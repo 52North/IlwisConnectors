@@ -1,5 +1,6 @@
 QMAKE_CXXFLAGS += -std=c++11
-QMAKE_CXXFLAGS += -unused-parameter
+QMAKE_CXXFLAGS += -Wno-unused-parameter
+QMAKE_CXXFLAGS += -Wno-sign-compare
 
 CONFIG(debug, debug|release) {
 CONF=debug
@@ -14,37 +15,35 @@ PLATFORM = generic
 win32{
     PLATFORM = win32
 }
+BOOST=../external
 
 QT += sql
 
 plugin{
-DESTDIR = $$PWD/libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
+DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 }dll{
-DESTDIR = $$PWD/libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/output/$$PLATFORM$$CONF/bin
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
+DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
 }else {
-DESTDIR = $$PWD/libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/output/$$PLATFORM$$CONF/bin
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
+DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
 }
 
-INCLUDEPATH += sources/core \
-                sources/core/ilwisobjects \
-                sources/core/ilwisobjects/geometry \
-                sources/core/util \
-                sources/core/ilwisobjects/geometry/geodeticdatum \
-                sources/core/ilwisobjects/geometry/projection \
-                sources/core/ilwisobjects/geometry/coordinatesystem \
-                sources/core/ilwisobjects/geometry/georeference \
-                sources/core/ilwisobjects/coverage \
-                sources/core/ilwisobjects/table \
-                sources/core/ilwisobjects/operation \
-                sources/core/catalog \
-                sources/core/ilwisobjects/domain
+INCLUDEPATH += ../IlwisCore/core \
+                ../IlwisCore/core/ilwisobjects \
+                ../IlwisCore/core/ilwisobjects/geometry \
+                ../IlwisCore/core/util \
+                ../IlwisCore/core/ilwisobjects/geometry/geodeticdatum \
+                ../IlwisCore/core/ilwisobjects/geometry/projection \
+                ../IlwisCore/core/ilwisobjects/geometry/coordinatesystem \
+                ../IlwisCore/core/ilwisobjects/geometry/georeference \
+                ../IlwisCore/core/ilwisobjects/coverage \
+                ../IlwisCore/core/ilwisobjects/table \
+                ../IlwisCore/core/ilwisobjects/operation \
+                ../IlwisCore/core/catalog \
+                ../IlwisCore/core/ilwisobjects/domain \
+                $$BOOST
 
-HEADERS +=
 
-SOURCES +=
-
-INCLUDEPATH += sources
 
