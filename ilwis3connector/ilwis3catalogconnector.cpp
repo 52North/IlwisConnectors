@@ -83,9 +83,6 @@ bool Ilwis3CatalogConnector::loadItems()
     for(int i = 0; i < odfitems.size(); ++i) {
         ODFItem &item = odfitems[i];
         QFileInfo ff(item.toLocalFile());
-        if ( ff.suffix() == "mps") {
-            qDebug() << "stop";
-        }
         ok = item.resolveNames(names);
 
         if ( ok) {
