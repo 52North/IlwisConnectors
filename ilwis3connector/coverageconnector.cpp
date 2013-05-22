@@ -166,13 +166,12 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
             _odf->setKeyValue("BaseMap","Domain","Image.dom");
         }
         else {
-            NumericRange *numRange = numDomain->range<NumericRange>();
-            RawConverter conv(numRange->min(), numRange->max(),pow(10, -digits))                ;
-            QString rangeString = QString("%1:%2:%3:offset=%4").arg(numRange->min()).arg(numRange->max()).arg(conv.scale()).arg(conv.offset());
+            RawConverter conv(coverage->statistics().min(), coverage->statistics().max(),pow(10, -digits))                ;
+            QString rangeString = QString("%1:%2:%3:offset=%4").arg(coverage->statistics().min()).arg(coverage->statistics().max()).arg(conv.scale()).arg(conv.offset());
             _odf->setKeyValue("BaseMap","Range",rangeString);
             _odf->setKeyValue("BaseMap","Domain","value.dom");
 
-            _odf->setKeyValue("BaseMap","MinMax",QString("%1:%2").arg(numRange->min()).arg(numRange->max()));
+            _odf->setKeyValue("BaseMap","MinMax",QString("%1:%2").arg(coverage->statistics().min()).arg(coverage->statistics().max()));
             QString domInfo = QString("value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0");
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
         }
