@@ -362,9 +362,7 @@ bool GridCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         gcMap->copyBinary(gcov, i);
         //QUrl mapUrl = "file:///" + path + "/" + mapName + ".mpr";
         gcMap->connectTo(QUrl(), "map", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
-        //gcMap->statistics().calculate();
-        gcMap->storeMetaData();
-        gcMap->storeBinaryData();
+        gcMap->store(IlwisObject::smBINARYDATA | IlwisObject::smMETADATA);
     }
 
     _odf->store("mpl");
@@ -384,7 +382,7 @@ QString GridCoverageConnector::getGrfName(const IGridCoverage& gcov) {
         localName = gcov->name() + ".grf";
         grf->setName(localName);
         grf->connectTo(QUrl(), "georef", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
-        grf->storeMetaData();
+        grf->store(IlwisObject::smMETADATA);
     } else
         localName = localGrf.fileName();
 
@@ -421,10 +419,8 @@ bool GridCoverageConnector::storeMetaData( IlwisObject *obj)  {
 
     const IDomain dom = gcov->domain();
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
-        INumericDomain numDomain = dom.get<NumericDomain>();
-        NumericRange *numRange = numDomain->range<NumericRange>();
         int digits = gcov->statistics().significantDigits();
-        RawConverter conv(numRange->min(), numRange->max(),pow(10, -digits)) ;
+        RawConverter conv(gcov->statistics().min(), gcov->statistics().max(),pow(10, -digits)) ;
         qint32 delta = gcov->statistics().max() - gcov->statistics().min();
         if ( delta >= 0 && delta < 256 &&  digits == 0){
            _odf->setKeyValue("MapStore","Type","Byte");
