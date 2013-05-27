@@ -14,12 +14,11 @@
 #include "numericdomain.h"
 #include "numericrange.h"
 #include "coordinatesystem.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "containerstatistics.h"
 #include "coverage.h"
-#include "containerstatistics.h"
 #include "rawconverter.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
@@ -91,17 +90,17 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
         return false;
     }
 
-    coverage->setDomain(dom);
+    coverage->datadef().domain(dom);
     double vmax,vmin,scale,offset;
     QString range = _odf->value("BaseMap","Range");
     if ( range != sUNDEF ) {
         if ( getRawInfo(range, vmin,vmax,scale,offset)) {
             if ( scale == 1.0) {
-                coverage->setRange(new NumericRange(vmin, vmax,1));
+                coverage->datadef().range(new NumericRange(vmin, vmax,1));
 
             }
             else {
-                coverage->setRange(new NumericRange(vmin, vmax));
+                coverage->datadef().range(new NumericRange(vmin, vmax));
             }
 
 
@@ -148,7 +147,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
                       arg(bounds.max_corner().x(),10,'f').
                       arg(bounds.max_corner().y(),10,'f'));
 
-    const IDomain dom = coverage->domain();
+    const IDomain dom = coverage->datadef().domain();
     if (!dom.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Domain", coverage->name());
 

@@ -5,29 +5,17 @@
 #include <fstream>
 #include <iterator>
 
-#include "kernel.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "connectorinterface.h"
+#include "raster.h"
 #include "module.h"
 #include "numericrange.h"
 #include "inifile.h"
-#include "ilwisdata.h"
-#include "domain.h"
 #include "numericrange.h"
 #include "numericdomain.h"
-#include "coordinatesystem.h"
-#include "valuedefiner.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "containerstatistics.h"
-#include "coverage.h"
-#include "georeference.h"
-#include "grid.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
-#include "gridcoverage.h"
 #include "pixeliterator.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
@@ -91,17 +79,17 @@ bool GridCoverageConnector::loadMapList(IlwisObject *data) {
     QString storeType = odf.value("MapStore","Type");
     setStoreType(storeType);
 
-    gcoverage->setDomain(mp->domain());
+    gcoverage->datadef().domain(mp->datadef().domain());
 
     double vmax,vmin,scale,offset;
     QString range = odf.value("BaseMap","Range");
     if ( range != sUNDEF ) {
         if( getRawInfo(range, vmin,vmax,scale,offset)) {
             if ( scale == 1.0) {
-                gcoverage->setRange(new NumericRange(vmin, vmax,1));
+                gcoverage->datadef().range(new NumericRange(vmin, vmax,1));
             }
             else {
-                gcoverage->setRange(new NumericRange(vmin, vmax));
+                gcoverage->datadef().range(new NumericRange(vmin, vmax));
             }
         }
     }
@@ -110,7 +98,7 @@ bool GridCoverageConnector::loadMapList(IlwisObject *data) {
     gcoverage->size(sz);
     gcoverage->setCoordinateSystem(mp->coordinateSystem());
     gcoverage->setEnvelope(mp->envelope());
-    _dataType = mp->range()->determineType();
+    _dataType = mp->datadef().range()->determineType();
 
     return true;
 
@@ -168,7 +156,7 @@ bool GridCoverageConnector::loadMetaData(IlwisObject *data)
     setStoreType(storeType);
 
     gcoverage->setGeoreference(grf);
-    _dataType = gcoverage->range()->determineType();
+    _dataType = gcoverage->datadef().range()->determineType();
 
     return true;
 
@@ -286,7 +274,7 @@ bool GridCoverageConnector::storeBinaryData(IlwisObject *obj)
     if ( gcov->size().zsize() > 1) // mpl doesnt have binary data
         return true;
 
-    const IDomain dom = gcov->domain();
+    const IDomain dom = gcov->datadef().domain();
     if (!dom.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Domain", gcov->name());
 
@@ -353,7 +341,7 @@ bool GridCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         res.addProperty("bounds", IVARIANT(gcov->envelope()));
         res.addProperty("georeference", IVARIANT(gcov->georeference()));
         res.addProperty("coordinatesystem", IVARIANT(gcov->coordinateSystem()));
-        res.addProperty("domain", IVARIANT(gcov->domain()));
+        res.addProperty("domain", IVARIANT(gcov->datadef().domain()));
         mastercatalog()->addItems({res});
 
         IGridCoverage gcMap;
@@ -417,7 +405,7 @@ bool GridCoverageConnector::storeMetaData( IlwisObject *obj)  {
     _odf->setKeyValue("Map","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
     _odf->setKeyValue("Map","Type","MapStore");
 
-    const IDomain dom = gcov->domain();
+    const IDomain dom = gcov->datadef().domain();
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
         int digits = gcov->statistics().significantDigits();
         RawConverter conv(gcov->statistics().min(), gcov->statistics().max(),pow(10, -digits)) ;

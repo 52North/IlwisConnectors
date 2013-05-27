@@ -17,7 +17,7 @@
 #include "ilwisdata.h"
 #include "ilwisobject.h"
 #include "domain.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "basetable.h"
 #include "flattable.h"
@@ -112,7 +112,7 @@ ColumnDefinition TableConnector::getKeyColumn() {
     IDomain dmkey;
     dmkey.prepare("count");
     ColumnDefinition colKey(dom->name()+"_raw", dmkey, 0);
-    colKey.setRange(new NumericRange(0,dom->count(),1));
+    colKey.datadef().range(new NumericRange(0,dom->count(),1));
     return colKey;
 
 }
@@ -133,12 +133,12 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
             QVariantList varlist;
             RawConverter conv = _converters[colName];
             for(quint32 j = 0; j < tbl.rows(); ++j){
-                if ( col.domain()->valueType() >= itINT8 && col.domain()->valueType() <= itDOUBLE) {
+                if ( col.datadef().domain()->valueType() >= itINT8 && col.datadef().domain()->valueType() <= itDOUBLE) {
                     double value;
                     if (tbl.get(j,i,value)) {
                         varlist <<  conv.raw2real(value);
                     }
-                } else if (col.domain()->valueType() == itSTRING) {
+                } else if (col.datadef().domain()->valueType() == itSTRING) {
                     QString value;
                     if (tbl.get(j,i,value)) {
                         varlist << value;
