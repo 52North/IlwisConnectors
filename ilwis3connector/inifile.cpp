@@ -57,14 +57,14 @@ void IniFile::setKeyValue(const QString& section, const QString& key, const QStr
     {
         // Add a new section, with one new key/value entry
         SectionEntries entries;
-        entries[key] = value;
+        entries[key.toLower()] = value;
         _sections[section] = entries;
     }
     else
     {
         // Add one new key/value entry in an existing section
         SectionEntries& entries = iterSect.value();
-        entries[key] = value;
+        entries[key.toLower()] = value;
     }
 }
 
@@ -75,7 +75,7 @@ QString IniFile::value(const QString& section, const QString& key) const
     if (iterSect != _sections.end())
     {
         const SectionEntries& entries = iterSect.value();
-        SectionEntries::const_iterator iterEntry = entries.find(key);
+        SectionEntries::const_iterator iterEntry = entries.find(key.toLower());
         if (iterEntry != entries.end())
             return iterEntry.value();
     }
@@ -90,7 +90,7 @@ void IniFile::removeKeyValue(const QString& section, const QString& key)
     {
         // The section exists, now erase entry "key"
         SectionEntries& entries = iterSect.value();
-        entries.remove(key);
+        entries.remove(key.toLower());
     }
 }
 
@@ -208,6 +208,7 @@ void IniFile::store(const QString& ext)
         for (iterEntry = entries.begin(); iterEntry != entries.end(); ++iterEntry)
         {
             QString key = iterEntry.key();
+            key[0].toUpper();
             text <<  key.trimmed() << "=" << iterEntry.value() << "\n";
         }
     }
