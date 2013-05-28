@@ -41,8 +41,13 @@ bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
         kernel()->issues()->log(TR("Invalid Georef section in %1").arg(odf.fileinfo().baseName()));
         return false;
     }
-    quint32 lines = odf.value("GeoRef","Lines").toInt();
-    quint32 columns = odf.value("GeoRef","Columns").toInt();
+    bool ok1, ok2;
+    quint32 lines = odf.value("GeoRef","Lines").toInt(&ok1);
+    quint32 columns = odf.value("GeoRef","Columns").toInt(&ok2);
+    if ( !(ok1 & ok2)) {
+        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Lines/Columns","Georeference");
+    }
+
     GeoReference *grf = static_cast<GeoReference *>(data);
     grf->size(Size(columns, lines,1));
     if ( type == "GeoRefCorners") {
