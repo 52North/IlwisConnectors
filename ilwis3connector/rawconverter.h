@@ -6,6 +6,18 @@ namespace Ilwis3{
 class RawConverter
 {
 public:
+    RawConverter(const QString &type)
+    {
+        _scale = 1;
+        _offset = -1;
+         _undefined = 0;
+        if ( type == "class") {
+            _storeType = itUINT8;
+        } else {
+            _storeType = itUINT32;
+        }
+    }
+
     RawConverter() : _offset(0), _scale(1), _storeType(itUNKNOWN), _undefined(rUNDEF){
     }
 
