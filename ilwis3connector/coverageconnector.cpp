@@ -1,5 +1,6 @@
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QRegExp>
 
 #include "kernel.h"
 #include "angle.h"
@@ -90,7 +91,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
         return false;
     }
 
-    coverage->datadef().domain(dom);
+    coverage->datadef() = DataDefinition(dom);
     double vmax,vmin,scale,offset;
     QString range = _odf->value("BaseMap","Range");
     if ( range != sUNDEF ) {
@@ -103,6 +104,25 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
                 coverage->datadef().range(new NumericRange(vmin, vmax));
             }
 
+
+        }
+    } else {
+        QString dminfo = _odf->value("BaseMap","DomainInfo");
+        if ( dminfo != sUNDEF) {
+            int index = dminfo.indexOf("class;");
+            if ( index != -1) {
+                _converter = RawConverter("class");
+            } else {
+                index = dminfo.indexOf("id;");
+                if ( index != -1) {
+                    _converter = RawConverter("id");
+                } else {
+                    index = dminfo.indexOf("UniqueId;");
+                    if ( index != -1) {
+                        _converter = RawConverter("UniqueId");
+                    }
+                }
+            }
 
         }
     }
@@ -153,16 +173,25 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
 
     calcStatics(obj,CoverageStatistics::pBASIC);
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
-        INumericDomain numDomain = dom.get<NumericDomain>();
 
         quint16 digits = coverage->statistics().significantDigits();
         qint32 delta = coverage->statistics().max() - coverage->statistics().min();
         if ( delta >= 0 && delta < 256 && digits == 0){
-            QString domInfo = QString("Image.dom;Byte;image;0;;");
-            _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
-            _odf->setKeyValue("BaseMap","Range","0:255:offset=0");
-            _odf->setKeyValue("BaseMap","MinMax","0:255");
-            _odf->setKeyValue("BaseMap","Domain","Image.dom");
+            if ( delta >= 0 && delta < 256 && digits == 0){
+                if ( coverage->datadef().domain()->code() == "boolean"){
+                    QString domInfo = QString("bool.dom;Byte;bool;0;;");
+                    _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
+                    _odf->setKeyValue("BaseMap","Range","0:1:offset=-1");
+                    _odf->setKeyValue("BaseMap","Domain","bool.dom");
+                }
+                else{
+                    QString domInfo = QString("Image.dom;Byte;image;0;;");
+                    _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
+                    _odf->setKeyValue("BaseMap","Range","0:255:offset=0");
+                    _odf->setKeyValue("BaseMap","MinMax","0:255");
+                    _odf->setKeyValue("BaseMap","Domain","Image.dom");
+                }
+            }
         }
         else {
             RawConverter conv(coverage->statistics().min(), coverage->statistics().max(),pow(10, -digits))                ;
