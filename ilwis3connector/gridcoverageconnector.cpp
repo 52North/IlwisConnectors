@@ -5,15 +5,13 @@
 #include <fstream>
 #include <iterator>
 
+#include "kernel.h"
 #include "raster.h"
 #include "module.h"
 #include "numericrange.h"
 #include "inifile.h"
 #include "numericrange.h"
 #include "numericdomain.h"
-#include "columndefinition.h"
-#include "table.h"
-#include "containerstatistics.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
 #include "pixeliterator.h"

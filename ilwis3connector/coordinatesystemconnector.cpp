@@ -5,9 +5,7 @@
 #include <QStringList>
 
 #include "kernel.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
+#include "geometries.h"
 #include "inifile.h"
 #include "connectorinterface.h"
 #include "ilwisdata.h"
@@ -16,8 +14,6 @@
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
 #include "projection.h"
-#include "nullprojection.h"
-#include "domain.h"
 #include "coordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
 #include "coordinatesystemconnector.h"
