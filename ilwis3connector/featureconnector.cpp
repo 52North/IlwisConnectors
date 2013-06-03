@@ -6,6 +6,8 @@
 #include "module.h"
 #include "inifile.h"
 #include "ilwisdata.h"
+#include "ilwiscontext.h"
+#include "catalog.h"
 #include "numericdomain.h"
 #include "numericrange.h"
 #include "columndefinition.h"
@@ -41,6 +43,76 @@ void FeatureConnector::calcStatics(const IlwisObject *obj, CoverageStatistics::P
 
 FeatureConnector::FeatureConnector(const Resource &item, bool load) : CoverageConnector(item, load)
 {
+}
+
+bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& tbl) {
+    return false;
+}
+
+bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& tbl) {
+    QString datafile = _odf->value("PolygonMapStore","DataPol");
+    datafile = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + datafile;
+    QFile file(datafile);
+
+    if (!file.exists()){
+        kernel()->issues()->log(TR(ERR_MISSING_DATA_FILE_1).arg(file.fileName()));
+        return false;
+    }
+    if(!file.open(QIODevice::ReadOnly )){
+        kernel()->issues()->log(TR(ERR_COULD_NOT_OPEN_READING_1).arg(file.fileName()));
+        return false;
+    }
+    QDataStream stream(&file);
+    int nrPolygons = fcoverage->featureCount(itPOLYGONCOVERAGE);
+    SPAttributeRecord record( new AttributeRecord(tbl,"coverage_key"));
+    bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
+
+    for(int j=0; j < nrPolygons; ++j) {
+        Polygon pol;
+        readRing(stream, pol.outer());
+        double value;
+        quint32 numberOfHoles;
+        stream >> value;
+        stream >> numberOfHoles;
+        pol.inners().resize(numberOfHoles);
+        for(int i=0; i< numberOfHoles;++i)
+            readRing(stream, pol.inners()[i]);
+        if ( isNumeric) {
+            tbl->cell("coverage_key", j, QVariant(j));
+            tbl->cell("feature_value", j, QVariant(value));
+            fcoverage->newFeature({pol},j, record);
+        } else {
+            quint32 itemId = value;
+            tbl->cell("coverage_key", j, QVariant(itemId));
+            fcoverage->newFeature({pol},itemId, record);
+        }
+
+    }
+
+    return true;
+}
+
+bool FeatureConnector::readRing(QDataStream& stream, std::vector<Coordinate2d> &ring ) {
+    quint32 numberOfCoords;
+
+    if (stream.readRawData((char *)&numberOfCoords, 4) <= 0)
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,"data file");
+    Coordinate *p = new Coordinate[numberOfCoords];
+    stream.readRawData((char *)p,numberOfCoords*3*8);
+    ring.resize(numberOfCoords);
+    std::copy(p, p + numberOfCoords, ring.begin());
+
+   return true;
+}
+
+bool FeatureConnector::loadBinaryPolygons(FeatureCoverage *fcoverage, ITable& tbl) {
+    QString dataFile = _odf->value("PolygonMapStore","DataPol");
+    if ( dataFile != sUNDEF) {
+        return loadBinaryPolygons30(fcoverage, tbl);
+    } else {
+        return loadBinaryPolygons37(fcoverage, tbl);
+    }
+    return false;
 }
 
 bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage, ITable& tbl) {
@@ -142,6 +214,8 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
         return loadBinaryPoints(fcoverage, tbl);
     else if (fcoverage->featureTypes() == itSEGMENTCOVERAGE)
         return loadBinarySegments(fcoverage, tbl);
+    else if (fcoverage->featureTypes() == itPOLYGONCOVERAGE)
+        return loadBinaryPolygons(fcoverage, tbl);
     return false;
 }
 
