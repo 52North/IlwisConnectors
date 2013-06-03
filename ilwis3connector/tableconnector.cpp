@@ -2,10 +2,10 @@
 #include <QSqlError>
 
 #include "kernel.h"
-#include "connectorinterface.h"
-#include "inifile.h"
 #include "angle.h"
 #include "point.h"
+#include "connectorinterface.h"
+#include "inifile.h"
 #include "errorobject.h"
 #include "ilwisdata.h"
 #include "domain.h"

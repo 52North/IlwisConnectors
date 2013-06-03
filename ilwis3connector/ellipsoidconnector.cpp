@@ -5,9 +5,9 @@
 #include <QSqlError>
 
 #include "kernel.h"
-#include "inifile.h"
 #include "angle.h"
 #include "point.h"
+#include "inifile.h"
 #include "connectorinterface.h"
 #include "ilwisdata.h"
 #include "ilwisobjectconnector.h"

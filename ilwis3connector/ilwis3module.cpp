@@ -7,8 +7,8 @@
 #include <fstream>
 
 #include "kernel.h"
-#include "inifile.h"
 #include "raster.h"
+#include "inifile.h"
 #include "numericrange.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"

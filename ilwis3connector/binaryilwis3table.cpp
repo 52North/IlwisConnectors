@@ -2,9 +2,9 @@
 #include <QFile>
 
 #include "kernel.h"
-#include "inifile.h"
 #include "angle.h"
 #include "point.h"
+#include "inifile.h"
 #include "ilwisdata.h"
 #include "domain.h"
 #include "connectorinterface.h"
