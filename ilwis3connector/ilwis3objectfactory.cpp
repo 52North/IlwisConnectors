@@ -106,6 +106,8 @@ bool Ilwis3ObjectFactory::canUse(const Resource &item) const
         return true;
     else if ( type & itSEGMENTCOVERAGE)
         return true;
+    else if ( type & itPOLYGONCOVERAGE)
+        return true;
 
     return false;
 }
