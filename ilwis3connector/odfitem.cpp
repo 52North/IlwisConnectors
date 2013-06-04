@@ -211,7 +211,7 @@ IlwisTypes ODFItem::findDomainType() const
         return itNUMERICDOMAIN;
     if ( type == "DomainClass" )
         return itITEMDOMAIN;
-    if ( type == "DomainIdentifier" || type == "DomainUniqueId")
+    if ( type == "DomainIdentifier" || type == "DomainUniqueID")
         return itITEMDOMAIN;
     if ( type == "DomainCOORD" )
         return itCOORDSYSTEM;
