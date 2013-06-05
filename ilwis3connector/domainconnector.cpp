@@ -4,9 +4,9 @@
 #include "connectorinterface.h"
 #include "inifile.h"
 #include "ilwisdata.h"
+#include "domainitem.h"
 #include "domain.h"
 #include "itemdomain.h"
-#include "domainitem.h"
 #include "identifieritem.h"
 #include "thematicitem.h"
 #include "numericrange.h"
@@ -49,16 +49,24 @@ bool DomainConnector::loadMetaData(IlwisObject* data)
     return false;
 }
 
-bool DomainConnector::handleIdDomain(IlwisObject* ) {
-    //TODO read ilwis3 identifier domains
+bool DomainConnector::handleIdDomain(IlwisObject* data) {
+    ItemDomain<IndexedIdentifier> *iddomain = static_cast<ItemDomain<IndexedIdentifier> *>(data);
+    bool ok;
+    quint32 nritems = _odf->value("DomainIdentifier","Nr").toLong(&ok);
+    if ( !ok) {
+        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"domain items", data->name());
+    }
+    QString prefix = _odf->value("DomainSort","Prefix");
+    iddomain->addItem(new IndexedIdentifier(prefix,0, nritems));
 
-    return false;
+    return true;
 }
 
 bool DomainConnector::handleItemDomains(IlwisObject* data) {
     Ilwis3::BinaryIlwis3Table tbl ;
-    if (!tbl.load(_odf)) // no table found?
-        return false;
+    if (!tbl.load(_odf)) { // no table found? could be internal domain
+        return handleIdDomain(data);
+    }
     quint32 indexName = tbl.index("Name");
     if (indexName == iUNDEF) { // no name column in the table ?
         kernel()->issues()->log(TR(ERR_COLUMN_MISSING_2).arg("Name",_odf->fileinfo().baseName()));
