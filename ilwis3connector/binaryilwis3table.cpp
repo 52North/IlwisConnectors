@@ -17,7 +17,7 @@
 using namespace Ilwis ;
 using namespace Ilwis3;
 
-BinaryIlwis3Table::BinaryIlwis3Table()
+BinaryIlwis3Table::BinaryIlwis3Table() : _rows(0), _columns(0),_recordSize(0),_records(0)
 {
 }
 
