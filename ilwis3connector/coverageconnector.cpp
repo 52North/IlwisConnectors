@@ -110,9 +110,9 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
                 if ( index != -1) {
                     _converter = RawConverter("id");
                 } else {
-                    index = dminfo.indexOf("UniqueId;");
+                    index = dminfo.indexOf("UniqueID;");
                     if ( index != -1) {
-                        _converter = RawConverter("UniqueId");
+                        _converter = RawConverter("UniqueID");
                     }
                 }
             }
