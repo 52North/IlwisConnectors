@@ -10,6 +10,7 @@
 #include "ilwisdata.h"
 #include "domainitem.h"
 #include "domain.h"
+#include "textdomain.h"
 #include "itemdomain.h"
 #include "numericrange.h"
 #include "identifieritem.h"
@@ -89,6 +90,8 @@ ColumnDefinition TableConnector::makeColumn(const QString& colName, quint64 inde
     if ( isSystemObject(domName)) {
         domName = noExt(domName);
     }
+    if ( domName.toLower() == "string.dom")
+        domName = "code=domain:text";
     if(!dom.prepare(domName)) {
         return ColumnDefinition();
     }
