@@ -27,6 +27,10 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
+struct XYZ {
+    double x,y,z;
+};
+
 ConnectorInterface *FeatureConnector::create(const Resource &item, bool load) {
     return new FeatureConnector(item, load);
 
@@ -72,10 +76,10 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         readRing(stream, pol.outer());
         double value;
         quint32 numberOfHoles;
-        stream >> value;
-        stream >> numberOfHoles;
+        stream.readRawData((char *)&value, 8);
+        stream.readRawData((char *)&numberOfHoles, 4);
         pol.inners().resize(numberOfHoles);
-        for(int i=0; i< numberOfHoles;++i)
+        for(quint32 i=0; i< numberOfHoles;++i)
             readRing(stream, pol.inners()[i]);
         if ( isNumeric) {
             tbl->cell("coverage_key", j, QVariant(j));
@@ -97,17 +101,19 @@ bool FeatureConnector::readRing(QDataStream& stream, std::vector<Coordinate2d> &
 
     if (stream.readRawData((char *)&numberOfCoords, 4) <= 0)
         return ERROR1(ERR_COULD_NOT_OPEN_READING_1,"data file");
-    Coordinate *p = new Coordinate[numberOfCoords];
-    stream.readRawData((char *)p,numberOfCoords*3*8);
+    vector<XYZ> pnts(numberOfCoords);
+    stream.readRawData((char *)&pnts[0],numberOfCoords*3*8);
     ring.resize(numberOfCoords);
-    std::copy(p, p + numberOfCoords, ring.begin());
+    for(quint32 i=0; i < numberOfCoords; ++i) {
+        ring[i] = Coordinate2d(pnts[i].x, pnts[i].y);
+    }
 
    return true;
 }
 
 bool FeatureConnector::loadBinaryPolygons(FeatureCoverage *fcoverage, ITable& tbl) {
     QString dataFile = _odf->value("PolygonMapStore","DataPol");
-    if ( dataFile != sUNDEF) {
+    if ( dataFile == sUNDEF) {
         return loadBinaryPolygons30(fcoverage, tbl);
     } else {
         return loadBinaryPolygons37(fcoverage, tbl);
