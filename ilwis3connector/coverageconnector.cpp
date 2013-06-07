@@ -127,7 +127,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
         double maxx = parts[2].toDouble();
         double maxy = parts[3].toDouble();
         Box2D<double> env(Coordinate(minx, miny), Coordinate(maxx, maxy));
-        coverage->setEnvelope(env);
+        coverage->envelope(env);
     } else {
         kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Coordinate boundaries", data->name()), IssueObject::itWarning);
     }
