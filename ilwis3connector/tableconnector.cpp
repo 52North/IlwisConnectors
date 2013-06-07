@@ -96,7 +96,7 @@ ColumnDefinition TableConnector::makeColumn(const QString& colName, quint64 inde
         return ColumnDefinition();
     }
     QString section = QString("Col:%1").arg(colName);
-    RawConverter conv = Ilwis3Range::converter(_odf,_odf->value(section,"Range" ));
+    RawConverter conv = Ilwis3Range::converter(_odf,section);
     _converters[colName] = conv;
     ColumnDefinition col(colName, dom, index );
     return col;
@@ -135,13 +135,14 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
         if ( col.isValid()) {
             QVariantList varlist;
             RawConverter conv = _converters[colName];
+            IlwisTypes valueType = col.datadef().domain()->valueType();
             for(quint32 j = 0; j < tbl.rows(); ++j){
-                if ( col.datadef().domain()->valueType() >= itINT8 && col.datadef().domain()->valueType() <= itDOUBLE) {
+                if ( (valueType >= itINT8 && valueType <= itDOUBLE) || valueType == itITEMDOMAIN) {
                     double value;
                     if (tbl.get(j,i,value)) {
                         varlist <<  conv.raw2real(value);
                     }
-                } else if (col.datadef().domain()->valueType() == itSTRING) {
+                } else if (valueType == itSTRING ) {
                     QString value;
                     if (tbl.get(j,i,value)) {
                         varlist << value;
