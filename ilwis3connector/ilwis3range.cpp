@@ -91,7 +91,16 @@ bool Ilwis3Range::range2MinMax(const ODF &odf, const QString &range, double& vmi
     return true;
 }
 
-RawConverter Ilwis3Range::converter(const ODF &odf, const QString &range)  {
+RawConverter Ilwis3Range::converter(const ODF &odf, const QString &section)  {
+    QString range = odf->value(section,"Range" );
+    if ( range == sUNDEF) {
+        QString dminfo = odf->value(section,"DomainInfo");
+        if ( dminfo != sUNDEF) {
+            QStringList parts = dminfo.split(";");
+            QString dmtype = parts[2];
+            return RawConverter(dmtype);
+        }
+    }
     QStringList parts = range.split(":");
     if ( parts.size() >= 2) {
         double scale = 1.0;
