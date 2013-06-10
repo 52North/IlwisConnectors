@@ -7,7 +7,7 @@ class FeatureCoverage;
 
 namespace Ilwis3{
 
-
+class BinaryIlwis3Table;
 
 class FeatureConnector : public CoverageConnector
 {
@@ -29,6 +29,8 @@ private:
     bool loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& tbl);
     //bool readRing(QDataStream &stream,boost::geometry::model::ring<Coordinate2d>& ring);
     bool readRing(QDataStream &stream,std::vector<Coordinate2d>& ring);
+    bool getRings(qint32 startIndex, const BinaryIlwis3Table &topTable, const BinaryIlwis3Table& polTable, std::vector<vector<Coordinate2d> > &rings);
+    bool isForwardStartDirection(const BinaryIlwis3Table &topTable, qint32 colForward, qint32 colBackward, qint32 colCoords, long index);
 };
 }
 }
