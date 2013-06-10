@@ -18,6 +18,7 @@ public:
     bool get(quint32 row, quint32 column, Coordinate &c) const;
     bool get(quint32 row, quint32 column, QString &s) const;
     bool get(quint32 row, quint32 column, vector<Coordinate>& coords) const;
+    bool get(quint32 row, quint32 column, vector<Coordinate2d> &coords) const;
     quint32 index(const QString& colname) const;
     quint32 rows() const;
     quint32 columns() const;
@@ -35,7 +36,7 @@ private:
     char * _records;
     QVector<ColumnInfo> _columnInfo;
 
-    void getColumnInfo(const ODF &odf);
+    void getColumnInfo(const ODF &odf, const QString &prfix="");
     void readData(char *memblock);
     QString *readString(char *mem);
     char *readCoordList(char *mem, long &count);

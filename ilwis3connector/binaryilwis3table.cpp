@@ -65,7 +65,7 @@ bool BinaryIlwis3Table::load(const ODF& odf, const QString& prfix){
         return false;
     }
 
-    getColumnInfo(odf);
+    getColumnInfo(odf, prefix);
 
     qint64 size = file.size();
     char *memblock = new char [size];
@@ -83,20 +83,20 @@ bool BinaryIlwis3Table::load(const ODF& odf, const QString& prfix){
     return true;
 }
 
-void BinaryIlwis3Table::getColumnInfo(const ODF& odf) {
+void BinaryIlwis3Table::getColumnInfo(const ODF& odf, const QString& prefix) {
     _columnInfo.resize(_columns);
     _recordSize = 0;
 
     for(quint32 col = 0 ; col < _columns; ++col) {
         ColumnInfo inf;
         QString key = QString("Col%1").arg(col);
-        QString name = odf->value("TableStore",key);
-        QString section = QString("Col:%1").arg(name);
+        QString name = odf->value(prefix + "TableStore",key);
+        QString section = QString(prefix + "Col:%1").arg(name);
         QString st = odf->value(section, "StoreType");
         inf._name = name;
         QString range = odf->value(section,"Range");
         QStringList parts = range.split(":");
-        inf._isRaw = parts.size() == 4;
+        inf._isRaw = parts.size() == 4 && st != "Real";
         if ( st == "Long" ){
             inf._offset = _recordSize;
             _recordSize+=4;
@@ -191,6 +191,7 @@ bool BinaryIlwis3Table::get(quint32 row, quint32 column, double& v ) const {
     v = rUNDEF;
     char *p = moveTo(row,  info);
     if( info._isRaw  || info._type == itINT32){
+        double *ddd = (double *)p;
         long raw = p != 0 ? *(long *) p : iUNDEF;
         v = raw;
     }
@@ -234,6 +235,19 @@ bool BinaryIlwis3Table::get(quint32 row, quint32 column, vector<Coordinate> &coo
     return true;
 
 }
+
+bool BinaryIlwis3Table::get(quint32 row, quint32 column, vector<Coordinate2d> &coords) const {
+    if(!check(row, column))
+        return false;
+    const ColumnInfo& field = _columnInfo.at(column);
+    char *p = moveTo(row,  field);
+    vector<Coordinate2d> *crds = ( vector<Coordinate2d> *)(*(long *)p);
+    coords = *crds;
+
+    return true;
+
+}
+
 
 inline bool BinaryIlwis3Table::check(quint32 row, quint32 col) const {
     if ( row >= _rows || col >= _columns) {
