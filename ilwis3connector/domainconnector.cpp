@@ -42,7 +42,7 @@ bool DomainConnector::loadMetaData(IlwisObject* data)
     }
     if ( type() == itNUMERICDOMAIN) {
         return handleValueDomains(data);
-    } else if ( type() == itITEMDOMAIN) {
+    } else if ( type() == itITEMDOMAIN || type() == itDOMAIN) {
         return handleItemDomains(data);
     }
 
@@ -63,10 +63,14 @@ bool DomainConnector::handleIdDomain(IlwisObject* data) {
 }
 
 bool DomainConnector::handleItemDomains(IlwisObject* data) {
-    Ilwis3::BinaryIlwis3Table tbl ;
-    if (!tbl.load(_odf)) { // no table found? could be internal domain
+    QString domtype = _odf->value("Domain","Type");
+    bool hasDataFile = _odf->value("TableStore","Col1") == "Ord";
+    if ( (domtype == "DomainUniqueID" || domtype ==  "DomainIdentifier") && !hasDataFile)
+    { // no table found? internal domain
         return handleIdDomain(data);
     }
+    Ilwis3::BinaryIlwis3Table tbl ;
+    tbl.load(_odf);
     quint32 indexName = tbl.index("Name");
     if (indexName == iUNDEF) { // no name column in the table ?
         kernel()->issues()->log(TR(ERR_COLUMN_MISSING_2).arg("Name",_odf->fileinfo().baseName()));
