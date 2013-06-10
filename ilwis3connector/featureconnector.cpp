@@ -50,8 +50,138 @@ FeatureConnector::FeatureConnector(const Resource &item, bool load) : CoverageCo
 }
 
 bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& tbl) {
-    return false;
+    BinaryIlwis3Table polTable;
+    if ( !polTable.load(_odf)) {
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->fileinfo().fileName())    ;
+    }
+
+    BinaryIlwis3Table topTable;
+    if ( !topTable.load(_odf,"top")) {
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->fileinfo().fileName())    ;
+    }
+
+    qint32 colValue = polTable.index("PolygonValue");
+    qint32 colTopStart = polTable.index("TopStart");
+    qint32 colArea = polTable.index("Area");
+    int nrPolygons = polTable.rows();
+    SPAttributeRecord record( new AttributeRecord(tbl,"coverage_key"));
+    bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
+
+    double v;
+    for(int i = 0; i < nrPolygons; ++i) {
+        polTable.get(i,colArea, v);
+        if ( v < 0)
+            continue;
+        polTable.get(i,colTopStart,v);
+        qint32 index = v;
+        std::vector<std::vector<Coordinate2d>> rings;
+        if (getRings(index, topTable, polTable, rings)) {
+            if ( rings.size() == 0)
+                continue;
+            Polygon polygon;
+            polygon.outer().resize(rings[0].size());
+            std::copy(rings[0].begin(), rings[0].end(), polygon.outer().begin());
+            for(int j = 1; j < rings.size(); ++j) {
+                polygon.inners()[j-1].resize(rings[j].size());
+                std::copy(rings[j].begin(), rings[j].end(), polygon.inners()[j-1].begin());
+            }
+            polTable.get(i, colValue, v);
+            if ( isNumeric) {
+                tbl->cell("coverage_key", i, QVariant(i));
+                tbl->cell("feature_value", i, QVariant(v));
+                fcoverage->newFeature({polygon},i, record);
+            } else {
+                quint32 itemId = v;
+                tbl->cell("coverage_key", i, QVariant(itemId));
+                fcoverage->newFeature({polygon},itemId, record);
+            }
+        }
+    }
+    return true;
 }
+
+bool FeatureConnector::getRings(qint32 startIndex, const BinaryIlwis3Table& topTable, const BinaryIlwis3Table& polTable, std::vector<vector<Coordinate2d>>& rings ){
+    qint32 row = startIndex;
+    qint32 colCoords = topTable.index("Coords");
+    qint32 colForward = topTable.index("ForwardLink");
+    qint32 colBackward = topTable.index("BackwardLink");
+    std::vector<Coordinate> ring;
+    bool forward = isForwardStartDirection(topTable,colForward, colBackward, colCoords, row);
+    do{
+        std::vector<Coordinate> coords;
+        topTable.get(row,colCoords,coords);
+        if( coords.size() == 0 ||coords.back() == coords.front()){
+            ring.resize(coords.size());
+            std::copy(coords.begin(), coords.end(), ring.begin());
+        } else if ( coords.back() == ring.back()) {
+            ring.resize(coords.size());
+            std::reverse_copy(coords.begin(), coords.end(), ring.begin());
+        } else if ( ring.front() == coords.front()) {
+            ring.resize(coords.size());
+            std::reverse_copy(coords.begin(), coords.end(), ring.begin());
+        } else if ( ring.front() == coords.back()) {
+            ring.resize(coords.size());
+            std::copy(coords.begin(), coords.end(), ring.begin());
+        }
+
+        if ( ring.front() == ring.back() && ring.size() > 3) {
+            std::vector<Coordinate2d> ring2d;
+            Coordinate crdOld;
+            for(const Coordinate& crd : ring) {
+                if ( crd == crdOld)  // remove duplicates
+                    continue;
+                ring2d.push_back(crd);
+                crdOld = crd;
+            }
+            rings.push_back(ring2d);
+            coords.clear();
+            ring.clear();
+        }
+        qint32 oldIndex = row;
+        double v;
+        if ( forward)
+            topTable.get(abs(row),colForward,v);
+        else
+            topTable.get(abs(row), colBackward, v);\
+        row = v;
+        if ( oldIndex == row && row != startIndex) // this would indicate infintite loop. corrupt data
+            return false;
+        forward = row > 0;
+    } while(abs(row) != abs(startIndex) && row != iUNDEF);
+
+    return true;
+}
+
+bool FeatureConnector::isForwardStartDirection(const BinaryIlwis3Table& topTable, qint32 colForward, qint32 colBackward, qint32 colCoords, long index) {
+    qint32 fwl, bwl;
+    double v;
+    topTable.get(abs(index),colForward, v );
+    fwl = v;
+    if ( fwl != iUNDEF)
+        --fwl; // due to being raw values
+    topTable.get(abs(index),colBackward, v );
+    bwl = v;
+    if ( bwl != iUNDEF)
+        --bwl;
+
+    if ( abs(fwl) == abs(bwl)	)
+        return true;
+    if ( index < 0)
+        return false;
+    std::vector<Coordinate2d> startLine, forwardLine;
+    topTable.get(abs(index), colCoords,startLine);
+    topTable.get(abs(fwl), colCoords, forwardLine);
+
+    bool forward = false;
+    if ( fwl > 0)
+        forward =  startLine.back() == forwardLine.front();
+    else
+        forward = startLine.back() == forwardLine.back();
+
+    return forward;
+
+}
+
 
 bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& tbl) {
     QString datafile = _odf->value("PolygonMapStore","DataPol");
@@ -92,6 +222,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         }
 
     }
+    file.close();
 
     return true;
 }
