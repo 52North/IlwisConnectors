@@ -7,6 +7,8 @@
 
 #include "kernel.h"
 #include "raster.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "module.h"
 #include "numericrange.h"
 #include "inifile.h"
@@ -231,9 +233,9 @@ Grid* GridCoverageConnector::loadGridData(IlwisObject* data)
         return 0;
     }
     int blockCount = 0;
+    GridCoverage *gc = static_cast<GridCoverage *>(data);
     Grid *grid = 0;
     if ( grid == 0) {
-        GridCoverage *gc = static_cast<GridCoverage *>(data);
         Size sz = gc->size();
         grid =new Grid(sz);
     }
@@ -257,6 +259,14 @@ Grid* GridCoverageConnector::loadGridData(IlwisObject* data)
             delete grid;
             return 0;
         }
+    }
+    if ( gc->attributeTable(itGRIDCOVERAGE).isValid()) {
+        ITable tbl = gc->attributeTable(itGRIDCOVERAGE);
+        IDomain covdom;
+        if (!covdom.prepare("count")){
+            return 0;
+        }
+        tbl->addColumn("coverage_key",covdom);
     }
     return grid;
 
