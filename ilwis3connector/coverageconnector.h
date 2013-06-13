@@ -18,7 +18,6 @@ protected:
     bool storeMetaData(IlwisObject *obj) ;
 
     RawConverter _converter;
-    ITable _attributeTable;
 };
 }
 }
