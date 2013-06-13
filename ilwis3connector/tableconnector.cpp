@@ -46,6 +46,8 @@ TableConnector::TableConnector(const Resource &item, bool load) : Ilwis3Connecto
 
 bool TableConnector::loadMetaData(IlwisObject *data)
 {
+    Locker lock(_mutex);
+
     if(!Ilwis3Connector::loadMetaData(data))
         return false;
 
@@ -121,6 +123,8 @@ ColumnDefinition TableConnector::getKeyColumn() {
 }
 
 bool TableConnector::loadBinaryData(IlwisObject* data ) {
+    Locker lock(_mutex);
+
     Ilwis3::BinaryIlwis3Table tbl ;
     if (!tbl.load(_odf)) // no table found?
         return false;
