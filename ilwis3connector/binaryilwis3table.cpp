@@ -96,8 +96,12 @@ void BinaryIlwis3Table::getColumnInfo(const ODF& odf, const QString& prefix) {
         inf._name = name;
         QString range = odf->value(section,"Range");
         QStringList parts = range.split(":");
-        inf._isRaw = parts.size() == 4 && st != "Real";
+        inf._isRaw = ( parts.size() == 4 || parts.size() == 3) && st != "Real";
         if ( st == "Long" ){
+            inf._offset = _recordSize;
+            _recordSize+=4;
+            inf._type = itINT32;
+        } if ( st == "Int" ){
             inf._offset = _recordSize;
             _recordSize+=4;
             inf._type = itINT32;
