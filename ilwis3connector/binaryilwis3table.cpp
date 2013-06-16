@@ -122,7 +122,7 @@ void BinaryIlwis3Table::getColumnInfo(const ODF& odf, const QString& prefix) {
         } else if ( st == "Coord" ) {
             inf._offset = _recordSize;
             _recordSize += 16;
-            inf._type = itCOORD;
+            inf._type = itCOORD2D;
         } else if ( st == "Coord3D" ) {
             inf._offset = _recordSize;
             _recordSize += 24;
@@ -146,7 +146,7 @@ void BinaryIlwis3Table::readData(char *memblock) {
                 *(double *)p = *(double *)(memblock + posFile);
                 //v33 = *(double *)p;
                 posFile += 8;
-            } else if ( info._type == itCOORD) {
+            } else if ( info._type == itCOORD2D) {
                 memcpy(p,memblock + posFile,16);
                 //c33= *(double *)p;
                 posFile += 16;
