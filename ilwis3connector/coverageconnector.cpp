@@ -9,6 +9,10 @@
 #include "ilwisdata.h"
 #include "numericdomain.h"
 #include "numericrange.h"
+#include "domainitem.h"
+#include "itemdomain.h"
+#include "identifieritem.h"
+#include "thematicitem.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "rawconverter.h"
@@ -195,6 +199,14 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
             _odf->setKeyValue("BaseMap","MinMax",QString("%1:%2").arg(coverage->statistics().min()).arg(coverage->statistics().max()));
             QString domInfo = QString("value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0");
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
+        }
+    } if ( dom->ilwisType() == itITEMDOMAIN) {
+        QString source = Resource::toLocalFile(dom->source(), true);
+        IThematicDomain themdom = dom.get<ThematicDomain>();
+        if ( themdom.isValid()) {
+            QString domInfo = QString("%1;Byte;class;%2;;").arg(source).arg(themdom->count());
+            _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
+            _odf->setKeyValue("BaseMap","Domain",source);
         }
     }
     return true;
