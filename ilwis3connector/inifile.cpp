@@ -208,7 +208,7 @@ void IniFile::store(const QString& ext)
         for (iterEntry = entries.begin(); iterEntry != entries.end(); ++iterEntry)
         {
             QString key = iterEntry.key();
-            key[0].toUpper();
+            key[0] = key[0].toUpper();
             text <<  key.trimmed() << "=" << iterEntry.value() << "\n";
         }
     }
