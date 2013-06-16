@@ -141,7 +141,7 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
             RawConverter conv = _converters[colName];
             IlwisTypes valueType = col.datadef().domain()->valueType();
             for(quint32 j = 0; j < tbl.rows(); ++j){
-                if ( (valueType >= itINT8 && valueType <= itDOUBLE) || valueType == itITEMDOMAIN) {
+                if ( (valueType >= itINT8 && valueType <= itDOUBLE) || ((valueType & itDOMAINITEM) != 0)) {
                     double value;
                     if (tbl.get(j,i,value)) {
                         varlist <<  conv.raw2real(value);
@@ -167,7 +167,7 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
 
 QString TableConnector::valueType2DataType(IlwisTypes ty) {
     QString vType=sUNDEF;
-    if ( (ty >= itINT8 && ty <= itINT64) || ty ==itITEMDOMAIN) {
+    if ( (ty >= itINT8 && ty <= itINT64) || ((ty & itDOMAINITEM) != 0)) {
         vType = "Integer"        ;
     } else if ( ty >= itINT8 && ty <= itDOUBLE) {
         vType = "Real";
