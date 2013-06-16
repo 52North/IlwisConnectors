@@ -268,7 +268,7 @@ Grid* GridCoverageConnector::loadGridData(IlwisObject* data)
         }
         tbl->addColumn("coverage_key",covdom);
         for(quint32 i=0; i < tbl->rows() ; ++i) {
-            tbl->cell("coverage_key",i, i+1);
+            tbl->cell("coverage_key",i, i);
         }
     }
     return grid;
@@ -289,18 +289,19 @@ bool GridCoverageConnector::storeBinaryData(IlwisObject *obj)
     if (!dom.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Domain", gcov->name());
 
-    QFileInfo inf(_resource.toLocalFile());
+    QFileInfo inf(obj->name());
     QString dir = context()->workingCatalog()->location().toLocalFile();
     QString filename = dir + "/" + inf.baseName() + ".mp#";
+    Size sz = gcov->size();
     bool ok = false;
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
         calcStatics(obj, CoverageStatistics::pBASIC);
         RawConverter conv(gcov->statistics().min(), gcov->statistics().max(),pow(10, -gcov->statistics().significantDigits()));
-        Size sz = gcov->size();
+
 
         std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
         if ( !output_file.is_open())
-            return false;
+            return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
 
         if ( conv.storeType() == itUINT8) {
             ok = save<quint8>(output_file,RawConverter(), gcov,sz);
@@ -313,6 +314,15 @@ bool GridCoverageConnector::storeBinaryData(IlwisObject *obj)
         }
         output_file.close();
 
+    } else if ( dom->ilwisType() == itITEMDOMAIN ){
+        if ( dom->valueType() & itTHEMATICITEM) {
+            std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
+            if ( !output_file.is_open()){
+                return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
+            }
+            RawConverter conv("class");
+            ok = save<quint8>(output_file,conv, gcov,sz);
+        }
     }
     return ok;
 
@@ -378,7 +388,11 @@ QString GridCoverageConnector::getGrfName(const IGridCoverage& gcov) {
     QFileInfo localGrf(localName);
     if ( !localGrf.exists()) {
         //QFileInfo coveragePath(Resource::toLocalFile(obj->target()));
-        localName = gcov->name() + ".grf";
+        localName = gcov->name();
+        int index;
+        if ( (index = localName.indexOf(".")) != -1)
+            localName = localName.left(index);
+        localName += ".grf";
         grf->setName(localName);
         grf->connectTo(QUrl(), "georef", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
         grf->store(IlwisObject::smMETADATA);
@@ -431,8 +445,9 @@ bool GridCoverageConnector::storeMetaData( IlwisObject *obj)  {
         } else if ( conv.storeType() == itDOUBLE){
             _odf->setKeyValue("MapStore","Type","Real");
         }
+    } if ( dom->ilwisType() == itITEMDOMAIN) {
+        _odf->setKeyValue("MapStore","Type","Byte");
     }
-
     QFileInfo inf(_resource.toLocalFile());
     QString file = inf.baseName() + ".mp#";
     _odf->setKeyValue("MapStore","Data",file);
