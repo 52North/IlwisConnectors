@@ -160,7 +160,7 @@ QString ODFItem::findDatumName() const {
 
 QString ODFItem::findDomainName() const
 {
-    quint64 validTypes = itTABLE | itCOVERAGE | itREPRESENTATION | itDOMAIN;
+    quint64 validTypes = itTABLE | itCOVERAGE | itDOMAIN;
     if ( (_ilwtype & validTypes) == 0)
         return sUNDEF;
 
@@ -180,8 +180,6 @@ QString ODFItem::findDomainName() const
             name = ini.value("BaseMap","Domain");
         }
     }
-    else if(_ilwtype & itREPRESENTATION)
-        name = _odf.value("Representation", "Domain");
     else if(_ilwtype & itTABLE)
         name = _odf.value("Table", "Domain");
     else if(_ilwtype & itDOMAIN)
@@ -191,7 +189,7 @@ QString ODFItem::findDomainName() const
 
 IlwisTypes ODFItem::findDomainType() const
 {
-    quint64 validTypes = itTABLE | itCOVERAGE | itREPRESENTATION | itDOMAIN;
+    quint64 validTypes = itTABLE | itCOVERAGE | itDOMAIN;
     if ( (_ilwtype & validTypes) == 0)
         return itUNKNOWN;
 
@@ -433,8 +431,6 @@ quint64 ODFItem::objectSize() const {
         break;
     case itDOMAIN:
         sz += partSize(_file.absoluteFilePath(), "TableStore", "Data"); break; // only true for Domainssort
-    case itREPRESENTATION:
-        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data"); break; // only true for rprclass
     case itGEOREF:
         sz += partSize(_file.absoluteFilePath(), "TableStore", "Data"); break;
     case itCOORDSYSTEM:
