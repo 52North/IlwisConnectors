@@ -195,8 +195,6 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
         return itPOINTCOVERAGE;
     if ( ext == "dom")
         return itDOMAIN;
-    if ( ext == "rpr")
-        return itREPRESENTATION;
     if ( ext == "csy")
         return itCOORDSYSTEM;
     if ( ext == "grf")
@@ -222,8 +220,6 @@ QString Ilwis3Connector::suffix(IlwisTypes type) const {
         return "mps";
     if ( (type & itDOMAIN) != 0)
         return "dom";
-    if ( type == itREPRESENTATION)
-        return "rpr";
     if ( (type & itGEOREF) != 0)
         return "grf";
     if ( (type & itCOORDSYSTEM) != 0)
@@ -234,14 +230,24 @@ QString Ilwis3Connector::suffix(IlwisTypes type) const {
 }
 
 QUrl Ilwis3Connector::resolve(const Resource& resource) const {
-    QFileInfo inf(resource.url().toLocalFile());
-    if ( inf.suffix() != "")
-        return resource.url();
+    QString filename = resource.url().toLocalFile();
+    if ( filename == "") {
+        if ( resource.name() == sUNDEF)
+            return QUrl();
+
+        QUrl url(Ilwis::context()->workingCatalog()->filesystemLocation().toString() + "/" + resource.name());
+        filename = url.toLocalFile();
+    }
+    QFileInfo inf(filename);
+    if ( inf.suffix() != ""){
+       return QUrl::fromLocalFile(filename);
+    }
+
 
     IlwisTypes tp = resource.ilwisType();
     bool ok;
     int dim = resource["dimensions"].toInt(&ok);
-    QString ext =  ok && tp == 8 && dim == 3 ? "mpl" : suffix(tp);
+    QString ext =  ok && tp == itGRIDCOVERAGE && dim == 3 ? "mpl" : suffix(tp);
     QString basename = inf.baseName();
     if ( basename == ""){
        basename = resource.name();
@@ -252,6 +258,8 @@ QUrl Ilwis3Connector::resolve(const Resource& resource) const {
     QString path = inf.absolutePath();
     if ( path == "")
         path = Ilwis::context()->workingCatalog()->filesystemLocation().toString();
+    else
+        path = QUrl::fromLocalFile(path).toString();
     QString file =  basename + "." + ext;
     file = path + "/" + file;
     return QUrl(file);
