@@ -32,9 +32,18 @@ private:
 
     template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IGridCoverage& gcov, const Size& sz) const{
         PixelIterator pixiter(gcov,Box3D<>(sz));
+        int  i=0;
+        T c = 0;
+        const char *ptr = reinterpret_cast<const char*>(&c);
+        //std::ofstream dum("d:/dummyout.txt",ios_base::out | ios_base::trunc);
         for_each(pixiter, pixiter.end(), [&](double& v){
-            T c = conv.real2raw(v);
-            output_file.write(reinterpret_cast<const char*>(&c), sizeof(T));
+            c = conv.real2raw(v);
+            if ( i == 480000 && v == rUNDEF){
+                qDebug() << "stop49095";
+            }
+            ++i;
+            output_file.write(ptr, sizeof(T));
+            //dum << v << " ";
        });
         return true;
     }
