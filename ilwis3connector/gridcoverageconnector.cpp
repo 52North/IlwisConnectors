@@ -282,6 +282,11 @@ bool GridCoverageConnector::storeBinaryData(IlwisObject *obj)
     if ( obj == nullptr)
         return false;
     IGridCoverage gcov = mastercatalog()->get(obj->id());
+    if ( !gcov.isValid())
+        return false;
+
+    if (!gcov->georeference().isValid())
+        return false;
     if ( gcov->size().zsize() > 1) // mpl doesnt have binary data
         return true;
 
@@ -408,6 +413,9 @@ bool GridCoverageConnector::storeMetaData( IlwisObject *obj)  {
     IGridCoverage gcov = mastercatalog()->get(obj->id());
     if (!gcov.isValid())
         return false;
+    if (!gcov->georeference().isValid())
+        return false;
+
     if ( gcov->size().zsize() > 1)
         return storeMetaDataMapList(obj);
 
