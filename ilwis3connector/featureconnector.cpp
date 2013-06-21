@@ -347,11 +347,11 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
         tbl->addColumn("feature_value",featuredom);
     }
 
-    if (fcoverage->featureTypes() == itPOINTCOVERAGE)
+    if (fcoverage->featureTypes() == itPOINT)
         return loadBinaryPoints(fcoverage, tbl);
-    else if (fcoverage->featureTypes() == itSEGMENTCOVERAGE)
+    else if (fcoverage->featureTypes() == itLINE)
         return loadBinarySegments(fcoverage, tbl);
-    else if (fcoverage->featureTypes() == itPOLYGONCOVERAGE)
+    else if (fcoverage->featureTypes() == itPOLYGON)
         return loadBinaryPolygons(fcoverage, tbl);
     return false;
 }
@@ -362,19 +362,22 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
     if ( !ok)
         return false;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
-    IlwisTypes coverageType = ilwisType(_odf->fileinfo().fileName());
-    fcoverage->featureTypes(coverageType);
-
+    IlwisTypes coverageType = itPOINT;
 
     int features = _odf->value("PointMap","Points").toInt(&ok);
     if (!ok) {
+        coverageType = itLINE;
         features = _odf->value("SegmentMapStore","Segments").toInt(&ok);
         if (!ok) {
+            coverageType = itPOLYGON;
             features = _odf->value("PolygonMapStore","Polygons").toInt(&ok);
         }
     }
-    if (ok)
+
+    if (ok){
+        fcoverage->featureTypes(coverageType);
         fcoverage->setFeatureCount(coverageType, features);
+    }
     else
        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",obj->name());
 
