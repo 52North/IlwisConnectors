@@ -12,6 +12,7 @@
 #include "numericrange.h"
 #include "columndefinition.h"
 #include "table.h"
+#include "polygon.h"
 #include "geometry.h"
 #include "attributerecord.h"
 #include "feature.h"
