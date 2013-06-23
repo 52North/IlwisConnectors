@@ -94,7 +94,7 @@ bool GridCoverageConnector::loadMapList(IlwisObject *data) {
         }
     }
 
-    gcoverage->setGeoreference(mp->georeference());
+    gcoverage->georeference(mp->georeference());
     gcoverage->size(sz);
     gcoverage->setCoordinateSystem(mp->coordinateSystem());
     gcoverage->envelope(mp->envelope());
@@ -155,7 +155,7 @@ bool GridCoverageConnector::loadMetaData(IlwisObject *data)
 
     setStoreType(storeType);
 
-    gcoverage->setGeoreference(grf);
+    gcoverage->georeference(grf);
     _dataType = gcoverage->datadef().range()->determineType();
 
     return true;
