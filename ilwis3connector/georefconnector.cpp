@@ -72,7 +72,7 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
 {
     Ilwis3Connector::storeMetaData(obj);
     GeoReference *grf = static_cast<GeoReference *>(obj);
-    _odf->setKeyValue("GeoRef","CoordSystem",Resource::toLocalFile(grf->coordinateSystem()->source(),true));
+    _odf->setKeyValue("GeoRef","CoordSystem",Resource::toLocalFile(grf->coordinateSystem()->source().url(),true));
     Size sz = grf->size();
     _odf->setKeyValue("GeoRef","Lines", QString::number(sz.ysize()));
     _odf->setKeyValue("GeoRef","Columns", QString::number(sz.xsize()));
