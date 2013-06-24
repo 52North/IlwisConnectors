@@ -153,7 +153,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
 
 
-    _odf->setKeyValue("BaseMap","CoordSystem",Resource::toLocalFile(csy->source(),true));
+    _odf->setKeyValue("BaseMap","CoordSystem",Resource::toLocalFile(csy->source().url(),true));
     Box2D<double> bounds = coverage->envelope();
     if(!bounds.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Bounds", coverage->name());
@@ -201,7 +201,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
-        QString source = Resource::toLocalFile(dom->source(), true);
+        QString source = Resource::toLocalFile(dom->source().url(), true);
         IThematicDomain themdom = dom.get<ThematicDomain>();
         if ( themdom.isValid()) {
             QString domInfo = QString("%1;Byte;class;%2;;").arg(source).arg(themdom->count());
