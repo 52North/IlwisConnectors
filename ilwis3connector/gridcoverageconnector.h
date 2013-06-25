@@ -38,10 +38,7 @@ private:
         //std::ofstream dum("d:/dummyout.txt",ios_base::out | ios_base::trunc);
         for_each(pixiter, pixiter.end(), [&](double& v){
             c = conv.real2raw(v);
-            if ( i == 480000 && v == rUNDEF){
-                qDebug() << "stop49095";
-            }
-            ++i;
+             ++i;
             output_file.write(ptr, sizeof(T));
             //dum << v << " ";
        });
