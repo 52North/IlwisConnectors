@@ -94,7 +94,8 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
             } else {
                 quint32 itemId = v;
                 tbl->cell("coverage_key", i, QVariant(itemId));
-                fcoverage->newFeature({polygon},itemId, record);
+                SPFeatureI feature = fcoverage->newFeature({polygon},itemId, record);
+                tbl->cell("feature_id", i, QVariant(feature->featureid()));
             }
         }
     }
@@ -219,7 +220,8 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         } else {
             quint32 itemId = value;
             tbl->cell("coverage_key", j, QVariant(itemId));
-            fcoverage->newFeature({pol},itemId, record);
+            SPFeatureI feature = fcoverage->newFeature({pol},itemId, record);
+            tbl->cell("feature_id", j, QVariant(feature->featureid()));
         }
 
     }
@@ -280,7 +282,8 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage, ITable& tb
         } else {
             quint32 itemId = value;
             tbl->cell("coverage_key", i, QVariant(itemId));
-            fcoverage->newFeature({line},itemId, record);
+            SPFeatureI feature = fcoverage->newFeature({line},itemId, record);
+            tbl->cell("feature_id", i, QVariant(feature->featureid()));
         }
 
 
@@ -320,7 +323,9 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage, ITable& tbl)
         quint32 itemId = itemIdT;
         tbl->cell("coverage_key", i, QVariant(itemId));
 
-        fcoverage->newFeature({c},itemId, record);
+        SPFeatureI feature = fcoverage->newFeature({c},itemId, record);
+
+        tbl->cell("feature_id", i, QVariant(feature->featureid()));
 
     }
     return true;
@@ -338,6 +343,7 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
         return false;
     }
     tbl->addColumn("coverage_key",covdom);
+    tbl->addColumn("feature_id",covdom);
 
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     if ( isNumeric) {
