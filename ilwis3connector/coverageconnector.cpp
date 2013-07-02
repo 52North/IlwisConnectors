@@ -202,12 +202,26 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
         QString source = Resource::toLocalFile(dom->source().url(), true);
-        IThematicDomain themdom = dom.get<ThematicDomain>();
-        if ( themdom.isValid()) {
-            QString domInfo = QString("%1;Byte;class;%2;;").arg(source).arg(themdom->count());
-            _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
-            _odf->setKeyValue("BaseMap","Domain",source);
+        if ( dom->valueType() == itTHEMATICITEM) {
+            IThematicDomain themdom = dom.get<ThematicDomain>();
+            if ( themdom.isValid()) {
+                QString domInfo = QString("%1;Byte;class;%2;;").arg(source).arg(themdom->count());
+                _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
+                _odf->setKeyValue("BaseMap","Domain",source);
+            }
+        } else if ( dom->valueType() == itINDEXEDITEM) {
+            _odf->setKeyValue("BaseMap","Domain","UniqueID");
         }
+    }
+
+    ITable attTable = coverage->attributeTable(itPOLYGONCOVERAGE);
+    if ( attTable.isValid()) {
+        QString dataFile = coverage->name();
+        int index = dataFile.lastIndexOf(".");
+        if ( index != -1) {
+            dataFile = dataFile.left(index);
+        }
+        _odf->setKeyValue("BaseMap","AttributeTable",dataFile + ".tbt");
     }
     return true;
 }
