@@ -392,7 +392,48 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
 
 }
 
-bool FeatureConnector::storeMetaData(IlwisObject *)
-{
+bool FeatureConnector::storeBinaryData(IlwisObject *obj) {
     return false;
+}
+
+bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& dataFile){
+
+    _odf->setKeyValue("BaseMap","Type","PolygonMap");
+    _odf->setKeyValue("PolygonMap","Type","PolygonMapStore");
+    _odf->setKeyValue("PolygonMap","Toplogical","No");
+    _odf->setKeyValue("PolygonMapStore","Format",QString::number(5));
+    _odf->setKeyValue("PolygonMapStore","DeletedPolygons",QString::number(0));
+    _odf->setKeyValue("Ilwis","Class","ILWIS::Polygon Map");
+
+    QString localFile = dataFile + ".mpz#";
+    _odf->setKeyValue("PolygonMapStore","DataPol", localFile);
+    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(fcov->featureCount(itPOLYGONCOVERAGE)));
+
+    return true;
+}
+
+bool FeatureConnector::storeMetaData(IlwisObject *obj)
+{
+    bool ok = CoverageConnector::storeMetaData(obj);
+    if ( !ok)
+        return false;
+    FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
+
+    QString dataFile = fcov->name();
+    int index = dataFile.lastIndexOf(".");
+    if ( index != -1) {
+        dataFile = dataFile.left(index);
+    }
+
+    _odf->setKeyValue("Domain","Type","UniqueID");
+    _odf->setKeyValue("DomainSort","Sorting","AlphaNumeric");
+    _odf->setKeyValue("DomainSort","Prefix","feature");
+    _odf->setKeyValue("DomainSort","Class","Domain UniqueID");
+    _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(itPOLYGONCOVERAGE)));
+
+
+    if ( fcov->featureTypes() & itPOLYGONCOVERAGE){
+        ok = storeMetaPolygon(fcov, dataFile);
+    }
+    return ok;
 }
