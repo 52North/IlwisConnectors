@@ -16,6 +16,7 @@ private:
     bool fillEllipsoidRecord(const QStringList &parts, QSqlQuery &sqlPublic);
     bool fillDatumRecord(const QStringList &parts, QSqlQuery &sqlPublic);
     bool fillProjectionRecord(const QStringList &parts, QSqlQuery &sqlPublic);
+    bool fillDomainRecord(const QStringList &parts, QSqlQuery &sqlPublic);
     bool doQuery(QString& query, QSqlQuery &sqlPublic);
 
     QHash<IlwisTypes,CheckUsage> _types;

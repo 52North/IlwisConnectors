@@ -98,15 +98,15 @@ bool Ilwis3ObjectFactory::canUse(const Resource &item) const
         return true;
     else if ( type & itGEOREF)
         return true;
-    else if ( type & itGRIDCOVERAGE)
+    else if ( type & itGRID)
         return true;
     else if ( type & itTABLE)
         return true;
-    else if ( type & itPOINTCOVERAGE)
+    else if ( type & itPOINT)
         return true;
-    else if ( type & itSEGMENTCOVERAGE)
+    else if ( type & itLINE)
         return true;
-    else if ( type & itPOLYGONCOVERAGE)
+    else if ( type & itPOLYGON)
         return true;
 
     return false;
@@ -125,6 +125,7 @@ void Ilwis3ObjectFactory::loadIlwis3Aliasses() {
     insertFile("datum_allias.csv", sqlPublic);
     insertFile("ellipsoid_allias.csv",sqlPublic);
     insertFile("projection_allias.csv",sqlPublic);
+    insertFile("domain_allias.csv",sqlPublic);
 }
 
 void Ilwis3ObjectFactory::insertFile(const QString& filename, QSqlQuery& sqlPublic) {
@@ -158,6 +159,8 @@ void Ilwis3ObjectFactory::insertFile(const QString& filename, QSqlQuery& sqlPubl
             ok = fillEllipsoidRecord(parts, sqlPublic);
         else if ( filename == "projection_allias.csv")
             ok = fillProjectionRecord(parts, sqlPublic);
+        else if ( filename == "domain_allias.csv")
+            ok = fillDomainRecord(parts, sqlPublic);
 
         if (!ok) {
             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(filename), IssueObject::itCritical);
@@ -165,6 +168,19 @@ void Ilwis3ObjectFactory::insertFile(const QString& filename, QSqlQuery& sqlPubl
         }
 
     }
+}
+
+bool Ilwis3ObjectFactory::fillDomainRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
+    if ( parts.size() == 1 && parts[0] == "") // empty line
+        return true;
+    if ( parts.size() != 2 || parts[0] == "" )
+        return false;
+    if ( parts[1] == "") // not necessarily corrupt, just an unfinished record
+        return true;
+   QString parms = QString("'%1','%2','domain','ilwis3'").arg(parts[1],parts[0]);
+   QString stmt = QString("INSERT INTO aliasses VALUES(%1)").arg(parms);
+
+   return doQuery(stmt, sqlPublic);
 }
 
 bool Ilwis3ObjectFactory::fillEllipsoidRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
