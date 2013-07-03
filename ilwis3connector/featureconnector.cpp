@@ -1,5 +1,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
+#include <fstream>
+#include <iterator>
 
 #include "kernel.h"
 #include "coverage.h"
@@ -17,6 +19,7 @@
 #include "attributerecord.h"
 #include "feature.h"
 #include "featurecoverage.h"
+#include "featureiterator.h"
 #include "containerstatistics.h"
 #include "rawconverter.h"
 #include "ilwisobjectconnector.h"
@@ -199,7 +202,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         return false;
     }
     QDataStream stream(&file);
-    int nrPolygons = fcoverage->featureCount(itPOLYGONCOVERAGE);
+    int nrPolygons = fcoverage->featureCount(itPOLYGON);
     SPAttributeRecord record( new AttributeRecord(tbl,"coverage_key"));
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
@@ -392,8 +395,67 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
 
 }
 
+bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QString& baseName) {
+    QString filename = baseName + ".mpz#";
+
+    std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
+    if ( !output_file.is_open())
+        return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
+    IFeatureCoverage cov;
+    cov.set(fcov);
+    FeatureIterator iter(cov);
+    double raw = 1;
+    TableConnector::handleTable(fcov->attributeTable(itPOLYGON));
+    for_each(iter, iter.end(), [&](SPFeatureI feature){
+        const Geometry& geom = feature->geometry();
+        for(int i=0; i < feature->trackSize(); ++i) {
+            if ( geom.ilwisType() == itPOLYGON) {
+                Polygon pol = geom.toType<Polygon>();
+                writeRing(output_file, pol.outer());
+                output_file.write((char *)&raw,8);
+                quint32 holeCount = pol.inners().size();
+                output_file.write((char *)&holeCount,4);
+                for(const std::vector<Coordinate2d>& coords : pol.inners() ) {
+                    writeRing(output_file, coords);
+                }
+                ++raw;
+            }
+        }
+
+    });
+
+    output_file.close();
+
+    return true;
+}
+
 bool FeatureConnector::storeBinaryData(IlwisObject *obj) {
-    return false;
+    FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
+
+    QFileInfo inf(obj->name());
+    QString dir = context()->workingCatalog()->location().toLocalFile();
+    QString baseName = dir + "/" + inf.baseName();
+    bool ok = false;
+    if ( fcov->featureTypes() & itPOLYGON) {
+        ok = storeBinaryDataPolygon(fcov, baseName);
+    }
+
+    return ok;
+}
+
+void FeatureConnector::writeRing(std::ofstream& output_file, const std::vector<Coordinate2d>& coords) {
+    quint32 crdCount = coords.size();
+    output_file.write((char *)&crdCount,4);
+    std::vector<double> crds(crdCount * 3);
+    quint32 count = 0;
+    for(const Coordinate2d& crd : coords) {
+        crds[count] = crd.x();
+        crds[count+1] = crd.y();
+        crds[count+2] = 0;
+        count +=3;
+    }
+    output_file.write((char *)&crds[0], crdCount * 8 * 3);
+
 }
 
 bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& dataFile){
@@ -407,7 +469,7 @@ bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& da
 
     QString localFile = dataFile + ".mpz#";
     _odf->setKeyValue("PolygonMapStore","DataPol", localFile);
-    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(fcov->featureCount(itPOLYGONCOVERAGE)));
+    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(fcov->featureCount(itPOLYGON)));
 
     return true;
 }
@@ -429,11 +491,13 @@ bool FeatureConnector::storeMetaData(IlwisObject *obj)
     _odf->setKeyValue("DomainSort","Sorting","AlphaNumeric");
     _odf->setKeyValue("DomainSort","Prefix","feature");
     _odf->setKeyValue("DomainSort","Class","Domain UniqueID");
-    _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(itPOLYGONCOVERAGE)));
+    _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(itPOLYGON)));
 
 
-    if ( fcov->featureTypes() & itPOLYGONCOVERAGE){
+    if ( fcov->featureTypes() & itPOLYGON){
         ok = storeMetaPolygon(fcov, dataFile);
     }
+
+    _odf->store();
     return ok;
 }
