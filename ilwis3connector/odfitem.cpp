@@ -310,13 +310,13 @@ IlwisTypes ODFItem::findCsyType() const
 }
 
 QString ODFItem::findGrfName() const{
-    quint64 validTypes = itGEOREF | itGRIDCOVERAGE;
+    quint64 validTypes = itGEOREF | itGRID;
     if ( (_ilwtype & validTypes) == 0)
         return sUNDEF;
 
     QString name = sUNDEF;
 
-    if ( _ilwtype & itGRIDCOVERAGE) {
+    if ( _ilwtype & itGRID) {
         name = _odf.value("Map","GeoRef");
         if ( name == sUNDEF)
             name = _odf.value("MapList","GeoRef");
@@ -329,7 +329,7 @@ QString ODFItem::findGrfName() const{
 
 IlwisTypes ODFItem::findGrfType() const {
 
-    quint64 validTypes = itGEOREF | itGRIDCOVERAGE;
+    quint64 validTypes = itGEOREF | itGRID;
     if ( (_ilwtype & validTypes) == 0)
         return itUNKNOWN;
 
@@ -394,13 +394,13 @@ quint64 ODFItem::objectSize() const {
 
     switch(_ilwtype )
     {
-    case itGRIDCOVERAGE:
+    case itGRID:
         sz += partSize(_file.absoluteFilePath(), "MapStore", "Data"); break;
     case itTABLE:
         sz += partSize(_file.absoluteFilePath(), "TableStore", "Data"); break;
-    case itPOINTCOVERAGE:
+    case itPOINT:
         sz += partSize(_file.absoluteFilePath(), "TableStore", "Data"); break;
-    case itSEGMENTCOVERAGE:
+    case itLINE:
         if ( rVersion >= 3.0)
         {
             sz += partSize(_file.absoluteFilePath(), "TableStore", "Data");
@@ -413,7 +413,7 @@ quint64 ODFItem::objectSize() const {
             sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataCrd");
         }
         break;
-    case itPOLYGONCOVERAGE:
+    case itPOLYGON:
         if ( rVersion >= 3.0)
         {
             sz += partSize(_file.absoluteFilePath(), "top:TableStore", "Data");
@@ -456,7 +456,7 @@ QString ODFItem::findDimensions() const
             if ( sY == "") return "";
             return QString("%1 x %2").arg(sX, sY);
         }
-        case itGRIDCOVERAGE:
+        case itGRID:
         {
             QString sSize = _odf.value( "Map", "Size");
             QStringList xy = sSize.split(" ");
@@ -465,11 +465,11 @@ QString ODFItem::findDimensions() const
 
             return QString ("%1 x %2").arg( xy[0], xy[1]);
         }
-        case itSEGMENTCOVERAGE:
+        case itLINE:
             return _odf.value( "SegmentMapStore", "Segments");
-        case itPOLYGONCOVERAGE:
+        case itPOLYGON:
             return _odf.value( "PolygonMapStore", "Polygons");
-        case itPOINTCOVERAGE:
+        case itPOINT:
             return _odf.value( "PointMap", "Points");
         case itCOORDSYSTEM:
             {
