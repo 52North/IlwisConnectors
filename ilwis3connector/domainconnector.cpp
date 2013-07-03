@@ -99,7 +99,7 @@ bool DomainConnector::handleValueDomains(IlwisObject* data) {
         range = handleValueDomainObjects();
     } else {
         QString section;
-        if ( odfType <= itGRIDCOVERAGE) { //  the 'basemaps' objects
+        if ( odfType <= itGRID) { //  the 'basemaps' objects
             section = "BaseMap"    ;
         } else if (odfType == itTABLE) {
             QUrlQuery queryItem(_resource.url());
@@ -158,6 +158,37 @@ QString DomainConnector::parseDomainInfo(const QString& inf) const{
         }
     }
     return sUNDEF;
+}
+
+QString DomainConnector::storeDomain(const IDomain &dm)
+{
+    QString dmName = dm->name();
+    QString alias = kernel()->database().findAlias(dmName,"domain","ilwis3");
+    if ( alias != sUNDEF)
+        return alias; // nothing to be done, already exists
+    else {
+        if ( dm->valueType() == itINDEXEDITEM) {
+            return "UniqueID"; // nothing to be done, already exists
+        } else if ( dm->valueType() == itNAMEDITEM){ // identifier domain
+            dmName = dm->name();
+            quint64 dmid = mastercatalog()->name2id(dmName + ".dom"); // is there an existing domain
+            if ( dmid != i64UNDEF) {
+                dmName = dmName + ".dom"    ;
+                return dmName ; // nothing to be done, already exists
+            } else {
+                INamedIdDomain iddom = dm.get<NamedIdDomain>();
+                QStringList names;
+                for(int i=0; i < iddom->count(); ++i ) {
+                    names << iddom->item(i)->name();
+                }
+                IniFile ini;
+                ini.setIniFile(dmName, false);
+
+
+            }
+
+        }
+    }
 }
 
 IlwisObject *DomainConnector::create() const

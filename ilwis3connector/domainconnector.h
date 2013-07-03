@@ -15,7 +15,8 @@ public:
     IlwisObject *create() const;
 
     static ConnectorInterface *create(const Ilwis::Resource &item, bool load=true);
-private:
+    static QString storeDomain(const IDomain& dm);
+ private:
     bool handleValueDomains(IlwisObject *data);
     /*!
      \brief transfers the raw, codes (if present) and description (if present) to the internal storage of the thematic domain.
