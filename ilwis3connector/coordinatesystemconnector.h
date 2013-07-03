@@ -13,6 +13,8 @@ public:
 
     IlwisObject *create() const;
     static ConnectorInterface *create(const Resource &item, bool load=true);
+
+    static QString createCsyFromCode(const QString &code);
 private:
     GeodeticDatum *getDatum(QString& ellipsoid);
     IProjection getProjection();

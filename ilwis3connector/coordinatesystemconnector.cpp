@@ -221,3 +221,12 @@ IProjection CoordinateSystemConnector::getProjection() {
 
     return proj;
 }
+
+QString CoordinateSystemConnector::createCsyFromCode(const QString& code) {
+    if ( code == "epsg:4326")
+        return  "LatlonWGS84.csy";
+    //TODO, create csy based on proj4 data, epsg->proj4 can be done through the database
+    return sUNDEF;
+
+
+}
