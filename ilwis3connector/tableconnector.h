@@ -16,6 +16,7 @@ public:
     bool loadBinaryData(IlwisObject *);
 
     static ConnectorInterface *create(const Ilwis::Resource &item, bool load);
+    static bool storeTable(const ITable& tbl);
 private:
     ColumnDefinition getKeyColumn();
     ColumnDefinition makeColumn(const QString &colName, quint64 index);

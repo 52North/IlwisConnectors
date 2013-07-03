@@ -165,6 +165,19 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
     return true;
 }
 
+bool TableConnector::storeTable(const ITable &tbl)
+{
+    if ( !tbl.isValid()) {
+        return ERROR1(ERR_NO_INITIALIZED_1,"attribute table");
+    }
+    for(int i=0; i < tbl->columns(); ++i) {
+        ColumnDefinition def = tbl->columndefinition(i);
+        IDomain dmColumn = def.datadef().domain();
+
+    }
+    return false;
+}
+
 QString TableConnector::valueType2DataType(IlwisTypes ty) {
     QString vType=sUNDEF;
     if ( (ty >= itINT8 && ty <= itINT64) || ((ty & itDOMAINITEM) != 0)) {
@@ -178,3 +191,4 @@ QString TableConnector::valueType2DataType(IlwisTypes ty) {
     }
     return vType;
 }
+
