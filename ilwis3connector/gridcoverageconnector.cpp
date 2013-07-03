@@ -260,8 +260,8 @@ Grid* GridCoverageConnector::loadGridData(IlwisObject* data)
             return 0;
         }
     }
-    if ( gc->attributeTable(itGRIDCOVERAGE).isValid()) {
-        ITable tbl = gc->attributeTable(itGRIDCOVERAGE);
+    if ( gc->attributeTable(itGRID).isValid()) {
+        ITable tbl = gc->attributeTable(itGRID);
         IDomain covdom;
         if (!covdom.prepare("count")){
             return 0;
@@ -362,7 +362,7 @@ bool GridCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         QString mapName = QString("%1_band_%2").arg(obj->name()).arg(i);
         _odf->setKeyValue("MapList",QString("Map%1").arg(i),mapName);
 
-        Resource res(itGRIDCOVERAGE);
+        Resource res(itGRID);
         res.addProperty("size", IVARIANT(sz));
         res.addProperty("bounds", IVARIANT(gcov->envelope()));
         res.addProperty("georeference", IVARIANT(gcov->georeference()));
