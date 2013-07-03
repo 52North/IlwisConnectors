@@ -18,6 +18,10 @@
 #include "rawconverter.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
+#include "ellipsoid.h"
+#include "geodeticdatum.h"
+#include "projection.h"
+#include "coordinatesystemconnector.h"
 #include "coverageconnector.h"
 
 using namespace Ilwis;
@@ -75,7 +79,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
         if(!attTable.prepare(file))
             kernel()->issues()->log(data->name(),TR(ERR_NO_INITIALIZED_1).arg(data->name()),IssueObject::itWarning);
     }
-    if (!attTable.isValid() && coverage->ilwisType() != itGRIDCOVERAGE)   {
+    if (!attTable.isValid() && coverage->ilwisType() != itGRID)   {
         Resource res(QUrl(QString("ilwis://internal/%1").arg(_odf->fileinfo().baseName())), itFLATTABLE);
         if(!attTable.prepare(res))
             return ERROR1(ERR_NO_INITIALIZED_1,data->name());
@@ -152,8 +156,14 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
     if (!csy.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
 
-
-    _odf->setKeyValue("BaseMap","CoordSystem",Resource::toLocalFile(csy->source().url(),true));
+    QString localName = Resource::toLocalFile(csy->source().url(),true);
+    if ( localName == sUNDEF) {
+        localName = CoordinateSystemConnector::createCsyFromCode(csy->code());
+    }
+    if ( localName == sUNDEF) {
+        return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
+    }
+    _odf->setKeyValue("BaseMap","CoordSystem", localName);
     Box2D<double> bounds = coverage->envelope();
     if(!bounds.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Bounds", coverage->name());
@@ -214,7 +224,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
         }
     }
 
-    ITable attTable = coverage->attributeTable(itPOLYGONCOVERAGE);
+    ITable attTable = coverage->attributeTable(itPOLYGON);
     if ( attTable.isValid()) {
         QString dataFile = coverage->name();
         int index = dataFile.lastIndexOf(".");
