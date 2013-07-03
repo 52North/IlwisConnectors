@@ -158,13 +158,13 @@ QString Ilwis3Connector::name2Code(const QString& name, const QString& type) {
 }
 
 QString Ilwis3Connector::ilwis3ClassName(IlwisTypes type) const {
-    if ( type & itGRIDCOVERAGE)
+    if ( type & itGRID)
         return "Raster Map";
-    else if ( type & itPOINTCOVERAGE)
+    else if ( type & itPOINT)
         return "Point Map";
-    else if ( type & itSEGMENTCOVERAGE)
+    else if ( type & itLINE)
         return "Segment Map";
-    else if ( type & itPOLYGONCOVERAGE)
+    else if ( type & itPOLYGON)
         return "Polygon Map";
     else if ( type & itTABLE)
         return "Table";
@@ -186,13 +186,13 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
 
     QString ext = inf.suffix();
     if ( ext == "mpr")
-        return itGRIDCOVERAGE;
+        return itGRID;
     if ( ext == "mpa")
-        return itPOLYGONCOVERAGE;
+        return itPOLYGON;
     if ( ext == "mps")
-        return itSEGMENTCOVERAGE;
+        return itLINE;
     if ( ext == "mpp")
-        return itPOINTCOVERAGE;
+        return itPOINT;
     if ( ext == "dom")
         return itDOMAIN;
     if ( ext == "csy")
@@ -202,7 +202,7 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
     if ( ext == "tbt")
         return itTABLE;
     if ( ext == "mpl")
-        return itGRIDCOVERAGE;
+        return itGRID;
     if ( ext == "ioc")
         return itOBJECTCOLLECTION;
 
@@ -210,13 +210,13 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
 }
 
 QString Ilwis3Connector::suffix(IlwisTypes type) const {
-    if ( type == itGRIDCOVERAGE)
+    if ( type == itGRID)
         return "mpr";
-    if ( type == itPOLYGONCOVERAGE)
+    if ( type == itPOLYGON)
         return "mpa";
-    if ( type == itPOINTCOVERAGE)
+    if ( type == itPOINT)
         return "mpp";
-    if ( type == itSEGMENTCOVERAGE)
+    if ( type == itLINE)
         return "mps";
     if ( (type & itDOMAIN) != 0)
         return "dom";
@@ -243,11 +243,10 @@ QUrl Ilwis3Connector::resolve(const Resource& resource) const {
        return QUrl::fromLocalFile(filename);
     }
 
-
     IlwisTypes tp = resource.ilwisType();
     bool ok;
     int dim = resource["dimensions"].toInt(&ok);
-    QString ext =  ok && tp == itGRIDCOVERAGE && dim == 3 ? "mpl" : suffix(tp);
+    QString ext =  ok && tp == itGRID && dim == 3 ? "mpl" : suffix(tp);
     QString basename = inf.baseName();
     if ( basename == ""){
        basename = resource.name();
