@@ -12,11 +12,11 @@ class DomainConnector : public Ilwis3Connector
 public:
     DomainConnector(const Resource& item, bool load=true);
     bool loadMetaData(Ilwis::IlwisObject *data);
+    bool storeMetaData(Ilwis::IlwisObject *data);
     IlwisObject *create() const;
 
     static ConnectorInterface *create(const Ilwis::Resource &item, bool load=true);
-    static QString storeDomain(const IDomain& dm);
- private:
+private:
     bool handleValueDomains(IlwisObject *data);
     /*!
      \brief transfers the raw, codes (if present) and description (if present) to the internal storage of the thematic domain.
@@ -34,6 +34,7 @@ public:
     bool range2MinMax(const QString &range, double &vmin, double &vmax) const;
     bool minMax2minMax(const QString &minmax, double &vmin, double &vmax) const;
     QString parseDomainInfo(const QString &inf) const;
+    bool storeMetaDataSortDomain(Ilwis::Domain *dom, IlwisTypes tp) ;
 };
 }
 

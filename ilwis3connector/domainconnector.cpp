@@ -160,35 +160,99 @@ QString DomainConnector::parseDomainInfo(const QString& inf) const{
     return sUNDEF;
 }
 
-QString DomainConnector::storeDomain(const IDomain &dm)
+bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
+    ItemDomain<ThematicItem> *themdom = static_cast< ItemDomain<ThematicItem> *>(dom);
+    auto writeColumnFunc = [&] (const QString& name, const QString& domName, const QString& domInfo, const QString& rng) -> void {
+        _odf->setKeyValue(name, "Time", Time::now().toString());
+        _odf->setKeyValue(name, "Version", "3.1");
+        _odf->setKeyValue(name, "Class", "Column");
+        _odf->setKeyValue(name, "Domain", "value.dom");
+        _odf->setKeyValue(name, "DomainInfo", domInfo);
+        if ( rng != sUNDEF)
+            _odf->setKeyValue(name, "Range", rng);
+        _odf->setKeyValue(name, "ReadOnly", "No");
+        _odf->setKeyValue(name, "OwnedByTable", "No");
+        _odf->setKeyValue(name, "Type", "ColumnStore");
+
+    };
+
+    _odf->setKeyValue("Table", "Time", Time::now().toString());
+    _odf->setKeyValue("Table","Version","3.1");
+    _odf->setKeyValue("Table","Class","Table");
+    _odf->setKeyValue("Table","Domain","String.dom");
+    _odf->setKeyValue("Table","DomainInfo", "String.dom;String;string;0;;");
+    _odf->setKeyValue("Table","Columns",tp == itTHEMATICITEM ? "5" : "3");
+    _odf->setKeyValue("Table","Records", QString::number(themdom->count()));
+    _odf->setKeyValue("DomainSort","Prefix", "");
+    _odf->setKeyValue("DomainSort","Sorting","Alphabetical");
+    _odf->setKeyValue("Domain", "Type", tp == itTHEMATICITEM ? "DomainSort" : "DomainIdentifier");
+    _odf->setKeyValue( tp == itTHEMATICITEM ? "DomainClass" : "DomainIdentifier", "Nr", QString::number(themdom->count()));
+
+    QFileInfo inf(dom->name());
+    QString dataName  = inf.baseName() + ".dm#";
+    _odf->setKeyValue("TableStore", "Data", dataName);
+    _odf->setKeyValue("TableStore", "Col0", "Name");
+    if (tp == itTHEMATICITEM) {
+        _odf->setKeyValue("TableStore", "Col1", "Code");
+        _odf->setKeyValue("TableStore", "Col2", "Description");
+    }
+    _odf->setKeyValue("TableStore", "Col3", "Ord");
+    _odf->setKeyValue("TableStore", "Col4", "Ind");
+
+    writeColumnFunc("Col:Name","String.dom","String.dom;String;string;0;;", sUNDEF);
+    if ( tp == itTHEMATICITEM) {
+        writeColumnFunc("Col:Code","String.dom","String.dom;String;string;0;;", sUNDEF);
+        writeColumnFunc("Col:Description","String.dom","String.dom;String;string;0;;", sUNDEF);
+    }
+    writeColumnFunc("Col:Ord","value.dom","value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0;", "0:2147483646:offset=0");
+    writeColumnFunc("Col:Ind","value.dom","value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0;", "0:2147483646:offset=0");
+
+    return true;
+
+}
+
+bool DomainConnector::storeMetaData(IlwisObject *data)
 {
-    QString dmName = dm->name();
+    Domain *dom = static_cast<Domain *>(data);
+    QString dmName = dom->name();
     QString alias = kernel()->database().findAlias(dmName,"domain","ilwis3");
     if ( alias != sUNDEF)
-        return alias; // nothing to be done, already exists
-    else {
-        if ( dm->valueType() == itINDEXEDITEM) {
-            return "UniqueID"; // nothing to be done, already exists
-        } else if ( dm->valueType() == itNAMEDITEM){ // identifier domain
-            dmName = dm->name();
-            quint64 dmid = mastercatalog()->name2id(dmName + ".dom"); // is there an existing domain
-            if ( dmid != i64UNDEF) {
-                dmName = dmName + ".dom"    ;
-                return dmName ; // nothing to be done, already exists
-            } else {
-                INamedIdDomain iddom = dm.get<NamedIdDomain>();
-                QStringList names;
-                for(int i=0; i < iddom->count(); ++i ) {
-                    names << iddom->item(i)->name();
-                }
-                IniFile ini;
-                ini.setIniFile(dmName, false);
+        return true; // nothing to be done, already exists as a system domain
+    Ilwis3Connector::storeMetaData(data);
 
+    _odf->setKeyValue("Ilwis", "Type", "Domain");
+    if ( dom->ilwisType() == itNUMERICDOMAIN) {
+        SPNumericRange numRange = dom->range<NumericRange>();
+        int width=12;
+        QString type = "DomainValueInt";
+        if ( dom->valueType() & (itINT8 & itUINT8)){
+            width=3;
+        } else if ( dom->valueType() & (itINT16 & itUINT16) ){
+            width = 8;
+        } else if ( dom->valueType() & (itINT32 & itUINT32) ){
+            width=10;
+        } else
+            type = "DomainValueReal";
 
-            }
-
+        _odf->setKeyValue("Domain", "Type", "DomainValue");
+        _odf->setKeyValue("Domain", "Width", QString::number(width));
+        _odf->setKeyValue("DomainValue", "Type", type);
+        _odf->setKeyValue(type, "Min", QString::number(numRange->min()));
+        _odf->setKeyValue(type, "Max", QString::number(numRange->max()));
+        if ( numRange->step() != 1) {
+            _odf->setKeyValue(type, "Step", QString::number(numRange->step()));
         }
+    } else if ( dom->valueType() == itTHEMATICITEM) {
+        storeMetaDataSortDomain(dom, itTHEMATICITEM);
+    } else if ( dom->valueType() & itIDENTIFIERITEM) {
+        storeMetaDataSortDomain(dom, itIDENTIFIERITEM);
+    } else if ( dom->ilwisType() == itTEXTDOMAIN) {
+    } else if ( dom->ilwisType() == itCOLORDOMAIN) {
+    } else if ( dom->ilwisType() == itTIMEDOMAIN) {
+    } else if ( dom->ilwisType() == itCOORDDOMAIN) {
     }
+
+    return true;
 }
 
 IlwisObject *DomainConnector::create() const
