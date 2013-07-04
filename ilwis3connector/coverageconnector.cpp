@@ -6,6 +6,8 @@
 #include "coverage.h"
 #include "module.h"
 #include "inifile.h"
+#include "catalog.h"
+#include "ilwiscontext.h"
 #include "ilwisdata.h"
 #include "numericdomain.h"
 #include "numericrange.h"
@@ -21,6 +23,7 @@
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
 #include "projection.h"
+#include "tableconnector.h"
 #include "coordinatesystemconnector.h"
 #include "coverageconnector.h"
 
@@ -232,6 +235,10 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
             dataFile = dataFile.left(index);
         }
         _odf->setKeyValue("BaseMap","AttributeTable",dataFile + ".tbt");
+        QString dir = context()->workingCatalog()->location().toLocalFile();
+        QString filename = dir + "/" + dataFile + ".tbt";
+        TableConnector conn(Resource(QUrl::fromLocalFile(filename), itTABLE), false);
+        conn.storeMetaData(attTable.ptr());
     }
     return true;
 }
