@@ -16,9 +16,6 @@ public:
     static IlwisTypes ilwisType(const QString &name);
     static QString name2Code(const QString &name, const QString &type);
 
-
-
-
 protected:
     QString suffix(IlwisTypes type) const;
     QUrl resolve(const Resource &resource) const;
