@@ -405,7 +405,6 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     cov.set(fcov);
     FeatureIterator iter(cov);
     double raw = 1;
-    TableConnector::handleTable(fcov->attributeTable(itPOLYGON));
     for_each(iter, iter.end(), [&](SPFeatureI feature){
         const Geometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
