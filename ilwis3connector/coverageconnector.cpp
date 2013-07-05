@@ -235,6 +235,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
             dataFile = dataFile.left(index);
         }
         _odf->setKeyValue("BaseMap","AttributeTable",dataFile + ".tbt");
+        attTable->setName(dataFile);
         QString dir = context()->workingCatalog()->location().toLocalFile();
         QString filename = dir + "/" + dataFile + ".tbt";
         TableConnector conn(Resource(QUrl::fromLocalFile(filename), itTABLE), false);
