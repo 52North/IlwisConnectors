@@ -138,19 +138,19 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
         QString colName = tbl.columnName(i);
         ColumnDefinition col = table->columndefinition(colName);
         if ( col.isValid()) {
-            QVariantList varlist;
+            std::vector<QVariant> varlist(tbl.rows());
             RawConverter conv = _converters[colName];
             IlwisTypes valueType = col.datadef().domain()->valueType();
             for(quint32 j = 0; j < tbl.rows(); ++j){
                 if ( (valueType >= itINT8 && valueType <= itDOUBLE) || ((valueType & itDOMAINITEM) != 0)) {
                     double value;
                     if (tbl.get(j,i,value)) {
-                        varlist <<  conv.raw2real(value);
+                       varlist[j] =  conv.raw2real(value);
                     }
                 } else if (valueType == itSTRING ) {
                     QString value;
                     if (tbl.get(j,i,value)) {
-                        varlist << value;
+                        varlist[j] = value;
                     }
                 }
             }
@@ -187,7 +187,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
     _odf->setKeyValue("Table", "Type", "TableStore");
     _odf->setKeyValue("TableStore", "Type", "TableBinary");
     _odf->setKeyValue("TableStore", "UseAs", "No");
-    QFileInfo tblOdf(tbl->source().toLocalFile(true));
+    QFileInfo tblOdf(_resource.toLocalFile(true));
     QString dataFile = tblOdf.baseName() + ".tb#";
     _odf->setKeyValue("TableStore", "Data", dataFile);
     for(int i=0; i < tbl->columns(); ++i) {
