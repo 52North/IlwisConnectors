@@ -28,7 +28,7 @@ ODFItem::ODFItem(const QString &file) : Resource(QUrl(QUrl::fromLocalFile(file))
 
     _odf.setIniFile(file);
     _file = file;
-    setName(_file.fileName());
+    setName(_file.fileName(), false);
     _container = QUrl::fromLocalFile(_file.canonicalPath());
     IlwisTypes csytp, domtp, grftp;
     csytp = domtp = grftp = itUNKNOWN;
