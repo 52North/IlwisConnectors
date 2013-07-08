@@ -15,6 +15,7 @@ public:
     //static IlwisTypes type(const QString &name);
     static IlwisTypes ilwisType(const QString &name);
     static QString name2Code(const QString &name, const QString &type);
+    QString provider() const;
 
 protected:
     QString suffix(IlwisTypes type) const;

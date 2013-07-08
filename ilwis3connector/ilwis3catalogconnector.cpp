@@ -82,11 +82,6 @@ bool Ilwis3CatalogConnector::loadItems()
     QList<Resource> finalList;
     for(int i = 0; i < odfitems.size(); ++i) {
         ODFItem &item = odfitems[i];
-        QFileInfo ff(item.toLocalFile());
-        if ( ff.suffix() == "mpa") {
-            QString fi = ff.fileName();
-            qDebug() << "stop1";
-        }
         ok = item.resolveNames(names);
 
 
@@ -117,6 +112,11 @@ bool Ilwis3CatalogConnector::canUse(const QUrl &res) const
         return false;
 
     return true;
+}
+
+QString Ilwis3CatalogConnector::provider() const
+{
+    return "ilwis3";
 }
 
 

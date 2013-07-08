@@ -12,6 +12,7 @@ public:
 
     virtual bool loadItems();
     bool canUse(const QUrl& res) const;
+    QString provider() const;
 
     static ConnectorInterface *create(const Ilwis::Resource &item, bool);
 private:

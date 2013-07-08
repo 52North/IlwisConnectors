@@ -157,6 +157,11 @@ QString Ilwis3Connector::name2Code(const QString& name, const QString& type) {
     return code;
 }
 
+QString Ilwis3Connector::provider() const
+{
+    return "ilwis3";
+}
+
 QString Ilwis3Connector::ilwis3ClassName(IlwisTypes type) const {
     if ( type & itGRID)
         return "Raster Map";
