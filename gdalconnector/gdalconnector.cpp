@@ -28,7 +28,7 @@ IlwisTypes Ilwis::Gdal::GdalConnector::ilwisType(const QString &name)
         return itCATALOG;
     QStringList extensions = gdal()->rasterNameFilter();
     if ( extensions.indexOf("." + inf.suffix())!= -1)
-        return itGRIDCOVERAGE;
+        return itGRID;
     return itUNKNOWN; //TODO vector and table formats here
 
 }
@@ -58,4 +58,9 @@ bool GdalConnector::canUse(const Ilwis::Resource &item) {
     gdal()->close(handle);
 
     return ok;
+}
+
+QString GdalConnector::provider() const
+{
+    return "gdal";
 }

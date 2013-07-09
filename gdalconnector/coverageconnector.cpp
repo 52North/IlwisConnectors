@@ -59,7 +59,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     Coordinate cMin( min(crdLeftup.x(), crdRightDown.x()), min(crdLeftup.y(), crdRightDown.y()));
     Coordinate cMax( max(crdLeftup.x(), crdRightDown.x()), max(crdLeftup.y(), crdRightDown.y()));
 
-    coverage->setEnvelope(Box2D<double>(cMin, cMax));
+    coverage->envelope(Box2D<double>(cMin, cMax));
 
     return true;
 }

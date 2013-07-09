@@ -43,7 +43,7 @@ HEADERS += gdalconnector/gdalconnector.h\
 		
 TEMPLATE = lib
 
-INCLUDEPATH += $$PWD/gdalconnector/gdalconnector/gdalheaders
+INCLUDEPATH += $$PWD/../external/gdalheaders
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore

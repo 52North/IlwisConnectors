@@ -15,6 +15,7 @@ public:
     bool loadMetaData(IlwisObject* data);
     bool canUse(const Ilwis::Resource &item);
 
+    QString provider() const;
 protected:
     QString _filename;
     QString _internalPath;

@@ -44,7 +44,7 @@ bool GridCoverageConnector::loadMetaData(IlwisObject *data){
     if(!grf.prepare(_resource.url().toLocalFile()))
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
 
-    gcoverage->setGeoreference(grf);
+    gcoverage->georeference(grf);
 
     int layerIndex = 1;
     auto index = _internalPath.indexOf("layerindex=");

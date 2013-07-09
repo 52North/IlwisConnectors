@@ -30,6 +30,7 @@
 #include "abstractfactory.h"
 #include "connectorfactory.h"
 #include "catalogconnectorfactory.h"
+#include "symboltable.h"
 #include "OperationExpression.h"
 #include "gdalmodule.h"
 #include "catalogconnector.h"
@@ -72,7 +73,7 @@ void GdalModule::prepare()
         return ;
 
     cfactory->addCreator(itITEMDOMAIN | itNUMERICDOMAIN ,"gdal", DomainConnector::create);
-    cfactory->addCreator(itGRIDCOVERAGE ,"gdal", GridCoverageConnector::create);
+    cfactory->addCreator(itGRID ,"gdal", GridCoverageConnector::create);
     cfactory->addCreator(itGEOREF,"gdal", GeorefConnector::create);
     cfactory->addCreator(itCOORDSYSTEM,"gdal",CoordinateSystemConnector::create);
 }
