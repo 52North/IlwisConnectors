@@ -14,6 +14,7 @@
 #include "coordinatesystem.h"
 #include "georeference.h"
 #include "boostext.h"
+#include "georefimplementation.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
 #include "georefconnector.h"
@@ -36,7 +37,7 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
 
     //TODO tiepoints grf
 
-    CornersGeoReference * grf = static_cast<CornersGeoReference *>(data);
+    GeoReference * grf = static_cast<GeoReference *>(data);
 
     ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", _filename);
     if(!csy.isValid()) {
@@ -60,7 +61,7 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
     Coordinate cMin( min(crdLeftup.x(), crdRightDown.x()), min(crdLeftup.y(), crdRightDown.y()));
     Coordinate cMax( max(crdLeftup.x(), crdRightDown.x()), max(crdLeftup.y(), crdRightDown.y()));
 
-    grf->setEnvelope(Box2D<double>(cMin, cMax));
+    grf->impl<CornersGeoReference>()->setEnvelope(Box2D<double>(cMin, cMax));
 
 
     return true;
@@ -68,7 +69,7 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
 
 IlwisObject *GeorefConnector::create() const{
     //TODO tiepoints georef
-    return new CornersGeoReference(_resource);
+    return GeoReference::create("corners");
 
 
 

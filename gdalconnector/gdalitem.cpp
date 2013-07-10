@@ -24,7 +24,7 @@ GDALItems::GDALItems(const QString &path)
     // and a homogenous type if files. when we have example of more complex nature we wille xtend this
     QUrl url("file:///" + path);
     quint64 csyId = addCsy(dataSet, path);
-    Resource resGrf(url, itCORNERSGEOREF);
+    Resource resGrf(url, itGEOREF);
     resGrf.addProperty("coordinatesystem", csyId);
     resGrf.setExtendedType(itCONVENTIONALCOORDSYSTEM);
     insert(resGrf);
@@ -47,7 +47,7 @@ void GDALItems::addItem(const QUrl& url, quint64 csyid, quint64 grfId, IlwisType
     gdalItem.addProperty("domain", resValue.id());
     gdalItem.addProperty("coordinatesystem", csyid);
     gdalItem.addProperty("georeference", grfId);
-    gdalItem.setExtendedType(itCORNERSGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM);
+    gdalItem.setExtendedType(itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM);
     insert(gdalItem);
 }
 
