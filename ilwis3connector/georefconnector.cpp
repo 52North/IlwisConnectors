@@ -13,9 +13,13 @@
 #include "ilwis3connector.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
+#include "georefimplementation.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
 #include "georefconnector.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "georefimplementationfactory.h"
 
 using namespace Ilwis;
 using namespace Ilwis3;
@@ -107,7 +111,7 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
 }
 
 bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
-    CornersGeoReference *grf = static_cast<CornersGeoReference *>(data);
+    GeoReference *grf = static_cast<GeoReference *>(data);
     QString csyName = odf.value("GeoRef","CoordSystem");
     QUrl path = mastercatalog()->name2url(csyName, itCOORDSYSTEM);
     ICoordinateSystem csy;
@@ -130,7 +134,7 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
         return false;
     }
 
-    grf->setEnvelope(Box2D<double>(Coordinate(minx, miny), Coordinate(maxx, maxy)));
+    grf->impl<CornersGeoReference>()->setEnvelope(Box2D<double>(Coordinate(minx, miny), Coordinate(maxx, maxy)));
     return true;
 }
 
@@ -138,7 +142,8 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
 IlwisObject *GeorefConnector::createGeoreference(const IniFile &odf) const{
     QString type = odf.value("GeoRef","Type");
     if ( type == "GeoRefCorners"){
-        return new CornersGeoReference();
+        return GeoReference::create("corners");
+
     }
     //TODO tiepoints georef
     if ( type == "GeoRefSubMap") {
