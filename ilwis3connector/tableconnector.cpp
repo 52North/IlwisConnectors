@@ -240,6 +240,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
 
     }
     _odf->setKeyValue("TableStore", "StoreTime", Time::now().toString());
+    _odf->store();
     return true;
 }
 
