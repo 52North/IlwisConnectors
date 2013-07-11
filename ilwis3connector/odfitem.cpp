@@ -42,15 +42,12 @@ ODFItem::ODFItem(const QString &file) : Resource(QUrl(QUrl::fromLocalFile(file))
 
     csytp = findCsyType();
     domtp = findDomainType();
-    grftp = findGrfType();
 
 
     if ( csytp != itUNKNOWN && _ilwtype == itCOORDSYSTEM)
         _ilwtype = csytp;
     if ( domtp != itUNKNOWN && _ilwtype == itDOMAIN)
         _ilwtype = domtp;
-    if ( grftp != itUNKNOWN && _ilwtype == itGEOREF)
-        _ilwtype = grftp;
 
     if ( _domname != sUNDEF)
         _extendedType |= domtp;
@@ -62,7 +59,7 @@ ODFItem::ODFItem(const QString &file) : Resource(QUrl(QUrl::fromLocalFile(file))
             _extendedType |= itPROJECTION;
     }
     if ( _grfname != sUNDEF)
-        _extendedType |= grftp;
+        _extendedType |= itGEOREF;
 
 
     if (_datumName != sUNDEF)
@@ -196,6 +193,11 @@ IlwisTypes ODFItem::findDomainType() const
     if  ( _domname == "")
         return itUNKNOWN;
 
+    if ( _domname == "UniqueID")
+        return itITEMDOMAIN;
+    if ( _domname == "bool.dom")
+        return itNUMERICDOMAIN;
+
     Resource item = mastercatalog()->name2Resource(stripExtension(_domname),itDOMAIN);
     if ( item.isValid())
         return item.ilwisType();
@@ -327,30 +329,30 @@ QString ODFItem::findGrfName() const{
 
 }
 
-IlwisTypes ODFItem::findGrfType() const {
+//IlwisTypes ODFItem::findGrfType() const {
 
-    quint64 validTypes = itGEOREF | itGRID;
-    if ( (_ilwtype & validTypes) == 0)
-        return itUNKNOWN;
+//    quint64 validTypes = itGEOREF | itGRID;
+//    if ( (_ilwtype & validTypes) == 0)
+//        return itUNKNOWN;
 
-    if ( _grfname == "")
-        return itUNKNOWN;
-    Resource item = mastercatalog()->name2Resource(stripExtension(_grfname),itGEOREF);
-    if ( item.isValid())
-        return item.ilwisType();
-    IniFile grf;
-    QString path = _file.canonicalPath() + "/" + _grfname;
-    if(!grf.setIniFile(path))
-        return itUNKNOWN;
+//    if ( _grfname == "")
+//        return itUNKNOWN;
+//    Resource item = mastercatalog()->name2Resource(stripExtension(_grfname),itGEOREF);
+//    if ( item.isValid())
+//        return item.ilwisType();
+//    IniFile grf;
+//    QString path = _file.canonicalPath() + "/" + _grfname;
+//    if(!grf.setIniFile(path))
+//        return itUNKNOWN;
 
-    QString type =  grf.value("GeoRef", "Type");
-    if ( type.compare("georefcorners",Qt::CaseInsensitive) == 0)
-        return itCORNERSGEOREF;
-    if ( type.compare("georefctp",Qt::CaseInsensitive) == 0)
-        return itTIEPOINTGEOREF;
+//    QString type =  grf.value("GeoRef", "Type");
+//    if ( type.compare("georefcorners",Qt::CaseInsensitive) == 0)
+//        return itCORNERSGEOREF;
+//    if ( type.compare("georefctp",Qt::CaseInsensitive) == 0)
+//        return itTIEPOINTGEOREF;
 
-    return itUNKNOWN;
-}
+//    return itUNKNOWN;
+//}
 
 quint64 ODFItem::findSize() const
 {

@@ -32,7 +32,6 @@ private:
     QString findCsyName() const;
     IlwisTypes findCsyType() const;
     QString findGrfName() const;
-    IlwisTypes findGrfType() const;
     QString findDatumName() const;
     QString findProjectionName() const;
     quint64 findSize() const;
