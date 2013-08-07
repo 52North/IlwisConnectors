@@ -266,9 +266,9 @@ Grid* GridCoverageConnector::loadGridData(IlwisObject* data)
         if (!covdom.prepare("count")){
             return 0;
         }
-        tbl->addColumn("coverage_key",covdom);
+        tbl->addColumn(COVERAGEKEYCOLUMN,covdom);
         for(quint32 i=0; i < tbl->rows() ; ++i) {
-            tbl->cell("coverage_key",i, i);
+            tbl->cell(COVERAGEKEYCOLUMN,i, i);
         }
     }
     return grid;
@@ -300,7 +300,7 @@ bool GridCoverageConnector::storeBinaryData(IlwisObject *obj)
     Size sz = gcov->size();
     bool ok = false;
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
-        calcStatics(obj, CoverageStatistics::pBASIC);
+        calcStatics(obj, NumericStatistics::pBASIC);
         RawConverter conv(gcov->statistics().min(), gcov->statistics().max(),pow(10, -gcov->statistics().significantDigits()));
 
 
@@ -333,7 +333,7 @@ bool GridCoverageConnector::storeBinaryData(IlwisObject *obj)
 
 }
 
-void GridCoverageConnector::calcStatics(const IlwisObject *obj, CoverageStatistics::PropertySets set) const {
+void GridCoverageConnector::calcStatics(const IlwisObject *obj, NumericStatistics::PropertySets set) const {
     IGridCoverage gcov = mastercatalog()->get(obj->id());
     if ( !gcov->statistics().isValid()) {
         PixelIterator iter(gcov,Box3D<>(gcov->size()));
@@ -342,7 +342,7 @@ void GridCoverageConnector::calcStatics(const IlwisObject *obj, CoverageStatisti
 }
 
 bool GridCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
-    bool ok = Ilwis3Connector::storeMetaData(obj);
+    bool ok = Ilwis3Connector::storeMetaData(obj, itGRID);
     if ( !ok)
         return false;
 
@@ -419,7 +419,7 @@ bool GridCoverageConnector::storeMetaData( IlwisObject *obj)  {
     if ( gcov->size().zsize() > 1)
         return storeMetaDataMapList(obj);
 
-    bool ok = CoverageConnector::storeMetaData(obj);
+    bool ok = CoverageConnector::storeMetaData(obj, itGRID);
     if ( !ok)
         return false;
 
