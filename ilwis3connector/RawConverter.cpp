@@ -94,3 +94,4 @@ double RawConverter::guessUndef(double vmin, double vmax) {
         return flUNDEF;
     return rUNDEF;
 }
+

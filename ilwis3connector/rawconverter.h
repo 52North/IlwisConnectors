@@ -18,6 +18,8 @@ public:
         }
     }
 
+
+
     RawConverter() : _offset(0), _scale(1), _storeType(itUNKNOWN), _undefined(rUNDEF){
     }
 
@@ -79,6 +81,10 @@ public:
             default:
                 _undefined = 0;
         }
+    }
+
+    bool isValid() const{
+        return _storeType != itUNKNOWN;
     }
 
 private:
