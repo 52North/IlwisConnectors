@@ -51,7 +51,7 @@ bool Ilwis3Connector::loadMetaData(IlwisObject *data)
     return false;
 }
 
-bool Ilwis3Connector::storeMetaData(const IlwisObject *obj) const
+bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) const
 {
     if ( obj == nullptr)
         return ERROR1(ERR_NO_INITIALIZED_1,"Object");
@@ -155,6 +155,22 @@ QString Ilwis3Connector::name2Code(const QString& name, const QString& type) {
 
     QString code = db.value(0).toString();
     return code;
+}
+
+QString Ilwis3Connector::code2name(const QString& code, const QString& type) {
+    QSqlQuery db(kernel()->database());
+    QString query = QString("Select alias from aliasses where code='%1' and type='%2' and source='ilwis3'").arg(code, type);
+    if ( !db.exec(query)) {
+        kernel()->issues()->logSql(db.lastError());
+        return sUNDEF;
+    }
+    if (!db.next()) {
+        kernel()->issues()->log(TR("Couldnt find %2 %1").arg(type).arg(code));
+        return sUNDEF;
+    }
+
+    QString name = db.value(0).toString();
+    return name;
 }
 
 QString Ilwis3Connector::provider() const

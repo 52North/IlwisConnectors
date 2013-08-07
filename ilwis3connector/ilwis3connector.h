@@ -15,6 +15,7 @@ public:
     //static IlwisTypes type(const QString &name);
     static IlwisTypes ilwisType(const QString &name);
     static QString name2Code(const QString &name, const QString &type);
+    static QString code2name(const QString &code, const QString &type);
     QString provider() const;
 
 protected:
@@ -22,7 +23,7 @@ protected:
     QUrl resolve(const Resource &resource) const;
     bool isSystemObject(const QString &filename);
     bool loadMetaData(IlwisObject* data);
-    bool storeMetaData(const IlwisObject* data) const;
+    bool storeMetaData(const IlwisObject* data, IlwisTypes type) const;
 
 
     QString ilwis3ClassName(IlwisTypes type) const;
