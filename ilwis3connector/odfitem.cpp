@@ -504,6 +504,8 @@ bool ODFItem::isSystemObject(const QString& name) {
 }
 
 QString  ODFItem::cleanName(const QString& name) const{
+    if ( name.size() == 0)
+        return name;
     QString cleanTxt = name.trimmed();
     if ( cleanTxt.contains(QRegExp("\\\\|/"))) {
         cleanTxt = QFileInfo(cleanTxt).fileName();
