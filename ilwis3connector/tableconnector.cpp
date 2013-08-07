@@ -31,6 +31,8 @@
 #include "domainconnector.h"
 #include "rawconverter.h"
 #include "ilwis3range.h"
+#include "ilwiscontext.h"
+#include "catalog.h"
 
 using namespace Ilwis;
 using namespace Ilwis3;
@@ -168,21 +170,112 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
 
 bool TableConnector::storeBinaryData(IlwisObject *obj)
 {
-    return false;
+    QFileInfo inf(obj->name());
+    QString dir = context()->workingCatalog()->location().toLocalFile();
+    QString filename = dir + "/" + inf.baseName() + ".tb#";
+    std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
+    if ( !output_file.is_open())
+        return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
+    char header[128];
+    memset(header, 0, 128);
+    output_file.write(header,128);
+
+    const Table *tbl = static_cast<const Table *>(obj);
+
+    typedef std::pair<RawConverter, quint64> TypeDef;
+    std::vector<TypeDef> types;
+    int skip = iUNDEF;
+    for(int i=0; i < tbl->columns(); ++i) {
+        const ColumnDefinition& def = tbl->columndefinition(i);
+        if ( def.name() == FEATUREIDCOLUMN)
+            skip = i;
+        IDomain dmColumn = def.datadef().domain();
+        IlwisTypes colType = dmColumn->ilwisType();
+        if ( hasType(colType,itNUMERICDOMAIN) ) {
+           auto nrange = def.datadef().range().dynamicCast<NumericRange>();
+           RawConverter conv(nrange->min(), nrange->max(), nrange->step());
+           types.push_back(std::make_pair(conv, colType));
+        }
+        else if ( hasType(colType, itITEMDOMAIN)) {
+            RawConverter conv(0,1,0,2147483648,itINT32);
+            types.push_back(std::make_pair(conv, itITEMDOMAIN));
+        } else if ( hasType(colType, itTEXTDOMAIN) ||
+                    hasType(colType, itCOORDDOMAIN))  {
+            types.push_back(std::make_pair(RawConverter(), colType));
+        }
+    }
+    for(int y=0; y < tbl->rows(); ++y) {
+        std::vector<QVariant> rec = tbl->record(y);
+        for(int x=0; x < rec.size(); ++x) {
+            if ( x == skip)
+                continue;
+            const RawConverter& conv = types[x].first;
+            IlwisTypes tp = types[x].second;
+            if ( conv.isValid()) {
+                if ( conv.isNeutral()) {
+                    if ( conv.storeType() == itINT32 && tp == itITEMDOMAIN) {
+                        long val = rec[x].value<long>() + 1;
+                        output_file.write((char *)&val, 4);
+                    }
+                    else if ( conv.storeType() != itDOUBLE)    {
+                        long val = rec[x].value<long>();
+                        output_file.write((char *)&val, 4);
+                    } else {
+                        double val = rec[x].value<double>();
+                        output_file.write((char *)&val, 8);
+                    }
+                } else {
+                    double val = rec[x].value<double>();
+                    long raw = conv.real2raw(val);
+                    output_file.write((char *)&raw,  4);
+                }
+            }else {
+
+                if ( tp == itTEXTDOMAIN) {
+                    QString s = rec[x].value<QString>();
+                    QByteArray bytes = s.toLocal8Bit();
+                    const char * ptr = bytes.data();
+                    output_file.write(ptr, s.size());
+                    char c = 0;
+                    output_file.write(&c, 1);
+
+                } else if ( tp == itCOORDDOMAIN) {
+                    Coordinate crd =  rec[x].value<Coordinate>();
+                    double v = crd.x();
+                    output_file.write((char *)&v, 8);
+                    v = crd.y();
+                    output_file.write((char *)&v, 8);
+                    v = crd.z();
+                    output_file.write((char *)&v, 8);
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+QString TableConnector::getDomainName(const IDomain& dom, bool& isSystem) {
+    QString name = code2name(dom->code(), "domain") ;
+    if ( name != sUNDEF)
+        return name;
+    isSystem = false;
+    return dom->source().toLocalFile(true);
 }
 
 bool TableConnector::storeMetaData(IlwisObject *obj)
 {
-    if(!Ilwis3Connector::storeMetaData(obj))
+    if(!Ilwis3Connector::storeMetaData(obj, itTABLE))
         return false;
 
     const Table *tbl = static_cast<const Table *>(obj);
+    int reduceColumns = _attributeDomain == "" ? 0 : 1; // the featured_id column will not be go the ilwis3, useless info at that level
 
     _odf->setKeyValue("Ilwis", "Type", "Table");
     _odf->setKeyValue("Ilwis", "Class", "Table");
     _odf->setKeyValue("Table", "Domain", _attributeDomain);
     _odf->setKeyValue("Table", "DomainInfo", QString("%1;Long;UniqueID;0;;").arg(_attributeDomain));
-    _odf->setKeyValue("Table", "Columns", QString::number(tbl->columns()));
+    _odf->setKeyValue("Table", "Columns", QString::number(tbl->columns() - reduceColumns));
     _odf->setKeyValue("Table", "Records", QString::number(tbl->rows()));
     _odf->setKeyValue("Table", "Type", "TableStore");
     _odf->setKeyValue("TableStore", "Type", "TableBinary");
@@ -192,17 +285,22 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
     _odf->setKeyValue("TableStore", "Data", dataFile);
     for(int i=0; i < tbl->columns(); ++i) {
         ColumnDefinition def = tbl->columndefinition(i);
+        if ( def.name() == FEATUREIDCOLUMN)
+            continue;
         IDomain dmColumn = def.datadef().domain();
-        Resource resDomain(dmColumn->source());
-        DomainConnector conn(resDomain, itDOMAIN);
-        conn.storeMetaData(dmColumn.ptr());
-        _odf->setKeyValue("TableStore", QString("Col%1").arg(i), def.name());
+        bool isSystem = true;
+        QString domName = getDomainName(dmColumn, isSystem);
+        if ( !isSystem) {
+            DomainConnector conn(dmColumn->source(), itDOMAIN);
+            conn.storeMetaData(dmColumn.ptr());
+        }
+        _odf->setKeyValue("TableStore", QString("Col%1").arg(i - reduceColumns), def.name());
         QString colName = QString("Col:%1").arg(def.name());
         _odf->setKeyValue(colName, "Time", Time::now().toString());
         _odf->setKeyValue(colName, "Version", "3.1");
         _odf->setKeyValue(colName, "Class", "Column");
-        _odf->setKeyValue(colName, "Domain", resDomain.toLocalFile(true));
-        _odf->setKeyValue(colName, "Time", Time::now().toString());
+        _odf->setKeyValue(colName, "Domain", domName);
+        //_odf->setKeyValue(colName, "Time", Time::now().toString());
         _odf->setKeyValue(colName, "DomainChangeable", "Yes");
         _odf->setKeyValue(colName, "ValueRangeChangeable", "Yes");
         _odf->setKeyValue(colName, "ExpressionChangeable", "Yes");
@@ -223,18 +321,22 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
                 storeType = "Int"  ;
             else if ( conv.storeType() & itUINT8 )
                  storeType = "Byte"  ;
-            domainInfo = QString("%1;%2;value;0;%3;4;0.1;%5").arg(dmColumn->name()).
+            domainInfo = QString("%1;%2;value;0;%3;%4;0.1;offset=%5").arg(dmColumn->name()).
                     arg(storeType).
                     arg(numdmrange->min()).
                     arg(numdmrange->max()).
                     arg(conv.offset());
+            _odf->setKeyValue(colName, "StoreType", storeType == "Real" ? "Real" : "Long");
         } else if ( dmColumn->valueType() == itTHEMATICITEM) {
-            domainInfo = QString("%1;Int;class;256;;").arg(resDomain.toLocalFile(true)) ;
+            domainInfo = QString("%1;Int;class;256;;").arg(dmColumn->source().toLocalFile(true)) ;
+            _odf->setKeyValue(colName, "StoreType", "Long");
         } else if ( dmColumn->valueType() == itSTRING) {
             domainInfo = "string.dom;String;string;0;;";
+            _odf->setKeyValue(colName, "StoreType","String");
         } else if ( dmColumn->valueType() & itIDENTIFIERITEM) {
             int count = dmColumn->range().dynamicCast<ItemRange>()->count();
-            domainInfo = QString("%1;Long;id;%2;;").arg(resDomain.toLocalFile(true)).arg(count) ;
+            domainInfo = QString("%1;Long;id;%2;;").arg(dmColumn->source().toLocalFile(true)).arg(count) ;
+            _odf->setKeyValue(colName, "StoreType", "Long");
         }
         _odf->setKeyValue(colName, "DomainInfo", domainInfo);
 
@@ -258,3 +360,8 @@ QString TableConnector::valueType2DataType(IlwisTypes ty) {
     return vType;
 }
 
+
+void TableConnector::attributeDomain(const QString &attdom)
+{
+    _attributeDomain = attdom;
+}
