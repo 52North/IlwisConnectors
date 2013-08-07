@@ -147,9 +147,9 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     return true;
 }
 
-bool CoverageConnector::storeMetaData(IlwisObject *obj)
+bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
 {
-    bool ok = Ilwis3Connector::storeMetaData(obj);
+    bool ok = Ilwis3Connector::storeMetaData(obj, type);
     if ( !ok)
         return false;
 
@@ -181,7 +181,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
     if (!dom.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Domain", coverage->name());
 
-    calcStatics(obj,CoverageStatistics::pBASIC);
+    calcStatics(obj,NumericStatistics::pBASIC);
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
 
         quint16 digits = coverage->statistics().significantDigits();
@@ -223,24 +223,54 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj)
                 _odf->setKeyValue("BaseMap","Domain",source);
             }
         } else if ( dom->valueType() == itINDEXEDITEM) {
-            _odf->setKeyValue("BaseMap","Domain","UniqueID");
+            _odf->setKeyValue("BaseMap","Domain",_odf->fileinfo().fileName());
         }
     }
 
-    ITable attTable = coverage->attributeTable(itPOLYGON);
+    ITable attTable = coverage->attributeTable(type);
     if ( attTable.isValid()) {
-        QString dataFile = coverage->name();
-        int index = dataFile.lastIndexOf(".");
-        if ( index != -1) {
-            dataFile = dataFile.left(index);
-        }
-        _odf->setKeyValue("BaseMap","AttributeTable",dataFile + ".tbt");
-        attTable->setName(dataFile);
-        QString dir = context()->workingCatalog()->location().toLocalFile();
-        QString filename = dir + "/" + dataFile + ".tbt";
-        TableConnector conn(Resource(QUrl::fromLocalFile(filename), itTABLE), false);
-        conn.storeMetaData(attTable.ptr());
+        QScopedPointer<TableConnector> conn(createTableConnector(attTable, coverage, type));
+        conn->storeMetaData(attTable.ptr());
     }
     return true;
 }
 
+bool CoverageConnector::storeBinaryData(IlwisObject *obj, IlwisTypes type)
+{
+    Coverage *coverage = static_cast<Coverage *>(obj);
+    ITable attTable = coverage->attributeTable(itPOLYGON);
+    if ( attTable.isValid()) {
+        QScopedPointer<TableConnector> conn(createTableConnector(attTable, coverage, type));
+        return conn->storeBinaryData(attTable.ptr());
+
+    }
+
+    return false;
+}
+
+TableConnector *CoverageConnector::createTableConnector(ITable& attTable, Coverage *coverage, IlwisTypes tp) {
+    QString dataFile = coverage->name();
+    QString attDom = dataFile;
+    int index = dataFile.lastIndexOf(".");
+    if ( index != -1) {
+        dataFile = dataFile.left(index);
+    }else{
+        if ( tp == itPOLYGON)
+            attDom += ".mpa";
+        if ( tp == itGRID)
+            attDom += ".mpr";
+        if ( tp == itPOINT)
+            attDom += ".mpp";
+        if ( tp == itLINE)
+            attDom += ".mps";
+    }
+    _odf->setKeyValue("BaseMap","AttributeTable",dataFile + ".tbt");
+    attTable->setName(dataFile);
+    QString dir = context()->workingCatalog()->location().toLocalFile();
+    QString filename = dir + "/" + dataFile + ".tbt";
+    TableConnector *conn = new TableConnector(Resource(QUrl::fromLocalFile(filename), itTABLE), false);
+    //attribute domains are comming from ilwis4 always uniqueid and based on the map
+    conn->attributeDomain(attDom);
+
+    return conn;
+}
