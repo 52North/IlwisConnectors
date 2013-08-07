@@ -45,7 +45,7 @@ Ilwis::IlwisObject *FeatureConnector::create() const
     return new Ilwis::FeatureCoverage(_resource);
 }
 
-void FeatureConnector::calcStatics(const IlwisObject *obj, CoverageStatistics::PropertySets set) const
+void FeatureConnector::calcStatics(const IlwisObject *obj, NumericStatistics::PropertySets set) const
 {
 }
 
@@ -68,7 +68,7 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
     qint32 colTopStart = polTable.index("TopStart");
     qint32 colArea = polTable.index("Area");
     int nrPolygons = polTable.rows();
-    SPAttributeRecord record( new AttributeRecord(tbl,"coverage_key"));
+    SPAttributeRecord record( new AttributeRecord(tbl,COVERAGEKEYCOLUMN));
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
     double v;
@@ -91,14 +91,14 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
             }
             polTable.get(i, colValue, v);
             if ( isNumeric) {
-                tbl->cell("coverage_key", i, QVariant(i));
-                tbl->cell("feature_value", i, QVariant(v));
+                tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(i));
+                tbl->cell(FEATUREVALUECOLUMN, i, QVariant(v));
                 fcoverage->newFeature({polygon},i, record);
             } else {
                 quint32 itemId = v;
-                tbl->cell("coverage_key", i, QVariant(itemId));
+                tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
                 SPFeatureI feature = fcoverage->newFeature({polygon},itemId, record);
-                tbl->cell("feature_id", i, QVariant(feature->featureid()));
+                tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
             }
         }
     }
@@ -203,7 +203,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     }
     QDataStream stream(&file);
     int nrPolygons = fcoverage->featureCount(itPOLYGON);
-    SPAttributeRecord record( new AttributeRecord(tbl,"coverage_key"));
+    SPAttributeRecord record( new AttributeRecord(tbl,COVERAGEKEYCOLUMN));
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
     for(int j=0; j < nrPolygons; ++j) {
@@ -217,14 +217,14 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         for(quint32 i=0; i< numberOfHoles;++i)
             readRing(stream, pol.inners()[i]);
         if ( isNumeric) {
-            tbl->cell("coverage_key", j, QVariant(j));
-            tbl->cell("feature_value", j, QVariant(value));
+            tbl->cell(COVERAGEKEYCOLUMN, j, QVariant(j));
+            tbl->cell(FEATUREVALUECOLUMN, j, QVariant(value));
             fcoverage->newFeature({pol},j, record);
         } else {
             quint32 itemId = value;
-            tbl->cell("coverage_key", j, QVariant(itemId));
+            tbl->cell(COVERAGEKEYCOLUMN, j, QVariant(itemId));
             SPFeatureI feature = fcoverage->newFeature({pol},itemId, record);
-            tbl->cell("feature_id", j, QVariant(feature->featureid()));
+            tbl->cell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         }
 
     }
@@ -269,7 +269,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage, ITable& tb
     if ( isNumeric) // in other case nr of record already has been set as it is based on a real table
         tbl->setRows(mpsTable.rows());
 
-    SPAttributeRecord record( new AttributeRecord(tbl,"coverage_key"));
+    SPAttributeRecord record( new AttributeRecord(tbl,COVERAGEKEYCOLUMN));
     double value;
     for(quint32 i= 0; i < mpsTable.rows(); ++i) {
         std::vector<Coordinate > coords;
@@ -279,14 +279,14 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage, ITable& tb
         std::copy(coords.begin(), coords.end(), line.begin());
         mpsTable.get(i, colItemId,value);
         if ( isNumeric) {
-            tbl->cell("coverage_key", i, QVariant(i));
-            tbl->cell("feature_value", i, QVariant(value));
+            tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(i));
+            tbl->cell(FEATUREVALUECOLUMN, i, QVariant(value));
             fcoverage->newFeature({line},i, record);
         } else {
             quint32 itemId = value;
-            tbl->cell("coverage_key", i, QVariant(itemId));
+            tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
             SPFeatureI feature = fcoverage->newFeature({line},itemId, record);
-            tbl->cell("feature_id", i, QVariant(feature->featureid()));
+            tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
         }
 
 
@@ -308,7 +308,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage, ITable& tbl)
     int colItemId = mppTable.index("Name");
 
     bool newCase =  coordColumnX == iUNDEF;
-    SPAttributeRecord record( new AttributeRecord(tbl,"coverage_key"));
+    SPAttributeRecord record( new AttributeRecord(tbl,COVERAGEKEYCOLUMN));
 
 
     for(quint32 i= 0; i < mppTable.rows(); ++i) {
@@ -324,11 +324,11 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage, ITable& tbl)
         }
         mppTable.get(i, colItemId,itemIdT);
         quint32 itemId = itemIdT;
-        tbl->cell("coverage_key", i, QVariant(itemId));
+        tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
 
         SPFeatureI feature = fcoverage->newFeature({c},itemId, record);
 
-        tbl->cell("feature_id", i, QVariant(feature->featureid()));
+        tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
 
     }
     return true;
@@ -345,8 +345,8 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
     if (!covdom.prepare("count")){
         return false;
     }
-    tbl->addColumn("coverage_key",covdom);
-    tbl->addColumn("feature_id",covdom);
+    tbl->addColumn(COVERAGEKEYCOLUMN,covdom);
+    tbl->addColumn(FEATUREIDCOLUMN,covdom);
 
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     if ( isNumeric) {
@@ -354,7 +354,7 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
         if (!featuredom.prepare("value")){
             return false;
         }
-        tbl->addColumn("feature_value",featuredom);
+        tbl->addColumn(FEATUREVALUECOLUMN,featuredom);
     }
 
     if (fcoverage->featureTypes() == itPOINT)
@@ -428,16 +428,32 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     return true;
 }
 
-bool FeatureConnector::storeBinaryData(IlwisObject *obj) {
-    FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
 
-    QFileInfo inf(obj->name());
+bool FeatureConnector::storeBinaryData(FeatureCoverage *fcov, IlwisTypes type) {
+    if ( type == 0)
+        return true;
+    if (!CoverageConnector::storeBinaryData(fcov, type)) // attribute tables
+        return false;
+    QFileInfo inf(fcov->name());
     QString dir = context()->workingCatalog()->location().toLocalFile();
     QString baseName = dir + "/" + inf.baseName();
     bool ok = false;
-    if ( fcov->featureTypes() & itPOLYGON) {
+    if ( type & itPOLYGON) {
         ok = storeBinaryDataPolygon(fcov, baseName);
     }
+
+    return ok;
+}
+
+bool FeatureConnector::storeBinaryData(IlwisObject *obj) {
+
+    FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
+    IlwisTypes featureTypes = fcov->featureTypes();
+    bool ok = true;
+
+    ok &= storeBinaryData(fcov, featureTypes & itPOLYGON);
+    ok &= storeBinaryData(fcov, featureTypes & itLINE);
+    ok &= storeBinaryData(fcov, featureTypes & itPOINT);
 
     return ok;
 }
@@ -473,12 +489,12 @@ bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& da
     return true;
 }
 
-bool FeatureConnector::storeMetaData(IlwisObject *obj)
-{
-    bool ok = CoverageConnector::storeMetaData(obj);
+bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
+    if ( type == 0)
+        return false;
+    bool ok = CoverageConnector::storeMetaData(fcov, type);
     if ( !ok)
         return false;
-    FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
 
     QString dataFile = fcov->name();
     int index = dataFile.lastIndexOf(".");
@@ -486,7 +502,7 @@ bool FeatureConnector::storeMetaData(IlwisObject *obj)
         dataFile = dataFile.left(index);
     }
 
-    _odf->setKeyValue("Domain","Type","UniqueID");
+    _odf->setKeyValue("Domain","Type","DomainUniqueID");
     _odf->setKeyValue("DomainSort","Sorting","AlphaNumeric");
     _odf->setKeyValue("DomainSort","Prefix","feature");
     _odf->setKeyValue("DomainSort","Class","Domain UniqueID");
@@ -499,4 +515,18 @@ bool FeatureConnector::storeMetaData(IlwisObject *obj)
 
     _odf->store();
     return ok;
+}
+
+bool FeatureConnector::storeMetaData(IlwisObject *obj)
+{
+    FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
+    IlwisTypes featureTypes = fcov->featureTypes();
+    bool ok = true;
+    ok &= storeMetaData(fcov, featureTypes & itPOLYGON);
+    ok &= storeMetaData(fcov, featureTypes & itLINE);
+    ok &= storeMetaData(fcov, featureTypes & itPOINT);
+
+    return ok;
+
+
 }

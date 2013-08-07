@@ -16,13 +16,13 @@ public:
     bool loadMetaData(Ilwis::IlwisObject *data);
     bool loadBinaryData(Ilwis::IlwisObject *obj);
     bool storeMetaData(IlwisObject *obj) ;
-    bool storeBinaryData(IlwisObject *obj);
 
     static ConnectorInterface *create(const Resource &item, bool load);
     Ilwis::IlwisObject *create() const;
-    void calcStatics(const IlwisObject *obj,CoverageStatistics::PropertySets set) const;
+    void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
 
     bool storeMetaPolygon(FeatureCoverage *fcov, const QString &dataFile);
+    bool storeBinaryData(IlwisObject *obj);
 
 private:
     bool loadBinaryPoints(FeatureCoverage *fcoverage, Ilwis::ITable &tbl);
@@ -37,6 +37,8 @@ private:
 
     void writeRing(std::ofstream &output_file, const std::vector<Coordinate2d>& coords);
     bool storeBinaryDataPolygon(Ilwis::FeatureCoverage *fcov, const QString &baseName);
+    bool storeMetaData(Ilwis::FeatureCoverage *fcov, IlwisTypes type);
+    bool storeBinaryData(Ilwis::FeatureCoverage *fcov, IlwisTypes type);
 
 };
 }
