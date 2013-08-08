@@ -12,7 +12,12 @@
 #include "ilwis3connector.h"
 #include "ilwiscontext.h"
 #include "catalog.h"
+#include "domain.h"
+#include "datadefinition.h"
+#include "numericrange.h"
+#include "RawConverter.h"
 #include "binaryilwis3table.h"
+
 
 using namespace Ilwis ;
 using namespace Ilwis3;
@@ -290,6 +295,89 @@ QString BinaryIlwis3Table::columnName(int index)
 
 inline char *BinaryIlwis3Table::moveTo(int row, const  ColumnInfo& fld) const{
     return (char *)(_records + row * _recordSize + fld._offset);
+}
+
+bool BinaryIlwis3Table::openOutput(const QString& basename, std::ofstream& output_file) {
+    QFileInfo inf(basename);
+    QString dir = context()->workingCatalog()->location().toLocalFile();
+    QString filename = dir + "/" + inf.baseName() + ".tb#";
+    output_file.open(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
+    if ( !output_file.is_open())
+        return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
+    char header[128];
+    memset(header, 0, 128);
+    output_file.write(header,128);
+
+    return true;
+
+}
+
+void BinaryIlwis3Table::addStoreDefinition(const DataDefinition& def) {
+    IDomain dmColumn = def.domain();
+    IlwisTypes colType = dmColumn->ilwisType();
+    ColumnInfo inf;
+    if ( hasType(colType,itNUMERICDOMAIN) ) {
+       auto nrange = def.range().dynamicCast<NumericRange>();
+       RawConverter conv(nrange->min(), nrange->max(), nrange->step());
+       inf._conv = conv;
+       inf._type = colType;
+    }
+    else if ( hasType(colType, itITEMDOMAIN)) {
+        RawConverter conv(0,1,0,2147483648,itINT32);
+        inf._conv = conv;
+        inf._type = itITEMDOMAIN;
+    } else if ( hasType(colType, itTEXTDOMAIN) ||
+                hasType(colType, itCOORDDOMAIN))  {
+       inf._type = colType;
+    }
+    _columnInfo.push_back(inf);
+}
+
+void BinaryIlwis3Table::storeRecord(std::ofstream& output_file, const std::vector<QVariant>& rec, int skip) {
+    for(int x=0; x < rec.size(); ++x) {
+        if ( x == skip)
+            continue;
+        const RawConverter& conv = _columnInfo[x]._conv;
+        IlwisTypes tp = _columnInfo[x]._type;
+        if ( conv.isValid()) {
+            if ( conv.isNeutral()) {
+                if ( conv.storeType() == itINT32 && tp == itITEMDOMAIN) {
+                    long val = rec[x].value<long>() + 1;
+                    output_file.write((char *)&val, 4);
+                }
+                else if ( conv.storeType() != itDOUBLE)    {
+                    long val = rec[x].value<long>();
+                    output_file.write((char *)&val, 4);
+                } else {
+                    double val = rec[x].value<double>();
+                    output_file.write((char *)&val, 8);
+                }
+            } else {
+                double val = rec[x].value<double>();
+                long raw = conv.real2raw(val);
+                output_file.write((char *)&raw,  4);
+            }
+        }else {
+
+            if ( tp == itTEXTDOMAIN) {
+                QString s = rec[x].value<QString>();
+                QByteArray bytes = s.toLocal8Bit();
+                const char * ptr = bytes.data();
+                output_file.write(ptr, s.size());
+                char c = 0;
+                output_file.write(&c, 1);
+
+            } else if ( tp == itCOORDDOMAIN) {
+                Coordinate crd =  rec[x].value<Coordinate>();
+                double v = crd.x();
+                output_file.write((char *)&v, 8);
+                v = crd.y();
+                output_file.write((char *)&v, 8);
+                v = crd.z();
+                output_file.write((char *)&v, 8);
+            }
+        }
+    }
 }
 
 

@@ -16,6 +16,7 @@
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "numericdomain.h"
+#include "datadefinition.h"
 #include "binaryilwis3table.h"
 #include "ilwis3range.h"
 #include "domainconnector.h"

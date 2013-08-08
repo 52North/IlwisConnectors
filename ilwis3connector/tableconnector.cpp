@@ -27,9 +27,9 @@
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "tableconnector.h"
+#include "rawconverter.h"
 #include "binaryilwis3table.h"
 #include "domainconnector.h"
-#include "rawconverter.h"
 #include "ilwis3range.h"
 #include "ilwiscontext.h"
 #include "catalog.h"
@@ -170,86 +170,93 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
 
 bool TableConnector::storeBinaryData(IlwisObject *obj)
 {
-    QFileInfo inf(obj->name());
-    QString dir = context()->workingCatalog()->location().toLocalFile();
-    QString filename = dir + "/" + inf.baseName() + ".tb#";
-    std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
-    if ( !output_file.is_open())
-        return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
-    char header[128];
-    memset(header, 0, 128);
-    output_file.write(header,128);
+    //    QFileInfo inf(obj->name());
+    //    QString dir = context()->workingCatalog()->location().toLocalFile();
+    //    QString filename = dir + "/" + inf.baseName() + ".tb#";
+    //    std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
+    //    if ( !output_file.is_open())
+    //        return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
+    //    char header[128];
+    //    memset(header, 0, 128);
+    //    output_file.write(header,128);
 
     const Table *tbl = static_cast<const Table *>(obj);
 
-    typedef std::pair<RawConverter, quint64> TypeDef;
-    std::vector<TypeDef> types;
+//    typedef std::pair<RawConverter, quint64> TypeDef;
+//    std::vector<TypeDef> types;
     int skip = iUNDEF;
+    BinaryIlwis3Table ilw3tbl;
+    std::ofstream output_file;
+    if(!ilw3tbl.openOutput(obj->name(), output_file))
+        return false;
+
     for(int i=0; i < tbl->columns(); ++i) {
         const ColumnDefinition& def = tbl->columndefinition(i);
         if ( def.name() == FEATUREIDCOLUMN)
             skip = i;
-        IDomain dmColumn = def.datadef().domain();
-        IlwisTypes colType = dmColumn->ilwisType();
-        if ( hasType(colType,itNUMERICDOMAIN) ) {
-           auto nrange = def.datadef().range().dynamicCast<NumericRange>();
-           RawConverter conv(nrange->min(), nrange->max(), nrange->step());
-           types.push_back(std::make_pair(conv, colType));
-        }
-        else if ( hasType(colType, itITEMDOMAIN)) {
-            RawConverter conv(0,1,0,2147483648,itINT32);
-            types.push_back(std::make_pair(conv, itITEMDOMAIN));
-        } else if ( hasType(colType, itTEXTDOMAIN) ||
-                    hasType(colType, itCOORDDOMAIN))  {
-            types.push_back(std::make_pair(RawConverter(), colType));
-        }
+//        IDomain dmColumn = def.datadef().domain();
+//        IlwisTypes colType = dmColumn->ilwisType();
+//        if ( hasType(colType,itNUMERICDOMAIN) ) {
+//           auto nrange = def.datadef().range().dynamicCast<NumericRange>();
+//           RawConverter conv(nrange->min(), nrange->max(), nrange->step());
+//           types.push_back(std::make_pair(conv, colType));
+//        }
+//        else if ( hasType(colType, itITEMDOMAIN)) {
+//            RawConverter conv(0,1,0,2147483648,itINT32);
+//            types.push_back(std::make_pair(conv, itITEMDOMAIN));
+//        } else if ( hasType(colType, itTEXTDOMAIN) ||
+//                    hasType(colType, itCOORDDOMAIN))  {
+//            types.push_back(std::make_pair(RawConverter(), colType));
+//        }
+        ilw3tbl.addStoreDefinition(def.datadef());
     }
     for(int y=0; y < tbl->rows(); ++y) {
         std::vector<QVariant> rec = tbl->record(y);
-        for(int x=0; x < rec.size(); ++x) {
-            if ( x == skip)
-                continue;
-            const RawConverter& conv = types[x].first;
-            IlwisTypes tp = types[x].second;
-            if ( conv.isValid()) {
-                if ( conv.isNeutral()) {
-                    if ( conv.storeType() == itINT32 && tp == itITEMDOMAIN) {
-                        long val = rec[x].value<long>() + 1;
-                        output_file.write((char *)&val, 4);
-                    }
-                    else if ( conv.storeType() != itDOUBLE)    {
-                        long val = rec[x].value<long>();
-                        output_file.write((char *)&val, 4);
-                    } else {
-                        double val = rec[x].value<double>();
-                        output_file.write((char *)&val, 8);
-                    }
-                } else {
-                    double val = rec[x].value<double>();
-                    long raw = conv.real2raw(val);
-                    output_file.write((char *)&raw,  4);
-                }
-            }else {
+        ilw3tbl.storeRecord(output_file, rec, skip);
+//        for(int x=0; x < rec.size(); ++x) {
+//            if ( x == skip)
+//                continue;
+//            const RawConverter& conv = types[x].first;
+//            IlwisTypes tp = types[x].second;
+//            if ( conv.isValid()) {
+//                if ( conv.isNeutral()) {
+//                    if ( conv.storeType() == itINT32 && tp == itITEMDOMAIN) {
+//                        long val = rec[x].value<long>() + 1;
+//                        output_file.write((char *)&val, 4);
+//                    }
+//                    else if ( conv.storeType() != itDOUBLE)    {
+//                        long val = rec[x].value<long>();
+//                        output_file.write((char *)&val, 4);
+//                    } else {
+//                        double val = rec[x].value<double>();
+//                        output_file.write((char *)&val, 8);
+//                    }
+//                } else {
+//                    double val = rec[x].value<double>();
+//                    long raw = conv.real2raw(val);
+//                    output_file.write((char *)&raw,  4);
+//                }
+//            }else {
 
-                if ( tp == itTEXTDOMAIN) {
-                    QString s = rec[x].value<QString>();
-                    QByteArray bytes = s.toLocal8Bit();
-                    const char * ptr = bytes.data();
-                    output_file.write(ptr, s.size());
-                    char c = 0;
-                    output_file.write(&c, 1);
+//                if ( tp == itTEXTDOMAIN) {
+//                    QString s = rec[x].value<QString>();
+//                    QByteArray bytes = s.toLocal8Bit();
+//                    const char * ptr = bytes.data();
+//                    output_file.write(ptr, s.size());
+//                    char c = 0;
+//                    output_file.write(&c, 1);
 
-                } else if ( tp == itCOORDDOMAIN) {
-                    Coordinate crd =  rec[x].value<Coordinate>();
-                    double v = crd.x();
-                    output_file.write((char *)&v, 8);
-                    v = crd.y();
-                    output_file.write((char *)&v, 8);
-                    v = crd.z();
-                    output_file.write((char *)&v, 8);
-                }
-            }
-        }
+//                } else if ( tp == itCOORDDOMAIN) {
+//                    Coordinate crd =  rec[x].value<Coordinate>();
+//                    double v = crd.x();
+//                    output_file.write((char *)&v, 8);
+//                    v = crd.y();
+//                    output_file.write((char *)&v, 8);
+//                    v = crd.z();
+//                    output_file.write((char *)&v, 8);
+//                }
+//            }
+//        }
     }
 
     return true;

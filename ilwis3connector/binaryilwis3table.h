@@ -23,12 +23,16 @@ public:
     quint32 rows() const;
     quint32 columns() const;
     QString columnName(int index);
+    void addStoreDefinition(const DataDefinition &def);
+    void storeRecord(std::ofstream &output_file, const std::vector<QVariant> &rec, int skip=iUNDEF);
+    bool openOutput(const QString &basename, std::ofstream &output_file);
 private:
     struct ColumnInfo{
         bool _isRaw;
         quint32 _offset;
         IlwisTypes _type;
         QString _name;
+        RawConverter _conv;
     };
     quint32 _rows;
     quint32 _columns;
