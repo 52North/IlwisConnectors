@@ -78,6 +78,7 @@ void Ilwis3Module::prepare()
     factory->addCreator("map","ilwis3",Ilwis3::GridCoverageConnector::create);
     factory->addCreator("georef","ilwis3",Ilwis3::GeorefConnector::create);
     factory->addCreator("polygonmap","ilwis3",Ilwis3::FeatureConnector::create);
+    factory->addCreator("segmentmap","ilwis3",Ilwis3::FeatureConnector::create);
 
     CatalogConnectorFactory *catfact = kernel()->factory<CatalogConnectorFactory>("catalogconnectorfactory", "ilwis");
     if ( catfact)
