@@ -35,8 +35,9 @@ private:
     bool getRings(qint32 startIndex, const BinaryIlwis3Table &topTable, const BinaryIlwis3Table& polTable, std::vector<vector<Coordinate2d> > &rings);
     bool isForwardStartDirection(const BinaryIlwis3Table &topTable, qint32 colForward, qint32 colBackward, qint32 colCoords, long index);
 
-    void writeRing(std::ofstream &output_file, const std::vector<Coordinate2d>& coords);
+    void writeCoords(std::ofstream &output_file, const std::vector<Coordinate2d>& coords, bool singleton=false);
     bool storeBinaryDataPolygon(Ilwis::FeatureCoverage *fcov, const QString &baseName);
+    bool storeBinaryDataLine(FeatureCoverage *fcov, const QString &baseName);
     bool storeMetaData(Ilwis::FeatureCoverage *fcov, IlwisTypes type);
     bool storeBinaryData(Ilwis::FeatureCoverage *fcov, IlwisTypes type);
 

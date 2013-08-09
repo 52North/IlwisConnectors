@@ -7,14 +7,14 @@
 #include "coverage.h"
 #include "module.h"
 #include "inifile.h"
-#include "ilwisdata.h"
+#include "coverage.h"
+#include "polygon.h"
 #include "ilwiscontext.h"
 #include "catalog.h"
 #include "numericdomain.h"
 #include "numericrange.h"
 #include "columndefinition.h"
 #include "table.h"
-#include "polygon.h"
 #include "geometry.h"
 #include "attributerecord.h"
 #include "feature.h"
@@ -25,6 +25,7 @@
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "binaryilwis3table.h"
+#include "coordinatedomain.h"
 #include "coverageconnector.h"
 #include "featureconnector.h"
 
@@ -410,12 +411,12 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
         for(int i=0; i < feature->trackSize(); ++i) {
             if ( geom.ilwisType() == itPOLYGON) {
                 Polygon pol = geom.toType<Polygon>();
-                writeRing(output_file, pol.outer());
+                writeCoords(output_file, pol.outer());
                 output_file.write((char *)&raw,8);
                 quint32 holeCount = pol.inners().size();
                 output_file.write((char *)&holeCount,4);
                 for(const std::vector<Coordinate2d>& coords : pol.inners() ) {
-                    writeRing(output_file, coords);
+                    writeCoords(output_file, coords);
                 }
                 ++raw;
             }
@@ -428,6 +429,50 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     return true;
 }
 
+bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString& baseName) {
+    BinaryIlwis3Table binTable;
+    std::ofstream output_file;
+    if(!binTable.openOutput(baseName + ".mps#", output_file))
+        return false;
+    IFeatureCoverage cov;
+    cov.set(fcov);
+    FeatureIterator iter(cov);
+    double raw = 1;
+    IDomain crddom;
+    crddom.prepare(cov->source().url().toString(), itCOORDDOMAIN);
+    DataDefinition def(crddom, cov->envelope().clone());
+    binTable.addStoreDefinition(def);
+    binTable.addStoreDefinition(def);
+    binTable.addStoreDefinition(def);
+    for_each(iter, iter.end(), [&](SPFeatureI feature){
+        const Geometry& geom = feature->geometry();
+        for(int i=0; i < feature->trackSize(); ++i) {
+            vector<QVariant> record(5);
+            if ( geom.ilwisType() == itLINE) {
+                 Line2D<Coordinate2d> line = geom.toType<Line2D<Coordinate2d>>();
+                 const Coordinate2d& crdmin = geom.envelope().min_corner();
+                 const Coordinate2d& crdmax = geom.envelope().max_corner();
+                 record[0].setValue(crdmin);
+                 record[1].setValue(crdmax);
+                 QList<Coordinate2d> points;
+                 for(const Coordinate2d& crd: line) {
+                    points.push_back(crd);    ;
+                 }
+                 record[2].setValue(points);
+                 record[3].setValue(false);
+                 record[4].setValue(raw);
+                 binTable.storeRecord(output_file, record);
+
+                 ++raw;
+            }
+        }
+
+    });
+
+    output_file.close();
+
+    return true;
+}
 
 bool FeatureConnector::storeBinaryData(FeatureCoverage *fcov, IlwisTypes type) {
     if ( type == 0)
@@ -438,8 +483,10 @@ bool FeatureConnector::storeBinaryData(FeatureCoverage *fcov, IlwisTypes type) {
     QString dir = context()->workingCatalog()->location().toLocalFile();
     QString baseName = dir + "/" + inf.baseName();
     bool ok = false;
-    if ( type & itPOLYGON) {
+    if ( hasType(type, itPOLYGON)) {
         ok = storeBinaryDataPolygon(fcov, baseName);
+    } else if ( hasType(type, itLINE)) {
+        ok = storeBinaryDataLine(fcov, baseName)    ;
     }
 
     return ok;
@@ -458,9 +505,11 @@ bool FeatureConnector::storeBinaryData(IlwisObject *obj) {
     return ok;
 }
 
-void FeatureConnector::writeRing(std::ofstream& output_file, const std::vector<Coordinate2d>& coords) {
+void FeatureConnector::writeCoords(std::ofstream& output_file, const std::vector<Coordinate2d>& coords, bool singleton) {
     quint32 crdCount = coords.size();
-    output_file.write((char *)&crdCount,4);
+    if(!singleton) {
+        output_file.write((char *)&crdCount,4);
+    }
     std::vector<double> crds(crdCount * 3);
     quint32 count = 0;
     for(const Coordinate2d& crd : coords) {
