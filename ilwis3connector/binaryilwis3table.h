@@ -39,6 +39,7 @@ private:
     quint32 _recordSize;
     char * _records;
     QVector<ColumnInfo> _columnInfo;
+    bool _loaded;
 
     void getColumnInfo(const ODF &odf, const QString &prfix="");
     void readData(char *memblock);
@@ -46,6 +47,7 @@ private:
     char *readCoordList(char *mem, long &count);
     char *moveTo(int row, const ColumnInfo &fld) const;
     bool check(quint32 row, quint32 col) const;
+    std::mutex _mutex;
 
 };
 }

@@ -22,7 +22,7 @@
 using namespace Ilwis ;
 using namespace Ilwis3;
 
-BinaryIlwis3Table::BinaryIlwis3Table() : _rows(0), _columns(0),_recordSize(0),_records(0)
+BinaryIlwis3Table::BinaryIlwis3Table() : _rows(0), _columns(0),_recordSize(0),_records(0), _loaded(false)
 {
 }
 
@@ -44,6 +44,10 @@ BinaryIlwis3Table::~BinaryIlwis3Table(){
 }
 
 bool BinaryIlwis3Table::load(const ODF& odf, const QString& prfix){
+    Locker lock(_mutex);
+    if( _loaded)
+        return true;
+
     QString prefix = prfix == "" ? "" : prfix + ":";
 
     bool ok;
@@ -75,7 +79,7 @@ bool BinaryIlwis3Table::load(const ODF& odf, const QString& prfix){
     qint64 size = file.size();
     char *memblock = new char [size];
     file.seek (0);
-    qint64 r = file.read (memblock, size);
+    file.read (memblock, size);
     file.close();
 
     _records = new char [ _recordSize * _rows];
@@ -85,6 +89,7 @@ bool BinaryIlwis3Table::load(const ODF& odf, const QString& prfix){
 
     delete[] memblock;
 
+    _loaded = true;
     return true;
 }
 
@@ -110,6 +115,10 @@ void BinaryIlwis3Table::getColumnInfo(const ODF& odf, const QString& prefix) {
             inf._offset = _recordSize;
             _recordSize+=4;
             inf._type = itINT32;
+        } if ( st == "Byte" ){
+            inf._offset = _recordSize;
+            _recordSize+=1;
+            inf._type = itINT8;
         } else if ( st == "String" ) {
             inf._offset = _recordSize;
             inf._type = itSTRING;
@@ -145,6 +154,7 @@ void BinaryIlwis3Table::readData(char *memblock) {
             const ColumnInfo& info = _columnInfo.at(c);
             char *p = _records + r * _recordSize + info._offset;
             if( info._isRaw  || info._type == itINT32){
+                long l1 = *(long *)(memblock + posFile);
                 *(long *)p = *(long *)(memblock + posFile);
                 posFile += 4;
             } else if ( info._type == itDOUBLE) {
@@ -200,7 +210,6 @@ bool BinaryIlwis3Table::get(quint32 row, quint32 column, double& v ) const {
     v = rUNDEF;
     char *p = moveTo(row,  info);
     if( info._isRaw  || info._type == itINT32){
-        double *ddd = (double *)p;
         long raw = p != 0 ? *(long *) p : iUNDEF;
         v = raw;
     }
@@ -300,7 +309,7 @@ inline char *BinaryIlwis3Table::moveTo(int row, const  ColumnInfo& fld) const{
 bool BinaryIlwis3Table::openOutput(const QString& basename, std::ofstream& output_file) {
     QFileInfo inf(basename);
     QString dir = context()->workingCatalog()->location().toLocalFile();
-    QString filename = dir + "/" + inf.baseName() + ".tb#";
+    QString filename = dir + "/" + inf.baseName();
     output_file.open(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
     if ( !output_file.is_open())
         return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
@@ -368,13 +377,28 @@ void BinaryIlwis3Table::storeRecord(std::ofstream& output_file, const std::vecto
                 output_file.write(&c, 1);
 
             } else if ( tp == itCOORDDOMAIN) {
-                Coordinate crd =  rec[x].value<Coordinate>();
-                double v = crd.x();
-                output_file.write((char *)&v, 8);
-                v = crd.y();
-                output_file.write((char *)&v, 8);
-                v = crd.z();
-                output_file.write((char *)&v, 8);
+                if ( rec[x].type() == QMetaType::QVariantList) {
+                    const QList<QVariant> points = rec[x].toList();
+                    long size = points.size();
+                    output_file.write((char *)&size, 4);
+                    for(const QVariant& pnt : points) {
+                        Coordinate2d crd = pnt.value<Coordinate2d>();
+                        double v = crd.x();
+                        output_file.write((char *)&v, 8);
+                        v = crd.y();
+                        output_file.write((char *)&v, 8);
+                        v = 0;
+                        output_file.write((char *)&v, 8);
+                    }
+                } else {
+                    Coordinate2d crd =  rec[x].value<Coordinate2d>();
+                    double v = crd.x();
+                    output_file.write((char *)&v, 8);
+                    v = crd.y();
+                    output_file.write((char *)&v, 8);
+                    v = 0;
+                    output_file.write((char *)&v, 8);
+                }
             }
         }
     }
