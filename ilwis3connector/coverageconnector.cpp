@@ -235,12 +235,12 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
     return true;
 }
 
-bool CoverageConnector::storeBinaryData(IlwisObject *obj, IlwisTypes type)
+bool CoverageConnector::storeBinaryData(IlwisObject *obj, IlwisTypes tp)
 {
     Coverage *coverage = static_cast<Coverage *>(obj);
-    ITable attTable = coverage->attributeTable(itPOLYGON);
+    ITable attTable = coverage->attributeTable(tp);
     if ( attTable.isValid()) {
-        QScopedPointer<TableConnector> conn(createTableConnector(attTable, coverage, type));
+        QScopedPointer<TableConnector> conn(createTableConnector(attTable, coverage, tp));
         return conn->storeBinaryData(attTable.ptr());
 
     }

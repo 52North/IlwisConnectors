@@ -18,7 +18,7 @@ protected:
     virtual void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const = 0;
     bool loadMetaData(Ilwis::IlwisObject *data);
     bool storeMetaData(IlwisObject *obj, IlwisTypes type) ;
-    bool storeBinaryData(IlwisObject *obj, IlwisTypes type);
+    bool storeBinaryData(IlwisObject *obj, IlwisTypes tp);
     TableConnector *createTableConnector(ITable &attTable, Coverage *coverage, IlwisTypes tp);
 
     RawConverter _converter;
