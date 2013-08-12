@@ -159,7 +159,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
     if (!csy.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
 
-    QString localName = Resource::toLocalFile(csy->source().url(),true);
+    QString localName = Resource::toLocalFile(csy->resource().url(),true);
     if ( localName == sUNDEF) {
         localName = CoordinateSystemConnector::createCsyFromCode(csy->code());
     }
@@ -214,7 +214,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
-        QString source = Resource::toLocalFile(dom->source().url(), true);
+        QString source = Resource::toLocalFile(dom->resource().url(), true);
         if ( dom->valueType() == itTHEMATICITEM) {
             IThematicDomain themdom = dom.get<ThematicDomain>();
             if ( themdom.isValid()) {
