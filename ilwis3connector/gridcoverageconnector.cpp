@@ -389,7 +389,7 @@ QString GridCoverageConnector::getGrfName(const IGridCoverage& gcov) {
         ERROR2(ERR_NO_INITIALIZED_2, "Georeference", gcov->name());
         return sUNDEF;
     }
-    QString localName = Resource::toLocalFile(grf->source().url(),true);
+    QString localName = Resource::toLocalFile(grf->resource().url(),true);
     QFileInfo localGrf(localName);
     if ( !localGrf.exists()) {
         //QFileInfo coveragePath(Resource::toLocalFile(obj->target()));
