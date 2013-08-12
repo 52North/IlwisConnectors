@@ -439,7 +439,10 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
     FeatureIterator iter(cov);
     double raw = 1;
     IDomain crddom;
-    crddom.prepare(cov->source().url().toString(), itCOORDDOMAIN);
+    crddom.prepare(cov->resource(IlwisObject::cmOUTPUT).url().toString(), itCOORDDOMAIN);
+    if ( !crddom.isValid()) {
+        return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateDomain", baseName);
+    }
     DataDefinition def(crddom, cov->envelope().clone());
     binTable.addStoreDefinition(def);
     binTable.addStoreDefinition(def);
