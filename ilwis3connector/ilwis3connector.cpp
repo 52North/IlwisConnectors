@@ -27,6 +27,8 @@ Ilwis3Connector::Ilwis3Connector(const Resource &item, bool load) : IlwisObjectC
     odf->setIniFile(fullname, load);
     _odf.reset(odf);
     _resource = Resource(fullname, item.ilwisType());
+    if (!load && item.id() != i64UNDEF)
+        _resource.setId(item.id());
 }
 
 bool Ilwis3Connector::loadMetaData(IlwisObject *data)
