@@ -22,6 +22,8 @@ protected:
     TableConnector *createTableConnector(ITable &attTable, Coverage *coverage, IlwisTypes tp);
 
     RawConverter _converter;
+private:
+    ITable prepareAttributeTable() const;
 };
 }
 }

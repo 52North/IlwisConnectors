@@ -57,6 +57,47 @@ bool CoverageConnector::getRawInfo(const QString& range, double& vmin, double& v
     return false;
 }
 
+ITable CoverageConnector::prepareAttributeTable() const{
+    QString file = _odf->value("BaseMap", "AttributeTable");
+    ITable extTable;
+    if ( file != sUNDEF) {
+        if(!extTable.prepare(file)){
+            kernel()->issues()->log(file,TR(ERR_NO_INITIALIZED_1).arg(file),IssueObject::itWarning);
+            return ITable();
+        }
+    }
+    ITable attTable;
+    Resource res(QUrl(QString("ilwis://internal/%1").arg(_odf->fileinfo().baseName())), itFLATTABLE);
+    if(!attTable.prepare(res)) {
+        ERROR1(ERR_NO_INITIALIZED_1,res.name());
+        return ITable();
+    }
+
+    IDomain covdom;
+    if (!covdom.prepare("count")){
+        return ITable();
+    }
+
+    if ( extTable.isValid()) {
+        for(int i=0; i < extTable->columns(); ++i) {
+            attTable->addColumn(extTable->columndefinition(i));
+        }
+    }
+    attTable->addColumn(COVERAGEKEYCOLUMN,covdom);
+    attTable->addColumn(FEATUREIDCOLUMN,covdom);
+
+    bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
+    if ( isNumeric) {
+        IDomain featuredom;
+        if (!featuredom.prepare("value")){
+            return ITable();
+        }
+        attTable->addColumn(FEATUREVALUECOLUMN,featuredom);
+    }
+    return attTable;
+
+}
+
 bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
 {
     Ilwis3Connector::loadMetaData(data);
@@ -76,18 +117,11 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     }
     coverage->setCoordinateSystem(csy);
 
-    QString file = _odf->value("BaseMap", "AttributeTable");
-    ITable attTable;
-    if ( file != sUNDEF) {
-        if(!attTable.prepare(file))
-            kernel()->issues()->log(data->name(),TR(ERR_NO_INITIALIZED_1).arg(data->name()),IssueObject::itWarning);
-    }
-    if (!attTable.isValid() && coverage->ilwisType() != itGRID)   {
-        Resource res(QUrl(QString("ilwis://internal/%1").arg(_odf->fileinfo().baseName())), itFLATTABLE);
-        if(!attTable.prepare(res))
-            return ERROR1(ERR_NO_INITIALIZED_1,data->name());
 
-    }
+    ITable attTable = prepareAttributeTable();
+    if (!attTable.isValid())
+        return false;
+
     coverage->attributeTable(ilwisType(_odf->fileinfo().fileName()),attTable);
     IDomain dom;
     if(!dom.prepare(_odf->fileinfo().canonicalFilePath())) {
@@ -215,15 +249,18 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
         QString source = Resource::toLocalFile(dom->resource().url(), true);
-        if ( dom->valueType() == itTHEMATICITEM) {
+        if ( dom->valueType() == itTHEMATICITEM && coverage->ilwisType() == itGRID) {
             IThematicDomain themdom = dom.get<ThematicDomain>();
             if ( themdom.isValid()) {
                 QString domInfo = QString("%1;Byte;class;%2;;").arg(source).arg(themdom->count());
                 _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
                 _odf->setKeyValue("BaseMap","Domain",source);
             }
-        } else if ( dom->valueType() == itINDEXEDITEM) {
-            _odf->setKeyValue("BaseMap","Domain",_odf->fileinfo().fileName());
+        } else  {
+            QString domName = _odf->fileinfo().fileName();
+            QString domInfo = QString("%1;Long;UniqueID;0;;").arg(domName);
+            _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
+            _odf->setKeyValue("BaseMap","Domain",domName);
         }
     }
 
