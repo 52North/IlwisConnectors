@@ -25,9 +25,9 @@ public:
     bool storeBinaryData(IlwisObject *obj);
 
 private:
-    bool loadBinaryPoints(FeatureCoverage *fcoverage, Ilwis::ITable &tbl);
-    bool loadBinarySegments(FeatureCoverage *fcoverage, ITable &tbl);
-    bool loadBinaryPolygons(FeatureCoverage *fcoverage, ITable &tbl);
+    bool loadBinaryPoints(FeatureCoverage *fcoverage);
+    bool loadBinarySegments(FeatureCoverage *fcoverage);
+    bool loadBinaryPolygons(FeatureCoverage *fcoverage);
     bool loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable &tbl);
     bool loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& tbl);
     //bool readRing(QDataStream &stream,boost::geometry::model::ring<Coordinate2d>& ring);
@@ -41,6 +41,15 @@ private:
     bool storeMetaData(Ilwis::FeatureCoverage *fcov, IlwisTypes type);
     bool storeBinaryData(Ilwis::FeatureCoverage *fcov, IlwisTypes type);
 
+    bool storeMetaLine(FeatureCoverage *fcov, const QString &dataFile);
+    void storeColumn(const QString &colName, const QString &domName, const QString &domInfo, const QString &storeType);
+
+    void writeCoord(std::ofstream& output_file, const Coordinate2d& crd) {
+        double x = crd.x();
+        double y = crd.y();
+        output_file.write((char *)&x, 8);
+        output_file.write((char *)&y, 8);
+    }
 };
 }
 }

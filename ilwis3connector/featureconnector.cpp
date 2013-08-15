@@ -249,8 +249,9 @@ bool FeatureConnector::readRing(QDataStream& stream, std::vector<Coordinate2d> &
    return true;
 }
 
-bool FeatureConnector::loadBinaryPolygons(FeatureCoverage *fcoverage, ITable& tbl) {
+bool FeatureConnector::loadBinaryPolygons(FeatureCoverage *fcoverage) {
     QString dataFile = _odf->value("PolygonMapStore","DataPol");
+    ITable tbl = fcoverage->attributeTable(itPOLYGON);
     if ( dataFile == sUNDEF) {
         return loadBinaryPolygons30(fcoverage, tbl);
     } else {
@@ -259,7 +260,7 @@ bool FeatureConnector::loadBinaryPolygons(FeatureCoverage *fcoverage, ITable& tb
     return false;
 }
 
-bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage, ITable& tbl) {
+bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     BinaryIlwis3Table mpsTable;
     if ( !mpsTable.load(_odf)) {
         return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->fileinfo().fileName())    ;
@@ -267,8 +268,9 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage, ITable& tb
     int colCoords = mpsTable.index("Coords");
     int colItemId = mpsTable.index("SegmentValue");
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-    if ( isNumeric) // in other case nr of record already has been set as it is based on a real table
-        tbl->setRows(mpsTable.rows());
+    ITable tbl = fcoverage->attributeTable(itLINE);
+//    if ( isNumeric) // in other case nr of record already has been set as it is based on a real table
+//        tbl->setRows(mpsTable.rows());
 
     SPAttributeRecord record( new AttributeRecord(tbl,COVERAGEKEYCOLUMN));
     double value;
@@ -297,7 +299,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage, ITable& tb
 
 }
 
-bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage, ITable& tbl) {
+bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
     BinaryIlwis3Table mppTable;
     if ( !mppTable.load(_odf)) {
         return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->fileinfo().fileName())    ;
@@ -308,6 +310,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage, ITable& tbl)
     int coordColumn = mppTable.index("Coordinate");
     int colItemId = mppTable.index("Name");
 
+    ITable tbl = fcoverage->attributeTable(itPOINT);
     bool newCase =  coordColumnX == iUNDEF;
     SPAttributeRecord record( new AttributeRecord(tbl,COVERAGEKEYCOLUMN));
 
@@ -341,30 +344,34 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
 
-    IDomain covdom;
-    ITable tbl = fcoverage->attributeTable(ilwisType(_odf->fileinfo().fileName()));
-    if (!covdom.prepare("count")){
-        return false;
-    }
-    tbl->addColumn(COVERAGEKEYCOLUMN,covdom);
-    tbl->addColumn(FEATUREIDCOLUMN,covdom);
-
-    bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-    if ( isNumeric) {
-        IDomain featuredom;
-        if (!featuredom.prepare("value")){
+    QString file = _odf->value("BaseMap", "AttributeTable");
+    ITable extTable;
+    if ( file != sUNDEF) {
+        if(!extTable.prepare(file)){
+            kernel()->issues()->log(file,TR(ERR_NO_INITIALIZED_1).arg(file),IssueObject::itWarning);
             return false;
         }
-        tbl->addColumn(FEATUREVALUECOLUMN,featuredom);
     }
-
+    bool ok = false;
     if (fcoverage->featureTypes() == itPOINT)
-        return loadBinaryPoints(fcoverage, tbl);
+        ok = loadBinaryPoints(fcoverage);
     else if (fcoverage->featureTypes() == itLINE)
-        return loadBinarySegments(fcoverage, tbl);
+        ok = loadBinarySegments(fcoverage);
     else if (fcoverage->featureTypes() == itPOLYGON)
-        return loadBinaryPolygons(fcoverage, tbl);
-    return false;
+        ok = loadBinaryPolygons(fcoverage);
+    if ( ok && extTable.isValid()) {
+        ITable attTbl = fcoverage->attributeTable(fcoverage->featureTypes());
+        quint32 keyIndex = attTbl->columnIndex(COVERAGEKEYCOLUMN);
+        for(quint32 rowExt=0; rowExt < extTable->rows(); ++rowExt) {
+            vector<QVariant> rec = extTable->record(rowExt);
+            for(quint32 rowAtt = 0; rowAtt < attTbl->rows(); ++rowAtt ) {
+                if ( attTbl->cell(keyIndex, rowAtt) == rowExt + 1) {
+                    attTbl->record(rowAtt,rec);
+                }
+            }
+        }
+    }
+    return ok;
 }
 
 bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
@@ -392,6 +399,8 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
     else
        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",obj->name());
 
+    ITable tbl = fcoverage->attributeTable(coverageType);
+    tbl->setRows(fcoverage->featureCount(coverageType));
     return true;
 
 }
@@ -429,44 +438,43 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     return true;
 }
 
+
+
 bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString& baseName) {
-    BinaryIlwis3Table binTable;
     std::ofstream output_file;
-    if(!binTable.openOutput(baseName + ".mps#", output_file))
-        return false;
+    QFileInfo inf(baseName);
+    QString dir = context()->workingCatalog()->location().toLocalFile();
+    QString filename = dir + "/" + inf.baseName() + ".mps#";
+    output_file.open(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
+    if ( !output_file.is_open())
+        return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
+    char header[128];
+    memset(header, 0, 128);
+    output_file.write(header,128);
+
     IFeatureCoverage cov;
     cov.set(fcov);
     FeatureIterator iter(cov);
-    double raw = 1;
-    IDomain crddom;
-    crddom.prepare(cov->resource(IlwisObject::cmOUTPUT).url().toString(), itCOORDDOMAIN);
-    if ( !crddom.isValid()) {
-        return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateDomain", baseName);
-    }
-    DataDefinition def(crddom, cov->envelope().clone());
-    binTable.addStoreDefinition(def);
-    binTable.addStoreDefinition(def);
-    binTable.addStoreDefinition(def);
+    quint32 raw = 1;
+
     for_each(iter, iter.end(), [&](SPFeatureI feature){
         const Geometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
-            vector<QVariant> record(5);
             if ( geom.ilwisType() == itLINE) {
-                 Line2D<Coordinate2d> line = geom.toType<Line2D<Coordinate2d>>();
-                 const Coordinate2d& crdmin = geom.envelope().min_corner();
-                 const Coordinate2d& crdmax = geom.envelope().max_corner();
-                 record[0].setValue(crdmin);
-                 record[1].setValue(crdmax);
-                 QList<Coordinate2d> points;
-                 for(const Coordinate2d& crd: line) {
-                    points.push_back(crd);    ;
-                 }
-                 record[2].setValue(points);
-                 record[3].setValue(false);
-                 record[4].setValue(raw);
-                 binTable.storeRecord(output_file, record);
-
-                 ++raw;
+                Line2D<Coordinate2d> line = geom.toType<Line2D<Coordinate2d>>();
+                const Coordinate2d& crdmin = geom.envelope().min_corner();
+                const Coordinate2d& crdmax = geom.envelope().max_corner();
+                writeCoord(output_file, crdmin);
+                writeCoord(output_file, crdmax);
+                int noOfCoordsBytes = line.size() * 16;
+                output_file.write((char *)&noOfCoordsBytes, 4);
+                for(const Coordinate2d& crd: line) {
+                    writeCoord(output_file, crd);
+                }
+                long deleted=1;
+                output_file.write((char *)&deleted, 4);
+                output_file.write((char *)&raw, 4);
+                ++raw;
             }
         }
 
@@ -525,6 +533,55 @@ void FeatureConnector::writeCoords(std::ofstream& output_file, const std::vector
 
 }
 
+void FeatureConnector::storeColumn(const QString& colName, const QString& domName, const QString& domInfo, const QString& storeType) {
+    _odf->setKeyValue(colName, "Time", Time::now().toString());
+    _odf->setKeyValue(colName, "Version", "3.1");
+    _odf->setKeyValue(colName, "Class", "Column");
+    _odf->setKeyValue(colName, "Domain", domName);
+   _odf->setKeyValue(colName, "DomainInfo", domInfo);
+    _odf->setKeyValue(colName, "StoreType", storeType);
+     _odf->setKeyValue(colName, "Stored", "Yes");
+    _odf->setKeyValue(colName, "ReadOnly", "No");
+    _odf->setKeyValue(colName, "OwnedByTable", "Yes");
+    _odf->setKeyValue(colName, "Type", "ColumnStore");
+}
+
+bool FeatureConnector::storeMetaLine(FeatureCoverage *fcov, const QString& dataFile){
+
+    _odf->setKeyValue("BaseMap","Type","SegmentMap");
+    _odf->setKeyValue("SegmentMap","Type","SegmentMapStore");
+    _odf->setKeyValue("SegmentMapStore","Format",QString::number(2));
+    _odf->setKeyValue("SegmentMapStore","DeletedPolygons",QString::number(0));
+    _odf->setKeyValue("Ilwis","Class","ILWIS::Segment Map");
+
+    int noOfLines = fcov->featureCount(itLINE);
+    _odf->setKeyValue("SegmentMapStore", "Segments", QString::number(noOfLines));
+
+    _odf->setKeyValue("Table", "Domain", "None.dom");
+    _odf->setKeyValue("Table", "DomainInfo", "None.dom;Byte;none;0;;");
+    _odf->setKeyValue("Table", "Columns", QString::number(5));
+    _odf->setKeyValue("Table", "Records", QString::number(noOfLines));
+    _odf->setKeyValue("Table", "Type", "TableStore");
+
+    QString localFile = dataFile + ".mps#";
+    _odf->setKeyValue("TableStore", "Data", localFile);
+    _odf->setKeyValue("TableStore", "UseAs", "No");
+    _odf->setKeyValue("TableStore", "Type", "TableBinary");
+    _odf->setKeyValue("TableStore", "Col0", "MinCoords");
+    _odf->setKeyValue("TableStore", "Col1", "MaxCoords");
+    _odf->setKeyValue("TableStore", "Col2", "Coords");
+    _odf->setKeyValue("TableStore", "Col3", "Deleted");
+    _odf->setKeyValue("TableStore", "Col4", "SegmentValue");
+
+    storeColumn("Col:MinCoords","eth.csy","eth.csy;Coord;coord;0;;", "Coord");
+    storeColumn("Col:MaxCoords","eth.csy","eth.csy;Coord;coord;0;;", "Coord");
+    storeColumn("Col:Coords","CoordBuf.dom","CoordBuf.dom;?;coordbuf;0;;", "CoordBuf");
+    storeColumn("Col:Deleted","bool.dom","bool.dom;Byte;bool;0;;", "Long");
+    storeColumn("Col:SegmentValue",dataFile + ".mps",dataFile + ".mps;Long;UniqueID;0;;", "Long");
+
+    return true;
+}
+
 bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& dataFile){
 
     _odf->setKeyValue("BaseMap","Type","PolygonMap");
@@ -558,11 +615,14 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     _odf->setKeyValue("DomainSort","Sorting","AlphaNumeric");
     _odf->setKeyValue("DomainSort","Prefix","feature");
     _odf->setKeyValue("DomainSort","Class","Domain UniqueID");
-    _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(itPOLYGON)));
+    _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(type)));
 
 
     if ( fcov->featureTypes() & itPOLYGON){
         ok = storeMetaPolygon(fcov, dataFile);
+    }
+    if ( fcov->featureTypes() & itLINE){
+        ok = storeMetaLine(fcov, dataFile);
     }
 
     _odf->store();
