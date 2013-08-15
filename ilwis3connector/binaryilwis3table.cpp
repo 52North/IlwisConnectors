@@ -309,7 +309,7 @@ inline char *BinaryIlwis3Table::moveTo(int row, const  ColumnInfo& fld) const{
 bool BinaryIlwis3Table::openOutput(const QString& basename, std::ofstream& output_file) {
     QFileInfo inf(basename);
     QString dir = context()->workingCatalog()->location().toLocalFile();
-    QString filename = dir + "/" + inf.baseName();
+    QString filename = dir + "/" + inf.fileName();
     output_file.open(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
     if ( !output_file.is_open())
         return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
