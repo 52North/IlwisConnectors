@@ -204,7 +204,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     }
     QDataStream stream(&file);
     int nrPolygons = fcoverage->featureCount(itPOLYGON);
-    SPAttributeRecord record( new AttributeRecord(tbl,COVERAGEKEYCOLUMN));
+    SPAttributeRecord record( new AttributeRecord(tbl,FEATUREIDCOLUMN));
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
     for(int j=0; j < nrPolygons; ++j) {
@@ -220,7 +220,8 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         if ( isNumeric) {
             tbl->cell(COVERAGEKEYCOLUMN, j, QVariant(j));
             tbl->cell(FEATUREVALUECOLUMN, j, QVariant(value));
-            fcoverage->newFeature({pol},j, record);
+            SPFeatureI feature = fcoverage->newFeature({pol},j, record);
+            tbl->cell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         } else {
             quint32 itemId = value;
             tbl->cell(COVERAGEKEYCOLUMN, j, QVariant(itemId));
@@ -272,7 +273,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
 //    if ( isNumeric) // in other case nr of record already has been set as it is based on a real table
 //        tbl->setRows(mpsTable.rows());
 
-    SPAttributeRecord record( new AttributeRecord(tbl,COVERAGEKEYCOLUMN));
+    SPAttributeRecord record( new AttributeRecord(tbl,FEATUREIDCOLUMN));
     double value;
     for(quint32 i= 0; i < mpsTable.rows(); ++i) {
         std::vector<Coordinate > coords;
@@ -284,7 +285,9 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
         if ( isNumeric) {
             tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(i));
             tbl->cell(FEATUREVALUECOLUMN, i, QVariant(value));
-            fcoverage->newFeature({line},i, record);
+            SPFeatureI feature = fcoverage->newFeature({line},i, record);
+            tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+
         } else {
             quint32 itemId = value;
             tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
@@ -312,7 +315,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
 
     ITable tbl = fcoverage->attributeTable(itPOINT);
     bool newCase =  coordColumnX == iUNDEF;
-    SPAttributeRecord record( new AttributeRecord(tbl,COVERAGEKEYCOLUMN));
+    SPAttributeRecord record( new AttributeRecord(tbl,FEATUREIDCOLUMN));
 
 
     for(quint32 i= 0; i < mppTable.rows(); ++i) {
