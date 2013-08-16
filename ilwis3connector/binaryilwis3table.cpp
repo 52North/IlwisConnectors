@@ -111,14 +111,14 @@ void BinaryIlwis3Table::getColumnInfo(const ODF& odf, const QString& prefix) {
             inf._offset = _recordSize;
             _recordSize+=4;
             inf._type = itINT32;
-        } if ( st == "Int" ){
+        } if ( st == "Int" ){ // in practice same as long
             inf._offset = _recordSize;
             _recordSize+=4;
             inf._type = itINT32;
-        } if ( st == "Byte" ){
+        } if ( st == "Byte" ){ // in practive same as long
             inf._offset = _recordSize;
-            _recordSize+=1;
-            inf._type = itINT8;
+            _recordSize+=4;
+            inf._type = itINT32;
         } else if ( st == "String" ) {
             inf._offset = _recordSize;
             inf._type = itSTRING;
@@ -132,7 +132,6 @@ void BinaryIlwis3Table::getColumnInfo(const ODF& odf, const QString& prefix) {
             inf._offset = _recordSize;
             _recordSize+=8;
             inf._type  = itDOUBLE;
-
         } else if ( st == "Coord" ) {
             inf._offset = _recordSize;
             _recordSize += 16;
@@ -153,11 +152,11 @@ void BinaryIlwis3Table::readData(char *memblock) {
         for(quint32 c = 0; c < _columns; ++c) {
             const ColumnInfo& info = _columnInfo.at(c);
             char *p = _records + r * _recordSize + info._offset;
-            if( info._isRaw  || info._type == itINT32){
+            if(  info._type == itINT32){
                 long l1 = *(long *)(memblock + posFile);
                 *(long *)p = *(long *)(memblock + posFile);
                 posFile += 4;
-            } else if ( info._type == itDOUBLE) {
+             }else if ( info._type == itDOUBLE) {
                 *(double *)p = *(double *)(memblock + posFile);
                 //v33 = *(double *)p;
                 posFile += 8;
