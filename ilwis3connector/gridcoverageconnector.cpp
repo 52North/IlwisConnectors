@@ -301,7 +301,8 @@ bool GridCoverageConnector::storeBinaryData(IlwisObject *obj)
     bool ok = false;
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
         calcStatics(obj, NumericStatistics::pBASIC);
-        RawConverter conv(gcov->statistics().min(), gcov->statistics().max(),pow(10, -gcov->statistics().significantDigits()));
+        const NumericStatistics& stats = gcov->statistics();
+        RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - stats.significantDigits()));
 
 
         std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
@@ -440,9 +441,10 @@ bool GridCoverageConnector::storeMetaData( IlwisObject *obj)  {
 
     const IDomain dom = gcov->datadef().domain();
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
-        int digits = gcov->statistics().significantDigits();
-        RawConverter conv(gcov->statistics().min(), gcov->statistics().max(),pow(10, -digits)) ;
-        qint32 delta = gcov->statistics().max() - gcov->statistics().min();
+        const NumericStatistics& stats = gcov->statistics();
+        int digits = stats.significantDigits();
+        RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - digits));
+        qint32 delta = stats[NumericStatistics::pRANGE];
         if ( delta >= 0 && delta < 256 &&  digits == 0){
            _odf->setKeyValue("MapStore","Type","Byte");
         }
