@@ -219,7 +219,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
 
         quint16 digits = coverage->statistics().significantDigits();
-        qint32 delta = coverage->statistics()[NumericStatistics::pRANGE];
+        qint32 delta = coverage->statistics()[NumericStatistics::pDELTA];
         if ( delta >= 0 && delta < 256 && digits == 0){
             if ( delta >= 0 && delta < 256 && digits == 0){
                 if ( coverage->datadef().domain()->code() == "boolean"){
