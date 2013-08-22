@@ -310,7 +310,7 @@ bool GridCoverageConnector::storeBinaryData(IlwisObject *obj)
             return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
 
         if ( conv.storeType() == itUINT8) {
-            ok = save<quint8>(output_file,RawConverter(), gcov,sz);
+            ok = save<quint8>(output_file,conv.scale() == 1 ? RawConverter() : conv, gcov,sz);
         } else if ( conv.storeType() == itINT16) {
             ok = save<qint16>(output_file,conv, gcov,sz);
         } else if ( conv.storeType() == itINT32) {
@@ -447,8 +447,9 @@ bool GridCoverageConnector::storeMetaData( IlwisObject *obj)  {
         qint32 delta = stats[NumericStatistics::pDELTA];
         if ( delta >= 0 && delta < 256 &&  digits == 0){
            _odf->setKeyValue("MapStore","Type","Byte");
-        }
-        else if ( conv.storeType() == itINT16){
+        } else if ( conv.storeType() == itUINT8){
+           _odf->setKeyValue("MapStore","Type","Byte");
+        } else if ( conv.storeType() == itINT16){
             _odf->setKeyValue("MapStore","Type","Int");
         } else if ( conv.storeType() == itINT32){
             _odf->setKeyValue("MapStore","Type","Long");
