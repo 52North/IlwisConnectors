@@ -80,9 +80,10 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
     Size sz = grf->size();
     _odf->setKeyValue("GeoRef","Lines", QString::number(sz.ysize()));
     _odf->setKeyValue("GeoRef","Columns", QString::number(sz.xsize()));
-    CornersGeoReference *cgrf = dynamic_cast<CornersGeoReference *>(grf);
-    if ( cgrf) {
-        _odf->setKeyValue("GeoRef","CornersOfCorners", cgrf->isCornersOfCorners()? "Yes" : "No");
+    //CornersGeoReference *cgrf = dynamic_cast<CornersGeoReference *>(grf);
+    if ( grf->grfType<CornersGeoReference>()) {
+        QSharedPointer<CornersGeoReference> cgrf = grf->impl<CornersGeoReference>();
+        _odf->setKeyValue("GeoRef","CornersOfCorners", cgrf->isCornersOfCorners() ? "Yes" : "No");
         _odf->setKeyValue("GeoRef","Type", "GeoRefCorners");
         Coordinate cmin = cgrf->envelope().min_corner();
         Coordinate cmax = cgrf->envelope().max_corner();
