@@ -266,7 +266,7 @@ Grid* GridCoverageConnector::loadGridData(IlwisObject* data)
         if (!covdom.prepare("count")){
             return 0;
         }
-        tbl->addColumn(COVERAGEKEYCOLUMN,covdom);
+        //tbl->addColumn(COVERAGEKEYCOLUMN,covdom);
         for(quint32 i=0; i < tbl->rows() ; ++i) {
             tbl->cell(COVERAGEKEYCOLUMN,i, i);
         }
