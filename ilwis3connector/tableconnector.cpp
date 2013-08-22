@@ -194,7 +194,7 @@ bool TableConnector::storeBinaryData(IlwisObject *obj)
 }
 
 QString TableConnector::getDomainName(const IDomain& dom, bool& isSystem) {
-    QString name = code2name(dom->code(), "domain") ;
+    QString name = dom->code() != sUNDEF ? code2name(dom->code(), "domain") : sUNDEF;
     if ( name != sUNDEF)
         return name;
     isSystem = false;
