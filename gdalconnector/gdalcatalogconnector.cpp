@@ -66,6 +66,9 @@ bool GdalCatalogConnector::loadItems()
 
     QSet<Resource> gdalitems;
     QList<Resource> folders;
+    if (!gdal()->isValid()) {
+        return ERROR1(ERR_NO_INITIALIZED_1,"gdal library");
+    }
     foreach(QFileInfo file, fileList) {
         QUrl container = location;
         QString path = file.canonicalFilePath();

@@ -35,6 +35,9 @@ IlwisTypes Ilwis::Gdal::GdalConnector::ilwisType(const QString &name)
 
 bool GdalConnector::loadMetaData(IlwisObject *data)
 {
+    if (!gdal()->isValid()) {
+        return ERROR1(ERR_NO_INITIALIZED_1,"gdal library");
+    }
     if ( _filename == "") {
         return ERROR1(ERR_MISSING_DATA_FILE_1,"Gdal reading");
     }
