@@ -3,8 +3,9 @@
 # Project created by QtCreator 2012-09-19T13:18:13
 #
 #-------------------------------------------------
-TARGET = gdalconnector
+
 CONFIG += plugin
+TARGET = gdalconnector
 
 include(global.pri)
 
@@ -12,6 +13,8 @@ DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
 DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
 QT       -= gui
+
+TEMPLATE = lib
 
 DEFINES += GDALCONNECTOR_LIBRARY
 
@@ -41,7 +44,7 @@ HEADERS += gdalconnector/gdalconnector.h\
     gdalconnector/gdalobjectfactory.h \
     gdalconnector/georefconnector.h
 		
-TEMPLATE = lib
+
 
 INCLUDEPATH += $$PWD/../external/gdalheaders
 
@@ -55,5 +58,4 @@ DEPENDPATH += $$PWD/core
 
 OTHER_FILES += \
     gdalconnector/gdalconnector.json
-
 
