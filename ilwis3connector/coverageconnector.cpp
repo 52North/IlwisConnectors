@@ -57,7 +57,7 @@ bool CoverageConnector::getRawInfo(const QString& range, double& vmin, double& v
     return false;
 }
 
-ITable CoverageConnector::prepareAttributeTable(const QString& file, IlwisTypes tp) const{
+ITable CoverageConnector::prepareAttributeTable(const QString& file, const QString& basemaptype) const{
 
     ITable extTable;
     if ( file != sUNDEF) {
@@ -73,7 +73,7 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, IlwisTypes 
     }
 
     ITable attTable;
-    if ( hasType(tp, itFEATURECOVERAGE) ) {
+    if ( basemaptype != "Map" ) {
         Resource res(QUrl(QString("ilwis://internal/%1").arg(_odf->fileinfo().baseName())), itFLATTABLE);
         if(!attTable.prepare(res)) {
             ERROR1(ERR_NO_INITIALIZED_1,res.name());
@@ -124,9 +124,10 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
 
 
     QString attfile = _odf->value("BaseMap", "AttributeTable");
+    QString basemaptype = _odf->value("BaseMap", "Type");
     // feature coverages always have an attribute table; rasters might have
-    if ( hasType(coverage->ilwisType(), itFEATURECOVERAGE) || attfile != sUNDEF) {
-        ITable attTable = prepareAttributeTable(attfile, coverage->ilwisType());
+    if ( basemaptype != "Map" || attfile != sUNDEF) {
+        ITable attTable = prepareAttributeTable(attfile, basemaptype);
         if (!attTable.isValid())
             return false;
 

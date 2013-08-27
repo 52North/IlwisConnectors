@@ -23,7 +23,7 @@ protected:
 
     RawConverter _converter;
 private:
-    ITable prepareAttributeTable(const QString &file, IlwisTypes type) const;
+    ITable prepareAttributeTable(const QString &file, const QString& basemaptype) const;
 };
 }
 }
