@@ -30,6 +30,7 @@
 #include "coverageconnector.h"
 #include "gridcoverageconnector.h"
 #include "gdalobjectfactory.h"
+#include "gdalproxy.h"
 
 using namespace Ilwis;
 using namespace Gdal;
@@ -62,6 +63,8 @@ bool GdalObjectFactory::canUse(const Resource &item) const
         return false;
 
     IlwisTypes type = item.ilwisType() ;
+    if (!gdal()->supports(item))
+        return false;
 
     if ( type & itDOMAIN)
         return true;
