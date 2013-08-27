@@ -58,7 +58,7 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data){
 
         QString projectionName(gdal()->getAttributeValue(srshandle,"Projection",0));
         IProjection projection;
-        projection.prepare("wkt=" + projectionName);
+        projection.prepare("code=wkt:" + projectionName);
         if ( projection.isValid()) {
             setProjectionParameter(srshandle, "false_easting", Projection::pvX0, projection);
             setProjectionParameter(srshandle, "false_northing", Projection::pvY0, projection);
@@ -73,7 +73,7 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data){
 
         QString ellipsoidName(gdal()->getAttributeValue(srshandle,"SPHEROID",0));
         IEllipsoid ellipsoid;
-        ellipsoid.prepare("wkt=" + ellipsoidName);
+        ellipsoid.prepare("code=wkt:" + ellipsoidName);
         if ( ellipsoid.isValid())
             csyp->setEllipsoid(ellipsoid);
     }
