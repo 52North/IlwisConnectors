@@ -57,8 +57,8 @@ bool CoverageConnector::getRawInfo(const QString& range, double& vmin, double& v
     return false;
 }
 
-ITable CoverageConnector::prepareAttributeTable() const{
-    QString file = _odf->value("BaseMap", "AttributeTable");
+ITable CoverageConnector::prepareAttributeTable(const QString& file, IlwisTypes tp) const{
+
     ITable extTable;
     if ( file != sUNDEF) {
         if(!extTable.prepare(file)){
@@ -66,23 +66,28 @@ ITable CoverageConnector::prepareAttributeTable() const{
             return ITable();
         }
     }
-    ITable attTable;
-    Resource res(QUrl(QString("ilwis://internal/%1").arg(_odf->fileinfo().baseName())), itFLATTABLE);
-    if(!attTable.prepare(res)) {
-        ERROR1(ERR_NO_INITIALIZED_1,res.name());
-        return ITable();
-    }
 
     IDomain covdom;
     if (!covdom.prepare("count")){
         return ITable();
     }
 
-    if ( extTable.isValid()) {
-        for(int i=0; i < extTable->columns(); ++i) {
-            attTable->addColumn(extTable->columndefinition(i));
+    ITable attTable;
+    if ( hasType(tp, itFEATURECOVERAGE) ) {
+        Resource res(QUrl(QString("ilwis://internal/%1").arg(_odf->fileinfo().baseName())), itFLATTABLE);
+        if(!attTable.prepare(res)) {
+            ERROR1(ERR_NO_INITIALIZED_1,res.name());
+            return ITable();
         }
+        if ( extTable.isValid()) {
+            for(int i=0; i < extTable->columns(); ++i) {
+                attTable->addColumn(extTable->columndefinition(i));
+            }
+        }
+    } else {
+        attTable = extTable;
     }
+
     attTable->addColumn(COVERAGEKEYCOLUMN,covdom);
     attTable->addColumn(FEATUREIDCOLUMN,covdom);
 
@@ -118,11 +123,15 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     coverage->setCoordinateSystem(csy);
 
 
-    ITable attTable = prepareAttributeTable();
-    if (!attTable.isValid())
-        return false;
+    QString attfile = _odf->value("BaseMap", "AttributeTable");
+    // feature coverages always have an attribute table; rasters might have
+    if ( hasType(coverage->ilwisType(), itFEATURECOVERAGE) || attfile != sUNDEF) {
+        ITable attTable = prepareAttributeTable(attfile, coverage->ilwisType());
+        if (!attTable.isValid())
+            return false;
 
-    coverage->attributeTable(ilwisType(_odf->fileinfo().fileName()),attTable);
+        coverage->attributeTable(ilwisType(_odf->fileinfo().fileName()),attTable);
+    }
     IDomain dom;
     if(!dom.prepare(_odf->fileinfo().canonicalFilePath())) {
         kernel()->issues()->log(data->name(),TR(ERR_NO_INITIALIZED_1).arg(data->name()));
