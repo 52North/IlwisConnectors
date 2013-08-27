@@ -36,15 +36,14 @@ bool GridCoverageConnector::loadMetaData(IlwisObject *data){
 
     auto *gcoverage = static_cast<GridCoverage *>(data);
 
-    QSize sz(gdal()->xsize(_dataSet), gdal()->ysize(_dataSet));
-    gcoverage->size(sz);
-
-
     IGeoReference grf;
     if(!grf.prepare(_resource.url().toLocalFile()))
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
 
     gcoverage->georeference(grf);
+
+    Size sz(gdal()->xsize(_dataSet), gdal()->ysize(_dataSet), gdal()->layerCount(_dataSet));
+    gcoverage->size(sz);
 
     int layerIndex = 1;
     auto index = _internalPath.indexOf("layerindex=");
@@ -68,7 +67,6 @@ bool GridCoverageConnector::loadMetaData(IlwisObject *data){
     _gdalValueType = gdal()->rasterDataType(layerHandle);
     _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
 
-    _layers  = gdal()->layerCount(_dataSet);
     return true;
 }
 
@@ -101,9 +99,10 @@ Grid *GridCoverageConnector::loadGridData(IlwisObject* data){
         ERROR2(ERR_COULD_NOT_LOAD_2, "GDAL","layer");
         return 0;
     }
+    GridCoverage *gc = static_cast<GridCoverage *>(data);
     Grid *grid = 0;
     if ( grid == 0) {
-        GridCoverage *gc = static_cast<GridCoverage *>(data);
+
         Size sz = gc->size();
         grid =new Grid(sz);
     }
@@ -113,31 +112,38 @@ Grid *GridCoverageConnector::loadGridData(IlwisObject* data){
     char *block = new char[blockSizeBytes];
     int count = 0;
     quint64 totalLines =grid->size().ysize();
-    quint64 linesLeft = totalLines;
-    while(true) {
-        if ( block == 0) {
-            kernel()->issues()->log(TR("Corrupt or invalid data size when reading data(GDAL connector)"));
-            return 0;
-        }
-        if ( linesLeft > linesPerBlock)
-            gdal()->rasterIO(layerHandle,GF_Read,0,count * linesPerBlock,grid->size().xsize(), linesPerBlock,
-                             block,grid->size().xsize(), linesPerBlock,_gdalValueType,0,0 );
-        else {
-            gdal()->rasterIO(layerHandle,GF_Read,0,count * linesPerBlock,grid->size().xsize(), linesLeft,
-                             block,grid->size().xsize(), linesLeft,_gdalValueType,0,0 );
-            break;
-        }
-        quint32 noItems = grid->blockSize(count);
-         if ( noItems == iUNDEF)
-            return 0;
-        std::vector<double> values(noItems);
-        for(quint32 i=0; i < noItems; ++i) {
-            double v = value(block, i);
-            values[i] = v;
-        }
+    quint32 layer = 1;
+    while(layer <= gc->size().zsize()) {
+        quint64 linesLeft = totalLines;
+        while(true) {
+            if ( block == 0) {
+                kernel()->issues()->log(TR("Corrupt or invalid data size when reading data(GDAL connector)"));
+                return 0;
+            }
+            if ( linesLeft > linesPerBlock)
+                gdal()->rasterIO(layerHandle,GF_Read,0,count * linesPerBlock,grid->size().xsize(), linesPerBlock,
+                                 block,grid->size().xsize(), linesPerBlock,_gdalValueType,0,0 );
+            else {
+                gdal()->rasterIO(layerHandle,GF_Read,0,count * linesPerBlock,grid->size().xsize(), linesLeft,
+                                 block,grid->size().xsize(), linesLeft,_gdalValueType,0,0 );
 
-        ++count;
-        linesLeft -= linesPerBlock;
+            }
+            quint32 noItems = grid->blockSize(count);
+             if ( noItems == iUNDEF)
+                return 0;
+            std::vector<double> values(noItems);
+            for(quint32 i=0; i < noItems; ++i) {
+                double v = value(block, i);
+                values[i] = v;
+            }
+            grid->setBlock(count, values, true);
+            ++count;
+            if ( linesLeft < linesPerBlock )
+                break;
+            linesLeft -= linesPerBlock;
+        }
+        if ( ++layer < gc->size().zsize())
+            layerHandle = gdal()->getRasterBand(_dataSet, layer);
     }
 
     delete [] block;
