@@ -31,9 +31,9 @@ GDALProxy::GDALProxy(const QString& library) {
 
 GDALProxy::~GDALProxy()
 {
-    foreach(GdalHandle handle, _openedDatasets) {
-        close(handle._handle);
-    }
+//    foreach(GdalHandle handle, _openedDatasets) {
+//        close(handle._handle);
+//    }
 }
 
 bool GDALProxy::prepare() {
@@ -136,6 +136,16 @@ bool GDALProxy::isValid() const
 QStringList GDALProxy::rasterNameFilter() const
 {
     return _rasterExtensions;
+}
+
+bool GDALProxy::supports(const Resource &item) const
+{
+    QFileInfo inf(item.toLocalFile());
+    QString ext = inf.suffix();
+    QString filter = "*." + ext;
+    if ( !gdal()->rasterNameFilter().contains(filter,Qt::CaseInsensitive))
+        return false;
+    return true;
 }
 
 GDALDatasetH GDALProxy::openFile(const QString &filename, quint64 asker, GDALAccess mode) {
