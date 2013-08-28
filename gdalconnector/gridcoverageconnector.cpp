@@ -110,21 +110,22 @@ Grid *GridCoverageConnector::loadGridData(IlwisObject* data){
     quint32 linesPerBlock = grid->maxLines();
     qint64 blockSizeBytes = grid->blockSize(0) * _typeSize;
     char *block = new char[blockSizeBytes];
-    int count = 0;
+    int count = 0; // block count over all the layers
     quint64 totalLines =grid->size().ysize();
     quint32 layer = 1;
     while(layer <= gc->size().zsize()) {
         quint64 linesLeft = totalLines;
+        int gdalindex = 0; // count within one gdal layer
         while(true) {
             if ( block == 0) {
                 kernel()->issues()->log(TR("Corrupt or invalid data size when reading data(GDAL connector)"));
                 return 0;
             }
             if ( linesLeft > linesPerBlock)
-                gdal()->rasterIO(layerHandle,GF_Read,0,count * linesPerBlock,grid->size().xsize(), linesPerBlock,
+                gdal()->rasterIO(layerHandle,GF_Read,0,gdalindex * linesPerBlock,grid->size().xsize(), linesPerBlock,
                                  block,grid->size().xsize(), linesPerBlock,_gdalValueType,0,0 );
             else {
-                gdal()->rasterIO(layerHandle,GF_Read,0,count * linesPerBlock,grid->size().xsize(), linesLeft,
+                gdal()->rasterIO(layerHandle,GF_Read,0,gdalindex * linesPerBlock,grid->size().xsize(), linesLeft,
                                  block,grid->size().xsize(), linesLeft,_gdalValueType,0,0 );
 
             }
@@ -138,6 +139,7 @@ Grid *GridCoverageConnector::loadGridData(IlwisObject* data){
             }
             grid->setBlock(count, values, true);
             ++count;
+            ++gdalindex;
             if ( linesLeft < linesPerBlock )
                 break;
             linesLeft -= linesPerBlock;
