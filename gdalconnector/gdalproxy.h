@@ -20,14 +20,17 @@ typedef char * (*IGDALGetProjectionRef )(GDALDatasetH) ;
 typedef OGRSpatialReferenceH (*IOSRNewSpatialReference )(const char *) ;
 typedef OGRErr (*IOSRImportFromWkt )(OGRSpatialReferenceH, char **) ;
 typedef OGRErr (*IOSRSetWellKnownGeogCS )(OGRSpatialReferenceH, char *) ;
+typedef CPLErr (*IGDALSetProjection)(GDALDatasetH,const char *);
 typedef int (*IOSRIsProjectedFunc )(OGRSpatialReferenceH) ;
 typedef CPLErr (*IGDALGetGeoTransform )(GDALDatasetH, double *) ;
+typedef CPLErr (*IGDALSetGeoTransform)(GDALDatasetH, double * );
 typedef CPLErr (*IGDALRasterIO )(GDALRasterBandH , GDALRWFlag , int , int , int , int , void *, int , int , GDALDataType , int , int ) ;
 typedef int (*IGDALGetDataTypeSize )(GDALDataType) ;
 typedef int (*IGDALGetAccess )(GDALDatasetH) ;
 typedef const char* (*IOSRGetAttrValue )(OGRSpatialReferenceH, const char *, int) ;
 typedef GDALDriverH (*IGDALGetDriver )(int) ;
 typedef int (*IGDALGetDriverCount )() ;
+typedef GDALDriverH (*IGDALGetDriverByName)(const char * ) ;
 typedef const char* (*IGDALGetDriverName )(GDALDriverH) ;
 typedef const char* (*IGDALGetMetadataItem )(GDALMajorObjectH , const char *, const char *) ;
 typedef OGRErr (*IOSRImportFromEPSG )(OGRSpatialReferenceH, int) ;
@@ -66,10 +69,15 @@ typedef int (*IGetSubGeometryCount )(OGRGeometryH)  ;
 typedef OGRGeometryH (*IGetSubGeometryRef )(OGRGeometryH,int) ;
 typedef OGRSpatialReferenceH (*IGetSpatialRef )(OGRLayerH hLayer) ;
 typedef OGRErr (*IExportToWkt )(OGRSpatialReferenceH,char **) ;
+typedef OGRErr (*IOSRImportFromProj4)(OGRSpatialReferenceH, const char *);
+typedef OGRSpatialReferenceH (*IOSRNewSpatialReference)(const char *) ;
 typedef int (*IGetFeatureCount )(OGRLayerH,int) ;
 typedef OGRErr 	(*IGetLayerExtent )(OGRLayerH, OGREnvelope *, int) ;
 typedef const char * (*IGetFieldName )(OGRFieldDefnH) ;
 typedef void (*ICPLPushFinderLocation )( const char * ) ;
+
+typedef const char* (*ICPLGetLastErrorMsg)();
+typedef void (*IFree)( void * );
 
 
 class GDALProxy {
@@ -122,13 +130,16 @@ public:
     IOSRNewSpatialReference newSpatialRef;
     IOSRImportFromWkt importFromWkt;
     IOSRSetWellKnownGeogCS setWellKnownGeogCs;
+    IGDALSetProjection setProjection;
     IOSRIsProjectedFunc isProjected;
     IGDALGetGeoTransform getGeotransform;
+    IGDALSetGeoTransform setGeoTransform;
     IGDALRasterIO rasterIO;
     IGDALGetDataTypeSize getDataTypeSize;
     IGDALGetAccess getAccess;
     IOSRGetAttrValue getAttributeValue;
     IGDALGetDriver getDriver;
+    IGDALGetDriverByName getGDALDriverByName;
     IGDALGetDriverCount getDriverCount;
     IGDALGetDriverName getLongName;
     IGDALGetDriverName getShortName;
@@ -143,7 +154,7 @@ public:
     IOGRRegisterAll ogrRegisterAll;
     IOGRGetDriverCount ogrDriverCount;
     IOGRGetDriver ogrGetDriver;
-    IOGRGetDriverName getDriverName;
+    IOGRGetDriverName getOGRDriverName;
     IOGRGetDriverByName getDriverByName;
     IGetLayerByName getLaterByName;
     IGetLayerCount getLayerCount;
@@ -168,10 +179,14 @@ public:
     IGetSubGeometryRef getSubGeometryRef;
     IGetSpatialRef getSpatialRef;
     IExportToWkt exportToWkt;
+    IOSRImportFromProj4 importFromProj4;
     IGetFeatureCount featureCount;
     IGetLayerExtent getLayerExtent;
     IGetFieldName getFieldName;
     ICPLPushFinderLocation pushFinderLocation;
+    ICPLGetLastErrorMsg getLastErrorMsg;
+    IOSRNewSpatialReference newSRS;
+    IFree free;
 
 
 private:

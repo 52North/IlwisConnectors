@@ -51,13 +51,16 @@ bool GDALProxy::prepare() {
     newSpatialRef = add<IOSRNewSpatialReference>("OSRNewSpatialReference");
     importFromWkt = add<IOSRImportFromWkt>("OSRImportFromWkt");
     setWellKnownGeogCs = add<IOSRSetWellKnownGeogCS>("OSRSetWellKnownGeogCS");
+    setProjection = add<IGDALSetProjection>("GDALSetProjection");
     isProjected = add<IOSRIsProjectedFunc>("OSRIsProjected");
     getGeotransform = add<IGDALGetGeoTransform>("GDALGetGeoTransform");
+    setGeoTransform = add<IGDALSetGeoTransform>("GDALSetGeoTransform");
     rasterIO = add<IGDALRasterIO>("GDALRasterIO");
     getDataTypeSize = add<IGDALGetDataTypeSize>("GDALGetDataTypeSize");
     getAccess = add<IGDALGetAccess>("GDALGetAccess");
     getAttributeValue = add<IOSRGetAttrValue>("OSRGetAttrValue");
     getDriver = add<IGDALGetDriver>("GDALGetDriver");
+    getGDALDriverByName = add<IGDALGetDriverByName>("GDALGetDriverByName");
     getDriverCount = add<IGDALGetDriverCount>("GDALGetDriverCount");
     getLongName = add<IGDALGetDriverName>("GDALGetDriverLongName");
     getShortName = add<IGDALGetDriverName>("GDALGetDriverShortName");
@@ -74,7 +77,7 @@ bool GDALProxy::prepare() {
     ogrRegisterAll = add<IOGRRegisterAll>("OGRRegisterAll");
     ogrDriverCount =add<IOGRGetDriverCount>("OGRGetDriverCount");
     ogrGetDriver = add<IOGRGetDriver>("OGRGetDriver");
-    getDriverName = add<IOGRGetDriverName>("OGR_Dr_GetName");
+    getOGRDriverName = add<IOGRGetDriverName>("OGR_Dr_GetName");
     getDriverByName = add<IOGRGetDriverByName>("OGRGetDriverByName");
     getLaterByName = add<IGetLayerByName>("OGR_DS_GetLayerByName");
     getLayerCount = add<IGetLayerCount>("OGR_DS_GetLayerCount");
@@ -99,10 +102,14 @@ bool GDALProxy::prepare() {
     getSubGeometryRef = add<IGetSubGeometryRef>("OGR_G_GetGeometryRef");
     getSpatialRef = add<IGetSpatialRef>("OGR_L_GetSpatialRef");
     exportToWkt = add<IExportToWkt>("OSRExportToWkt");
+    importFromProj4 = add<IOSRImportFromProj4>("OSRImportFromProj4");
     featureCount = add<IGetFeatureCount>("OGR_L_GetFeatureCount");
     getLayerExtent = add<IGetLayerExtent>("OGR_L_GetExtent");
     getFieldName = add<IGetFieldName>("OGR_Fld_GetNameRef");
     pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
+    getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");
+    newSRS = add<IOSRNewSpatialReference>("OSRNewSpatialReference");
+    free = add<IFree>("VSIFree");
 
     if ( _isValid) {
         registerAll();
