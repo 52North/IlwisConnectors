@@ -50,6 +50,20 @@ bool GdalConnector::loadMetaData(IlwisObject *data)
     return true;
 }
 
+bool GdalConnector::store(IlwisObject *, int )
+{
+    GDALDriverH hdriver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
+    if ( !hdriver ) {
+        return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _filename);
+    }
+    const char* metaitem = gdal()->getMetaDataItem(hdriver, GDAL_DCAP_CREATE, NULL);
+    if (QString(metaitem).toLower() != "yes") {
+        return ERROR2(ERR_OPERATION_NOTSUPPORTED2, "write data-source", _filename);
+    }
+
+    return true;
+}
+
 bool GdalConnector::canUse(const Ilwis::Resource &item) {
     QStringList extensions = gdal()->rasterNameFilter();
     QFileInfo inf(item.url().toLocalFile());
@@ -66,4 +80,36 @@ bool GdalConnector::canUse(const Ilwis::Resource &item) {
 QString GdalConnector::provider() const
 {
     return "gdal";
+}
+
+void GdalConnector::format(const QString &f)
+{
+    _gdalShortName = f;
+}
+
+QString GdalConnector::format() const
+{
+    return _gdalShortName;
+}
+
+GDALDataType GdalConnector::ilwisType2GdalType(IlwisTypes tp) {
+    switch(tp) {
+    case itINT8:
+    case itUINT8:
+        return GDT_Byte;
+    case itINT16:
+        return GDT_Int16;
+    case itUINT16:
+        return GDT_UInt16;
+    case itINT32:
+        return GDT_Int32;
+    case itUINT32:
+        return GDT_UInt32;
+    case itFLOAT:
+        return GDT_Float32;
+    case itDOUBLE:
+        return GDT_Float64;
+    default:
+        return GDT_Float64;
+    }
 }

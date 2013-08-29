@@ -13,13 +13,18 @@ public:
     static IlwisTypes ilwisType(const QString &name);
 
     bool loadMetaData(IlwisObject* data);
+    bool store(IlwisObject *, int);
     bool canUse(const Ilwis::Resource &item);
 
     QString provider() const;
+    void format(const QString&);
+    QString format() const;
 protected:
+    static GDALDataType ilwisType2GdalType(IlwisTypes tp) ;
     QString _filename;
     QString _internalPath;
     GDALDatasetH _dataSet;
+    QString _gdalShortName;
 };
 }
 }
