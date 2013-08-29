@@ -5,9 +5,18 @@
 
 #include "kernel.h"
 #include "raster.h"
+#include "georefimplementation.h"
+#include "simpelgeoreference.h"
+#include "cornersgeoreference.h"
+#include "geodeticdatum.h"
+#include "projection.h"
+#include "ellipsoid.h"
+#include "conventionalcoordinatesystem.h"
+#include "projection.h"
 #include "numericrange.h"
 #include "numericrange.h"
 #include "numericdomain.h"
+#include "pixeliterator.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "catalog.h"
@@ -75,7 +84,7 @@ inline double GridCoverageConnector::value(char *block, int index) const{
     char *c = &(block[index * _typeSize]);
     switch (_gdalValueType) {
     case GDT_Byte:
-        v = *(quint8 *)c; break;
+        v = *(qint8 *)c; break;
     case GDT_Int16:
         v =  *(qint16 *)c; break;
     case GDT_UInt16:
@@ -154,4 +163,89 @@ Grid *GridCoverageConnector::loadGridData(IlwisObject* data){
 
 Ilwis::IlwisObject *GridCoverageConnector::create() const{
     return new GridCoverage(_resource);
+}
+
+bool GridCoverageConnector::store(IlwisObject *obj, int )
+{
+    bool ok = GdalConnector::store(obj, 0);
+    if ( !ok)
+        return false;
+    GridCoverage *gcov = static_cast<GridCoverage *>(obj);
+    Size sz = gcov->size();
+    GDALDataType gdalType = ilwisType2GdalType(gcov->datadef().range()->determineType());
+    GDALDriverH hdriver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
+    if ( hdriver == 0) {
+        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "driver",_gdalShortName);
+    }
+    const char *cext = gdal()->getMetaDataItem(hdriver,GDAL_DMD_EXTENSION,NULL);
+    QString filename = _filename;
+    if ( cext != 0 ) {
+        QString ext(cext);
+        int index = filename.lastIndexOf(".");
+        if ( index != -1) {
+            QString pext = filename.right(filename.size() - index);
+            if ( pext.toLower() != ext) {
+                filename += "." + ext;
+            }
+        }else
+           filename += "." + ext;
+
+    }
+
+    GDALDatasetH dataset = gdal()->create( hdriver, filename.toLocal8Bit(), sz.xsize(), sz.ysize(), sz.zsize(), gdalType, 0 );
+    if ( dataset == 0) {
+        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data set",_filename);
+    }
+    if ( gcov->georeference()->grfType<CornersGeoReference>()) {
+        //std::vector<double> mat = gcov->georeference()->impl<CornersGeoReference>()->matrix();
+        std::vector<double> sup = gcov->georeference()->impl<CornersGeoReference>()->support();
+        Box2Dd env = gcov->envelope();
+        double a2 = (env.max_corner().x() - env.min_corner().x()) / gcov->size().xsize();
+        double b2 = (env.max_corner().y() - env.min_corner().y()) / gcov->size().ysize();
+        double geoTransform[6] = { env.min_corner().x(), a2, sup[0], env.min_corner().y(), sup[1], b2 };
+
+        CPLErr err = gdal()->setGeoTransform(dataset,geoTransform);
+        if ( err != CP_NONE) {
+            kernel()->issues()->log(QString(gdal()->getLastErrorMsg()));
+            gdal()->close(dataset);
+            return false;
+        }
+        IConventionalCoordinateSystem csy = gcov->coordinateSystem().get<ConventionalCoordinateSystem>();
+        QString proj4def = csy->projection()->toProj4();
+        OGRSpatialReferenceH srsH = gdal()->newSRS(0);
+        OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());
+        char *wktText = NULL;
+        gdal()->exportToWkt(srsH,&wktText);
+        err = gdal()->setProjection(dataset, wktText);
+        gdal()->free(wktText);
+        if ( err != CP_NONE) {
+            kernel()->issues()->log(QString(gdal()->getLastErrorMsg()));
+            gdal()->close(dataset);
+            return false;
+        }
+
+    }
+
+    switch(gdalType) {
+    case GDT_Byte:
+        ok = save<quint8>(gcov, dataset,gdalType);break;
+    case GDT_UInt16:
+        ok = save<quint16>(gcov, dataset,gdalType);break;
+    case GDT_Int16:
+        ok = save<qint16>(gcov, dataset,gdalType);break;
+    case GDT_Int32:
+        ok = save<qint32>(gcov, dataset,gdalType);break;
+    case GDT_UInt32:
+        ok = save<quint32>(gcov, dataset,gdalType);break;
+    case GDT_Float32:
+        ok = save<float>(gcov, dataset,gdalType);break;
+    case GDT_Float64:
+        ok = save<double>(gcov, dataset,gdalType);break;
+    default:
+        ok= ERROR1(ERR_NO_INITIALIZED_1, "gdal Data type");
+    }
+
+    gdal()->close(dataset);
+
+    return ok;
 }
