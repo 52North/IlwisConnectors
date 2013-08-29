@@ -13,6 +13,8 @@ public:
     CoverageConnector(const Ilwis::Resource &item, bool load=true);
     bool loadMetaData(Ilwis::IlwisObject *data);
 
+protected:
+    bool store(IlwisObject *obj, IlwisTypes type);
 private:
     //void setCsy(Coverage *coverage);
 };

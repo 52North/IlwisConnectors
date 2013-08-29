@@ -65,4 +65,14 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     return true;
 }
 
+bool CoverageConnector::store(IlwisObject *obj, IlwisTypes type)
+{
+    bool ok = GdalConnector::store(obj, type);
+    if ( !ok)
+        return false;
+
+    return true;
+}
+
+
 
