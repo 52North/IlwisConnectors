@@ -17,6 +17,9 @@ public:
     static QString name2Code(const QString &name, const QString &type);
     static QString code2name(const QString &code, const QString &type);
     QString provider() const;
+    virtual bool storeBinaryData(IlwisObject* ) { return false; }
+    virtual bool storeMetaData(IlwisObject* )  { return false; }
+    bool store(IlwisObject *, int storemode);
 
 protected:
     QString suffix(IlwisTypes type) const;

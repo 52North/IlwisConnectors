@@ -180,6 +180,17 @@ QString Ilwis3Connector::provider() const
     return "ilwis3";
 }
 
+bool Ilwis3Connector::store(IlwisObject *obj, int storemode)
+{
+    bool ok = true;
+    if ( storemode & IlwisObject::smMETADATA)
+        ok &= storeMetaData(obj);
+    if ( storemode & IlwisObject::smBINARYDATA)
+        ok &= storeBinaryData(obj);
+
+    return ok;
+}
+
 QString Ilwis3Connector::ilwis3ClassName(IlwisTypes type) const {
     if ( type & itGRID)
         return "Raster Map";
