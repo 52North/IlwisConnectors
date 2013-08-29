@@ -4,11 +4,9 @@
 #include "kernel.h"
 
 #include "kernel.h"
+#include "raster.h"
 #include "geometries.h"
 #include "range.h"
-#include "connectorinterface.h"
-#include "ilwisdata.h"
-#include "domain.h"
 #include "datadefinition.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
@@ -16,6 +14,7 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "catalog.h"
+#include "pixeliterator.h"
 #include "gdalproxy.h"
 #include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
@@ -37,6 +36,7 @@
 #include "gdalcatalogconnector.h"
 #include "ilwisobjectfactory.h"
 #include "gdalobjectfactory.h"
+#include "gdalproxy.h"
 
 using namespace Ilwis;
 using namespace Gdal;
@@ -72,10 +72,19 @@ void GdalModule::prepare()
     if (!cfactory)
         return ;
 
+
     cfactory->addCreator(itITEMDOMAIN | itNUMERICDOMAIN ,"gdal", DomainConnector::create);
     cfactory->addCreator(itGRID ,"gdal", GridCoverageConnector::create);
     cfactory->addCreator(itGEOREF,"gdal", GeorefConnector::create);
     cfactory->addCreator(itCOORDSYSTEM,"gdal",CoordinateSystemConnector::create);
+
+    for(int i=0; i < gdal()->getDriverCount(); ++i) {
+        GDALDriverH driv = gdal()->getDriver(i);
+        if ( driv) {
+            QString shortName = gdal()->getShortName(driv);
+            cfactory->addCreator(shortName,"gdal", GridCoverageConnector::create);
+        }
+    }
 }
 
 QString GdalModule::getName() const
