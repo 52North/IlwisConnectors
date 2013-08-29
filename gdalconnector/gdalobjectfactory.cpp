@@ -28,7 +28,6 @@
 #include "conventionalcoordinatesystem.h"
 #include "coordinatesystemconnector.h"
 #include "coverageconnector.h"
-#include "gridcoverageconnector.h"
 #include "gdalobjectfactory.h"
 #include "gdalproxy.h"
 
