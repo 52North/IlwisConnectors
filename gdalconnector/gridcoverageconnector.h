@@ -37,8 +37,6 @@ private:
             return ERROR1(ERR_NO_INITIALIZED_1,"raster band");
         }
         while(iter != iter.end()) {
-            qDebug() << iter.position().y();
-            //std::copy(iter, iter+columns, data.begin());
             for_each(data.begin(), data.end(), [&](DT& v){
                 v = *iter;
                 ++iter;
