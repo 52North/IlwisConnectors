@@ -95,6 +95,7 @@ bool CoverageConnector::setSRS(Coverage *gcov, GDALDatasetH dataset) const
     if ( err != CP_NONE) {
         return reportError(dataset);
     }
+    return true;
 }
 
 
