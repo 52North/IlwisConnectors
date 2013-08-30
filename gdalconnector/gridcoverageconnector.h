@@ -15,13 +15,15 @@ public:
 
     static ConnectorInterface *create(const Ilwis::Resource &item, bool load=true);
     Ilwis::IlwisObject *create() const;
-    //bool storeMetaData(IlwisObject *obj, IlwisTypes type);
     bool store(IlwisObject *obj, int );
-protected:
-    double value(char *block, int index) const;
+
+private:
     int _layers;
     GDALDataType _gdalValueType;
     int _typeSize;
+
+    double value(char *block, int index) const;
+    bool setGeotransform(GridCoverage *gcov, GDALDatasetH dataset);
 
     template<typename DT> bool save(GridCoverage *gcov, GDALDatasetH dataset,GDALDataType gdaltype){
         quint32 columns = gcov->size().xsize();

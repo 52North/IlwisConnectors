@@ -8,11 +8,7 @@
 #include "georefimplementation.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
-#include "geodeticdatum.h"
-#include "projection.h"
-#include "ellipsoid.h"
-#include "conventionalcoordinatesystem.h"
-#include "projection.h"
+
 #include "numericrange.h"
 #include "numericrange.h"
 #include "numericdomain.h"
@@ -165,39 +161,8 @@ Ilwis::IlwisObject *GridCoverageConnector::create() const{
     return new GridCoverage(_resource);
 }
 
-bool GridCoverageConnector::store(IlwisObject *obj, int )
-{
-    bool ok = GdalConnector::store(obj, 0);
-    if ( !ok)
-        return false;
-    GridCoverage *gcov = static_cast<GridCoverage *>(obj);
-    Size sz = gcov->size();
-    GDALDataType gdalType = ilwisType2GdalType(gcov->datadef().range()->determineType());
-    GDALDriverH hdriver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
-    if ( hdriver == 0) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "driver",_gdalShortName);
-    }
-    const char *cext = gdal()->getMetaDataItem(hdriver,GDAL_DMD_EXTENSION,NULL);
-    QString filename = _filename;
-    if ( cext != 0 ) {
-        QString ext(cext);
-        int index = filename.lastIndexOf(".");
-        if ( index != -1) {
-            QString pext = filename.right(filename.size() - index);
-            if ( pext.toLower() != ext) {
-                filename += "." + ext;
-            }
-        }else
-           filename += "." + ext;
-
-    }
-
-    GDALDatasetH dataset = gdal()->create( hdriver, filename.toLocal8Bit(), sz.xsize(), sz.ysize(), sz.zsize(), gdalType, 0 );
-    if ( dataset == 0) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data set",_filename);
-    }
+bool GridCoverageConnector::setGeotransform(GridCoverage *gcov,GDALDatasetH dataset) {
     if ( gcov->georeference()->grfType<CornersGeoReference>()) {
-        //std::vector<double> mat = gcov->georeference()->impl<CornersGeoReference>()->matrix();
         std::vector<double> sup = gcov->georeference()->impl<CornersGeoReference>()->support();
         Box2Dd env = gcov->envelope();
         double a2 = (env.max_corner().x() - env.min_corner().x()) / gcov->size().xsize();
@@ -206,25 +171,37 @@ bool GridCoverageConnector::store(IlwisObject *obj, int )
 
         CPLErr err = gdal()->setGeoTransform(dataset,geoTransform);
         if ( err != CP_NONE) {
-            kernel()->issues()->log(QString(gdal()->getLastErrorMsg()));
-            gdal()->close(dataset);
-            return false;
+            return reportError(dataset);
         }
-        IConventionalCoordinateSystem csy = gcov->coordinateSystem().get<ConventionalCoordinateSystem>();
-        QString proj4def = csy->projection()->toProj4();
-        OGRSpatialReferenceH srsH = gdal()->newSRS(0);
-        OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());
-        char *wktText = NULL;
-        gdal()->exportToWkt(srsH,&wktText);
-        err = gdal()->setProjection(dataset, wktText);
-        gdal()->free(wktText);
-        if ( err != CP_NONE) {
-            kernel()->issues()->log(QString(gdal()->getLastErrorMsg()));
-            gdal()->close(dataset);
-            return false;
-        }
-
+        return true;
     }
+    return ERROR2(ERR_OPERATION_NOTSUPPORTED2,TR("Georeference type"), "Gdal");
+}
+
+bool GridCoverageConnector::store(IlwisObject *obj, int )
+{
+    if(!GdalConnector::store(obj, 0))
+        return false;
+
+    GridCoverage *gcov = static_cast<GridCoverage *>(obj);
+    Size sz = gcov->size();
+    GDALDataType gdalType = ilwisType2GdalType(gcov->datadef().range()->determineType());
+    GDALDriverH hdriver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
+    if ( hdriver == 0) {
+        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "driver",_gdalShortName);
+    }
+    QString filename = constructOutputName(hdriver);
+
+    GDALDatasetH dataset = gdal()->create( hdriver, filename.toLocal8Bit(), sz.xsize(), sz.ysize(), sz.zsize(), gdalType, 0 );
+    if ( dataset == 0) {
+        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data set",_filename);
+    }
+    bool ok = setGeotransform(gcov, dataset);
+    if (ok)
+        ok = setSRS(gcov, dataset);
+
+    if (!ok)
+        return false;
 
     switch(gdalType) {
     case GDT_Byte:

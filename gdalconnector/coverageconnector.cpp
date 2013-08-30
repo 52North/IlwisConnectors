@@ -7,6 +7,11 @@
 #include "kernel.h"
 #include "coverage.h"
 #include "module.h"
+#include "geodeticdatum.h"
+#include "projection.h"
+#include "ellipsoid.h"
+#include "conventionalcoordinatesystem.h"
+#include "projection.h"
 #include "ilwisdata.h"
 #include "numericdomain.h"
 #include "numericrange.h"
@@ -72,6 +77,24 @@ bool CoverageConnector::store(IlwisObject *obj, IlwisTypes type)
         return false;
 
     return true;
+}
+
+bool CoverageConnector::setSRS(Coverage *gcov, GDALDatasetH dataset) const
+{
+    IConventionalCoordinateSystem csy = gcov->coordinateSystem().get<ConventionalCoordinateSystem>();
+    QString proj4def = csy->projection()->toProj4();
+    OGRSpatialReferenceH srsH = gdal()->newSRS(0);
+    OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());
+    if ( errOgr != OGRERR_NONE) {
+        return reportError(dataset);
+    }
+    char *wktText = NULL;
+    gdal()->exportToWkt(srsH,&wktText);
+    CPLErr err = gdal()->setProjection(dataset, wktText);
+    gdal()->free(wktText);
+    if ( err != CP_NONE) {
+        return reportError(dataset);
+    }
 }
 
 

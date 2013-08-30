@@ -92,6 +92,13 @@ QString GdalConnector::format() const
     return _gdalShortName;
 }
 
+bool GdalConnector::reportError(GDALDatasetH dataset) const
+{
+    kernel()->issues()->log(QString(gdal()->getLastErrorMsg()));
+    gdal()->close(dataset);
+    return false;
+}
+
 GDALDataType GdalConnector::ilwisType2GdalType(IlwisTypes tp) {
     switch(tp) {
     case itINT8:
@@ -112,4 +119,22 @@ GDALDataType GdalConnector::ilwisType2GdalType(IlwisTypes tp) {
     default:
         return GDT_Float64;
     }
+}
+
+QString GdalConnector::constructOutputName(GDALDriverH hdriver) const
+{
+    const char *cext = gdal()->getMetaDataItem(hdriver,GDAL_DMD_EXTENSION,NULL);
+    QString filename = _filename;
+    if ( cext != 0 ) {
+        QString ext(cext);
+        int index = filename.lastIndexOf(".");
+        if ( index != -1) {
+            QString pext = filename.right(filename.size() - index);
+            if ( pext.toLower() != ext) {
+                filename += "." + ext;
+            }
+        }else
+           filename += "." + ext;
+    }
+    return filename;
 }

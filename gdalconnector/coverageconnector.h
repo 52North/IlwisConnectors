@@ -15,6 +15,7 @@ public:
 
 protected:
     bool store(IlwisObject *obj, IlwisTypes type);
+    bool setSRS(Coverage *gcov, GDALDatasetH dataset) const;
 private:
     //void setCsy(Coverage *coverage);
 };
