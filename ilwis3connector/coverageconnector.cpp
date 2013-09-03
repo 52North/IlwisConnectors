@@ -300,6 +300,11 @@ bool CoverageConnector::storeBinaryData(IlwisObject *obj, IlwisTypes tp)
 TableConnector *CoverageConnector::createTableConnector(ITable& attTable, Coverage *coverage, IlwisTypes tp) {
     QString dataFile = coverage->name();
     QString attDom = dataFile;
+    if ( hasType(tp,itGRID)) {
+        Resource res = coverage->datadef().domain()->resource();
+        QFileInfo inf(res.toLocalFile());
+        attDom = inf.fileName();
+    }
     int index = dataFile.lastIndexOf(".");
     if ( index != -1) {
         dataFile = dataFile.left(index);
