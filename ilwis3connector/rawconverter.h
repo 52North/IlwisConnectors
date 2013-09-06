@@ -44,7 +44,7 @@ public:
 
 
     double raw2real(double raw) const{
-        if ( raw == _undefined)
+        if ( raw == _undefined || raw == 0)
             return rUNDEF;
         return (raw + _offset) * _scale;
     }
