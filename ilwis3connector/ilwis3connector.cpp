@@ -38,7 +38,7 @@ bool Ilwis3Connector::loadMetaData(IlwisObject *data)
         IniFile *ini = new IniFile();
         ini->setIniFile(inf.absoluteFilePath());
         _odf.reset(ini);
-        data->setName(inf.baseName());
+        data->setName(inf.fileName());
         data->setDescription(_odf->value("Ilwis","Description"));
         bool ok;
         quint32 sec = _odf->value("Ilwis","Time").toULong(&ok);
