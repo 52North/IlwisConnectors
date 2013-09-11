@@ -64,7 +64,7 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
 
     QFileInfo inf(_resource.url().toLocalFile());
     IniFile *ini = new IniFile();
-    ini->setIniFile(inf.absoluteFilePath(), true);
+    ini->setIniFile(inf.absoluteFilePath(), false);
     _odf.reset(ini);
 
     _odf->setKeyValue("Ilwis","Description", obj->description());
