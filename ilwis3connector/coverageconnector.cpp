@@ -87,9 +87,10 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
     } else {
         attTable = extTable;
     }
-
-    attTable->addColumn(COVERAGEKEYCOLUMN,covdom);
-    attTable->addColumn(FEATUREIDCOLUMN,covdom);
+    if ( attTable->columnIndex(FEATUREIDCOLUMN) == iUNDEF) { // external tables might already have these
+        attTable->addColumn(COVERAGEKEYCOLUMN,covdom);
+        attTable->addColumn(FEATUREIDCOLUMN,covdom);
+    }
 
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     if ( isNumeric) {
