@@ -364,7 +364,7 @@ bool GridCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         _odf->setKeyValue("MapList",QString("Map%1").arg(i),mapName);
 
         Resource res(itGRID);
-        res.addProperty("size", IVARIANT(sz));
+        res.addProperty("size", IVARIANT(Size(sz.xsize(), sz.ysize())));
         res.addProperty("bounds", IVARIANT(gcov->envelope()));
         res.addProperty("georeference", IVARIANT(gcov->georeference()));
         res.addProperty("coordinatesystem", IVARIANT(gcov->coordinateSystem()));
