@@ -73,9 +73,11 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data){
 
         QString ellipsoidName(gdal()->getAttributeValue(srshandle,"SPHEROID",0));
         IEllipsoid ellipsoid;
-        ellipsoid.prepare("code=wkt:" + ellipsoidName);
-        if ( ellipsoid.isValid())
-            csyp->setEllipsoid(ellipsoid);
+        if ( ellipsoidName != "unnamed") {
+            ellipsoid.prepare("code=wkt:" + ellipsoidName);
+            if ( ellipsoid.isValid())
+                csyp->setEllipsoid(ellipsoid);
+        }
     }
     gdal()->closeFile(_filename, data->id());
     return true;
