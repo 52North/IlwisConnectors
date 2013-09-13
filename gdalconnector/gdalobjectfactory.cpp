@@ -69,7 +69,7 @@ bool GdalObjectFactory::canUse(const Resource &item) const
         return true;
     else if ( type & itCOORDSYSTEM)
         return true;
-    else if ( type & itGRID)
+    else if ( type & itRASTER)
         return true;
     else if ( type & itGEOREF)
         return true;

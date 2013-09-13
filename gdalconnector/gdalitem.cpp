@@ -35,7 +35,7 @@ GDALItems::GDALItems(const QString &path)
 //            QUrl url2(QString("file:///" + path + "#layerindex=%1").arg(layer));
 //            addItem(url2,csyId, resGrf.id());
 //        }
-//        addItem(url, csyId, resGrf.id(), itGRIDCOVERAGELIST);
+//        addItem(url, csyId, resGrf.id(), itRASTERCOVERAGELIST);
     }
 
     gdal()->close(dataSet);

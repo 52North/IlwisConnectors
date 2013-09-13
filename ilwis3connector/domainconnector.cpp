@@ -84,7 +84,7 @@ bool DomainConnector::handleItemDomains(IlwisObject* data) {
         tbl.get(i,indexName,itemName);
         if ( indexCode != iUNDEF)
             tbl.get(i,indexName,itemCode);
-        ThematicItem *item = new ThematicItem(itemName,itemCode);
+        ThematicItem *item = new ThematicItem({itemName,itemCode});
         tdomain->addItem(item);
     }
 
@@ -100,7 +100,7 @@ bool DomainConnector::handleValueDomains(IlwisObject* data) {
         range = handleValueDomainObjects();
     } else {
         QString section;
-        if ( odfType <= itGRID) { //  the 'basemaps' objects
+        if ( odfType <= itRASTER) { //  the 'basemaps' objects
             section = "BaseMap"    ;
         } else if (odfType == itTABLE) {
             QUrlQuery queryItem(_resource.url());

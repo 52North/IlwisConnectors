@@ -6,10 +6,10 @@ class BaseGrid;
 
 namespace Ilwis3{
 
-class GridCoverageConnector : public CoverageConnector
+class RasterCoverageConnector : public CoverageConnector
 {
 public:
-    GridCoverageConnector(const Ilwis::Resource &item, bool load=true);
+    RasterCoverageConnector(const Ilwis::Resource &item, bool load=true);
 
     bool loadMetaData(IlwisObject *data);
     bool storeMetaData(Ilwis::IlwisObject *obj);
@@ -28,9 +28,9 @@ private:
     void setStoreType(const QString &storeType);
     bool loadMapList(IlwisObject *data);
     bool storeMetaDataMapList(Ilwis::IlwisObject *obj);
-    QString getGrfName(const IGridCoverage &gcov);
+    QString getGrfName(const IRasterCoverage &gcov);
 
-    template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IGridCoverage& gcov, const Size& sz) const{
+    template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& gcov, const Size& sz) const{
         PixelIterator pixiter(gcov,Box3D<>(sz));
         int  i=0;
         T c = 0;

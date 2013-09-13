@@ -4,11 +4,11 @@
 namespace Ilwis{
 namespace Gdal{
 
-class GridCoverageConnector : public CoverageConnector
+class RasterCoverageConnector : public CoverageConnector
 {
 public:
 
-    GridCoverageConnector(const Ilwis::Resource &item, bool load=true);
+    RasterCoverageConnector(const Ilwis::Resource &item, bool load=true);
 
     bool loadMetaData(IlwisObject *data);
     Ilwis::Grid *loadGridData(Ilwis::IlwisObject *data) ;
@@ -23,11 +23,11 @@ private:
     int _typeSize;
 
     double value(char *block, int index) const;
-    bool setGeotransform(GridCoverage *gcov, GDALDatasetH dataset);
+    bool setGeotransform(RasterCoverage *gcov, GDALDatasetH dataset);
 
-    template<typename DT> bool save(GridCoverage *gcov, GDALDatasetH dataset,GDALDataType gdaltype){
+    template<typename DT> bool save(RasterCoverage *gcov, GDALDatasetH dataset,GDALDataType gdaltype){
         quint32 columns = gcov->size().xsize();
-        IGridCoverage gc;
+        IRasterCoverage gc;
         gc.set(gcov);
         PixelIterator iter(gc);
         int bandcount = 1;

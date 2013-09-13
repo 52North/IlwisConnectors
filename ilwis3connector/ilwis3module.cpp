@@ -68,14 +68,14 @@ void Ilwis3Module::prepare()
         return ;
     factory->addCreator(itITEMDOMAIN | itNUMERICDOMAIN ,"ilwis3", Ilwis3::DomainConnector::create);
     factory->addCreator(itTABLE,"ilwis3",Ilwis3::TableConnector::create);
-    factory->addCreator(itGRID,"ilwis3", Ilwis3::GridCoverageConnector::create);
+    factory->addCreator(itRASTER,"ilwis3", Ilwis3::RasterCoverageConnector::create);
     factory->addCreator(itGEOREF,"ilwis3", Ilwis3::GeorefConnector::create);
     factory->addCreator(itPROJECTION,"ilwis3", Ilwis3::ProjectionConnector::create);
     factory->addCreator(itELLIPSOID,"ilwis3",Ilwis3::EllipsoidConnector::create);
     factory->addCreator(itCOORDSYSTEM,"ilwis3",Ilwis3::CoordinateSystemConnector::create);
     factory->addCreator(itFEATURECOVERAGE,"ilwis3",Ilwis3::FeatureConnector::create);
 
-    factory->addCreator("map","ilwis3",Ilwis3::GridCoverageConnector::create);
+    factory->addCreator("map","ilwis3",Ilwis3::RasterCoverageConnector::create);
     factory->addCreator("georef","ilwis3",Ilwis3::GeorefConnector::create);
     factory->addCreator("polygonmap","ilwis3",Ilwis3::FeatureConnector::create);
     factory->addCreator("segmentmap","ilwis3",Ilwis3::FeatureConnector::create);

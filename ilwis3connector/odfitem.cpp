@@ -312,13 +312,13 @@ IlwisTypes ODFItem::findCsyType() const
 }
 
 QString ODFItem::findGrfName() const{
-    quint64 validTypes = itGEOREF | itGRID;
+    quint64 validTypes = itGEOREF | itRASTER;
     if ( (_ilwtype & validTypes) == 0)
         return sUNDEF;
 
     QString name = sUNDEF;
 
-    if ( _ilwtype & itGRID) {
+    if ( _ilwtype & itRASTER) {
         name = _odf.value("Map","GeoRef");
         if ( name == sUNDEF)
             name = _odf.value("MapList","GeoRef");
@@ -331,7 +331,7 @@ QString ODFItem::findGrfName() const{
 
 //IlwisTypes ODFItem::findGrfType() const {
 
-//    quint64 validTypes = itGEOREF | itGRID;
+//    quint64 validTypes = itGEOREF | itRASTER;
 //    if ( (_ilwtype & validTypes) == 0)
 //        return itUNKNOWN;
 
@@ -396,7 +396,7 @@ quint64 ODFItem::objectSize() const {
 
     switch(_ilwtype )
     {
-    case itGRID:
+    case itRASTER:
         sz += partSize(_file.absoluteFilePath(), "MapStore", "Data"); break;
     case itTABLE:
         sz += partSize(_file.absoluteFilePath(), "TableStore", "Data"); break;
@@ -458,7 +458,7 @@ QString ODFItem::findDimensions() const
             if ( sY == "") return "";
             return QString("%1 x %2").arg(sX, sY);
         }
-        case itGRID:
+        case itRASTER:
         {
             QString sSize = _odf.value( "Map", "Size");
             QStringList xy = sSize.split(" ");

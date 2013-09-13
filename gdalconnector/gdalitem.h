@@ -9,7 +9,7 @@ public:
     GDALItems(const QString& path);
 
 private:
-    void addItem(const QUrl &url, quint64 csyid, quint64 grfId, IlwisTypes tp =itGRID);
+    void addItem(const QUrl &url, quint64 csyid, quint64 grfId, IlwisTypes tp =itRASTER);
     quint64 addCsy(GDALDatasetH dataSet, const QString& path);
 };
 }

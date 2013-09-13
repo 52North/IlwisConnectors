@@ -262,7 +262,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
         QString source = Resource::toLocalFile(dom->resource().url(), true);
-        if ( dom->valueType() == itTHEMATICITEM && coverage->ilwisType() == itGRID) {
+        if ( dom->valueType() == itTHEMATICITEM && coverage->ilwisType() == itRASTER) {
             IThematicDomain themdom = dom.get<ThematicDomain>();
             if ( themdom.isValid()) {
                 QString domInfo = QString("%1;Byte;class;%2;;").arg(source).arg(themdom->count());
@@ -301,7 +301,7 @@ bool CoverageConnector::storeBinaryData(IlwisObject *obj, IlwisTypes tp)
 TableConnector *CoverageConnector::createTableConnector(ITable& attTable, Coverage *coverage, IlwisTypes tp) {
     QString dataFile = coverage->name();
     QString attDom = dataFile;
-    if ( hasType(tp,itGRID)) {
+    if ( hasType(tp,itRASTER)) {
         Resource res = coverage->datadef().domain()->resource();
         QFileInfo inf(res.toLocalFile());
         attDom = inf.fileName();
@@ -312,7 +312,7 @@ TableConnector *CoverageConnector::createTableConnector(ITable& attTable, Covera
     }else{
         if ( tp == itPOLYGON)
             attDom += ".mpa";
-        if ( tp == itGRID)
+        if ( tp == itRASTER)
             attDom += ".mpr";
         if ( tp == itPOINT)
             attDom += ".mpp";

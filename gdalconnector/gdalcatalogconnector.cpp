@@ -75,7 +75,7 @@ bool GdalCatalogConnector::loadItems()
         QString loc = location.toLocalFile();
         if ( path.compare(loc,Qt::CaseInsensitive) == 0)
             container = file.canonicalPath();
-        IlwisTypes tp = itGRID;
+        IlwisTypes tp = itRASTER;
         QUrl res("file:///" + path);
         if ( mastercatalog()->resource2id(res, tp) == i64UNDEF) {
             if ( !file.isDir() ) {

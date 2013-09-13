@@ -28,7 +28,7 @@ IlwisTypes Ilwis::Gdal::GdalConnector::ilwisType(const QString &name)
         return itCATALOG;
     QStringList extensions = gdal()->rasterNameFilter();
     if ( extensions.indexOf("." + inf.suffix())!= -1)
-        return itGRID;
+        return itRASTER;
     return itUNKNOWN; //TODO vector and table formats here
 
 }

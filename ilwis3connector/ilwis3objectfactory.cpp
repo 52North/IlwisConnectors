@@ -98,7 +98,7 @@ bool Ilwis3ObjectFactory::canUse(const Resource &item) const
         return true;
     else if ( type & itGEOREF)
         return true;
-    else if ( type & itGRID)
+    else if ( type & itRASTER)
         return true;
     else if ( type & itTABLE)
         return true;

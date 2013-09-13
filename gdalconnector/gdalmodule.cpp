@@ -74,7 +74,7 @@ void GdalModule::prepare()
 
 
     cfactory->addCreator(itITEMDOMAIN | itNUMERICDOMAIN ,"gdal", DomainConnector::create);
-    cfactory->addCreator(itGRID ,"gdal", GridCoverageConnector::create);
+    cfactory->addCreator(itRASTER ,"gdal", RasterCoverageConnector::create);
     cfactory->addCreator(itGEOREF,"gdal", GeorefConnector::create);
     cfactory->addCreator(itCOORDSYSTEM,"gdal",CoordinateSystemConnector::create);
 
@@ -82,7 +82,7 @@ void GdalModule::prepare()
         GDALDriverH driv = gdal()->getDriver(i);
         if ( driv) {
             QString shortName = gdal()->getShortName(driv);
-            cfactory->addCreator(shortName,"gdal", GridCoverageConnector::create);
+            cfactory->addCreator(shortName,"gdal", RasterCoverageConnector::create);
         }
     }
 }

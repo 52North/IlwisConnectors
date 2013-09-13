@@ -26,29 +26,29 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *GridCoverageConnector::create(const Resource &item, bool load) {
-    return new GridCoverageConnector(item, load);
+ConnectorInterface *RasterCoverageConnector::create(const Resource &item, bool load) {
+    return new RasterCoverageConnector(item, load);
 
 }
 
 
 
-GridCoverageConnector::GridCoverageConnector(const Resource &item, bool load) : CoverageConnector(item, load),_storesize(1)
+RasterCoverageConnector::RasterCoverageConnector(const Resource &item, bool load) : CoverageConnector(item, load),_storesize(1)
 {
 }
 
-bool GridCoverageConnector::loadMapList(IlwisObject *data) {
+bool RasterCoverageConnector::loadMapList(IlwisObject *data) {
     Ilwis3Connector::loadMetaData(data);
 
-    GridCoverage *gcoverage = static_cast<GridCoverage *>(data);
+    RasterCoverage *gcoverage = static_cast<RasterCoverage *>(data);
 
     QString file = filename2FullPath(_odf->value("MapList","Map0"));
     if ( file == sUNDEF)
-        return ERROR2(ERR_COULD_NOT_LOAD_2,"GridCoverage",_odf->fileinfo().baseName());
+        return ERROR2(ERR_COULD_NOT_LOAD_2,"RasterCoverage",_odf->fileinfo().baseName());
 
-    IGridCoverage mp;
+    IRasterCoverage mp;
     if (!mp.prepare("file:///" + file))
-        return ERROR2(ERR_COULD_NOT_LOAD_2,"GridCoverage",file);
+        return ERROR2(ERR_COULD_NOT_LOAD_2,"RasterCoverage",file);
 
     bool ok;
     qint32 z = _odf->value("MapList","Maps").toInt(&ok);
@@ -104,7 +104,7 @@ bool GridCoverageConnector::loadMapList(IlwisObject *data) {
 
 }
 
-void GridCoverageConnector::setStoreType(const QString& storeType) {
+void RasterCoverageConnector::setStoreType(const QString& storeType) {
     _storetype = itUINT8;
     if ( storeType == "Int") {
         _storesize = 2;
@@ -125,7 +125,7 @@ void GridCoverageConnector::setStoreType(const QString& storeType) {
     _converter.storeType(_storetype);
 }
 
-bool GridCoverageConnector::loadMetaData(IlwisObject *data)
+bool RasterCoverageConnector::loadMetaData(IlwisObject *data)
 {
     Locker lock(_mutex);
 
@@ -138,7 +138,7 @@ bool GridCoverageConnector::loadMetaData(IlwisObject *data)
     else if(!CoverageConnector::loadMetaData(data))
         return false;
 
-    GridCoverage *gcoverage = static_cast<GridCoverage *>(data);
+    RasterCoverage *gcoverage = static_cast<RasterCoverage *>(data);
 
     QString grfName = _odf->value("Map","GeoRef");
     IGeoReference grf;
@@ -162,12 +162,12 @@ bool GridCoverageConnector::loadMetaData(IlwisObject *data)
 
 }
 
-IlwisObject *GridCoverageConnector::create() const
+IlwisObject *RasterCoverageConnector::create() const
 {
-    return new GridCoverage(_resource);
+    return new RasterCoverage(_resource);
 }
 
-inline double GridCoverageConnector::value(char *block, int index) const{
+inline double RasterCoverageConnector::value(char *block, int index) const{
     double v = rUNDEF;
     char *c = &(block[index * _storesize]);
     switch (_storetype) {
@@ -187,7 +187,7 @@ inline double GridCoverageConnector::value(char *block, int index) const{
     return v;
 }
 
-qint64  GridCoverageConnector::conversion(QFile& file, Grid *grid, int& count) {
+qint64  RasterCoverageConnector::conversion(QFile& file, Grid *grid, int& count) {
     qint64 blockSizeBytes = grid->blockSize(0) * _storesize;
     qint64 szLeft = grid->size().xsize() * grid->size().ysize() * _storesize;
     qint64 result = 0;
@@ -224,7 +224,7 @@ qint64  GridCoverageConnector::conversion(QFile& file, Grid *grid, int& count) {
     return totalRead;
 }
 
-Grid* GridCoverageConnector::loadGridData(IlwisObject* data)
+Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
 {
     Locker lock(_mutex);
 
@@ -233,7 +233,7 @@ Grid* GridCoverageConnector::loadGridData(IlwisObject* data)
         return 0;
     }
     int blockCount = 0;
-    GridCoverage *gc = static_cast<GridCoverage *>(data);
+    RasterCoverage *gc = static_cast<RasterCoverage *>(data);
     Grid *grid = 0;
     if ( grid == 0) {
         Size sz = gc->size();
@@ -260,8 +260,8 @@ Grid* GridCoverageConnector::loadGridData(IlwisObject* data)
             return 0;
         }
     }
-    if ( gc->attributeTable(itGRID).isValid()) {
-        ITable tbl = gc->attributeTable(itGRID);
+    if ( gc->attributeTable(itRASTER).isValid()) {
+        ITable tbl = gc->attributeTable(itRASTER);
         IDomain covdom;
         if (!covdom.prepare("count")){
             return 0;
@@ -275,13 +275,13 @@ Grid* GridCoverageConnector::loadGridData(IlwisObject* data)
 
 }
 
-bool GridCoverageConnector::storeBinaryData(IlwisObject *obj)
+bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
 {
     Locker lock(_mutex);
 
     if ( obj == nullptr)
         return false;
-    IGridCoverage gcov = mastercatalog()->get(obj->id());
+    IRasterCoverage gcov = mastercatalog()->get(obj->id());
     if ( !gcov.isValid())
         return false;
 
@@ -334,21 +334,21 @@ bool GridCoverageConnector::storeBinaryData(IlwisObject *obj)
 
 }
 
-void GridCoverageConnector::calcStatics(const IlwisObject *obj, NumericStatistics::PropertySets set) const {
-    IGridCoverage gcov = mastercatalog()->get(obj->id());
+void RasterCoverageConnector::calcStatics(const IlwisObject *obj, NumericStatistics::PropertySets set) const {
+    IRasterCoverage gcov = mastercatalog()->get(obj->id());
     if ( !gcov->statistics().isValid()) {
         PixelIterator iter(gcov,Box3D<>(gcov->size()));
         gcov->statistics().calculate(iter, iter.end(),set);
     }
 }
 
-bool GridCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
-    bool ok = Ilwis3Connector::storeMetaData(obj, itGRID);
+bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
+    bool ok = Ilwis3Connector::storeMetaData(obj, itRASTER);
     if ( !ok)
         return false;
 
 
-    IGridCoverage gcov = mastercatalog()->get(obj->id());
+    IRasterCoverage gcov = mastercatalog()->get(obj->id());
 
     QString localName = getGrfName(gcov);
     if ( localName == sUNDEF)
@@ -363,7 +363,7 @@ bool GridCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         QString mapName = QString("%1_band_%2").arg(obj->name()).arg(i);
         _odf->setKeyValue("MapList",QString("Map%1").arg(i),mapName);
 
-        Resource res(itGRID);
+        Resource res(itRASTER);
         res.addProperty("size", IVARIANT(Size(sz.xsize(), sz.ysize())));
         res.addProperty("bounds", IVARIANT(gcov->envelope()));
         res.addProperty("georeference", IVARIANT(gcov->georeference()));
@@ -371,7 +371,7 @@ bool GridCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         res.addProperty("domain", IVARIANT(gcov->datadef().domain()));
         mastercatalog()->addItems({res});
 
-        IGridCoverage gcMap;
+        IRasterCoverage gcMap;
         gcMap.prepare(res);
         gcMap->setName(mapName);
         gcMap->copyBinary(gcov, i);
@@ -384,7 +384,7 @@ bool GridCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
     return true;
 }
 
-QString GridCoverageConnector::getGrfName(const IGridCoverage& gcov) {
+QString RasterCoverageConnector::getGrfName(const IRasterCoverage& gcov) {
     const IGeoReference grf = gcov->georeference();
     if (!grf.isValid()) {
         ERROR2(ERR_NO_INITIALIZED_2, "Georeference", gcov->name());
@@ -408,10 +408,10 @@ QString GridCoverageConnector::getGrfName(const IGridCoverage& gcov) {
     return localName;
 }
 
-bool GridCoverageConnector::storeMetaData( IlwisObject *obj)  {
+bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     Locker lock(_mutex);
 
-    IGridCoverage gcov = mastercatalog()->get(obj->id());
+    IRasterCoverage gcov = mastercatalog()->get(obj->id());
     if (!gcov.isValid())
         return false;
     if (!gcov->georeference().isValid())
@@ -420,7 +420,7 @@ bool GridCoverageConnector::storeMetaData( IlwisObject *obj)  {
     if ( gcov->size().zsize() > 1)
         return storeMetaDataMapList(obj);
 
-    bool ok = CoverageConnector::storeMetaData(obj, itGRID);
+    bool ok = CoverageConnector::storeMetaData(obj, itRASTER);
     if ( !ok)
         return false;
 
@@ -428,7 +428,7 @@ bool GridCoverageConnector::storeMetaData( IlwisObject *obj)  {
 
 
     if ( !gcov.isValid())
-        return ERROR2(ERR_COULD_NOT_LOAD_2,"GridCoverage", obj->name());
+        return ERROR2(ERR_COULD_NOT_LOAD_2,"RasterCoverage", obj->name());
 
     QString localName = getGrfName(gcov);
     if ( localName == sUNDEF)

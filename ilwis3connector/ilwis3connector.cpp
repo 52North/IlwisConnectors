@@ -192,7 +192,7 @@ bool Ilwis3Connector::store(IlwisObject *obj, int storemode)
 }
 
 QString Ilwis3Connector::ilwis3ClassName(IlwisTypes type) const {
-    if ( type & itGRID)
+    if ( type & itRASTER)
         return "Raster Map";
     else if ( type & itPOINT)
         return "Point Map";
@@ -220,7 +220,7 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
 
     QString ext = inf.suffix();
     if ( ext == "mpr")
-        return itGRID;
+        return itRASTER;
     if ( ext == "mpa")
         return itPOLYGON;
     if ( ext == "mps")
@@ -236,7 +236,7 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
     if ( ext == "tbt")
         return itTABLE;
     if ( ext == "mpl")
-        return itGRID;
+        return itRASTER;
     if ( ext == "ioc")
         return itOBJECTCOLLECTION;
 
@@ -244,7 +244,7 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
 }
 
 QString Ilwis3Connector::suffix(IlwisTypes type) const {
-    if ( type == itGRID)
+    if ( type == itRASTER)
         return "mpr";
     if ( type == itPOLYGON)
         return "mpa";
@@ -280,7 +280,7 @@ QUrl Ilwis3Connector::resolve(const Resource& resource) const {
     IlwisTypes tp = resource.ilwisType();
     bool ok;
     int dim = resource["dimensions"].toInt(&ok);
-    QString ext =  ok && tp == itGRID && dim == 3 ? "mpl" : suffix(tp);
+    QString ext =  ok && tp == itRASTER && dim == 3 ? "mpl" : suffix(tp);
     QString basename = inf.baseName();
     if ( basename == ""){
        basename = resource.name();

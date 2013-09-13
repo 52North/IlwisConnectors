@@ -26,20 +26,20 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *GridCoverageConnector::create(const Resource &item, bool load) {
-    return new GridCoverageConnector(item, load);
+ConnectorInterface *RasterCoverageConnector::create(const Resource &item, bool load) {
+    return new RasterCoverageConnector(item, load);
 
 }
 
 
-GridCoverageConnector::GridCoverageConnector(const Ilwis::Resource &item, bool load) : CoverageConnector(item,load){
+RasterCoverageConnector::RasterCoverageConnector(const Ilwis::Resource &item, bool load) : CoverageConnector(item,load){
 }
 
-bool GridCoverageConnector::loadMetaData(IlwisObject *data){
+bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
     if(!CoverageConnector::loadMetaData(data))
         return false;
 
-    auto *gcoverage = static_cast<GridCoverage *>(data);
+    auto *gcoverage = static_cast<RasterCoverage *>(data);
 
     IGeoReference grf;
     if(!grf.prepare(_resource.url().toLocalFile()))
@@ -75,7 +75,7 @@ bool GridCoverageConnector::loadMetaData(IlwisObject *data){
     return true;
 }
 
-inline double GridCoverageConnector::value(char *block, int index) const{
+inline double RasterCoverageConnector::value(char *block, int index) const{
     double v = rUNDEF;
     char *c = &(block[index * _typeSize]);
     switch (_gdalValueType) {
@@ -98,13 +98,13 @@ inline double GridCoverageConnector::value(char *block, int index) const{
     }
     return v;
 }
-Grid *GridCoverageConnector::loadGridData(IlwisObject* data){
+Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
     auto layerHandle = gdal()->getRasterBand(_dataSet, 1);
     if (!layerHandle) {
         ERROR2(ERR_COULD_NOT_LOAD_2, "GDAL","layer");
         return 0;
     }
-    GridCoverage *gc = static_cast<GridCoverage *>(data);
+    RasterCoverage *gc = static_cast<RasterCoverage *>(data);
     Grid *grid = 0;
     if ( grid == 0) {
 
@@ -157,11 +157,11 @@ Grid *GridCoverageConnector::loadGridData(IlwisObject* data){
     return grid;
 }
 
-Ilwis::IlwisObject *GridCoverageConnector::create() const{
-    return new GridCoverage(_resource);
+Ilwis::IlwisObject *RasterCoverageConnector::create() const{
+    return new RasterCoverage(_resource);
 }
 
-bool GridCoverageConnector::setGeotransform(GridCoverage *gcov,GDALDatasetH dataset) {
+bool RasterCoverageConnector::setGeotransform(RasterCoverage *gcov,GDALDatasetH dataset) {
     if ( gcov->georeference()->grfType<CornersGeoReference>()) {
         std::vector<double> sup = gcov->georeference()->impl<CornersGeoReference>()->support();
         Box2Dd env = gcov->envelope();
@@ -178,12 +178,12 @@ bool GridCoverageConnector::setGeotransform(GridCoverage *gcov,GDALDatasetH data
     return ERROR2(ERR_OPERATION_NOTSUPPORTED2,TR("Georeference type"), "Gdal");
 }
 
-bool GridCoverageConnector::store(IlwisObject *obj, int )
+bool RasterCoverageConnector::store(IlwisObject *obj, int )
 {
     if(!GdalConnector::store(obj, 0))
         return false;
 
-    GridCoverage *gcov = static_cast<GridCoverage *>(obj);
+    RasterCoverage *gcov = static_cast<RasterCoverage *>(obj);
     Size sz = gcov->size();
     GDALDataType gdalType = ilwisType2GdalType(gcov->datadef().range()->determineType());
     GDALDriverH hdriver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
