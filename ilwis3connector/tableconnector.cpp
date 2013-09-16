@@ -248,6 +248,9 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         if ( dmColumn->ilwisType() == itNUMERICDOMAIN) {
             INumericDomain numdom = dmColumn.get<NumericDomain>();
             SPNumericRange numdmrange = numdom->range<NumericRange>();
+            if ( numdmrange.isNull()){
+                return ERROR1(ERR_NO_INITIALIZED_1,TR("numeric range"));
+            }
             SPNumericRange numrange = def.datadef().range().dynamicCast<NumericRange>();
             RawConverter conv(numrange->min(), numrange->max(), numrange->step());
             QString range = QString("%1:%2:%3:offset=%4").arg(numrange->min()).arg(numrange->max()).arg(numrange->step()).arg(conv.offset());
