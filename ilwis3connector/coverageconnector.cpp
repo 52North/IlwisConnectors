@@ -269,11 +269,23 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
                 _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
                 _odf->setKeyValue("BaseMap","Domain",source);
             }
-        } else  {
+        } else if(dom->valueType() == itINDEXEDITEM) {
             QString domName = _odf->fileinfo().fileName();
             QString domInfo = QString("%1;Long;UniqueID;0;;").arg(domName);
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
             _odf->setKeyValue("BaseMap","Domain",domName);
+        } else if ( dom->valueType() == itNAMEDITEM) {
+            INamedIdDomain iddom = dom.get<NamedIdDomain>();
+            QString domName = _odf->fileinfo().fileName();
+            int index;
+            if ( (index=domName.lastIndexOf("."))!= -1)             {
+                domName = domName.left(index);
+            }
+            QString domInfo = QString("%1;;Int;id;%2;;").arg(domName).arg(iddom->count());
+            _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
+            _odf->setKeyValue("BaseMap","Domain",domName);
+            iddom->connectTo(QUrl(),"domain","ilwis3", IlwisObject::cmOUTPUT);
+            iddom->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
         }
     }
 
