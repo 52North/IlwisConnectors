@@ -13,9 +13,10 @@ public:
          _undefined = 0;
         if ( type == "class") {
             _storeType = itUINT8;
-        } else {
+        } else if ( type == "ident"){
+            _storeType = itUINT16;
+        } else
             _storeType = itUINT32;
-        }
     }
 
 

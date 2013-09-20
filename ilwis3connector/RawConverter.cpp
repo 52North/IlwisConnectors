@@ -65,13 +65,13 @@ double RawConverter::determineOffset(double low, double high, double step, Ilwis
   switch (st) {
     case itINT32:
       if (minDivStep > -LONG_MAX || maxDivStep < LONG_MAX)
-        r0 = minDivStep / 2 + maxDivStep / 2 - 0.0001;
+        r0 = minDivStep - 0.0001;
       else
         r0 = 0;
       break;
     case itINT16:
       if (minDivStep > -SHRT_MAX || maxDivStep < SHRT_MAX)
-        r0 = minDivStep / 2 + maxDivStep / 2 - 0.0001;
+        r0 = minDivStep - 0.0001;
       else
         r0 = 0;
       break;
@@ -84,6 +84,7 @@ double RawConverter::determineOffset(double low, double high, double step, Ilwis
   }
   return r0;
 }
+
 
 double RawConverter::guessUndef(double vmin, double vmax) {
     if ( vmin >  std::numeric_limits<short>::min() && vmax < std::numeric_limits<short>::max())
