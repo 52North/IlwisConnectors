@@ -190,6 +190,7 @@ bool TableConnector::storeBinaryData(IlwisObject *obj)
 
     }
 
+    output_file.close();
     return true;
 }
 
