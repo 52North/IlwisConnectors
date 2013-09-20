@@ -103,6 +103,10 @@ void BinaryIlwis3Table::getColumnInfo(const ODF& odf, const QString& prefix) {
         QString name = odf->value(prefix + "TableStore",key);
         QString section = QString(prefix + "Col:%1").arg(name);
         QString st = odf->value(section, "StoreType");
+        if ( st == sUNDEF) {
+            ERROR2(ERR_INVALID_PROPERTY_FOR_2, "column store type", odf->fileinfo().fileName());
+            return ;
+        }
         inf._name = name;
         QString range = odf->value(section,"Range");
         QStringList parts = range.split(":");
