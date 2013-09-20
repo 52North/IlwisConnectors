@@ -321,13 +321,20 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
         output_file.close();
 
     } else if ( dom->ilwisType() == itITEMDOMAIN ){
-        if ( dom->valueType() & itTHEMATICITEM) {
+        if ( hasType(dom->valueType(), itTHEMATICITEM | itNAMEDITEM)) {
             std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
             if ( !output_file.is_open()){
                 return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
             }
-            RawConverter conv("class");
-            ok = save<quint8>(output_file,conv, gcov,sz);
+
+            if( hasType(dom->valueType(), itTHEMATICITEM)){
+                RawConverter conv("class");
+                ok = save<quint8>(output_file,conv, gcov,sz);
+            }
+            else{
+                RawConverter conv("ident");
+                ok = save<quint16>(output_file,conv, gcov,sz);
+            }
         }
     }
     return ok;
@@ -456,8 +463,12 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
         } else if ( conv.storeType() == itDOUBLE){
             _odf->setKeyValue("MapStore","Type","Real");
         }
-    } if ( dom->ilwisType() == itITEMDOMAIN) {
-        _odf->setKeyValue("MapStore","Type","Byte");
+    } if ( hasType(dom->ilwisType(),itITEMDOMAIN)) {
+        if ( hasType(dom->valueType(), itTHEMATICITEM))
+            _odf->setKeyValue("MapStore","Type","Byte");
+        else if ( hasType(dom->valueType(), itNAMEDITEM)) {
+            _odf->setKeyValue("MapStore","Type","Int");
+        }
     }
     QFileInfo inf(_resource.toLocalFile());
     QString file = inf.baseName() + ".mp#";
