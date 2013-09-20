@@ -19,6 +19,7 @@
 #include "datadefinition.h"
 #include "binaryilwis3table.h"
 #include "ilwis3range.h"
+#include "textdomain.h"
 #include "domainconnector.h"
 
 using namespace Ilwis;
@@ -162,18 +163,22 @@ QString DomainConnector::parseDomainInfo(const QString& inf) const{
 }
 
 bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
-    ItemDomain<ThematicItem> *themdom = static_cast< ItemDomain<ThematicItem> *>(dom);
-    auto writeColumnFunc = [&] (const QString& name, const QString& domName, const QString& domInfo, const QString& rng) -> void {
+    ItemDomain<NamedIdentifier> *piddomain = static_cast< ItemDomain<NamedIdentifier> *>(dom);
+    INamedIdDomain iddomain;
+    iddomain.set(piddomain);
+
+    auto writeColumnFunc = [&] (const QString& name, const QString& domName, const QString& domInfo, const QString& rng, const QString& storeType) -> void {
         _odf->setKeyValue(name, "Time", Time::now().toString());
         _odf->setKeyValue(name, "Version", "3.1");
         _odf->setKeyValue(name, "Class", "Column");
-        _odf->setKeyValue(name, "Domain", "value.dom");
+        _odf->setKeyValue(name, "Domain", domName);
         _odf->setKeyValue(name, "DomainInfo", domInfo);
         if ( rng != sUNDEF)
             _odf->setKeyValue(name, "Range", rng);
         _odf->setKeyValue(name, "ReadOnly", "No");
         _odf->setKeyValue(name, "OwnedByTable", "No");
         _odf->setKeyValue(name, "Type", "ColumnStore");
+        _odf->setKeyValue(name, "StoreType", storeType);
 
     };
 
@@ -181,32 +186,69 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
     _odf->setKeyValue("Table","Version","3.1");
     _odf->setKeyValue("Table","Class","Table");
     _odf->setKeyValue("Table","Domain","String.dom");
+    _odf->setKeyValue("Table","Type","TableStore");
     _odf->setKeyValue("Table","DomainInfo", "String.dom;String;string;0;;");
     _odf->setKeyValue("Table","Columns",tp == itTHEMATICITEM ? "5" : "3");
-    _odf->setKeyValue("Table","Records", QString::number(themdom->count()));
+    _odf->setKeyValue("Table","Records", QString::number(iddomain->count()));
     _odf->setKeyValue("DomainSort","Prefix", "");
     _odf->setKeyValue("DomainSort","Sorting","Alphabetical");
     _odf->setKeyValue("Domain", "Type", tp == itTHEMATICITEM ? "DomainSort" : "DomainIdentifier");
-    _odf->setKeyValue( tp == itTHEMATICITEM ? "DomainClass" : "DomainIdentifier", "Nr", QString::number(themdom->count()));
+    _odf->setKeyValue( tp == itTHEMATICITEM ? "DomainClass" : "DomainIdentifier", "Nr", QString::number(iddomain->count()));
 
     QFileInfo inf(dom->name());
     QString dataName  = inf.baseName() + ".dm#";
     _odf->setKeyValue("TableStore", "Data", dataName);
     _odf->setKeyValue("TableStore", "Col0", "Name");
+    _odf->setKeyValue("TableStore", "Col1", "Ord");
+    _odf->setKeyValue("TableStore", "Col2", "Ind");
+    _odf->setKeyValue("TableStore", "Type", "TableBinary");
     if (tp == itTHEMATICITEM) {
-        _odf->setKeyValue("TableStore", "Col1", "Code");
-        _odf->setKeyValue("TableStore", "Col2", "Description");
+        _odf->setKeyValue("TableStore", "Col3", "Code");
+        _odf->setKeyValue("TableStore", "Col4", "Description");
     }
-    _odf->setKeyValue("TableStore", "Col3", "Ord");
-    _odf->setKeyValue("TableStore", "Col4", "Ind");
 
-    writeColumnFunc("Col:Name","String.dom","String.dom;String;string;0;;", sUNDEF);
+    writeColumnFunc("Col:Name","String.dom","String.dom;String;string;0;;", sUNDEF, "String");
+    writeColumnFunc("Col:Ord","value.dom","value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0;", "-32766:32767:offset=0","Int");
+    writeColumnFunc("Col:Ind","value.dom","value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0;", "-32766:32767:offset=0","Int");
     if ( tp == itTHEMATICITEM) {
-        writeColumnFunc("Col:Code","String.dom","String.dom;String;string;0;;", sUNDEF);
-        writeColumnFunc("Col:Description","String.dom","String.dom;String;string;0;;", sUNDEF);
+        writeColumnFunc("Col:Code","String.dom","String.dom;String;string;0;;", sUNDEF, "String");
+        writeColumnFunc("Col:Description","String.dom","String.dom;String;string;0;;", sUNDEF, "String");
     }
-    writeColumnFunc("Col:Ord","value.dom","value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0;", "0:2147483646:offset=0");
-    writeColumnFunc("Col:Ind","value.dom","value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0;", "0:2147483646:offset=0");
+
+    BinaryIlwis3Table ilw3tbl;
+    std::ofstream output_file;
+    if(!ilw3tbl.openOutput(dom->name()  + ".dm#", output_file))
+        return false;
+    ITextDomain txtdom;
+    txtdom.prepare();
+    DataDefinition deftxt(txtdom);
+    INumericDomain numdom;
+    numdom.prepare("count");
+    DataDefinition deford(numdom);
+    DataDefinition defind(numdom);
+
+    ilw3tbl.addStoreDefinition(deftxt);
+    ilw3tbl.addStoreDefinition(deford);
+    ilw3tbl.addStoreDefinition(defind);
+    if ( tp == itTHEMATICITEM) {
+        ilw3tbl.addStoreDefinition(deftxt);
+        ilw3tbl.addStoreDefinition(deftxt);
+    }
+
+    for(SPDomainItem item : iddomain){
+        std::vector<QVariant> record(tp == itTHEMATICITEM ? 5 : 3);
+        record[0] = item->name();
+        record[1] = item->raw() + 1;
+        record[2] = item->raw() + 1;
+        if ( tp == itTHEMATICITEM) {
+            SPThematicItem thematicItem = item.staticCast<ThematicItem>();
+            record[3] = thematicItem->code();
+            record[4] = thematicItem->description();
+        }
+        ilw3tbl.storeRecord(output_file, record);
+    }
+
+    output_file.close();
 
     return true;
 
@@ -253,6 +295,7 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
     } else if ( dom->ilwisType() == itCOORDDOMAIN) {
     }
 
+    _odf->store();
     return true;
 }
 
