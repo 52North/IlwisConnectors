@@ -104,11 +104,11 @@ Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
         ERROR2(ERR_COULD_NOT_LOAD_2, "GDAL","layer");
         return 0;
     }
-    RasterCoverage *gc = static_cast<RasterCoverage *>(data);
+    RasterCoverage *rasterCoverage = static_cast<RasterCoverage *>(data);
     Grid *grid = 0;
     if ( grid == 0) {
 
-        Size sz = gc->size();
+        Size sz = rasterCoverage->size();
         grid =new Grid(sz);
     }
     grid->prepare();
@@ -118,7 +118,7 @@ Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
     int count = 0; // block count over all the layers
     quint64 totalLines =grid->size().ysize();
     quint32 layer = 1;
-    while(layer <= gc->size().zsize()) {
+    while(layer <= rasterCoverage->size().zsize()) {
         quint64 linesLeft = totalLines;
         int gdalindex = 0; // count within one gdal layer
         while(true) {
@@ -149,7 +149,7 @@ Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
                 break;
             linesLeft -= linesPerBlock;
         }
-        if ( ++layer < gc->size().zsize())
+        if ( ++layer < rasterCoverage->size().zsize())
             layerHandle = gdal()->getRasterBand(_dataSet, layer);
     }
 
@@ -161,12 +161,12 @@ Ilwis::IlwisObject *RasterCoverageConnector::create() const{
     return new RasterCoverage(_resource);
 }
 
-bool RasterCoverageConnector::setGeotransform(RasterCoverage *gcov,GDALDatasetH dataset) {
-    if ( gcov->georeference()->grfType<CornersGeoReference>()) {
-        std::vector<double> sup = gcov->georeference()->impl<CornersGeoReference>()->support();
-        Box2Dd env = gcov->envelope();
-        double a2 = (env.max_corner().x() - env.min_corner().x()) / gcov->size().xsize();
-        double b2 = (env.max_corner().y() - env.min_corner().y()) / gcov->size().ysize();
+bool RasterCoverageConnector::setGeotransform(RasterCoverage *rasterCoverage,GDALDatasetH dataset) {
+    if ( rasterCoverage->georeference()->grfType<CornersGeoReference>()) {
+        std::vector<double> sup = rasterCoverage->georeference()->impl<CornersGeoReference>()->support();
+        Box2Dd env = rasterCoverage->envelope();
+        double a2 = (env.max_corner().x() - env.min_corner().x()) / rasterCoverage->size().xsize();
+        double b2 = (env.max_corner().y() - env.min_corner().y()) / rasterCoverage->size().ysize();
         double geoTransform[6] = { env.min_corner().x(), a2, sup[0], env.min_corner().y(), sup[1], b2 };
 
         CPLErr err = gdal()->setGeoTransform(dataset,geoTransform);
@@ -183,9 +183,9 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
     if(!GdalConnector::store(obj, 0))
         return false;
 
-    RasterCoverage *gcov = static_cast<RasterCoverage *>(obj);
-    Size sz = gcov->size();
-    GDALDataType gdalType = ilwisType2GdalType(gcov->datadef().range()->determineType());
+    RasterCoverage *rasterCoverage = static_cast<RasterCoverage *>(obj);
+    Size sz = rasterCoverage->size();
+    GDALDataType gdalType = ilwisType2GdalType(rasterCoverage->datadef().range()->determineType());
     GDALDriverH hdriver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
     if ( hdriver == 0) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "driver",_gdalShortName);
@@ -196,28 +196,28 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
     if ( dataset == 0) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data set",_filename);
     }
-    bool ok = setGeotransform(gcov, dataset);
+    bool ok = setGeotransform(rasterCoverage, dataset);
     if (ok)
-        ok = setSRS(gcov, dataset);
+        ok = setSRS(rasterCoverage, dataset);
 
     if (!ok)
         return false;
 
     switch(gdalType) {
     case GDT_Byte:
-        ok = save<quint8>(gcov, dataset,gdalType);break;
+        ok = save<quint8>(rasterCoverage, dataset,gdalType);break;
     case GDT_UInt16:
-        ok = save<quint16>(gcov, dataset,gdalType);break;
+        ok = save<quint16>(rasterCoverage, dataset,gdalType);break;
     case GDT_Int16:
-        ok = save<qint16>(gcov, dataset,gdalType);break;
+        ok = save<qint16>(rasterCoverage, dataset,gdalType);break;
     case GDT_Int32:
-        ok = save<qint32>(gcov, dataset,gdalType);break;
+        ok = save<qint32>(rasterCoverage, dataset,gdalType);break;
     case GDT_UInt32:
-        ok = save<quint32>(gcov, dataset,gdalType);break;
+        ok = save<quint32>(rasterCoverage, dataset,gdalType);break;
     case GDT_Float32:
-        ok = save<float>(gcov, dataset,gdalType);break;
+        ok = save<float>(rasterCoverage, dataset,gdalType);break;
     case GDT_Float64:
-        ok = save<double>(gcov, dataset,gdalType);break;
+        ok = save<double>(rasterCoverage, dataset,gdalType);break;
     default:
         ok= ERROR1(ERR_NO_INITIALIZED_1, "gdal Data type");
     }

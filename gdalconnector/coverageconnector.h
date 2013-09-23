@@ -15,7 +15,7 @@ public:
 
 protected:
     bool store(IlwisObject *obj, IlwisTypes type);
-    bool setSRS(Coverage *gcov, GDALDatasetH dataset) const;
+    bool setSRS(Coverage *rasterCoverage, GDALDatasetH dataset) const;
 private:
     //void setCsy(Coverage *coverage);
 };

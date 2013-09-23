@@ -23,13 +23,13 @@ private:
     int _typeSize;
 
     double value(char *block, int index) const;
-    bool setGeotransform(RasterCoverage *gcov, GDALDatasetH dataset);
+    bool setGeotransform(RasterCoverage *rasterCoverage, GDALDatasetH dataset);
 
-    template<typename DT> bool save(RasterCoverage *gcov, GDALDatasetH dataset,GDALDataType gdaltype){
-        quint32 columns = gcov->size().xsize();
-        IRasterCoverage gc;
-        gc.set(gcov);
-        PixelIterator iter(gc);
+    template<typename DT> bool save(RasterCoverage *prasterCoverage, GDALDatasetH dataset,GDALDataType gdaltype){
+        quint32 columns = prasterCoverage->size().xsize();
+        IRasterCoverage rasterCoverage;
+        rasterCoverage.set(prasterCoverage);
+        PixelIterator iter(rasterCoverage);
         int bandcount = 1;
         std::vector<DT> data(columns);
         GDALRasterBandH hband = gdal()->getRasterBand(dataset,bandcount);

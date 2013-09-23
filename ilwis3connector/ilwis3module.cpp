@@ -73,7 +73,7 @@ void Ilwis3Module::prepare()
     factory->addCreator(itPROJECTION,"ilwis3", Ilwis3::ProjectionConnector::create);
     factory->addCreator(itELLIPSOID,"ilwis3",Ilwis3::EllipsoidConnector::create);
     factory->addCreator(itCOORDSYSTEM,"ilwis3",Ilwis3::CoordinateSystemConnector::create);
-    factory->addCreator(itFEATURECOVERAGE,"ilwis3",Ilwis3::FeatureConnector::create);
+    factory->addCreator(itFEATURE,"ilwis3",Ilwis3::FeatureConnector::create);
 
     factory->addCreator("map","ilwis3",Ilwis3::RasterCoverageConnector::create);
     factory->addCreator("georef","ilwis3",Ilwis3::GeorefConnector::create);

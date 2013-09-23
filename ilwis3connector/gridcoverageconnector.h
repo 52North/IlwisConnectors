@@ -28,10 +28,10 @@ private:
     void setStoreType(const QString &storeType);
     bool loadMapList(IlwisObject *data);
     bool storeMetaDataMapList(Ilwis::IlwisObject *obj);
-    QString getGrfName(const IRasterCoverage &gcov);
+    QString getGrfName(const IRasterCoverage &rasterCoverage);
 
-    template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& gcov, const Size& sz) const{
-        PixelIterator pixiter(gcov,Box3D<>(sz));
+    template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& rasterCoverage, const Size& sz) const{
+        PixelIterator pixiter(rasterCoverage,Box3D<>(sz));
         int  i=0;
         T c = 0;
         const char *ptr = reinterpret_cast<const char*>(&c);

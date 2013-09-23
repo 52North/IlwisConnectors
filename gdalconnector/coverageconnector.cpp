@@ -79,9 +79,9 @@ bool CoverageConnector::store(IlwisObject *obj, IlwisTypes type)
     return true;
 }
 
-bool CoverageConnector::setSRS(Coverage *gcov, GDALDatasetH dataset) const
+bool CoverageConnector::setSRS(Coverage *rasterCoverage, GDALDatasetH dataset) const
 {
-    IConventionalCoordinateSystem csy = gcov->coordinateSystem().get<ConventionalCoordinateSystem>();
+    IConventionalCoordinateSystem csy = rasterCoverage->coordinateSystem().get<ConventionalCoordinateSystem>();
     QString proj4def = csy->projection()->toProj4();
     OGRSpatialReferenceH srsH = gdal()->newSRS(0);
     OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());
