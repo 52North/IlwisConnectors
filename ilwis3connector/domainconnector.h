@@ -10,12 +10,12 @@ namespace Ilwis3{
 class DomainConnector : public Ilwis3Connector
 {
 public:
-    DomainConnector(const Resource& item, bool load=true);
+    DomainConnector(const Resource& resource, bool load=true);
     bool loadMetaData(Ilwis::IlwisObject *data);
     bool storeMetaData(Ilwis::IlwisObject *data);
     IlwisObject *create() const;
 
-    static ConnectorInterface *create(const Ilwis::Resource &item, bool load=true);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
 private:
     bool handleValueDomains(IlwisObject *data);
     /*!

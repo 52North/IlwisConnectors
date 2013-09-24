@@ -7,8 +7,8 @@ class GdalObjectFactory : public IlwisObjectFactory
 {
 public:
     GdalObjectFactory();
-    bool canUse(const Resource &item) const;
-    IlwisObject *create(const Resource &item) const;
+    bool canUse(const Resource &resource) const;
+    IlwisObject *create(const Resource &resource) const;
 };
 }
 }

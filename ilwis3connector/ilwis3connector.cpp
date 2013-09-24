@@ -20,15 +20,15 @@ using namespace Ilwis;
 using namespace Ilwis3;
 
 
-Ilwis3Connector::Ilwis3Connector(const Resource &item, bool load) : IlwisObjectConnector(item, load)
+Ilwis3Connector::Ilwis3Connector(const Resource &resource, bool load) : IlwisObjectConnector(resource, load)
 {
-    QUrl fullname = resolve(item);
+    QUrl fullname = resolve(resource);
     IniFile *odf = new IniFile();
     odf->setIniFile(fullname, load);
     _odf.reset(odf);
-    _resource = Resource(fullname, item.ilwisType());
-    if (!load && item.id() != i64UNDEF)
-        _resource.setId(item.id());
+    _resource = Resource(fullname, resource.ilwisType());
+    if (!load && resource.id() != i64UNDEF)
+        _resource.setId(resource.id());
 }
 
 bool Ilwis3Connector::loadMetaData(IlwisObject *data)

@@ -6,13 +6,13 @@ namespace Gdal{
 class GdalCatalogConnector : public CatalogConnector
 {
 public:
-    GdalCatalogConnector(const Ilwis::Resource &item);
+    GdalCatalogConnector(const Ilwis::Resource &resource);
 
     virtual bool loadItems();
-    bool canUse(const QUrl& res) const;
+    bool canUse(const QUrl& resource) const;
     QString provider() const;
 
-    static ConnectorInterface *create(const Ilwis::Resource &item, bool load=true);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
 protected:
     IlwisTypes _type;
 };

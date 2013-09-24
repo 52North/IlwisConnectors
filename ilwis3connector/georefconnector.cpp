@@ -24,13 +24,13 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *GeorefConnector::create(const Resource &item, bool load) {
-    return new GeorefConnector(item, load);
+ConnectorInterface *GeorefConnector::create(const Resource &resource, bool load) {
+    return new GeorefConnector(resource, load);
 
 }
 
 
-GeorefConnector::GeorefConnector(const Resource &item, bool load) : Ilwis3Connector(item, load) {
+GeorefConnector::GeorefConnector(const Resource &resource, bool load) : Ilwis3Connector(resource, load) {
 
 }
 
@@ -76,7 +76,7 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
 {
     Ilwis3Connector::storeMetaData(obj, itGEOREF);
     GeoReference *grf = static_cast<GeoReference *>(obj);
-    _odf->setKeyValue("GeoRef","CoordSystem",Resource::toLocalFile(grf->coordinateSystem()->resource().url(),true));
+    _odf->setKeyValue("GeoRef","CoordSystem",Resource::toLocalFile(grf->coordinateSystem()->source().url(),true));
     Size sz = grf->size();
     _odf->setKeyValue("GeoRef","Lines", QString::number(sz.ysize()));
     _odf->setKeyValue("GeoRef","Columns", QString::number(sz.xsize()));
@@ -118,8 +118,8 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
     ICoordinateSystem csy;
     if(!csy.prepare(path.toLocalFile())) {
         kernel()->issues()->log(TR("Couldnt find coordinate system %1, loading unknown").arg(csyName),IssueObject::itWarning);
-        QString res = QString("ilwis://file/unknown.csy");
-        if(!csy.prepare(res)) {
+        QString resource = QString("ilwis://file/unknown.csy");
+        if(!csy.prepare(resource)) {
             kernel()->issues()->log(TR("Cound find coordinate system unknown, corrupt system file"));
             return false;
         }

@@ -27,7 +27,7 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-CoverageConnector::CoverageConnector(const Resource& item,bool load) : GdalConnector(item,load)
+CoverageConnector::CoverageConnector(const Resource& resource,bool load) : GdalConnector(resource,load)
 {
 }
 
@@ -43,11 +43,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "coordinatesystem", coverage->name());
     }
 
-    IDomain dom;
-    if(!dom.prepare("code=value")) { //TODO  for the moment only value maps in gdal
-        return ERROR1(ERR_NO_INITIALIZED_1,data->name());
-    }
-    coverage->datadef().domain(dom);
+
 
     double geosys[6];
     CPLErr err = gdal()->getGeotransform(_dataSet, geosys) ;
@@ -79,9 +75,9 @@ bool CoverageConnector::store(IlwisObject *obj, IlwisTypes type)
     return true;
 }
 
-bool CoverageConnector::setSRS(Coverage *rasterCoverage, GDALDatasetH dataset) const
+bool CoverageConnector::setSRS(Coverage *raster, GDALDatasetH dataset) const
 {
-    IConventionalCoordinateSystem csy = rasterCoverage->coordinateSystem().get<ConventionalCoordinateSystem>();
+    IConventionalCoordinateSystem csy = raster->coordinateSystem().get<ConventionalCoordinateSystem>();
     QString proj4def = csy->projection()->toProj4();
     OGRSpatialReferenceH srsH = gdal()->newSRS(0);
     OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());

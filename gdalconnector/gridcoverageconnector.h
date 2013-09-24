@@ -8,12 +8,12 @@ class RasterCoverageConnector : public CoverageConnector
 {
 public:
 
-    RasterCoverageConnector(const Ilwis::Resource &item, bool load=true);
+    RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true);
 
     bool loadMetaData(IlwisObject *data);
     Ilwis::Grid *loadGridData(Ilwis::IlwisObject *data) ;
 
-    static ConnectorInterface *create(const Ilwis::Resource &item, bool load=true);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
     Ilwis::IlwisObject *create() const;
     bool store(IlwisObject *obj, int );
 
@@ -23,13 +23,13 @@ private:
     int _typeSize;
 
     double value(char *block, int index) const;
-    bool setGeotransform(RasterCoverage *rasterCoverage, GDALDatasetH dataset);
+    bool setGeotransform(RasterCoverage *raster, GDALDatasetH dataset);
 
     template<typename DT> bool save(RasterCoverage *prasterCoverage, GDALDatasetH dataset,GDALDataType gdaltype){
         quint32 columns = prasterCoverage->size().xsize();
-        IRasterCoverage rasterCoverage;
-        rasterCoverage.set(prasterCoverage);
-        PixelIterator iter(rasterCoverage);
+        IRasterCoverage raster;
+        raster.set(prasterCoverage);
+        PixelIterator iter(raster);
         int bandcount = 1;
         std::vector<DT> data(columns);
         GDALRasterBandH hband = gdal()->getRasterBand(dataset,bandcount);

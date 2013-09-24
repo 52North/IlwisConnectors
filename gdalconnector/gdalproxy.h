@@ -95,7 +95,7 @@ public:
 
     bool isValid() const;
     QStringList rasterNameFilter() const;
-    bool supports(const Resource& item) const;
+    bool supports(const Resource& resource) const;
 
     template<class T> T  add(const QString& name) {
         if (!_isValid)

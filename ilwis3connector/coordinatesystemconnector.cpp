@@ -21,12 +21,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *CoordinateSystemConnector::create(const Resource &item,bool load) {
-    return new CoordinateSystemConnector(item, load);
+ConnectorInterface *CoordinateSystemConnector::create(const Resource &resource,bool load) {
+    return new CoordinateSystemConnector(resource, load);
 
 }
 
-CoordinateSystemConnector::CoordinateSystemConnector(const Resource &item, bool load) : Ilwis3Connector(item, load)
+CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, bool load) : Ilwis3Connector(resource, load)
 {
     QString type = _odf->value("CoordSystem","Type");
 }
@@ -176,7 +176,7 @@ IProjection CoordinateSystemConnector::getProjection() {
     }
 
     QString code = name2Code(projection, "projection");
-    Resource res(QUrl(QString("ilwis://tables/projection?code=%1").arg(code)), itPROJECTION);
+    Resource resource(QUrl(QString("ilwis://tables/projection?code=%1").arg(code)), itPROJECTION);
 
     if ( code == sUNDEF) {
         kernel()->issues()->log(TR("Couldnt find projection %1").arg(projection));
@@ -184,7 +184,7 @@ IProjection CoordinateSystemConnector::getProjection() {
     }
 
     IProjection proj;
-    if(!proj.prepare(res))
+    if(!proj.prepare(resource))
         return IProjection();
 
     bool ok;

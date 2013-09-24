@@ -6,12 +6,12 @@ namespace Ilwis3 {
 class GeorefConnector : public Ilwis3Connector
 {
 public:
-    GeorefConnector(const Ilwis::Resource &item, bool load=true);
+    GeorefConnector(const Ilwis::Resource &resource, bool load=true);
     bool loadMetaData(IlwisObject *data);
     bool storeMetaData(IlwisObject *obj);
     IlwisObject *create() const;
 
-    static ConnectorInterface *create(const Ilwis::Resource &item, bool load=true);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
 
 private:
     bool loadGeoref(const IniFile &odf, IlwisObject *data);

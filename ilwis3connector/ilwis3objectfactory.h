@@ -7,7 +7,7 @@ class Ilwis3ObjectFactory : public IlwisObjectFactory
 public:
     Ilwis3ObjectFactory();
 
-    IlwisObject *create(const Ilwis::Resource &item) const;
+    IlwisObject *create(const Ilwis::Resource &resource) const;
     bool canUse(const Resource &resource) const;
     bool prepare();
 private:

@@ -57,13 +57,13 @@ quint64 GDALItems::addCsy(GDALDatasetH dataSet, const QString &path) {
         return i64UNDEF;
     QString epsg(gdal()->getAttributeValue(srshandle,"AUTHORITY",0));
     if ( epsg != sUNDEF) {
-        Resource res = mastercatalog()->name2Resource("code=epsg:" + epsg, itCONVENTIONALCOORDSYSTEM);
-        if ( res.isValid())
-            return res.id();
+        Resource resource = mastercatalog()->name2Resource("code=epsg:" + epsg, itCONVENTIONALCOORDSYSTEM);
+        if ( resource.isValid())
+            return resource.id();
     }
-    Resource res(QUrl("file:///" + path),itCONVENTIONALCOORDSYSTEM );
-    insert(res);
-    return res.id();
+    Resource resource(QUrl("file:///" + path),itCONVENTIONALCOORDSYSTEM );
+    insert(resource);
+    return resource.id();
 }
 
 

@@ -145,9 +145,9 @@ QStringList GDALProxy::rasterNameFilter() const
     return _rasterExtensions;
 }
 
-bool GDALProxy::supports(const Resource &item) const
+bool GDALProxy::supports(const Resource &resource) const
 {
-    QFileInfo inf(item.toLocalFile());
+    QFileInfo inf(resource.toLocalFile());
     QString ext = inf.suffix();
     QString filter = "*." + ext;
     if ( !gdal()->rasterNameFilter().contains(filter,Qt::CaseInsensitive))

@@ -37,12 +37,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *TableConnector::create(const Resource &item, bool load) {
-    return new TableConnector(item, load);
+ConnectorInterface *TableConnector::create(const Resource &resource, bool load) {
+    return new TableConnector(resource, load);
 
 }
 
-TableConnector::TableConnector(const Resource &item, bool load) : Ilwis3Connector(item, load)
+TableConnector::TableConnector(const Resource &resource, bool load) : Ilwis3Connector(resource, load)
 {
    // _type = itTABLE;
 }
@@ -199,7 +199,7 @@ QString TableConnector::getDomainName(const IDomain& dom, bool& isSystem) {
     if ( name != sUNDEF)
         return name;
     isSystem = false;
-    return dom->resource().toLocalFile(true);
+    return dom->source().toLocalFile(true);
 }
 
 bool TableConnector::storeMetaData(IlwisObject *obj)
@@ -230,7 +230,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         bool isSystem = true;
         QString domName = getDomainName(dmColumn, isSystem);
         if ( !isSystem) {
-            DomainConnector conn(dmColumn->resource(), itDOMAIN);
+            DomainConnector conn(dmColumn->source(), itDOMAIN);
             conn.storeMetaData(dmColumn.ptr());
         }
         _odf->setKeyValue("TableStore", QString("Col%1").arg(i - reduceColumns), def.name());
@@ -270,14 +270,14 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
                     arg(conv.offset());
             _odf->setKeyValue(colName, "StoreType", storeType == "Real" ? "Real" : "Long");
         } else if ( dmColumn->valueType() == itTHEMATICITEM) {
-            domainInfo = QString("%1;Int;class;256;;").arg(dmColumn->resource().toLocalFile(true)) ;
+            domainInfo = QString("%1;Int;class;256;;").arg(dmColumn->source().toLocalFile(true)) ;
             _odf->setKeyValue(colName, "StoreType", "Long");
         } else if ( dmColumn->valueType() == itSTRING) {
             domainInfo = "string.dom;String;string;0;;";
             _odf->setKeyValue(colName, "StoreType","String");
         } else if ( dmColumn->valueType() & itIDENTIFIERITEM) {
             int count = dmColumn->range().dynamicCast<ItemRange>()->count();
-            domainInfo = QString("%1;Long;id;%2;;").arg(dmColumn->resource().toLocalFile(true)).arg(count) ;
+            domainInfo = QString("%1;Long;id;%2;;").arg(dmColumn->source().toLocalFile(true)).arg(count) ;
             _odf->setKeyValue(colName, "StoreType", "Long");
         }
         _odf->setKeyValue(colName, "DomainInfo", domainInfo);

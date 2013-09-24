@@ -23,11 +23,11 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *GeorefConnector::create(const Ilwis::Resource &item,bool load) {
-    return new GeorefConnector(item,load);
+ConnectorInterface *GeorefConnector::create(const Ilwis::Resource &resource,bool load) {
+    return new GeorefConnector(resource,load);
 }
 
-GeorefConnector::GeorefConnector(const Ilwis::Resource &item, bool load) : GdalConnector(item, load)
+GeorefConnector::GeorefConnector(const Ilwis::Resource &resource, bool load) : GdalConnector(resource, load)
 {
 }
 

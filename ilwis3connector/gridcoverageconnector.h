@@ -9,7 +9,7 @@ namespace Ilwis3{
 class RasterCoverageConnector : public CoverageConnector
 {
 public:
-    RasterCoverageConnector(const Ilwis::Resource &item, bool load=true);
+    RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true);
 
     bool loadMetaData(IlwisObject *data);
     bool storeMetaData(Ilwis::IlwisObject *obj);
@@ -17,7 +17,7 @@ public:
     bool storeBinaryData(Ilwis::IlwisObject *obj);
 
     Ilwis::IlwisObject *create() const;
-    static ConnectorInterface *create(const Ilwis::Resource &item,bool load = true);
+    static ConnectorInterface *create(const Ilwis::Resource &resource,bool load = true);
 
     void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
 
@@ -28,10 +28,11 @@ private:
     void setStoreType(const QString &storeType);
     bool loadMapList(IlwisObject *data);
     bool storeMetaDataMapList(Ilwis::IlwisObject *obj);
-    QString getGrfName(const IRasterCoverage &rasterCoverage);
+    QString getGrfName(const IRasterCoverage &raster);
+    void setDataDefinition(IlwisObject *data);
 
-    template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& rasterCoverage, const Size& sz) const{
-        PixelIterator pixiter(rasterCoverage,Box3D<>(sz));
+    template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& raster, const Size& sz) const{
+        PixelIterator pixiter(raster,Box3D<>(sz));
         int  i=0;
         T c = 0;
         const char *ptr = reinterpret_cast<const char*>(&c);

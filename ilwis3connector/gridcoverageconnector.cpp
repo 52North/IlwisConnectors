@@ -26,14 +26,14 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *RasterCoverageConnector::create(const Resource &item, bool load) {
-    return new RasterCoverageConnector(item, load);
+ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load) {
+    return new RasterCoverageConnector(resource, load);
 
 }
 
 
 
-RasterCoverageConnector::RasterCoverageConnector(const Resource &item, bool load) : CoverageConnector(item, load),_storesize(1)
+RasterCoverageConnector::RasterCoverageConnector(const Resource &resource, bool load) : CoverageConnector(resource, load),_storesize(1)
 {
 }
 
@@ -125,11 +125,60 @@ void RasterCoverageConnector::setStoreType(const QString& storeType) {
     _converter.storeType(_storetype);
 }
 
+void RasterCoverageConnector::setDataDefinition(IlwisObject *data) {
+
+    RasterCoverage *raster = static_cast<RasterCoverage *>(data);
+
+    IDomain dom;
+    if(!dom.prepare(_odf->fileinfo().canonicalFilePath())) {
+        kernel()->issues()->log(data->name(),TR(ERR_NO_INITIALIZED_1).arg(data->name()));
+        return ;
+    }
+
+    raster->datadef() = DataDefinition(dom);
+    double vmax,vmin,scale,offset;
+    QString range = _odf->value("BaseMap","Range");
+    if ( range != sUNDEF ) {
+        if ( getRawInfo(range, vmin,vmax,scale,offset)) {
+            if ( scale == 1.0) {
+                raster->datadef().range(new NumericRange(vmin, vmax,1));
+
+            }
+            else {
+                raster->datadef().range(new NumericRange(vmin, vmax));
+            }
+
+
+        }
+    } else {
+        QString dminfo = _odf->value("BaseMap","DomainInfo");
+        if ( dminfo != sUNDEF) {
+            int index = dminfo.indexOf("class;");
+            if ( index != -1) {
+                _converter = RawConverter("class");
+            } else {
+                index = dminfo.indexOf("id;");
+                if ( index != -1) {
+                    _converter = RawConverter("id");
+                } else {
+                    index = dminfo.indexOf("UniqueID;");
+                    if ( index != -1) {
+                        _converter = RawConverter("UniqueID");
+                    }
+                }
+            }
+
+        }
+    }
+}
+
 bool RasterCoverageConnector::loadMetaData(IlwisObject *data)
 {
     Locker lock(_mutex);
 
     QFileInfo inf(_resource.toLocalFile());
+    setDataDefinition(data);
+
     bool isMapList  = inf.suffix().toLower() == "mpl";
 
     if (isMapList ){
@@ -233,10 +282,10 @@ Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
         return 0;
     }
     int blockCount = 0;
-    RasterCoverage *rasterCoverage = static_cast<RasterCoverage *>(data);
+    RasterCoverage *raster = static_cast<RasterCoverage *>(data);
     Grid *grid = 0;
     if ( grid == 0) {
-        Size sz = rasterCoverage->size();
+        Size sz = raster->size();
         grid =new Grid(sz);
     }
     grid->prepare();
@@ -260,8 +309,8 @@ Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
             return 0;
         }
     }
-    if ( rasterCoverage->attributeTable(itRASTER).isValid()) {
-        ITable tbl = rasterCoverage->attributeTable(itRASTER);
+    if ( raster->attributeTable(itRASTER).isValid()) {
+        ITable tbl = raster->attributeTable(itRASTER);
         IDomain covdom;
         if (!covdom.prepare("count")){
             return 0;
@@ -281,27 +330,27 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
 
     if ( obj == nullptr)
         return false;
-    IRasterCoverage rasterCoverage = mastercatalog()->get(obj->id());
-    if ( !rasterCoverage.isValid())
+    IRasterCoverage raster = mastercatalog()->get(obj->id());
+    if ( !raster.isValid())
         return false;
 
-    if (!rasterCoverage->georeference().isValid())
+    if (!raster->georeference().isValid())
         return false;
-    if ( rasterCoverage->size().zsize() > 1) // mpl doesnt have binary data
+    if ( raster->size().zsize() > 1) // mpl doesnt have binary data
         return true;
 
-    const IDomain dom = rasterCoverage->datadef().domain();
+    const IDomain dom = raster->datadef().domain();
     if (!dom.isValid())
-        return ERROR2(ERR_NO_INITIALIZED_2, "Domain", rasterCoverage->name());
+        return ERROR2(ERR_NO_INITIALIZED_2, "Domain", raster->name());
 
     QFileInfo inf(obj->name());
     QString dir = context()->workingCatalog()->location().toLocalFile();
     QString filename = dir + "/" + inf.baseName() + ".mp#";
-    Size sz = rasterCoverage->size();
+    Size sz = raster->size();
     bool ok = false;
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
         calcStatics(obj, NumericStatistics::pBASIC);
-        const NumericStatistics& stats = rasterCoverage->statistics();
+        const NumericStatistics& stats = raster->statistics();
         RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - stats.significantDigits()));
 
 
@@ -310,13 +359,13 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
             return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
 
         if ( conv.storeType() == itUINT8) {
-            ok = save<quint8>(output_file,conv.scale() == 1 ? RawConverter() : conv, rasterCoverage,sz);
+            ok = save<quint8>(output_file,conv.scale() == 1 ? RawConverter() : conv, raster,sz);
         } else if ( conv.storeType() == itINT16) {
-            ok = save<qint16>(output_file,conv, rasterCoverage,sz);
+            ok = save<qint16>(output_file,conv, raster,sz);
         } else if ( conv.storeType() == itINT32) {
-            save<qint32>(output_file,conv, rasterCoverage,sz);
+            save<qint32>(output_file,conv, raster,sz);
         } else {
-            ok = save<double>(output_file,conv, rasterCoverage,sz);
+            ok = save<double>(output_file,conv, raster,sz);
         }
         output_file.close();
 
@@ -329,11 +378,11 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
 
             if( hasType(dom->valueType(), itTHEMATICITEM)){
                 RawConverter conv("class");
-                ok = save<quint8>(output_file,conv, rasterCoverage,sz);
+                ok = save<quint8>(output_file,conv, raster,sz);
             }
             else{
                 RawConverter conv("ident");
-                ok = save<quint16>(output_file,conv, rasterCoverage,sz);
+                ok = save<quint16>(output_file,conv, raster,sz);
             }
         }
     }
@@ -342,10 +391,10 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
 }
 
 void RasterCoverageConnector::calcStatics(const IlwisObject *obj, NumericStatistics::PropertySets set) const {
-    IRasterCoverage rasterCoverage = mastercatalog()->get(obj->id());
-    if ( !rasterCoverage->statistics().isValid()) {
-        PixelIterator iter(rasterCoverage,Box3D<>(rasterCoverage->size()));
-        rasterCoverage->statistics().calculate(iter, iter.end(),set);
+    IRasterCoverage raster = mastercatalog()->get(obj->id());
+    if ( !raster->statistics().isValid()) {
+        PixelIterator iter(raster,Box3D<>(raster->size()));
+        raster->statistics().calculate(iter, iter.end(),set);
     }
 }
 
@@ -355,14 +404,14 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         return false;
 
 
-    IRasterCoverage rasterCoverage = mastercatalog()->get(obj->id());
+    IRasterCoverage raster = mastercatalog()->get(obj->id());
 
-    QString localName = getGrfName(rasterCoverage);
+    QString localName = getGrfName(raster);
     if ( localName == sUNDEF)
         return false;
     _odf->setKeyValue("Ilwis","Type","MapList");
     _odf->setKeyValue("MapList","GeoRef",localName);
-    Size sz = rasterCoverage->size();
+    Size sz = raster->size();
     _odf->setKeyValue("MapList","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
     _odf->setKeyValue("MapList","Maps",QString::number(sz.zsize()));
 
@@ -370,18 +419,18 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         QString mapName = QString("%1_band_%2").arg(obj->name()).arg(i);
         _odf->setKeyValue("MapList",QString("Map%1").arg(i),mapName);
 
-        Resource res(itRASTER);
-        res.addProperty("size", IVARIANT(Size(sz.xsize(), sz.ysize())));
-        res.addProperty("bounds", IVARIANT(rasterCoverage->envelope()));
-        res.addProperty("georeference", IVARIANT(rasterCoverage->georeference()));
-        res.addProperty("coordinatesystem", IVARIANT(rasterCoverage->coordinateSystem()));
-        res.addProperty("domain", IVARIANT(rasterCoverage->datadef().domain()));
-        mastercatalog()->addItems({res});
+        Resource resource(itRASTER);
+        resource.addProperty("size", IVARIANT(Size(sz.xsize(), sz.ysize())));
+        resource.addProperty("bounds", IVARIANT(raster->envelope()));
+        resource.addProperty("georeference", IVARIANT(raster->georeference()));
+        resource.addProperty("coordinatesystem", IVARIANT(raster->coordinateSystem()));
+        resource.addProperty("domain", IVARIANT(raster->datadef().domain()));
+        mastercatalog()->addItems({resource});
 
         IRasterCoverage gcMap;
-        gcMap.prepare(res);
+        gcMap.prepare(resource);
         gcMap->setName(mapName);
-        gcMap->copyBinary(rasterCoverage, i);
+        gcMap->copyBinary(raster, i);
         //QUrl mapUrl = "file:///" + path + "/" + mapName + ".mpr";
         gcMap->connectTo(QUrl(), "map", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
         gcMap->store(IlwisObject::smBINARYDATA | IlwisObject::smMETADATA);
@@ -391,17 +440,17 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
     return true;
 }
 
-QString RasterCoverageConnector::getGrfName(const IRasterCoverage& rasterCoverage) {
-    const IGeoReference grf = rasterCoverage->georeference();
+QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
+    const IGeoReference grf = raster->georeference();
     if (!grf.isValid()) {
-        ERROR2(ERR_NO_INITIALIZED_2, "Georeference", rasterCoverage->name());
+        ERROR2(ERR_NO_INITIALIZED_2, "Georeference", raster->name());
         return sUNDEF;
     }
-    QString localName = Resource::toLocalFile(grf->resource().url(),false);
+    QString localName = Resource::toLocalFile(grf->source().url(),false);
     QFileInfo localGrf(localName);
     if ( !localGrf.exists()) {
         //QFileInfo coveragePath(Resource::toLocalFile(obj->target()));
-        localName = rasterCoverage->name();
+        localName = raster->name();
         int index;
         if ( (index = localName.indexOf(".")) != -1)
             localName = localName.left(index);
@@ -418,37 +467,37 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& rasterCoverag
 bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     Locker lock(_mutex);
 
-    IRasterCoverage rasterCoverage = mastercatalog()->get(obj->id());
-    if (!rasterCoverage.isValid())
+    IRasterCoverage raster = mastercatalog()->get(obj->id());
+    if (!raster.isValid())
         return false;
-    if (!rasterCoverage->georeference().isValid())
+    if (!raster->georeference().isValid())
         return false;
 
-    if ( rasterCoverage->size().zsize() > 1)
+    if ( raster->size().zsize() > 1)
         return storeMetaDataMapList(obj);
 
-    bool ok = CoverageConnector::storeMetaData(obj, itRASTER);
+    bool ok = CoverageConnector::storeMetaData(obj, itRASTER, raster->datadef());
     if ( !ok)
         return false;
 
     _odf->setKeyValue("BaseMap","Type","Map");
 
 
-    if ( !rasterCoverage.isValid())
+    if ( !raster.isValid())
         return ERROR2(ERR_COULD_NOT_LOAD_2,"RasterCoverage", obj->name());
 
-    QString localName = getGrfName(rasterCoverage);
+    QString localName = getGrfName(raster);
     if ( localName == sUNDEF)
         return false;
 
     _odf->setKeyValue("Map","GeoRef",localName);
-    Size sz = rasterCoverage->size();
+    Size sz = raster->size();
     _odf->setKeyValue("Map","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
     _odf->setKeyValue("Map","Type","MapStore");
 
-    const IDomain dom = rasterCoverage->datadef().domain();
+    const IDomain dom = raster->datadef().domain();
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
-        const NumericStatistics& stats = rasterCoverage->statistics();
+        const NumericStatistics& stats = raster->statistics();
         int digits = stats.significantDigits();
         RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - digits));
         qint32 delta = stats[NumericStatistics::pDELTA];

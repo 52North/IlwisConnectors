@@ -11,7 +11,7 @@ namespace Ilwis3 {
 
 class ILWIS3CONNECTORSHARED_EXPORT Ilwis3Connector : public Ilwis::IlwisObjectConnector {
 public:
-    Ilwis3Connector(const Ilwis::Resource &item, bool load=true);
+    Ilwis3Connector(const Ilwis::Resource &resource, bool load=true);
     //static IlwisTypes type(const QString &name);
     static IlwisTypes ilwisType(const QString &name);
     static QString name2Code(const QString &name, const QString &type);

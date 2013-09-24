@@ -3,7 +3,7 @@
 #include <QRegExp>
 
 #include "kernel.h"
-#include "coverage.h"
+#include "raster.h"
 #include "module.h"
 #include "inifile.h"
 #include "catalog.h"
@@ -30,7 +30,7 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-CoverageConnector::CoverageConnector(const Resource &item, bool load) : Ilwis3Connector(item, load)
+CoverageConnector::CoverageConnector(const Resource &resource, bool load) : Ilwis3Connector(resource, load)
 {
 }
 
@@ -74,9 +74,9 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
 
     ITable attTable;
     if ( basemaptype != "Map" ) {
-        Resource res(QUrl(QString("ilwis://internal/%1").arg(_odf->fileinfo().baseName())), itFLATTABLE);
-        if(!attTable.prepare(res)) {
-            ERROR1(ERR_NO_INITIALIZED_1,res.name());
+        Resource resource(QUrl(QString("ilwis://internal/%1").arg(_odf->fileinfo().baseName())), itFLATTABLE);
+        if(!attTable.prepare(resource)) {
+            ERROR1(ERR_NO_INITIALIZED_1,resource.name());
             return ITable();
         }
         if ( extTable.isValid()) {
@@ -115,8 +115,8 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     ICoordinateSystem csy;
     if ( !csy.prepare(csyName)) {
         kernel()->issues()->log(csyName,TR("Coordinate system couldnt be initialized, defaulting to 'unknown'"),IssueObject::itWarning);
-        QString res = QString("ilwis://file/unknown.csy");
-        if (!csy.prepare(res)) {
+        QString resource = QString("ilwis://file/unknown.csy");
+        if (!csy.prepare(resource)) {
             kernel()->issues()->log(TR("Fallback to 'unknown failed', corrupt system files defintion"));
             return false;
         }
@@ -134,47 +134,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
 
         coverage->attributeTable(ilwisType(_odf->fileinfo().fileName()),attTable);
     }
-    IDomain dom;
-    if(!dom.prepare(_odf->fileinfo().canonicalFilePath())) {
-        kernel()->issues()->log(data->name(),TR(ERR_NO_INITIALIZED_1).arg(data->name()));
-        return false;
-    }
 
-    coverage->datadef() = DataDefinition(dom);
-    double vmax,vmin,scale,offset;
-    QString range = _odf->value("BaseMap","Range");
-    if ( range != sUNDEF ) {
-        if ( getRawInfo(range, vmin,vmax,scale,offset)) {
-            if ( scale == 1.0) {
-                coverage->datadef().range(new NumericRange(vmin, vmax,1));
-
-            }
-            else {
-                coverage->datadef().range(new NumericRange(vmin, vmax));
-            }
-
-
-        }
-    } else {
-        QString dminfo = _odf->value("BaseMap","DomainInfo");
-        if ( dminfo != sUNDEF) {
-            int index = dminfo.indexOf("class;");
-            if ( index != -1) {
-                _converter = RawConverter("class");
-            } else {
-                index = dminfo.indexOf("id;");
-                if ( index != -1) {
-                    _converter = RawConverter("id");
-                } else {
-                    index = dminfo.indexOf("UniqueID;");
-                    if ( index != -1) {
-                        _converter = RawConverter("UniqueID");
-                    }
-                }
-            }
-
-        }
-    }
     QString cbounds = _odf->value("BaseMap","CoordBounds");
     QStringList parts = cbounds.split(" ");
     if ( parts.size() == 4) {
@@ -192,7 +152,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     return true;
 }
 
-bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
+bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const DataDefinition& datadef)
 {
     bool ok = Ilwis3Connector::storeMetaData(obj, type);
     if ( !ok)
@@ -204,7 +164,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
     if (!csy.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
 
-    QString localName = Resource::toLocalFile(csy->resource().url(),true);
+    QString localName = Resource::toLocalFile(csy->source().url(),true);
     if ( localName == sUNDEF) {
         localName = CoordinateSystemConnector::createCsyFromCode(csy->code());
     }
@@ -222,7 +182,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
                       arg(bounds.max_corner().x(),10,'f').
                       arg(bounds.max_corner().y(),10,'f'));
 
-    const IDomain dom = coverage->datadef().domain();
+    const IDomain dom = datadef.domain();
     if (!dom.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Domain", coverage->name());
 
@@ -233,7 +193,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
         qint32 delta = coverage->statistics()[NumericStatistics::pDELTA];
         if ( delta >= 0 && delta < 256 && digits == 0){
             if ( delta >= 0 && delta < 256 && digits == 0){
-                if ( coverage->datadef().domain()->code() == "boolean"){
+                if ( datadef.domain()->code() == "boolean"){
                     QString domInfo = QString("bool.dom;Byte;bool;0;;");
                     _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
                     _odf->setKeyValue("BaseMap","Range","0:1:offset=-1");
@@ -261,7 +221,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type)
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
-        QString source = Resource::toLocalFile(dom->resource().url(), true);
+        QString source = Resource::toLocalFile(dom->source().url(), true);
         if ( dom->valueType() == itTHEMATICITEM && coverage->ilwisType() == itRASTER) {
             IThematicDomain themdom = dom.get<ThematicDomain>();
             if ( themdom.isValid()) {
@@ -314,8 +274,9 @@ TableConnector *CoverageConnector::createTableConnector(ITable& attTable, Covera
     QString dataFile = coverage->name();
     QString attDom = dataFile;
     if ( hasType(tp,itRASTER)) {
-        Resource res = coverage->datadef().domain()->resource();
-        QFileInfo inf(res.toLocalFile());
+        RasterCoverage *raster = static_cast<RasterCoverage *>(coverage);
+        Resource resource = raster->datadef().domain()->source();
+        QFileInfo inf(resource.toLocalFile());
         attDom = inf.fileName();
     }
     int index = dataFile.lastIndexOf(".");

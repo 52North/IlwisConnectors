@@ -84,12 +84,12 @@ bool ODFItem::resolveNames(const QHash<QString, quint64> &names)
     if ( fileid != i64UNDEF)
         _properties["coordinatesystem"] = fileid;
     if ( _datumName != sUNDEF) {
-        const Resource& item = mastercatalog()->name2Resource(_datumName,itGEODETICDATUM);
-        _properties["geodeticdatum"] = item.id();
+        const Resource& resource = mastercatalog()->name2Resource(_datumName,itGEODETICDATUM);
+        _properties["geodeticdatum"] = resource.id();
     }
     if (_projectionName != sUNDEF) {
-        const Resource& item = mastercatalog()->name2Resource(_projectionName,itPROJECTION);
-        _properties["projection"] = item.id();
+        const Resource& resource = mastercatalog()->name2Resource(_projectionName,itPROJECTION);
+        _properties["projection"] = resource.id();
     }
 
     return ok;
@@ -102,11 +102,11 @@ bool ODFItem::setFileId(const QHash<QString, quint64> &names, const QString& val
     }
     if ( Ilwis3Connector::ilwisType(value) & itCOORDSYSTEM) {
         if ( value == "latlonwgs84.csy") {
-            Resource res = mastercatalog()->name2Resource("code=epsg:4326", itCOORDSYSTEM);
-            if ( !res.isValid()) {
+            Resource resource = mastercatalog()->name2Resource("code=epsg:4326", itCOORDSYSTEM);
+            if ( !resource.isValid()) {
                return ERROR1(ERR_FIND_SYSTEM_OBJECT_1, "Wgs 84");
             }
-            fileid = res.id();
+            fileid = resource.id();
             return true;
         }
     }
@@ -118,9 +118,9 @@ bool ODFItem::setFileId(const QHash<QString, quint64> &names, const QString& val
         // the mastercatalog will contain system items at this moment so we can check these first
         QString baseName = value.left(value.indexOf("."));
         IlwisTypes tp = Ilwis3Connector::ilwisType(value);
-        Resource item = mastercatalog()->name2Resource(baseName, tp);
-        if ( item.isValid()) {
-            fileid = item.id();
+        Resource resource = mastercatalog()->name2Resource(baseName, tp);
+        if ( resource.isValid()) {
+            fileid = resource.id();
         } else {
             QString completeName =  (value.contains(QRegExp("\\\\|/"))) ? value : _file.canonicalPath() + "/" + value;
             fileid = mastercatalog()->resource2id(QUrl(completeName), tp);
@@ -198,9 +198,9 @@ IlwisTypes ODFItem::findDomainType() const
     if ( _domname == "bool.dom")
         return itNUMERICDOMAIN;
 
-    Resource item = mastercatalog()->name2Resource(stripExtension(_domname),itDOMAIN);
-    if ( item.isValid())
-        return item.ilwisType();
+    Resource resource = mastercatalog()->name2Resource(stripExtension(_domname),itDOMAIN);
+    if ( resource.isValid())
+        return resource.ilwisType();
     IniFile dm;
     QString path = _file.canonicalPath() + "/" + _domname;
     if(!dm.setIniFile(path))
@@ -262,9 +262,9 @@ IlwisTypes ODFItem::findCsyType() const
     if ( _csyname == "")
         return itUNKNOWN;
 
-    Resource item = mastercatalog()->name2Resource(stripExtension(_csyname),itCOORDSYSTEM);
-    if ( item.isValid())
-        return item.ilwisType();
+    Resource resource = mastercatalog()->name2Resource(stripExtension(_csyname),itCOORDSYSTEM);
+    if ( resource.isValid())
+        return resource.ilwisType();
     IniFile csy;
     if ( _csyname == "LatlonWGS84.csy")
         return itCONVENTIONALCOORDSYSTEM;
@@ -337,9 +337,9 @@ QString ODFItem::findGrfName() const{
 
 //    if ( _grfname == "")
 //        return itUNKNOWN;
-//    Resource item = mastercatalog()->name2Resource(stripExtension(_grfname),itGEOREF);
-//    if ( item.isValid())
-//        return item.ilwisType();
+//    Resource resource = mastercatalog()->name2Resource(stripExtension(_grfname),itGEOREF);
+//    if ( resource.isValid())
+//        return resource.ilwisType();
 //    IniFile grf;
 //    QString path = _file.canonicalPath() + "/" + _grfname;
 //    if(!grf.setIniFile(path))

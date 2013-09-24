@@ -6,13 +6,13 @@ namespace Ilwis3{
 class CoordinateSystemConnector : public Ilwis3Connector
 {
 public:
-    CoordinateSystemConnector(const Resource &item, bool load=true);
+    CoordinateSystemConnector(const Resource &resource, bool load=true);
     bool loadMetaData(IlwisObject *data);
 
-    static bool canUse(const Ilwis::Resource &item);
+    static bool canUse(const Ilwis::Resource &resource);
 
     IlwisObject *create() const;
-    static ConnectorInterface *create(const Resource &item, bool load=true);
+    static ConnectorInterface *create(const Resource &resource, bool load=true);
 
     static QString createCsyFromCode(const QString &code);
 private:

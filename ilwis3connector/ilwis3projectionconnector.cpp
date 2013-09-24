@@ -24,12 +24,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *ProjectionConnector::create(const Resource &item, bool load) {
-    return new ProjectionConnector(item, load);
+ConnectorInterface *ProjectionConnector::create(const Resource &resource, bool load) {
+    return new ProjectionConnector(resource, load);
 
 }
 
-ProjectionConnector::ProjectionConnector(const Resource &item, bool load) : Ilwis3Connector(item)
+ProjectionConnector::ProjectionConnector(const Resource &resource, bool load) : Ilwis3Connector(resource)
 {
     QString prj = _odf->value("CoordSystem", "Projection");
     if (prj != sUNDEF)  {
@@ -89,14 +89,14 @@ Projection::ProjectionParamValue ProjectionConnector::mapKeyToEnum(const QString
 
 IlwisObject *ProjectionConnector::create() const
 {
-    QString res = QString("ilwis://factory/projection?code=%1").arg(_internalCode);
-    Resource item = mastercatalog()->name2Resource(res, itPROJECTION);
-    if ( !item.isValid()) {
-        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Projection",res));
+    QString url = QString("ilwis://factory/projection?code=%1").arg(_internalCode);
+    Resource resource = mastercatalog()->name2Resource(url, itPROJECTION);
+    if ( !resource.isValid()) {
+        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Projection",url));
     }
-    const IlwisObjectFactory *factory =  kernel()->factory<IlwisObjectFactory>("ProjectionFactory",item);
+    const IlwisObjectFactory *factory =  kernel()->factory<IlwisObjectFactory>("ProjectionFactory",resource);
     if ( factory) {
-        return factory->create(item);
+        return factory->create(resource);
     }
 
     return 0;

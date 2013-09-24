@@ -8,13 +8,13 @@ namespace Ilwis3 {
 class Ilwis3CatalogConnector : public FileCatalogConnector
 {
 public:
-    Ilwis3CatalogConnector(const Ilwis::Resource &item);
+    Ilwis3CatalogConnector(const Ilwis::Resource &resource);
 
     virtual bool loadItems();
-    bool canUse(const QUrl& res) const;
+    bool canUse(const QUrl& resource) const;
     QString provider() const;
 
-    static ConnectorInterface *create(const Ilwis::Resource &item, bool);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool);
 private:
     void registerNames(const QString &name, QHash<QString, quint64> &names);
 };

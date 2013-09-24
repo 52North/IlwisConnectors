@@ -16,7 +16,7 @@ private:
      \brief  tries to find a id for the name found in the catalog
 
      All the names in the catalog have been scanned and they either have a resource already associated with them or
-     they need to be associated with an existing resource. This can either be an item in the catalog or a system object.
+     they need to be associated with an existing resource. This can either be an resource in the catalog or a system object.
      Basically an object in the mastercatalog.
 
      \param names names found in this catalog

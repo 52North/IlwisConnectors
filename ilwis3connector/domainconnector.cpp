@@ -25,12 +25,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *DomainConnector::create(const Resource& item, bool load) {
-    return new DomainConnector(item, load);
+ConnectorInterface *DomainConnector::create(const Resource& resource, bool load) {
+    return new DomainConnector(resource, load);
 
 }
 
-DomainConnector::DomainConnector(const Resource& item, bool load) : Ilwis3Connector(item, load)
+DomainConnector::DomainConnector(const Resource& resource, bool load) : Ilwis3Connector(resource, load)
 {
 }
 

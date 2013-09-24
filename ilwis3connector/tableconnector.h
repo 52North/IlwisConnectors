@@ -9,7 +9,7 @@ class RawConverter;
 class TableConnector : public Ilwis3Connector
 {
 public:
-    TableConnector(const Ilwis::Resource &item, bool load);
+    TableConnector(const Ilwis::Resource &resource, bool load);
     bool loadMetaData(IlwisObject* data);
     bool storeMetaData(Ilwis::IlwisObject *obj);
     QString type() const;
@@ -17,7 +17,7 @@ public:
     bool loadBinaryData(IlwisObject *);
     bool storeBinaryData(IlwisObject* obj);
 
-    static ConnectorInterface *create(const Ilwis::Resource &item, bool load);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load);
     static bool storeTable(const ITable& tbl);
     void attributeDomain(const QString& attdom);
 private:

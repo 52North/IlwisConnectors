@@ -38,14 +38,14 @@ GdalObjectFactory::GdalObjectFactory() : IlwisObjectFactory("IlwisObjectFactory"
 {
 }
 
-IlwisObject *GdalObjectFactory::create(const Resource &item) const
+IlwisObject *GdalObjectFactory::create(const Resource &resource) const
 {
 
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    GdalConnector *connector = factory->createFromResource<GdalConnector>(item, "gdal");
+    GdalConnector *connector = factory->createFromResource<GdalConnector>(resource, "gdal");
 
    if(!connector) {
-       kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",item.name()));
+       kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
        return 0;
    }
    IlwisObject *object = createObject(connector);
@@ -56,13 +56,13 @@ IlwisObject *GdalObjectFactory::create(const Resource &item) const
    return 0;
 }
 
-bool GdalObjectFactory::canUse(const Resource &item) const
+bool GdalObjectFactory::canUse(const Resource &resource) const
 {
-    if ( item.url().scheme() == "ilwis") // can't use anything marked as internal
+    if ( resource.url().scheme() == "ilwis") // can't use anything marked as internal
         return false;
 
-    IlwisTypes type = item.ilwisType() ;
-    if (!gdal()->supports(item))
+    IlwisTypes type = resource.ilwisType() ;
+    if (!gdal()->supports(resource))
         return false;
 
     if ( type & itDOMAIN)

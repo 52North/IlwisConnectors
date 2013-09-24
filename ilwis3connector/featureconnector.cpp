@@ -16,6 +16,10 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "geometry.h"
+#include "domainitem.h"
+#include "itemdomain.h"
+#include "identifieritem.h"
+#include "identifierrange.h"
 #include "attributerecord.h"
 #include "feature.h"
 #include "featurecoverage.h"
@@ -36,8 +40,8 @@ struct XYZ {
     double x,y,z;
 };
 
-ConnectorInterface *FeatureConnector::create(const Resource &item, bool load) {
-    return new FeatureConnector(item, load);
+ConnectorInterface *FeatureConnector::create(const Resource &resource, bool load) {
+    return new FeatureConnector(resource, load);
 
 }
 
@@ -50,7 +54,7 @@ void FeatureConnector::calcStatics(const IlwisObject *obj, NumericStatistics::Pr
 {
 }
 
-FeatureConnector::FeatureConnector(const Resource &item, bool load) : CoverageConnector(item, load)
+FeatureConnector::FeatureConnector(const Resource &resource, bool load) : CoverageConnector(resource, load)
 {
 }
 
@@ -604,7 +608,20 @@ bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& da
 bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     if ( type == 0)
         return false;
-    bool ok = CoverageConnector::storeMetaData(fcov, type);
+    DataDefinition datadef;
+
+    ITable attTable = fcov->attributeTable(type);
+    ColumnDefinition coldef = attTable->columndefinition(COVERAGEKEYCOLUMN);
+    if ( coldef.isValid()) {
+        datadef = coldef.datadef();
+    } else {
+        IIndexedIdDomain indexdom;
+        indexdom.prepare();
+        indexdom->setRange(IndexedIdentifierRange(type2Prefix(type),fcov->featureCount(type)));
+        datadef.domain(indexdom);
+    }
+
+    bool ok = CoverageConnector::storeMetaData(fcov, type, datadef);
     if ( !ok)
         return false;
 
@@ -644,4 +661,15 @@ bool FeatureConnector::storeMetaData(IlwisObject *obj)
     return ok;
 
 
+}
+
+QString FeatureConnector::type2Prefix(IlwisTypes tp) {
+    if ( tp == itPOINT)
+        return "point";
+    if (tp == itLINE)
+        return "seg";
+    if ( tp == itPOLYGON)
+        return "pol";
+
+    return "feature";
 }

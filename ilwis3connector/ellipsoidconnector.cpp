@@ -18,12 +18,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *EllipsoidConnector::create(const Resource &item, bool load) {
-    return new EllipsoidConnector(item, load);
+ConnectorInterface *EllipsoidConnector::create(const Resource &resource, bool load) {
+    return new EllipsoidConnector(resource, load);
 
 }
 
-EllipsoidConnector::EllipsoidConnector(const Resource &item, bool load) : Ilwis3Connector(item, load)
+EllipsoidConnector::EllipsoidConnector(const Resource &resource, bool load) : Ilwis3Connector(resource, load)
 {
 }
 

@@ -12,12 +12,12 @@ class BinaryIlwis3Table;
 class FeatureConnector : public CoverageConnector
 {
 public:
-    FeatureConnector(const Ilwis::Resource &item, bool load);
+    FeatureConnector(const Ilwis::Resource &resource, bool load);
     bool loadMetaData(Ilwis::IlwisObject *data);
     bool loadBinaryData(Ilwis::IlwisObject *obj);
     bool storeMetaData(IlwisObject *obj) ;
 
-    static ConnectorInterface *create(const Resource &item, bool load);
+    static ConnectorInterface *create(const Resource &resource, bool load);
     Ilwis::IlwisObject *create() const;
     void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
 
@@ -43,6 +43,7 @@ private:
 
     bool storeMetaLine(FeatureCoverage *fcov, const QString &dataFile);
     void storeColumn(const QString &colName, const QString &domName, const QString &domInfo, const QString &storeType);
+    QString type2Prefix(IlwisTypes tp);
 
     void writeCoord(std::ofstream& output_file, const Coordinate2d& crd) {
         double x = crd.x();

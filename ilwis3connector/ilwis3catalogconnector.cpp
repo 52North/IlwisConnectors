@@ -23,12 +23,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *Ilwis3CatalogConnector::create(const Resource &item, bool) {
-    return new Ilwis3CatalogConnector(item);
+ConnectorInterface *Ilwis3CatalogConnector::create(const Resource &resource, bool) {
+    return new Ilwis3CatalogConnector(resource);
 
 }
 
-Ilwis3CatalogConnector::Ilwis3CatalogConnector(const Resource &item) : FileCatalogConnector(item)
+Ilwis3CatalogConnector::Ilwis3CatalogConnector(const Resource &resource) : FileCatalogConnector(resource)
 {
 }
 
@@ -63,14 +63,14 @@ bool Ilwis3CatalogConnector::loadItems()
         if ( path.compare(loc,Qt::CaseInsensitive) == 0)
             container = file.canonicalPath();
         IlwisTypes tp = Ilwis3Connector::ilwisType(path);
-        QUrl res("file:///" + path);
-        if ( mastercatalog()->resource2id(res, tp) == i64UNDEF) {
+        QUrl url("file:///" + path);
+        if ( mastercatalog()->resource2id(url, tp) == i64UNDEF) {
             if ( tp & itILWISOBJECT ) {
                 ODFItem item(path);
                 odfitems.push_back(item);
                 names[file.fileName().toLower()] = item.id();
             } else {
-                folders.push_back(loadFolder(file, container, path, res));
+                folders.push_back(loadFolder(file, container, path, url));
             }
         }
 
@@ -96,15 +96,15 @@ bool Ilwis3CatalogConnector::loadItems()
     return ok;
 }
 
-bool Ilwis3CatalogConnector::canUse(const QUrl &res) const
+bool Ilwis3CatalogConnector::canUse(const QUrl &resource) const
 {
-    QString dn = res.toString();
-    if ( res.scheme() != "file")
+    QString dn = resource.toString();
+    if ( resource.scheme() != "file")
         return false;
 
-    if ( res.toString() == "file://") // root of file system
+    if ( resource.toString() == "file://") // root of file system
         return true;
-    QFileInfo inf(res.toLocalFile());
+    QFileInfo inf(resource.toLocalFile());
     if ( !inf.isDir())
         return false;
 

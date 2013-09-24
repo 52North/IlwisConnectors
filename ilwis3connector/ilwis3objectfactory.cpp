@@ -43,16 +43,16 @@ Ilwis3ObjectFactory::Ilwis3ObjectFactory() : IlwisObjectFactory("IlwisObjectFact
 {
 }
 
-IlwisObject *Ilwis3ObjectFactory::create(const Resource &item) const
+IlwisObject *Ilwis3ObjectFactory::create(const Resource &resource) const
 {
 
-    //Ilwis3Connector *connector = ConnectorFactory::screate<Ilwis3Connector>(item, "ilwis3");
+    //Ilwis3Connector *connector = ConnectorFactory::screate<Ilwis3Connector>(resource, "ilwis3");
 
      const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-     Ilwis3Connector *connector = factory->createFromResource<Ilwis3Connector>(item, "ilwis3");
+     Ilwis3Connector *connector = factory->createFromResource<Ilwis3Connector>(resource, "ilwis3");
 
     if(!connector) {
-        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",item.name()));
+        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
         return 0;
     }
     IlwisObject *object = createObject(connector);
@@ -63,21 +63,21 @@ IlwisObject *Ilwis3ObjectFactory::create(const Resource &item) const
     return 0;
 }
 
-bool Ilwis3ObjectFactory::canUse(const Resource &item) const
+bool Ilwis3ObjectFactory::canUse(const Resource &resource) const
 {
-    if ( item.url().scheme() == "ilwis") // can't use anything marked as internal
+    if ( resource.url().scheme() == "ilwis") // can't use anything marked as internal
         return false;
 
-    if ( item.url().scheme() != "file") // can't read non file based data
+    if ( resource.url().scheme() != "file") // can't read non file based data
         return false;
 
 
-    IlwisTypes type = item.ilwisType() ;
+    IlwisTypes type = resource.ilwisType() ;
     QHash<IlwisTypes, CheckUsage>::const_iterator cur;
     if ( (cur = _types.find(type)) != _types.end()) {
-        return (cur.value())(item);
+        return (cur.value())(resource);
     }
-    QString filename = item.url().toLocalFile();
+    QString filename = resource.url().toLocalFile();
     if ( filename == "")
         return false;
 

@@ -21,12 +21,12 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *DomainConnector::create(const Resource& item, bool load) {
-    return new DomainConnector(item);
+ConnectorInterface *DomainConnector::create(const Resource& resource, bool load) {
+    return new DomainConnector(resource);
 
 }
 
-DomainConnector::DomainConnector(const Resource& item, bool load) : GdalConnector(item,load)
+DomainConnector::DomainConnector(const Resource& resource, bool load) : GdalConnector(resource,load)
 {
 }
 

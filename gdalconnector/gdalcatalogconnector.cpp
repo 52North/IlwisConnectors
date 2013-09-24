@@ -18,12 +18,12 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *GdalCatalogConnector::create(const Resource &item,bool) {
-    return new GdalCatalogConnector(item);
+ConnectorInterface *GdalCatalogConnector::create(const Resource &resource,bool) {
+    return new GdalCatalogConnector(resource);
 
 }
 
-GdalCatalogConnector::GdalCatalogConnector(const Ilwis::Resource &item) : CatalogConnector(item), _type(item.ilwisType())
+GdalCatalogConnector::GdalCatalogConnector(const Ilwis::Resource &resource) : CatalogConnector(resource), _type(resource.ilwisType())
 {
 }
 
@@ -76,14 +76,14 @@ bool GdalCatalogConnector::loadItems()
         if ( path.compare(loc,Qt::CaseInsensitive) == 0)
             container = file.canonicalPath();
         IlwisTypes tp = itRASTER;
-        QUrl res("file:///" + path);
-        if ( mastercatalog()->resource2id(res, tp) == i64UNDEF) {
+        QUrl url("file:///" + path);
+        if ( mastercatalog()->resource2id(url, tp) == i64UNDEF) {
             if ( !file.isDir() ) {
                 GDALItems items(path);
                 gdalitems += items;
-                //names[file.fileName()] = item.id();
+                //names[file.fileName()] = resource.id();
             } else {
-                Resource item(res, itCATALOG);
+                Resource resource(url, itCATALOG);
                 //drives have the format file:///c:/ while folders have file:///c:/myfolder; note the slash
                 //drives must be recognized as container and formatted as such
                 int index = path.lastIndexOf(QRegExp("\\\\|/"));
@@ -93,12 +93,12 @@ bool GdalCatalogConnector::loadItems()
                     else
                         container = QUrl("file:///" + path.left(3));
                 }
-                item.setContainer(container);
-                //QFileInfo inf(res.toLocalFile());
+                resource.setContainer(container);
+                //QFileInfo inf(resource.toLocalFile());
                 QString name = file.isRoot() ? file.absoluteFilePath() : file.fileName();
-                item.setName(name);
+                resource.setName(name);
 
-                folders.push_back(item);
+                folders.push_back(resource);
             }
         }
 
@@ -109,14 +109,14 @@ bool GdalCatalogConnector::loadItems()
     return true;
 }
 
-bool GdalCatalogConnector::canUse(const QUrl &res) const
+bool GdalCatalogConnector::canUse(const QUrl &resource) const
 {
-    if ( res.scheme() != "file")
+    if ( resource.scheme() != "file")
         return false;
 
-    if ( res.toString() == "file://") // root of file system
+    if ( resource.toString() == "file://") // root of file system
         return true;
-    QFileInfo inf(res.toLocalFile());
+    QFileInfo inf(resource.toLocalFile());
     if ( !inf.isDir())
         return false;
 

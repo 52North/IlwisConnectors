@@ -8,11 +8,11 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-GdalConnector::GdalConnector(const Resource &item, bool load) : IlwisObjectConnector(item,load), _internalPath(sUNDEF)
+GdalConnector::GdalConnector(const Resource &resource, bool load) : IlwisObjectConnector(resource,load), _internalPath(sUNDEF)
 {
-    if ( item.url().hasFragment())
-        _internalPath = item.url().fragment();
-    _filename = item.url().toLocalFile();
+    if ( resource.url().hasFragment())
+        _internalPath = resource.url().fragment();
+    _filename = resource.url().toLocalFile();
 }
 
 
@@ -64,13 +64,13 @@ bool GdalConnector::store(IlwisObject *, int )
     return true;
 }
 
-bool GdalConnector::canUse(const Ilwis::Resource &item) {
+bool GdalConnector::canUse(const Ilwis::Resource &resource) {
     QStringList extensions = gdal()->rasterNameFilter();
-    QFileInfo inf(item.url().toLocalFile());
+    QFileInfo inf(resource.url().toLocalFile());
     bool ok = extensions.indexOf("." + inf.suffix())!= -1;
     if ( ok)
         return true;
-    GDALDatasetH handle = gdal()->open(item.url().toLocalFile().toLocal8Bit(), GA_ReadOnly);
+    GDALDatasetH handle = gdal()->open(resource.url().toLocalFile().toLocal8Bit(), GA_ReadOnly);
     ok = handle != 0;
     gdal()->close(handle);
 

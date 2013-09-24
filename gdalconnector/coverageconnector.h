@@ -10,12 +10,12 @@ namespace Gdal {
 class CoverageConnector : public GdalConnector
 {
 public:
-    CoverageConnector(const Ilwis::Resource &item, bool load=true);
+    CoverageConnector(const Ilwis::Resource &resource, bool load=true);
     bool loadMetaData(Ilwis::IlwisObject *data);
 
 protected:
     bool store(IlwisObject *obj, IlwisTypes type);
-    bool setSRS(Coverage *rasterCoverage, GDALDatasetH dataset) const;
+    bool setSRS(Coverage *raster, GDALDatasetH dataset) const;
 private:
     //void setCsy(Coverage *coverage);
 };
