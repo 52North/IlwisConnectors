@@ -32,6 +32,9 @@ ODFItem::ODFItem(const QString &file) : Resource(QUrl(QUrl::fromLocalFile(file))
     _container = QUrl::fromLocalFile(_file.canonicalPath());
     IlwisTypes csytp, domtp, grftp;
     csytp = domtp = grftp = itUNKNOWN;
+    if ( file.indexOf("kenya_2009ndvi_cor_22.mpr") != -1) {
+        qDebug() << "stop111";
+    }
 
     _ilwtype = Ilwis3Connector::ilwisType(file);
     _csyname = findCsyName();
@@ -197,8 +200,12 @@ IlwisTypes ODFItem::findDomainType() const
         return itITEMDOMAIN;
     if ( _domname == "bool.dom")
         return itNUMERICDOMAIN;
+    if ( _domname == "value.dom")
+        return itNUMERICDOMAIN;
 
     Resource resource = mastercatalog()->name2Resource(stripExtension(_domname),itDOMAIN);
+    if ( resource.isValid())
+        return resource.ilwisType();
     if ( resource.isValid())
         return resource.ilwisType();
     IniFile dm;

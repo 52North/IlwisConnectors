@@ -125,14 +125,14 @@ void RasterCoverageConnector::setStoreType(const QString& storeType) {
     _converter.storeType(_storetype);
 }
 
-void RasterCoverageConnector::setDataDefinition(IlwisObject *data) {
+bool RasterCoverageConnector::setDataDefinition(IlwisObject *data) {
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
     IDomain dom;
     if(!dom.prepare(_odf->fileinfo().canonicalFilePath())) {
         kernel()->issues()->log(data->name(),TR(ERR_NO_INITIALIZED_1).arg(data->name()));
-        return ;
+        return false;
     }
 
     raster->datadef() = DataDefinition(dom);
@@ -170,6 +170,7 @@ void RasterCoverageConnector::setDataDefinition(IlwisObject *data) {
 
         }
     }
+    return true;
 }
 
 bool RasterCoverageConnector::loadMetaData(IlwisObject *data)
@@ -177,7 +178,8 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data)
     Locker lock(_mutex);
 
     QFileInfo inf(_resource.toLocalFile());
-    setDataDefinition(data);
+    if(!setDataDefinition(data))
+        return false;
 
     bool isMapList  = inf.suffix().toLower() == "mpl";
 

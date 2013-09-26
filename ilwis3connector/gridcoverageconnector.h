@@ -29,7 +29,7 @@ private:
     bool loadMapList(IlwisObject *data);
     bool storeMetaDataMapList(Ilwis::IlwisObject *obj);
     QString getGrfName(const IRasterCoverage &raster);
-    void setDataDefinition(IlwisObject *data);
+    bool setDataDefinition(IlwisObject *data);
 
     template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& raster, const Size& sz) const{
         PixelIterator pixiter(raster,Box3D<>(sz));

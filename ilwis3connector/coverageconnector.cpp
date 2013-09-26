@@ -95,7 +95,7 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     if ( isNumeric) {
         IDomain featuredom;
-        if (!featuredom.prepare("numerical")){
+        if (!featuredom.prepare("value")){
             return ITable();
         }
         attTable->addColumn(FEATUREVALUECOLUMN,featuredom);
