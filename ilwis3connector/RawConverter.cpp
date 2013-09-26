@@ -20,9 +20,9 @@ IlwisTypes RawConverter::minNeededStoreType(double low, double high, double step
     quint32 delta = abs(maxDivStep - minDivStep);
     if ( delta <= 255)
         return itUINT8;
-    else if ( delta <= 32768)
+    else if ( delta <= 65535)
         return itINT16;
-    else if ( delta <= 2147483648){
+    else if ( delta <= 4294967295){
         return itINT32;
     }
     return itDOUBLE;

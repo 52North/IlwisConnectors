@@ -223,9 +223,11 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
     txtdom.prepare();
     DataDefinition deftxt(txtdom);
     INumericDomain numdom;
-    numdom.prepare("count");
+    numdom.prepare("integer");
     DataDefinition deford(numdom);
+    deford.range(new NumericRange(-32766,32767,1));
     DataDefinition defind(numdom);
+    defind.range(new NumericRange(-32766,32767,1));
 
     ilw3tbl.addStoreDefinition(deftxt);
     ilw3tbl.addStoreDefinition(deford);
