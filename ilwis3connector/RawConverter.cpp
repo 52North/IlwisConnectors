@@ -63,24 +63,24 @@ double RawConverter::determineOffset(double low, double high, double step, Ilwis
   double r = rounding(minDivStep / 2 + maxDivStep / 2 - 0.0001);
   r0 = r;
   switch (st) {
-    case itINT32:
-      if (minDivStep > -LONG_MAX || maxDivStep < LONG_MAX)
-        r0 = minDivStep - 0.0001;
-      else
-        r0 = 0;
-      break;
-    case itINT16:
-      if (minDivStep > -SHRT_MAX || maxDivStep < SHRT_MAX)
-        r0 = minDivStep - 0.0001;
-      else
-        r0 = 0;
-      break;
-    case itUINT8:
-      if (minDivStep > 0 || maxDivStep <= 255)
-        r0 = minDivStep-1;
-      else
-        r0 = -1;
-      break;
+     case itINT32:
+       if (minDivStep > -LONG_MAX || maxDivStep < LONG_MAX)
+         r0 = minDivStep / 2 + maxDivStep / 2 - 0.0001;
+       else
+         r0 = 0;
+       break;
+     case itINT16:
+       if (minDivStep > -SHRT_MAX || maxDivStep < SHRT_MAX)
+         r0 = minDivStep / 2 + maxDivStep / 2 - 0.0001;
+       else
+         r0 = 0;
+       break;
+     case itUINT8:
+       if (minDivStep > 0 || maxDivStep <= 255)
+         r0 = minDivStep-1;
+       else
+         r0 = -1;
+       break;
   }
   return r0;
 }
