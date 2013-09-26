@@ -62,7 +62,11 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
         return false;
     }
 
-    QFileInfo inf(_resource.url().toLocalFile());
+    QString name = _resource.url().toLocalFile();
+    QString ext = suffix(type);
+    if ( name.indexOf("." + ext) == -1)
+        name += "." + ext;
+    QFileInfo inf(name);
     IniFile *ini = new IniFile();
     ini->setIniFile(inf.absoluteFilePath(), false);
     _odf.reset(ini);
@@ -293,7 +297,9 @@ QUrl Ilwis3Connector::resolve(const Resource& resource) const {
         path = Ilwis::context()->workingCatalog()->filesystemLocation().toString();
     else
         path = QUrl::fromLocalFile(path).toString();
-    QString file =  basename + "." + ext;
+    QString file =  basename;
+    if ( ext != "")
+         file += "." + ext;
     file = path + "/" + file;
     return QUrl(file);
 }
