@@ -256,7 +256,7 @@ bool FeatureConnector::readRing(QDataStream& stream, std::vector<Coordinate2d> &
 
 bool FeatureConnector::loadBinaryPolygons(FeatureCoverage *fcoverage) {
     QString dataFile = _odf->value("PolygonMapStore","DataPol");
-    ITable tbl = fcoverage->attributeTable(itPOLYGON);
+    ITable tbl = fcoverage->attributeTable();
     if ( dataFile == sUNDEF) {
         return loadBinaryPolygons30(fcoverage, tbl);
     } else {
@@ -273,7 +273,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     int colCoords = mpsTable.index("Coords");
     int colItemId = mpsTable.index("SegmentValue");
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-    ITable tbl = fcoverage->attributeTable(itLINE);
+    ITable tbl = fcoverage->attributeTable();
 //    if ( isNumeric) // in other case nr of record already has been set as it is based on a real table
 //        tbl->setRows(mpsTable.rows());
 
@@ -317,7 +317,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
     int coordColumn = mppTable.index("Coordinate");
     int colItemId = mppTable.index("Name");
 
-    ITable tbl = fcoverage->attributeTable(itPOINT);
+    ITable tbl = fcoverage->attributeTable();
     bool newCase =  coordColumnX == iUNDEF;
     SPAttributeRecord record( new AttributeRecord(tbl,FEATUREIDCOLUMN));
 
@@ -367,7 +367,7 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
     else if (fcoverage->featureTypes() == itPOLYGON)
         ok = loadBinaryPolygons(fcoverage);
     if ( ok && extTable.isValid()) {
-        ITable attTbl = fcoverage->attributeTable(fcoverage->featureTypes());
+        ITable attTbl = fcoverage->attributeTable();
         quint32 keyIndex = attTbl->columnIndex(COVERAGEKEYCOLUMN);
         for(quint32 rowExt=0; rowExt < extTable->rows(); ++rowExt) {
             vector<QVariant> rec = extTable->record(rowExt);
@@ -406,8 +406,8 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
     else
        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",obj->name());
 
-    ITable tbl = fcoverage->attributeTable(coverageType);
-    tbl->setRows(fcoverage->featureCount(coverageType));
+    ITable tbl = fcoverage->attributeTable();
+    tbl->setRows(fcoverage->featureCount());
     return true;
 
 }
@@ -610,7 +610,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         return false;
     DataDefinition datadef;
 
-    ITable attTable = fcov->attributeTable(type);
+    ITable attTable = fcov->attributeTable();
     ColumnDefinition coldef = attTable->columndefinition(COVERAGEKEYCOLUMN);
     if ( coldef.isValid()) {
         datadef = coldef.datadef();

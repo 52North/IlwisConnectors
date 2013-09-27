@@ -132,7 +132,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
         if (!attTable.isValid())
             return false;
 
-        coverage->attributeTable(ilwisType(_odf->fileinfo().fileName()),attTable);
+        coverage->attributeTable(attTable);
     }
 
     QString cbounds = _odf->value("BaseMap","CoordBounds");
@@ -249,7 +249,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
         }
     }
 
-    ITable attTable = coverage->attributeTable(type);
+    ITable attTable = coverage->attributeTable();
     if ( attTable.isValid()) {
         QScopedPointer<TableConnector> conn(createTableConnector(attTable, coverage, type));
         conn->storeMetaData(attTable.ptr());
@@ -260,7 +260,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
 bool CoverageConnector::storeBinaryData(IlwisObject *obj, IlwisTypes tp)
 {
     Coverage *coverage = static_cast<Coverage *>(obj);
-    ITable attTable = coverage->attributeTable(tp);
+    ITable attTable = coverage->attributeTable();
     if ( attTable.isValid()) {
         QScopedPointer<TableConnector> conn(createTableConnector(attTable, coverage, tp));
         return conn->storeBinaryData(attTable.ptr());

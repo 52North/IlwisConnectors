@@ -311,8 +311,8 @@ Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
             return 0;
         }
     }
-    if ( raster->attributeTable(itRASTER).isValid()) {
-        ITable tbl = raster->attributeTable(itRASTER);
+    if ( raster->attributeTable().isValid()) {
+        ITable tbl = raster->attributeTable();
         IDomain covdom;
         if (!covdom.prepare("count")){
             return 0;
