@@ -93,7 +93,7 @@ ColumnDefinition TableConnector::makeColumn(const QString& colName, quint64 inde
     QString domName = _odf->value("Col:" + colName,"Domain");
     IDomain dom;
     if ( isSystemObject(domName)) {
-        domName = noExt(domName);
+        domName = noExt(domName).toLower();
     }
     if ( domName.toLower() == "string.dom")
         domName = "code=domain:text";
