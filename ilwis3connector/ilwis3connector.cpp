@@ -133,7 +133,7 @@ bool Ilwis3Connector::isSystemObject(const QString& filename) {
         return false;
     }
 
-    QString fn = noExt(filename);
+    QString fn = noExt(filename).toLower();
 
     QSqlQuery db(kernel()->database());
     QString query = QString("Select code from %1 where code='%2'").arg(table, fn);
