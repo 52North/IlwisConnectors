@@ -73,7 +73,6 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
     qint32 colTopStart = polTable.index("TopStart");
     qint32 colArea = polTable.index("Area");
     int nrPolygons = polTable.rows();
-    SPAttributeRecord record( new AttributeRecord(tbl,COVERAGEKEYCOLUMN));
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
     double v;
@@ -98,11 +97,11 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
             if ( isNumeric) {
                 tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(i));
                 tbl->cell(FEATUREVALUECOLUMN, i, QVariant(v));
-                fcoverage->newFeature({polygon},i, record);
+                fcoverage->newFeature({polygon});
             } else {
                 quint32 itemId = v;
                 tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
-                SPFeatureI feature = fcoverage->newFeature({polygon},itemId, record);
+                SPFeatureI feature = fcoverage->newFeature({polygon});
                 tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
             }
         }
@@ -224,12 +223,12 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         if ( isNumeric) {
             tbl->cell(COVERAGEKEYCOLUMN, j, QVariant(j));
             tbl->cell(FEATUREVALUECOLUMN, j, QVariant(value));
-            SPFeatureI feature = fcoverage->newFeature({pol},j, record);
+            SPFeatureI feature = fcoverage->newFeature({pol});
             tbl->cell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         } else {
             quint32 itemId = value;
             tbl->cell(COVERAGEKEYCOLUMN, j, QVariant(itemId));
-            SPFeatureI feature = fcoverage->newFeature({pol},itemId, record);
+            SPFeatureI feature = fcoverage->newFeature({pol});
             tbl->cell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         }
 
@@ -277,7 +276,6 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
 //    if ( isNumeric) // in other case nr of record already has been set as it is based on a real table
 //        tbl->setRows(mpsTable.rows());
 
-    SPAttributeRecord record( new AttributeRecord(tbl,FEATUREIDCOLUMN));
     double value;
     for(quint32 i= 0; i < mpsTable.rows(); ++i) {
         std::vector<Coordinate > coords;
@@ -289,13 +287,13 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
         if ( isNumeric) {
             tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(i));
             tbl->cell(FEATUREVALUECOLUMN, i, QVariant(value));
-            SPFeatureI feature = fcoverage->newFeature({line},i, record);
+            SPFeatureI feature = fcoverage->newFeature({line});
             tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
 
         } else {
             quint32 itemId = value;
             tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
-            SPFeatureI feature = fcoverage->newFeature({line},itemId, record);
+            SPFeatureI feature = fcoverage->newFeature({line});
             tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
         }
 
@@ -319,8 +317,6 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
 
     ITable tbl = fcoverage->attributeTable();
     bool newCase =  coordColumnX == iUNDEF;
-    SPAttributeRecord record( new AttributeRecord(tbl,FEATUREIDCOLUMN));
-
 
     for(quint32 i= 0; i < mppTable.rows(); ++i) {
         Coordinate c;
@@ -337,7 +333,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
         quint32 itemId = itemIdT;
         tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
 
-        SPFeatureI feature = fcoverage->newFeature({c},itemId, record);
+        SPFeatureI feature = fcoverage->newFeature({c});
 
         tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
 
@@ -360,7 +356,7 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
         }
     }
     bool ok = false;
-    if (fcoverage->featureTypes() == itPOINT)
+     if (fcoverage->featureTypes() == itPOINT)
         ok = loadBinaryPoints(fcoverage);
     else if (fcoverage->featureTypes() == itLINE)
         ok = loadBinarySegments(fcoverage);
