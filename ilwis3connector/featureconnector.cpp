@@ -365,9 +365,9 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
     if ( ok && extTable.isValid()) {
         ITable attTbl = fcoverage->attributeTable();
         quint32 keyIndex = attTbl->columnIndex(COVERAGEKEYCOLUMN);
-        for(quint32 rowExt=0; rowExt < extTable->rows(); ++rowExt) {
+        for(quint32 rowExt=0; rowExt < extTable->records(); ++rowExt) {
             vector<QVariant> rec = extTable->record(rowExt);
-            for(quint32 rowAtt = 0; rowAtt < attTbl->rows(); ++rowAtt ) {
+            for(quint32 rowAtt = 0; rowAtt < attTbl->records(); ++rowAtt ) {
                 if ( attTbl->cell(keyIndex, rowAtt) == rowExt + 1) {
                     attTbl->record(rowAtt,rec);
                 }

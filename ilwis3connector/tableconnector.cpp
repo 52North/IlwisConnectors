@@ -184,7 +184,7 @@ bool TableConnector::storeBinaryData(IlwisObject *obj)
             skip = i;
         ilw3tbl.addStoreDefinition(def.datadef());
     }
-    for(int y=0; y < tbl->rows(); ++y) {
+    for(int y=0; y < tbl->records(); ++y) {
         std::vector<QVariant> rec = tbl->record(y);
         ilw3tbl.storeRecord(output_file, rec, skip);
 
@@ -215,7 +215,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
     _odf->setKeyValue("Table", "Domain", _attributeDomain);
     _odf->setKeyValue("Table", "DomainInfo", QString("%1;Long;UniqueID;0;;").arg(_attributeDomain));
     _odf->setKeyValue("Table", "Columns", QString::number(tbl->columns() - reduceColumns));
-    _odf->setKeyValue("Table", "Records", QString::number(tbl->rows()));
+    _odf->setKeyValue("Table", "Records", QString::number(tbl->records()));
     _odf->setKeyValue("Table", "Type", "TableStore");
     _odf->setKeyValue("TableStore", "Type", "TableBinary");
     _odf->setKeyValue("TableStore", "UseAs", "No");
