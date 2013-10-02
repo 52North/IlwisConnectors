@@ -29,7 +29,8 @@ SOURCES += \
     gdalconnector/domainconnector.cpp \
     gdalconnector/gridcoverageconnector.cpp \
     gdalconnector/gdalobjectfactory.cpp \
-    gdalconnector/georefconnector.cpp
+    gdalconnector/georefconnector.cpp \
+    gdalconnector/gdalfeatureconnector.cpp
 
 HEADERS += gdalconnector/gdalconnector.h\
         gdalconnector/gdalconnector_global.h \
@@ -42,7 +43,8 @@ HEADERS += gdalconnector/gdalconnector.h\
     gdalconnector/domainconnector.h \
     gdalconnector/gridcoverageconnector.h \
     gdalconnector/gdalobjectfactory.h \
-    gdalconnector/georefconnector.h
+    gdalconnector/georefconnector.h \
+    gdalconnector/gdalfeatureconnector.h
 		
 
 

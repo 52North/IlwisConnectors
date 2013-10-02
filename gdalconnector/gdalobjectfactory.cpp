@@ -73,6 +73,8 @@ bool GdalObjectFactory::canUse(const Resource &resource) const
         return true;
     else if ( type & itGEOREF)
         return true;
+    else if ( type & itFEATURE)
+        return true;
 
     return false;
 }
