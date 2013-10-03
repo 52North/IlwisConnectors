@@ -403,7 +403,7 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",obj->name());
 
     ITable tbl = fcoverage->attributeTable();
-    tbl->setRows(fcoverage->featureCount());
+    tbl->records(fcoverage->featureCount());
     return true;
 
 }

@@ -73,7 +73,7 @@ bool TableConnector::loadMetaData(IlwisObject *data)
         DatabaseTable *dbtable = static_cast<DatabaseTable *>(tbl);
         dbtable->setDatabase(kernel()->database());
     }
-    tbl->setRows(rows);
+    tbl->records(rows);
     return true;
 
 }
