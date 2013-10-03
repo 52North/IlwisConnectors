@@ -1,23 +1,45 @@
-//#include "ilwisdata.h"
-//#include "feature.h"
-#include "connectorinterface.h"
-#include "ilwisobjectconnector.h"
+#include <QSqlQuery>
+#include <QSqlError>
+#include <fstream>
+#include <iterator>
+
+#include "kernel.h"
+#include "coverage.h"
+#include "module.h"
+#include "coverage.h"
+#include "polygon.h"
+#include "ilwiscontext.h"
+#include "catalog.h"
+#include "numericdomain.h"
+#include "numericrange.h"
+#include "columndefinition.h"
+#include "table.h"
+#include "geometry.h"
+#include "domainitem.h"
+#include "itemdomain.h"
+#include "identifieritem.h"
+#include "identifierrange.h"
+#include "attributerecord.h"
+#include "feature.h"
+#include "featurecoverage.h"
 #include "gdalproxy.h"
+#include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
+#include "coverageconnector.h"
 #include "gdalfeatureconnector.h"
 
 using namespace Ilwis;
 using namespace Gdal;
 
-GdalFeatureConnector::GdalFeatureConnector(const Resource &resource, bool load) : GdalConnector(resource,load){
+GdalFeatureConnector::GdalFeatureConnector(const Resource &resource, bool load) : CoverageConnector(resource,load){
 }
 
-ConnectorInterface* GdalFeatureConnector::create(const Resource &resource, bool load) const{
+ConnectorInterface* GdalFeatureConnector::create(const Resource &resource, bool load) {
     return new GdalFeatureConnector(resource, load);
 }
 
-Ilwis::IlwisObject *RasterCoverageConnector::create() const{
-    return new Feature(_resource);
+Ilwis::IlwisObject* GdalFeatureConnector::create() const{
+    return new FeatureCoverage(this->_resource);
 }
 
 bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
@@ -57,26 +79,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
     return false;
 }
 
-bool GdalFeatureConnector::store(IlwisObject *obj, IlwisTypes type): GdalConnector::store(obj, type)
+bool GdalFeatureConnector::store(IlwisObject *obj, IlwisTypes type)
 {
-}
-
-bool GdalFeatureConnector::setSRS(Coverage *raster, GDALDatasetH dataset) const
-{
-//    IConventionalCoordinateSystem csy = raster->coordinateSystem().get<ConventionalCoordinateSystem>();
-//    QString proj4def = csy->projection()->toProj4();
-//    OGRSpatialReferenceH srsH = gdal()->newSRS(0);
-//    OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());
-//    if ( errOgr != OGRERR_NONE) {
-//        return reportError(dataset);
-//    }
-//    char *wktText = NULL;
-//    gdal()->exportToWkt(srsH,&wktText);
-//    CPLErr err = gdal()->setProjection(dataset, wktText);
-//    gdal()->free(wktText);
-//    if ( err != CP_NONE) {
-//        return reportError(dataset);
-//    }
-//    return true;
-    return false;
+    return CoverageConnector::store(obj, type);
 }

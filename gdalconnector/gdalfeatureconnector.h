@@ -3,14 +3,15 @@
 
 namespace Ilwis{
     namespace Gdal {
-        class GdalFeatureConnector : public GdalConnector
+        class GdalFeatureConnector : public CoverageConnector
         {
         public:
             GdalFeatureConnector(const Ilwis::Resource &resource, bool load=true);
             static IlwisTypes ilwisType(const QString &name);
 
             bool loadMetaData(IlwisObject* data);
-            bool store(IlwisObject*, int);
+            bool loadBinaryData(IlwisObject* ) { return false; }
+            bool store(IlwisObject *obj, IlwisTypes type);
 //            bool canUse(const Ilwis::Resource &resource);
 
             static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
