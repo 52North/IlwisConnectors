@@ -17,8 +17,12 @@ public:
     Ilwis::IlwisObject *create() const;
     bool store(IlwisObject *obj, int );
 
+    bool setSRS(Coverage *raster, GDALDatasetH dataset) const;
+    void reportError(GDALDatasetH dataset) const;
+
 private:
     int _layers;
+    GDALDatasetH _dataSet;
     GDALDataType _gdalValueType;
     int _typeSize;
 

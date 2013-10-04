@@ -42,44 +42,75 @@ Ilwis::IlwisObject* GdalFeatureConnector::create() const{
     return new FeatureCoverage(this->_resource);
 }
 
-bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
-{
+IlwisTypes GdalFeatureConnector::getFeatureType(OGRLayerH hLayer) const{
+    IlwisTypes ret = itUNKNOWN;
+    OGRwkbGeometryType type = gdal()->getLayerGeometry(hLayer);
+    if ( type == wkbPoint || type == wkbMultiPoint || type == wkbPoint25D || type == wkbMultiPoint25D)
+        ret += itPOINT;
+
+    if ( type == wkbLineString || type == wkbMultiLineString || type == wkbLineString25D || type == wkbMultiLineString25D)
+        ret += itLINE;
+
+    if ( type == wkbPolygon || type == wkbMultiPolygon || type == wkbPolygon25D || type == wkbMultiPolygon25D)
+        ret += itPOLYGON;
+
+    return ret;
+}
+
+
+bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
+
     if(!GdalConnector::loadMetaData(data))
         return false;
 
-//    Coverage *coverage = static_cast<Coverage *>(data);
+    OGRSFDriverH driver;
+    _dataSource = gdal()->openOGRFile(_filename, data->id(), GA_ReadOnly, &driver);
+    if (!_dataSource){
+        return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename,QString(gdal()->getLastErrorMsg()));
+    }
+    QFileInfo inf(_filename);//TODO: what about replacing QString _filename by a QFileInfo
+    data->setName(inf.fileName());
 
-//    ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", _filename);
-//    if(!csy.isValid()) {
-//        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "coordinatesystem", coverage->name());
-//    }
+    if(!CoverageConnector::loadMetaData(data))
+        return false;
 
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+    IlwisTypes coverageType = itUNKNOWN;
+    int featureCount = 0;
 
+    int layerCount = gdal()->getLayerCount(_dataSource);
+    for(int layer = 0; layer < layerCount ; ++layer) {
+        OGRLayerH hLayer = gdal()->getLayer(_dataSource, layer);
+        if ( hLayer) {
+            IlwisTypes type = getFeatureType(hLayer);
+            if (type == itUNKNOWN){
+                ERROR2(ERR_COULD_NOT_LOAD_2,QString("Layer %1 from:").arg(_filename),QString(":%1").arg(gdal()->getLastErrorMsg()));
+            }
+            coverageType |= type;
+            featureCount += gdal()->getFeatureCount(_dataSource, FALSE) ? -1 : 0;//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
+        }
+    }
+    if (coverageType != itUNKNOWN && featureCount > 0){
+        fcoverage->featureTypes(coverageType);
+        fcoverage->setFeatureCount(coverageType, featureCount);
+    }else
+       return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",data->name());
 
-//    double geosys[6];
-//    CPLErr err = gdal()->getGeotransform(_dataSet, geosys) ;
-//    if ( err != CE_None) {
-//        return ERROR2(ERR_INVALID_PROPERTY_FOR_2, "Bounds", coverage->name());
-//    }
+    ITable tbl = fcoverage->attributeTable();
+    tbl->setRows(fcoverage->featureCount());
 
-//    double a1 = geosys[0];
-//    double b1 = geosys[3];
-//    double a2 = geosys[1];
-//    double b2 = geosys[5];
-//    Pixel pix(gdal()->xsize(_dataSet), gdal()->ysize(_dataSet));
-//    Coordinate crdLeftup( a1 , b1);
-//    Coordinate crdRightDown(a1 + pix.x() * a2, b1 + pix.y() * b2 ) ;
-//    Coordinate cMin( min(crdLeftup.x(), crdRightDown.x()), min(crdLeftup.y(), crdRightDown.y()));
-//    Coordinate cMax( max(crdLeftup.x(), crdRightDown.x()), max(crdLeftup.y(), crdRightDown.y()));
-
-//    coverage->envelope(Box2D<double>(cMin, cMax));
-
-//    return true;
-
-    return false;
+    gdal()->closeFile(_filename, data->id()); //TODO: when to close a file
+    return true;
 }
 
 bool GdalFeatureConnector::store(IlwisObject *obj, IlwisTypes type)
 {
     return CoverageConnector::store(obj, type);
 }
+
+void GdalFeatureConnector::reportError(OGRDataSourceH dataSource) const
+{
+    kernel()->issues()->log(QString(gdal()->getLastErrorMsg()));
+    gdal()->releaseDataSource(dataSource);
+}
+

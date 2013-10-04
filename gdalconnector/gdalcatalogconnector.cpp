@@ -51,7 +51,7 @@ bool GdalCatalogConnector::loadItems()
             return ERROR1(ERR_COULD_NOT_OPEN_READING_1,folder.absolutePath());
         }
         fileList = folder.entryInfoList();
-        QStringList namefilter = gdal()->rasterNameFilter();
+        QStringList namefilter = gdal()->getRasterExtensions();
 
         folder.setFilter(QDir::Files);
         QFileInfoList files = folder.entryInfoList(namefilter);

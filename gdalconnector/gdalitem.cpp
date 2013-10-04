@@ -16,7 +16,7 @@ using namespace Gdal;
 GDALItems::GDALItems(const QString &path)
 {
     GDALDatasetH dataSet = gdal()->open(path.toLocal8Bit(), GA_ReadOnly);
-
+    //TODO: GDALdatasetH is not general as OGR uses OGRDataSourceH!!
     int count  = gdal()->layerCount(dataSet);
     if ( count == 0)
         return;
@@ -52,7 +52,7 @@ void GDALItems::addItem(const QUrl& url, quint64 csyid, quint64 grfId, IlwisType
 }
 
 quint64 GDALItems::addCsy(GDALDatasetH dataSet, const QString &path) {
-    OGRSpatialReferenceH srshandle = gdal()->srsHandle(dataSet, path);
+    OGRSpatialReferenceH srshandle = gdal()->srsHandle_Set(dataSet, path);
     if ( srshandle == 0)
         return i64UNDEF;
     QString epsg(gdal()->getAttributeValue(srshandle,"AUTHORITY",0));

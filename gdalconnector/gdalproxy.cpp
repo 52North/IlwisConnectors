@@ -48,8 +48,6 @@ bool GDALProxy::prepare() {
     create = add<IGDALCreate>("GDALCreate");
     rasterDataType = add<IGDALGetRasterDataType>("GDALGetRasterDataType");
     getProjectionRef = add<IGDALGetProjectionRef>("GDALGetProjectionRef");
-    newSpatialRef = add<IOSRNewSpatialReference>("OSRNewSpatialReference");
-    importFromWkt = add<IOSRImportFromWkt>("OSRImportFromWkt");
     setWellKnownGeogCs = add<IOSRSetWellKnownGeogCS>("OSRSetWellKnownGeogCS");
     setProjection = add<IGDALSetProjection>("GDALSetProjection");
     isProjected = add<IOSRIsProjectedFunc>("OSRIsProjected");
@@ -72,6 +70,9 @@ bool GDALProxy::prepare() {
     maxValue = add<IGDALRasValue>("GDALGetRasterMaximum");
     colorInterpretation = add<IGDALGetRasterColorInterpretation>("GDALGetRasterColorInterpretation");
     authority = add<IOSRGetAuthorityCode>("OSRGetAuthorityCode");
+
+    newSpatialRef = add<IOSRNewSpatialReference>("OSRNewSpatialReference");
+    importFromWkt = add<IOSRImportFromWkt>("OSRImportFromWkt");
 
     ogrOpen = add<IOGROpen>("OGROpen");
     ogrRegisterAll = add<IOGRRegisterAll>("OGRRegisterAll");
@@ -103,22 +104,23 @@ bool GDALProxy::prepare() {
     getSpatialRef = add<IGetSpatialRef>("OGR_L_GetSpatialRef");
     exportToWkt = add<IExportToWkt>("OSRExportToWkt");
     importFromProj4 = add<IOSRImportFromProj4>("OSRImportFromProj4");
-    featureCount = add<IGetFeatureCount>("OGR_L_GetFeatureCount");
+    getFeatureCount = add<IGetFeatureCount>("OGR_L_GetFeatureCount");
     getLayerExtent = add<IGetLayerExtent>("OGR_L_GetExtent");
     getFieldName = add<IGetFieldName>("OGR_Fld_GetNameRef");
     pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
     getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");
-    newSRS = add<IOSRNewSpatialReference>("OSRNewSpatialReference");
+    releaseDataSource = add<IOGRReleaseDataSource>("OGRReleaseDataSource");
     free = add<IFree>("VSIFree");
 
     if ( _isValid) {
+        //raster extensions
         registerAll();
         int ndrivers = getDriverCount();
         QSet<QString> extensions;
         for(int index = 0; index < ndrivers; ++index) {
             GDALDriverH driverH = getDriver(index);
             if ( driverH) {
-                const char *cext = getMetaDataItem(driverH,GDAL_DMD_EXTENSION,NULL);
+                const char *cext = getMetaDataItem(driverH,GDAL_DMD_EXTENSION,NULL);//raster extensions only
                 if ( cext){
                     QString ext(cext);
                     if ( ext != "" && ext != "mpr/mpl")
@@ -130,6 +132,9 @@ bool GDALProxy::prepare() {
         QFileInfo ilw = context()->ilwisFolder();
         QString path = ilw.canonicalFilePath() + "/Extensions/gdalconnector/resources";
         pushFinderLocation(path.toLocal8Bit());
+        //feature extensions
+        _featureExtensions.append(QString("*.shp"));
+        //TODO: ask OGRDriverName and compare to http://www.gdal.org/ogr/ogr_formats.html
     }
 
     return _isValid;
@@ -140,30 +145,50 @@ bool GDALProxy::isValid() const
     return _isValid;
 }
 
-QStringList GDALProxy::rasterNameFilter() const
+QStringList GDALProxy::getRasterExtensions() const
 {
     return _rasterExtensions;
 }
 
-bool GDALProxy::supports(const Resource &resource) const
+QStringList GDALProxy::getFeatureExtensions() const
 {
+    return _featureExtensions;
+}
+
+bool GDALProxy::supports(const Resource &resource) const{
     QFileInfo inf(resource.toLocalFile());
     QString ext = inf.suffix();
     QString filter = "*." + ext;
-    if ( !gdal()->rasterNameFilter().contains(filter,Qt::CaseInsensitive))
-        return false;
-    return true;
+    if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
+        return true;
+    if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
+        return true;
+    return false;
 }
 
-GDALDatasetH GDALProxy::openFile(const QString &filename, quint64 asker, GDALAccess mode) {
+GDALDatasetH GDALProxy::openRasterFile(const QString &filename, quint64 owner, GDALAccess mode) {
     GDALDatasetH handle;
     auto name = filename.toLower();
     if (_openedDatasets.contains(name)) {
         handle = _openedDatasets[name]._handle;
     } else {
-        handle = open(name.toLocal8Bit(), mode);
+        handle = open(filename.toLocal8Bit(), mode);
         if ( handle) {
-            _openedDatasets[name.toLocal8Bit()] = GdalHandle(handle, asker);
+            _openedDatasets[name.toLocal8Bit()] = GdalHandle(handle, owner);//TODO: why converting toLocal8Bit?? _openDatasets is handling Qstrings as keys!
+        }
+    }
+    return handle;
+}
+
+OGRDataSourceH GDALProxy::openOGRFile(const QString& filename, quint64 owner, GDALAccess mode, OGRSFDriverH* driverList){
+    OGRDataSourceH handle;
+    auto name = filename.toLower();
+    if (_openedDatasets.contains(name)){
+        handle = _openedDatasets[name]._handle;
+    } else {
+        handle = gdal()->ogrOpen(filename.toLocal8Bit(), mode, driverList);
+        if (handle){
+            _openedDatasets[name.toLocal8Bit()] = GdalHandle(handle, owner);//TODO: why converting toLocal8Bit?? _openDatasets is handling Qstrings as keys!
         }
     }
     return handle;
@@ -186,7 +211,7 @@ GDALDatasetH GDALProxy::operator [] (const QString& filename) {
     return 0;
 }
 
-OGRSpatialReferenceH GDALProxy::srsHandle(GDALDatasetH dataSet, const QString& source) {
+OGRSpatialReferenceH GDALProxy::srsHandle_Set(GDALDatasetH dataSet, const QString& source) {
     OGRSpatialReferenceH srshandle = newSpatialRef(NULL);
     const char *cwkt = getProjectionRef(dataSet);
     if (!cwkt) {
@@ -207,4 +232,19 @@ OGRSpatialReferenceH GDALProxy::srsHandle(GDALDatasetH dataSet, const QString& s
         return 0;
     }
     return srshandle;
+}
+OGRSpatialReferenceH GDALProxy::srsHandle_Source(OGRDataSourceH dataSource, const QString& source) {
+    OGRLayerH hLayer = gdal()->getLayer(dataSource, 0);//take the first layer
+    if (hLayer){
+        OGRSpatialReferenceH srshandle = gdal()->getSpatialRef(hLayer);
+        if ( srshandle ){
+            return srshandle;
+        }else{
+            kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
+            return NULL;
+        }
+    }else{
+        kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
+        return NULL;
+    }
 }

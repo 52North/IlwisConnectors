@@ -35,6 +35,8 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
     if(!GdalConnector::loadMetaData(data))
         return false;
 
+    GDALDatasetH dataSet = gdal()->openRasterFile(_filename, data->id());
+
     //TODO tiepoints grf
 
     GeoReference * grf = static_cast<GeoReference *>(data);
@@ -45,9 +47,9 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
     }
     grf->coordinateSystem(csy);
 
-    QSize sz(gdal()->xsize(_dataSet), gdal()->ysize(_dataSet));
+    QSize sz(gdal()->xsize(dataSet), gdal()->ysize(dataSet));
     double geosys[6];
-    CPLErr err = gdal()->getGeotransform(_dataSet, geosys) ;
+    CPLErr err = gdal()->getGeotransform(dataSet, geosys) ;
     if ( err != CE_None) {
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2, "Georeference", grf->name());
     }

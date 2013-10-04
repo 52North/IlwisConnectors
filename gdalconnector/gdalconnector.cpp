@@ -26,10 +26,11 @@ IlwisTypes Ilwis::Gdal::GdalConnector::ilwisType(const QString &name)
     bool isCatalog =  inf.isDir();
     if ( isCatalog)
         return itCATALOG;
-    QStringList extensions = gdal()->rasterNameFilter();
-    if ( extensions.indexOf("." + inf.suffix())!= -1)
+    if ( gdal()->getRasterExtensions().indexOf("." + inf.suffix())!= -1)
         return itRASTER;
-    return itUNKNOWN; //TODO vector and table formats here
+    if ( gdal()->getFeatureExtensions().indexOf("." + inf.suffix())!= -1)
+        return itFEATURE;
+    return itUNKNOWN; //TODO add table formats here
 
 }
 
@@ -41,12 +42,6 @@ bool GdalConnector::loadMetaData(IlwisObject *data)
     if ( _filename == "") {
         return ERROR1(ERR_MISSING_DATA_FILE_1,"Gdal reading");
     }
-    _dataSet = gdal()->openFile(_filename, data->id());
-    if (!_dataSet){
-        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_filename);
-    }
-    QFileInfo inf(_filename);
-    data->setName(inf.fileName());
     return true;
 }
 
@@ -65,7 +60,7 @@ bool GdalConnector::store(IlwisObject *, int )
 }
 
 bool GdalConnector::canUse(const Ilwis::Resource &resource) {
-    QStringList extensions = gdal()->rasterNameFilter();
+    QStringList extensions = gdal()->getRasterExtensions();
     QFileInfo inf(resource.url().toLocalFile());
     bool ok = extensions.indexOf("." + inf.suffix())!= -1;
     if ( ok)
@@ -90,13 +85,6 @@ void GdalConnector::format(const QString &f)
 QString GdalConnector::format() const
 {
     return _gdalShortName;
-}
-
-bool GdalConnector::reportError(GDALDatasetH dataset) const
-{
-    kernel()->issues()->log(QString(gdal()->getLastErrorMsg()));
-    gdal()->close(dataset);
-    return false;
 }
 
 GDALDataType GdalConnector::ilwisType2GdalType(IlwisTypes tp) {

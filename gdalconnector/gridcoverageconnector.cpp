@@ -22,6 +22,10 @@
 #include "gdalconnector.h"
 #include "coverageconnector.h"
 #include "gridcoverageconnector.h"
+#include "geodeticdatum.h"
+#include "projection.h"
+#include "ellipsoid.h"
+#include "conventionalcoordinatesystem.h"
 
 using namespace Ilwis;
 using namespace Gdal;
@@ -36,10 +40,39 @@ RasterCoverageConnector::RasterCoverageConnector(const Ilwis::Resource &resource
 }
 
 bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
+
+    if(!GdalConnector::loadMetaData(data))
+        return false;
+
+    _dataSet = gdal()->openRasterFile(_filename, data->id());
+    if (!_dataSet){
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_filename);
+    }
+    QFileInfo inf(_filename);//TODO: what about replacing QString _filename by a QFileInfo
+    data->setName(inf.fileName());
+
     if(!CoverageConnector::loadMetaData(data))
         return false;
 
     auto *gcoverage = static_cast<RasterCoverage *>(data);
+
+    double geosys[6];
+    CPLErr err = gdal()->getGeotransform(_dataSet, geosys) ;
+    if ( err != CE_None) {
+        return ERROR2(ERR_INVALID_PROPERTY_FOR_2, "Bounds", gcoverage->name());
+    }
+
+    double a1 = geosys[0];
+    double b1 = geosys[3];
+    double a2 = geosys[1];
+    double b2 = geosys[5];
+    Pixel pix(gdal()->xsize(_dataSet), gdal()->ysize(_dataSet));
+    Coordinate crdLeftup( a1 , b1);
+    Coordinate crdRightDown(a1 + pix.x() * a2, b1 + pix.y() * b2 ) ;
+    Coordinate cMin( min(crdLeftup.x(), crdRightDown.x()), min(crdLeftup.y(), crdRightDown.y()));
+    Coordinate cMax( max(crdLeftup.x(), crdRightDown.x()), max(crdLeftup.y(), crdRightDown.y()));
+
+    gcoverage->envelope(Box2D<double>(cMin, cMax));
 
     IGeoReference grf;
     if(!grf.prepare(_resource.url().toLocalFile()))
@@ -72,6 +105,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
     _gdalValueType = gdal()->rasterDataType(layerHandle);
     _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
 
+    gdal()->closeFile(_filename, data->id());
     return true;
 }
 
@@ -171,7 +205,8 @@ bool RasterCoverageConnector::setGeotransform(RasterCoverage *raster,GDALDataset
 
         CPLErr err = gdal()->setGeoTransform(dataset,geoTransform);
         if ( err != CP_NONE) {
-            return reportError(dataset);
+            reportError(dataset);
+            return false;
         }
         return true;
     }
@@ -232,3 +267,32 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
 
     return ok;
 }
+
+bool RasterCoverageConnector::setSRS(Coverage *raster, GDALDatasetH dataset) const
+{
+    IConventionalCoordinateSystem csy = raster->coordinateSystem().get<ConventionalCoordinateSystem>();
+    QString proj4def = csy->projection()->toProj4();
+    OGRSpatialReferenceH srsH = gdal()->newSpatialRef(0);
+    OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());
+    if ( errOgr != OGRERR_NONE) {
+        reportError(dataset);
+        return false;
+    }
+    char *wktText = NULL;
+    gdal()->exportToWkt(srsH,&wktText);
+    CPLErr err = gdal()->setProjection(dataset, wktText);
+    gdal()->free(wktText);
+    if ( err != CP_NONE) {
+        reportError(dataset);
+        return false;
+    }
+    return true;
+}
+
+
+void RasterCoverageConnector::reportError(GDALDatasetH dataset) const
+{
+    kernel()->issues()->log(QString(gdal()->getLastErrorMsg()));
+    gdal()->close(dataset);
+}
+

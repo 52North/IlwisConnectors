@@ -44,9 +44,23 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data){
     if (!GdalConnector::loadMetaData(data))
         return false;
 
-    CoordinateSystem *csy = static_cast<CoordinateSystem *>(data);
+    //UGLY!
+    //resolve from filename whether to use GDALDataSetH or OGRDataSourceH
+    OGRSpatialReferenceH srshandle = NULL;
+    GDALDatasetH dataSet = gdal()->openRasterFile(_filename, data->id());
+    if (!dataSet){
+        OGRSFDriverH driver;
+        OGRDataSourceH dataSource = gdal()->openOGRFile(_filename, data->id(), GA_ReadOnly, &driver);
+        if (!dataSource){
+            return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_filename);
+        }else{
+            srshandle = gdal()->srsHandle_Source(dataSource, data->name());
+        }
+    }else{
+        srshandle = gdal()->srsHandle_Set(dataSet, data->name());
+    }
 
-    OGRSpatialReferenceH srshandle = gdal()->srsHandle(_dataSet, data->name());
+    CoordinateSystem *csy = static_cast<CoordinateSystem *>(data);
 
     if ( type() == itCONVENTIONALCOORDSYSTEM) {
         ConventionalCoordinateSystem *csyp = static_cast<ConventionalCoordinateSystem *>(csy);

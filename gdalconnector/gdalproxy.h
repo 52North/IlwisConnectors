@@ -18,26 +18,27 @@ typedef GDALDatasetH (*IGDALCreate )(GDALDriverH hDriver, const char *, int, int
 typedef GDALDataType (*IGDALGetRasterDataType )(GDALRasterBandH) ;
 typedef char * (*IGDALGetProjectionRef )(GDALDatasetH) ;
 typedef OGRSpatialReferenceH (*IOSRNewSpatialReference )(const char *) ;
-typedef OGRErr (*IOSRImportFromWkt )(OGRSpatialReferenceH, char **) ;
-typedef OGRErr (*IOSRSetWellKnownGeogCS )(OGRSpatialReferenceH, char *) ;
 typedef CPLErr (*IGDALSetProjection)(GDALDatasetH,const char *);
-typedef int (*IOSRIsProjectedFunc )(OGRSpatialReferenceH) ;
 typedef CPLErr (*IGDALGetGeoTransform )(GDALDatasetH, double *) ;
 typedef CPLErr (*IGDALSetGeoTransform)(GDALDatasetH, double * );
 typedef CPLErr (*IGDALRasterIO )(GDALRasterBandH , GDALRWFlag , int , int , int , int , void *, int , int , GDALDataType , int , int ) ;
 typedef int (*IGDALGetDataTypeSize )(GDALDataType) ;
 typedef int (*IGDALGetAccess )(GDALDatasetH) ;
-typedef const char* (*IOSRGetAttrValue )(OGRSpatialReferenceH, const char *, int) ;
 typedef GDALDriverH (*IGDALGetDriver )(int) ;
 typedef int (*IGDALGetDriverCount )() ;
 typedef GDALDriverH (*IGDALGetDriverByName)(const char * ) ;
 typedef const char* (*IGDALGetDriverName )(GDALDriverH) ;
 typedef const char* (*IGDALGetMetadataItem )(GDALMajorObjectH , const char *, const char *) ;
+typedef double (*IGDALRasValue)(GDALRasterBandH, int * );
+typedef GDALColorInterp (*IGDALGetRasterColorInterpretation)(GDALRasterBandH);
+
+typedef OGRErr (*IOSRImportFromWkt )(OGRSpatialReferenceH, char **) ;
+typedef OGRErr (*IOSRSetWellKnownGeogCS )(OGRSpatialReferenceH, char *) ;
+typedef int (*IOSRIsProjectedFunc )(OGRSpatialReferenceH) ;
+typedef const char* (*IOSRGetAttrValue )(OGRSpatialReferenceH, const char *, int) ;
 typedef OGRErr (*IOSRImportFromEPSG )(OGRSpatialReferenceH, int) ;
 typedef OGRErr (*IOSRExportToPrettyWkt )(OGRSpatialReferenceH ,char **,int) ;
 typedef double (*IOSRGetProjParm )(OGRSpatialReferenceH,const char *,double ,OGRErr *) ;
-typedef double (*IGDALRasValue)(GDALRasterBandH, int * );
-typedef GDALColorInterp (*IGDALGetRasterColorInterpretation)(GDALRasterBandH);
 typedef const char* (*IOSRGetAuthorityCode)( OGRSpatialReferenceH, const char *);
 
 typedef OGRDataSourceH (*IOGROpen )(const char *, int, OGRSFDriverH *) ;
@@ -70,12 +71,11 @@ typedef OGRGeometryH (*IGetSubGeometryRef )(OGRGeometryH,int) ;
 typedef OGRSpatialReferenceH (*IGetSpatialRef )(OGRLayerH hLayer) ;
 typedef OGRErr (*IExportToWkt )(OGRSpatialReferenceH,char **) ;
 typedef OGRErr (*IOSRImportFromProj4)(OGRSpatialReferenceH, const char *);
-typedef OGRSpatialReferenceH (*IOSRNewSpatialReference)(const char *) ;
 typedef int (*IGetFeatureCount )(OGRLayerH,int) ;
 typedef OGRErr 	(*IGetLayerExtent )(OGRLayerH, OGREnvelope *, int) ;
 typedef const char * (*IGetFieldName )(OGRFieldDefnH) ;
 typedef void (*ICPLPushFinderLocation )( const char * ) ;
-
+typedef OGRErr (*IOGRReleaseDataSource) (OGRDataSourceH);
 typedef const char* (*ICPLGetLastErrorMsg)();
 typedef void (*IFree)( void * );
 
@@ -94,7 +94,8 @@ public:
     ~GDALProxy();
 
     bool isValid() const;
-    QStringList rasterNameFilter() const;
+    QStringList getRasterExtensions() const;
+    QStringList getFeatureExtensions() const;
     bool supports(const Resource& resource) const;
 
     template<class T> T  add(const QString& name) {
@@ -109,10 +110,12 @@ public:
         return fp;
     }
 
-    GDALDatasetH openFile(const QString& filename, quint64 asker, GDALAccess mode=GA_ReadOnly);
+    OGRDataSourceH openOGRFile(const QString& filename, quint64 owner, GDALAccess mode=GA_ReadOnly, OGRSFDriverH* driverList = NULL);
+    GDALDatasetH openRasterFile(const QString& filename, quint64 owner, GDALAccess mode=GA_ReadOnly);
     void closeFile(const QString& filename, quint64 asker);
     GDALDatasetH operator [] (const QString& filename);
-    OGRSpatialReferenceH srsHandle(GDALDatasetH dataSet, const QString &source);
+    OGRSpatialReferenceH srsHandle_Set(GDALDatasetH dataSet, const QString &source);
+    OGRSpatialReferenceH srsHandle_Source(OGRDataSourceH dataSource, const QString& source);
 
     IGDALClose close;
     IGDALOpen open;
@@ -127,28 +130,30 @@ public:
     IGDALCreate create;
     IGDALGetRasterDataType rasterDataType;
     IGDALGetProjectionRef getProjectionRef;
-    IOSRNewSpatialReference newSpatialRef;
-    IOSRImportFromWkt importFromWkt;
-    IOSRSetWellKnownGeogCS setWellKnownGeogCs;
     IGDALSetProjection setProjection;
-    IOSRIsProjectedFunc isProjected;
     IGDALGetGeoTransform getGeotransform;
     IGDALSetGeoTransform setGeoTransform;
     IGDALRasterIO rasterIO;
     IGDALGetDataTypeSize getDataTypeSize;
     IGDALGetAccess getAccess;
-    IOSRGetAttrValue getAttributeValue;
     IGDALGetDriver getDriver;
     IGDALGetDriverByName getGDALDriverByName;
     IGDALGetDriverCount getDriverCount;
     IGDALGetDriverName getLongName;
     IGDALGetDriverName getShortName;
     IGDALGetMetadataItem getMetaDataItem;
+    IGDALGetRasterColorInterpretation colorInterpretation;
+
+    IOSRNewSpatialReference newSpatialRef;
+    IOSRImportFromWkt importFromWkt;
+    IOSRSetWellKnownGeogCS setWellKnownGeogCs;
+    IOSRIsProjectedFunc isProjected;
+    IOSRGetAttrValue getAttributeValue;
     IOSRImportFromEPSG importFromEpsg;
     IOSRExportToPrettyWkt exportToPrettyWkt;
     IOSRGetProjParm getProjectionParm;
-    IGDALGetRasterColorInterpretation colorInterpretation;
     IOSRGetAuthorityCode authority;
+    IOSRImportFromProj4 importFromProj4;
 
     IOGROpen ogrOpen;
     IOGRRegisterAll ogrRegisterAll;
@@ -179,13 +184,12 @@ public:
     IGetSubGeometryRef getSubGeometryRef;
     IGetSpatialRef getSpatialRef;
     IExportToWkt exportToWkt;
-    IOSRImportFromProj4 importFromProj4;
-    IGetFeatureCount featureCount;
+    IGetFeatureCount getFeatureCount;
     IGetLayerExtent getLayerExtent;
     IGetFieldName getFieldName;
     ICPLPushFinderLocation pushFinderLocation;
     ICPLGetLastErrorMsg getLastErrorMsg;
-    IOSRNewSpatialReference newSRS;
+    IOGRReleaseDataSource releaseDataSource;
     IFree free;
 
 
@@ -195,6 +199,7 @@ private:
     QLibrary _lib;
     bool _isValid;
     static GDALProxy *_proxy;
+    QStringList _featureExtensions;
     QStringList _rasterExtensions;
     QHash<QString, GdalHandle> _openedDatasets;
 };
