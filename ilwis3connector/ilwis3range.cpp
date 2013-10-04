@@ -101,6 +101,19 @@ RawConverter Ilwis3Range::converter(const ODF &odf, const QString &section)  {
             return RawConverter(dmtype);
         }
     }
+    QString sst = odf->value(section,"StoreType");
+    IlwisTypes st = itUNKNOWN;
+    if ( sst == "Byte")
+        st = itUINT8;
+    else if ( sst == "Int")
+        st = itINT16;
+    else if ( sst == "Long")
+        st = itINT32;
+    else if ( sst== "Real")
+        st = itDOUBLE;
+    else if ( sst == "Float")
+        st = itFLOAT;
+
     QStringList parts = range.split(":");
     if ( parts.size() >= 2) {
         double scale = 1.0;
@@ -120,7 +133,7 @@ RawConverter Ilwis3Range::converter(const ODF &odf, const QString &section)  {
             kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Range",odf->fileinfo().baseName()));
             return RawConverter();
         }
-        return RawConverter(offset, scale,vmin, vmax);
+        return RawConverter(offset, scale,vmin, vmax, st);
     }
     return RawConverter();
 }
