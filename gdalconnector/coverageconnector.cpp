@@ -36,6 +36,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data){
     if(!csy.isValid()) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "coordinatesystem", coverage->name());
     }
+    coverage->setCoordinateSystem(csy);
 
     return true;
 }

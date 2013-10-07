@@ -76,6 +76,8 @@ typedef OGRErr 	(*IGetLayerExtent )(OGRLayerH, OGREnvelope *, int) ;
 typedef const char * (*IGetFieldName )(OGRFieldDefnH) ;
 typedef void (*ICPLPushFinderLocation )( const char * ) ;
 typedef OGRErr (*IOGRReleaseDataSource) (OGRDataSourceH);
+typedef OGRGeometryH (*IOGRGetSpatialFilter)(OGRLayerH);
+typedef void (*IOGRGetEnvelope3D) (OGRGeometryH, OGREnvelope*);
 typedef const char* (*ICPLGetLastErrorMsg)();
 typedef void (*IFree)( void * );
 
@@ -190,6 +192,8 @@ public:
     ICPLPushFinderLocation pushFinderLocation;
     ICPLGetLastErrorMsg getLastErrorMsg;
     IOGRReleaseDataSource releaseDataSource;
+    IOGRGetSpatialFilter getSpatialFilter;
+    IOGRGetEnvelope3D getEnvelope3D;
     IFree free;
 
 

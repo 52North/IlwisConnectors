@@ -110,6 +110,8 @@ bool GDALProxy::prepare() {
     pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
     getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");
     releaseDataSource = add<IOGRReleaseDataSource>("OGRReleaseDataSource");
+    getSpatialFilter = add<IOGRGetSpatialFilter>("OGR_L_GetSpatialFilter");
+    getEnvelope3D = add<IOGRGetEnvelope3D>("OGR_G_GetEnvelope3D");
     free = add<IFree>("VSIFree");
 
     if ( _isValid) {
@@ -133,6 +135,7 @@ bool GDALProxy::prepare() {
         QString path = ilw.canonicalFilePath() + "/Extensions/gdalconnector/resources";
         pushFinderLocation(path.toLocal8Bit());
         //feature extensions
+        ogrRegisterAll();
         _featureExtensions.append(QString("*.shp"));
         //TODO: ask OGRDriverName and compare to http://www.gdal.org/ogr/ogr_formats.html
     }

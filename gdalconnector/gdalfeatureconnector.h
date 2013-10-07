@@ -8,7 +8,7 @@ namespace Ilwis{
                 GdalFeatureConnector(const Ilwis::Resource &resource, bool load=true);
 
                 bool loadMetaData(IlwisObject* data);
-                bool loadBinaryData(IlwisObject* data) { return false; }
+                bool loadBinaryData(IlwisObject* data);
                 bool store(IlwisObject *obj, IlwisTypes type);
 
                 static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);

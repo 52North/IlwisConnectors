@@ -77,29 +77,59 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     IlwisTypes coverageType = itUNKNOWN;
     int featureCount = 0;
+    Box2D<double> bbox;
+    bool initMinMax = 0;
 
     int layerCount = gdal()->getLayerCount(_dataSource);
     for(int layer = 0; layer < layerCount ; ++layer) {
         OGRLayerH hLayer = gdal()->getLayer(_dataSource, layer);
         if ( hLayer) {
+            //feature types
             IlwisTypes type = getFeatureType(hLayer);
             if (type == itUNKNOWN){
-                ERROR2(ERR_COULD_NOT_LOAD_2,QString("Layer %1 from:").arg(_filename),QString(":%1").arg(gdal()->getLastErrorMsg()));
+                ERROR2(ERR_COULD_NOT_LOAD_2,QString("layer from: %1").arg(_filename),QString(":%1").arg(gdal()->getLastErrorMsg()));
             }
             coverageType |= type;
-            featureCount += gdal()->getFeatureCount(_dataSource, FALSE) ? -1 : 0;//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
+            //feature counts
+            int temp = gdal()->getFeatureCount(hLayer, FALSE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
+            featureCount = fcoverage->featureCount(type);
+            featureCount += (temp == -1) ? 0 : temp;
+            fcoverage->setFeatureCount(type, featureCount);
+            //layer envelopes/extents
+            OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
+            OGRErr er = gdal()->getLayerExtent(hLayer, &envelope , FALSE);//TRUE to FORCE
+            if (er ==  OGRERR_FAILURE){
+                ERROR2(ERR_COULD_NOT_LOAD_2,QString("(TRY FORCE) extent of a layer from: %2").arg(_filename),QString(":%1").arg(gdal()->getLastErrorMsg()));
+            }
+            if(!initMinMax){
+                bbox=Box2D<double>(Coordinate2d(envelope.MinX,envelope.MinY),Coordinate2d(envelope.MaxX,envelope.MaxY));
+            }else{
+                if(bbox.max_corner().x() < envelope.MaxX)
+                    bbox.max_corner().x(envelope.MaxX);
+                if(bbox.max_corner().y() < envelope.MaxY)
+                    bbox.max_corner().y(envelope.MaxY);
+                if(bbox.min_corner().x() > envelope.MinX)
+                    bbox.min_corner().x(envelope.MinX);
+                if(bbox.min_corner().y() > envelope.MinY)
+                    bbox.min_corner().y(envelope.MinY);
+            }
         }
     }
-    if (coverageType != itUNKNOWN && featureCount > 0){
+    if (coverageType != itUNKNOWN && featureCount >= 0){
         fcoverage->featureTypes(coverageType);
-        fcoverage->setFeatureCount(coverageType, featureCount);
-    }else
+        fcoverage->envelope(bbox);
+    }else{
        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",data->name());
+    }
 
-    ITable tbl = fcoverage->attributeTable();
-    tbl->setRows(fcoverage->featureCount());
+//    ITable tbl = fcoverage->attributeTable();
+//    tbl->setRows(fcoverage->featureCount());
 
     return true;
+}
+
+bool GdalFeatureConnector::loadBinaryData(IlwisObject* data) {
+    return false;
 }
 
 bool GdalFeatureConnector::store(IlwisObject *obj, IlwisTypes type)
