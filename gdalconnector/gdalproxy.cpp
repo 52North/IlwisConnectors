@@ -161,7 +161,7 @@ bool GDALProxy::supports(const Resource &resource) const{
     QString filter = "*." + ext;
     if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
         return true;
-    if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
+    if ( gdal()->getFeatureExtensions().contains(filter,Qt::CaseInsensitive))
         return true;
     return false;
 }

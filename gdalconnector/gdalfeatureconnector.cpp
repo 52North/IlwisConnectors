@@ -63,7 +63,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     if(!GdalConnector::loadMetaData(data))
         return false;
 
-    OGRSFDriverH driver;
+    OGRSFDriverH driver = NULL;
     _dataSource = gdal()->openOGRFile(_filename, data->id(), GA_ReadOnly, &driver);
     if (!_dataSource){
         return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename,QString(gdal()->getLastErrorMsg()));
@@ -99,7 +99,6 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     ITable tbl = fcoverage->attributeTable();
     tbl->setRows(fcoverage->featureCount());
 
-    gdal()->closeFile(_filename, data->id()); //TODO: when to close a file
     return true;
 }
 

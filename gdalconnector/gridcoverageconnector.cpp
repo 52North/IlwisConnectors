@@ -105,7 +105,6 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
     _gdalValueType = gdal()->rasterDataType(layerHandle);
     _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
 
-    gdal()->closeFile(_filename, data->id());
     return true;
 }
 
