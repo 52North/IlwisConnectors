@@ -16,7 +16,7 @@ GdalConnector::GdalConnector(const Resource &resource, bool load) : IlwisObjectC
 }
 
 
-IlwisTypes Ilwis::Gdal::GdalConnector::ilwisType(const QString &name)
+IlwisTypes GdalConnector::ilwisType(const QString &name)
 {
     QString filename = name;
     if (name.contains("?") == 0) {
@@ -27,7 +27,7 @@ IlwisTypes Ilwis::Gdal::GdalConnector::ilwisType(const QString &name)
     if ( isCatalog)
         return itCATALOG;
     QStringList extensions = gdal()->rasterNameFilter();
-    if ( extensions.indexOf("." + inf.suffix())!= -1)
+    if ( extensions.indexOf("*." + inf.suffix())!= -1)
         return itRASTER;
     return itUNKNOWN; //TODO vector and table formats here
 
