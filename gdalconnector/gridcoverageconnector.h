@@ -22,7 +22,6 @@ public:
 
 private:
     int _layers;
-    GDALDatasetH _dataSet;
     GDALDataType _gdalValueType;
     int _typeSize;
 

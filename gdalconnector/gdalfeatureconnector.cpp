@@ -60,17 +60,6 @@ IlwisTypes GdalFeatureConnector::getFeatureType(OGRLayerH hLayer) const{
 
 bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
 
-    if(!GdalConnector::loadMetaData(data))
-        return false;
-
-    OGRSFDriverH driver = NULL;
-    _dataSource = gdal()->openOGRFile(_filename, data->id(), GA_ReadOnly, &driver);
-    if (!_dataSource){
-        return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename,QString(gdal()->getLastErrorMsg()));
-    }
-    QFileInfo inf(_filename);//TODO: what about replacing QString _filename by a QFileInfo
-    data->setName(inf.fileName());
-
     if(!CoverageConnector::loadMetaData(data))
         return false;
 
@@ -80,21 +69,23 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     Box2D<double> bbox;
     bool initMinMax = 0;
 
-    int layerCount = gdal()->getLayerCount(_dataSource);
-    for(int layer = 0; layer < layerCount ; ++layer) {
-        OGRLayerH hLayer = gdal()->getLayer(_dataSource, layer);
+    for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
+        OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
         if ( hLayer) {
+
             //feature types
             IlwisTypes type = getFeatureType(hLayer);
             if (type == itUNKNOWN){
                 ERROR2(ERR_COULD_NOT_LOAD_2,QString("layer from: %1").arg(_filename),QString(":%1").arg(gdal()->getLastErrorMsg()));
             }
             coverageType |= type;
+
             //feature counts
             int temp = gdal()->getFeatureCount(hLayer, FALSE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
             featureCount = fcoverage->featureCount(type);
             featureCount += (temp == -1) ? 0 : temp;
             fcoverage->setFeatureCount(type, featureCount);
+
             //layer envelopes/extents
             OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
             OGRErr er = gdal()->getLayerExtent(hLayer, &envelope , FALSE);//TRUE to FORCE
@@ -129,7 +120,33 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
 }
 
 bool GdalFeatureConnector::loadBinaryData(IlwisObject* data) {
-    return false;
+    if ( data == nullptr)
+        return false;
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+    if ( fcoverage->isValid() ) {
+        for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
+            OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
+            if ( hLayer) {
+                OGRFeatureDefnH hFeatureDef = gdal()->getLayerDef(hLayer);
+                if ( hFeatureDef) {
+//                    Table tbl;
+//                    createTable(fnBaseOutputName, dm, hFeatureDef, hLayer, tbl);
+//                    if ( tbl.fValid()) {
+//                        bmp->SetAttributeTable(tbl);
+//                    }
+                    OGRFeatureH hFeature;
+                    int rec = 1;
+                    gdal()->resetReading(hLayer);
+                    while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL ){
+                            OGRGeometryH hGeometry = gdal()->getGeometryRef(hFeature);
+//                            filler->fillFeature(hGeometry, rec);
+
+                    }
+                }
+            }
+        }
+    }
+    return true;
 }
 
 bool GdalFeatureConnector::store(IlwisObject *obj, IlwisTypes type)

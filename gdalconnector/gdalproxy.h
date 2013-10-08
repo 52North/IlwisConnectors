@@ -81,15 +81,28 @@ typedef void (*IOGRGetEnvelope3D) (OGRGeometryH, OGREnvelope*);
 typedef const char* (*ICPLGetLastErrorMsg)();
 typedef void (*IFree)( void * );
 
+class GdalHandle {
+    friend class GDALProxy;
+    public:
+        enum GdalHandleType{
+            etGDALDatasetH,
+            etOGRDataSourceH
+        };
+
+        GdalHandle(void* h, GdalHandleType t, quint64 o=i64UNDEF);
+        GdalHandleType type();
+        void* handle();
+    private:
+        void* _handle;
+        GdalHandleType _type;
+        quint64 _owner;
+};
 
 class GDALProxy {
     friend GDALProxy* gdal();
 
-    struct GdalHandle {
-        GdalHandle(GDALDatasetH h=0, quint64 o=0) : _handle(h),_owner(o) {}
-        GDALDatasetH _handle;
-        quint64 _owner;
-    };
+public:
+
 
 public:
     GDALProxy(const QString& library);
@@ -112,12 +125,10 @@ public:
         return fp;
     }
 
-    OGRDataSourceH openOGRFile(const QString& filename, quint64 owner, GDALAccess mode=GA_ReadOnly, OGRSFDriverH* driverList = NULL);
-    GDALDatasetH openRasterFile(const QString& filename, quint64 owner, GDALAccess mode=GA_ReadOnly);
+    GdalHandle* openFile(const QString& filename, quint64 asker, GDALAccess mode=GA_ReadOnly);
     void closeFile(const QString& filename, quint64 asker);
     GDALDatasetH operator [] (const QString& filename);
-    OGRSpatialReferenceH srsHandle_Set(GDALDatasetH dataSet, const QString &source);
-    OGRSpatialReferenceH srsHandle_Source(OGRDataSourceH dataSource, const QString& source);
+    OGRSpatialReferenceH srsHandle(GdalHandle* handle, const QString& source);
 
     IGDALClose close;
     IGDALOpen open;
@@ -205,7 +216,7 @@ private:
     static GDALProxy *_proxy;
     QStringList _featureExtensions;
     QStringList _rasterExtensions;
-    QHash<QString, GdalHandle> _openedDatasets;
+    QHash<QString, GdalHandle*> _openedDatasets;
 };
 
 GDALProxy *gdal();

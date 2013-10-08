@@ -30,7 +30,12 @@ CoverageConnector::CoverageConnector(const Resource& resource,bool load) : GdalC
 
 bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data){
 
+    if(!GdalConnector::loadMetaData(data))
+        return false;
+
     Coverage *coverage = static_cast<Coverage *>(data);
+    if ( coverage == nullptr)
+        return false;
 
     ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", _filename);
     if(!csy.isValid()) {

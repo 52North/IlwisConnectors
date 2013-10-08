@@ -25,6 +25,7 @@ protected:
     QString _filename; //TODO: might be better QFileInfo for Linux/Win filename case sensitivity
     QString _internalPath;
     QString _gdalShortName;
+    GdalHandle* _handle;
 };
 }
 }

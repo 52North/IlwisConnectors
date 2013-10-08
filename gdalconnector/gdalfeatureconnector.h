@@ -16,11 +16,6 @@ namespace Ilwis{
             protected:
                 IlwisTypes getFeatureType(OGRLayerH hLayer) const;
                 void reportError(OGRDataSourceH dataSource) const;
-
-
-                OGRDataSourceH _dataSource;
-
-
         };
     }
 }

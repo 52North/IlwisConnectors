@@ -20,6 +20,15 @@ Ilwis::Gdal::GDALProxy* Ilwis::Gdal::gdal() {
 using namespace Ilwis;
 using namespace Gdal;
 
+GdalHandle::GdalHandle(void* h, GdalHandleType t, quint64 o): _handle(h),_type(t),_owner(o){}
+
+GdalHandle::GdalHandleType GdalHandle::type(){
+    return _type;
+}
+void* GdalHandle::handle(){
+    return _handle;
+}
+
 GDALProxy::GDALProxy(const QString& library) {
 
     QFileInfo ilw = context()->ilwisFolder();
@@ -169,85 +178,86 @@ bool GDALProxy::supports(const Resource &resource) const{
     return false;
 }
 
-GDALDatasetH GDALProxy::openRasterFile(const QString &filename, quint64 owner, GDALAccess mode) {
-    GDALDatasetH handle;
-    auto name = filename.toLower();
-    if (_openedDatasets.contains(name)) {
-        handle = _openedDatasets[name]._handle;
-    } else {
-        handle = open(filename.toLocal8Bit(), mode);
-        if ( handle) {
-            _openedDatasets[name.toLocal8Bit()] = GdalHandle(handle, owner);//TODO: why converting toLocal8Bit?? _openDatasets is handling Qstrings as keys!
-        }
-    }
-    return handle;
-}
-
-OGRDataSourceH GDALProxy::openOGRFile(const QString& filename, quint64 owner, GDALAccess mode, OGRSFDriverH* driverList){
-    OGRDataSourceH handle;
-    auto name = filename.toLower();
+GdalHandle* GDALProxy::openFile(const QString& filename, quint64 asker, GDALAccess mode){
+    void* handle = nullptr;
+    auto name = filename.toLower();//TODO not on Linux! (MACRO?)
     if (_openedDatasets.contains(name)){
-        handle = _openedDatasets[name]._handle;
+        return _openedDatasets[name];
     } else {
-        handle = gdal()->ogrOpen(filename.toLocal8Bit(), mode, driverList);
+        handle = gdal()->ogrOpen(filename.toLocal8Bit(), mode, NULL);
         if (handle){
-            _openedDatasets[name.toLocal8Bit()] = GdalHandle(handle, owner);//TODO: why converting toLocal8Bit?? _openDatasets is handling Qstrings as keys!
+            return _openedDatasets[name] = new GdalHandle(handle, GdalHandle::etOGRDataSourceH, asker);
+        }else{
+            handle = gdal()->open(filename.toLocal8Bit(), mode);
+            if (handle){
+                return _openedDatasets[name] = new GdalHandle(handle, GdalHandle::etGDALDatasetH, asker);
+            }else{
+               ERROR1(ERR_COULD_NOT_OPEN_READING_1,filename);
+               return NULL;
+            }
         }
     }
-    return handle;
 }
 
-void GDALProxy::closeFile(const QString &filename, quint64 asker)
-{
-    auto name = filename.toLower();
+void GDALProxy::closeFile(const QString &filename, quint64 asker){
+    QString name = filename.toLower();
     auto iter = _openedDatasets.find(name);
-    if (iter != _openedDatasets.end() && iter.value()._owner == asker) {
-        close(_openedDatasets[name]._handle);
+    if (iter != _openedDatasets.end() && iter.value()->_owner == asker) {
+        close(_openedDatasets[name]->handle());
         _openedDatasets.remove(name);
     }
 }
 
 GDALDatasetH GDALProxy::operator [] (const QString& filename) {
     if (_openedDatasets.contains(filename.toLower())) {
-        return _openedDatasets[filename]._handle;
+        return _openedDatasets[filename]->handle();
     }
     return 0;
 }
 
-OGRSpatialReferenceH GDALProxy::srsHandle_Set(GDALDatasetH dataSet, const QString& source) {
-    OGRSpatialReferenceH srshandle = newSpatialRef(NULL);
-    const char *cwkt = getProjectionRef(dataSet);
-    if (!cwkt) {
-        kernel()->issues()->log(TR("Invalid or empty WKT for %1 %2").arg("CoordinateSystem", source), IssueObject::itWarning);
-        return 0;
-    }
-    char wkt[5000];
-    char *wkt2 = (char *)wkt;
-    strcpy(wkt, cwkt);
+OGRSpatialReferenceH GDALProxy::srsHandle(GdalHandle* handle, const QString& source) {
+    if (handle == nullptr){
+        OGRSpatialReferenceH srshandle = nullptr;
+        if (handle->_type == GdalHandle::etGDALDatasetH){
+            srshandle = newSpatialRef(NULL);
+            const char *cwkt = getProjectionRef(handle->handle());
+            if (!cwkt) {
+                kernel()->issues()->log(TR("Invalid or empty WKT for %1 %2").arg("CoordinateSystem", source), IssueObject::itWarning);
+                return NULL;
+            }
+            char wkt[5000];
+            char *wkt2 = (char *)wkt;
+            strcpy(wkt, cwkt);
 
-    OGRErr err = gdal()->importFromWkt(srshandle, &wkt2);
-    char *pwkt;
-    gdal()->exportToPrettyWkt(srshandle, &pwkt,0);
-    free(pwkt);
+            OGRErr err = importFromWkt(srshandle, &wkt2);
+            char *pwkt;//TODO only for debug?
+            exportToPrettyWkt(srshandle, &pwkt,0);
+            free(pwkt);
 
-    if ( err != OGRERR_NONE ){
-        kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
-        return 0;
-    }
-    return srshandle;
-}
-OGRSpatialReferenceH GDALProxy::srsHandle_Source(OGRDataSourceH dataSource, const QString& source) {
-    OGRLayerH hLayer = gdal()->getLayer(dataSource, 0);//take the first layer
-    if (hLayer){
-        OGRSpatialReferenceH srshandle = gdal()->getSpatialRef(hLayer);
-        if ( srshandle ){
+            if ( err != OGRERR_NONE ){
+                kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
+                return NULL;
+            }
             return srshandle;
+        }else if(handle->_type == GdalHandle::etOGRDataSourceH){
+            OGRLayerH hLayer = getLayer(handle->handle(), 0);//take the first layer
+            if (hLayer){
+                srshandle = getSpatialRef(hLayer);
+                if ( srshandle ){
+                    return srshandle;
+                }else{
+                    kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
+                    return NULL;
+                }
+            }else{
+                kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
+                return NULL;
+            }
         }else{
-            kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
+            kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", QString("%1 : nullptr").arg(source)), IssueObject::itWarning);
             return NULL;
         }
     }else{
-        kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
         return NULL;
     }
 }

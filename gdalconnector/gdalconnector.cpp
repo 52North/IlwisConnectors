@@ -10,6 +10,7 @@ using namespace Gdal;
 
 GdalConnector::GdalConnector(const Resource &resource, bool load) : IlwisObjectConnector(resource,load), _internalPath(sUNDEF)
 {
+    _handle = NULL;
     if ( resource.url().hasFragment())
         _internalPath = resource.url().fragment();
     _filename = resource.url().toLocalFile();
@@ -34,14 +35,24 @@ IlwisTypes Ilwis::Gdal::GdalConnector::ilwisType(const QString &name)
 
 }
 
-bool GdalConnector::loadMetaData(IlwisObject *data)
-{
+bool GdalConnector::loadMetaData(IlwisObject *data){
+    if (data == nullptr)
+        return false;
+
     if (!gdal()->isValid()) {
         return ERROR1(ERR_NO_INITIALIZED_1,"gdal library");
     }
     if ( _filename == "") {
         return ERROR1(ERR_MISSING_DATA_FILE_1,"Gdal reading");
     }
+
+    _handle = gdal()->openFile(_filename, data->id(), GA_ReadOnly);
+    if (!_handle){
+        return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename,QString(gdal()->getLastErrorMsg()));
+    }
+    QFileInfo inf(_filename);//TODO: what about replacing QString _filename by a QFileInfo
+    data->setName(inf.fileName());
+
     return true;
 }
 
@@ -61,13 +72,15 @@ bool GdalConnector::store(IlwisObject *, int )
 
 bool GdalConnector::canUse(const Ilwis::Resource &resource) {
     QStringList extensions = gdal()->getRasterExtensions();
+    extensions.append(gdal()->getFeatureExtensions());
     QFileInfo inf(resource.url().toLocalFile());
     bool ok = extensions.indexOf("." + inf.suffix())!= -1;
     if ( ok)
         return true;
-    GDALDatasetH handle = gdal()->open(resource.url().toLocalFile().toLocal8Bit(), GA_ReadOnly);
-    ok = handle != 0;
-    gdal()->close(handle);
+    QString name = resource.url().toLocalFile();
+    GdalHandle* handle = gdal()->openFile(name, resource.id(), GA_ReadOnly);
+    ok = handle->handle() != 0;
+    gdal()->closeFile(name, resource.id());
 
     return ok;
 }

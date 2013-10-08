@@ -31,24 +31,25 @@ DomainConnector::DomainConnector(const Resource& resource, bool load) : GdalConn
 }
 
 bool DomainConnector::loadMetaData(IlwisObject *data){
+    bool ret = true;
     if (!GdalConnector::loadMetaData(data))
-        return false;
-
+        ret = false;
 
     if (type() == itUNKNOWN) {
         kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Domain type",data->name()));
-        return false;
+        ret = false;
     }
-    bool ok = false;
 
-    if ( type() == itNUMERICDOMAIN) {
-        ok = handleValueDomains(data);
-    } else if ( type() == itITEMDOMAIN) {
-        ok = handleThematicDomains(data);
+    if (ret == true){
+        if ( type() == itNUMERICDOMAIN) {
+            ret = handleValueDomains(data);
+        } else if ( type() == itITEMDOMAIN) {
+            ret = handleThematicDomains(data);
+        }
     }
 
     gdal()->closeFile(_filename, data->id());
-    return ok;
+    return ret;
 
 }
 
@@ -59,7 +60,7 @@ bool DomainConnector::handleThematicDomains(IlwisObject* ) {
 
 bool DomainConnector::handleValueDomains(IlwisObject* data) {
     NumericDomain *vdata = static_cast<NumericDomain*>(data);
-
+    //TODO adjust the range
     return true;
 }
 
