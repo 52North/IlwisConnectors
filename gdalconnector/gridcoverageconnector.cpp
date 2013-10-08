@@ -67,7 +67,15 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
 
     auto vmin = gdal()->minValue(layerHandle, &ok);
     auto vmax = gdal()->maxValue(layerHandle, &ok);
-    gcoverage->datadef().range(new NumericRange(vmin, vmax));
+    QString domName = NumericDomain::standardNumericDomainName(vmin, vmax);
+    IDomain dom;
+    dom.prepare(domName);
+    if(!dom.isValid()) {
+        return ERROR1(ERR_FIND_SYSTEM_OBJECT_1, domName);
+    }
+    INumericDomain numdom = dom.get<NumericDomain>();
+    gcoverage->datadef().domain(dom);
+    gcoverage->datadef().range(new NumericRange(vmin, vmax, numdom->range<NumericRange>()->step()));
 
     _gdalValueType = gdal()->rasterDataType(layerHandle);
     _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
