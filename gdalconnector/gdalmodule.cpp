@@ -85,6 +85,7 @@ void GdalModule::prepare()
             cfactory->addCreator(shortName,"gdal", RasterCoverageConnector::create);
         }
     }
+    IlwisObject::addTypeFunction(GdalConnector::ilwisType);
 }
 
 QString GdalModule::getName() const
