@@ -73,7 +73,7 @@ bool TableConnector::loadMetaData(IlwisObject *data)
         DatabaseTable *dbtable = static_cast<DatabaseTable *>(tbl);
         dbtable->setDatabase(kernel()->database());
     }
-    tbl->setRows(rows);
+    tbl->records(rows);
     return true;
 
 }
@@ -143,11 +143,15 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
             std::vector<QVariant> varlist(tbl.rows());
             RawConverter conv = _converters[colName];
             IlwisTypes valueType = col.datadef().domain()->valueType();
+            double vmax = -1e300; double vmin = 1e300;
             for(quint32 j = 0; j < tbl.rows(); ++j){
                 if ( (valueType >= itINT8 && valueType <= itDOUBLE) || ((valueType & itDOMAINITEM) != 0)) {
                     double value;
                     if (tbl.get(j,i,value)) {
-                       varlist[j] =  conv.raw2real(value);
+                        double v = conv.raw2real(value);
+                        vmax = Ilwis::max(vmax, v);
+                        vmin = Ilwis::min(vmin, v);
+                        varlist[j] =  v;
                     }
                 } else if (valueType == itSTRING ) {
                     QString value;
@@ -157,6 +161,8 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
                 }
             }
             table->column(colName,varlist);
+            if ( hasType(valueType, itNUMBER))
+                table->columndefinition(i).datadef().range(new NumericRange(vmin, vmax));
         } else {
             kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("column", colName));
             return false;
@@ -253,8 +259,8 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
                 return ERROR1(ERR_NO_INITIALIZED_1,TR("numeric range"));
             }
             SPNumericRange numrange = def.datadef().range().dynamicCast<NumericRange>();
-            RawConverter conv(numrange->min(), numrange->max(), numrange->step());
-            QString range = QString("%1:%2:%3:offset=%4").arg(numrange->min()).arg(numrange->max()).arg(numrange->step()).arg(conv.offset());
+            RawConverter conv(numrange->min(), numrange->max(), numrange->resolution());
+            QString range = QString("%1:%2:%3:offset=%4").arg(numrange->min()).arg(numrange->max()).arg(numrange->resolution()).arg(conv.offset());
             _odf->setKeyValue(colName,"Range",range);
             QString storeType = "Real";
             if ( conv.storeType() & itINT32 )

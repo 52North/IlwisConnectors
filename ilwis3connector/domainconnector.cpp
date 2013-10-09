@@ -284,8 +284,8 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
         _odf->setKeyValue("DomainValue", "Type", type);
         _odf->setKeyValue(type, "Min", QString::number(numRange->min()));
         _odf->setKeyValue(type, "Max", QString::number(numRange->max()));
-        if ( numRange->step() != 1) {
-            _odf->setKeyValue(type, "Step", QString::number(numRange->step()));
+        if ( numRange->resolution() != 1) {
+            _odf->setKeyValue(type, "Step", QString::number(numRange->resolution()));
         }
     } else if ( dom->valueType() == itTHEMATICITEM) {
         storeMetaDataSortDomain(dom, itTHEMATICITEM);

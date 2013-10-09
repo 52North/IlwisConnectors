@@ -27,7 +27,6 @@ SOURCES += \
     ilwis3connector/coordinatesystemconnector.cpp \
     ilwis3connector/domainconnector.cpp \
     ilwis3connector/georefconnector.cpp \
-    ilwis3connector/gridcoverageconnector.cpp \
     ilwis3connector/coverageconnector.cpp \
     ilwis3connector/inifile.cpp \
     ilwis3connector/tableconnector.cpp \
@@ -37,7 +36,8 @@ SOURCES += \
     ilwis3connector/ilwis3catalogconnector.cpp \
     ilwis3connector/ilwis3projectionconnector.cpp \
     ilwis3connector/RawConverter.cpp \
-    ilwis3connector/featureconnector.cpp
+    ilwis3connector/featureconnector.cpp \
+    ilwis3connector/ilwisrastercoverageconnector.cpp
 
 HEADERS += \
     ilwis3connector/ilwis3connector_global.h \
@@ -48,7 +48,6 @@ HEADERS += \
     ilwis3connector/coordinatesystemconnector.h \
     ilwis3connector/domainconnector.h \
     ilwis3connector/georefconnector.h \
-    ilwis3connector/gridcoverageconnector.h \
     ilwis3connector/coverageconnector.h \
     ilwis3connector/rawconverter.h \
     ilwis3connector/inifile.h \
@@ -58,7 +57,8 @@ HEADERS += \
     ilwis3connector/odfitem.h \
     ilwis3connector/ilwis3catalogconnector.h \
     ilwis3connector/ilwis3projectionconnector.h \
-    ilwis3connector/featureconnector.h
+    ilwis3connector/featureconnector.h \
+    ilwis3connector/ilwisrastercoverageconnector.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore

@@ -17,7 +17,7 @@ GdalConnector::GdalConnector(const Resource &resource, bool load) : IlwisObjectC
 }
 
 
-IlwisTypes Ilwis::Gdal::GdalConnector::ilwisType(const QString &name)
+IlwisTypes GdalConnector::ilwisType(const QString &name)
 {
     QString filename = name;
     if (name.contains("?") == 0) {
