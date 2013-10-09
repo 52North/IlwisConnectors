@@ -21,7 +21,7 @@
 #include "ilwis3connector.h"
 #include "rawconverter.h"
 #include "coverageconnector.h"
-#include "gridcoverageconnector.h"
+#include "ilwisrastercoverageconnector.h"
 
 using namespace Ilwis;
 using namespace Ilwis3;

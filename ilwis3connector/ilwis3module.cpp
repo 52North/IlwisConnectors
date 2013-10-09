@@ -36,7 +36,7 @@
 #include "coordinatesystemconnector.h"
 #include "georefconnector.h"
 #include "coverageconnector.h"
-#include "gridcoverageconnector.h"
+#include "ilwisrastercoverageconnector.h"
 #include "domainconnector.h"
 #include "tableconnector.h"
 #include "ilwis3projectionconnector.h"
