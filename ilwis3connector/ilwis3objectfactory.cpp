@@ -33,7 +33,7 @@
 #include "georefconnector.h"
 #include "rawconverter.h"
 #include "coverageconnector.h"
-#include "gridcoverageconnector.h"
+#include "ilwisrastercoverageconnector.h"
 #include "tableconnector.h"
 
 using namespace Ilwis;
