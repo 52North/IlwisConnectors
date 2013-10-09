@@ -69,7 +69,7 @@ bool GdalConnector::store(IlwisObject *, int )
 
     return true;
 }
-
+//TODO is that canUse ever called?
 bool GdalConnector::canUse(const Ilwis::Resource &resource) {
     QStringList extensions = gdal()->getRasterExtensions();
     extensions.append(gdal()->getFeatureExtensions());

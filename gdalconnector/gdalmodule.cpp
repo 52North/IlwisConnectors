@@ -21,6 +21,8 @@
 #include "coordinatesystemconnector.h"
 #include "coverageconnector.h"
 #include "gridcoverageconnector.h"
+#include "polygon.h"
+#include "geometry.h"
 #include "gdalfeatureconnector.h"
 #include "domainconnector.h"
 #include "abstractfactory.h"

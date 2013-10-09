@@ -14,8 +14,11 @@ namespace Ilwis{
                 static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
                 Ilwis::IlwisObject *create() const;
             protected:
-                IlwisTypes getFeatureType(OGRLayerH hLayer) const;
-                void reportError(OGRDataSourceH dataSource) const;
+                IlwisTypes translateOGRType(OGRwkbGeometryType type) const;
+                GeometryType fillFeature(OGRGeometryH geometry, int& rec) const;
+                GeometryType fillPoint(OGRGeometryH geometry, int& rec) const;
+                GeometryType fillLine(OGRGeometryH geometry, int& rec) const;
+                GeometryType fillPolygon(OGRGeometryH geometry, int& rec) const;
         };
     }
 }

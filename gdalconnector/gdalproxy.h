@@ -80,6 +80,9 @@ typedef OGRGeometryH (*IOGRGetSpatialFilter)(OGRLayerH);
 typedef void (*IOGRGetEnvelope3D) (OGRGeometryH, OGREnvelope*);
 typedef const char* (*ICPLGetLastErrorMsg)();
 typedef void (*IFree)( void * );
+typedef int (*IOGRGetGeomFieldCoun) (OGRFeatureH);
+typedef void (*IOGR_DS_Destroy) (OGRDataSourceH);
+
 
 class GdalHandle {
     friend class GDALProxy;
@@ -193,7 +196,7 @@ public:
     IDestroyFeature destroyFeature;
     IGetPointCount getPointCount;
     IGetPoints getPoints;
-    IGetSubGeometryCount getSubGeometry;
+    IGetSubGeometryCount getSubGeometryCount;
     IGetSubGeometryRef getSubGeometryRef;
     IGetSpatialRef getSpatialRef;
     IExportToWkt exportToWkt;
@@ -205,8 +208,8 @@ public:
     IOGRReleaseDataSource releaseDataSource;
     IOGRGetSpatialFilter getSpatialFilter;
     IOGRGetEnvelope3D getEnvelope3D;
+    IOGR_DS_Destroy destroyDataSource;
     IFree free;
-
 
 private:
     bool prepare();

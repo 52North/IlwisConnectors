@@ -42,9 +42,9 @@ Ilwis::IlwisObject* GdalFeatureConnector::create() const{
     return new FeatureCoverage(this->_resource);
 }
 
-IlwisTypes GdalFeatureConnector::getFeatureType(OGRLayerH hLayer) const{
+IlwisTypes GdalFeatureConnector::translateOGRType(OGRwkbGeometryType type) const{
     IlwisTypes ret = itUNKNOWN;
-    OGRwkbGeometryType type = gdal()->getLayerGeometry(hLayer);
+
     if ( type == wkbPoint || type == wkbMultiPoint || type == wkbPoint25D || type == wkbMultiPoint25D)
         ret += itPOINT;
 
@@ -74,7 +74,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
         if ( hLayer) {
 
             //feature types
-            IlwisTypes type = getFeatureType(hLayer);
+            IlwisTypes type = translateOGRType(gdal()->getLayerGeometry(hLayer));
             if (type == itUNKNOWN){
                 ERROR2(ERR_COULD_NOT_LOAD_2,QString("layer from: %1").arg(_filename),QString(":%1").arg(gdal()->getLastErrorMsg()));
             }
@@ -119,7 +119,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     return true;
 }
 
-bool GdalFeatureConnector::loadBinaryData(IlwisObject* data) {
+bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
     if ( data == nullptr)
         return false;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
@@ -134,13 +134,13 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data) {
 //                    if ( tbl.fValid()) {
 //                        bmp->SetAttributeTable(tbl);
 //                    }
-                    OGRFeatureH hFeature;
                     int rec = 1;
+                    OGRFeatureH hFeature;
                     gdal()->resetReading(hLayer);
                     while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL ){
-                            OGRGeometryH hGeometry = gdal()->getGeometryRef(hFeature);
-//                            filler->fillFeature(hGeometry, rec);
-
+                        GeometryType geom = fillFeature(gdal()->getGeometryRef(hFeature), rec);
+//                        SPFeatureI feature = fcoverage->newFeature({geom});
+                        gdal()->destroyFeature( hFeature );
                     }
                 }
             }
@@ -149,14 +149,41 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data) {
     return true;
 }
 
+GeometryType GdalFeatureConnector::fillFeature(OGRGeometryH geometry, int& rec) const{
+    if (geometry){
+        switch (translateOGRType(gdal()->getGeometryType(geometry))){
+            case itPOINT:   return fillPoint(geometry, rec);    break;
+            case itLINE:    return fillLine(geometry, rec);     break;
+            case itPOLYGON: return fillPolygon(geometry, rec);  break;
+            default:
+                ERROR2(ERR_INVALID_PROPERTY_FOR_2, "GeometryType of a Feature", _filename);
+                break;
+        }
+    }
+    return nullptr;
+}
+GeometryType GdalFeatureConnector::fillPoint(OGRGeometryH geometry, int& rec) const{
+    double x,y,z;
+    gdal()->getPoints(geometry, 0,&x,&y,&z);
+    Coordinate coord(std::vector<double>({x,y,z}));
+    rec++;
+    return coord;
+}
+GeometryType GdalFeatureConnector::fillLine(OGRGeometryH geometry, int& rec) const{
+    return nullptr;
+}
+
+GeometryType GdalFeatureConnector::fillPolygon(OGRGeometryH geometry, int &rec) const{
+    long count = gdal()->getSubGeometryCount(geometry);
+    for(int i = 0; i < count; ++i) {
+        OGRGeometryH hSubGeometry = gdal()->getSubGeometryRef(geometry, i);
+        fillPolygon(hSubGeometry, rec);
+    }
+    Polygon p;
+    return p;
+}
+
 bool GdalFeatureConnector::store(IlwisObject *obj, IlwisTypes type)
 {
     return CoverageConnector::store(obj, type);
 }
-
-void GdalFeatureConnector::reportError(OGRDataSourceH dataSource) const
-{
-    kernel()->issues()->log(QString(gdal()->getLastErrorMsg()));
-    gdal()->releaseDataSource(dataSource);
-}
-

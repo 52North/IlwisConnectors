@@ -108,7 +108,7 @@ bool GDALProxy::prepare() {
     destroyFeature = add<IDestroyFeature>("OGR_F_Destroy");
     getPointCount = add<IGetPointCount>("OGR_G_GetPointCount");
     getPoints = add<IGetPoints>("OGR_G_GetPoint");
-    getSubGeometry = add<IGetSubGeometryCount>("OGR_G_GetGeometryCount");
+    getSubGeometryCount = add<IGetSubGeometryCount>("OGR_G_GetGeometryCount");
     getSubGeometryRef = add<IGetSubGeometryRef>("OGR_G_GetGeometryRef");
     getSpatialRef = add<IGetSpatialRef>("OGR_L_GetSpatialRef");
     exportToWkt = add<IExportToWkt>("OSRExportToWkt");
@@ -121,6 +121,8 @@ bool GDALProxy::prepare() {
     releaseDataSource = add<IOGRReleaseDataSource>("OGRReleaseDataSource");
     getSpatialFilter = add<IOGRGetSpatialFilter>("OGR_L_GetSpatialFilter");
     getEnvelope3D = add<IOGRGetEnvelope3D>("OGR_G_GetEnvelope3D");
+    destroyDataSource = add<IOGR_DS_Destroy>("OGR_DS_Destroy");
+
     free = add<IFree>("VSIFree");
 
     if ( _isValid) {
@@ -203,7 +205,16 @@ void GDALProxy::closeFile(const QString &filename, quint64 asker){
     QString name = filename.toLower();
     auto iter = _openedDatasets.find(name);
     if (iter != _openedDatasets.end() && iter.value()->_owner == asker) {
-        close(_openedDatasets[name]->handle());
+        GdalHandle* handle = _openedDatasets[name];
+        if (handle->type() == GdalHandle::etGDALDatasetH){
+            close(handle->handle());
+        }else if(handle->etOGRDataSourceH){
+            if (OGRErr err = releaseDataSource(handle->handle()) != OGRERR_NONE){
+                ERROR2(ERR_INVALID_PROPERTY_FOR_2, QString("OGRDataSource (ERR %1)").arg(err), name);
+            }
+        }else{
+            ERROR2(ERR_INVALID_PROPERTY_FOR_2, "GDAL-OGR HandleType", name);
+        }
         _openedDatasets.remove(name);
     }
 }
