@@ -157,7 +157,6 @@ void BinaryIlwis3Table::readData(char *memblock) {
             const ColumnInfo& info = _columnInfo.at(c);
             char *p = _records + r * _recordSize + info._offset;
             if(  info._type == itINT32){
-                long l1 = *(long *)(memblock + posFile);
                 *(long *)p = *(long *)(memblock + posFile);
                 posFile += 4;
              }else if ( info._type == itDOUBLE) {
@@ -330,7 +329,7 @@ void BinaryIlwis3Table::addStoreDefinition(const DataDefinition& def) {
     ColumnInfo inf;
     if ( hasType(colType,itNUMERICDOMAIN) ) {
        auto nrange = def.range().dynamicCast<NumericRange>();
-       RawConverter conv(nrange->min(), nrange->max(), nrange->step());
+       RawConverter conv(nrange->min(), nrange->max(), nrange->resolution());
        inf._conv = conv;
        inf._type = colType;
     }

@@ -259,8 +259,8 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
                 return ERROR1(ERR_NO_INITIALIZED_1,TR("numeric range"));
             }
             SPNumericRange numrange = def.datadef().range().dynamicCast<NumericRange>();
-            RawConverter conv(numrange->min(), numrange->max(), numrange->step());
-            QString range = QString("%1:%2:%3:offset=%4").arg(numrange->min()).arg(numrange->max()).arg(numrange->step()).arg(conv.offset());
+            RawConverter conv(numrange->min(), numrange->max(), numrange->resolution());
+            QString range = QString("%1:%2:%3:offset=%4").arg(numrange->min()).arg(numrange->max()).arg(numrange->resolution()).arg(conv.offset());
             _odf->setKeyValue(colName,"Range",range);
             QString storeType = "Real";
             if ( conv.storeType() & itINT32 )
