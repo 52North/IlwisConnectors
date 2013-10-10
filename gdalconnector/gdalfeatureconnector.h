@@ -15,10 +15,10 @@ namespace Ilwis{
                 Ilwis::IlwisObject *create() const;
             protected:
                 IlwisTypes translateOGRType(OGRwkbGeometryType type) const;
-                GeometryType fillFeature(OGRGeometryH geometry, int& rec) const;
-                GeometryType fillPoint(OGRGeometryH geometry, int& rec) const;
-                GeometryType fillLine(OGRGeometryH geometry, int& rec) const;
-                GeometryType fillPolygon(OGRGeometryH geometry, int& rec) const;
+                bool fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const;
+                bool fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const;
+                bool fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const;
+                bool fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const;
         };
     }
 }
