@@ -72,6 +72,13 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     Box2D<double> bbox;
     bool initMinMax = 0;
 
+//    ITable attTable;
+//    Resource resource(QUrl(QString("ilwis://internal/%1").arg(_filename)), itFLATTABLE);
+//    if(!attTable.prepare(resource)) {
+//        ERROR1(ERR_NO_INITIALIZED_1,resource.name());
+//        return false;
+//    }
+
     for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
         OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
         if ( hLayer) {
@@ -155,13 +162,14 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
 
 bool GdalFeatureConnector::fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const{
     if (geometry){
-        switch (translateOGRType(gdal()->getGeometryType(geometry))){
+        OGRwkbGeometryType type = gdal()->getGeometryType(geometry);
+        switch (translateOGRType(type)){
             case itUNKNOWN: return ERROR2(ERR_INVALID_PROPERTY_FOR_2, "GeometryType of a Feature", _filename);
             case itPOINT:   return fillPoint(fcoverage, geometry, rec);    break;
             case itLINE:    return fillLine(fcoverage, geometry, rec);     break;
-            case itPOLYGON: return fillPolygon(fcoverage, geometry, rec);  break;
+            case itPOLYGON: return fillPolygon(fcoverage, geometry, type, rec);  break;
             default:{ //possibly wbkGeometryCollection or other kind of mixture
-                long subGeomCount = gdal()->getSubGeometryCount(geometry);
+                int subGeomCount = gdal()->getSubGeometryCount(geometry);
                 if(subGeomCount){
                     bool ok;
                     for(int i = 0; i < subGeomCount; ++i) {
@@ -181,8 +189,8 @@ bool GdalFeatureConnector::fillFeature(FeatureCoverage *fcoverage, OGRGeometryH 
     return false;
 }
 bool GdalFeatureConnector::fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const{
-    long subGeomCount = gdal()->getSubGeometryCount(geometry);
-    if(subGeomCount){
+    int subGeomCount = gdal()->getSubGeometryCount(geometry);
+    if(subGeomCount > 0){
         bool ok;
         for(int i = 0; i < subGeomCount; ++i) {
             OGRGeometryH hSubGeometry = gdal()->getSubGeometryRef(geometry, i);
@@ -211,8 +219,8 @@ bool GdalFeatureConnector::fillPoint(FeatureCoverage *fcoverage, OGRGeometryH ge
     }
 }
 bool GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const{
-    long subGeomCount = gdal()->getSubGeometryCount(geometry);
-    if(subGeomCount){
+    int subGeomCount = gdal()->getSubGeometryCount(geometry);
+    if(subGeomCount > 0){
         bool ok;
         for(int i = 0; i < subGeomCount; ++i) {
             OGRGeometryH hSubGeometry = gdal()->getSubGeometryRef(geometry, i);
@@ -248,81 +256,73 @@ bool GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage, OGRGeometryH geo
     }
 }
 
-bool GdalFeatureConnector::fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const{
-//    try {
-//		if ( hGeometry) {
-//			long count = funcs.ogrGetSubGeometryCount(hGeometry);
-//			OGRwkbGeometryType tp = funcs.ogrGetGeometryType(hGeometry);
-//			if ( tp == wkbPolygon || tp == wkbPolygon25D ){
-//				fillPolygon(count, rec, hGeometry);
-//				if ( isMulti == false) // for multis de raw remains the same (same record).
-//					++rec;
-//			}
-//			else {//wbkMultiPolygon || wbkMultiPolygon25
-//				for(int i = 0; i < count; ++i) {
-//					OGRGeometryH hSubGeometry = funcs.ogrGetSubGeometry(hGeometry, i);
-//					fillFeature(hSubGeometry, rec, count > 1);
-//				}
-//			}
-//		}
-//	} catch ( geos::util::IllegalArgumentException& ) {
-//		// we ignore errors during import, polygons are skipped
-//	}
+bool GdalFeatureConnector::fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, OGRwkbGeometryType type, quint64& rec) const{
+    int subGeomCount = gdal()->getSubGeometryCount(geometry);//error!check type!
+    if ( type == wkbPolygon || type == wkbPolygon25D ){
+        OGRGeometryH hSubGeometry = gdal()->getSubGeometryRef(geometry, 0);
+        if(hSubGeometry){
+            int count = gdal()->getPointCount(hSubGeometry);
+            if ( count == 0)
+                return true;
+            Polygon pol;
+            std::vector<Coordinate2d>& ring = pol.outer();
+            ring.resize(count);
 
-    long subGeomCount = gdal()->getSubGeometryCount(geometry);
-    if(subGeomCount){
+            for(int i = 0; i < count; ++i) {
+                double x,y,z;
+                gdal()->getPoints(hSubGeometry, i,&x,&y,&z);
+                ring[i] = Coordinate2d(x,y);
+//                tbl->cell(FEATUREVALUECOLUMN, i, QVariant(z));
+            }
+
+            pol.inners().resize(subGeomCount-1);
+            bool ok = true;
+            for(int j = 1; j < subGeomCount; ++j) {
+                hSubGeometry = gdal()->getSubGeometryRef(geometry, j);
+                if(hSubGeometry){
+                    count = gdal()->getPointCount(hSubGeometry);
+                    if(count == 0)
+                       ok = false;
+                    ring = pol.inners()[j];
+                    ring.resize(count);
+                    for(int i = 0; i < count; ++i) {
+                        double x,y,z;
+                        gdal()->getPoints(hSubGeometry, i,&x,&y,&z);
+                        ring[i] = Coordinate2d(x,y);
+//                        tbl->cell(FEATUREVALUECOLUMN, i, QVariant(z));
+                    }
+                }else{
+                    ok = false;
+                }
+            }
+            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,QString("subpolygon for record %1").arg(rec),_filename);
+            rec++;
+            SPFeatureI feature = fcoverage->newFeature({pol});
+            if (feature != nullptr){
+        //        tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
+        //        tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,QString("polygon for record %1").arg(rec),_filename);
+            return false;
+        }
+    }else if (type == wkbMultiPolygon || type == wkbMultiPolygon25D){
         bool ok;
         for(int i = 0; i < subGeomCount; ++i) {
             OGRGeometryH hSubGeometry = gdal()->getSubGeometryRef(geometry, i);
             if(hSubGeometry){
-                ok &= fillPolygon(fcoverage, hSubGeometry, rec);
+                ok &= fillPolygon(fcoverage, hSubGeometry, wkbPolygon, rec);
             }else{
                 ok = false;
             }
         }
         return ok;
     }else{
-        int count = gdal()->getPointCount(geometry);
-         if ( count == 0)
-             return true;
-//         Polygon pol;
-//         readRing(stream, pol.outer());
-//         double value;
-//         quint32 numberOfHoles;
-//         stream.readRawData((char *)&value, 8);
-//         stream.readRawData((char *)&numberOfHoles, 4);
-//         pol.inners().resize(numberOfHoles);
-//         for(quint32 i=0; i< numberOfHoles;++i)
-//             readRing(stream, pol.inners()[i]);
-//         if ( isNumeric) {
-//             tbl->cell(COVERAGEKEYCOLUMN, j, QVariant(j));
-//             tbl->cell(FEATUREVALUECOLUMN, j, QVariant(value));
-//             SPFeatureI feature = fcoverage->newFeature({pol});
-//             tbl->cell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
-//         } else {
-//             quint32 itemId = value;
-//             tbl->cell(COVERAGEKEYCOLUMN, j, QVariant(itemId));
-//             SPFeatureI feature = fcoverage->newFeature({pol});
-//             tbl->cell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
-//         }
-
-         Line2D<Coordinate2d > line;
-         line.resize(count);
-         for(int i = 0; i < count; ++i) {
-             double x,y,z;
-             gdal()->getPoints(geometry, i,&x,&y,&z);
-             line[i] = Coordinate2d(x,y);
-//             tbl->cell(FEATUREVALUECOLUMN, i, QVariant(z));
-         }
-        rec++;
-        SPFeatureI feature = fcoverage->newFeature({line});
-        if (feature != nullptr){
-    //        tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
-    //        tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
-            return true;
-        }else{
-            return false;
-        }
+        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,QString("polygon for record %1").arg(rec),_filename);
+        return false;
     }
 }
 

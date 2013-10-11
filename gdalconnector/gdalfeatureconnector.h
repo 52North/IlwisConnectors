@@ -18,7 +18,7 @@ namespace Ilwis{
                 bool fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const;
                 bool fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const;
                 bool fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const;
-                bool fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, quint64& rec) const;
+                bool fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, OGRwkbGeometryType type, quint64& rec) const;
         };
     }
 }
