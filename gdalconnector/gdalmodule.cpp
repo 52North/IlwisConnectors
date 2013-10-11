@@ -27,6 +27,7 @@
 #include "feature.h"
 #include "featurecoverage.h"
 #include "gdalfeatureconnector.h"
+#include "gdalfeaturetableconnector.h"
 #include "domainconnector.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
@@ -84,6 +85,7 @@ void GdalModule::prepare()
     cfactory->addCreator(itGEOREF,"gdal", GeorefConnector::create);
     cfactory->addCreator(itCOORDSYSTEM,"gdal", CoordinateSystemConnector::create);
     cfactory->addCreator(itFEATURE,"gdal", GdalFeatureConnector::create);
+    cfactory->addCreator(itFLATTABLE,"gdal", GdalFeatureTableConnector::create);
 
     for(int i=0; i < gdal()->getDriverCount(); ++i) {
         GDALDriverH driv = gdal()->getDriver(i);

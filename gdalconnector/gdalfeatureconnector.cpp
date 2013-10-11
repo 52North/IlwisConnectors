@@ -17,6 +17,7 @@
 #include "geometry.h"
 #include "domainitem.h"
 #include "itemdomain.h"
+#include "textdomain.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
 #include "attributerecord.h"
@@ -72,16 +73,35 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     Box2D<double> bbox;
     bool initMinMax = 0;
 
-//    ITable attTable;
-//    Resource resource(QUrl(QString("ilwis://internal/%1").arg(_filename)), itFLATTABLE);
-//    if(!attTable.prepare(resource)) {
-//        ERROR1(ERR_NO_INITIALIZED_1,resource.name());
-//        return false;
-//    }
+    ITable attTable;
+    Resource resource(QUrl(QString("ilwis://internal/%1").arg(_filename)), itFLATTABLE);
+    if(!attTable.prepare(resource)) {//only internalTableconnector is used! own class not needed
+        ERROR1(ERR_NO_INITIALIZED_1,resource.name());
+        return false;
+    }
+    fcoverage->attributeTable(attTable);
 
     for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
         OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
         if ( hLayer) {
+
+            //TODO is this to be done in gdalFeatureTableConnector!?!
+            OGRFeatureDefnH hLayerDef = gdal()->getLayerDef(hLayer);
+            int fieldCount = gdal()->getFieldCount(hLayerDef);
+            for (int i = 0; i < fieldCount; i++){
+                OGRFieldDefnH hFieldDefn = gdal()->getFieldDfn(hLayerDef, i);
+                QString name = QString(gdal()->getFieldName(hFieldDefn));
+                OGRFieldType type = gdal()->getFieldType(hFieldDefn);
+                //OGR_Fld_GetWidth, OGR_Fld_GetPrecision, OGR_Fld_IsIgnored
+                IDomain domain;
+                switch(type){
+                    case OFTInteger: domain = INumericDomain(); break;//might better be shrinked
+                    default: domain = ITextDomain();
+                }
+
+                ColumnDefinition colDef(name, domain,i);
+                attTable->addColumn(colDef);
+            }
 
             //feature types
             IlwisTypes type = translateOGRType(gdal()->getLayerGeometry(hLayer));
@@ -139,12 +159,6 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
             if ( hLayer) {
                 OGRFeatureDefnH hFeatureDef = gdal()->getLayerDef(hLayer);
                 if ( hFeatureDef) {
-//                    ITable attTable;
-////                     createTable(fnBaseOutputName, dm, hFeatureDef, hLayer, tbl);
-//                    if (!attTable.isValid())
-//                        return false;
-//                    fcoverage->attributeTable(attTable);
-
                     quint64 rec = 1;
                     OGRFeatureH hFeature;
                     gdal()->resetReading(hLayer);
@@ -202,6 +216,10 @@ bool GdalFeatureConnector::fillPoint(FeatureCoverage *fcoverage, OGRGeometryH ge
         }
         return ok;
     }else{
+        ITable attTable = fcoverage->attributeTable();
+        if (!attTable.isValid())
+            return false;
+
         double x,y,z;
         gdal()->getPoints(geometry, 0,&x,&y,&z);
         Coordinate coord(x,y,z);
@@ -209,8 +227,8 @@ bool GdalFeatureConnector::fillPoint(FeatureCoverage *fcoverage, OGRGeometryH ge
         rec++;
         SPFeatureI feature = fcoverage->newFeature({point});
         if (feature != nullptr){
-    //        tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
-    //        tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+            attTable->cell(COVERAGEKEYCOLUMN, rec, QVariant(rec));//TODO need two different record counter for MultiGeometries in COVERAGEKEYCOLUMN
+            attTable->cell(FEATUREIDCOLUMN, rec, QVariant(feature->featureid()));
             return true;
         }else{
             ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, QString("Record: %1").arg(rec), _filename);
@@ -235,6 +253,9 @@ bool GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage, OGRGeometryH geo
         int count = gdal()->getPointCount(geometry);
          if ( count == 0)
              return true;
+         ITable attTable = fcoverage->attributeTable();
+         if (!attTable.isValid())
+             return false;
 
          Line2D<Coordinate2d > line;
          line.resize(count);
@@ -242,13 +263,13 @@ bool GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage, OGRGeometryH geo
              double x,y,z;
              gdal()->getPoints(geometry, i,&x,&y,&z);
              line[i] = Coordinate2d(x,y);
-//             tbl->cell(FEATUREVALUECOLUMN, i, QVariant(z));
+//             attTable->cell(FEATUREVALUECOLUMN, rec, QVariant(z));
          }
         rec++;
         SPFeatureI feature = fcoverage->newFeature({line});
         if (feature != nullptr){
-    //        tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
-    //        tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+    //        attTable->cell(COVERAGEKEYCOLUMN, rec, QVariant(itemId));
+    //        attTable->cell(FEATUREIDCOLUMN, rec, QVariant(feature->featureid()));
             return true;
         }else{
             return false;
@@ -264,6 +285,10 @@ bool GdalFeatureConnector::fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH 
             int count = gdal()->getPointCount(hSubGeometry);
             if ( count == 0)
                 return true;
+            ITable attTable = fcoverage->attributeTable();
+            if (!attTable.isValid())
+                return false;
+
             Polygon pol;
             std::vector<Coordinate2d>& ring = pol.outer();
             ring.resize(count);
