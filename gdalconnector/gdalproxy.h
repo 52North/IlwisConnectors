@@ -61,6 +61,7 @@ typedef OGRFieldType (*IGetFieldType )(OGRFieldDefnH 	hDefn ) ;
 typedef int (*IGetFieldAsInteger )(OGRFeatureH,int) ;
 typedef double (*IGetFieldAsDouble )(OGRFeatureH,int) ;
 typedef const char* (*IGetFieldAsString )(OGRFeatureH,int) ;
+typedef int (*IGetFieldAsDateTime) (OGRFeatureH, int, int *, int *, int *, int *, int *, int *, int *) ;
 typedef OGRGeometryH (*IGetGeometryRef )(OGRFeatureH ) ;
 typedef OGRwkbGeometryType (*IGetGeometryType )(OGRGeometryH) ;
 typedef void (*IDestroyFeature )(OGRFeatureH ) ;
@@ -191,6 +192,7 @@ public:
     IGetFieldAsInteger getFieldAsInt;
     IGetFieldAsDouble getFieldAsDouble;
     IGetFieldAsString getFieldAsString;
+    IGetFieldAsDateTime getFieldAsDateTime;
     IGetGeometryRef getGeometryRef;
     IGetGeometryType getGeometryType;
     IDestroyFeature destroyFeature;

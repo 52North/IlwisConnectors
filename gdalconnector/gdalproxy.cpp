@@ -103,6 +103,7 @@ bool GDALProxy::prepare() {
     getFieldAsString = add<IGetFieldAsString>("OGR_F_GetFieldAsString");
     getFieldAsDouble = add<IGetFieldAsDouble>("OGR_F_GetFieldAsDouble");
     getFieldAsInt = add<IGetFieldAsInteger>("OGR_F_GetFieldAsInteger");
+    getFieldAsDateTime = add<IGetFieldAsDateTime>("OGR_F_GetFieldAsDateTime");
     getGeometryRef = add<IGetGeometryRef>("OGR_F_GetGeometryRef");
     getGeometryType = add<IGetGeometryType>("OGR_G_GetGeometryType");
     destroyFeature = add<IDestroyFeature>("OGR_F_Destroy");

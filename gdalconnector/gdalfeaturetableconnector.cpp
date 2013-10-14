@@ -27,17 +27,17 @@ IlwisObject* GdalFeatureTableConnector::create() const{
 
 
 bool GdalFeatureTableConnector::loadMetaData(IlwisObject* data){
-
+    return false;
 }
 
 bool GdalFeatureTableConnector::storeMetaData(Ilwis::IlwisObject *obj){
-
+    return false;
 }
 
 bool GdalFeatureTableConnector::loadBinaryData(IlwisObject *){
-
+    return false;
 }
 
 bool GdalFeatureTableConnector::storeBinaryData(IlwisObject* obj){
-
+    return false;
 }
