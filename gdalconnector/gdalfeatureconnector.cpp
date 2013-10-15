@@ -88,11 +88,11 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     ColumnDefinition colCovKey(COVERAGEKEYCOLUMN, dmKey, 1);
     attTable->addColumn(colCovKey);
 
-    for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
+//    for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
+        int layer = 0;//only first layer will be read/fit into single FeatureCoverage(*data)
         OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
         if ( hLayer) {
 
-            //TODO is this to be done in gdalFeatureTableConnector!?!
             OGRFeatureDefnH hLayerDef = gdal()->getLayerDef(hLayer);
             int fieldCount = gdal()->getFieldCount(hLayerDef);
             for (int i = 0; i < fieldCount; i++){
@@ -102,17 +102,19 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
                 //OGR_Fld_GetWidth, OGR_Fld_GetPrecision, OGR_Fld_IsIgnored
                 IDomain domain;
                 switch(type){
-                    case OFTInteger:{
-                         domain = INumericDomain();
-                         domain.prepare("integer"); break;// Simple 32bit integer
+                    case OFTInteger:{ // Simple 32bit integer
+                         INumericDomain ndomain;
+                         ndomain.prepare("integer");
+                         domain = ndomain;break;
                     }
                     case OFTIntegerList:break; // List of 32bit integers
 
-                    case OFTReal:{
-                        domain = INumericDomain();
-                        domain.prepare("value"); break; // Double Precision floating point
+                    case OFTReal:{ // Double Precision floating point
+                        INumericDomain ndomain;
+                        ndomain.prepare("value");
+                        domain = ndomain; break;
                     }
-                    case OFTRealList: // List of doubles
+                    case OFTRealList:break; // List of doubles
                     case OFTString:{ // String of ASCII chars
                         ITextDomain tdomain;
                         tdomain.prepare();
@@ -169,7 +171,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
                     bbox.min_corner().y(envelope.MinY);
             }
         }
-    }
+//    }
     fcoverage->attributeTable(attTable);
     if (coverageType != itUNKNOWN && featureCount >= 0){
         fcoverage->featureTypes(coverageType);
@@ -184,75 +186,102 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     return true;
 }
 
+QVariant GdalFeatureConnector::fillStringColumn(OGRFeatureH featureH, int colIntex, SPRange range){
+    return QVariant(gdal()->getFieldAsString(featureH, colIntex-2));
+}
+
+QVariant GdalFeatureConnector::fillIntegerColumn(OGRFeatureH featureH, int colIntex, SPRange range){
+    return QVariant(gdal()->getFieldAsInt(featureH, colIntex-2));
+}
+
+QVariant GdalFeatureConnector::fillDoubleColumn(OGRFeatureH featureH, int colIntex, SPRange range){
+    return QVariant(gdal()->getFieldAsDouble(featureH, colIntex-2));
+}
+
+QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colIntex, SPRange range){
+    Time time;
+    int year,month,day,hour,minute,second,TZFlag;
+    if (gdal()->getFieldAsDateTime(featureH,colIntex-2,&year,&month,&day,&hour,&minute,&second,&TZFlag)){
+        time.setDay(day);
+        time.setHour(hour);
+        time.setMinute(minute);
+        time.setMonth(month);
+        time.setSecond(second);
+        time.setYear(year);
+    }
+    return QVariant((double)time);
+}
+
 bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
     if ( data == nullptr)
         return false;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     if ( fcoverage->isValid() ) {
-        for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
+        ITable attTable = fcoverage->attributeTable();
+        if (!attTable.isValid()){
+            ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename);
+            return false;
+        }
+        std::vector<ColumnDef*> columnDefinitions;
+        columnDefinitions.resize(attTable->columns());
+        for (int i = 2; i < attTable->columns();i++){
+            ColumnDefinition coldef = attTable->columndefinition(i);
+            if(coldef.datadef().domain().isValid()){
+                IlwisTypes tp = coldef.datadef().domain()->valueType();
+                if (tp & itSTRING){
+                    columnDefinitions[i] = new ColumnDef(&GdalFeatureConnector::fillStringColumn, coldef.datadef().domain()->range());
+                }else if (tp & itINTEGER){
+                    columnDefinitions[i] = new ColumnDef(&GdalFeatureConnector::fillIntegerColumn, coldef.datadef().domain()->range());
+                }else if (tp & itDOUBLE){
+                    columnDefinitions[i] = new ColumnDef(&GdalFeatureConnector::fillDoubleColumn, coldef.datadef().domain()->range());
+                }else if (tp & itTIME){
+                    columnDefinitions[i] = new ColumnDef(&GdalFeatureConnector::fillDateTimeColumn, coldef.datadef().domain()->range());
+                }else{
+                    columnDefinitions[i] = nullptr;
+                }
+            }else{
+                columnDefinitions[i] = nullptr;
+            }
+
+        }
+
+        std::vector<QVariant> record;
+        record.resize(attTable->columns());
+
+        //each LAYER
+//        for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
+            int layer = 0;//only the first layer fits into one FeatureCoverage
             OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
             if ( hLayer) {
-                OGRFeatureDefnH hFeatureDef = gdal()->getLayerDef(hLayer);           
-                if ( hFeatureDef) {
-                    quint64 rec = 1;
-                    OGRFeatureH hFeature;
-                    gdal()->resetReading(hLayer);
-                    while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
-                        std::vector<SPFeatureI> features = fillFeature(fcoverage, gdal()->getGeometryRef(hFeature));
+                quint64 rec = 0;
+                OGRFeatureH hFeature;
+                gdal()->resetReading(hLayer);
+                //each FEATURE
+                while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
+                    //create ilwisFeatures from Geometry - multiple on wkbMultiPolygon/-Line/-Point and wkbGeometryCollection
+                    std::vector<SPFeatureI> features = fillFeature(fcoverage, gdal()->getGeometryRef(hFeature));
 
-                        if (!features.empty()){
-                            ITable attTable = fcoverage->attributeTable();
-                            if (!attTable.isValid())
-                            return false;
-                            std::vector<QVariant> record;
-                            record.push_back(QVariant((*features.begin())->featureid()));//FEATUREIDCOLUMN
-                            record.push_back(QVariant(rec++));//COVERAGEKEYCOLUMN
-                            for (int i = 2; i < attTable->columns();i++){
-                                ColumnDefinition coldef = attTable->columndefinition(i);
-                                if(coldef.datadef().domain().isValid()){
-                                    switch(coldef.datadef().domain()->ilwisType()){
-                                        case itNUMERICDOMAIN:{
-                                            record.push_back(QVariant(gdal()->getFieldAsDouble(hFeature, i-2)));
-                                            break;
-                                        }
-                                        case itTIMEDOMAIN:{
-                                            Time time;
-                                            int year,month,day,hour,minute,second,TZFlag;
-                                            if (gdal()->getFieldAsDateTime(hFeature,i-2,&year,&month,&day,&hour,&minute,&second,&TZFlag)){
-                                                time.setDay(day);
-                                                time.setHour(hour);
-                                                time.setMinute(minute);
-                                                time.setMonth(month);
-                                                time.setSecond(second);
-                                                time.setYear(year);
-                                            }
-                                            record.push_back(QVariant((double)time));
-                                            break;
-                                        }
-                                        case itTEXTDOMAIN: {
-                                            record.push_back(QVariant(gdal()->getFieldAsString(hFeature, i-2)));
-                                            break;
-                                        }
-                                        default: record.push_back(QVariant());
-                                    }
-                                }else{
-                                    record.push_back(QVariant());
-                                }
-
+                    if (!features.empty()){
+                        record[1] = QVariant(++rec);//COVERAGEKEYCOLUMN
+                        //each OGR_F_FIELD > RECORD
+                        for (int i = 2; i < attTable->columns();i++){
+                            if (columnDefinitions[i]){
+                                record[i] = (this->*columnDefinitions[i]->fillFunc)(hFeature, i, columnDefinitions[i]->range);
                             }
-                            for(const SPFeatureI& feat : features) {
-                                record[0] = QVariant(feat->featureid());
-                                attTable->record(NEW_RECORD,record);
-                            }
-                        }else{
-                            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, QString("Record: %1").arg(rec), _filename);
                         }
-
-                        gdal()->destroyFeature( hFeature );
+                        for(const SPFeatureI& feat : features) {
+                            record[0] = QVariant(feat->featureid());
+                            attTable->record(NEW_RECORD,record);
+                        }
+                    }else{
+                        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, QString("Record: %1").arg(rec), _filename);
                     }
+
+                    gdal()->destroyFeature( hFeature );
                 }
+
             }
-        }
+//        }
     }
     return true;
 }
@@ -266,7 +295,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillFeature(FeatureCoverage *fcove
             case itPOINT:   return fillPoint(fcoverage, geometry);    break;
             case itLINE:    return fillLine(fcoverage, geometry);     break;
             case itPOLYGON: return fillPolygon(fcoverage, geometry, type);  break;
-            default:{ //possibly wbkGeometryCollection or other kind of mixture
+            default:{ //possibly wkbGeometryCollection or other kind of mixture
                 int subGeomCount = gdal()->getSubGeometryCount(geometry);
                 if(subGeomCount){
                     for(int i = 0; i < subGeomCount; ++i) {
@@ -379,7 +408,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
                     }
                 }
             }
-            ret.push_back(fcoverage->newFeature({pol}));
+            ret.push_back(fcoverage->newFeature({pol}));//TODO: one extra record (as secound row) is created here!?
             return ret;
         }else{
             ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"polygon for a record",_filename);

@@ -38,10 +38,15 @@ GDALProxy::GDALProxy(const QString& library) {
     _isValid = b;
 }
 
-GDALProxy::~GDALProxy()
-{
-//    foreach(GdalHandle handle, _openedDatasets) {
-//        close(handle._handle);
+GDALProxy::~GDALProxy(){
+//    foreach(GdalHandle* handle, _openedDatasets) {
+//        if (handle->_type == GdalHandle::etGDALDatasetH){
+//            close(handle->_handle);
+//        }else{ //etOGRDataSourceH
+//            if (OGRErr err = releaseDataSource(handle->_handle) != OGRERR_NONE){
+//                ERROR2(ERR_INVALID_PROPERTY_FOR_2, QString("OGRDataSource (ERR %1)").arg(err), QString("%1").arg(handle->_owner));
+//            }
+//        }
 //    }
 }
 

@@ -4,7 +4,7 @@
 namespace Ilwis{
     namespace Gdal {
         class GdalFeatureConnector : public CoverageConnector{
-            public:
+           public:
                 GdalFeatureConnector(const Ilwis::Resource &resource, bool load=true);
 
                 bool loadMetaData(IlwisObject* data);
@@ -14,6 +14,15 @@ namespace Ilwis{
                 static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
                 Ilwis::IlwisObject *create() const;
             protected:
+                struct ColumnDef{
+                    ColumnDef(QVariant(GdalFeatureConnector::* func)(OGRFeatureH,  int, SPRange), SPRange r): fillFunc(func), range(r){}
+                    QVariant (GdalFeatureConnector::* fillFunc)(OGRFeatureH,  int, SPRange);
+                    SPRange range;
+                };
+                QVariant fillStringColumn(OGRFeatureH featureH, int colIntex, SPRange range);
+                QVariant fillIntegerColumn(OGRFeatureH featureH, int colIntex, SPRange range);
+                QVariant fillDoubleColumn(OGRFeatureH featureH, int colIntex, SPRange range);
+                QVariant fillDateTimeColumn(OGRFeatureH featureH, int colIntex, SPRange range);
                 IlwisTypes translateOGRType(OGRwkbGeometryType type) const;
                 std::vector<SPFeatureI> fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
                 std::vector<SPFeatureI> fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
