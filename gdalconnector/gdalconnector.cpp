@@ -69,21 +69,6 @@ bool GdalConnector::store(IlwisObject *, int )
 
     return true;
 }
-//TODO is that canUse ever called?
-bool GdalConnector::canUse(const Ilwis::Resource &resource) {
-    QStringList extensions = gdal()->getRasterExtensions();
-    extensions.append(gdal()->getFeatureExtensions());
-    QFileInfo inf(resource.url().toLocalFile());
-    bool ok = extensions.indexOf("." + inf.suffix())!= -1;
-    if ( ok)
-        return true;
-    QString name = resource.url().toLocalFile();
-    GdalHandle* handle = gdal()->openFile(name, resource.id(), GA_ReadOnly);
-    ok = handle->handle() != 0;
-    gdal()->closeFile(name, resource.id());
-
-    return ok;
-}
 
 QString GdalConnector::provider() const
 {

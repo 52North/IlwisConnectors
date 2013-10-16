@@ -14,7 +14,6 @@ public:
 
     bool loadMetaData(IlwisObject* data);
     bool store(IlwisObject *, int);
-    bool canUse(const Ilwis::Resource &resource);
 
     QString provider() const;
     void format(const QString&);
