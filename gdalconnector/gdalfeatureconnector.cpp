@@ -191,11 +191,19 @@ QVariant GdalFeatureConnector::fillStringColumn(OGRFeatureH featureH, int colInt
 }
 
 QVariant GdalFeatureConnector::fillIntegerColumn(OGRFeatureH featureH, int colIntex, SPRange range){
-    return QVariant(gdal()->getFieldAsInt(featureH, colIntex-2));
+    int v = gdal()->getFieldAsInt(featureH, colIntex-2);
+    SPNumericRange nrange = range.staticCast<NumericRange>();
+    if (nrange)
+        (*nrange) += (double)v;
+    return QVariant(v);
 }
 
 QVariant GdalFeatureConnector::fillDoubleColumn(OGRFeatureH featureH, int colIntex, SPRange range){
-    return QVariant(gdal()->getFieldAsDouble(featureH, colIntex-2));
+    double v = gdal()->getFieldAsDouble(featureH, colIntex-2);
+    SPNumericRange nrange = range.staticCast<NumericRange>();
+    if (nrange)
+        (*nrange) += v;
+    return QVariant(v);
 }
 
 QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colIntex, SPRange range){
@@ -209,7 +217,11 @@ QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colI
         time.setSecond(second);
         time.setYear(year);
     }
-    return QVariant((double)time);
+    double v = time;
+    SPNumericRange nrange = range.staticCast<NumericRange>();
+    if (nrange)
+        (*nrange) += v;
+    return QVariant(v);
 }
 
 bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
@@ -222,20 +234,38 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
             ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename);
             return false;
         }
-        std::vector<ColumnDef*> columnDefinitions;
+        std::vector<FillerColumnDef*> columnDefinitions;
         columnDefinitions.resize(attTable->columns());
         for (int i = 2; i < attTable->columns();i++){
-            ColumnDefinition coldef = attTable->columndefinition(i);
-            if(coldef.datadef().domain().isValid()){
-                IlwisTypes tp = coldef.datadef().domain()->valueType();
+            DataDefinition datadef = attTable->columndefinition(i).datadef();
+            if(datadef.domain().isValid()){
+                IlwisTypes tp = datadef.domain()->valueType();
                 if (tp & itSTRING){
-                    columnDefinitions[i] = new ColumnDef(&GdalFeatureConnector::fillStringColumn, coldef.datadef().domain()->range());
+                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillStringColumn, datadef.range());
                 }else if (tp & itINTEGER){
-                    columnDefinitions[i] = new ColumnDef(&GdalFeatureConnector::fillIntegerColumn, coldef.datadef().domain()->range());
+                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
+                    //creating the actual range as invalid to be adjusted in the fillers
+                    double min = r->min();
+                    r->min(r->max());
+                    r->max(min);
+                    datadef.range(r);
+                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillIntegerColumn, datadef.range());
                 }else if (tp & itDOUBLE){
-                    columnDefinitions[i] = new ColumnDef(&GdalFeatureConnector::fillDoubleColumn, coldef.datadef().domain()->range());
+                    //creating the actual range as invalid to be adjusted in the fillers
+                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
+                    double min = r->min();
+                    r->min(r->max());
+                    r->max(min);
+                    datadef.range(r);
+                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillDoubleColumn, datadef.range());
                 }else if (tp & itTIME){
-                    columnDefinitions[i] = new ColumnDef(&GdalFeatureConnector::fillDateTimeColumn, coldef.datadef().domain()->range());
+                    //creating the actual range as invalid to be adjusted in the fillers
+                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
+                    double min = r->min();
+                    r->min(r->max());
+                    r->max(min);
+                    datadef.range(r);
+                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillDateTimeColumn, datadef.range());
                 }else{
                     columnDefinitions[i] = nullptr;
                 }
@@ -260,7 +290,6 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                 while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
                     //create ilwisFeatures from Geometry - multiple on wkbMultiPolygon/-Line/-Point and wkbGeometryCollection
                     std::vector<SPFeatureI> features = fillFeature(fcoverage, gdal()->getGeometryRef(hFeature));
-
                     if (!features.empty()){
                         record[1] = QVariant(++rec);//COVERAGEKEYCOLUMN
                         //each OGR_F_FIELD > RECORD
@@ -271,7 +300,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                         }
                         for(const SPFeatureI& feat : features) {
                             record[0] = QVariant(feat->featureid());
-                            attTable->record(NEW_RECORD,record);
+                            attTable->record(attTable->records()-1,record);//should overwrite the last record in attTable, which hopefully is the one created by fcoverage->newFeature({geometry}) within FillFeature
                         }
                     }else{
                         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, QString("Record: %1").arg(rec), _filename);
@@ -408,7 +437,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
                     }
                 }
             }
-            ret.push_back(fcoverage->newFeature({pol}));//TODO: one extra record (as secound row) is created here!?
+            ret.push_back(fcoverage->newFeature({pol}));
             return ret;
         }else{
             ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"polygon for a record",_filename);

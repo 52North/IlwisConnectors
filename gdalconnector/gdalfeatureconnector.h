@@ -14,8 +14,8 @@ namespace Ilwis{
                 static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
                 Ilwis::IlwisObject *create() const;
             protected:
-                struct ColumnDef{
-                    ColumnDef(QVariant(GdalFeatureConnector::* func)(OGRFeatureH,  int, SPRange), SPRange r): fillFunc(func), range(r){}
+                struct FillerColumnDef{
+                    FillerColumnDef(QVariant(GdalFeatureConnector::* func)(OGRFeatureH,  int, SPRange), SPRange r): fillFunc(func), range(r){}
                     QVariant (GdalFeatureConnector::* fillFunc)(OGRFeatureH,  int, SPRange);
                     SPRange range;
                 };
