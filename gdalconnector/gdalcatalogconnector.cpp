@@ -51,7 +51,7 @@ bool GdalCatalogConnector::loadItems()
             return ERROR1(ERR_COULD_NOT_OPEN_READING_1,folder.absolutePath());
         }
         fileList = folder.entryInfoList();
-        QStringList namefilter = gdal()->rasterNameFilter();
+        QStringList namefilter = gdal()->getRasterExtensions();
 
         folder.setFilter(QDir::Files);
         QFileInfoList files = folder.entryInfoList(namefilter);
@@ -75,9 +75,8 @@ bool GdalCatalogConnector::loadItems()
         QString loc = location.toLocalFile();
         if ( path.compare(loc,Qt::CaseInsensitive) == 0)
             container = file.canonicalPath();
-        IlwisTypes tp = itRASTER;
         QUrl url("file:///" + path);
-        if ( mastercatalog()->resource2id(url, tp) == i64UNDEF) {
+        if ( mastercatalog()->resource2id(url, itRASTER) == i64UNDEF && mastercatalog()->resource2id(url, itFEATURE) == i64UNDEF) {
             if ( !file.isDir() ) {
                 GDALItems items(path);
                 gdalitems += items;

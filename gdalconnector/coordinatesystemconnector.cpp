@@ -43,44 +43,47 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data){
 
     if (!GdalConnector::loadMetaData(data))
         return false;
+    bool ret = true;
+    OGRSpatialReferenceH srshandle = gdal()->srsHandle(_handle, data->name());
+    if (srshandle){
+        CoordinateSystem *csy = static_cast<CoordinateSystem *>(data);
 
-    CoordinateSystem *csy = static_cast<CoordinateSystem *>(data);
+        if ( type() == itCONVENTIONALCOORDSYSTEM) {
+            ConventionalCoordinateSystem *csyp = static_cast<ConventionalCoordinateSystem *>(csy);
+            QString datumName(gdal()->getAttributeValue(srshandle,"Datum",0));
+            GeodeticDatum *datum = new GeodeticDatum(datumName);
+            //datum.prepare("wkt=" + datumName);
+            if ( datum->isValid())
+                csyp->setDatum(datum);
 
-    OGRSpatialReferenceH srshandle = gdal()->srsHandle(_dataSet, data->name());
+            QString projectionName(gdal()->getAttributeValue(srshandle,"Projection",0));
+            IProjection projection;
+            projection.prepare("code=wkt:" + projectionName);
+            if ( projection.isValid()) {
+                setProjectionParameter(srshandle, "false_easting", Projection::pvX0, projection);
+                setProjectionParameter(srshandle, "false_northing", Projection::pvY0, projection);
+                setProjectionParameter(srshandle, "scale_factor", Projection::pvK0, projection);
+                setProjectionParameter(srshandle, "central_meridian", Projection::pvLON0, projection);
+                setProjectionParameter(srshandle, "latitude_of_origin", Projection::pvLAT0, projection);
+                setProjectionParameter(srshandle, "standard_parallel_1", Projection::pvLAT1, projection);
+                setProjectionParameter(srshandle, "standard_parallel_2", Projection::pvLAT2, projection);
+                setProjectionParameter(srshandle, "zone", Projection::pvZONE, projection);
+                csyp->setProjection(projection);
+            }
 
-    if ( type() == itCONVENTIONALCOORDSYSTEM) {
-        ConventionalCoordinateSystem *csyp = static_cast<ConventionalCoordinateSystem *>(csy);
-        QString datumName(gdal()->getAttributeValue(srshandle,"Datum",0));
-        GeodeticDatum *datum = new GeodeticDatum(datumName);
-        //datum.prepare("wkt=" + datumName);
-        if ( datum->isValid())
-            csyp->setDatum(datum);
-
-        QString projectionName(gdal()->getAttributeValue(srshandle,"Projection",0));
-        IProjection projection;
-        projection.prepare("code=wkt:" + projectionName);
-        if ( projection.isValid()) {
-            setProjectionParameter(srshandle, "false_easting", Projection::pvX0, projection);
-            setProjectionParameter(srshandle, "false_northing", Projection::pvY0, projection);
-            setProjectionParameter(srshandle, "scale_factor", Projection::pvK0, projection);
-            setProjectionParameter(srshandle, "central_meridian", Projection::pvLON0, projection);
-            setProjectionParameter(srshandle, "latitude_of_origin", Projection::pvLAT0, projection);
-            setProjectionParameter(srshandle, "standard_parallel_1", Projection::pvLAT1, projection);
-            setProjectionParameter(srshandle, "standard_parallel_2", Projection::pvLAT2, projection);
-            setProjectionParameter(srshandle, "zone", Projection::pvZONE, projection);
-            csyp->setProjection(projection);
+            QString ellipsoidName(gdal()->getAttributeValue(srshandle,"SPHEROID",0));
+            IEllipsoid ellipsoid;
+            if ( ellipsoidName != "unnamed") {
+                ellipsoid.prepare("code=wkt:" + ellipsoidName);
+                if ( ellipsoid.isValid())
+                    csyp->setEllipsoid(ellipsoid);
+            }
         }
-
-        QString ellipsoidName(gdal()->getAttributeValue(srshandle,"SPHEROID",0));
-        IEllipsoid ellipsoid;
-        if ( ellipsoidName != "unnamed") {
-            ellipsoid.prepare("code=wkt:" + ellipsoidName);
-            if ( ellipsoid.isValid())
-                csyp->setEllipsoid(ellipsoid);
-        }
+    }else{
+        ret = ERROR2(ERR_INVALID_PROPERTY_FOR_2,"OGRSpatialReference",data->name());
     }
     gdal()->closeFile(_filename, data->id());
-    return true;
+    return ret;
 }
 
 void CoordinateSystemConnector::setProjectionParameter(OGRSpatialReferenceH handle, const char *wkt_name, Projection::ProjectionParamValue parmType, IProjection& projection){

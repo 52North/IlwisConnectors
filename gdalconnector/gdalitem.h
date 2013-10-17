@@ -10,7 +10,7 @@ public:
 
 private:
     void addItem(const QUrl &url, quint64 csyid, quint64 grfId, IlwisTypes tp =itRASTER);
-    quint64 addCsy(GDALDatasetH dataSet, const QString& path);
+    quint64 addCsy(GdalHandle* handle, const QString& path);
 };
 }
 }

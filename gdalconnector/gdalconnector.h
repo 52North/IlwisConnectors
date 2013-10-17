@@ -14,19 +14,17 @@ public:
 
     bool loadMetaData(IlwisObject* data);
     bool store(IlwisObject *, int);
-    bool canUse(const Ilwis::Resource &resource);
 
     QString provider() const;
     void format(const QString&);
     QString format() const;
 protected:
-    bool reportError(GDALDatasetH dataset) const;
     static GDALDataType ilwisType2GdalType(IlwisTypes tp) ;
     QString constructOutputName(GDALDriverH hdriver) const;
-    QString _filename;
+    QString _filename; //TODO: might be better QFileInfo for Linux/Win filename case sensitivity
     QString _internalPath;
-    GDALDatasetH _dataSet;
     QString _gdalShortName;
+    GdalHandle* _handle;
 };
 }
 }

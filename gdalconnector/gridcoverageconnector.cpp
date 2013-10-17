@@ -22,6 +22,10 @@
 #include "gdalconnector.h"
 #include "coverageconnector.h"
 #include "gridcoverageconnector.h"
+#include "geodeticdatum.h"
+#include "projection.h"
+#include "ellipsoid.h"
+#include "conventionalcoordinatesystem.h"
 
 using namespace Ilwis;
 using namespace Gdal;
@@ -36,51 +40,74 @@ RasterCoverageConnector::RasterCoverageConnector(const Ilwis::Resource &resource
 }
 
 bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
+
     if(!CoverageConnector::loadMetaData(data))
         return false;
 
     auto *gcoverage = static_cast<RasterCoverage *>(data);
 
-    IGeoReference grf;
-    if(!grf.prepare(_resource.url().toLocalFile()))
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
+    if (_handle->type() == GdalHandle::etGDALDatasetH){
+        double geosys[6];
+        CPLErr err = gdal()->getGeotransform(_handle->handle(), geosys) ;
+        if ( err != CE_None) {
+            return ERROR2(ERR_INVALID_PROPERTY_FOR_2, "Bounds", gcoverage->name());
+        }
 
-    gcoverage->georeference(grf);
+        double a1 = geosys[0];
+        double b1 = geosys[3];
+        double a2 = geosys[1];
+        double b2 = geosys[5];
+        Pixel pix(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()));
+        Coordinate crdLeftup( a1 , b1);
+        Coordinate crdRightDown(a1 + pix.x() * a2, b1 + pix.y() * b2 ) ;
+        Coordinate cMin( min(crdLeftup.x(), crdRightDown.x()), min(crdLeftup.y(), crdRightDown.y()));
+        Coordinate cMax( max(crdLeftup.x(), crdRightDown.x()), max(crdLeftup.y(), crdRightDown.y()));
 
-    Size sz(gdal()->xsize(_dataSet), gdal()->ysize(_dataSet), gdal()->layerCount(_dataSet));
-    gcoverage->size(sz);
+        gcoverage->envelope(Box2D<double>(cMin, cMax));
 
-    int layerIndex = 1;
-    auto index = _internalPath.indexOf("layerindex=");
-    if ( index == 0) {
-        bool ok = true;
-        layerIndex = _internalPath.mid(11).toInt(&ok);
-        if (!ok)
-            return ERROR2(ERR_COULD_NOT_LOAD_2,gcoverage->name(),"layer");
+        IGeoReference grf;
+        if(!grf.prepare(_resource.url().toLocalFile()))
+            return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
+
+        gcoverage->georeference(grf);
+
+        Size sz(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
+        gcoverage->size(sz);
+
+        int layerIndex = 1;
+        auto index = _internalPath.indexOf("layerindex=");
+        if ( index == 0) {
+            bool ok = true;
+            layerIndex = _internalPath.mid(11).toInt(&ok);
+            if (!ok)
+                return ERROR2(ERR_COULD_NOT_LOAD_2,gcoverage->name(),"layer");
+        }
+        auto layerHandle = gdal()->getRasterBand(_handle->handle(), layerIndex);
+        if (!layerHandle) {
+            return ERROR2(ERR_COULD_NOT_LOAD_2, gcoverage->name(),"layer");
+        }
+
+        int ok;
+
+        auto vmin = gdal()->minValue(layerHandle, &ok);
+        auto vmax = gdal()->maxValue(layerHandle, &ok);
+        QString domName = NumericDomain::standardNumericDomainName(vmin, vmax);
+        IDomain dom;
+        dom.prepare(domName);
+        if(!dom.isValid()) {
+            return ERROR1(ERR_FIND_SYSTEM_OBJECT_1, domName);
+        }
+        INumericDomain numdom = dom.get<NumericDomain>();
+        gcoverage->datadef().domain(dom);
+        gcoverage->datadef().range(new NumericRange(vmin, vmax, numdom->range<NumericRange>()->resolution()));
+
+        _gdalValueType = gdal()->rasterDataType(layerHandle);
+        _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
+
+        return true;
+    }else{
+        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"non-RasterCoverage",_filename);
     }
-    auto layerHandle = gdal()->getRasterBand(_dataSet, layerIndex);
-    if (!layerHandle) {
-        return ERROR2(ERR_COULD_NOT_LOAD_2, gcoverage->name(),"layer");
-    }
-
-    int ok;
-
-    auto vmin = gdal()->minValue(layerHandle, &ok);
-    auto vmax = gdal()->maxValue(layerHandle, &ok);
-    QString domName = NumericDomain::standardNumericDomainName(vmin, vmax);
-    IDomain dom;
-    dom.prepare(domName);
-    if(!dom.isValid()) {
-        return ERROR1(ERR_FIND_SYSTEM_OBJECT_1, domName);
-    }
-    INumericDomain numdom = dom.get<NumericDomain>();
-    gcoverage->datadef().domain(dom);
-    gcoverage->datadef().range(new NumericRange(vmin, vmax, numdom->range<NumericRange>()->resolution()));
-
-    _gdalValueType = gdal()->rasterDataType(layerHandle);
-    _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
-
-    return true;
 }
 
 inline double RasterCoverageConnector::value(char *block, int index) const{
@@ -107,7 +134,7 @@ inline double RasterCoverageConnector::value(char *block, int index) const{
     return v;
 }
 Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
-    auto layerHandle = gdal()->getRasterBand(_dataSet, 1);
+    auto layerHandle = gdal()->getRasterBand(_handle->handle(), 1);
     if (!layerHandle) {
         ERROR2(ERR_COULD_NOT_LOAD_2, "GDAL","layer");
         return 0;
@@ -158,7 +185,7 @@ Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
             linesLeft -= linesPerBlock;
         }
         if ( ++layer < raster->size().zsize())
-            layerHandle = gdal()->getRasterBand(_dataSet, layer);
+            layerHandle = gdal()->getRasterBand(_handle->handle(), layer);
     }
 
     delete [] block;
@@ -179,7 +206,8 @@ bool RasterCoverageConnector::setGeotransform(RasterCoverage *raster,GDALDataset
 
         CPLErr err = gdal()->setGeoTransform(dataset,geoTransform);
         if ( err != CP_NONE) {
-            return reportError(dataset);
+            reportError(dataset);
+            return false;
         }
         return true;
     }
@@ -240,3 +268,32 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
 
     return ok;
 }
+
+bool RasterCoverageConnector::setSRS(Coverage *raster, GDALDatasetH dataset) const
+{
+    IConventionalCoordinateSystem csy = raster->coordinateSystem().get<ConventionalCoordinateSystem>();
+    QString proj4def = csy->projection()->toProj4();
+    OGRSpatialReferenceH srsH = gdal()->newSpatialRef(0);
+    OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());
+    if ( errOgr != OGRERR_NONE) {
+        reportError(dataset);
+        return false;
+    }
+    char *wktText = NULL;
+    gdal()->exportToWkt(srsH,&wktText);
+    CPLErr err = gdal()->setProjection(dataset, wktText);
+    gdal()->free(wktText);
+    if ( err != CP_NONE) {
+        reportError(dataset);
+        return false;
+    }
+    return true;
+}
+
+
+void RasterCoverageConnector::reportError(GDALDatasetH dataset) const
+{
+    kernel()->issues()->log(QString(gdal()->getLastErrorMsg()));
+    gdal()->close(dataset);
+}
+
