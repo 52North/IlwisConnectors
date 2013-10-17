@@ -47,6 +47,7 @@ typedef int (*IOGRGetDriverCount )() ;
 typedef OGRSFDriverH (*IOGRGetDriver )(int) ;
 typedef const char * (*IOGRGetDriverName )(OGRSFDriverH) ;
 typedef OGRSFDriverH  (*IOGRGetDriverByName )(const char *) ;
+typedef int (*IOGRTestDriverCapability)(OGRSFDriverH ,const char *);
 typedef OGRLayerH (*IGetLayerByName )(OGRDataSourceH, const char *) ;
 typedef int (*IGetLayerCount )(OGRDataSourceH) ;
 typedef OGRLayerH (*IGetLayer )(OGRDataSourceH, int) ;
@@ -109,7 +110,7 @@ public:
 
 
 public:
-    GDALProxy(const QString& library);
+    GDALProxy(const QString& gdalLibrary, const QString& proj4jLibrary);
     ~GDALProxy();
 
     bool isValid() const;
@@ -121,7 +122,7 @@ public:
         if (!_isValid)
             return 0;
 
-        T fp =  (T )(_lib.resolve(name.toLocal8Bit()));
+        T fp =  (T )(_libgdal.resolve(name.toLocal8Bit()));
         if ( fp == 0) {
             kernel()->issues()->log(TR("GDAL-proxy not properly initialized; can't find %1").arg(name));
             _isValid = false;
@@ -131,7 +132,6 @@ public:
 
     GdalHandle* openFile(const QString& filename, quint64 asker, GDALAccess mode=GA_ReadOnly);
     void closeFile(const QString& filename, quint64 asker);
-    GDALDatasetH operator [] (const QString& filename);
     OGRSpatialReferenceH srsHandle(GdalHandle* handle, const QString& source);
 
     IGDALClose close;
@@ -178,6 +178,7 @@ public:
     IOGRGetDriver ogrGetDriver;
     IOGRGetDriverName getOGRDriverName;
     IOGRGetDriverByName getDriverByName;
+    IOGRTestDriverCapability testDriverCapability;
     IGetLayerByName getLaterByName;
     IGetLayerCount getLayerCount;
     IGetLayer getLayer;
@@ -216,7 +217,7 @@ public:
 private:
     bool prepare();
 
-    QLibrary _lib;
+    QLibrary _libgdal, _libproj4;
     bool _isValid;
     static GDALProxy *_proxy;
     QStringList _featureExtensions;

@@ -1,6 +1,7 @@
 #include <QLibrary>
 #include <QDebug>
 #include <QFileInfo>
+#include <QSettings>
 #include <functional>
 #include "kernel.h"
 #include "ilwiscontext.h"
@@ -11,7 +12,7 @@ Ilwis::Gdal::GDALProxy* Ilwis::Gdal::GDALProxy::_proxy = 0;
 
 Ilwis::Gdal::GDALProxy* Ilwis::Gdal::gdal() {
     if (Ilwis::Gdal::GDALProxy::_proxy == 0) {
-        Ilwis::Gdal::GDALProxy::_proxy = new Ilwis::Gdal::GDALProxy("gdal.dll");
+        Ilwis::Gdal::GDALProxy::_proxy = new Ilwis::Gdal::GDALProxy("gdal.dll", "libproj-0.dll");
         Ilwis::Gdal::GDALProxy::_proxy->prepare();
     }
     return Ilwis::Gdal::GDALProxy::_proxy;
@@ -29,13 +30,14 @@ void* GdalHandle::handle(){
     return _handle;
 }
 
-GDALProxy::GDALProxy(const QString& library) {
-
+GDALProxy::GDALProxy(const QString& gdalLibrary, const QString& proj4jLibrary) {
     QFileInfo ilw = context()->ilwisFolder();
-    QString path = ilw.canonicalFilePath() + "/Extensions/gdalconnector/" + library;
-    _lib.setFileName(path);
-    bool  b = _lib.load();
-    _isValid = b;
+    QString path = ilw.canonicalFilePath() + "/Extensions/gdalconnector/" + gdalLibrary;
+    _libgdal.setFileName(path);
+    path = ilw.canonicalFilePath() + "/Extensions/gdalconnector/" + proj4jLibrary;
+    _libproj4.setFileName(path);
+    bool ok = _libproj4.load();
+    _isValid = _libgdal.load() && ok;
 }
 
 GDALProxy::~GDALProxy(){
@@ -62,9 +64,7 @@ bool GDALProxy::prepare() {
     create = add<IGDALCreate>("GDALCreate");
     rasterDataType = add<IGDALGetRasterDataType>("GDALGetRasterDataType");
     getProjectionRef = add<IGDALGetProjectionRef>("GDALGetProjectionRef");
-    setWellKnownGeogCs = add<IOSRSetWellKnownGeogCS>("OSRSetWellKnownGeogCS");
     setProjection = add<IGDALSetProjection>("GDALSetProjection");
-    isProjected = add<IOSRIsProjectedFunc>("OSRIsProjected");
     getGeotransform = add<IGDALGetGeoTransform>("GDALGetGeoTransform");
     setGeoTransform = add<IGDALSetGeoTransform>("GDALSetGeoTransform");
     rasterIO = add<IGDALRasterIO>("GDALRasterIO");
@@ -77,23 +77,30 @@ bool GDALProxy::prepare() {
     getLongName = add<IGDALGetDriverName>("GDALGetDriverLongName");
     getShortName = add<IGDALGetDriverName>("GDALGetDriverShortName");
     getMetaDataItem = add<IGDALGetMetadataItem>("GDALGetMetadataItem");
-    importFromEpsg = add<IOSRImportFromEPSG>("OSRImportFromEPSG");
-    exportToPrettyWkt = add<IOSRExportToPrettyWkt>("OSRExportToPrettyWkt");
-    getProjectionParm = add<IOSRGetProjParm>("OSRGetProjParm");
     minValue = add<IGDALRasValue>("GDALGetRasterMinimum");
     maxValue = add<IGDALRasValue>("GDALGetRasterMaximum");
     colorInterpretation = add<IGDALGetRasterColorInterpretation>("GDALGetRasterColorInterpretation");
-    authority = add<IOSRGetAuthorityCode>("OSRGetAuthorityCode");
 
+    importFromEpsg = add<IOSRImportFromEPSG>("OSRImportFromEPSG");
+    exportToPrettyWkt = add<IOSRExportToPrettyWkt>("OSRExportToPrettyWkt");
+    getProjectionParm = add<IOSRGetProjParm>("OSRGetProjParm");
+    setWellKnownGeogCs = add<IOSRSetWellKnownGeogCS>("OSRSetWellKnownGeogCS");
+    isProjected = add<IOSRIsProjectedFunc>("OSRIsProjected");
+    authority = add<IOSRGetAuthorityCode>("OSRGetAuthorityCode");
     newSpatialRef = add<IOSRNewSpatialReference>("OSRNewSpatialReference");
     importFromWkt = add<IOSRImportFromWkt>("OSRImportFromWkt");
+    exportToWkt = add<IExportToWkt>("OSRExportToWkt");
+    importFromProj4 = add<IOSRImportFromProj4>("OSRImportFromProj4");
 
     ogrOpen = add<IOGROpen>("OGROpen");
+    releaseDataSource = add<IOGRReleaseDataSource>("OGRReleaseDataSource");
     ogrRegisterAll = add<IOGRRegisterAll>("OGRRegisterAll");
     ogrDriverCount =add<IOGRGetDriverCount>("OGRGetDriverCount");
     ogrGetDriver = add<IOGRGetDriver>("OGRGetDriver");
-    getOGRDriverName = add<IOGRGetDriverName>("OGR_Dr_GetName");
     getDriverByName = add<IOGRGetDriverByName>("OGRGetDriverByName");
+    getOGRDriverName = add<IOGRGetDriverName>("OGR_Dr_GetName");
+    testDriverCapability = add<IOGRTestDriverCapability>("OGR_Dr_TestCapability");
+
     getLaterByName = add<IGetLayerByName>("OGR_DS_GetLayerByName");
     getLayerCount = add<IGetLayerCount>("OGR_DS_GetLayerCount");
     getLayer = add<IGetLayer>("OGR_DS_GetLayer");
@@ -117,17 +124,15 @@ bool GDALProxy::prepare() {
     getSubGeometryCount = add<IGetSubGeometryCount>("OGR_G_GetGeometryCount");
     getSubGeometryRef = add<IGetSubGeometryRef>("OGR_G_GetGeometryRef");
     getSpatialRef = add<IGetSpatialRef>("OGR_L_GetSpatialRef");
-    exportToWkt = add<IExportToWkt>("OSRExportToWkt");
-    importFromProj4 = add<IOSRImportFromProj4>("OSRImportFromProj4");
     getFeatureCount = add<IGetFeatureCount>("OGR_L_GetFeatureCount");
     getLayerExtent = add<IGetLayerExtent>("OGR_L_GetExtent");
     getFieldName = add<IGetFieldName>("OGR_Fld_GetNameRef");
-    pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
-    getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");
-    releaseDataSource = add<IOGRReleaseDataSource>("OGRReleaseDataSource");
     getSpatialFilter = add<IOGRGetSpatialFilter>("OGR_L_GetSpatialFilter");
     getEnvelope3D = add<IOGRGetEnvelope3D>("OGR_G_GetEnvelope3D");
     destroyDataSource = add<IOGR_DS_Destroy>("OGR_DS_Destroy");
+
+    pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
+    getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");
 
     free = add<IFree>("VSIFree");
 
@@ -153,8 +158,20 @@ bool GDALProxy::prepare() {
         pushFinderLocation(path.toLocal8Bit());
         //feature extensions
         ogrRegisterAll();
-        _featureExtensions.append(QString("*.shp"));
-        //TODO: ask OGRDriverName and compare to http://www.gdal.org/ogr/ogr_formats.html
+        QSettings fileExtensions(path.append("/ogr_extensions.ini"), QSettings::IniFormat);
+        if (fileExtensions.childGroups().count() > 0){
+            fileExtensions.beginGroup(fileExtensions.childGroups().at(0));
+            for(QString key: fileExtensions.childKeys()){
+                OGRSFDriverH hDriver = getDriverByName(fileExtensions.value(key).toString().toLocal8Bit());
+                if (hDriver != nullptr && testDriverCapability(hDriver, ODrCCreateDataSource)){//ODrCDeleteDataSource is aso possible
+                    _featureExtensions.append(QString("*.").append(key));
+                }else{
+                    ERROR2(ERR_NO_INITIALIZED_2,QString("File format (%1) support").arg(key),"OGR-Library (gdall.dll)");
+                }
+            }
+        }else{
+            _featureExtensions.append(QString("*.shp"));
+        }
     }
 
     return _isValid;
@@ -223,13 +240,6 @@ void GDALProxy::closeFile(const QString &filename, quint64 asker){
         }
         _openedDatasets.remove(name);
     }
-}
-
-GDALDatasetH GDALProxy::operator [] (const QString& filename) {
-    if (_openedDatasets.contains(filename.toLower())) {
-        return _openedDatasets[filename]->handle();
-    }
-    return 0;
 }
 
 OGRSpatialReferenceH GDALProxy::srsHandle(GdalHandle* handle, const QString& source) {

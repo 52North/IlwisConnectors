@@ -208,6 +208,7 @@ QVariant GdalFeatureConnector::fillDoubleColumn(OGRFeatureH featureH, int colInt
 
 QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colIntex, SPRange range){
     Time time;
+    double v = rUNDEF;
     int year,month,day,hour,minute,second,TZFlag;
     if (gdal()->getFieldAsDateTime(featureH,colIntex-2,&year,&month,&day,&hour,&minute,&second,&TZFlag)){
         time.setDay(day);
@@ -216,8 +217,9 @@ QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colI
         time.setMonth(month);
         time.setSecond(second);
         time.setYear(year);
+        v = time;
     }
-    double v = time;
+
     SPNumericRange nrange = range.staticCast<NumericRange>();
     if (nrange)
         (*nrange) += v;
@@ -235,8 +237,8 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
             return false;
         }
         std::vector<FillerColumnDef*> columnDefinitions;
-        columnDefinitions.resize(attTable->columns());
-        for (int i = 2; i < attTable->columns();i++){
+        columnDefinitions.resize(attTable->columnCount());
+        for (int i = 2; i < attTable->columnCount();i++){
             DataDefinition datadef = attTable->columndefinition(i).datadef();
             if(datadef.domain().isValid()){
                 IlwisTypes tp = datadef.domain()->valueType();
@@ -276,7 +278,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
         }
 
         std::vector<QVariant> record;
-        record.resize(attTable->columns());
+        record.resize(attTable->columnCount());
 
         //each LAYER
 //        for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
@@ -293,14 +295,14 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                     if (!features.empty()){
                         record[1] = QVariant(++rec);//COVERAGEKEYCOLUMN
                         //each OGR_F_FIELD > RECORD
-                        for (int i = 2; i < attTable->columns();i++){
+                        for (int i = 2; i < attTable->columnCount();i++){
                             if (columnDefinitions[i]){
                                 record[i] = (this->*columnDefinitions[i]->fillFunc)(hFeature, i, columnDefinitions[i]->range);
                             }
                         }
                         for(const SPFeatureI& feat : features) {
                             record[0] = QVariant(feat->featureid());
-                            attTable->record(attTable->records()-1,record);//should overwrite the last record in attTable, which hopefully is the one created by fcoverage->newFeature({geometry}) within FillFeature
+                            attTable->record(attTable->recordCount()-1,record);//should overwrite the last record in attTable, which hopefully is the one created by fcoverage->newFeature({geometry}) within FillFeature
                         }
                     }else{
                         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, QString("Record: %1").arg(rec), _filename);
