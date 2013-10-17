@@ -73,7 +73,7 @@ bool TableConnector::loadMetaData(IlwisObject *data)
         DatabaseTable *dbtable = static_cast<DatabaseTable *>(tbl);
         dbtable->setDatabase(kernel()->database());
     }
-    tbl->records(rows);
+    tbl->recordCount(rows);
     return true;
 
 }
@@ -184,13 +184,13 @@ bool TableConnector::storeBinaryData(IlwisObject *obj)
     if(!ilw3tbl.openOutput(obj->name()  + ".tb#", output_file))
         return false;
 
-    for(int i=0; i < tbl->columns(); ++i) {
+    for(int i=0; i < tbl->columnCount(); ++i) {
         const ColumnDefinition& def = tbl->columndefinition(i);
         if ( def.name() == FEATUREIDCOLUMN)
             skip = i;
         ilw3tbl.addStoreDefinition(def.datadef());
     }
-    for(int y=0; y < tbl->records(); ++y) {
+    for(int y=0; y < tbl->recordCount(); ++y) {
         std::vector<QVariant> rec = tbl->record(y);
         ilw3tbl.storeRecord(output_file, rec, skip);
 
@@ -220,15 +220,15 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
     _odf->setKeyValue("Ilwis", "Class", "Table");
     _odf->setKeyValue("Table", "Domain", _attributeDomain);
     _odf->setKeyValue("Table", "DomainInfo", QString("%1;Long;UniqueID;0;;").arg(_attributeDomain));
-    _odf->setKeyValue("Table", "Columns", QString::number(tbl->columns() - reduceColumns));
-    _odf->setKeyValue("Table", "Records", QString::number(tbl->records()));
+    _odf->setKeyValue("Table", "Columns", QString::number(tbl->columnCount() - reduceColumns));
+    _odf->setKeyValue("Table", "Records", QString::number(tbl->recordCount()));
     _odf->setKeyValue("Table", "Type", "TableStore");
     _odf->setKeyValue("TableStore", "Type", "TableBinary");
     _odf->setKeyValue("TableStore", "UseAs", "No");
     QFileInfo tblOdf(_resource.toLocalFile(true));
     QString dataFile = tblOdf.baseName() + ".tb#";
     _odf->setKeyValue("TableStore", "Data", dataFile);
-    for(int i=0; i < tbl->columns(); ++i) {
+    for(int i=0; i < tbl->columnCount(); ++i) {
         ColumnDefinition def = tbl->columndefinition(i);
         if ( def.name() == FEATUREIDCOLUMN)
             continue;

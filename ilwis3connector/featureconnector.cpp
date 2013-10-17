@@ -365,9 +365,9 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
     if ( ok && extTable.isValid()) {
         ITable attTbl = fcoverage->attributeTable();
         quint32 keyIndex = attTbl->columnIndex(COVERAGEKEYCOLUMN);
-        for(quint32 rowExt=0; rowExt < extTable->records(); ++rowExt) {
+        for(quint32 rowExt=0; rowExt < extTable->recordCount(); ++rowExt) {
             vector<QVariant> rec = extTable->record(rowExt);
-            for(quint32 rowAtt = 0; rowAtt < attTbl->records(); ++rowAtt ) {
+            for(quint32 rowAtt = 0; rowAtt < attTbl->recordCount(); ++rowAtt ) {
                 if ( attTbl->cell(keyIndex, rowAtt) == rowExt + 1) {
                     attTbl->record(rowAtt,rec);
                 }
@@ -403,7 +403,7 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",obj->name());
 
     ITable tbl = fcoverage->attributeTable();
-    tbl->records(fcoverage->featureCount());
+    tbl->recordCount(fcoverage->featureCount());
     return true;
 
 }
