@@ -80,7 +80,7 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
             return ITable();
         }
         if ( extTable.isValid()) {
-            for(int i=0; i < extTable->columns(); ++i) {
+            for(int i=0; i < extTable->columnCount(); ++i) {
                 attTable->addColumn(extTable->columndefinition(i));
             }
         }
