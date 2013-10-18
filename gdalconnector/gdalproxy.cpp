@@ -4,6 +4,7 @@
 #include <QSettings>
 #include <functional>
 #include "kernel.h"
+#include "errorobject.h"
 #include "ilwiscontext.h"
 #include "gdalproxy.h"
 
@@ -14,6 +15,10 @@ Ilwis::Gdal::GDALProxy* Ilwis::Gdal::gdal() {
     if (Ilwis::Gdal::GDALProxy::_proxy == 0) {
         Ilwis::Gdal::GDALProxy::_proxy = new Ilwis::Gdal::GDALProxy("gdal.dll", "libproj-0.dll");
         Ilwis::Gdal::GDALProxy::_proxy->prepare();
+
+    }
+    if (!Ilwis::Gdal::GDALProxy::_proxy->isValid()) {
+        throw InternalError(TR("Gdal library not properly initialized"));
     }
     return Ilwis::Gdal::GDALProxy::_proxy;
 }
