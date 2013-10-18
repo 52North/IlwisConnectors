@@ -50,7 +50,7 @@ bool GdalConnector::loadMetaData(IlwisObject *data){
     if (!_handle){
         return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename,QString(gdal()->getLastErrorMsg()));
     }
-    QFileInfo inf(_filename);//TODO: what about replacing QString _filename by a QFileInfo
+    QFileInfo inf(_filename);
     data->setName(inf.fileName());
 
     return true;
