@@ -11,12 +11,19 @@
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
+#include "RawConverter.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
 #include "georefimplementation.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
+#include "controlpoint.h"
+#include "ctpgeoreference.h"
+#include "Eigen/LU"
+#include "mathhelper.h"
+#include "planarctpgeoreference.h"
 #include "georefconnector.h"
+#include "binaryilwis3table.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "georefimplementationfactory.h"
@@ -51,7 +58,6 @@ bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
     GeoReference *grf = static_cast<GeoReference *>(data);
     grf->size(Size(columns, lines,1));
     if ( type == "GeoRefCorners") {
-        //_type = itCORNERSGEOREF;
         return loadGeorefCorners(odf, data);
     } else if ( type == "GeoRefSubMap") {
         QString name = odf.value("GeoRefSubMap","GeoRef");
@@ -59,9 +65,71 @@ bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
         IniFile odf;
         odf.setIniFile(resource);
         return loadGeoref(odf,data);
+    } else if ( type == "GeoRefCTP"){
+        return loadGeorefTiepoints(odf, grf);
     }
-    //TODO tiepoints georef
     return false;
+}
+
+bool GeorefConnector::loadGeorefTiepoints(const IniFile& odf, GeoReference *grf) {
+    QString csyName = odf.value("GeoRef","CoordSystem");
+    QUrl path = mastercatalog()->name2url(csyName, itCOORDSYSTEM);
+    ICoordinateSystem csy;
+    if(!csy.prepare(path.toLocalFile())) {
+        return ERROR2(ERR_COULD_NOT_LOAD_2, "coordinate system",csyName);
+    }
+    grf->coordinateSystem(csy);
+    QSharedPointer<PlanarCTPGeoReference> grfctp(grf->impl<PlanarCTPGeoReference>());
+    BinaryIlwis3Table tbl;
+    tbl.load(_odf);
+    std::vector<int> colindexes(10, iUNDEF);
+    enum ColIndexID{ciiX=0, ciiY=1, ciiZ=2, ciiLAT=3, ciiLON=4, ciiXP=5, ciiYP=6, ciiACT=7, ciiDX=8, ciiDY=9, ciiNEVER=10};
+    colindexes[ciiX] = tbl.index("X");
+    colindexes[ciiY] = tbl.index("Y");
+    colindexes[ciiZ] = tbl.index("Z");
+    colindexes[ciiXP] = tbl.index("Col");
+    colindexes[ciiYP] = tbl.index("Row");
+    colindexes[ciiACT] = tbl.index("Active");
+    //colindexes[ciiDX] = tbl.index("DCol");
+    //colindexes[ciiDY] = tbl.index("DRow");
+    for(int rec = 0; rec < tbl.rows(); ++rec){
+        double x=rUNDEF;
+        tbl.get(rec,colindexes[ciiX],x);
+        double y=rUNDEF;
+        tbl.get(rec,colindexes[ciiY],y);
+            double z=0;
+        if (colindexes[ciiZ] != iUNDEF) {
+            tbl.get(rec,colindexes[ciiZ],z);
+        }
+        double xp=rUNDEF;
+        tbl.get(rec,colindexes[ciiXP],xp);
+        double yp=rUNDEF;
+        tbl.get(rec,colindexes[ciiYP],yp);
+
+        double active=1;
+        tbl.get(rec,colindexes[ciiACT],active);
+        ControlPoint ctp(Coordinate(x,y,z),Pixel_d(xp,yp));
+        ctp.active(active != 0);
+        grfctp->setControlPoint(ctp);
+    }
+    QString transf = odf.value("GeoRefCTP", "Transformation");
+    PlanarCTPGeoReference::Transformation transformation;
+    if (transf == "Conform")
+      transformation =  PlanarCTPGeoReference::tCONFORM;
+    else if (transf == "Affine")
+      transformation =  PlanarCTPGeoReference::tAFFINE;
+    else if (transf == "SecondOrder")
+      transformation =  PlanarCTPGeoReference::tSECONDORDER;
+    else if (transf == "FullSecondOrder")
+      transformation =  PlanarCTPGeoReference::tFULLSECONDORDER;
+    else if (transf == "ThirdOrder")
+      transformation =  PlanarCTPGeoReference::tTHIRDORDER;
+    else if (transf == "Projective")
+      transformation =  PlanarCTPGeoReference::tPROJECTIVE;
+    grfctp->transformation(transformation);
+    grfctp->compute();
+
+    return true;
 }
 
 bool GeorefConnector::loadMetaData(IlwisObject *data)
@@ -146,7 +214,9 @@ IlwisObject *GeorefConnector::createGeoreference(const IniFile &odf) const{
         return GeoReference::create("corners");
 
     }
-    //TODO tiepoints georef
+    if ( type == "GeoRefCTP") {
+        return GeoReference::create("tiepoints");
+    }
     if ( type == "GeoRefSubMap") {
         auto name = _odf->value("GeoRefSubMap","GeoRef");
         QUrl resource = mastercatalog()->name2url(name, itGEOREF);
