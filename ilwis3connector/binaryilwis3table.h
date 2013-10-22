@@ -3,6 +3,8 @@
 
 namespace Ilwis {
 
+class DataDefinition;
+
 namespace Ilwis3{
 
 
