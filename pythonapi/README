@@ -1,0 +1,8 @@
+ILWIS Python API
+
+This folder contains only the binary python extension (ilwis.pyd) and
+the Python sources for the classes wrapping the ILWIS functionality
+into a convenient API. It does not contain the ilwiscore.dll and  relating
+plugins which the ilwis Python extention is linked to.
+
+The extension is build with SWIG (http://www.swig.org)
