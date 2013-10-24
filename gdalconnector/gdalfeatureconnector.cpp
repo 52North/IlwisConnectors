@@ -130,7 +130,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
                     case OFTDateTime:{  // Date and Time
                         INumericDomain ndomain;
                         ndomain.prepare("value");
-                        ndomain->setRange(new TimeInterval());//TODO: ilwisType of Domain should change to itTIMEDOMAIN
+                        ndomain->range(new TimeInterval());//TODO: ilwisType of Domain should change to itTIMEDOMAIN
                         domain = ndomain;  break;
                     }
                 }
@@ -245,7 +245,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                 if (tp & itSTRING){
                     columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillStringColumn, datadef.range());
                 }else if (tp & itINTEGER){
-                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
+                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
                     //creating the actual range as invalid to be adjusted in the fillers
                     double min = r->min();
                     r->min(r->max());
@@ -254,7 +254,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                     columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillIntegerColumn, datadef.range());
                 }else if (tp & itDOUBLE){
                     //creating the actual range as invalid to be adjusted in the fillers
-                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
+                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
                     double min = r->min();
                     r->min(r->max());
                     r->max(min);
@@ -262,7 +262,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                     columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillDoubleColumn, datadef.range());
                 }else if (tp & itTIME){
                     //creating the actual range as invalid to be adjusted in the fillers
-                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
+                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
                     double min = r->min();
                     r->min(r->max());
                     r->max(min);

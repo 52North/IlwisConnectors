@@ -254,7 +254,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         QString domainInfo;
         if ( dmColumn->ilwisType() == itNUMERICDOMAIN) {
             INumericDomain numdom = dmColumn.get<NumericDomain>();
-            SPNumericRange numdmrange = numdom->range<NumericRange>();
+            SPNumericRange numdmrange = numdom->range2range<NumericRange>();
             if ( numdmrange.isNull()){
                 return ERROR1(ERR_NO_INITIALIZED_1,TR("numeric range"));
             }
@@ -282,7 +282,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
             domainInfo = "string.dom;String;string;0;;";
             _odf->setKeyValue(colName, "StoreType","String");
         } else if ( dmColumn->valueType() & itIDENTIFIERITEM) {
-            int count = dmColumn->range().dynamicCast<ItemRange>()->count();
+            int count = dmColumn->range2range<ItemRange>()->count();
             domainInfo = QString("%1;Long;id;%2;;").arg(dmColumn->source().toLocalFile(true)).arg(count) ;
             _odf->setKeyValue(colName, "StoreType", "Long");
         }
