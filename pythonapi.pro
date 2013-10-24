@@ -1,6 +1,6 @@
 include(global.pri)
 
-QT += core
+QT += core sql
 
 TARGET = _ilwisobjects
 
@@ -17,7 +17,8 @@ HEADERS += \
 SOURCES += \
     pythonapi/ilwisobject.cpp \
     pythonapi/coverage.cpp \
-    pythonapi/featurecoverage.cpp
+    pythonapi/featurecoverage.cpp \
+    pythonapi/ilwisobjects_wrap.cxx
 
 OTHER_FILES += \
     pythonapi/test.py \

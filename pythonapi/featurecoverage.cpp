@@ -23,9 +23,8 @@
 
 #include "featurecoverage.h"
 
-namespace pythonapi {
+using namespace pythonapi;
 
-    FeatureCoverage::FeatureCoverage():Coverage(){
-    }
-
+FeatureCoverage::FeatureCoverage():Coverage(){
+    this->data = new Ilwis::FeatureCoverage();
 }

@@ -4,6 +4,12 @@
 
 %{
 #include "ilwisobject.h"
+#include "coverage.h"
+#include "featurecoverage.h"
 %}
 
-class IlwisObject;
+%include "ilwisobject.h"
+
+%include "coverage.h"
+
+%include "featurecoverage.h"

@@ -4,9 +4,8 @@
 
 #include "coverage.h"
 
-namespace pythonapi{
+using namespace pythonapi;
 
-    Coverage::Coverage():IlwisObject(){
-    }
-
+Coverage::Coverage():IlwisObject(){
 }
+

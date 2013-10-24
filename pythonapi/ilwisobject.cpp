@@ -1,9 +1,8 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 #include "ilwisobject.h"
 
-namespace pythonapi {
+using namespace pythonapi;
 
-    IlwisObject::IlwisObject(): data(NULL){
-    }
-
+IlwisObject::IlwisObject(): data(NULL){
 }
+

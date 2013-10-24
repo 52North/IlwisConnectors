@@ -1,5 +1,5 @@
-#ifndef COVERAGE_H
-#define COVERAGE_H
+#ifndef PYTHONAPI_COVERAGE_H
+#define PYTHONAPI_COVERAGE_H
 
 #include "ilwisobject.h"
 
@@ -12,4 +12,4 @@ namespace pythonapi{
 
 }
 
-#endif // COVERAGE_H
+#endif // PYTHONAPI_COVERAGE_H

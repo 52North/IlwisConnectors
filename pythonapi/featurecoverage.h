@@ -1,5 +1,5 @@
-#ifndef FEATURECOVERAGE_H
-#define FEATURECOVERAGE_H
+#ifndef PYTHONAPI_FEATURECOVERAGE_H
+#define PYTHONAPI_FEATURECOVERAGE_H
 
 #include "coverage.h"
 
@@ -11,4 +11,5 @@ namespace pythonapi {
     };
 
 }
-#endif // FEATURECOVERAGE_H
+
+#endif // PYTHONAPI_FEATURECOVERAGE_H

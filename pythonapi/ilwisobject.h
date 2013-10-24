@@ -1,10 +1,14 @@
-#ifndef ILWISOBJECT_H
-#define ILWISOBJECT_H
+#ifndef PYTHONAPI_ILWISOBJECT_H
+#define PYTHONAPI_ILWISOBJECT_H
+
+namespace Ilwis {
+    class IlwisObject;
+}
 
 namespace pythonapi {
 
     class IlwisObject{
-        private:
+        protected:
             Ilwis::IlwisObject* data;
 
         public:
@@ -13,4 +17,4 @@ namespace pythonapi {
 
 }
 
-#endif // ILWISOBJECT_H
+#endif // PYTHONAPI_ILWISOBJECT_H
