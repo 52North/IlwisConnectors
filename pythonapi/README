@@ -1,5 +1,7 @@
 ILWIS Python API
 
+The extension was built with SWIG (http://www.swig.org)
+
 This folder contains only the python extension source (ilwisobjects.py) for
 the classes wrapping the ILWIS functionality into a convenient API.
 It does not contain the ilwiscore.dll and relating
@@ -7,9 +9,9 @@ plugins which the ilwis Python extention is linked to.
 
 The ilwiscore.dll depends on Qt-libraries, so if you want to use the extension in your
 python script, you need to be sure the PATH environment contains the following directories
-before executing the pythonXX.exe.
+before executing the Python3.3 executable.
 
 <pathToQt>\Qt5.1.1\5.1.1\mingw48_32\bin   <- QtCore(d).dll, QtSQL(d).dll icudt51.dll, icuin51.dll, icuuc51.dll
 <pathToILWIS>\                            <- ilwiscore.dll, <subdir>\<other_plugins>.dll
 
-The extension is build with SWIG (http://www.swig.org)
+The files test.sh and test.bat contain sample scripts to execute python test.py with correct PATH environment.

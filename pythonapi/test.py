@@ -4,7 +4,7 @@
 from ilwisobjects import *
 
 def main():
-    io = FeatureCoverage()
+    io = FeatureCoverage("C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
     print(io.toStr())
 
 if __name__ == "__main__":

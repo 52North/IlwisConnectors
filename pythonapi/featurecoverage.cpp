@@ -23,12 +23,26 @@
 
 #include "featurecoverage.h"
 
+#include <QtCore/QCoreApplication>
+#include <QString>
+
 using namespace pythonapi;
 
-FeatureCoverage::FeatureCoverage():Coverage(){
-    this->data = new Ilwis::FeatureCoverage();
+FeatureCoverage::FeatureCoverage(){
+}
+
+FeatureCoverage::FeatureCoverage(const char* resource){
+    int argc = 0;
+    char* argv[0];
+    QCoreApplication app(argc, argv);
+    Ilwis::initIlwis();
+    this->_ilwisIFeatureCoverage = new Ilwis::IFeatureCoverage();
+    this->_ilwisIFeatureCoverage->prepare(QString(resource));
 }
 
 const char* FeatureCoverage::toStr(){
-    return "FeatureCoverage";
+    if (this->_ilwisIFeatureCoverage->isValid())
+        return "FeatureCoverage";
+    else
+        return "invalid_FeatureCoverage";
 }
