@@ -8,6 +8,7 @@ namespace pythonapi {
     class FeatureCoverage : public Coverage{
         public:
         FeatureCoverage();
+        const char* toStr();
     };
 
 }

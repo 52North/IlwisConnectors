@@ -28,3 +28,7 @@ using namespace pythonapi;
 FeatureCoverage::FeatureCoverage():Coverage(){
     this->data = new Ilwis::FeatureCoverage();
 }
+
+const char* FeatureCoverage::toStr(){
+    return "FeatureCoverage";
+}

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from ilwis import *
+from ilwisobjects import *
 
 def main():
-    #TODO write tests in python
+    io = FeatureCoverage()
+    print(io.toStr())
 
 if __name__ == "__main__":
     main()
