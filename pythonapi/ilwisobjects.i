@@ -3,9 +3,14 @@
 %module ilwisobjects
 
 %{
+#include "ilwis.h"
 #include "ilwisobject.h"
 #include "coverage.h"
 #include "featurecoverage.h"
+%}
+
+%init %{
+    pythonapi::initIlwisObjects();
 %}
 
 %include "ilwisobject.h"
