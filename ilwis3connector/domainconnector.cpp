@@ -122,7 +122,7 @@ bool DomainConnector::handleValueDomains(IlwisObject* data) {
         kernel()->issues()->log(TR(ERR_NO_INITIALIZED_1).arg(data->name()));
         return false;
     }
-    vdata->setRange(range);
+    vdata->range(range);
 
 
     return true;
@@ -267,7 +267,7 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
 
     _odf->setKeyValue("Ilwis", "Type", "Domain");
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
-        SPNumericRange numRange = dom->range<NumericRange>();
+        SPNumericRange numRange = dom->range2range<NumericRange>();
         int width=12;
         QString type = "DomainValueInt";
         if ( dom->valueType() & (itINT8 & itUINT8)){

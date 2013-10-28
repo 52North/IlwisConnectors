@@ -99,7 +99,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
         }
         INumericDomain numdom = dom.get<NumericDomain>();
         gcoverage->datadef().domain(dom);
-        gcoverage->datadef().range(new NumericRange(vmin, vmax, numdom->range<NumericRange>()->resolution()));
+        gcoverage->datadef().range(new NumericRange(vmin, vmax, numdom->range2range<NumericRange>()->resolution()));
 
         _gdalValueType = gdal()->rasterDataType(layerHandle);
         _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
