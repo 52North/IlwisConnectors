@@ -304,16 +304,20 @@ QUrl Ilwis3Connector::resolve(const Resource& resource) const {
     return QUrl(file);
 }
 
-QString Ilwis3Connector::filename2FullPath(const QString& name) const {
+QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& owner) const {
     if ( name != sUNDEF) {
-         if ( name.contains(QRegExp("\\\\|/"))) {
-             return name;
-         }
-         else {
+        if ( name.contains(QRegExp("\\\\|/"))) {
+            return name;
+        }
+        else {
+            if ( owner.isValid())  {
+                QString loc = owner.container().toLocalFile() + "/" + name;
+                return loc;
+            }
             QUrl loc = context()->workingCatalog()->filesystemLocation();
             return loc.toLocalFile() + "/" + name;
 
-         }
+        }
     }
     return sUNDEF;
 }

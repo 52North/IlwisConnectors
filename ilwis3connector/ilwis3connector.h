@@ -19,6 +19,7 @@ public:
     QString provider() const;
     virtual bool storeBinaryData(IlwisObject* ) { return false; }
     virtual bool storeMetaData(IlwisObject* )  { return false; }
+
     bool store(IlwisObject *, int storemode);
 
 protected:
@@ -27,12 +28,13 @@ protected:
     bool isSystemObject(const QString &filename);
     bool loadMetaData(IlwisObject* data);
     bool storeMetaData(const IlwisObject* data, IlwisTypes type) const;
+    QString adjustPath(const QUrl& container, const QString& filename) const;
 
 
     QString ilwis3ClassName(IlwisTypes type) const;
     QString datum2Code(const QString& name, const QString& area) const;
     QString noExt(const QString& name);
-    QString filename2FullPath(const QString &name) const;
+    QString filename2FullPath(const QString &name, const Resource &owner=Resource()) const;
 
     mutable ODF _odf;
 
