@@ -10,5 +10,5 @@ bool pythonapi::initIlwisObjects(){
     int argc = 0;
     char* argv[0];
     QCoreApplication app(argc, argv);
-    return Ilwis::initIlwis(QFileInfo("./Lib/site-packages/ilwisobjects.config"));
+    return Ilwis::initIlwis(QFileInfo("C:/Python33/Lib/site-packages/ilwisobjects.conf"));
 }
