@@ -61,7 +61,8 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
 
     ITable extTable;
     if ( file != sUNDEF) {
-        if(!extTable.prepare(file)){
+        QString newfile = filename2FullPath(file, this->_resource);
+        if(!extTable.prepare(newfile)){
             kernel()->issues()->log(file,TR(ERR_NO_INITIALIZED_1).arg(file),IssueObject::itWarning);
             return ITable();
         }
@@ -110,11 +111,13 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
 
     Coverage *coverage = static_cast<Coverage *>(data);
     QString csyName = _odf->value("BaseMap","CoordSystem");
-    csyName = filename2FullPath(csyName, coverage->source());
-    if ( csyName.toLower() == "latlonwgs84.csy")
+    if ( csyName.toLower() == "latlonwgs84.csy"){
         csyName = "code=epsg:4326";
+    }else{
+        csyName = filename2FullPath(csyName, this->_resource);
+    }
     ICoordinateSystem csy;
-    if ( !csy.prepare(csyName)) {
+    if ( !csy.prepare(csyName, itCONVENTIONALCOORDSYSTEM)) {
         kernel()->issues()->log(csyName,TR("Coordinate system couldnt be initialized, defaulting to 'unknown'"),IssueObject::itWarning);
         QString resource = QString("ilwis://file/unknown.csy");
         if (!csy.prepare(resource)) {
