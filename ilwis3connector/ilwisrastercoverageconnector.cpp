@@ -192,6 +192,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data)
     RasterCoverage *gcoverage = static_cast<RasterCoverage *>(data);
 
     QString grfName = _odf->value("Map","GeoRef");
+    grfName = filename2FullPath(grfName, gcoverage->source());
     IGeoReference grf;
     if (!grf.prepare(grfName)) {
         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Georeference",grfName));

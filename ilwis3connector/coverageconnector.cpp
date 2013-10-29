@@ -110,6 +110,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
 
     Coverage *coverage = static_cast<Coverage *>(data);
     QString csyName = _odf->value("BaseMap","CoordSystem");
+    csyName = filename2FullPath(csyName, coverage->source());
     if ( csyName.toLower() == "latlonwgs84.csy")
         csyName = "code=epsg:4326";
     ICoordinateSystem csy;
