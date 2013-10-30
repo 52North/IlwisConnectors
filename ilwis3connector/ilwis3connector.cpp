@@ -184,6 +184,17 @@ QString Ilwis3Connector::provider() const
     return "ilwis3";
 }
 
+QString Ilwis3Connector::unquote(const QString &name) const
+{
+    if ( name == sUNDEF || name == "")
+        return name;
+    if ( name[0] != QChar('\''))
+        return name;
+    QString newname = name;
+    return newname.remove("'");
+
+}
+
 bool Ilwis3Connector::store(IlwisObject *obj, int storemode)
 {
     bool ok = true;
@@ -305,17 +316,18 @@ QUrl Ilwis3Connector::resolve(const Resource& resource) const {
 }
 
 QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& owner) const {
-    if ( name != sUNDEF) {
-        if ( name.contains(QRegExp("\\\\|/"))) {
-            return name;
+    QString localName = unquote(name);
+    if ( localName != sUNDEF) {
+        if ( localName.contains(QRegExp("\\\\|/"))) {
+            return localName;
         }
         else {
             if ( owner.isValid())  {
-                QString loc = owner.container().toLocalFile() + "/" + name;
+                QString loc = owner.container().toLocalFile() + "/" + localName;
                 return loc;
             }
             QUrl loc = context()->workingCatalog()->filesystemLocation();
-            return loc.toLocalFile() + "/" + name;
+            return loc.toLocalFile() + "/" + localName;
 
         }
     }
