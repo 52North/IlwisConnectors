@@ -197,7 +197,7 @@ QVariant GdalFeatureConnector::fillIntegerColumn(OGRFeatureH featureH, int colIn
         (*nrange) += (double)v;
     return QVariant(v);
 }
-
+//TODO: not yet tested
 QVariant GdalFeatureConnector::fillDoubleColumn(OGRFeatureH featureH, int colIntex, SPRange range){
     double v = gdal()->getFieldAsDouble(featureH, colIntex-2);
     SPNumericRange nrange = range.staticCast<NumericRange>();
@@ -205,7 +205,7 @@ QVariant GdalFeatureConnector::fillDoubleColumn(OGRFeatureH featureH, int colInt
         (*nrange) += v;
     return QVariant(v);
 }
-
+//TODO: not yet tested
 QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colIntex, SPRange range){
     Time time;
     double v = rUNDEF;
