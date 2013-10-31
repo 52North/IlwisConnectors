@@ -4,23 +4,16 @@
 #include "coverage.h"
 #include "string"
 
-
-namespace Ilwis {
-    class FeatureCoverage;
-    template<class T> class IlwisData;
-    typedef IlwisData<Ilwis::FeatureCoverage> IFeatureCoverage;
-}
-
-
 namespace pythonapi {
 
     class FeatureCoverage : public Coverage{
-    protected:
-        Ilwis::IFeatureCoverage* _ilwisIFeatureCoverage;
     public:
         FeatureCoverage();
         FeatureCoverage(const char* resource);
+        ~FeatureCoverage();
         const char* toStr();
+        unsigned int featureCount() const;
+        bool isValid();
     };
 }
 

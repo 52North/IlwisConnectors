@@ -8,6 +8,8 @@ namespace pythonapi{
     class Coverage : public IlwisObject{
         public:
             Coverage();
+            virtual ~Coverage(){};
+            virtual bool isValid() = 0;
     };
 
 }
