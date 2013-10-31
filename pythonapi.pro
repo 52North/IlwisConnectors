@@ -15,14 +15,18 @@ HEADERS += \
     pythonapi/ilwisobject.h \
     pythonapi/coverage.h \
     pythonapi/featurecoverage.h \
-    pythonapi/ilwis.h
+    pythonapi/ilwis.h \
+    pythonapi/featureiterator.h \
+    pythonapi/feature.h
 
 SOURCES += \
     pythonapi/ilwisobject.cpp \
     pythonapi/coverage.cpp \
     pythonapi/featurecoverage.cpp \
     pythonapi/ilwisobjects_wrap.cxx \
-    pythonapi/ilwis.cpp
+    pythonapi/ilwis.cpp \
+    pythonapi/featureiterator.cpp \
+    pythonapi/feature.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \

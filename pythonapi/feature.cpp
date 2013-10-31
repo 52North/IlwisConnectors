@@ -17,38 +17,16 @@
 #include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
-#include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
 
-#include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
-
-#include "featurecoverage.h"
+#include "feature.h"
 
 using namespace pythonapi;
 
-FeatureCoverage::FeatureCoverage(){
+Feature::Feature(Ilwis::SPFeatureI* ilwisFeature): _ilwisSPFeatureI(ilwisFeature){
 }
 
-FeatureCoverage::FeatureCoverage(const char* resource){
-    Ilwis::IFeatureCoverage fc;
-    fc.prepare(QString(resource));
-    this->_ilwisIIlwisObject = fc.shared_ptr();
-}
-
-FeatureCoverage::~FeatureCoverage(){
-}
-
-const char* FeatureCoverage::toStr(){
-    return this->_ilwisIIlwisObject->name().toLocal8Bit();
-}
-
-unsigned int FeatureCoverage::featureCount() const{
-    return std::static_pointer_cast<Ilwis::FeatureCoverage>(this->_ilwisIIlwisObject)->featureCount();
-}
-
-bool FeatureCoverage::isValid(){
-    return this->_ilwisIIlwisObject->isValid();
-}
-
-Ilwis::ESPIlwisObject FeatureCoverage::data(){
-    return this->_ilwisIIlwisObject;
+const char* Feature::toStr(){
+    QString ret("Feature:%1");
+    ret.arg(this->_ilwisSPFeatureI->data()->featureid());
+    return ret.toLocal8Bit();
 }

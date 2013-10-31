@@ -8,6 +8,8 @@ def main():
     if fc.isValid():
         print("successfully loaded", fc.toStr())
         print(fc.toStr(),"contains:",fc.featureCount(),"Features")
+        for f in fc:
+            print(f.toStr());
     else:
         print("couldn't load FeatureCoverage:", fc.toStr())
 

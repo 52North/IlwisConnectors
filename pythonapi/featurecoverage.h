@@ -4,6 +4,11 @@
 #include "coverage.h"
 #include "string"
 
+namespace Ilwis {
+    class FeatureCoverage;
+    typedef IlwisData<FeatureCoverage> IFeatureCoverage;
+}
+
 namespace pythonapi {
 
     class FeatureCoverage : public Coverage{
@@ -14,6 +19,7 @@ namespace pythonapi {
         const char* toStr();
         unsigned int featureCount() const;
         bool isValid();
+        Ilwis::ESPIlwisObject data();
     };
 }
 
