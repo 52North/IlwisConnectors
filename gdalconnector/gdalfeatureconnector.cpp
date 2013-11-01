@@ -238,6 +238,9 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
         }
         std::vector<FillerColumnDef*> columnDefinitions;
         columnDefinitions.resize(attTable->columnCount());
+        fcoverage->setFeatureCount(itPOLYGON, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+        fcoverage->setFeatureCount(itLINE, 0);
+        fcoverage->setFeatureCount(itPOINT, 0);
         for (int i = 2; i < attTable->columnCount();i++){
             DataDefinition datadef = attTable->columndefinition(i).datadef();
             if(datadef.domain().isValid()){
