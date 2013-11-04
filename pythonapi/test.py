@@ -9,7 +9,7 @@ def main():
         print("successfully loaded", fc)
         print(fc ,"contains:",fc.featureCount(),"Features")
         for f in fc:
-            print(f);
+            print(f, ":", f.cell("coverage_key"), ",", f.cell("MAY"), ",", f.cell("rainfall"));
     else:
         print("couldn't load FeatureCoverage:", fc)
 
@@ -17,6 +17,8 @@ def main():
     if fc.isValid():
         print("successfully loaded", fc)
         print(fc,"contains:",fc.featureCount(),"Features")
+        for f in fc:
+            print(f, ":", f.cell("coverage_key"), ",", f.cell("may"), ",", f.cell("RAINFALL"));
     else:
         print("couldn't load FeatureCoverage:", fc)
 

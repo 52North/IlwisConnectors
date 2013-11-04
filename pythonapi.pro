@@ -17,7 +17,8 @@ HEADERS += \
     pythonapi/featurecoverage.h \
     pythonapi/ilwis.h \
     pythonapi/featureiterator.h \
-    pythonapi/feature.h
+    pythonapi/feature.h \
+    pythonapi/pyvariant.h
 
 SOURCES += \
     pythonapi/ilwisobject.cpp \
@@ -26,7 +27,8 @@ SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
     pythonapi/ilwis.cpp \
     pythonapi/featureiterator.cpp \
-    pythonapi/feature.cpp
+    pythonapi/feature.cpp \
+    pythonapi/pyvariant.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \

@@ -9,6 +9,7 @@
 #include "ilwis.h"
 #include "ilwisobject.h"
 #include "coverage.h"
+#include "pyvariant.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "featureiterator.h"
@@ -21,6 +22,8 @@
 %include "ilwisobject.h"
 
 %include "coverage.h"
+
+%include "pyvariant.h"
 
 %include "feature.h"
 
