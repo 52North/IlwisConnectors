@@ -31,7 +31,7 @@
 #include "binaryilwis3table.h"
 #include "coordinatedomain.h"
 #include "coverageconnector.h"
-#include "featureconnector.h"
+#include "ilwis3featureconnector.h"
 
 using namespace Ilwis;
 using namespace Ilwis3;
@@ -207,6 +207,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     }
     QDataStream stream(&file);
     int nrPolygons = fcoverage->featureCount(itPOLYGON);
+    fcoverage->setFeatureCount(itPOLYGON, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
     SPAttributeRecord record( new AttributeRecord(tbl,FEATUREIDCOLUMN));
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
@@ -273,8 +274,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     int colItemId = mpsTable.index("SegmentValue");
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     ITable tbl = fcoverage->attributeTable();
-//    if ( isNumeric) // in other case nr of record already has been set as it is based on a real table
-//        tbl->setRows(mpsTable.rows());
+    fcoverage->setFeatureCount(itLINE, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
 
     double value;
     for(quint32 i= 0; i < mpsTable.rows(); ++i) {
@@ -317,6 +317,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
 
     ITable tbl = fcoverage->attributeTable();
     bool newCase =  coordColumnX == iUNDEF;
+    fcoverage->setFeatureCount(itPOINT, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
 
     for(quint32 i= 0; i < mppTable.rows(); ++i) {
         Coordinate c;

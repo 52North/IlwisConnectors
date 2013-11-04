@@ -41,7 +41,7 @@
 #include "tableconnector.h"
 #include "ilwis3projectionconnector.h"
 #include "domainconnector.h"
-#include "featureconnector.h"
+#include "ilwis3featureconnector.h"
 
 using namespace Ilwis;
 using namespace Ilwis3;

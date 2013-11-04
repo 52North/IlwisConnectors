@@ -36,8 +36,8 @@ SOURCES += \
     ilwis3connector/ilwis3catalogconnector.cpp \
     ilwis3connector/ilwis3projectionconnector.cpp \
     ilwis3connector/RawConverter.cpp \
-    ilwis3connector/featureconnector.cpp \
-    ilwis3connector/ilwisrastercoverageconnector.cpp
+    ilwis3connector/ilwisrastercoverageconnector.cpp \
+    ilwis3connector/ilwis3featureconnector.cpp
 
 HEADERS += \
     ilwis3connector/ilwis3connector_global.h \
@@ -57,8 +57,8 @@ HEADERS += \
     ilwis3connector/odfitem.h \
     ilwis3connector/ilwis3catalogconnector.h \
     ilwis3connector/ilwis3projectionconnector.h \
-    ilwis3connector/featureconnector.h \
-    ilwis3connector/ilwisrastercoverageconnector.h
+    ilwis3connector/ilwisrastercoverageconnector.h \
+    ilwis3connector/ilwis3featureconnector.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore

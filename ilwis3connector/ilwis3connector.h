@@ -19,6 +19,7 @@ public:
     QString provider() const;
     virtual bool storeBinaryData(IlwisObject* ) { return false; }
     virtual bool storeMetaData(IlwisObject* )  { return false; }
+    QString unquote(const QString &name) const;
 
     bool store(IlwisObject *, int storemode);
 
@@ -29,6 +30,7 @@ protected:
     bool loadMetaData(IlwisObject* data);
     bool storeMetaData(const IlwisObject* data, IlwisTypes type) const;
     QString adjustPath(const QUrl& container, const QString& filename) const;
+    QString unquote(const QString& name);
 
 
     QString ilwis3ClassName(IlwisTypes type) const;
