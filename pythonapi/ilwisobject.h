@@ -6,19 +6,25 @@
 namespace Ilwis {
     class IlwisObject;
     template<class T> class IlwisData;
+    typedef IlwisData<IlwisObject> IIlwisObject;
     typedef std::shared_ptr<IlwisObject> ESPIlwisObject;
 }
 
+//Qt typedefs only for GNU compiler
+typedef unsigned long long quint64; /* 64 bit unsigned */
 
 namespace pythonapi {
 
     class IlwisObject{
     protected:
-        Ilwis::ESPIlwisObject _ilwisIIlwisObject;
+        quint64 _ilwisObjectID;
+        Ilwis::IIlwisObject ptr() const;
     public:
         IlwisObject();
         virtual ~IlwisObject(){};
-        virtual bool isValid() = 0;
+        bool isValid();
+        const char *__str__();
+        quint64 id() const;
     };
 
 }

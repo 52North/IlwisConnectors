@@ -9,8 +9,10 @@ namespace pythonapi{
 class Feature{
 public:
     Feature(Ilwis::SPFeatureI* ilwisFeature);
-    const char* toStr();
+    const char *__str__();
+
 private:
+    //TODO: replace with std::shared_ptr of that feature if done in IlwisCore
     Ilwis::SPFeatureI* _ilwisSPFeatureI;
 };
 

@@ -31,24 +31,15 @@ FeatureCoverage::FeatureCoverage(){
 FeatureCoverage::FeatureCoverage(const char* resource){
     Ilwis::IFeatureCoverage fc;
     fc.prepare(QString(resource));
-    this->_ilwisIIlwisObject = fc.shared_ptr();
+    this->_ilwisObjectID = fc->id();
 }
 
 FeatureCoverage::~FeatureCoverage(){
 }
 
-const char* FeatureCoverage::toStr(){
-    return this->_ilwisIIlwisObject->name().toLocal8Bit();
-}
-
 unsigned int FeatureCoverage::featureCount() const{
-    return std::static_pointer_cast<Ilwis::FeatureCoverage>(this->_ilwisIIlwisObject)->featureCount();
+    return this->ptr().get<Ilwis::FeatureCoverage>()->featureCount();
 }
 
-bool FeatureCoverage::isValid(){
-    return this->_ilwisIIlwisObject->isValid();
-}
 
-Ilwis::ESPIlwisObject FeatureCoverage::data(){
-    return this->_ilwisIIlwisObject;
-}
+

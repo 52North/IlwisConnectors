@@ -9,7 +9,6 @@ namespace pythonapi{
         public:
             Coverage();
             virtual ~Coverage(){};
-            virtual bool isValid() = 0;
     };
 
 }

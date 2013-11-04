@@ -16,10 +16,7 @@ namespace pythonapi {
         FeatureCoverage();
         FeatureCoverage(const char* resource);
         ~FeatureCoverage();
-        const char* toStr();
         unsigned int featureCount() const;
-        bool isValid();
-        Ilwis::ESPIlwisObject data();
     };
 }
 

@@ -19,22 +19,23 @@
 
 using namespace pythonapi;
 
-FeatureIterator::FeatureIterator(FeatureCoverage fc): _firstValue(true){
-    this->_ilwisFeatureIterator = new Ilwis::FeatureIterator(Ilwis::IFeatureCoverage(fc.data()));
+FeatureIterator::FeatureIterator(FeatureCoverage fc){
+    Ilwis::IFeatureCoverage tFc;
+    tFc.prepare(fc.id());
+    this->_ilwisFeatureIterator = new Ilwis::FeatureIterator(tFc);
+}
+
+FeatureIterator::~FeatureIterator(){
+    delete this->_ilwisFeatureIterator;
 }
 
 Feature FeatureIterator::next(){
-    if (!this->_firstValue)
-        (*this->_ilwisFeatureIterator)++;
-    else
-        this->_firstValue = false;
     Ilwis::SPFeatureI f = (*(*this->_ilwisFeatureIterator));
+    (*this->_ilwisFeatureIterator)++;
     Ilwis::SPFeatureI* f_ptr = new Ilwis::SPFeatureI(f.data());
     return Feature(f_ptr);
 }
 
 bool FeatureIterator::hasNext(){
-    Ilwis::FeatureIterator temp(*this->_ilwisFeatureIterator);
-    temp++;
-    return (temp != this->_ilwisFeatureIterator->end());
+    return ((*this->_ilwisFeatureIterator) != this->_ilwisFeatureIterator->end());
 }

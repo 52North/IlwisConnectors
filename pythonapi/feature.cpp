@@ -25,7 +25,6 @@ using namespace pythonapi;
 Feature::Feature(Ilwis::SPFeatureI* ilwisFeature): _ilwisSPFeatureI(ilwisFeature){
 }
 
-const char* Feature::toStr(){
-    QString ret = QString("Feature:%1").arg(this->_ilwisSPFeatureI->data()->featureid());
-    return ret.toLocal8Bit();
+const char* Feature::__str__(){
+    return QString("IlwisFeature(%1)").arg(this->_ilwisSPFeatureI->data()->featureid()).toLocal8Bit();
 }

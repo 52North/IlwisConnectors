@@ -14,11 +14,17 @@ class FeatureIterator
 {
 public:
     FeatureIterator(FeatureCoverage fc);
+    ~FeatureIterator();
+    /**
+     * @brief next confusingly returns current value bevore iterating to the next item
+     * brings together C++ style "std::iterator it != it.end()" with end() pointing the back (after last entry)
+     * and Python style "for it in it:" using the __next__() also to retrieve first item.
+     * @return
+     */
     Feature next();
     bool hasNext();
 private:
     Ilwis::FeatureIterator* _ilwisFeatureIterator;
-    bool _firstValue;
 };
 
 }

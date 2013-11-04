@@ -6,19 +6,19 @@ from ilwisobjects import *
 def main():
     fc = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
     if fc.isValid():
-        print("successfully loaded", fc.toStr())
-        print(fc.toStr(),"contains:",fc.featureCount(),"Features")
+        print("successfully loaded", fc)
+        print(fc ,"contains:",fc.featureCount(),"Features")
         for f in fc:
-            print(f.toStr());
+            print(f);
     else:
-        print("couldn't load FeatureCoverage:", fc.toStr())
+        print("couldn't load FeatureCoverage:", fc)
 
     fc = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/Rainfall.mpp")
     if fc.isValid():
-        print("successfully loaded", fc.toStr())
-        print(fc.toStr(),"contains:",fc.featureCount(),"Features")
+        print("successfully loaded", fc)
+        print(fc,"contains:",fc.featureCount(),"Features")
     else:
-        print("couldn't load FeatureCoverage:", fc.toStr())
+        print("couldn't load FeatureCoverage:", fc)
 
 if __name__ == "__main__":
     main()
