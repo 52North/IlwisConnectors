@@ -26,7 +26,6 @@ Feature::Feature(Ilwis::SPFeatureI* ilwisFeature): _ilwisSPFeatureI(ilwisFeature
 }
 
 const char* Feature::toStr(){
-    QString ret("Feature:%1");
-    ret.arg(this->_ilwisSPFeatureI->data()->featureid());
+    QString ret = QString("Feature:%1").arg(this->_ilwisSPFeatureI->data()->featureid());
     return ret.toLocal8Bit();
 }

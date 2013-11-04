@@ -6,9 +6,6 @@
 
 
 %{
-#include <assert.h>
-static int myErr = 0;
-
 #include "ilwis.h"
 #include "ilwisobject.h"
 #include "coverage.h"
@@ -29,28 +26,25 @@ static int myErr = 0;
 
 %include "featurecoverage.h"
 
-%exception pythonapi::FeatureIterator::next {
-  assert(!myErr);
-  $action
-  if (myErr) {
-    myErr = 0; // clear flag for next time
-    PyErr_SetString(PyExc_StopIteration, "End of iterator");
-    return NULL;
-  }
-}
-
 %include "featureiterator.h"
 
 %extend pythonapi::FeatureIterator {
 %insert("python") %{
-    def __iter__():
+    def __iter__(self):
         return self
+%}
+%insert("python") %{
+    def __next__(self):
+        if self.hasNext():
+            return self.next()
+        else:
+            raise StopIteration
 %}
 }
 
 %extend pythonapi::FeatureCoverage {
 %insert("python") %{
-    def __iter__():
+    def __iter__(self):
         return FeatureIterator(self)
 %}
 }

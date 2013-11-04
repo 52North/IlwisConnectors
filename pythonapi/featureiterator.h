@@ -15,8 +15,10 @@ class FeatureIterator
 public:
     FeatureIterator(FeatureCoverage fc);
     Feature next();
+    bool hasNext();
 private:
     Ilwis::FeatureIterator* _ilwisFeatureIterator;
+    bool _firstValue;
 };
 
 }
