@@ -24,7 +24,7 @@ namespace pythonapi {
         virtual ~IlwisObject(){};
         bool isValid();
         const char *__str__();
-        quint64 id() const;
+        quint64 ilwisID() const;
     };
 
 }

@@ -21,7 +21,7 @@ using namespace pythonapi;
 
 FeatureIterator::FeatureIterator(FeatureCoverage fc){
     Ilwis::IFeatureCoverage tFc;
-    tFc.prepare(fc.id());
+    tFc.prepare(fc.ilwisID());
     this->_ilwisFeatureIterator = new Ilwis::FeatureIterator(tFc);
 }
 

@@ -31,9 +31,6 @@ const char* Feature::__str__(){
     return QString("IlwisFeature(%1)").arg(this->_ilwisSPFeatureI->data()->featureid()).toLocal8Bit();
 }
 
-PyVariant Feature::cell(const char *name, int index){
-    //TODO
-    //gdal and ilwis3 connector apply different column name capitalization
-    //Feature->cell(name) is case sensitive!!
-    return PyVariant(new QVariant((*this->_ilwisSPFeatureI)(QString(name),index)));
+PyVariant *Feature::cell(const char *name, int index){
+    return new PyVariant(new QVariant((*this->_ilwisSPFeatureI)(QString(name),index)));
 }

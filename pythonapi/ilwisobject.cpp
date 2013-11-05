@@ -22,6 +22,6 @@ Ilwis::IIlwisObject IlwisObject::ptr() const{
     return fc;
 }
 
-quint64 IlwisObject::id() const{
+quint64 IlwisObject::ilwisID() const{
     return this->_ilwisObjectID;
 }

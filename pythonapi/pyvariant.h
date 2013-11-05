@@ -10,7 +10,9 @@ namespace pythonapi{
         PyVariant();
         PyVariant(QVariant* data);
         ~PyVariant();
+        void __del__();
         const char* __str__();
+        int __int__();
     protected:
         QVariant* _data;
     };
