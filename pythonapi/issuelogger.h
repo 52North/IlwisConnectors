@@ -1,7 +1,7 @@
 #ifndef PYTHONAPI_ISSUELOGGER_H
 #define PYTHONAPI_ISSUELOGGER_H
 
-#include <QtCore>
+#include <QObject>
 
 namespace pythonapi{
 

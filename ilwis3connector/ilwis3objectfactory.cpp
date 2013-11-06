@@ -83,7 +83,7 @@ bool Ilwis3ObjectFactory::canUse(const Resource &resource) const
 
     QString ext = QFileInfo(filename).suffix();
     QString exts = "mprmpamppmpsdomtbtgrfcsympl";
-    if ( exts.indexOf(ext) == -1)
+    if ( exts.indexOf(ext) == -1 || ext.isEmpty())
         return false;
 
     if ( type & itDOMAIN)
