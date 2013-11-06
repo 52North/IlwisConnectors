@@ -55,7 +55,7 @@ public:
         return real / _scale - _offset;
     }
     bool isNeutral() const{
-        return _offset == 0 && _scale == 1.0;
+        return (_offset == 0 && _scale == 1.0) || _scale == 0;
     }
 
     double offset() const {
