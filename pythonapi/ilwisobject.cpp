@@ -9,7 +9,7 @@ IlwisObject::IlwisObject(){
 }
 
 bool IlwisObject::isValid(){
-    return this->ptr().isValid() && this->ptr()->isValid();
+    return this->_ilwisObjectID != Ilwis::i64UNDEF && this->ptr().isValid() && this->ptr()->isValid();
 }
 
 const char* IlwisObject::__str__(){

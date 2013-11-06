@@ -31,7 +31,10 @@ FeatureCoverage::FeatureCoverage(){
 FeatureCoverage::FeatureCoverage(const char* resource){
     Ilwis::IFeatureCoverage fc;
     fc.prepare(QString(resource));
-    this->_ilwisObjectID = fc->id();
+    if (fc.isValid())
+        this->_ilwisObjectID = fc->id();
+    else
+        this->_ilwisObjectID = Ilwis::i64UNDEF;
 }
 
 FeatureCoverage::~FeatureCoverage(){

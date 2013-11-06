@@ -9,5 +9,5 @@ const char* pythonapi::get_err_message(std::exception &e){
     if (err)
         return QString("%1: %2").arg(err->what(),err->message()).toLocal8Bit();
     else
-        return QString("non-ILWIS std::exception - ").append(err->what()).toLocal8Bit();
+        return QString("non-ILWIS Exception: ").append(err->what()).toLocal8Bit();
 }

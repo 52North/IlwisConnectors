@@ -6,6 +6,7 @@
 
 %{
 #include "ilwis.h"
+#include "log.h"
 #include "exception.h"
 #include "ilwisobject.h"
 #include "coverage.h"
@@ -14,7 +15,7 @@
 #include "featurecoverage.h"
 #include "featureiterator.h"
 
-static PyObject* myException;
+static PyObject* ilwisException;
 %}
 
 %init %{
@@ -22,9 +23,9 @@ static PyObject* myException;
     pythonapi::initIlwisObjects();
 
     //init IlwisException for Python
-    myException = PyErr_NewException("_ilwisobjects.IlwisException",NULL,NULL);
-    Py_INCREF(myException);
-    PyModule_AddObject(m, "IlwisException", myException);//m is SWIG declaration for Python C API modul creation
+    ilwisException = PyErr_NewException("_ilwisobjects.IlwisException",NULL,NULL);
+    Py_INCREF(ilwisException);
+    PyModule_AddObject(m, "IlwisException", ilwisException);//m is SWIG declaration for Python C API modul creation
 %}
 //adds the export flag to pyd library for the IlwisException
 %pythoncode %{
@@ -35,7 +36,7 @@ static PyObject* myException;
     try {
         $action
     }catch (std::exception& e) {
-        PyErr_SetString(myException,pythonapi::get_err_message(e));
+        PyErr_SetString(ilwisException,pythonapi::get_err_message(e));
         SWIG_fail;
     }
 }

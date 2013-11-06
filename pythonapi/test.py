@@ -24,5 +24,7 @@ def main():
     else:
         print("couldn't load FeatureCoverage:", fc)
 
+    fc = FeatureCoverage("file:///C:/Users/Poku");
+
 if __name__ == "__main__":
     main()
