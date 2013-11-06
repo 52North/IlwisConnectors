@@ -22,6 +22,8 @@
 #include "textdomain.h"
 #include "domainconnector.h"
 
+#include <QUrlQuery>
+
 using namespace Ilwis;
 using namespace Ilwis3;
 

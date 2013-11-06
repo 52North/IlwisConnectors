@@ -205,7 +205,7 @@ bool RasterCoverageConnector::setGeotransform(RasterCoverage *raster,GDALDataset
         double geoTransform[6] = { env.min_corner().x(), a2, sup[0], env.min_corner().y(), sup[1], b2 };
 
         CPLErr err = gdal()->setGeoTransform(dataset,geoTransform);
-        if ( err != CP_NONE) {
+        if ( err != CE_None) {
             reportError(dataset);
             return false;
         }
@@ -283,7 +283,7 @@ bool RasterCoverageConnector::setSRS(Coverage *raster, GDALDatasetH dataset) con
     gdal()->exportToWkt(srsH,&wktText);
     CPLErr err = gdal()->setProjection(dataset, wktText);
     gdal()->free(wktText);
-    if ( err != CP_NONE) {
+    if ( err != CE_None) {
         reportError(dataset);
         return false;
     }
