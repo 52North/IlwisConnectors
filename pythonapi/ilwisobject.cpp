@@ -17,9 +17,7 @@ const char* IlwisObject::__str__(){
 }
 
 Ilwis::IIlwisObject IlwisObject::ptr() const{
-    Ilwis::IIlwisObject fc;
-    fc.prepare(this->_ilwisObjectID);
-    return fc;
+    return Ilwis::IlwisObject::create<Ilwis::IIlwisObject>(this->_ilwisObjectID);
 }
 
 quint64 IlwisObject::ilwisID() const{
