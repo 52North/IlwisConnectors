@@ -4,8 +4,6 @@
 #include <exception>
 
 namespace pythonapi{
-    const char* get_err_message(std::exception& e);
 
-    // PyObject* translate_Exception(std::exception& e);
 }
 #endif // PYTHONAPI_EXCEPTION_H

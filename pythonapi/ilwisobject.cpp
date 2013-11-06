@@ -6,6 +6,7 @@
 using namespace pythonapi;
 
 IlwisObject::IlwisObject(){
+    this->_ilwisObjectID = Ilwis::i64UNDEF;
 }
 
 bool IlwisObject::isValid(){
@@ -21,5 +22,7 @@ Ilwis::IIlwisObject IlwisObject::ptr() const{
 }
 
 quint64 IlwisObject::ilwisID() const{
+    if (this->_ilwisObjectID == Ilwis::i64UNDEF)
+        throw Ilwis::ErrorObject(QString("invalid IlwisObjectID"));
     return this->_ilwisObjectID;
 }

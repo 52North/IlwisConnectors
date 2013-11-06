@@ -5,11 +5,11 @@
 
 namespace pythonapi{
 
-    class IssueLogger: public QObject{
+    class QIssueLogger: public QObject{
         Q_OBJECT
 
     public:
-        IssueLogger();
+        QIssueLogger();
 
     public slots:
         void ilwiserrormessage(const QString& message);

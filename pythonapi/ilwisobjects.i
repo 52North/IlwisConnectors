@@ -6,26 +6,22 @@
 
 %{
 #include "ilwis.h"
-#include "log.h"
-#include "exception.h"
 #include "ilwisobject.h"
 #include "coverage.h"
 #include "pyvariant.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "featureiterator.h"
-
-static PyObject* ilwisException;
 %}
 
 %init %{
-    //init QtCoreApllication and Ilwis library
+    //init QtCoreApllication, Ilwis library and IssueLogger connection
     pythonapi::initIlwisObjects();
 
     //init IlwisException for Python
-    ilwisException = PyErr_NewException("_ilwisobjects.IlwisException",NULL,NULL);
-    Py_INCREF(ilwisException);
-    PyModule_AddObject(m, "IlwisException", ilwisException);//m is SWIG declaration for Python C API modul creation
+    pythonapi::ilwisException = PyErr_NewException("_ilwisobjects.IlwisException",NULL,NULL);
+    Py_INCREF(pythonapi::ilwisException);
+    PyModule_AddObject(m, "IlwisException", pythonapi::ilwisException);//m is SWIG declaration for Python C API modul creation
 %}
 //adds the export flag to pyd library for the IlwisException
 %pythoncode %{
@@ -36,7 +32,7 @@ static PyObject* ilwisException;
     try {
         $action
     }catch (std::exception& e) {
-        PyErr_SetString(ilwisException,pythonapi::get_err_message(e));
+        PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
         SWIG_fail;
     }
 }

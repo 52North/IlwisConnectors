@@ -19,9 +19,7 @@ HEADERS += \
     pythonapi/featureiterator.h \
     pythonapi/feature.h \
     pythonapi/pyvariant.h \
-    pythonapi/exception.h \
-    pythonapi/log.h \
-    pythonapi/issuelogger.h
+    pythonapi/qissuelogger.h
 
 SOURCES += \
     pythonapi/ilwisobject.cpp \
@@ -32,9 +30,8 @@ SOURCES += \
     pythonapi/featureiterator.cpp \
     pythonapi/feature.cpp \
     pythonapi/pyvariant.cpp \
-    pythonapi/exception.cpp \
-    pythonapi/log.cpp \
-    pythonapi/issuelogger.cpp
+    pythonapi/qissuelogger.cpp \
+    pythonapi/py_error.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \

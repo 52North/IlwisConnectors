@@ -27,7 +27,7 @@ int PyVariant::__int__(){
         bool ok = false;
         int ret = this->_data->toInt(&ok);
         if (!ok)
-            throw Ilwis::ErrorObject(QString("QVariant cannot convert '%1' to int").arg(this->_data->toString()));
+            throw std::domain_error(QString("QVariant cannot convert '%1' to int").arg(this->_data->toString()).toStdString());
         return ret;
     }
 }
