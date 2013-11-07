@@ -432,7 +432,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
                     count = gdal()->getPointCount(hSubGeometry);
                     if(count == 0)
                        continue;
-                    ring = pol.inners()[j];
+                    ring = pol.inners()[j-1];
                     ring.resize(count);
                     for(int i = 0; i < count; ++i) {
                         double x,y,z;
