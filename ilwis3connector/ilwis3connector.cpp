@@ -323,7 +323,7 @@ QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& 
         }
         else {
             if ( owner.isValid())  {
-                QString loc = owner.container().toLocalFile() + "/" + localName;
+                QString loc = "file:///" + owner.container().toLocalFile() + "/" + localName;
                 return loc;
             }
             QUrl loc = context()->workingCatalog()->filesystemLocation();

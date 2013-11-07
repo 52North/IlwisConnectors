@@ -112,7 +112,7 @@ ColumnDefinition TableConnector::getKeyColumn() {
     if ( domain == "None")
         return ColumnDefinition();
     IThematicDomain dom;
-    dom.prepare(domain);
+    dom.prepare(filename2FullPath(domain, this->_resource));
     if ( !dom.isValid()) {
         kernel()->issues()->log(TR(ERR_NO_INITIALIZED_1).arg(domain));
         return ColumnDefinition();

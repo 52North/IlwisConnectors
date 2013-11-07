@@ -1,1 +1,5 @@
 *.user
+pythonapi/ilwisobjects.py
+pythonapi/ilwisobjects_wrap.cxx
+*/__pycache__/
+.idea

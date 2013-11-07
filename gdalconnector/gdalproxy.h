@@ -2,6 +2,7 @@
 #define GDALPROXY_H
 
 #include <QHash>
+#include <QLibrary>
 #include "ogr_api.h"
 #include "gdal.h"
 
