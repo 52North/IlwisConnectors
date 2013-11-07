@@ -24,15 +24,16 @@ IlwisTypes GdalConnector::ilwisType(const QString &name)
         filename = name.split("?").front();
     }
     QFileInfo inf(filename);
-    bool isCatalog =  inf.isDir();
-    if ( isCatalog)
+    if ( inf.isDir())
         return itCATALOG;
-    if ( gdal()->getRasterExtensions().indexOf("." + inf.suffix())!= -1)
+
+    QString ext = inf.suffix();
+    QString filter = "*." + ext;
+    if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
         return itRASTER;
-    if ( gdal()->getFeatureExtensions().indexOf("." + inf.suffix())!= -1)
+    if ( gdal()->getFeatureExtensions().contains(filter,Qt::CaseInsensitive))
         return itFEATURE;
     return itUNKNOWN; //TODO add table formats here
-
 }
 
 bool GdalConnector::loadMetaData(IlwisObject *data){

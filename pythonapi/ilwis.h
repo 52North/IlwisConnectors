@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 
+//predeclaration of PyObject from object.h
 typedef struct _object PyObject;
 
 namespace pythonapi{

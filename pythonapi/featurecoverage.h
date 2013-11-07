@@ -2,7 +2,6 @@
 #define PYTHONAPI_FEATURECOVERAGE_H
 
 #include "coverage.h"
-#include "string"
 
 namespace Ilwis {
     class FeatureCoverage;

@@ -4,7 +4,8 @@
 from ilwisobjects import *
 
 def main():
-    fc = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
+    fc = FeatureCoverage()
+    fc.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
     if fc.isValid():
         print("successfully loaded", fc)
         print(fc ,"contains:",fc.featureCount(),"Features")
@@ -22,7 +23,8 @@ def main():
         del v
         print("sum of rainfall values in may:",sum)
     else:
-        print("couldn't load FeatureCoverage:", fc)
+        print("couldn't load FeatureCoverage")
+
 
     fc = FeatureCoverage("file:///C:/Users/Poku");
     try:
@@ -31,10 +33,16 @@ def main():
     except IlwisException as err:
         print("caught error:",err)
 
-#def claudio_example():#and martins solution proposal
+#    rc = RasterCoverage()
+#    rc.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
+#    rc.connectTo("", "GTiff","gdal",IlwisObject.cmOUTPUT)
+
+
+
+def claudio_example():#and martins solution proposal
 #    ilwisengine = ilwisobjects.engine()
 #    #create a feature coverage
-#    distribution = ilwisengine.features()
+    distribution = FeatureCoverage()#ilwisengine.features()
 #    #link it to a local shape file with species distribution. the attributes will contain an attribute 'distribution'.
 #    distribution.connectTo("file://d:/somepath/species.shp");
 #    #create a coordinate system; we could also use the csy of the distribution map but lets create (for interface sake) a coordinate system

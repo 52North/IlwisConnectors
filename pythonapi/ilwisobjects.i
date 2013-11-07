@@ -12,6 +12,7 @@
 #include "feature.h"
 #include "featurecoverage.h"
 #include "featureiterator.h"
+#include "rastercoverage.h"
 %}
 
 %init %{
@@ -72,3 +73,4 @@
 %}
 }
 
+%include "rastercoverage.h"

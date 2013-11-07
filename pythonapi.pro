@@ -19,7 +19,8 @@ HEADERS += \
     pythonapi/featureiterator.h \
     pythonapi/feature.h \
     pythonapi/pyvariant.h \
-    pythonapi/qissuelogger.h
+    pythonapi/qissuelogger.h \
+    pythonapi/rastercoverage.h
 
 SOURCES += \
     pythonapi/ilwisobject.cpp \
@@ -31,7 +32,8 @@ SOURCES += \
     pythonapi/feature.cpp \
     pythonapi/pyvariant.cpp \
     pythonapi/qissuelogger.cpp \
-    pythonapi/py_error.cpp
+    pythonapi/py_error.cpp \
+    pythonapi/rastercoverage.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \

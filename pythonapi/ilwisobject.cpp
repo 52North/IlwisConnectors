@@ -9,6 +9,20 @@ IlwisObject::IlwisObject(){
     this->_ilwisObjectID = Ilwis::i64UNDEF;
 }
 
+void IlwisObject::connectTo(const char *url, const char *format, const char *fnamespace, ConnectorMode cmode){
+    Ilwis::IIlwisObject io;
+    if(this->isValid())
+        io = this->ptr();
+    else{
+        if (cmode == cmINPUT){
+            io.prepare(QString(url), Ilwis::IlwisObject::findType(url));
+            this->_ilwisObjectID = io->id();
+        }else
+            throw Ilwis::ErrorObject(QString("Cannot connect to invalid object."));
+    }
+    this->ptr()->connectTo(QUrl(url), QString(format), QString(fnamespace), (Ilwis::IlwisObject::ConnectorMode)cmode);
+}
+
 bool IlwisObject::isValid(){
     return this->_ilwisObjectID != Ilwis::i64UNDEF && this->ptr().isValid() && this->ptr()->isValid();
 }
@@ -18,7 +32,9 @@ const char* IlwisObject::__str__(){
 }
 
 Ilwis::IIlwisObject IlwisObject::ptr() const{
-    return Ilwis::IlwisObject::create<Ilwis::IIlwisObject>(this->_ilwisObjectID);
+    Ilwis::IIlwisObject io;
+    io.prepare(this->_ilwisObjectID);
+    return io;
 }
 
 quint64 IlwisObject::ilwisID() const{
