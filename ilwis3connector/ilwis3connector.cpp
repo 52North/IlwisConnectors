@@ -228,6 +228,9 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
     if (name.contains("?") == 0) {
         filename = name.split("?").front();
     }
+    if ( filename.indexOf("file://") == 0) {
+        filename = QUrl(filename).toLocalFile();
+    }
     QFileInfo inf(filename);
     bool isCatalog =  inf.isDir();
     if ( isCatalog)
