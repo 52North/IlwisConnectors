@@ -52,6 +52,8 @@ bool GdalCatalogConnector::loadItems()
         }
         fileList = folder.entryInfoList();
         QStringList namefilter = gdal()->getRasterExtensions();
+        //TODO: GdalCatalogConnector should also support FeatureExtensions
+        //namefilter << gdal()->getFeatureExtensions();
 
         folder.setFilter(QDir::Files);
         QFileInfoList files = folder.entryInfoList(namefilter);
