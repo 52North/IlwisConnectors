@@ -26,23 +26,26 @@ def main():
         print("couldn't load FeatureCoverage")
 
 
-    fc = FeatureCoverage("file:///C:/Users/Poku");
-    try:
-        for f in fc:
-            print(f)
-    except IlwisException as err:
-        print("caught error:",err)
+#    fc = FeatureCoverage("file:///C:/Users/Poku");
+#    try:
+#        for f in fc:
+#            print(f)
+#    except IlwisException as err:
+#        print("caught error:",err)
 
-#    rc = RasterCoverage()
-#    rc.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
+    rc = RasterCoverage()
+    rc.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
+    rc.connectTo("", "map","ilwis3",IlwisObject.cmOUTPUT);
+#    mp->setCreateTime(Ilwis::Time::now());
 #    rc.connectTo("", "GTiff","gdal",IlwisObject.cmOUTPUT)
+#    rc.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA)
 
 
 
 def claudio_example():#and martins solution proposal
 #    ilwisengine = ilwisobjects.engine()
 #    #create a feature coverage
-    distribution = FeatureCoverage()#ilwisengine.features()
+     distribution = FeatureCoverage()#ilwisengine.features()
 #    #link it to a local shape file with species distribution. the attributes will contain an attribute 'distribution'.
 #    distribution.connectTo("file://d:/somepath/species.shp");
 #    #create a coordinate system; we could also use the csy of the distribution map but lets create (for interface sake) a coordinate system

@@ -20,6 +20,8 @@ namespace pythonapi {
     public:
         //should be the same as enum Ilwis::IlwisObject::ConnectorMode (ilwisobject.h)
         enum ConnectorMode{cmINPUT=1, cmOUTPUT=2, cmEXTENDED=4};
+        enum StoreMode{smMETADATA=1, smBINARYDATA=2};
+
     protected:
         quint64 _ilwisObjectID;
         Ilwis::IIlwisObject ptr() const;
@@ -28,6 +30,7 @@ namespace pythonapi {
         virtual ~IlwisObject(){};
 
         void connectTo(const char* url, const char* format  = "", const char* fnamespace = "", ConnectorMode cmode = cmINPUT);
+        void store(ConnectorMode storeMode);
         bool isValid();
         const char *__str__();
         quint64 ilwisID() const;

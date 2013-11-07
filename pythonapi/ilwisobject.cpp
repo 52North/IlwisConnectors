@@ -15,12 +15,18 @@ void IlwisObject::connectTo(const char *url, const char *format, const char *fna
         io = this->ptr();
     else{
         if (cmode == cmINPUT){
-            io.prepare(QString(url), Ilwis::IlwisObject::findType(url));
+            if (!io.prepare(QString(url), Ilwis::IlwisObject::findType(url)))
+                throw Ilwis::ErrorObject(QString("Cannot create new IlwisObject from %1 for cmOUTPUT").arg(url));
             this->_ilwisObjectID = io->id();
-        }else
-            throw Ilwis::ErrorObject(QString("Cannot connect to invalid object."));
+        }else{
+            throw Ilwis::ErrorObject(QString("Cannot connect to invalid object for cmOUTPUT"));
+        }
     }
     this->ptr()->connectTo(QUrl(url), QString(format), QString(fnamespace), (Ilwis::IlwisObject::ConnectorMode)cmode);
+}
+
+void IlwisObject::store(IlwisObject::ConnectorMode storeMode){
+    this->ptr()->store((Ilwis::IlwisObject::ConnectorMode)storeMode);
 }
 
 bool IlwisObject::isValid(){
