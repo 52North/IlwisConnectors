@@ -26,13 +26,17 @@
 using namespace pythonapi;
 
 FeatureCoverage::FeatureCoverage(){
+    Ilwis::IFeatureCoverage fc;
+    fc.prepare();
+    if (fc.isValid())
+        this->_ilwisObject = new Ilwis::IlwisData<Ilwis::IlwisObject>(fc);
 }
 
 FeatureCoverage::FeatureCoverage(const char* resource){
     Ilwis::IFeatureCoverage fc;
     fc.prepare(QString(resource));
     if (fc.isValid())
-        this->_ilwisObjectID = fc->id();
+        this->_ilwisObject = new Ilwis::IlwisData<Ilwis::IlwisObject>(fc);
 }
 
 FeatureCoverage::~FeatureCoverage(){

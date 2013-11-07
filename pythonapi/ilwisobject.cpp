@@ -6,31 +6,32 @@
 using namespace pythonapi;
 
 IlwisObject::IlwisObject(){
-    this->_ilwisObjectID = Ilwis::i64UNDEF;
+    this->_ilwisObject = NULL;
+}
+
+IlwisObject::~IlwisObject(){
+//    delete this->_ilwisObject;
 }
 
 void IlwisObject::connectTo(const char *url, const char *format, const char *fnamespace, ConnectorMode cmode){
-    Ilwis::IIlwisObject io;
-    if(this->isValid())
-        io = this->ptr();
-    else{
-        if (cmode == cmINPUT){
-            if (!io.prepare(QString(url), Ilwis::IlwisObject::findType(url)))
-                throw Ilwis::ErrorObject(QString("Cannot create new IlwisObject from %1 for cmOUTPUT").arg(url));
-            this->_ilwisObjectID = io->id();
+    if(this->isValid()){
+        if (cmode == cmINPUT || cmode == cmEXTENDED){
+            if (!this->ptr().prepare(QString(url)))
+                throw Ilwis::ErrorObject(QString("Cannot reconnect %1 for input").arg(url));
         }else{
-            throw Ilwis::ErrorObject(QString("Cannot connect to invalid object for cmOUTPUT"));
+            this->ptr()->connectTo(QUrl(url), QString(format), QString(fnamespace), (Ilwis::IlwisObject::ConnectorMode)cmode);
         }
+    }else{
+        throw Ilwis::ErrorObject(QString("Cannot connect to invalid object"));
     }
-    this->ptr()->connectTo(QUrl(url), QString(format), QString(fnamespace), (Ilwis::IlwisObject::ConnectorMode)cmode);
 }
 
 void IlwisObject::store(IlwisObject::ConnectorMode storeMode){
     this->ptr()->store((Ilwis::IlwisObject::ConnectorMode)storeMode);
 }
 
-bool IlwisObject::isValid(){
-    return this->_ilwisObjectID != Ilwis::i64UNDEF && this->ptr().isValid() && this->ptr()->isValid();
+bool IlwisObject::isValid() const{
+    return this->_ilwisObject != NULL && this->ptr().isValid() && this->ptr()->isValid();
 }
 
 const char* IlwisObject::__str__(){
@@ -38,13 +39,11 @@ const char* IlwisObject::__str__(){
 }
 
 Ilwis::IIlwisObject IlwisObject::ptr() const{
-    Ilwis::IIlwisObject io;
-    io.prepare(this->_ilwisObjectID);
-    return io;
+    return (*this->_ilwisObject);
 }
 
 quint64 IlwisObject::ilwisID() const{
-    if (this->_ilwisObjectID == Ilwis::i64UNDEF)
-        throw Ilwis::ErrorObject(QString("invalid IlwisObjectID"));
-    return this->_ilwisObjectID;
+    if (this->isValid())
+        throw Ilwis::ErrorObject(QString("invalid IlwisObject"));
+    return this->ptr()->id();
 }

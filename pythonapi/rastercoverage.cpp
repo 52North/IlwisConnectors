@@ -19,4 +19,8 @@
 using namespace pythonapi;
 
 RasterCoverage::RasterCoverage(){
+    Ilwis::IRasterCoverage fc;
+    fc.prepare();
+    if (fc.isValid())
+        this->_ilwisObject = new Ilwis::IlwisData<Ilwis::IlwisObject>(fc);
 }

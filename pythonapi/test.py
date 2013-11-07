@@ -4,8 +4,7 @@
 from ilwisobjects import *
 
 def main():
-    fc = FeatureCoverage()
-    fc.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
+    fc = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
     if fc.isValid():
         print("successfully loaded", fc)
         print(fc ,"contains:",fc.featureCount(),"Features")
