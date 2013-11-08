@@ -199,9 +199,9 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data)
         return false;
     }
 
-    QString dataFile = filename2FullPath(_odf->value("MapStore","Data"));
+    QString dataFile = filename2FullPath(_odf->value("MapStore","Data"), _resource);
     if ( dataFile != sUNDEF)
-         _dataFiles.push_back(dataFile);
+         _dataFiles.push_back(QUrl(dataFile).toLocalFile());
 
     QString storeType = _odf->value("MapStore","Type");
 
@@ -294,7 +294,7 @@ Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
     grid->prepare();
 
     for(quint32 i=0; i < _dataFiles.size(); ++i) {
-        QFile file(_dataFiles[i].absoluteFilePath());
+        QFile file(_dataFiles[i].absoluteFilePath()+"#");
         if ( !file.exists()){
             ERROR1(ERR_MISSING_DATA_FILE_1,_dataFiles[0].fileName());
             return 0;
