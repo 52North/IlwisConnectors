@@ -22,5 +22,13 @@ RasterCoverage::RasterCoverage(){
     Ilwis::IRasterCoverage fc;
     fc.prepare();
     if (fc.isValid())
-        this->_ilwisObject = new Ilwis::IlwisData<Ilwis::IlwisObject>(fc);
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IlwisData<Ilwis::IlwisObject>(fc));
 }
+
+RasterCoverage::RasterCoverage(const char *resource){
+    Ilwis::IRasterCoverage fc;
+    fc.prepare(QString(resource));
+    if (fc.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IlwisData<Ilwis::IlwisObject>(fc));
+}
+

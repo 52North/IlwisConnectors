@@ -4,6 +4,7 @@
 from ilwisobjects import *
 
 def main():
+    muteIssueLogger()
     fc = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
     if fc.isValid():
         print("successfully loaded", fc)
@@ -19,11 +20,14 @@ def main():
             print(int(v))
         except TypeError as err:
             print("caught TypeError:",err)
+        del it
+        del f
         del v
         print("sum of rainfall values in may:",sum)
+        del sum
     else:
         print("couldn't load FeatureCoverage")
-
+    del fc
 
 #    fc = FeatureCoverage("file:///C:/Users/Poku");
 #    try:
@@ -34,10 +38,11 @@ def main():
 
     rc = RasterCoverage()
     rc.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
-    rc.connectTo("", "map","ilwis3",IlwisObject.cmOUTPUT);
-#    mp->setCreateTime(Ilwis::Time::now());
-#    rc.connectTo("", "GTiff","gdal",IlwisObject.cmOUTPUT)
-#    rc.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA)
+    rc.connectTo("", "GTiff","gdal",IlwisObject.cmOUTPUT)
+    if rc.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
+        print("successfully saved n000302.mpr.tif")
+    else:
+        print("could not save n000302.mpr.tif")
 
 
 

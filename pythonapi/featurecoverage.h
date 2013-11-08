@@ -10,7 +10,10 @@ namespace Ilwis {
 
 namespace pythonapi {
 
+    class FeatureIterator;
+
     class FeatureCoverage : public Coverage{
+        friend class FeatureIterator;
     public:
         FeatureCoverage();
         FeatureCoverage(const char* resource);

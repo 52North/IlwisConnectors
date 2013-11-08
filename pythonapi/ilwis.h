@@ -9,6 +9,7 @@ typedef struct _object PyObject;
 namespace pythonapi{
     //init modul (ilwis.cpp)
     bool initIlwisObjects();
+    void muteIssueLogger(); // (ilwis.cpp)
     //can retrieve Ilwis::ErrorObject::message (ilwis.cpp)
     const char* get_err_message(std::exception& e);
     //returns typeid(Ilwis::ErrorObject) to compare in translate_Exception_type (ilwis.cpp)

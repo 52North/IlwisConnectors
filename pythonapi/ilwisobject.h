@@ -23,14 +23,14 @@ namespace pythonapi {
         enum StoreMode{smMETADATA=1, smBINARYDATA=2};
 
     protected:
-        Ilwis::IIlwisObject* _ilwisObject;
-        Ilwis::IIlwisObject ptr() const;
+        std::shared_ptr<Ilwis::IIlwisObject> _ilwisObject;
+        std::shared_ptr<Ilwis::IIlwisObject> ptr() const;
     public:
         IlwisObject();
         virtual ~IlwisObject();
 
         void connectTo(const char* url, const char* format  = "", const char* fnamespace = "", ConnectorMode cmode = cmINPUT);
-        void store(ConnectorMode storeMode);
+        bool store(ConnectorMode storeMode);
         bool isValid() const;
         const char *__str__();
         quint64 ilwisID() const;

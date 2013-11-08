@@ -13,6 +13,7 @@ namespace pythonapi {
     class RasterCoverage : public Coverage{
     public:
         RasterCoverage();
+        RasterCoverage(const char* resource);
     };
 
 }

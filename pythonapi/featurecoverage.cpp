@@ -29,21 +29,21 @@ FeatureCoverage::FeatureCoverage(){
     Ilwis::IFeatureCoverage fc;
     fc.prepare();
     if (fc.isValid())
-        this->_ilwisObject = new Ilwis::IlwisData<Ilwis::IlwisObject>(fc);
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IlwisData<Ilwis::IlwisObject>(fc));
 }
 
 FeatureCoverage::FeatureCoverage(const char* resource){
     Ilwis::IFeatureCoverage fc;
     fc.prepare(QString(resource));
     if (fc.isValid())
-        this->_ilwisObject = new Ilwis::IlwisData<Ilwis::IlwisObject>(fc);
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IlwisData<Ilwis::IlwisObject>(fc));
 }
 
 FeatureCoverage::~FeatureCoverage(){
 }
 
 unsigned int FeatureCoverage::featureCount() const{
-    return this->ptr().get<Ilwis::FeatureCoverage>()->featureCount();
+    return this->ptr()->get<Ilwis::FeatureCoverage>()->featureCount();
 }
 
 

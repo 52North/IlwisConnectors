@@ -38,6 +38,12 @@
     }
 }
 
+
+namespace pythonapi {
+    void muteIssueLogger(); //(ilwis.h)
+}
+
+
 %include "ilwisobject.h"
 
 %include "coverage.h"
