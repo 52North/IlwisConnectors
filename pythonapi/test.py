@@ -6,7 +6,7 @@ from ilwisobjects import *
 def main():
     muteIssueLogger()
     fc = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
-    if fc.isValid():
+    if fc:
         print("successfully loaded", fc)
         print(fc ,"contains:",fc.featureCount(),"Features")
         sum = 0
@@ -36,8 +36,14 @@ def main():
 #    except IlwisException as err:
 #        print("caught error:",err)
 
+    e = Engine()
+    print(e.do(""))
+
     rc = RasterCoverage()
     rc.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
+
+    aaa = rc + rc;
+    print(rc, " + ", rc, " = ", aaa)
     rc.connectTo("", "GTiff","gdal",IlwisObject.cmOUTPUT)
     if rc.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
         print("successfully saved n000302.mpr.tif")

@@ -2,6 +2,7 @@
 #define PYTHONAPI_ILWISOBJECT_H
 
 #include <memory>
+#include "object.h"
 
 namespace Ilwis {
     class IlwisObject;
@@ -16,7 +17,7 @@ typedef unsigned long long quint64; /* 64 bit unsigned */
 
 namespace pythonapi {
 
-    class IlwisObject{
+    class IlwisObject: public Object{
     public:
         //should be the same as enum Ilwis::IlwisObject::ConnectorMode (ilwisobject.h)
         enum ConnectorMode{cmINPUT=1, cmOUTPUT=2, cmEXTENDED=4};
@@ -27,11 +28,12 @@ namespace pythonapi {
         std::shared_ptr<Ilwis::IIlwisObject> ptr() const;
     public:
         IlwisObject();
+        IlwisObject(Ilwis::IIlwisObject* object);
         virtual ~IlwisObject();
 
         void connectTo(const char* url, const char* format  = "", const char* fnamespace = "", ConnectorMode cmode = cmINPUT);
         bool store(ConnectorMode storeMode);
-        bool isValid() const;
+        bool __bool__() const;
         const char *__str__();
         quint64 ilwisID() const;
     };

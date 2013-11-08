@@ -9,10 +9,11 @@ namespace Ilwis{
 
 namespace pythonapi{
 
-    class Feature{
+    class Feature: public Object{
     public:
         Feature(Ilwis::SPFeatureI* ilwisFeature);
-        const char *__str__();
+        bool __bool__() const;
+        const char* __str__();
         PyVariant* cell(const char* name, int index = -1);
 
     private:

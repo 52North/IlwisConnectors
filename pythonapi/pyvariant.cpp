@@ -5,11 +5,13 @@
 
 using namespace pythonapi;
 
-PyVariant::PyVariant(QVariant* data): _data(data){
+PyVariant::PyVariant(): _data(std::unique_ptr<QVariant>(new QVariant())){
+}
+
+PyVariant::PyVariant(QVariant* data): _data(std::unique_ptr<QVariant>(data)){
 }
 
 PyVariant::~PyVariant(){
-    delete this->_data;
 }
 
 void PyVariant::__del__(){
@@ -32,6 +34,6 @@ int PyVariant::__int__(){
     }
 }
 
-
-PyVariant::PyVariant(): _data(new QVariant()){
+bool PyVariant::__bool__() const{
+    return (bool)this->_data && !this->_data->isNull();
 }

@@ -14,6 +14,7 @@ namespace pythonapi {
     public:
         RasterCoverage();
         RasterCoverage(const char* resource);
+        RasterCoverage* __add__(RasterCoverage &rc);
     };
 
 }

@@ -6,6 +6,8 @@
 
 %{
 #include "ilwis.h"
+#include "object.h"
+#include "engine.h"
 #include "ilwisobject.h"
 #include "coverage.h"
 #include "pyvariant.h"
@@ -43,6 +45,14 @@ namespace pythonapi {
     void muteIssueLogger(); //(ilwis.h)
 }
 
+%include "object.h"
+
+%include "engine.h"
+%extend pythonapi::Engine {
+%insert("python") %{
+    do = _do
+%}
+}
 
 %include "ilwisobject.h"
 
