@@ -3,15 +3,16 @@
 #include <QUrl>
 #include <QStringList>
 #include <QDir>
+#include "kernel.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "inifile.h"
 #include "identity.h"
-#include "kernel.h"
 #include "resource.h"
 #include "catalog.h"
 #include "mastercatalog.h"
 #include "ilwiscontext.h"
 #include "odfitem.h"
-#include "connectorinterface.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 
@@ -23,28 +24,24 @@ using namespace Ilwis3;
 
 #include <typeinfo>
 
-ODFItem::ODFItem(const QString &file) : Resource(QUrl(QUrl::fromLocalFile(file)),itANY), _projectionName(sUNDEF)
+ODFItem::ODFItem(const QUrl &file, const UPContainerConnector& container) : Resource(file,itANY), _projectionName(sUNDEF)
 {
-
-    _odf.setIniFile(file);
-    _file = file;
+    _odf.setIniFile(file, container);
+    _file = container->toLocalFile(file);
     setName(_file.fileName(), false);
-    _container = QUrl::fromLocalFile(_file.canonicalPath());
+    addContainer(QUrl::fromLocalFile(_file.canonicalPath()));
     IlwisTypes csytp, domtp, grftp;
     csytp = domtp = grftp = itUNKNOWN;
-    if ( file.indexOf("kenya_2009ndvi_cor_22.mpr") != -1) {
-        qDebug() << "stop111";
-    }
 
-    _ilwtype = Ilwis3Connector::ilwisType(file);
-    _csyname = findCsyName();
-    _domname = findDomainName();
+    _ilwtype = Ilwis3Connector::ilwisType(_file.absoluteFilePath());
+    _csyname = findCsyName(container);
+    _domname = findDomainName(container);
     _grfname = findGrfName();
     _datumName = findDatumName();
 
 
-    csytp = findCsyType();
-    domtp = findDomainType();
+    csytp = findCsyType(container);
+    domtp = findDomainType(container);
 
 
     if ( csytp != itUNKNOWN && _ilwtype == itCOORDSYSTEM)
@@ -68,7 +65,7 @@ ODFItem::ODFItem(const QString &file) : Resource(QUrl(QUrl::fromLocalFile(file))
     if (_datumName != sUNDEF)
         _extendedType |= itGEODETICDATUM;
 
-    _size = findSize();
+    _size = findSize(container);
     _dimensions = findDimensions();
 }
 
@@ -113,7 +110,10 @@ bool ODFItem::setFileId(const QHash<QString, quint64> &names, const QString& val
             return true;
         }
     }
-    QHash<QString, quint64>::const_iterator iter = names.find(value);
+    QString completeName =  (value.contains(QRegExp("\\\\|/"))) ? value : _file.canonicalPath() + "/" + value;
+    QUrl url = QUrl::fromLocalFile(completeName.toLower());
+    QString dd = url.toLocalFile();
+    QHash<QString, quint64>::const_iterator iter = names.find(url.toString());
     if (iter != names.end()){
         fileid = iter.value();
     } else {
@@ -125,8 +125,7 @@ bool ODFItem::setFileId(const QHash<QString, quint64> &names, const QString& val
         if ( resource.isValid()) {
             fileid = resource.id();
         } else {
-            QString completeName =  (value.contains(QRegExp("\\\\|/"))) ? value : _file.canonicalPath() + "/" + value;
-            fileid = mastercatalog()->resource2id(QUrl(completeName), tp);
+            fileid = mastercatalog()->resource2id(url, tp);
             if ( fileid == i64UNDEF) {
                 kernel()->issues()->log(TR(ERR_MISSING_1).arg(completeName));
                 fileid = i64UNDEF;
@@ -158,7 +157,7 @@ QString ODFItem::findDatumName() const {
     return sUNDEF;
 }
 
-QString ODFItem::findDomainName() const
+QString ODFItem::findDomainName(const UPContainerConnector& containerc) const
 {
     quint64 validTypes = itTABLE | itCOVERAGE | itDOMAIN;
     if ( (_ilwtype & validTypes) == 0)
@@ -173,10 +172,10 @@ QString ODFItem::findDomainName() const
             QString rasmap = _odf.value("MapList","Map0");
             QFile file(rasmap) ;
             if ( !file.exists()) {
-                rasmap = _file.path() + "/" + rasmap;
+                rasmap = container().toString() + "/" + rasmap;
             }
             IniFile ini;
-            ini.setIniFile(rasmap);
+            ini.setIniFile(rasmap, containerc);
             name = ini.value("BaseMap","Domain");
         }
     }
@@ -187,7 +186,7 @@ QString ODFItem::findDomainName() const
     return cleanName(name);
 }
 
-IlwisTypes ODFItem::findDomainType() const
+IlwisTypes ODFItem::findDomainType(const UPContainerConnector& containerc) const
 {
     quint64 validTypes = itTABLE | itCOVERAGE | itDOMAIN;
     if ( (_ilwtype & validTypes) == 0)
@@ -204,13 +203,12 @@ IlwisTypes ODFItem::findDomainType() const
         return itNUMERICDOMAIN;
 
     Resource resource = mastercatalog()->name2Resource(stripExtension(_domname),itDOMAIN);
-    if ( resource.isValid())
-        return resource.ilwisType();
+    //Resource resource = mastercatalog()->name2Resource(_domname,itDOMAIN);
     if ( resource.isValid())
         return resource.ilwisType();
     IniFile dm;
-    QString path = _file.canonicalPath() + "/" + _domname;
-    if(!dm.setIniFile(path))
+    QString path = container().toString() + "/" + _domname;
+    if(!dm.setIniFile(path, containerc))
         return itUNKNOWN;
 
     QString type =  dm.value("Domain", "Type");
@@ -228,7 +226,7 @@ IlwisTypes ODFItem::findDomainType() const
 
 }
 
-QString ODFItem::findCsyName() const
+QString ODFItem::findCsyName(const UPContainerConnector& containerc) const
 {
     quint64 validTypes = itGEOREF | itCOORDSYSTEM | itCOVERAGE;
     if ( (_ilwtype & validTypes) == 0 )
@@ -244,9 +242,9 @@ QString ODFItem::findCsyName() const
              if ( grf != sUNDEF) {
                  QFileInfo infgrf(grf);
                  if ( !infgrf.exists()) {
-                     QString grfpath = _file.path() + "/" + grf;
+                     QString grfpath = container().toString() + "/" + grf;
                      IniFile ini;
-                     ini.setIniFile(grfpath);
+                     ini.setIniFile(grfpath, containerc);
                      name = ini.value("GeoRef","CoordSystem");
                  }
              }
@@ -260,7 +258,7 @@ QString ODFItem::findCsyName() const
     return cleanName(name);
 }
 
-IlwisTypes ODFItem::findCsyType() const
+IlwisTypes ODFItem::findCsyType(const UPContainerConnector& containerc) const
 {
     quint64 validTypes = itGEOREF | itCOORDSYSTEM | itCOVERAGE;
     if ( (_ilwtype & validTypes) == 0)
@@ -269,11 +267,12 @@ IlwisTypes ODFItem::findCsyType() const
     if ( _csyname == "")
         return itUNKNOWN;
 
-    Resource resource = mastercatalog()->name2Resource(stripExtension(_csyname),itCOORDSYSTEM);
+    //Resource resource = mastercatalog()->name2Resource(stripExtension(_csyname),itCOORDSYSTEM);
+    Resource resource = mastercatalog()->name2Resource(_csyname,itCOORDSYSTEM);
     if ( resource.isValid())
         return resource.ilwisType();
     IniFile csy;
-    if ( _csyname == "LatlonWGS84.csy")
+    if ( _csyname == "latlonwgs84.csy")
         return itCONVENTIONALCOORDSYSTEM;
 
     QString ext = _file.suffix().toLower();
@@ -283,24 +282,24 @@ IlwisTypes ODFItem::findCsyType() const
             QString csyname;
             QFileInfo infgrf(grf);
             if ( !infgrf.exists()) {
-                grf = _file.path() + "/" + grf;
+                grf = container().toString()+ "/" + grf;
             }
             IniFile ini;
-            ini.setIniFile(grf);
+            ini.setIniFile(grf, containerc);
             csyname = ini.value("GeoRef","CoordSystem");
             QFile file(csyname);
             if ( !file.exists())
-                csyname = _file.path() + "/" + csyname;
-            csy.setIniFile(csyname);
+                csyname = container().toString() + "/" + csyname;
+            csy.setIniFile(csyname, containerc);
 
         }
     } else {
         QString path = _csyname;
         QFile file(path);
         if ( !file.exists())
-            path = _file.path() + "/" + path;
+            path = container().toString() + "/" + path;
 
-        if(!csy.setIniFile(path)){
+        if(!csy.setIniFile(path, containerc)){
             return itUNKNOWN;
         }
     }
@@ -361,9 +360,9 @@ QString ODFItem::findGrfName() const{
 //    return itUNKNOWN;
 //}
 
-quint64 ODFItem::findSize() const
+quint64 ODFItem::findSize(const UPContainerConnector& container) const
 {
-    return objectSize();
+    return objectSize(container);
 //    if ( sz == 0)
 //        return "";
 //     if ( sz < 1000)
@@ -378,11 +377,11 @@ quint64 ODFItem::findSize() const
 
 }
 
-quint64 ODFItem::partSize(const QString& file, const QString& section, const QString& key)  const{
+quint64 ODFItem::partSize(const QString& file, const QString& section, const QString& key,const UPContainerConnector& container)  const{
     QString part = file;
     if ( section != "") {
         IniFile odf;
-        odf.setIniFile(file);
+        odf.setIniFile(file, container);
         part = odf.value(section,key);
         if ( !part.contains(QRegExp("\\\\|/"))) {
             QFileInfo inf(file);
@@ -395,60 +394,60 @@ quint64 ODFItem::partSize(const QString& file, const QString& section, const QSt
 
 }
 
-quint64 ODFItem::objectSize() const {
+quint64 ODFItem::objectSize(const UPContainerConnector& container) const {
 
-    qint64 sz = partSize(_file.absoluteFilePath(),"","");
+    qint64 sz = partSize(_file.absoluteFilePath(),"","", container);
     bool versionOk;
     double rVersion = _odf.value("Ilwis", "Version").toDouble(&versionOk);
 
     switch(_ilwtype )
     {
     case itRASTER:
-        sz += partSize(_file.absoluteFilePath(), "MapStore", "Data"); break;
+        sz += partSize(_file.absoluteFilePath(), "MapStore", "Data", container); break;
     case itTABLE:
-        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data"); break;
+        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container); break;
     case itPOINT:
-        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data"); break;
+        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container); break;
     case itLINE:
         if ( rVersion >= 3.0)
         {
-            sz += partSize(_file.absoluteFilePath(), "TableStore", "Data");
-            sz += partSize(_file.absoluteFilePath(), "ForeignFormat", "Filename");
+            sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container);
+            sz += partSize(_file.absoluteFilePath(), "ForeignFormat", "Filename", container);
         }
         else
         {
-            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataSeg");
-            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataSegCode");
-            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataCrd");
+            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataSeg", container);
+            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataSegCode", container);
+            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataCrd", container);
         }
         break;
     case itPOLYGON:
         if ( rVersion >= 3.0)
         {
-            sz += partSize(_file.absoluteFilePath(), "top:TableStore", "Data");
-            sz += partSize(_file.absoluteFilePath(), "TableStore", "Data");
-            sz += partSize(_file.absoluteFilePath(), "ForeignFormat", "Filename");
+            sz += partSize(_file.absoluteFilePath(), "top:TableStore", "Data", container);
+            sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container);
+            sz += partSize(_file.absoluteFilePath(), "ForeignFormat", "Filename", container);
         }
         else
         {
-            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataSeg");
-            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataCrd");
-            sz += partSize(_file.absoluteFilePath(), "PolygonMapStore", "DataPol");
-            sz += partSize(_file.absoluteFilePath(), "PolygonMapStore", "DataPolCode");
-            sz += partSize(_file.absoluteFilePath(), "PolygonMapStore", "DataTop");
+            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataSeg", container);
+            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataCrd", container);
+            sz += partSize(_file.absoluteFilePath(), "PolygonMapStore", "DataPol", container);
+            sz += partSize(_file.absoluteFilePath(), "PolygonMapStore", "DataPolCode", container);
+            sz += partSize(_file.absoluteFilePath(), "PolygonMapStore", "DataTop", container);
         }
         break;
     case itDOMAIN:
-        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data"); break; // only true for Domainssort
+        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container); break; // only true for Domainssort
     case itGEOREF:
-        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data"); break;
+        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container); break;
     case itCOORDSYSTEM:
-        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data"); break;
+        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container); break;
 
         if ( _file.suffix() == "isl")
-            sz += partSize(_file.absoluteFilePath(), "Script", "ScriptFile"); break;
+            sz += partSize(_file.absoluteFilePath(), "Script", "ScriptFile", container); break;
         if ( _file.suffix() == "fun")
-            sz += partSize(_file.absoluteFilePath(), "FuncUser", "FuncDeffile"); break;
+            sz += partSize(_file.absoluteFilePath(), "FuncUser", "FuncDeffile", container); break;
     }
     return sz;
 }
@@ -520,5 +519,5 @@ QString  ODFItem::cleanName(const QString& name) const{
     if ( cleanTxt.at(0) == '\'') {
         cleanTxt = cleanTxt.remove("'");
     }
-    return cleanTxt;
+    return cleanTxt.toLower();
 }
