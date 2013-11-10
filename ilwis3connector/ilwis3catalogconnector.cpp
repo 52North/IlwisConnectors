@@ -7,9 +7,10 @@
 #include <QVector>
 #include "identity.h"
 #include "kernel.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "inifile.h"
 #include "resource.h"
-#include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
@@ -28,7 +29,7 @@ ConnectorInterface *Ilwis3CatalogConnector::create(const Resource &resource, boo
 
 }
 
-Ilwis3CatalogConnector::Ilwis3CatalogConnector(const Resource &resource) : FileCatalogConnector(resource)
+Ilwis3CatalogConnector::Ilwis3CatalogConnector(const Resource &resource) : CatalogConnector(resource)
 {
 }
 
@@ -42,36 +43,29 @@ inline uint qHash(const QFileInfo& inf ){
 
 bool Ilwis3CatalogConnector::loadItems()
 {
-    QUrl location = _location.url();
-    QStringList namefilter;
-    namefilter << "*.mpr" << "*.mpa" << "*.mps" << "*.mpp" << "*.tbt" << "*.dom" << "*.rpr" << "*.csy" << "*.grf" << "*.mpl";
+    if (!isValid())
+        return false;
 
-    QFileInfoList fileList = loadFolders(namefilter);
 
-    // remove duplicates, shoudnt happen but better save than sorry
-    QSet<QFileInfo> reduced = fileList.toSet();
-    fileList.clear();
-    fileList = QList<QFileInfo>::fromSet(reduced);
+    QStringList filters;
+    filters << "*.mpr" << "*.mpa" << "*.mps" << "*.mpp" << "*.tbt" << "*.dom" << "*.csy" << "*.grf" << "*.mpl";
+    std::vector<QUrl> files = containerConnector()->sources(filters
+                                                      ,ContainerConnector::foFULLPATHS | ContainerConnector::foEXTENSIONFILTER);
 
     QList<ODFItem> odfitems;
     QList<Resource> folders;
     QHash<QString, quint64> names;
-    foreach(QFileInfo file, fileList) {
-        QUrl container = location.url();
-        QString path = file.canonicalFilePath();
-        QString loc = container.toLocalFile();
-        if ( path.compare(loc,Qt::CaseInsensitive) == 0)
-            container = file.canonicalPath();
-        IlwisTypes tp = Ilwis3Connector::ilwisType(path);
-        QUrl url("file:///" + path);
+    foreach(const QUrl& url, files) {
+        QFileInfo file = containerConnector()->toLocalFile(url);
+        IlwisTypes tp = Ilwis3Connector::ilwisType(file.fileName());
         if ( mastercatalog()->resource2id(url, tp) == i64UNDEF) {
             if ( tp & itILWISOBJECT ) {
-                ODFItem item(path);
+                ODFItem item(url, containerConnector());
                 odfitems.push_back(item);
-                names[file.fileName().toLower()] = item.id();
-            } else {
+                names[url.toString().toLower()] = item.id();
+            } /*else {
                 folders.push_back(loadFolder(file, container, path, url));
-            }
+            }*/
         }
 
     }
@@ -96,22 +90,13 @@ bool Ilwis3CatalogConnector::loadItems()
     return ok;
 }
 
-bool Ilwis3CatalogConnector::canUse(const QUrl &resource) const
+bool Ilwis3CatalogConnector::canUse(const Resource &resource) const
 {
-    QString dn = resource.toString();
-    if ( resource.scheme() != "file")
-        return false;
-
-    if ( resource.toString() == "file://") // root of file system
+        if ( resource.ilwisType() != itCATALOG)
+            return false;
+        if (resource.url().scheme() == "ilwis")
+            return false;
         return true;
-    QFileInfo inf(resource.toLocalFile());
-    if ( !inf.isDir())
-        return false;
-
-    if ( !inf.exists())
-        return false;
-
-    return true;
 }
 
 QString Ilwis3CatalogConnector::provider() const
