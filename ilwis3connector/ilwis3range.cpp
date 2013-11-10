@@ -2,6 +2,8 @@
 #include <QStringList>
 #include "kernel.h"
 #include "numericrange.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "inifile.h"
 #include "rawconverter.h"
 #include "ilwis3range.h"
@@ -61,12 +63,12 @@ bool Ilwis3Range::minMax2minMax(const ODF &odf,const QString& minmax, double& vm
     if ( parts.size() >= 2) {
         vmin = parts[0].toDouble(&ok);
         if ( !ok) {
-            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Maximum", odf->fileinfo().baseName()));
+            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Maximum", odf->file()));
             return false;
         }
         vmax = parts[1].toDouble(&ok);
         if (!ok){
-            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Minimum", odf->fileinfo().baseName()));
+            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Minimum", odf->file()));
             return false;
         }
     }
@@ -81,7 +83,7 @@ bool Ilwis3Range::range2MinMax(const ODF &odf, const QString &range, double& vmi
         double v1 = parts[0].toDouble(&ok1);
         double v2 = parts[1].toDouble(&ok2);
         if ( ! ( ok1 && ok2)) {
-            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Range",odf->fileinfo().baseName()));
+            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Range",odf->file()));
             return false;
         }
         RawConverter conv = converter(odf,range);
@@ -130,7 +132,7 @@ RawConverter Ilwis3Range::converter(const ODF &odf, const QString &section)  {
 
         }
         if ( ! ( ok1 && ok2)) {
-            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Range",odf->fileinfo().baseName()));
+            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Range",odf->file()));
             return RawConverter();
         }
         return RawConverter(offset, scale,vmin, vmax, st);
