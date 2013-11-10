@@ -8,6 +8,8 @@
 #include "ilwis.h"
 #include "catalog.h"
 #include "kernel.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "ilwiscontext.h"
 #include "inifile.h"
 
@@ -21,32 +23,18 @@ IniFile::~IniFile()
 {
 }
 
-bool IniFile::setIniFile(const QString& fn, bool loadfile) {
-    QRegExp exp("/");
-    QString file = fn;
+bool IniFile::setIniFile(const QUrl& fn, const UPContainerConnector &container, bool loadfile) {
+    if ( !container || !container->isValid())
+        return false;
 
-    if (exp.indexIn(fn) == -1) {
-        file = context()->workingCatalog()->resolve(file);
-    }
-    _filename = file;
-
+     _filename = fn;
     if ( !loadfile ) // not interested in loading an inifile; we are creating a new one
         return true;
 
-    if ( _filename.exists() )
-        load();
-    else {
-        kernel()->issues()->log(TR(ERR_MISSING_DATA_FILE_1).arg(fn));
-        return false;
-    }
+    if(!load(container))
+        return ERROR1(ERR_MISSING_DATA_FILE_1,fn.toLocalFile());
+
     return true;
-
-}
-
-bool IniFile::setIniFile(const QUrl &fn, bool loadfile)
-{
-    QString file = fn.toLocalFile();
-    return setIniFile(file, loadfile);
 
 }
 
@@ -106,9 +94,9 @@ void IniFile::removeSection(const QString& section)
     }
 }
 
-QFileInfo IniFile::fileinfo() const
+QString IniFile::file() const
 {
-    return _filename;
+    return _filename.toString();
 }
 
 QStringList IniFile::childKeys(const QString &section) const
@@ -125,14 +113,22 @@ QStringList IniFile::childKeys(const QString &section) const
     return keys;
 }
 
-void IniFile::load()
+bool IniFile::load(const UPContainerConnector& container)
 {
     enum ParseState { FindSection, FindKey, ReadFindKey, StoreKey, None } state;
-    QFile inifile(_filename.canonicalFilePath());
-    if (!inifile.open(QIODevice::ReadOnly | QIODevice::Text))
-        return;
-    QTextStream textfile(&inifile);
-     QString text = textfile.readAll();
+    QFileInfo fileinfo = container->toLocalFile(_filename);
+    if (!fileinfo.exists())
+        return false;
+
+    QFile txtfile(fileinfo.absoluteFilePath());
+    if (!txtfile.open(QIODevice::ReadOnly | QIODevice::Text)){
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1, fileinfo.fileName());
+    }
+    QTextStream textfile(&txtfile);
+    QString text = textfile.readAll();
+    if (text == ""){
+        return false;
+    }
      QStringList lines = text.split("\n");
 
      QString section, key, value;
@@ -185,13 +181,16 @@ void IniFile::load()
              break;
          }
      }
+     return true;
 }
 
-void IniFile::store(const QString& ext)
+void IniFile::store(const QString& ext, const UPContainerConnector &container )
 {
-    QString path = _filename.absoluteFilePath();
-    if ( ext != "") {
-        path = _filename.absolutePath() + "/" + _filename.baseName() + "." + ext;
+    QFileInfo fileinf = container->toLocalFile(_filename);
+    QString path = fileinf.absoluteFilePath();
+
+    if ( ext != "" && path.indexOf("." + ext) > 3) {
+        path = path + "." + ext;
     }
     QFile fileIni(path);
 

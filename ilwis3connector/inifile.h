@@ -17,8 +17,7 @@ class IniFile
 {
 public:
     IniFile();
-    bool setIniFile(const QString& fn, bool loadfile=true);
-    bool setIniFile(const QUrl& fn, bool loadfile=true);
+    bool setIniFile(const QUrl& fn, const UPContainerConnector& container, bool loadfile=true);
     virtual ~IniFile();
 
     void setKeyValue(const QString& section, const QString& key, const QString& value);
@@ -26,16 +25,16 @@ public:
 
     void removeKeyValue(const QString& section, const QString& key);
     void removeSection(const QString& section);
-    QFileInfo fileinfo()const;
+    QString file()const;
     QStringList childKeys(const QString& section) const;
 
-    void store(const QString &ext="");
+    void store(const QString &ext, const UPContainerConnector &container);
 
 private:
-    QFileInfo _filename;
+    QUrl _filename;
     Sections _sections;
 
-    void load();
+    bool load(const UPContainerConnector &container);
 
 };
 
