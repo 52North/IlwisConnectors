@@ -6,8 +6,9 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "geometries.h"
-#include "inifile.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
+#include "inifile.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
@@ -45,7 +46,7 @@ GeorefConnector::GeorefConnector(const Resource &resource, bool load) : Ilwis3Co
 bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
     QString type = odf.value("GeoRef","Type");
     if ( type == "?") {
-        kernel()->issues()->log(TR("Invalid Georef section in %1").arg(odf.fileinfo().baseName()));
+        kernel()->issues()->log(TR("Invalid Georef section in %1").arg(odf.file()));
         return false;
     }
     bool ok1, ok2;
@@ -63,7 +64,7 @@ bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
         QString name = odf.value("GeoRefSubMap","GeoRef");
         QUrl resource = mastercatalog()->name2url(name, itGEOREF);
         IniFile odf;
-        odf.setIniFile(resource);
+        odf.setIniFile(resource, containerConnector());
         return loadGeoref(odf,data);
     } else if ( type == "GeoRefCTP"){
         return loadGeorefTiepoints(odf, grf);
@@ -170,7 +171,7 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
          _odf->setKeyValue("GeoRefSmpl", "b1", QString::number(support[0]));
          _odf->setKeyValue("GeoRefSmpl", "b2", QString::number(support[1]));
 
-        _odf->store();
+         _odf->store("grf", containerConnector());
         return true;
 
     }
@@ -221,7 +222,7 @@ IlwisObject *GeorefConnector::createGeoreference(const IniFile &odf) const{
         auto name = _odf->value("GeoRefSubMap","GeoRef");
         QUrl resource = mastercatalog()->name2url(name, itGEOREF);
         IniFile odf;
-        odf.setIniFile(resource);
+        odf.setIniFile(resource, containerConnector());
         return createGeoreference(odf);
     }
     return 0;

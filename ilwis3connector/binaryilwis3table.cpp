@@ -4,10 +4,11 @@
 #include "kernel.h"
 #include "angle.h"
 #include "point.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "inifile.h"
 #include "ilwisdata.h"
 #include "domain.h"
-#include "connectorinterface.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "ilwiscontext.h"
@@ -53,12 +54,12 @@ bool BinaryIlwis3Table::load(const ODF& odf, const QString& prfix){
     bool ok;
     _columns = odf->value(prefix + "Table","Columns").toLong(&ok);
     if (!ok) {
-        kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("column",odf->fileinfo().baseName()));
+        kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("column",odf->file()));
         return false;
     }
     _rows = odf->value(prefix + "Table","Records").toLong(&ok);
     if (!ok) {
-        kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("records",odf->fileinfo().baseName()));
+        kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("records",odf->file()));
         return false;
     }
     QString datafile = odf->value(prefix + "TableStore", "Data");
@@ -104,7 +105,7 @@ void BinaryIlwis3Table::getColumnInfo(const ODF& odf, const QString& prefix) {
         QString section = QString(prefix + "Col:%1").arg(name);
         QString st = odf->value(section, "StoreType");
         if ( st == sUNDEF) {
-            ERROR2(ERR_INVALID_PROPERTY_FOR_2, "column store type", odf->fileinfo().fileName());
+            ERROR2(ERR_INVALID_PROPERTY_FOR_2, "column store type", odf->file());
             return ;
         }
         inf._name = name;

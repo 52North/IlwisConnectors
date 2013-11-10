@@ -9,7 +9,7 @@ public:
     CoordinateSystemConnector(const Resource &resource, bool load=true);
     bool loadMetaData(IlwisObject *data);
 
-    static bool canUse(const Ilwis::Resource &resource);
+    static bool canUse(const Ilwis::Resource &resource, const UPContainerConnector &container);
 
     IlwisObject *create() const;
     static ConnectorInterface *create(const Resource &resource, bool load=true);

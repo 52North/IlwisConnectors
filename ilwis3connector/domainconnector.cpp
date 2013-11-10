@@ -2,6 +2,7 @@
 #include "angle.h"
 #include "point.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "inifile.h"
 #include "ilwisdata.h"
 #include "domainitem.h"
@@ -77,7 +78,7 @@ bool DomainConnector::handleItemDomains(IlwisObject* data) {
     tbl.load(_odf);
     quint32 indexName = tbl.index("Name");
     if (indexName == iUNDEF) { // no name column in the table ?
-        kernel()->issues()->log(TR(ERR_COLUMN_MISSING_2).arg("Name",_odf->fileinfo().baseName()));
+        kernel()->issues()->log(TR(ERR_COLUMN_MISSING_2).arg("Name",_odf->file()));
         return false;
     }
     quint32 indexCode = tbl.index("Code"); // not mandatory
@@ -299,7 +300,7 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
     } else if ( dom->ilwisType() == itCOORDDOMAIN) {
     }
 
-    _odf->store();
+    _odf->store("dom", containerConnector());
     return true;
 }
 
