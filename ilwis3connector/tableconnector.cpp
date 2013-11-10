@@ -5,6 +5,7 @@
 #include "angle.h"
 #include "point.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "inifile.h"
 #include "errorobject.h"
 #include "ilwisdata.h"
@@ -290,7 +291,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
 
     }
     _odf->setKeyValue("TableStore", "StoreTime", Time::now().toString());
-    _odf->store();
+    _odf->store("tbl", containerConnector());
     return true;
 }
 
