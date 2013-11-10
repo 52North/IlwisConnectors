@@ -11,6 +11,8 @@
 #include "table.h"
 #include "module.h"
 #include "numericrange.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "inifile.h"
 #include "numericrange.h"
 #include "numericdomain.h"
@@ -44,7 +46,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data) {
 
     QString file = filename2FullPath(_odf->value("MapList","Map0"));
     if ( file == sUNDEF)
-        return ERROR2(ERR_COULD_NOT_LOAD_2,"RasterCoverage",_odf->fileinfo().baseName());
+        return ERROR2(ERR_COULD_NOT_LOAD_2,"RasterCoverage",_odf->file());
 
     IRasterCoverage mp;
     if (!mp.prepare("file:///" + file))
@@ -60,12 +62,14 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data) {
 
     for(int i = 0; i < z; ++i) {
         QString file = _odf->value("MapList",QString("Map%1").arg(i));
-        file = filename2FullPath(file);
+        //file = filename2FullPath(file);
+        file = _resource.container().toString() + "/" + file;
         if ( file != sUNDEF) {
             IniFile odf;
-            odf.setIniFile(file);
-            QString dataFile = filename2FullPath(odf.value("MapStore","Data"));
-            _dataFiles.push_back(dataFile);
+            odf.setIniFile(file, containerConnector());
+            //QString dataFile = filename2FullPath(odf.value("MapStore","Data"));
+            QUrl url (_resource.container().toString() + "/" + odf.value("MapStore","Data"));
+            _dataFiles.push_back(url);
         } else {
             ERROR2(ERR_COULD_NOT_LOAD_2,"files","maplist");
             --z;
@@ -73,7 +77,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data) {
     }
 
     IniFile odf;
-    if (!odf.setIniFile(file))
+    if (!odf.setIniFile("file:///" + file, containerConnector()))
         return ERROR2(ERR_COULD_NOT_LOAD_2,"files","maplist");
 
     QString storeType = odf.value("MapStore","Type");
@@ -130,7 +134,7 @@ bool RasterCoverageConnector::setDataDefinition(IlwisObject *data) {
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
     IDomain dom;
-    if(!dom.prepare(_odf->fileinfo().canonicalFilePath())) {
+    if(!dom.prepare(_odf->file())) {
         kernel()->issues()->log(data->name(),TR(ERR_NO_INITIALIZED_1).arg(data->name()));
         return false;
     }
@@ -201,7 +205,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data)
 
     QString dataFile = filename2FullPath(_odf->value("MapStore","Data"));
     if ( dataFile != sUNDEF)
-         _dataFiles.push_back(dataFile);
+         _dataFiles.push_back(QUrl::fromLocalFile(dataFile));
 
     QString storeType = _odf->value("MapStore","Type");
 
@@ -253,7 +257,7 @@ qint64  RasterCoverageConnector::conversion(QFile& file, Grid *grid, int& count)
             result = file.read((char *)block,szLeft);
         }
         if ( result == -1){
-            kernel()->issues()->log(TR("Reading past the end of file %1").arg(_dataFiles[0].fileName()));
+            kernel()->issues()->log(TR("Reading past the end of file %1").arg(file.fileName()));
             break;
         }
         quint32 noItems = grid->blockSize(count);
@@ -294,13 +298,18 @@ Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
     grid->prepare();
 
     for(quint32 i=0; i < _dataFiles.size(); ++i) {
-        QFile file(_dataFiles[i].absoluteFilePath());
+        QFileInfo localfile =  this->containerConnector()->toLocalFile(_dataFiles[i]);
+        QString datafile = localfile.absoluteFilePath();
+        if ( datafile.right(1) != "#") { // can happen, # is a special token in urls
+            datafile += "#";
+        }
+        QFile file(datafile);
         if ( !file.exists()){
-            ERROR1(ERR_MISSING_DATA_FILE_1,_dataFiles[0].fileName());
+            ERROR1(ERR_MISSING_DATA_FILE_1,datafile);
             return 0;
         }
         if (!file.open(QIODevice::ReadOnly )) {
-            ERROR1(ERR_COULD_NOT_OPEN_READING_1,_dataFiles[0].fileName());
+            ERROR1(ERR_COULD_NOT_OPEN_READING_1,datafile);
             return 0;
         }
 
@@ -439,7 +448,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         gcMap->store(IlwisObject::smBINARYDATA | IlwisObject::smMETADATA);
     }
 
-    _odf->store("mpl");
+    _odf->store("mpl", containerConnector());
     return true;
 }
 
@@ -532,7 +541,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     _odf->setKeyValue("MapStore","SwapBytes","No");
     _odf->setKeyValue("MapStore","UseAs","No");
 
-    _odf->store();
+    _odf->store("mpr", containerConnector());
 
 
     return true;
