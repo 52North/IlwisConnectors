@@ -5,6 +5,7 @@
 #include <QLibrary>
 #include "ogr_api.h"
 #include "gdal.h"
+#include "cpl_vsi.h"
 
 namespace Ilwis{
 namespace Gdal{
@@ -86,6 +87,9 @@ typedef void (*IFree)( void * );
 typedef int (*IOGRGetGeomFieldCoun) (OGRFeatureH);
 typedef void (*IOGR_DS_Destroy) (OGRDataSourceH);
 
+typedef FILE* (*IVSIFileFromMemBuffer)( const char *, GByte *, vsi_l_offset ,int  );
+typedef int (*IVSIFCloseL)( FILE * );
+
 
 class GdalHandle {
     friend class GDALProxy;
@@ -131,7 +135,7 @@ public:
         return fp;
     }
 
-    GdalHandle* openFile(const QString& filename, quint64 asker, GDALAccess mode=GA_ReadOnly);
+    GdalHandle* openFile(const QFileInfo &filename, quint64 asker, GDALAccess mode=GA_ReadOnly);
     void closeFile(const QString& filename, quint64 asker);
     OGRSpatialReferenceH srsHandle(GdalHandle* handle, const QString& source);
 
@@ -213,6 +217,9 @@ public:
     IOGRGetSpatialFilter getSpatialFilter;
     IOGRGetEnvelope3D getEnvelope3D;
     IOGR_DS_Destroy destroyDataSource;
+
+    IVSIFileFromMemBuffer vsiFileFromMem;
+    IVSIFCloseL vsiClose;
     IFree free;
 
 private:

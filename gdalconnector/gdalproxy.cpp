@@ -139,6 +139,8 @@ bool GDALProxy::prepare() {
     pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
     getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");
 
+    vsiFileFromMem = add<IVSIFileFromMemBuffer>("VSIFileFromMemBuffer");
+    vsiClose = add<IVSIFCloseL>("VSIFCloseL");
     free = add<IFree>("VSIFree");
 
     if ( _isValid) {
@@ -211,21 +213,21 @@ bool GDALProxy::supports(const Resource &resource) const{
     return false;
 }
 
-GdalHandle* GDALProxy::openFile(const QString& filename, quint64 asker, GDALAccess mode){
+GdalHandle* GDALProxy::openFile(const QFileInfo& filename, quint64 asker, GDALAccess mode){
     void* handle = nullptr;
-    auto name = filename.toLower();//TODO not on Linux! (MACRO?)
+    auto name = filename.absoluteFilePath();
     if (_openedDatasets.contains(name)){
         return _openedDatasets[name];
     } else {
-        handle = gdal()->ogrOpen(filename.toLocal8Bit(), mode, NULL);
+        handle = gdal()->ogrOpen(name.toLocal8Bit(), mode, NULL);
         if (handle){
             return _openedDatasets[name] = new GdalHandle(handle, GdalHandle::etOGRDataSourceH, asker);
         }else{
-            handle = gdal()->open(filename.toLocal8Bit(), mode);
+            handle = gdal()->open(name.toLocal8Bit(), mode);
             if (handle){
                 return _openedDatasets[name] = new GdalHandle(handle, GdalHandle::etGDALDatasetH, asker);
             }else{
-               ERROR1(ERR_COULD_NOT_OPEN_READING_1,filename);
+               ERROR1(ERR_COULD_NOT_OPEN_READING_1,name);
                return NULL;
             }
         }
