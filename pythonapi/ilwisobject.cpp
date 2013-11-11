@@ -51,3 +51,9 @@ quint64 IlwisObject::ilwisID() const{
         throw Ilwis::ErrorObject(QString("invalid IlwisObject"));
     return (*this->ptr())->id();
 }
+
+IlwisTypes IlwisObject::ilwisType(){
+    if (!this->__bool__())
+        throw Ilwis::ErrorObject(QString("invalid IlwisObject"));
+    return (*this->ptr())->ilwisType();
+}

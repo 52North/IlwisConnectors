@@ -12,9 +12,6 @@ namespace Ilwis {
     typedef std::shared_ptr<IlwisObject> ESPIlwisObject;
 }
 
-//Qt typedefs only for GNU compiler
-typedef unsigned long long quint64; /* 64 bit unsigned */
-
 namespace pythonapi {
 
     class IlwisObject: public Object{
@@ -36,6 +33,7 @@ namespace pythonapi {
         bool __bool__() const;
         const char *__str__();
         quint64 ilwisID() const;
+        IlwisTypes ilwisType();
     };
 
 }

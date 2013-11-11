@@ -46,5 +46,12 @@ unsigned int FeatureCoverage::featureCount() const{
     return this->ptr()->get<Ilwis::FeatureCoverage>()->featureCount();
 }
 
+FeatureCoverage *FeatureCoverage::toFeatureCoverage(Object *obj){
+    FeatureCoverage* ptr = static_cast<FeatureCoverage*>(obj);
+    if(!ptr)
+        throw Ilwis::ErrorObject(QString("cast to FeatureCoverage not possible"));
+    return ptr;
+}
+
 
 

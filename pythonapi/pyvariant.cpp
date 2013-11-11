@@ -1,6 +1,7 @@
 #include <QVariant>
 #include "pyvariant.h"
 
+#include "../../IlwisCore/core/ilwis.h"
 #include "../../IlwisCore/core/errorobject.h"
 
 using namespace pythonapi;
@@ -36,4 +37,15 @@ int PyVariant::__int__(){
 
 bool PyVariant::__bool__() const{
     return (bool)this->_data && !this->_data->isNull();
+}
+
+IlwisTypes PyVariant::ilwisType(){
+    return itANY;
+}
+
+PyVariant* PyVariant::toPyVariant(Object* obj){
+    PyVariant* ptr = static_cast<PyVariant*>(obj);
+    if(!ptr)
+        throw Ilwis::ErrorObject(QString("cast to PyVariant not possible"));
+    return ptr;
 }

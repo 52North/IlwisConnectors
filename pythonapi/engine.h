@@ -1,7 +1,6 @@
 #ifndef PYTHONAPI_ENGINE_H
 #define PYTHONAPI_ENGINE_H
 
-#include "object.h"
 #include "ilwisobject.h"
 
 namespace pythonapi {

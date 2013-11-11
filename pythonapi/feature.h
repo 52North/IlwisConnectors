@@ -14,7 +14,8 @@ namespace pythonapi{
         Feature(Ilwis::SPFeatureI* ilwisFeature);
         bool __bool__() const;
         const char* __str__();
-        PyVariant* cell(const char* name, int index = -1);
+        PyVariant* attribute(const char* name, int index = -1);
+        IlwisTypes ilwisType();
 
     private:
         //TODO: replace with std::shared_ptr of that feature if done in IlwisCore

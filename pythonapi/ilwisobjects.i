@@ -50,7 +50,18 @@ namespace pythonapi {
 %include "engine.h"
 %extend pythonapi::Engine {
 %insert("python") %{
-    do = _do
+    def do(*args):
+        obj = Engine__do(*args)
+        if obj.ilwisType() == 8:
+            return RasterCoverage.toRasterCoverage(obj)
+        elif (obj.ilwisType() <= 7) and (obj.ilwisType() >= 1):
+            return FeatureCoverage.toFeatureCoverage(obj)
+        elif obj.ilwisType() <= 0xFFFFFFFFFFFFFFFF:
+            return PyVariant.toPyVariant(obj)
+        elif obj.ilwisType() == 0:
+            raise TypeError("unknown IlwisType")
+        else:
+            return obj
 %}
 }
 
@@ -60,7 +71,7 @@ namespace pythonapi {
 
 %include "pyvariant.h"
 
-%newobject pythonapi::Feature::cell(const char*, int);//possibly no effect
+%newobject pythonapi::Feature::attribute(const char*, int);//possibly no effect
 %include "feature.h"
 
 %include "featurecoverage.h"

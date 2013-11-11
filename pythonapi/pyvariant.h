@@ -17,6 +17,8 @@ namespace pythonapi{
         const char* __str__();
         int __int__();
         bool __bool__() const;
+        IlwisTypes ilwisType();
+        static PyVariant* toPyVariant(Object* obj);
     protected:
         std::unique_ptr<QVariant> _data;
     };

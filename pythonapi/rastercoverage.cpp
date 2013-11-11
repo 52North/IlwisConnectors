@@ -15,6 +15,7 @@
 #include "../../IlwisCore/core/ilwisobjects/coverage/rastercoverage.h"
 
 #include "rastercoverage.h"
+#include "engine.h"
 
 using namespace pythonapi;
 
@@ -33,5 +34,16 @@ RasterCoverage::RasterCoverage(const char *resource){
 }
 
 RasterCoverage* RasterCoverage::__add__(RasterCoverage &rc){
-    return new RasterCoverage();
+    return (RasterCoverage*)Engine::_do(QString("result = %1 + %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
+}
+
+double RasterCoverage::value(double x, double y, double z){
+    return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(Coordinate(x,y,z));
+}
+
+RasterCoverage* RasterCoverage::toRasterCoverage(Object* obj){
+    RasterCoverage* ptr = static_cast<RasterCoverage*>(obj);
+    if(!ptr)
+        throw Ilwis::ErrorObject(QString("cast to RasterCoverage not possible"));
+    return ptr;
 }

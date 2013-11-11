@@ -19,6 +19,7 @@ namespace pythonapi {
         FeatureCoverage(const char* resource);
         ~FeatureCoverage();
         unsigned int featureCount() const;
+        static FeatureCoverage* toFeatureCoverage(Object *obj);
     };
 }
 

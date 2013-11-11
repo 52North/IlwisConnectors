@@ -38,8 +38,12 @@ const char* Feature::__str__(){
         return QString("invalid IlwisFeature!").toLocal8Bit();
 }
 
-PyVariant *Feature::cell(const char *name, int index){
+PyVariant *Feature::attribute(const char *name, int index){
     if (!this->__bool__())
-        throw Ilwis::ErrorObject(QString("cannot call cell on invalid Feature"));
+        throw Ilwis::ErrorObject(QString("cannot call attribute on invalid Feature"));
     return new PyVariant(new QVariant((*this->_ilwisSPFeatureI)(QString(name),index)));
+}
+
+IlwisTypes Feature::ilwisType(){
+    return itFEATURE;
 }

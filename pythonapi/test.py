@@ -4,18 +4,18 @@
 from ilwisobjects import *
 
 def main():
-    muteIssueLogger()
+    #muteIssueLogger()
     fc = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
     if fc:
         print("successfully loaded", fc)
         print(fc ,"contains:",fc.featureCount(),"Features")
         sum = 0
         for f in fc:
-            sum += int(f.cell("MAY"))
-            print(f, ":", f.cell("coverage_key"), ",", f.cell("MAY"), ",", f.cell("RAINFALL"));
+            sum += int(f.attribute("MAY"))
+            print(f, ":", f.attribute("coverage_key"), ",", f.attribute("MAY"), ",", f.attribute("RAINFALL"));
         it = fc.__iter__();
         f = it.next()
-        v = f.cell("RAINFALL")
+        v = f.attribute("RAINFALL")
         try:
             print(int(v))
         except TypeError as err:
@@ -36,19 +36,20 @@ def main():
 #    except IlwisException as err:
 #        print("caught error:",err)
 
-    e = Engine()
-    print(e.do(""))
 
     rc = RasterCoverage()
     rc.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
-
+    print(rc.value(342,342,0))
+    aa7 = Engine.do("aa7.mpr=sin(n000302.mpr)")
+    print("sin(n000302.mpr)=",aa7)
+    print(aa7.value(342,342,0))
     aaa = rc + rc;
     print(rc, " + ", rc, " = ", aaa)
-    rc.connectTo("", "GTiff","gdal",IlwisObject.cmOUTPUT)
-    if rc.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
-        print("successfully saved n000302.mpr.tif")
+    aa7.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/aa7.mpr.tif", "GTiff","gdal",IlwisObject.cmOUTPUT)
+    if aa7.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
+        print("successfully saved aa7.mpr.tif")#stores .tif into C:/PATHONDIR/....
     else:
-        print("could not save n000302.mpr.tif")
+        print("could not save aa7.mpr.tif")
 
 
 
