@@ -21,7 +21,7 @@ public:
 protected:
     static GDALDataType ilwisType2GdalType(IlwisTypes tp) ;
     QString constructOutputName(GDALDriverH hdriver) const;
-    QString _filename; //TODO: might be better QFileInfo for Linux/Win filename case sensitivity
+    QUrl _filename;
     QString _internalPath;
     QString _gdalShortName;
     GdalHandle* _handle;

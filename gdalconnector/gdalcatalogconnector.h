@@ -9,12 +9,13 @@ public:
     GdalCatalogConnector(const Ilwis::Resource &resource);
 
     virtual bool loadItems();
-    bool canUse(const QUrl& resource) const;
+    bool canUse(const Resource& resource) const;
     QString provider() const;
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
 protected:
     IlwisTypes _type;
+
 };
 }
 }

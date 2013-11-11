@@ -6,11 +6,11 @@ namespace Gdal {
 class GDALItems : public QSet<Resource>
 {
 public:
-    GDALItems(const QString& path);
+    GDALItems(const QUrl& path, const UPContainerConnector &containerc);
 
 private:
     void addItem(const QUrl &url, quint64 csyid, quint64 grfId, IlwisTypes tp =itRASTER);
-    quint64 addCsy(GdalHandle* handle, const QString& path);
+    quint64 addCsy(GdalHandle* handle, const QFileInfo &path, const QUrl &url);
 };
 }
 }

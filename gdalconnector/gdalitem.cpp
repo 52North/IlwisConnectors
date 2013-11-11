@@ -5,6 +5,8 @@
 #include <QStringList>
 #include "kernel.h"
 #include "identity.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "resource.h"
 #include "gdalproxy.h"
 #include "gdalitem.h"
@@ -13,9 +15,12 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-GDALItems::GDALItems(const QString &path)
+GDALItems::GDALItems(const QUrl &url, const UPContainerConnector &containerc)
 {
-    GdalHandle* handle = gdal()->openFile(path, i64UNDEF , GA_ReadOnly);
+    if ( !containerc || !containerc->isValid())
+        return ;
+    QFileInfo file = containerc->toLocalFile(url);
+    GdalHandle* handle = gdal()->openFile(file.absoluteFilePath(), i64UNDEF , GA_ReadOnly);
     if (handle){
         int count = 0;
         if (handle->type() == GdalHandle::etGDALDatasetH){
@@ -27,8 +32,7 @@ GDALItems::GDALItems(const QString &path)
             return;
         //TODO at the moment simplistic approach; all is corners georef and domain value
         // and a homogenous type if files. when we have example of more complex nature we wille xtend this
-        QUrl url("file:///" + path);
-        quint64 csyId = addCsy(handle, path);
+        quint64 csyId = addCsy(handle, file, url);
         Resource resGrf(url, itGEOREF);
         resGrf.addProperty("coordinatesystem", csyId);
         resGrf.setExtendedType(itCONVENTIONALCOORDSYSTEM);
@@ -43,7 +47,7 @@ GDALItems::GDALItems(const QString &path)
     //        addItem(url, csyId, resGrf.id(), itRASTERCOVERAGELIST);
         }
 
-        gdal()->closeFile(path, i64UNDEF);
+        gdal()->closeFile(file.absoluteFilePath(), i64UNDEF);
     }
 }
 
@@ -57,8 +61,8 @@ void GDALItems::addItem(const QUrl& url, quint64 csyid, quint64 grfId, IlwisType
     insert(gdalItem);
 }
 
-quint64 GDALItems::addCsy(GdalHandle* handle, const QString &path) {
-    OGRSpatialReferenceH srshandle = gdal()->srsHandle(handle, path);
+quint64 GDALItems::addCsy(GdalHandle* handle, const QFileInfo &path, const QUrl& url) {
+    OGRSpatialReferenceH srshandle = gdal()->srsHandle(handle, path.absoluteFilePath());
     if ( srshandle == 0)
         return i64UNDEF;
     QString epsg(gdal()->getAttributeValue(srshandle,"AUTHORITY",0));
@@ -67,7 +71,7 @@ quint64 GDALItems::addCsy(GdalHandle* handle, const QString &path) {
         if ( resource.isValid())
             return resource.id();
     }
-    Resource resource(QUrl("file:///" + path),itCONVENTIONALCOORDSYSTEM );
+    Resource resource(url,itCONVENTIONALCOORDSYSTEM );
     insert(resource);
     return resource.id();
 }

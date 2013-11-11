@@ -11,7 +11,7 @@ public:
 
     bool loadMetaData(IlwisObject *data);
 
-    static bool canUse(const Ilwis::Resource &resource);
+   // static bool canUse(const Ilwis::Resource &resource);
 
     IlwisObject *create() const;
     static ConnectorInterface *create(const Resource &resource, bool load=true);
