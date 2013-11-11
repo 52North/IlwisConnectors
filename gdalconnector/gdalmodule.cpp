@@ -16,6 +16,7 @@
 #include "catalog.h"
 #include "pixeliterator.h"
 #include "gdalproxy.h"
+#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
 #include "coordinatesystemconnector.h"
