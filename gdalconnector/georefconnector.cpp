@@ -8,6 +8,7 @@
 #include "ilwisdata.h"
 #include "domain.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "gdalproxy.h"
 #include "gdalconnector.h"
@@ -39,7 +40,7 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
 
     GeoReference * grf = static_cast<GeoReference *>(data);
 
-    ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", _filename);
+    ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", _filename.toString());
     if(!csy.isValid()) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "coordinatesystem", grf->name());
     }
