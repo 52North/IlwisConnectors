@@ -63,7 +63,10 @@ bool BinaryIlwis3Table::load(const ODF& odf, const QString& prfix){
         return false;
     }
     QString datafile = odf->value(prefix + "TableStore", "Data");
-    datafile = odf->fileinfo().absolutePath() + "/" + datafile;
+    //TODO changes this container model
+    QUrl  url(odf->file());
+    QFileInfo inf = url.toLocalFile();
+    datafile = inf.absolutePath() + "/" + datafile;
     QFile file(datafile);
 
     if (!file.exists()){
