@@ -377,77 +377,78 @@ quint64 ODFItem::findSize(const UPContainerConnector& container) const
 
 }
 
-quint64 ODFItem::partSize(const QString& file, const QString& section, const QString& key,const UPContainerConnector& container)  const{
-    QString part = file;
+quint64 ODFItem::partSize(const QUrl& file, const QString& section, const QString& key,const UPContainerConnector& containerc)  const{
+    QFileInfo part = containerc->toLocalFile(file);
     if ( section != "") {
         IniFile odf;
-        odf.setIniFile(file, container);
-        part = odf.value(section,key);
-        if ( !part.contains(QRegExp("\\\\|/"))) {
-            QFileInfo inf(file);
-            part = inf.canonicalPath() + "/" + part;
+        odf.setIniFile(file, containerc);
+        QString filename = odf.value(section,key);
+        if ( !filename.contains(QRegExp("\\\\|/"))) {
+            //TODO changes this for files that are in non folder containers
+            filename = part.absolutePath() + "/" + filename;
+            part = QFileInfo(filename);
         }
 
     }
-    QFileInfo inf(part);
+    QFileInfo inf(part.absoluteFilePath());
     return inf.size();
 
 }
 
 quint64 ODFItem::objectSize(const UPContainerConnector& container) const {
 
-    qint64 sz = partSize(_file.absoluteFilePath(),"","", container);
+    qint64 sz = partSize(_odf.file(),"","", container);
     bool versionOk;
     double rVersion = _odf.value("Ilwis", "Version").toDouble(&versionOk);
 
     switch(_ilwtype )
     {
     case itRASTER:
-        sz += partSize(_file.absoluteFilePath(), "MapStore", "Data", container); break;
+        sz += partSize(_odf.file(), "MapStore", "Data", container); break;
     case itTABLE:
-        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container); break;
+        sz += partSize(_odf.file(), "TableStore", "Data", container); break;
     case itPOINT:
-        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container); break;
+        sz += partSize(_odf.file(), "TableStore", "Data", container); break;
     case itLINE:
         if ( rVersion >= 3.0)
         {
-            sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container);
-            sz += partSize(_file.absoluteFilePath(), "ForeignFormat", "Filename", container);
+            sz += partSize(_odf.file(), "TableStore", "Data", container);
+            sz += partSize(_odf.file(), "ForeignFormat", "Filename", container);
         }
         else
         {
-            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataSeg", container);
-            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataSegCode", container);
-            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataCrd", container);
+            sz += partSize(_odf.file(), "SegmentMapStore", "DataSeg", container);
+            sz += partSize(_odf.file(), "SegmentMapStore", "DataSegCode", container);
+            sz += partSize(_odf.file(), "SegmentMapStore", "DataCrd", container);
         }
         break;
     case itPOLYGON:
         if ( rVersion >= 3.0)
         {
-            sz += partSize(_file.absoluteFilePath(), "top:TableStore", "Data", container);
-            sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container);
-            sz += partSize(_file.absoluteFilePath(), "ForeignFormat", "Filename", container);
+            sz += partSize(_odf.file(), "top:TableStore", "Data", container);
+            sz += partSize(_odf.file(), "TableStore", "Data", container);
+            sz += partSize(_odf.file(), "ForeignFormat", "Filename", container);
         }
         else
         {
-            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataSeg", container);
-            sz += partSize(_file.absoluteFilePath(), "SegmentMapStore", "DataCrd", container);
-            sz += partSize(_file.absoluteFilePath(), "PolygonMapStore", "DataPol", container);
-            sz += partSize(_file.absoluteFilePath(), "PolygonMapStore", "DataPolCode", container);
-            sz += partSize(_file.absoluteFilePath(), "PolygonMapStore", "DataTop", container);
+            sz += partSize(_odf.file(), "SegmentMapStore", "DataSeg", container);
+            sz += partSize(_odf.file(), "SegmentMapStore", "DataCrd", container);
+            sz += partSize(_odf.file(), "PolygonMapStore", "DataPol", container);
+            sz += partSize(_odf.file(), "PolygonMapStore", "DataPolCode", container);
+            sz += partSize(_odf.file(), "PolygonMapStore", "DataTop", container);
         }
         break;
     case itDOMAIN:
-        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container); break; // only true for Domainssort
+        sz += partSize(_odf.file(), "TableStore", "Data", container); break; // only true for Domainssort
     case itGEOREF:
-        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container); break;
+        sz += partSize(_odf.file(), "TableStore", "Data", container); break;
     case itCOORDSYSTEM:
-        sz += partSize(_file.absoluteFilePath(), "TableStore", "Data", container); break;
+        sz += partSize(_odf.file(), "TableStore", "Data", container); break;
 
         if ( _file.suffix() == "isl")
-            sz += partSize(_file.absoluteFilePath(), "Script", "ScriptFile", container); break;
+            sz += partSize(_odf.file(), "Script", "ScriptFile", container); break;
         if ( _file.suffix() == "fun")
-            sz += partSize(_file.absoluteFilePath(), "FuncUser", "FuncDeffile", container); break;
+            sz += partSize(_odf.file(), "FuncUser", "FuncDeffile", container); break;
     }
     return sz;
 }
