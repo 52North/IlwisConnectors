@@ -40,6 +40,7 @@ protected:
 
     mutable ODF _odf;
 
+    QUrl makeUrl(const QString &path, const QString &name=sUNDEF);
 };
 }
 
