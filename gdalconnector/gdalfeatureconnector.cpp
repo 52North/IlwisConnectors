@@ -142,7 +142,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
             //feature types
             IlwisTypes type = translateOGRType(gdal()->getLayerGeometry(hLayer));
             if (type == itUNKNOWN){
-                ERROR2(ERR_COULD_NOT_LOAD_2,QString("layer from: %1").arg(_filename),QString(":%1").arg(gdal()->getLastErrorMsg()));
+                ERROR2(ERR_COULD_NOT_LOAD_2,QString("layer from: %1").arg(_filename.toString()),QString(":%1").arg(gdal()->getLastErrorMsg()));
             }
             coverageType |= type;
 
@@ -156,7 +156,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
             OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
             OGRErr er = gdal()->getLayerExtent(hLayer, &envelope , FALSE);//TRUE to FORCE
             if (er ==  OGRERR_FAILURE){
-                ERROR2(ERR_COULD_NOT_LOAD_2,QString("(TRY FORCE) extent of a layer from: %2").arg(_filename),QString(":%1").arg(gdal()->getLastErrorMsg()));
+                ERROR2(ERR_COULD_NOT_LOAD_2,QString("(TRY FORCE) extent of a layer from: %2").arg(_filename.toString()),QString(":%1").arg(gdal()->getLastErrorMsg()));
             }
             if(!initMinMax){
                 bbox=Box2D<double>(Coordinate2d(envelope.MinX,envelope.MinY),Coordinate2d(envelope.MaxX,envelope.MaxY));
@@ -233,7 +233,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
     if ( fcoverage->isValid() ) {
         ITable attTable = fcoverage->attributeTable();
         if (!attTable.isValid()){
-            ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename);
+            ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename.toString());
             return false;
         }
         std::vector<FillerColumnDef*> columnDefinitions;
@@ -308,7 +308,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                             attTable->record(attTable->recordCount()-1,record);//should overwrite the last record in attTable, which hopefully is the one created by fcoverage->newFeature({geometry}) within FillFeature
                         }
                     }else{
-                        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, QString("Record: %1").arg(rec), _filename);
+                        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, QString("Record: %1").arg(rec), _filename.toString());
                     }
 
                     gdal()->destroyFeature( hFeature );
@@ -325,7 +325,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillFeature(FeatureCoverage *fcove
     if (geometry){
         OGRwkbGeometryType type = gdal()->getGeometryType(geometry);
         switch (translateOGRType(type)){
-            case itUNKNOWN: ERROR2(ERR_INVALID_PROPERTY_FOR_2, "GeometryType of a Feature", _filename); return ret;
+            case itUNKNOWN: ERROR2(ERR_INVALID_PROPERTY_FOR_2, "GeometryType of a Feature", _filename.toString()); return ret;
             case itPOINT:   return fillPoint(fcoverage, geometry);    break;
             case itLINE:    return fillLine(fcoverage, geometry);     break;
             case itPOLYGON: return fillPolygon(fcoverage, geometry, type);  break;
@@ -445,7 +445,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
             ret.push_back(fcoverage->newFeature({pol}));
             return ret;
         }else{
-            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"polygon for a record",_filename);
+            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"polygon for a record",_filename.toString());
             return ret;
         }
     }else if (type == wkbMultiPolygon || type == wkbMultiPolygon25D){
@@ -458,7 +458,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
         }
         return ret;
     }else{
-        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"polygon for a record",_filename);
+        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"polygon for a record",_filename.toString());
         return ret;
     }
 }

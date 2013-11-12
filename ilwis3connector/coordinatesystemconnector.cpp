@@ -6,8 +6,9 @@
 
 #include "kernel.h"
 #include "geometries.h"
-#include "inifile.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
+#include "inifile.h"
 #include "ilwisdata.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
@@ -74,7 +75,7 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject* data)
     return true;
 }
 
-bool CoordinateSystemConnector::canUse(const Resource& resource) // static
+bool CoordinateSystemConnector::canUse(const Resource& resource,const UPContainerConnector &container) // static
 {
     IlwisTypes requiredType = resource.ilwisType();
     if ( (requiredType & itCOORDSYSTEM)!= 0)
@@ -83,7 +84,7 @@ bool CoordinateSystemConnector::canUse(const Resource& resource) // static
     QFileInfo inf(file);
     if ( inf.exists()) {
         IniFile odf;
-        odf.setIniFile(inf.absoluteFilePath());
+        odf.setIniFile(resource.url(), container);
         QString t = odf.value("CoordSystem","Type");
         if ( t == sUNDEF ) {
             if ( odf.value("CoordSystem","Projection") != "") // necessary due to incompleteness of ilwis odf's

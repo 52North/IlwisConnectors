@@ -5,13 +5,13 @@ namespace Ilwis {
 
 namespace Ilwis3 {
 
-class Ilwis3CatalogConnector : public FileCatalogConnector
+class Ilwis3CatalogConnector : public CatalogConnector
 {
 public:
     Ilwis3CatalogConnector(const Ilwis::Resource &resource);
 
     virtual bool loadItems();
-    bool canUse(const QUrl& resource) const;
+    bool canUse(const Resource& resource) const;
     QString provider() const;
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool);

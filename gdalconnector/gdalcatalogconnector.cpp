@@ -33,71 +33,42 @@ inline uint qHash(const QFileInfo& inf ){
 
 bool GdalCatalogConnector::loadItems()
 {
-    QFileInfoList fileList;
-
-    QUrl location = _location.url();
-    if ( location.toString() == "file://") { // root will only contain drives (folders)
-        fileList = QDir::drives();
-        QFileInfoList dirs;
-        foreach(QFileInfo inf , fileList) {
-             QDir dir(inf.canonicalPath());
-             dirs.append(dir.entryInfoList(QDir::Dirs));
-        }
-        fileList.append(dirs);;
-    } else {
-        QDir folder(location.toLocalFile());
-        folder.setFilter(QDir::Dirs);
-        if (!folder.exists()) {
-            return ERROR1(ERR_COULD_NOT_OPEN_READING_1,folder.absolutePath());
-        }
-        fileList = folder.entryInfoList();
-        QStringList namefilter = gdal()->getRasterExtensions();
+    QStringList filters = gdal()->getRasterExtensions();
+    filters.append(gdal()->getFeatureExtensions());
         //TODO: GdalCatalogConnector should also support FeatureExtensions
         //namefilter << gdal()->getFeatureExtensions();
 
-        folder.setFilter(QDir::Files);
-        QFileInfoList files = folder.entryInfoList(namefilter);
-        fileList.append(files);
-
-    }
-
-    // remove duplicates, shoudnt happen but better save than sorry
-    QSet<QFileInfo> reduced = fileList.toSet();
-    fileList.clear();
-    fileList = QList<QFileInfo>::fromSet(reduced);
+    std::vector<QUrl> files = containerConnector()->sources(filters
+                                                      ,ContainerConnector::foFULLPATHS | ContainerConnector::foEXTENSIONFILTER);
 
     QSet<Resource> gdalitems;
     QList<Resource> folders;
     if (!gdal()->isValid()) {
         return ERROR1(ERR_NO_INITIALIZED_1,"gdal library");
     }
-    foreach(QFileInfo file, fileList) {
-        QUrl container = location;
-        QString path = file.canonicalFilePath();
-        QString loc = location.toLocalFile();
-        if ( path.compare(loc,Qt::CaseInsensitive) == 0)
-            container = file.canonicalPath();
-        QUrl url("file:///" + path);
+    for(const QUrl& url : files) {
         if ( mastercatalog()->resource2id(url, itRASTER) == i64UNDEF && mastercatalog()->resource2id(url, itFEATURE) == i64UNDEF) {
+            QFileInfo file = containerConnector()->toLocalFile(url);
             if ( !file.isDir() ) {
-                GDALItems items(path);
+                GDALItems items(url, containerConnector());
                 gdalitems += items;
-                //names[file.fileName()] = resource.id();
             } else {
                 Resource resource(url, itCATALOG);
+                QUrl container;
                 //drives have the format file:///c:/ while folders have file:///c:/myfolder; note the slash
                 //drives must be recognized as container and formatted as such
-                int index = path.lastIndexOf(QRegExp("\\\\|/"));
-                if ( index != -1 && path[index - 1] == ':') { // is it a drive? (windows)
-                    if ( index == path.size() - 1)
+                QString name = url.toString();
+                int index = name.lastIndexOf(QRegExp("\\\\|/"));
+                if ( index != -1 && name[index - 1] == ':') { // is it a drive? (windows)
+                    if ( index == name.size() - 1)
                         container = QUrl("file://");
                     else
-                        container = QUrl("file:///" + path.left(3));
+                        container = QUrl(name.left(index));
                 }
-                resource.setContainer(container);
+                resource.addContainer(container);
                 //QFileInfo inf(resource.toLocalFile());
-                QString name = file.isRoot() ? file.absoluteFilePath() : file.fileName();
-                resource.setName(name);
+                QString filename = file.isRoot() ? file.absoluteFilePath() : file.fileName();
+                resource.setName(filename);
 
                 folders.push_back(resource);
             }
@@ -110,20 +81,12 @@ bool GdalCatalogConnector::loadItems()
     return true;
 }
 
-bool GdalCatalogConnector::canUse(const QUrl &resource) const
+bool GdalCatalogConnector::canUse(const Resource &resource) const
 {
-    if ( resource.scheme() != "file")
+    if ( resource.ilwisType() != itCATALOG)
         return false;
-
-    if ( resource.toString() == "file://") // root of file system
-        return true;
-    QFileInfo inf(resource.toLocalFile());
-    if ( !inf.isDir())
+    if (resource.url().scheme() == "ilwis")
         return false;
-
-    if ( !inf.exists())
-        return false;
-
     return true;
 }
 

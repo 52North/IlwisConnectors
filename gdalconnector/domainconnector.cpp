@@ -1,6 +1,7 @@
 
 #include "kernel.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "domainitem.h"
 #include "ilwisdata.h"
 #include "domain.h"
@@ -47,8 +48,8 @@ bool DomainConnector::loadMetaData(IlwisObject *data){
             ret = handleThematicDomains(data);
         }
     }
-
-    gdal()->closeFile(_filename, data->id());
+    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
+    gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
     return ret;
 
 }

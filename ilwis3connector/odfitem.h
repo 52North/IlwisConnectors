@@ -6,7 +6,7 @@ namespace Ilwis3{
 class ODFItem : public Resource
 {
 public:
-    ODFItem(const QString& file);
+    ODFItem(const QUrl& file, const UPContainerConnector &container);
     bool resolveNames(const QHash<QString, quint64>& names);
 
 
@@ -27,16 +27,16 @@ private:
     */
     bool setFileId(const QHash<QString, quint64> &names, const QString &unboundName, quint64 &fileid) const;
 
-    QString findDomainName() const;
-    IlwisTypes findDomainType() const;
-    QString findCsyName() const;
-    IlwisTypes findCsyType() const;
+    QString findDomainName(const UPContainerConnector &container) const;
+    IlwisTypes findDomainType(const UPContainerConnector &container) const;
+    QString findCsyName(const UPContainerConnector &container) const;
+    IlwisTypes findCsyType(const UPContainerConnector &container) const;
     QString findGrfName() const;
     QString findDatumName() const;
     QString findProjectionName() const;
-    quint64 findSize() const;
-    quint64 objectSize() const;
-    quint64 partSize(const QString &file, const QString &section, const QString &key) const;
+    quint64 findSize(const UPContainerConnector &container) const;
+    quint64 objectSize(const UPContainerConnector &container) const;
+    quint64 partSize(const QString &file, const QString &section, const QString &key,const UPContainerConnector& container) const;
     QString findDimensions() const;
     QString stripExtension(const QString &name) const;
     static bool isSystemObject(const QString &name);

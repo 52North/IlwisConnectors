@@ -106,7 +106,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
 
         return true;
     }else{
-        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"non-RasterCoverage",_filename);
+        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"non-RasterCoverage",_filename.toLocalFile());
     }
 }
 
@@ -236,7 +236,7 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
 
     GDALDatasetH dataset = gdal()->create( hdriver, filename.toLocal8Bit(), sz.xsize(), sz.ysize(), sz.zsize(), gdalType, 0 );
     if ( dataset == 0) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data set",_filename);
+        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data set",_filename.toLocalFile());
     }
     bool ok = setGeotransform(raster, dataset);
     if (ok)

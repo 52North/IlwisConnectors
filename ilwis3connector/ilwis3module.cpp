@@ -8,6 +8,8 @@
 
 #include "kernel.h"
 #include "raster.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "inifile.h"
 #include "numericrange.h"
 #include "ilwisobjectconnector.h"

@@ -14,6 +14,7 @@
 #include "numericrange.h"
 #include "columndefinition.h"
 #include "table.h"
+#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "gdalproxy.h"
 #include "gdalconnector.h"
@@ -37,7 +38,8 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data){
     if ( coverage == nullptr)
         return false;
 
-    ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", _filename);
+    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
+    ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", fileinf.absoluteFilePath());
     if(!csy.isValid()) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "coordinatesystem", coverage->name());
     }

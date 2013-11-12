@@ -22,7 +22,7 @@ public:
     void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
 
 private:
-    qint64 conversion(QFile &file, Ilwis::Grid *grid, int &count);
+    qint64 conversion(QFile& file,Ilwis::Grid *grid, int &count);
     //qint64 noconversionneeded(QFile &file, Ilwis::Grid *grid, int &count);
     double value(char *block, int index) const;
     void setStoreType(const QString &storeType);
@@ -46,7 +46,7 @@ private:
         return true;
     }
 
-    vector<QFileInfo> _dataFiles;
+    vector<QUrl> _dataFiles;
     int _storesize;
     IlwisTypes _storetype;
     IlwisTypes _dataType;

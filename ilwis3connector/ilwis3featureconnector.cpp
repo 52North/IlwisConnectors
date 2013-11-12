@@ -6,6 +6,8 @@
 #include "kernel.h"
 #include "coverage.h"
 #include "module.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "inifile.h"
 #include "coverage.h"
 #include "polygon.h"
@@ -61,12 +63,12 @@ FeatureConnector::FeatureConnector(const Resource &resource, bool load) : Covera
 bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& tbl) {
     BinaryIlwis3Table polTable;
     if ( !polTable.load(_odf)) {
-        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->fileinfo().fileName())    ;
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->file())    ;
     }
 
     BinaryIlwis3Table topTable;
     if ( !topTable.load(_odf,"top")) {
-        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->fileinfo().fileName())    ;
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->file())    ;
     }
 
     qint32 colValue = polTable.index("PolygonValue");
@@ -268,7 +270,7 @@ bool FeatureConnector::loadBinaryPolygons(FeatureCoverage *fcoverage) {
 bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     BinaryIlwis3Table mpsTable;
     if ( !mpsTable.load(_odf)) {
-        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->fileinfo().fileName())    ;
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->file())    ;
     }
     int colCoords = mpsTable.index("Coords");
     int colItemId = mpsTable.index("SegmentValue");
@@ -307,7 +309,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
 bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
     BinaryIlwis3Table mppTable;
     if ( !mppTable.load(_odf)) {
-        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->fileinfo().fileName())    ;
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->file())    ;
     }
     // two cases; the old case; 2 columns for x and y. and the new case one column for coord
     int coordColumnX = mppTable.index("x");
@@ -635,15 +637,16 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     _odf->setKeyValue("DomainSort","Class","Domain UniqueID");
     _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(type)));
 
-
+    QString ext = "mpa";
     if ( fcov->featureTypes() & itPOLYGON){
         ok = storeMetaPolygon(fcov, dataFile);
     }
     if ( fcov->featureTypes() & itLINE){
         ok = storeMetaLine(fcov, dataFile);
+        ext = "mpp";
     }
 
-    _odf->store();
+    _odf->store(ext, containerConnector());
     return ok;
 }
 

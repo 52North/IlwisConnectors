@@ -14,6 +14,7 @@
 #include "abstractfactory.h"
 #include "ilwisobjectfactory.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "connectorfactory.h"
 #include "gdalproxy.h"
 #include "ilwisobjectconnector.h"

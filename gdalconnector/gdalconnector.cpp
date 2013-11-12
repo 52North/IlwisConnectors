@@ -2,6 +2,7 @@
 #include "ilwisdata.h"
 #include "gdalproxy.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
 
@@ -13,7 +14,7 @@ GdalConnector::GdalConnector(const Resource &resource, bool load) : IlwisObjectC
     _handle = NULL;
     if ( resource.url().hasFragment())
         _internalPath = resource.url().fragment();
-    _filename = resource.url().toLocalFile();
+    _filename = resource.url();
 }
 
 
@@ -43,16 +44,16 @@ bool GdalConnector::loadMetaData(IlwisObject *data){
     if (!gdal()->isValid()) {
         return ERROR1(ERR_NO_INITIALIZED_1,"gdal library");
     }
-    if ( _filename == "") {
+    if ( !_filename.isValid()) {
         return ERROR1(ERR_MISSING_DATA_FILE_1,"Gdal reading");
     }
 
-    _handle = gdal()->openFile(_filename, data->id(), GA_ReadOnly);
+    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
+    _handle = gdal()->openFile(fileinf, data->id(), GA_ReadOnly);
     if (!_handle){
-        return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename,QString(gdal()->getLastErrorMsg()));
+        return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename.toString(),QString(gdal()->getLastErrorMsg()));
     }
-    QFileInfo inf(_filename);
-    data->setName(inf.fileName());
+    data->setName(fileinf.fileName());
 
     return true;
 }
@@ -61,11 +62,11 @@ bool GdalConnector::store(IlwisObject *, int )
 {
     GDALDriverH hdriver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
     if ( !hdriver ) {
-        return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _filename);
+        return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _filename.toString());
     }
     const char* metaitem = gdal()->getMetaDataItem(hdriver, GDAL_DCAP_CREATE, NULL);
     if (QString(metaitem).toLower() != "yes") {
-        return ERROR2(ERR_OPERATION_NOTSUPPORTED2, "write data-source", _filename);
+        return ERROR2(ERR_OPERATION_NOTSUPPORTED2, "write data-source", _filename.toString());
     }
 
     return true;
@@ -111,7 +112,8 @@ GDALDataType GdalConnector::ilwisType2GdalType(IlwisTypes tp) {
 QString GdalConnector::constructOutputName(GDALDriverH hdriver) const
 {
     const char *cext = gdal()->getMetaDataItem(hdriver,GDAL_DMD_EXTENSION,NULL);
-    QString filename = _filename;
+    QFileInfo fileinfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(_filename);
+    QString filename = fileinfo.absoluteFilePath();
     if ( cext != 0 ) {
         QString ext(cext);
         int index = filename.lastIndexOf(".");

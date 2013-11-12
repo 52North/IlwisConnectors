@@ -7,6 +7,7 @@
 #include "kernel.h"
 #include "geometries.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "ilwisdata.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
@@ -82,7 +83,8 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data){
     }else{
         ret = ERROR2(ERR_INVALID_PROPERTY_FOR_2,"OGRSpatialReference",data->name());
     }
-    gdal()->closeFile(_filename, data->id());
+    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
+    gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
     return ret;
 }
 

@@ -2,6 +2,7 @@
 #include "ilwisdata.h"
 #include "gdalproxy.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
 #include "gdalfeaturetableconnector.h"

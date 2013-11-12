@@ -9,6 +9,8 @@
 #include "numericrange.h"
 #include "ilwisdata.h"
 #include "raster.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "inifile.h"
 #include "numericdomain.h"
 #include "factory.h"
@@ -73,10 +75,10 @@ bool Ilwis3ObjectFactory::canUse(const Resource &resource) const
 
 
     IlwisTypes type = resource.ilwisType() ;
-    QHash<IlwisTypes, CheckUsage>::const_iterator cur;
-    if ( (cur = _types.find(type)) != _types.end()) {
-        return (cur.value())(resource);
-    }
+//    QHash<IlwisTypes, CheckUsage>::const_iterator cur;
+//    if ( (cur = _types.find(type)) != _types.end()) {
+//        return (cur.value())(resource);
+//    }
     QString filename = resource.url().toLocalFile();
     if ( filename == "")
         return false;

@@ -1,7 +1,6 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QUrl>
-#include "inifile.h"
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "errorobject.h"
@@ -9,6 +8,8 @@
 #include "domain.h"
 #include "numericdomain.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
+#include "inifile.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "catalog.h"
@@ -24,7 +25,7 @@ Ilwis3Connector::Ilwis3Connector(const Resource &resource, bool load) : IlwisObj
 {
     QUrl fullname = resolve(resource);
     IniFile *odf = new IniFile();
-    odf->setIniFile(fullname, load);
+    odf->setIniFile(fullname, containerConnector(load ? IlwisObject::cmINPUT : IlwisObject::cmOUTPUT), load);
     _odf.reset(odf);
     _resource = Resource(fullname, resource.ilwisType());
     if (!load && resource.id() != i64UNDEF)
@@ -36,7 +37,7 @@ bool Ilwis3Connector::loadMetaData(IlwisObject *data)
     QFileInfo inf = _resource.url().toLocalFile();
     if ( inf.exists()) {
         IniFile *ini = new IniFile();
-        ini->setIniFile(inf.absoluteFilePath());
+        ini->setIniFile(_resource.url(),containerConnector());
         _odf.reset(ini);
         data->setName(inf.fileName());
         data->setDescription(_odf->value("Ilwis","Description"));
@@ -68,7 +69,7 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
         name += "." + ext;
     QFileInfo inf(name);
     IniFile *ini = new IniFile();
-    ini->setIniFile(inf.absoluteFilePath(), false);
+    ini->setIniFile(QUrl::fromLocalFile(inf.absoluteFilePath()), containerConnector(), false);
     _odf.reset(ini);
 
     _odf->setKeyValue("Ilwis","Description", obj->description());

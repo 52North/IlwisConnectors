@@ -5,6 +5,8 @@
 #include "kernel.h"
 #include "raster.h"
 #include "module.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "inifile.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
@@ -75,7 +77,7 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
 
     ITable attTable;
     if ( basemaptype != "Map" ) {
-        Resource resource(QUrl(QString("ilwis://internal/%1").arg(_odf->fileinfo().baseName())), itFLATTABLE);
+        Resource resource(QUrl(QString("ilwis://internalcatalog/%1").arg(_resource.name())), itFLATTABLE);
         if(!attTable.prepare(resource)) {
             ERROR1(ERR_NO_INITIALIZED_1,resource.name());
             return ITable();
@@ -234,13 +236,13 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
                 _odf->setKeyValue("BaseMap","Domain",source);
             }
         } else if(dom->valueType() == itINDEXEDITEM) {
-            QString domName = _odf->fileinfo().fileName();
+            QString domName = _odf->file();
             QString domInfo = QString("%1;Long;UniqueID;0;;").arg(domName);
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
             _odf->setKeyValue("BaseMap","Domain",domName);
         } else if ( dom->valueType() == itNAMEDITEM) {
             INamedIdDomain iddom = dom.get<NamedIdDomain>();
-            QString domName = _odf->fileinfo().fileName();
+            QString domName = _odf->file();
             int index;
             if ( (index=domName.lastIndexOf("."))!= -1)             {
                 domName = domName.left(index);
