@@ -36,7 +36,7 @@ private:
     QString findProjectionName() const;
     quint64 findSize(const UPContainerConnector &container) const;
     quint64 objectSize(const UPContainerConnector &container) const;
-    quint64 partSize(const QString &file, const QString &section, const QString &key,const UPContainerConnector& container) const;
+    quint64 partSize(const QUrl &file, const QString &section, const QString &key, const UPContainerConnector& container) const;
     QString findDimensions() const;
     QString stripExtension(const QString &name) const;
     static bool isSystemObject(const QString &name);

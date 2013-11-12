@@ -205,7 +205,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data)
 
     QString dataFile = filename2FullPath(_odf->value("MapStore","Data"), _resource);
     if ( dataFile != sUNDEF)
-         _dataFiles.push_back(QUrl::fromLocalFile(dataFile));
+         _dataFiles.push_back(dataFile);
 
     QString storeType = _odf->value("MapStore","Type");
 
