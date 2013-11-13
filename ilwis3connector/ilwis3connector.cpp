@@ -331,11 +331,22 @@ QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& 
                 return loc;
             }
             QUrl loc = context()->workingCatalog()->filesystemLocation();
-            return loc.toLocalFile() + "/" + localName;
+            return loc.toString() + "/" + localName;
 
         }
     }
     return sUNDEF;
+}
+
+QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name) {
+    QString fileurl = path;
+    if ( fileurl == "")
+        fileurl = _resource.url().toString();
+    //TODO container pathing here; grf uses local path
+    QFileInfo inf = containerConnector()->toLocalFile(fileurl);
+    QString localpath = inf.absolutePath();
+    QString filename =  localpath + "/" + (name != sUNDEF ? name : inf.baseName());
+    return QUrl::fromLocalFile(filename);
 }
 
 

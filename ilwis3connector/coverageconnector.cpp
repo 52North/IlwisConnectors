@@ -250,7 +250,8 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
             QString domInfo = QString("%1;;Int;id;%2;;").arg(domName).arg(iddom->count());
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
             _odf->setKeyValue("BaseMap","Domain",domName);
-            iddom->connectTo(QUrl(),"domain","ilwis3", IlwisObject::cmOUTPUT);
+            QUrl url = makeUrl(_odf->file(),domName);
+            iddom->connectTo(url,"domain","ilwis3", IlwisObject::cmOUTPUT);
             iddom->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
         }
     }

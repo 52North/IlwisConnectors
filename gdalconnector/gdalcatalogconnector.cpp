@@ -35,7 +35,7 @@ bool GdalCatalogConnector::loadItems()
 {
     QStringList filters = gdal()->getRasterExtensions();
     filters.append(gdal()->getFeatureExtensions());
-        //TODO: GdalCatalogConnector should also support FeatureExtensions
+    filters.removeOne("*.hdr");
         //namefilter << gdal()->getFeatureExtensions();
 
     std::vector<QUrl> files = containerConnector()->sources(filters

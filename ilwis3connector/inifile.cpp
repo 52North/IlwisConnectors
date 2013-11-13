@@ -186,6 +186,9 @@ bool IniFile::load(const UPContainerConnector& container)
 
 void IniFile::store(const QString& ext, const UPContainerConnector &container )
 {
+    if (!container || !container->isValid())
+        return;
+
     QFileInfo fileinf = container->toLocalFile(_filename);
     QString path = fileinf.absoluteFilePath();
 

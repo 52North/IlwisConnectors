@@ -76,7 +76,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     bool initMinMax = 0;
 
     ITable attTable;
-    Resource resource(QUrl(QString("ilwis://internal/%1_%2").arg(fcoverage->name()).arg(fcoverage->id())), itFLATTABLE);
+    Resource resource(QUrl(QString("ilwis://internalcatalog/%1_%2").arg(fcoverage->name()).arg(fcoverage->id())), itFLATTABLE);
     if(!attTable.prepare(resource)) {//only internalTableconnector is used! own class not needed
         ERROR1(ERR_NO_INITIALIZED_1,resource.name());
         return false;
