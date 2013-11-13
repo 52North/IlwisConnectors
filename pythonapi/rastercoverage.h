@@ -15,6 +15,8 @@ namespace pythonapi {
         RasterCoverage();
         RasterCoverage(const char* resource);
         RasterCoverage* __add__(RasterCoverage &rc);
+        RasterCoverage* __add__(double value);
+        RasterCoverage* __radd__(double value);
         double value(double x, double y, double z);
         static RasterCoverage* toRasterCoverage(Object *obj);
     };

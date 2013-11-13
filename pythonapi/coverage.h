@@ -9,6 +9,7 @@ namespace pythonapi{
         public:
             Coverage();
             virtual ~Coverage(){};
+            bool addAttribute(const char* name, const char* domain);
     };
 
 }

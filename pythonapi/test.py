@@ -4,18 +4,26 @@
 from ilwisobjects import *
 
 def main():
+    Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape")
     #muteIssueLogger()
+    print("-----------------------------------------------")
+    #FeatureCoverage
     fc = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
     if fc:
         print("successfully loaded", fc)
         print(fc ,"contains:",fc.featureCount(),"Features")
+
+        print("-----------------------------------------------")
+        #iterating over features
         sum = 0
         for f in fc:
             sum += int(f.attribute("MAY"))
             print(f, ":", f.attribute("coverage_key"), ",", f.attribute("MAY"), ",", f.attribute("RAINFALL"));
         print("sum of rainfall values in may:",sum)
         del sum
+
         print("-----------------------------------------------")
+        #catching native python exception
         it = fc.__iter__();
         f = it.next()
         v = f.attribute("RAINFALL")
@@ -23,43 +31,44 @@ def main():
             print(int(v))
         except TypeError as err:
             print("caught TypeError:",err)
-#        del it
-#        del fc
-#        try:
-#            print(f)
-#        except:
-#            print("invalid f")
-#        del f
-#        del v
+
     else:
         print("couldn't load FeatureCoverage")
-    del fc
-
-#    fc = FeatureCoverage("file:///C:/Users/Poku");
-#    try:
-#        for f in fc:
-#            print(f)
-#    except IlwisException as err:
-#        print("caught error:",err)
+    if fc.addAttribute("highest","value"):
+        print("numeric attribute 'highest' was added to",fc)
+    else:
+        print("couln't add numeric attribute 'highest' to",fc)
 
     print("-----------------------------------------------")
     Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata")
     rc = RasterCoverage()
     rc.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
-    print("rc.value(342,342,0)=>",rc.value(342,342,0))
-    aa7 = Engine.do("aa7.mpr=sin(n000302.mpr)")
-    print("sin(n000302.mpr)=>",aa7)
-    print("aa7.value(342,342,0)=>",aa7.value(342,342,0))
-    print("-----------------------------------------------")
-    aaa = rc + rc;
-    print(rc, " + ", rc, " = ", aaa)
-    print("-----------------------------------------------")
-    aa7.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/aa7.tif", "GTiff","gdal",IlwisObject.cmOUTPUT)
-    if aa7.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
-        print("successfully saved aa7.mpr.tif")#stores .tif into C:/PATHONDIR/....
+    if (rc):
+        print("successfully loaded",rc)
+        print(rc,".value(342,342,0)=>",rc.value(342,342,0))
+        aa7 = Engine.do("aa7.mpr=sin(n000302.mpr)")
+        print("sin(n000302.mpr)=>",aa7)
+        print(aa7,".value(342,342,0)=>",aa7.value(342,342,0))
+        print("-----------------------------------------------")
+        print(rc,".value(342,342,0)=>",rc.value(342,342,0))
+        aa1 = rc + rc
+        print(rc, " + ", rc, " = ", aa1)
+        print(aa1,".value(342,342,0)=>",aa1.value(342,342,0))
+        aa2 = rc + 2
+        print(rc, " + 2 = ", aa2)
+        print(aa2,".value(342,342,0)=>",aa2.value(342,342,0))
+        aa3 = 2 + rc
+        print("2 + ", rc, " = ", aa3)
+        print(aa3,".value(342,342,0)=>",aa3.value(342,342,0))
+        print("-----------------------------------------------")
+        #store to file
+        aa7.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/aa7.tif", "GTiff","gdal",IlwisObject.cmOUTPUT)
+        if aa7.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
+            print("successfully saved aa7.mpr.tif")#stores .tif into C:/PATHONDIR/....
+        else:
+            print("could not save aa7.mpr.tif")
     else:
-        print("could not save aa7.mpr.tif")
-
+        print("couldn't load RasterCoverage")
 
 
 def claudio_example():#and martins solution proposal
@@ -86,10 +95,10 @@ def claudio_example():#and martins solution proposal
 #                polygon.attribute("highest", maxval)
 
 def martin_example():
-    nir = RasterCoverage("file:///C:/some/dir/nir_2010.idl")
-    vis = RasterCoverage("file:///C:/some/dir/vis_2010.idl")
+    nir = RasterCoverage("file:///C:/some/dir/nir_2010.img")
+    vis = RasterCoverage("file:///C:/some/dir/vis_2010.img")
     ndvi = (nir - vis)/(nir + vis)
-    daily_ndvi = ndvi.do("select * where index > "+str(Time("2010-4-1"))+" and index < "+str(Time("2010-4-1")))
+    daily_ndvi = ndvi.do("selection [0,0,"+str(Time("2010-4-1").double())+"] ["+str(ndvi.size().x())+","+str(ndvi.size().x())+","+str(Time("2010-4-1").double())+"]")
     dekadel_ndvi = Engine.do("aggregateraster",daily_ndvi,'Avg',[1,1,Duration(0).setDay(10).toInt()],True)
     dest_coordsys = CoordinateSystem("code=epsg:3148")
     out = dekadel_ndvi.transform(dest_coordsys)

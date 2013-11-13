@@ -33,7 +33,7 @@ bool Feature::__bool__() const{
 
 const char* Feature::__str__(){
     if (this->__bool__())
-        return QString("IlwisFeature(%1)").arg(this->_ilwisSPFeatureI->data()->featureid()).toLocal8Bit();
+        return QString("Feature(%1)").arg(this->_ilwisSPFeatureI->data()->featureid()).toLocal8Bit();
     else
         return QString("invalid IlwisFeature!").toLocal8Bit();
 }
