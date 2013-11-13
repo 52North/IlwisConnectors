@@ -331,7 +331,7 @@ QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& 
                 return loc;
             }
             QUrl loc = context()->workingCatalog()->filesystemLocation();
-            return loc.toLocalFile() + "/" + localName;
+            return loc.toString() + "/" + localName;
 
         }
     }
