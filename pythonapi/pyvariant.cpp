@@ -12,6 +12,30 @@ PyVariant::PyVariant(): _data(std::unique_ptr<QVariant>(new QVariant())){
 PyVariant::PyVariant(QVariant* data): _data(std::unique_ptr<QVariant>(data)){
 }
 
+PyVariant::PyVariant(int value): PyVariant(new QVariant(value)){
+}
+
+PyVariant::PyVariant(uint value): PyVariant(new QVariant(value)){
+}
+
+PyVariant::PyVariant(qlonglong value): PyVariant(new QVariant(value)){
+}
+
+PyVariant::PyVariant(qulonglong value): PyVariant(new QVariant(value)){
+}
+
+PyVariant::PyVariant(bool value): PyVariant(new QVariant(value)){
+}
+
+PyVariant::PyVariant(double value): PyVariant(new QVariant(value)){
+}
+
+PyVariant::PyVariant(float value): PyVariant(new QVariant(value)){
+}
+
+PyVariant::PyVariant(const char *value): PyVariant(new QVariant(value)){
+}
+
 PyVariant::~PyVariant(){
 }
 
@@ -41,6 +65,10 @@ bool PyVariant::__bool__() const{
 
 IlwisTypes PyVariant::ilwisType(){
     return itANY;
+}
+
+QVariant *PyVariant::clone(){
+    return new QVariant(*this->_data);
 }
 
 PyVariant* PyVariant::toPyVariant(Object* obj){

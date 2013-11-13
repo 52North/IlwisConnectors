@@ -15,15 +15,12 @@ IlwisObject::~IlwisObject(){
 }
 
 void IlwisObject::connectTo(const char *url, const char *format, const char *fnamespace, ConnectorMode cmode){
-    if(this->__bool__()){
-        if (cmode == cmINPUT || cmode == cmEXTENDED){
-            if (!this->ptr()->prepare(QString(url), (*this->ptr())->ilwisType()))
-                throw Ilwis::ErrorObject(QString("Cannot reconnect %1 for input").arg(url));
-        }else{
-            (*this->ptr())->connectTo(QUrl(url), QString(format), QString(fnamespace), (Ilwis::IlwisObject::ConnectorMode)cmode);
-        }
+    Ilwis::IIlwisObject io = (*this->ptr());
+    if (cmode == cmINPUT || cmode == cmEXTENDED){
+        if (!io.prepare(QString(url), io->ilwisType()))
+            throw Ilwis::ErrorObject(QString("Cannot reconnect %1 for input").arg(url));
     }else{
-        throw Ilwis::ErrorObject(QString("Cannot connect to invalid object"));
+        io->connectTo(QUrl(url), QString(format), QString(fnamespace), (Ilwis::IlwisObject::ConnectorMode)cmode);
     }
 }
 
@@ -32,28 +29,26 @@ bool IlwisObject::store(IlwisObject::ConnectorMode storeMode){
 }
 
 bool IlwisObject::__bool__() const{
-    return this->_ilwisObject != NULL && this->ptr()->isValid() && (*this->ptr())->isValid();
+    return this->_ilwisObject != NULL && this->_ilwisObject->isValid() && (*this->_ilwisObject)->isValid();
 }
 
 const char* IlwisObject::__str__(){
     if (this->__bool__())
         return QString("%1(%2)").arg(Ilwis::IlwisObject::type2Name((*this->ptr())->ilwisType())).arg((*this->ptr())->name()).toLocal8Bit();
     else
-        return QString("invalid IlwisObject").toLocal8Bit();
+        return QString("invalid IlwisObject!").toLocal8Bit();
 }
 
 std::shared_ptr<Ilwis::IIlwisObject> IlwisObject::ptr() const{
+    if (!this->__bool__())
+        throw Ilwis::ErrorObject(QString("invalid IlwisObject"));
     return this->_ilwisObject;
 }
 
 quint64 IlwisObject::ilwisID() const{
-    if (!this->__bool__())
-        throw Ilwis::ErrorObject(QString("invalid IlwisObject"));
     return (*this->ptr())->id();
 }
 
 IlwisTypes IlwisObject::ilwisType(){
-    if (!this->__bool__())
-        throw Ilwis::ErrorObject(QString("invalid IlwisObject"));
     return (*this->ptr())->ilwisType();
 }

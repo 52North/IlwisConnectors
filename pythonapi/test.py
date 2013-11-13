@@ -14,11 +14,18 @@ def main():
         print(fc ,"contains:",fc.featureCount(),"Features")
 
         print("-----------------------------------------------")
+        #adding new attribute to coverage
+        if fc.addAttribute("highest","value"):
+            print("value attribute 'highest' was added to",fc)
+        else:
+            print("couln't add value attribute 'highest' to",fc)
+        print("-----------------------------------------------")
         #iterating over features
         sum = 0
         for f in fc:
             sum += int(f.attribute("MAY"))
-            print(f, ":", f.attribute("coverage_key"), ",", f.attribute("MAY"), ",", f.attribute("RAINFALL"));
+            f.setAttribute("highest",PyVariant(sum))
+            print(f, ":", f.attribute("coverage_key"), ",", f.attribute("MAY"), ",", f.attribute("RAINFALL"), ",", f.attribute("highest"));
         print("sum of rainfall values in may:",sum)
         del sum
 
@@ -34,10 +41,6 @@ def main():
 
     else:
         print("couldn't load FeatureCoverage")
-    if fc.addAttribute("highest","value"):
-        print("numeric attribute 'highest' was added to",fc)
-    else:
-        print("couln't add numeric attribute 'highest' to",fc)
 
     print("-----------------------------------------------")
     Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata")

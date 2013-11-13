@@ -2,6 +2,7 @@
 #define PYTHONAPI_OBJECT_H
 
 //Qt typedefs only for GNU compiler
+typedef long long qint64;           /* 64 bit signed */
 typedef unsigned long long quint64; /* 64 bit unsigned */
 typedef quint64 IlwisTypes;
 

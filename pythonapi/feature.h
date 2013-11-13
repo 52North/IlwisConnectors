@@ -15,10 +15,12 @@ namespace pythonapi{
         bool __bool__() const;
         const char* __str__();
         PyVariant* attribute(const char* name, int index = -1);
+        void setAttribute(const char* name, PyVariant &value, int index = -1);
         IlwisTypes ilwisType();
 
     private:
         //TODO: replace with std::shared_ptr of that feature if done in IlwisCore
+        Ilwis::SPFeatureI ptr() const;
         Ilwis::SPFeatureI* _ilwisSPFeatureI;
     };
 

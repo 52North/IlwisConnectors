@@ -35,15 +35,25 @@ const char* Feature::__str__(){
     if (this->__bool__())
         return QString("Feature(%1)").arg(this->_ilwisSPFeatureI->data()->featureid()).toLocal8Bit();
     else
-        return QString("invalid IlwisFeature!").toLocal8Bit();
+        return QString("invalid Feature!").toLocal8Bit();
 }
 
 PyVariant *Feature::attribute(const char *name, int index){
-    if (!this->__bool__())
-        throw Ilwis::ErrorObject(QString("cannot call attribute on invalid Feature"));
-    return new PyVariant(new QVariant((*this->_ilwisSPFeatureI)(QString(name),index)));
+    return new PyVariant(new QVariant(this->ptr()(QString(name),index)));
+}
+
+void Feature::setAttribute(const char *name, PyVariant &value, int index){
+    QVariant* tmp = value.clone();
+    this->ptr()->cell(QString(name), (*tmp), index);
+    delete tmp;
 }
 
 IlwisTypes Feature::ilwisType(){
     return itFEATURE;
+}
+
+Ilwis::SPFeatureI Feature::ptr() const{
+    if (!this->__bool__())
+        throw Ilwis::ErrorObject(QString("invalid Feature!"));
+    return (*this->_ilwisSPFeatureI);
 }
