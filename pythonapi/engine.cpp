@@ -1,4 +1,7 @@
 #include "../../IlwisCore/core/kernel.h"
+#include "../../IlwisCore/core/ilwiscontext.h"
+#include "../../IlwisCore/core/catalog/catalog.h"
+
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/ilwisobjects/operation/operationmetadata.h"
 #include "../../IlwisCore/core/ilwisobjects/operation/symboltable.h"
@@ -54,4 +57,14 @@ Object *Engine::_do(const char *command){
     }else{
         return new PyVariant();
     }
+}
+
+bool Engine::setWorkingCatalog(const char *location){
+    Ilwis::Catalog cat;
+    cat.prepare(QString(location), QString("container='%1'").arg(location));
+    if(cat.isValid()){
+        Ilwis::context()->setWorkingCatalog(cat);
+        return true;
+    }else
+        throw Ilwis::ErrorObject(QString("invalid container location: '%1'").arg(location));
 }

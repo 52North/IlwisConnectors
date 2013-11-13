@@ -9,6 +9,7 @@ namespace pythonapi {
     public:
         Engine();
         static Object* _do(const char* command);
+        static bool setWorkingCatalog(const char* location);
     };
 
 }

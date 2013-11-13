@@ -33,8 +33,9 @@ RasterCoverage::RasterCoverage(const char *resource){
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
 }
 
+//TODO __radd__() and  also with (double)
 RasterCoverage* RasterCoverage::__add__(RasterCoverage &rc){
-    return (RasterCoverage*)Engine::_do(QString("result = %1 + %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("script add_%1_%2 = %3 + %4").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
 }
 
 double RasterCoverage::value(double x, double y, double z){
