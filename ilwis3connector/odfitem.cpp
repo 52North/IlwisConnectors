@@ -172,8 +172,10 @@ QString ODFItem::findDomainName(const UPContainerConnector& containerc) const
             QString rasmap = _odf.value("MapList","Map0");
             QFile file(rasmap) ;
             if ( !file.exists()) {
-                rasmap = container().toString() + "/" + rasmap;
+                rasmap = container().toString() + "/" + rasmap ;
             }
+            if ( rasmap.indexOf(".mpr") == -1)
+                rasmap += ".mpr";
             IniFile ini;
             ini.setIniFile(rasmap, containerc);
             name = ini.value("BaseMap","Domain");
@@ -201,9 +203,11 @@ IlwisTypes ODFItem::findDomainType(const UPContainerConnector& containerc) const
         return itNUMERICDOMAIN;
     if ( _domname == "value.dom")
         return itNUMERICDOMAIN;
+    if ( _domname == "image.dom")
+        return itNUMERICDOMAIN;
 
-    Resource resource = mastercatalog()->name2Resource(stripExtension(_domname),itDOMAIN);
-    //Resource resource = mastercatalog()->name2Resource(_domname,itDOMAIN);
+    //Resource resource = mastercatalog()->name2Resource(stripExtension(_domname),itDOMAIN);
+    Resource resource = mastercatalog()->name2Resource(_domname,itDOMAIN);
     if ( resource.isValid())
         return resource.ilwisType();
     IniFile dm;

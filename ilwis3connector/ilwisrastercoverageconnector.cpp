@@ -49,7 +49,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data) {
         return ERROR2(ERR_COULD_NOT_LOAD_2,"RasterCoverage",_odf->file());
 
     IRasterCoverage mp;
-    if (!mp.prepare("file:///" + file))
+    if (!mp.prepare(file))
         return ERROR2(ERR_COULD_NOT_LOAD_2,"RasterCoverage",file);
 
     bool ok;
@@ -77,7 +77,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data) {
     }
 
     IniFile odf;
-    if (!odf.setIniFile("file:///" + file, containerConnector()))
+    if (!odf.setIniFile(file, containerConnector()))
         return ERROR2(ERR_COULD_NOT_LOAD_2,"files","maplist");
 
     QString storeType = odf.value("MapStore","Type");
