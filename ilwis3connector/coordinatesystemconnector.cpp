@@ -54,6 +54,21 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject* data)
        }
     }
 
+    QString cb = _odf->value("CoordSystem", "CoordBounds");
+    QStringList cbparts = cb.split(" ");
+    if ( cbparts.size() == 4 && cbparts[0] != "-1e+308") {
+        bool ok1, ok2, ok3, ok4;
+        Box3D<double> box( Coordinate2d(
+                                cbparts[0].toDouble(&ok1),
+                                cbparts[1].toDouble(&ok2)),
+                           Coordinate2d(
+                                cbparts[2].toDouble(&ok3),
+                                cbparts[3].toDouble(&ok4)));
+        if ( !( ok1 && ok2 && ok3 && ok4)) {
+            return ERROR2(ERR_NO_INITIALIZED_2, TR("envelop"), csy->name());
+        }
+        csy->envelope(box);
+    }
 
     if ( type() == itCONVENTIONALCOORDSYSTEM ) {
         ConventionalCoordinateSystem *csycc = static_cast<ConventionalCoordinateSystem *>(csy);

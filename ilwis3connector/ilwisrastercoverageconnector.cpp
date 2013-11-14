@@ -443,7 +443,9 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         gcMap.prepare(resource);
         gcMap->setName(mapName);
         gcMap->copyBinary(raster, i);
-        QUrl url = makeUrl( _odf->file());
+        int index = _odf->file().lastIndexOf("/");
+        QString path = _odf->file().left(index);
+        QUrl url = makeUrl( path + "/" + mapName);
         gcMap->connectTo(url, "map", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
         gcMap->store(IlwisObject::smBINARYDATA | IlwisObject::smMETADATA);
     }
