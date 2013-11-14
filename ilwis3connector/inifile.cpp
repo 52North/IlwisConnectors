@@ -193,7 +193,7 @@ void IniFile::store(const QString& ext, const UPContainerConnector &container )
     QString path = fileinf.absoluteFilePath();
 
     if ( ext != "" && fileinf.suffix() != ext ) {
-        path = path + "." + ext;
+        path = fileinf.absolutePath() + "/" + fileinf.baseName() + "." + ext;
     }
     QFile fileIni(path);
 
