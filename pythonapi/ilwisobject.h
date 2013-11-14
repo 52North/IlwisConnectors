@@ -32,6 +32,8 @@ namespace pythonapi {
         bool store(ConnectorMode storeMode);
         bool __bool__() const;
         const char *__str__();
+        const char *__add__(const char* value);
+        const char *__radd__(const char* value);
         quint64 ilwisID() const;
         IlwisTypes ilwisType();
     };

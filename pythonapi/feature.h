@@ -15,7 +15,7 @@ namespace pythonapi{
         bool __bool__() const;
         const char* __str__();
         PyVariant* attribute(const char* name, int index = -1);
-        void setAttribute(const char* name, PyVariant &value, int index = -1);
+        void attribute(const char* name, PyVariant &value, int index = -1);
         IlwisTypes ilwisType();
 
     private:

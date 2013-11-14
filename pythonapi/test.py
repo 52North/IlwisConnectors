@@ -5,6 +5,10 @@ from ilwisobjects import *
 
 def main():
     Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape")
+
+    localcoordsystem = CoordinateSystem("code=epsg:23035")
+    polygongrid = Engine.do("gridding("+localcoordsystem+",10039939, 2399393, 10045997, 2405000, 1000)")
+
     #muteIssueLogger()
     print("-----------------------------------------------")
     #FeatureCoverage
@@ -24,7 +28,7 @@ def main():
         sum = 0
         for f in fc:
             sum += int(f.attribute("MAY"))
-            f.setAttribute("highest",PyVariant(sum))
+            f.attribute("highest",PyVariant(sum))
             print(f, ":", f.attribute("coverage_key"), ",", f.attribute("MAY"), ",", f.attribute("RAINFALL"), ",", f.attribute("highest"));
         print("sum of rainfall values in may:",sum)
         del sum
@@ -56,8 +60,8 @@ def main():
         print("Coudn't create CoordinateSystem from EPSG code!")
     print("-----------------------------------------------")
     Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata")
-    rc = RasterCoverage()
-    rc.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
+    rc = RasterCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
+#    rc.connectTo()
     if (rc):
         print("successfully loaded",rc)
         print(rc,".value(342,342,0)=>",rc.value(342,342,0))
@@ -88,7 +92,7 @@ def main():
 
 
 def claudio_example():#and martins solution proposal
-#    ilwisengine = ilwisobjects.engine()
+    ilwisengine = Engine()
 #    #create a feature coverage
     distribution = FeatureCoverage()#ilwisengine.features()
 #    #link it to a local shape file with species distribution. the attributes will contain an attribute 'distribution'.
@@ -100,15 +104,15 @@ def claudio_example():#and martins solution proposal
 #    #setting the bounds
 #    localcoordsystem.bounds(1003700, 239900, 1004600, 2409000)
 #    # create a polygon grid
-#    polygongrid = ilwisengine.do("gridding", localcoordsystem,10039939, 2399393, 10045997, 2405000, 1000)
+    polygongrid = ilwisengine.do("gridding", localcoordsystem,10039939, 2399393, 10045997, 2405000, 1000)
 #    #add an attribute for the highest distribution ; name plus domain as parameters. Others could include ranges and such. Keep it simple here
-#    polygongrid.addAttribute("highest","numeric")
+    polygongrid.addAttribute("highest","numeric")
 #    #small trivial algorithm for detecting the highest point attribute per polygon
-#    for polygon in polygongrid
-#        for point in distribution
+    for polygon in polygongrid:
+        for point in distribution:
 #            if polygon.contains(distribution.coordinatesystem(), point)
 #                maxval = max(polygon.attribute("highest"), point.attribute("distribution"))
-#                polygon.attribute("highest", maxval)
+                polygon.attribute("highest", maxval)
 
 def martin_example():
     nir = RasterCoverage("file:///C:/some/dir/nir_2010.img")
@@ -156,6 +160,43 @@ def raul_example():
                     dominant_neighbor = f
             Engine.do("merge",region,dominat_neighbor)
 
+def raul_martin_solution():
+    #simplistic way; takes a long time
+    import ilwisobjects
+
+    centroids = ilwisobjects.featurecoverage("ftp://somepath/regions_centroids.shp")
+    observations = ilwisobjects.featurecoverage("file://d:/data/observ_ca.xml")
+    kmeansvoronoi = centroids.do("kmeanscluster", 15)
+    kmeansvoronoi.addAttribute("leafingday_speciesX", "time")
+    kmeansvoronoi.addAttribute("numberOfObservation", "numeric")
+
+    for point in observations:
+        for area in kmeansvoronois:
+            if area.contains(observations.coordinatesystem(), point):
+                kmeansvoronoi.attribute("numberOfObservation",kmeansvoronoi.attribute("numberOfObservation") + 1)
+
+
+    #####################################################################
+    #simplistic way; probably faster
+
+    import ilwisobjects
+
+    areaRaster = ilwisobjects.featurecoverage("ftp://somepath/regions_areas.tif")
+    simplifiedRaster = areaRaster.do("rankorderfilter", "median", 10)
+    simplifiedPolygon = simplifiedRaster.do("rasterize",4)
+    centroids = simplifiedPolygon.do("centroids")
+
+    observations = ilwisobjects.featurecoverage("file://d:/data/observ_ca.xml")
+
+    kmeansvoronoi = centroids.do("kmeanscluster", 15)
+
+    kmeansvoronoi.addAttribute("leafingday_speciesX", "time")
+    kmeansvoronoi.addAttribute("numberOfObservation", "numeric")
+
+    for point in observations:
+        for area in kmeansvoronois:
+                if area.contains(observations.coordinatesystem(), point):
+                    kmeansvoronoi.attribute("numberOfObservation", kmeansvoronoi.attribute("numberOfObservation") + 1)
 
 if __name__ == "__main__":
     main()

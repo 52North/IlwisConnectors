@@ -42,7 +42,7 @@ PyVariant *Feature::attribute(const char *name, int index){
     return new PyVariant(new QVariant(this->ptr()(QString(name),index)));
 }
 
-void Feature::setAttribute(const char *name, PyVariant &value, int index){
+void Feature::attribute(const char *name, PyVariant &value, int index){
     QVariant* tmp = value.clone();
     this->ptr()->cell(QString(name), (*tmp), index);
     delete tmp;
