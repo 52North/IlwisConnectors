@@ -15,6 +15,7 @@
 #include "featurecoverage.h"
 #include "featureiterator.h"
 #include "rastercoverage.h"
+#include "coordinatesystem.h"
 %}
 
 %init %{
@@ -101,3 +102,5 @@ namespace pythonapi {
 }
 
 %include "rastercoverage.h"
+
+%include "coordinatesystem.h"

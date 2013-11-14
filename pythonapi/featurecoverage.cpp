@@ -39,9 +39,6 @@ FeatureCoverage::FeatureCoverage(const char* resource){
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
 }
 
-FeatureCoverage::~FeatureCoverage(){
-}
-
 unsigned int FeatureCoverage::featureCount() const{
     return this->ptr()->get<Ilwis::FeatureCoverage>()->featureCount();
 }

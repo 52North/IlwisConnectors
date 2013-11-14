@@ -10,8 +10,8 @@ namespace pythonapi{
 
     class Object{
     public:
-        Object(){};
-        virtual ~Object(){};
+        Object(){}
+        virtual ~Object(){}
         virtual bool __bool__() const = 0;
         virtual const char* __str__() = 0;
         virtual IlwisTypes ilwisType() = 0;

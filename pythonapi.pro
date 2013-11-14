@@ -22,7 +22,8 @@ HEADERS += \
     pythonapi/qissuelogger.h \
     pythonapi/rastercoverage.h \
     pythonapi/engine.h \
-    pythonapi/object.h
+    pythonapi/object.h \
+    pythonapi/coordinatesystem.h
 
 SOURCES += \
     pythonapi/ilwisobject.cpp \
@@ -36,7 +37,8 @@ SOURCES += \
     pythonapi/qissuelogger.cpp \
     pythonapi/py_error.cpp \
     pythonapi/rastercoverage.cpp \
-    pythonapi/engine.cpp
+    pythonapi/engine.cpp \
+    pythonapi/coordinatesystem.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \

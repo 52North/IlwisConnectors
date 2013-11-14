@@ -43,6 +43,18 @@ def main():
         print("couldn't load FeatureCoverage")
 
     print("-----------------------------------------------")
+    print("CoordinateSystems")
+    cs1 = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
+    if cs1:
+        print(cs1)
+    else:
+        print("Coudn't create CoordinateSystem from proy4 definition!")
+    cs2 = CoordinateSystem("code=epsg:23035")
+    if cs2:
+        print(cs2)
+    else:
+        print("Coudn't create CoordinateSystem from EPSG code!")
+    print("-----------------------------------------------")
     Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata")
     rc = RasterCoverage()
     rc.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
@@ -74,16 +86,17 @@ def main():
         print("couldn't load RasterCoverage")
 
 
+
 def claudio_example():#and martins solution proposal
 #    ilwisengine = ilwisobjects.engine()
 #    #create a feature coverage
-     distribution = FeatureCoverage()#ilwisengine.features()
+    distribution = FeatureCoverage()#ilwisengine.features()
 #    #link it to a local shape file with species distribution. the attributes will contain an attribute 'distribution'.
-#    distribution.connectTo("file://d:/somepath/species.shp");
+    distribution.connectTo("file://d:/somepath/species.shp");
 #    #create a coordinate system; we could also use the csy of the distribution map but lets create (for interface sake) a coordinate system
-#    localcoordsystem = ilwisengine.coordinatesystem("+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
+    localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
 #    #a variant could be
-#    # localcoordsystem = ilwisengine.coordinatesystem("code=epsg:23035")
+    localcoordsystem = ilwisengine.coordinatesystem("code=epsg:23035")
 #    #setting the bounds
 #    localcoordsystem.bounds(1003700, 239900, 1004600, 2409000)
 #    # create a polygon grid
@@ -107,6 +120,42 @@ def martin_example():
     out = dekadel_ndvi.transform(dest_coordsys)
     out.connectTo("file:///C:/some/dir/ndvi_2010-4-1_2010-7-1.netcdf","netcdf","gdal",IlwisObject.cmOUTPUT)
     out.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA)
+
+def raul_example():
+    centroids = FeatureCoverage("https://www.geobabble.org/phenoregions/centroids/seeds.out.phendump.2000-2011.500.final")
+    pheno = RasterCoverage("https://www.geobabble.org/phenoregions/gis/phendump.2000-2011.500.2011.img")
+    #kmeans returns a dictionary for raster classification
+    groups = centroids.do("kmeans",15)#groups = (dict){(x1,y1,z1)=[1,4,3],(x2,y2,z2)=[2,5,6],(x3,y3,z3)=[..],..}
+    #reclassification based on kmeanified groups
+    for i in range(pheno.size().x()):
+        for j in range(pheno.size().y()):
+            k = 0
+            for kmean in groups:
+                try:
+                    #pixel belongs to kmean if index was found otherwise ValueError occurs
+                    groups[kmean].index(pheno.value(i,j,-1))
+                    pheno.setValue(i,j,-1,k)
+                    break
+                except ValueError: pass
+    regions = pheno.do("vectorize")
+
+    #merge small regions into dominant neighbor
+    for region in regions:
+        if region.area() < 5000:
+            cov = regions.clone();
+            cov.clear()
+            regionclone = region.clone()
+            cov.addFeature(regionclone)
+            buffer = cov.dov("buffer")
+            intersects = regions.do("coveredby",buffer)
+            intersects.removeFeature(regionclone)
+            max = 0
+            for f in intersects:
+                if f.area() > max:
+                    max = f.area()
+                    dominant_neighbor = f
+            Engine.do("merge",region,dominat_neighbor)
+
 
 if __name__ == "__main__":
     main()
