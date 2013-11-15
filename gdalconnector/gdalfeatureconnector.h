@@ -15,10 +15,12 @@ namespace Ilwis{
                 Ilwis::IlwisObject *create() const;
             protected:
                 struct FillerColumnDef{
-                    FillerColumnDef(QVariant(GdalFeatureConnector::* func)(OGRFeatureH,  int, SPRange), SPRange r): fillFunc(func), range(r){}
+                    FillerColumnDef(QVariant(GdalFeatureConnector::* func)(OGRFeatureH,  int, SPRange), int i, SPRange r): fillFunc(func), index(i), range(r){}
                     QVariant (GdalFeatureConnector::* fillFunc)(OGRFeatureH,  int, SPRange);
+                    int index;
                     SPRange range;
                 };
+                QVariant fillEmptyColumn(OGRFeatureH, int, SPRange);
                 QVariant fillStringColumn(OGRFeatureH featureH, int colIntex, SPRange range);
                 QVariant fillIntegerColumn(OGRFeatureH featureH, int colIntex, SPRange range);
                 QVariant fillDoubleColumn(OGRFeatureH featureH, int colIntex, SPRange range);
