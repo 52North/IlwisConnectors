@@ -5,11 +5,16 @@ from ilwisobjects import *
 
 def main():
     Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape")
-
-    localcoordsystem = CoordinateSystem("code=epsg:23035")
-    polygongrid = Engine.do("gridding("+localcoordsystem+",10039939, 2399393, 10045997, 2405000, 1000)")
-
     #muteIssueLogger()
+    print("-----------------------------------------------")
+    #Gridding
+    localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
+    polygongrid = Engine.do("polygongrid=gridding("+localcoordsystem+",coordinate(225358.6605, 3849480.5700), 1000.0, 1000.0, 12, 12)")
+    if polygongrid:
+        print("successfully created FeatureCoverage with gridding",polygongrid)
+        print("FeatureCount is",polygongrid.featureCount())
+    else:
+        print("couln't create FeatureCoverage with gridding")
     print("-----------------------------------------------")
     #FeatureCoverage
     fc = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
@@ -83,9 +88,9 @@ def main():
         #store to file
         aa7.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/aa7.tif", "GTiff","gdal",IlwisObject.cmOUTPUT)
         if aa7.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
-            print("successfully saved aa7.mpr.tif")#stores .tif into C:/PATHONDIR/....
+            print("successfully saved aa7.tif.tif")
         else:
-            print("could not save aa7.mpr.tif")
+            print("could not save aa7.tif.tif")
     else:
         print("couldn't load RasterCoverage")
 

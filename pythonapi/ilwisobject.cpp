@@ -41,14 +41,14 @@ const char* IlwisObject::__str__(){
 
 const char *IlwisObject::__add__(const char *value){
     if (this->__bool__())
-        return QString("%1 '%2'").arg(value).arg((*this->ptr())->name()).toLocal8Bit();
+        return QString("%2%1").arg(value).arg((*this->ptr())->name()).toLocal8Bit();
     else
         return QString("invalid IlwisObject!").toLocal8Bit();
 }
 
 const char *IlwisObject::__radd__(const char *value){
     if (this->__bool__())
-        return QString("'%2' %1").arg(value).arg((*this->ptr())->name()).toLocal8Bit();
+        return QString("%1%2").arg(value).arg((*this->ptr())->name()).toLocal8Bit();
     else
         return QString("invalid IlwisObject!").toLocal8Bit();
 }

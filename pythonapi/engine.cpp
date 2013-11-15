@@ -44,7 +44,7 @@ Object *Engine::_do(const char *command){
     Ilwis::SymbolTable symtbl;
     Ilwis::ExecutionContext ctx;
     ctx.clear();
-    if (Ilwis::commandhandler()->execute(QString(command),&ctx, symtbl) && !ctx._results.empty()){
+    if (Ilwis::commandhandler()->execute(QString("script %1").arg(command),&ctx, symtbl) && !ctx._results.empty()){
         Ilwis::Symbol result = symtbl.getSymbol(ctx._results[0]);
         if (result._type == itRASTER){
             if (result._var.canConvert<Ilwis::IRasterCoverage>())
@@ -55,7 +55,7 @@ Object *Engine::_do(const char *command){
         }
         return new PyVariant(new QVariant(result._var));
     }else{
-        return new PyVariant();
+        throw Ilwis::ErrorObject(QString("couln't do(%1)").arg(command));
     }
 }
 
