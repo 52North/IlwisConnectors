@@ -64,6 +64,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
         Coordinate cMax( max(crdLeftup.x(), crdRightDown.x()), max(crdLeftup.y(), crdRightDown.y()));
 
         gcoverage->envelope(Box2D<double>(cMin, cMax));
+        gcoverage->coordinateSystem()->envelope(gcoverage->envelope());
 
         IGeoReference grf;
         if(!grf.prepare(_resource.url().toLocalFile()))
