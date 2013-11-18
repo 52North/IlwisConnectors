@@ -77,7 +77,12 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
 
     ITable attTable;
     if ( basemaptype != "Map" ) {
-        Resource resource(QUrl(QString("ilwis://internalcatalog/%1").arg(_resource.name())), itFLATTABLE);
+        QString name = _resource.name();
+        int index = -1;
+        if ( (index = name.indexOf(".")) != -1){
+            name = name.left(index);
+        }
+        Resource resource(QUrl(QString("ilwis://internalcatalog/%1").arg(name)), itFLATTABLE);
         if(!attTable.prepare(resource)) {
             ERROR1(ERR_NO_INITIALIZED_1,resource.name());
             return ITable();
