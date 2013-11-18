@@ -58,7 +58,7 @@ bool Ilwis3CatalogConnector::loadItems()
     foreach(const QUrl& url, files) {
         QFileInfo file = containerConnector()->toLocalFile(url);
         IlwisTypes tp = Ilwis3Connector::ilwisType(file.fileName());
-        if ( mastercatalog()->resource2id(url, tp) == i64UNDEF) {
+        if ( mastercatalog()->url2id(url, tp) == i64UNDEF) {
             if ( tp & itILWISOBJECT ) {
                 ODFItem item(url, containerConnector());
                 odfitems.push_back(item);
