@@ -46,7 +46,7 @@ bool GdalCatalogConnector::loadItems()
         return ERROR1(ERR_NO_INITIALIZED_1,"gdal library");
     }
     for(const QUrl& url : files) {
-        if ( mastercatalog()->resource2id(url, itRASTER) == i64UNDEF && mastercatalog()->resource2id(url, itFEATURE) == i64UNDEF) {
+        if ( mastercatalog()->url2id(url, itRASTER) == i64UNDEF && mastercatalog()->url2id(url, itFEATURE) == i64UNDEF) {
             QFileInfo file = containerConnector()->toLocalFile(url);
             if ( !file.isDir() ) {
                 GDALItems items(url, containerConnector());
