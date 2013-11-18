@@ -243,10 +243,13 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
         } else if ( dom->valueType() == itNAMEDITEM) {
             INamedIdDomain iddom = dom.get<NamedIdDomain>();
             QString domName = _odf->file();
-            int index;
-            if ( (index=domName.lastIndexOf("."))!= -1)             {
-                domName = domName.left(index);
-            }
+            QFileInfo localInfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(domName);
+            domName = localInfo.baseName();
+//            int index;
+//            if ( (index=domName.lastIndexOf("."))!= -1)             {
+//                domName = domName.left(index);
+//            }
+
             QString domInfo = QString("%1;;Int;id;%2;;").arg(domName).arg(iddom->count());
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
             _odf->setKeyValue("BaseMap","Domain",domName);
