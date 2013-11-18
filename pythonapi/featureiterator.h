@@ -13,7 +13,7 @@ namespace pythonapi {
 class FeatureIterator
 {
 public:
-    FeatureIterator(FeatureCoverage fc);
+    FeatureIterator(FeatureCoverage* fc);
     ~FeatureIterator();
     /**
      * @brief next confusingly returns current value bevore iterating to the next item
@@ -25,6 +25,7 @@ public:
     bool hasNext();
 private:
     Ilwis::FeatureIterator* _ilwisFeatureIterator;
+    FeatureCoverage* _coverage;
 };
 
 }

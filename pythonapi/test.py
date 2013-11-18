@@ -9,7 +9,7 @@ def main():
     print("-----------------------------------------------")
     #Gridding
     localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
-    polygongrid = Engine.do("polygongrid=gridding("+localcoordsystem+",coordinate(225358.6605, 3849480.5700), 1000.0, 1000.0, 12, 12)")
+    polygongrid = Engine.do("polygongrid","gridding",localcoordsystem,"coordinate(225358.6605, 3849480.5700)","1000.0","1000.0","12","12")
     if polygongrid:
         print("successfully created FeatureCoverage with gridding",polygongrid)
         print("FeatureCount is",polygongrid.featureCount())
@@ -26,6 +26,7 @@ def main():
         #adding new attribute to coverage
         if fc.addAttribute("highest","value"):
             print("value attribute 'highest' was added to",fc)
+            print(fc.attributes())
         else:
             print("couln't add value attribute 'highest' to",fc)
         print("-----------------------------------------------")
@@ -70,7 +71,7 @@ def main():
     if (rc):
         print("successfully loaded",rc)
         print(rc,".value(342,342,0)=>",rc.value(342,342,0))
-        aa7 = Engine.do("aa7.mpr=sin(n000302.mpr)")
+        aa7 = Engine.do("aa7.mpr","sin(n000302.mpr)")
         print("sin(n000302.mpr)=>",aa7)
         print(aa7,".value(342,342,0)=>",aa7.value(342,342,0))
         print("-----------------------------------------------")
@@ -86,11 +87,11 @@ def main():
         print(aa3,".value(342,342,0)=>",aa3.value(342,342,0))
         print("-----------------------------------------------")
         #store to file
-        aa7.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/aa7.tif", "GTiff","gdal",IlwisObject.cmOUTPUT)
-        if aa7.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
-            print("successfully saved aa7.tif.tif")
+        aa1.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/aa1.tif", "GTiff","gdal",IlwisObject.cmOUTPUT)
+        if aa1.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
+            print("successfully saved aa1.tif.tif")
         else:
-            print("could not save aa7.tif.tif")
+            print("could not save aa1.tif.tif")
     else:
         print("couldn't load RasterCoverage")
 
@@ -103,9 +104,9 @@ def claudio_example():#and martins solution proposal
 #    #link it to a local shape file with species distribution. the attributes will contain an attribute 'distribution'.
     distribution.connectTo("file://d:/somepath/species.shp");
 #    #create a coordinate system; we could also use the csy of the distribution map but lets create (for interface sake) a coordinate system
-    localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
+#    localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
 #    #a variant could be
-    localcoordsystem = ilwisengine.coordinatesystem("code=epsg:23035")
+    localcoordsystem = CoordinateSystem("code=epsg:23035")
 #    #setting the bounds
 #    localcoordsystem.bounds(1003700, 239900, 1004600, 2409000)
 #    # create a polygon grid
@@ -116,7 +117,7 @@ def claudio_example():#and martins solution proposal
     for polygon in polygongrid:
         for point in distribution:
 #            if polygon.contains(distribution.coordinatesystem(), point)
-#                maxval = max(polygon.attribute("highest"), point.attribute("distribution"))
+                maxval = max(polygon.attribute("highest"), point.attribute("distribution"))
                 polygon.attribute("highest", maxval)
 
 def martin_example():
@@ -205,3 +206,4 @@ def raul_martin_solution():
 
 if __name__ == "__main__":
     main()
+

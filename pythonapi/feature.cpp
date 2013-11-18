@@ -24,11 +24,11 @@
 
 using namespace pythonapi;
 
-Feature::Feature(Ilwis::SPFeatureI* ilwisFeature): _ilwisSPFeatureI(ilwisFeature){
+Feature::Feature(Ilwis::SPFeatureI* ilwisFeature, FeatureCoverage* fc): _ilwisSPFeatureI(ilwisFeature), _coverage(fc){
 }
 
 bool Feature::__bool__() const{
-    return !this->_ilwisSPFeatureI->isNull() && this->_ilwisSPFeatureI->data()->isValid();
+    return !this->_ilwisSPFeatureI->isNull() && this->_coverage != NULL && this->_coverage->__bool__() && this->_ilwisSPFeatureI->data()->isValid();
 }
 
 const char* Feature::__str__(){

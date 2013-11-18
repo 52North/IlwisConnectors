@@ -40,11 +40,41 @@ using namespace pythonapi;
 Engine::Engine(){
 }
 
-Object *Engine::_do(const char *command){
+Object *Engine::_do(const char* output_name,const char* operation, const char *c3, const char *c4, const char *c5,const char* c6, const char* c7, const char* c8, const char* c9){
     Ilwis::SymbolTable symtbl;
     Ilwis::ExecutionContext ctx;
     ctx.clear();
-    if (Ilwis::commandhandler()->execute(QString("script %1").arg(command),&ctx, symtbl) && !ctx._results.empty()){
+    QString command;
+    if (!QString(c3).isEmpty()){
+        if(!QString(c4).isEmpty()){
+            if(!QString(c5).isEmpty()){
+                if(!QString(c6).isEmpty()){
+                    if(!QString(c7).isEmpty()){
+                        if(!QString(c8).isEmpty()){
+                            if(!QString(c9).isEmpty()){
+                                command = QString("script %1=%2(%3,%4,%5,%6,%7,%8,%9)").arg(output_name,operation,c3,c4,c5,c6,c7,c8,c9);
+                            }else{
+                                command = QString("script %1=%2(%3,%4,%5,%6,%7,%8)").arg(output_name,operation,c3,c4,c5,c6,c7,c8);
+                            }
+                        }else{
+                            command = QString("script %1=%2(%3,%4,%5,%6,%7)").arg(output_name,operation,c3,c4,c5,c6,c7);
+                        }
+                    }else{
+                        command = QString("script %1=%2(%3,%4,%5,%6)").arg(output_name,operation,c3,c4,c5,c6);
+                    }
+                }else{
+                    command = QString("script %1=%2(%3,%4,%5)").arg(output_name,operation,c3,c4,c5);
+                }
+            }else{
+                command = QString("script %1=%2(%3,%4)").arg(output_name,operation,c3,c4);
+            }
+        }else{
+            command = QString("script %1=%2(%3)").arg(output_name,operation,c3);
+        }
+    }else{
+        command = QString("script %1=%2").arg(output_name,operation);
+    }
+    if (Ilwis::commandhandler()->execute(command,&ctx, symtbl) && !ctx._results.empty()){
         Ilwis::Symbol result = symtbl.getSymbol(ctx._results[0]);
         if (result._type == itRASTER){
             if (result._var.canConvert<Ilwis::IRasterCoverage>())

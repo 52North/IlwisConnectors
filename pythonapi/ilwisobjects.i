@@ -52,7 +52,31 @@ namespace pythonapi {
 %extend pythonapi::Engine {
 %insert("python") %{
     def do(*args):
-        obj = Engine__do(*args)
+        if len(args) > 1:
+            if len (args) > 2:
+                if len (args) > 3:
+                    if len (args) > 4:
+                        if len (args) > 5:
+                            if len (args) > 6:
+                                if len (args) > 7:
+                                    if len (args) > 8:
+                                        obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]),repr(args[4]),repr(args[5]),repr(args[6]),repr(args[7]),repr(args[8]))
+                                    else:
+                                        obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]),repr(args[4]),repr(args[5]),repr(args[6]),repr(args[7]))
+                                else:
+                                    obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]),repr(args[4]),repr(args[5]),repr(args[6]))
+                            else:
+                                obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]),repr(args[4]),repr(args[5]))
+                        else:
+                            obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]),repr(args[4]))
+                    else:
+                        obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]))
+                else:
+                    obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]))
+            else:
+                obj = Engine__do(repr(args[0]),repr(args[1]))
+        else:
+            raise IlwisError("no operation given!")
         if obj.ilwisType() == 8:
             return RasterCoverage.toRasterCoverage(obj)
         elif (obj.ilwisType() <= 7) and (obj.ilwisType() >= 1):

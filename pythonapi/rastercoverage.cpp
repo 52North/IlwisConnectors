@@ -34,15 +34,15 @@ RasterCoverage::RasterCoverage(const char *resource){
 }
 
 RasterCoverage* RasterCoverage::__add__(RasterCoverage &rc){
-    return (RasterCoverage*)Engine::_do(QString("add_%1_%2 = %3 + %4").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("add_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toLocal8Bit(),QString("%1 + %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
 }
 
 RasterCoverage *RasterCoverage::__add__(double value){
-    return (RasterCoverage*)Engine::_do(QString("add_%1_%3 = %2 + %3").arg((*this->ptr())->id()).arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("add_%1_%2").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%1 + %2").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
 }
 
 RasterCoverage *RasterCoverage::__radd__(double value){
-    return (RasterCoverage*)Engine::_do(QString("add_%3_%1 = %3 + %2").arg((*this->ptr())->id()).arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("add_%2_%1").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%2 + %1").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
 }
 
 double RasterCoverage::value(double x, double y, double z){
