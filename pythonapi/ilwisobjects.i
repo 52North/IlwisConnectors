@@ -5,17 +5,17 @@
 %include "exception.i"
 
 %{
-#include "ilwis.h"
-#include "object.h"
-#include "engine.h"
-#include "ilwisobject.h"
-#include "coverage.h"
-#include "pyvariant.h"
-#include "feature.h"
-#include "featurecoverage.h"
-#include "featureiterator.h"
-#include "rastercoverage.h"
-#include "coordinatesystem.h"
+#include "pythonapi_ilwis.h"
+#include "pythonapi_object.h"
+#include "pythonapi_engine.h"
+#include "pythonapi_ilwisobject.h"
+#include "pythonapi_coverage.h"
+#include "pythonapi_pyvariant.h"
+#include "pythonapi_feature.h"
+#include "pythonapi_featurecoverage.h"
+#include "pythonapi_featureiterator.h"
+#include "pythonapi_rastercoverage.h"
+#include "pythonapi_coordinatesystem.h"
 %}
 
 %init %{
@@ -43,12 +43,12 @@
 
 
 namespace pythonapi {
-    void muteIssueLogger(); //(ilwis.h)
+    void muteIssueLogger(); //(pythonapi_ilwis.h)
 }
 
-%include "object.h"
+%include "pythonapi_object.h"
 
-%include "engine.h"
+%include "pythonapi_engine.h"
 %extend pythonapi::Engine {
 %insert("python") %{
     def do(*args):
@@ -90,18 +90,18 @@ namespace pythonapi {
 %}
 }
 
-%include "ilwisobject.h"
+%include "pythonapi_ilwisobject.h"
 
-%include "coverage.h"
+%include "pythonapi_coverage.h"
 
-%include "pyvariant.h"
+%include "pythonapi_pyvariant.h"
 
 %newobject pythonapi::Feature::attribute(const char*, int);//possibly no effect
-%include "feature.h"
+%include "pythonapi_feature.h"
 
-%include "featurecoverage.h"
+%include "pythonapi_featurecoverage.h"
 
-%include "featureiterator.h"
+%include "pythonapi_featureiterator.h"
 
 %extend pythonapi::FeatureIterator {
 %insert("python") %{
@@ -132,6 +132,6 @@ namespace pythonapi {
 %}
 }
 
-%include "rastercoverage.h"
+%include "pythonapi_rastercoverage.h"
 
-%include "coordinatesystem.h"
+%include "pythonapi_coordinatesystem.h"

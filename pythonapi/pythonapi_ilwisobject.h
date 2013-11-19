@@ -2,7 +2,7 @@
 #define PYTHONAPI_ILWISOBJECT_H
 
 #include <memory>
-#include "object.h"
+#include "pythonapi_object.h"
 
 namespace Ilwis {
     class IlwisObject;

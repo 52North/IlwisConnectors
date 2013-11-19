@@ -1,6 +1,6 @@
-#include "qissuelogger.h"
+#include "pythonapi_ilwis.h"
 
-#include "ilwis.h"
+#include "pythonapi_qissuelogger.h"
 
 using namespace pythonapi;
 

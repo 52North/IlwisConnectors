@@ -14,8 +14,8 @@
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/rastercoverage.h"
 
-#include "rastercoverage.h"
-#include "engine.h"
+#include "pythonapi_rastercoverage.h"
+#include "pythonapi_engine.h"
 
 using namespace pythonapi;
 

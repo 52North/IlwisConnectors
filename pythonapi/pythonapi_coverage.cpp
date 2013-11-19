@@ -6,7 +6,7 @@
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
 
-#include "coverage.h"
+#include "pythonapi_coverage.h"
 
 using namespace pythonapi;
 

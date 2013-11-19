@@ -31,9 +31,9 @@
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
 
-#include "object.h"
-#include "engine.h"
-#include "pyvariant.h"
+#include "pythonapi_object.h"
+#include "pythonapi_engine.h"
+#include "pythonapi_pyvariant.h"
 
 using namespace pythonapi;
 

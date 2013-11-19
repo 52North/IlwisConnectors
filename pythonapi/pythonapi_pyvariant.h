@@ -1,7 +1,7 @@
 #ifndef PYTHONAPI_PYVARIANT_H
 #define PYTHONAPI_PYVARIANT_H
 
-#include "object.h"
+#include "pythonapi_object.h"
 #include <memory>
 
 //Qt typedefs

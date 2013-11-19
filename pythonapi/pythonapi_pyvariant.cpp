@@ -1,5 +1,5 @@
 #include <QVariant>
-#include "pyvariant.h"
+#include "pythonapi_pyvariant.h"
 
 #include "../../IlwisCore/core/ilwis.h"
 #include "../../IlwisCore/core/errorobject.h"

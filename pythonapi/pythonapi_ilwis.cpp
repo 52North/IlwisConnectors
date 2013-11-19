@@ -1,8 +1,8 @@
 #include "../../IlwisCore/core/kernel.h"
 #include "../../IlwisCore/core/errorobject.h"
 
-#include "ilwis.h"
-#include "qissuelogger.h"
+#include "pythonapi_ilwis.h"
+#include "pythonapi_qissuelogger.h"
 
 #include <QtCore/QCoreApplication>
 #include <QString>

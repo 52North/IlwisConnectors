@@ -1,7 +1,7 @@
 #ifndef PYTHONAPI_RASTERCOVERAGE_H
 #define PYTHONAPI_RASTERCOVERAGE_H
 
-#include "coverage.h"
+#include "pythonapi_coverage.h"
 
 namespace Ilwis {
     class RasterCoverage;

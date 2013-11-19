@@ -1,7 +1,7 @@
 #ifndef PYTHONAPI_COVERAGE_H
 #define PYTHONAPI_COVERAGE_H
 
-#include "ilwisobject.h"
+#include "pythonapi_ilwisobject.h"
 
 #include <string>
 #include <vector>

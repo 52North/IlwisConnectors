@@ -1,7 +1,7 @@
 #ifndef PYTHONAPI_COORDINATESYSTEM_H
 #define PYTHONAPI_COORDINATESYSTEM_H
 
-#include "ilwisobject.h"
+#include "pythonapi_ilwisobject.h"
 
 namespace pythonapi {
 

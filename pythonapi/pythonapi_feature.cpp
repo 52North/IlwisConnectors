@@ -18,8 +18,8 @@
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 
-#include "feature.h"
-#include "featurecoverage.h"
+#include "pythonapi_feature.h"
+#include "pythonapi_featurecoverage.h"
 
 #include <QVariant>
 

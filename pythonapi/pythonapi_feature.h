@@ -1,7 +1,7 @@
 #ifndef PYTHONAPI_FEATURE_H
 #define PYTHONAPI_FEATURE_H
 
-#include "pyvariant.h"
+#include "pythonapi_pyvariant.h"
 
 namespace Ilwis{
     class SPFeatureI;

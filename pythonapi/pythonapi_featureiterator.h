@@ -1,8 +1,8 @@
 #ifndef PYTHONAPI_FEATUREITERATOR_H
 #define PYTHONAPI_FEATUREITERATOR_H
 
-#include "feature.h"
-#include "featurecoverage.h"
+#include "pythonapi_feature.h"
+#include "pythonapi_featurecoverage.h"
 
 namespace Ilwis {
     class FeatureIterator;

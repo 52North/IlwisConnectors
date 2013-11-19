@@ -1,6 +1,6 @@
 #include "Python.h"
 
-#include "ilwis.h"
+#include "pythonapi_ilwis.h"
 
 #include <typeinfo>
 
