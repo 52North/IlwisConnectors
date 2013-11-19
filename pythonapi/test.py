@@ -74,46 +74,32 @@ def main():
         print(rctif.name()+".value(342,342,0) =>",rctif.value(342,342,0))
         print("-----------------------------------------------")
         aa7 = Engine.do("aa7.mpr","sin(n000302.mpr)")
-        print("sin(n000302.mpr)=>",aa7.name())
-        print(aa7.name(),".value(342,342,0)=>",aa7.value(342,342,0))
+        print("sin(n000302.mpr)=>",aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
         print("-----------------------------------------------")
-        print(rc.name(),".value(342,342,0)=>",rc.value(342,342,0))
         aa1 = rc + rc
-        print(rc.name(), " + ", rc.name(), " = ", aa1.name())
-        print(aa1.name(),".value(342,342,0)=>",aa1.value(342,342,0))
+        print(rc.name(), " + ", rc.name(), " = ", aa1.name()+".value(342,342,0)=>",aa1.value(342,342,0))
         aa2 = rc + 2
-        print(rc.name(), " + 2 = ", aa2.name())
-        print(aa2.name(),".value(342,342,0)=>",aa2.value(342,342,0))
+        print(rc.name(), " + 2 = ", aa2.name()+".value(342,342,0)=>",aa2.value(342,342,0))
         aa3 = 2 + rc
-        print("2 + ", rc.name(), " = ", aa3.name())
-        print(aa3.name(),".value(342,342,0)=>",aa3.value(342,342,0))
+        print("2 + ", rc.name(), " = ", aa3.name()+".value(342,342,0)=>",aa3.value(342,342,0))
         aa4 = rc - rc
-        print(rc.name(), " - ", rc.name(), " = ", aa4.name())
-        print(aa4.name(),".value(342,342,0)=>",aa4.value(342,342,0))
+        print(rc.name(), " - ", rc.name(), " = ", aa4.name()+".value(342,342,0)=>",aa4.value(342,342,0))
         aa5 = 2 - rc
-        print("2 - ", rc.name(), " = ", aa5.name())
-        print(aa5.name(),".value(342,342,0)=>",aa5.value(342,342,0))
+        print("2 - ", rc.name(), " = ", aa5.name()+".value(342,342,0)=>",aa5.value(342,342,0))
         aa6 = rc - 2
-        print(rc.name(), " - 2 = ", aa6.name())
-        print(aa6.name(),".value(342,342,0)=>",aa6.value(342,342,0))
+        print(rc.name(), " - 2 = ", aa6.name()+".value(342,342,0)=>",aa6.value(342,342,0))
         aa7 = rc / rc
-        print(rc.name(), " / ", rc.name(), " = ", aa7.name())
-        print(aa7.name(),".value(342,342,0)=>",aa7.value(342,342,0))
+        print(rc.name(), " / ", rc.name(), " = ", aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
         aa8 = 2 / rc
-        print("2 / ", rc.name(), " = ", aa8.name())
-        print(aa8.name(),".value(342,342,0)=>",aa8.value(342,342,0))
+        print("2 / ", rc.name(), " = ", aa8.name()+".value(342,342,0)=>",aa8.value(342,342,0))
         aa9 = rc / 2
-        print(rc.name(), " / 2 = ", aa9.name())
-        print(aa9.name(),".value(342,342,0)=>",aa9.value(342,342,0))
+        print(rc.name(), " / 2 = ", aa9.name()+".value(342,342,0)=>",aa9.value(342,342,0))
         aa10 = rc * rc
-        print(rc.name(), " * ", rc.name(), " = ", aa10.name())
-        print(aa10.name(),".value(342,342,0)=>",aa10.value(342,342,0))
+        print(rc.name(), " * ", rc.name(), " = ", aa10.name()+".value(342,342,0)=>",aa10.value(342,342,0))
         aa11 = 2 * rc
-        print("2 * ", rc.name(), " = ", aa11.name())
-        print(aa11.name(),".value(342,342,0)=>",aa11.value(342,342,0))
+        print("2 * ", rc.name(), " = ", aa11.name()+".value(342,342,0)=>",aa11.value(342,342,0))
         aa12 = rc * 2
-        print(rc.name(), " * 2 = ", aa12.name())
-        print(aa12.name(),".value(342,342,0)=>",aa12.value(342,342,0))
+        print(rc.name(), " * 2 = ", aa12.name()+".value(342,342,0)=>",aa12.value(342,342,0))
         print("-----------------------------------------------")
         #store to file
         aa1.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/aa1.tif", "GTiff","gdal",IlwisObject.cmOUTPUT)
