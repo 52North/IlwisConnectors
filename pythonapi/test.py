@@ -67,10 +67,12 @@ def main():
     print("-----------------------------------------------")
     Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata")
     rc = RasterCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
-#    rc.connectTo()
-    if (rc):
-        print("successfully loaded",rc.name())
-        print(rc.name(),".value(342,342,0)=>",rc.value(342,342,0))
+    rctif = RasterCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.tif")
+    if (rc and rctif):
+        print("successfully loaded",rc.name(),"and",rctif.name())
+        print(rc.name()+".value(342,342,0) =>",rc.value(342,342,0))
+        print(rctif.name()+".value(342,342,0) =>",rctif.value(342,342,0))
+        print("-----------------------------------------------")
         aa7 = Engine.do("aa7.mpr","sin(n000302.mpr)")
         print("sin(n000302.mpr)=>",aa7.name())
         print(aa7.name(),".value(342,342,0)=>",aa7.value(342,342,0))
@@ -85,6 +87,33 @@ def main():
         aa3 = 2 + rc
         print("2 + ", rc.name(), " = ", aa3.name())
         print(aa3.name(),".value(342,342,0)=>",aa3.value(342,342,0))
+        aa4 = rc - rc
+        print(rc.name(), " - ", rc.name(), " = ", aa4.name())
+        print(aa4.name(),".value(342,342,0)=>",aa4.value(342,342,0))
+        aa5 = 2 - rc
+        print("2 - ", rc.name(), " = ", aa5.name())
+        print(aa5.name(),".value(342,342,0)=>",aa5.value(342,342,0))
+        aa6 = rc - 2
+        print(rc.name(), " - 2 = ", aa6.name())
+        print(aa6.name(),".value(342,342,0)=>",aa6.value(342,342,0))
+        aa7 = rc / rc
+        print(rc.name(), " / ", rc.name(), " = ", aa7.name())
+        print(aa7.name(),".value(342,342,0)=>",aa7.value(342,342,0))
+        aa8 = 2 / rc
+        print("2 / ", rc.name(), " = ", aa8.name())
+        print(aa8.name(),".value(342,342,0)=>",aa8.value(342,342,0))
+        aa9 = rc / 2
+        print(rc.name(), " / 2 = ", aa9.name())
+        print(aa9.name(),".value(342,342,0)=>",aa9.value(342,342,0))
+        aa10 = rc * rc
+        print(rc.name(), " * ", rc.name(), " = ", aa10.name())
+        print(aa10.name(),".value(342,342,0)=>",aa10.value(342,342,0))
+        aa11 = 2 * rc
+        print("2 * ", rc.name(), " = ", aa11.name())
+        print(aa11.name(),".value(342,342,0)=>",aa11.value(342,342,0))
+        aa12 = rc * 2
+        print(rc.name(), " * 2 = ", aa12.name())
+        print(aa12.name(),".value(342,342,0)=>",aa12.value(342,342,0))
         print("-----------------------------------------------")
         #store to file
         aa1.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/aa1.tif", "GTiff","gdal",IlwisObject.cmOUTPUT)

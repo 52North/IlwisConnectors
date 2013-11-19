@@ -45,6 +45,42 @@ RasterCoverage *RasterCoverage::__radd__(double value){
     return (RasterCoverage*)Engine::_do(QString("add_%2_%1").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%2 + %1").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
 }
 
+RasterCoverage *RasterCoverage::__sub__(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(QString("sub_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toLocal8Bit(),QString("%1 - %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
+}
+
+RasterCoverage *RasterCoverage::__sub__(double value){
+    return (RasterCoverage*)Engine::_do(QString("sub_%1_%2").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%1 - %2").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+}
+
+RasterCoverage *RasterCoverage::__rsub__(double value){
+    return (RasterCoverage*)Engine::_do(QString("sub_%2_%1").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%2 - %1").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+}
+
+RasterCoverage *RasterCoverage::__mul__(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(QString("mul_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toLocal8Bit(),QString("%1 * %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
+}
+
+RasterCoverage *RasterCoverage::__mul__(double value){
+    return (RasterCoverage*)Engine::_do(QString("mul_%1_%2").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%1 * %2").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+}
+
+RasterCoverage *RasterCoverage::__rmul__(double value){
+    return (RasterCoverage*)Engine::_do(QString("mul_%2_%1").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%2 * %1").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+}
+
+RasterCoverage *RasterCoverage::__truediv__(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(QString("div_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toLocal8Bit(),QString("%1 / %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
+}
+
+RasterCoverage *RasterCoverage::__truediv__(double value){
+    return (RasterCoverage*)Engine::_do(QString("div_%1_%2").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%1 / %2").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+}
+
+RasterCoverage *RasterCoverage::__rtruediv__(double value){
+    return (RasterCoverage*)Engine::_do(QString("div_%2_%1").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%2 / %1").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+}
+
 double RasterCoverage::value(double x, double y, double z){
     return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(Coordinate(x,y,z));
 }
