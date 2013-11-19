@@ -17,3 +17,16 @@ bool Coverage::addAttribute(const char *name, const char *domain){
     return (*this->ptr()).get<Ilwis::Coverage>()->attributeTable()->addColumn(QString(name),QString(domain));
 }
 
+quint32 Coverage::attributeCount(){
+    return (*this->ptr()).get<Ilwis::Coverage>()->attributeTable()->columnCount();
+}
+
+std::vector<std::string> Coverage::attributes(){
+    std::vector<std::string> ret;
+    Ilwis::ITable tbl = (*this->ptr()).get<Ilwis::Coverage>()->attributeTable();
+    for(int i = 0; i < tbl->columnCount(); i++){
+        ret.push_back(tbl->columndefinition(i).name().toStdString());
+    }
+    return ret;
+}
+

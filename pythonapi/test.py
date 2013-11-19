@@ -11,7 +11,7 @@ def main():
     localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
     polygongrid = Engine.do("polygongrid","gridding",localcoordsystem,"coordinate(225358.6605, 3849480.5700)","1000.0","1000.0","12","12")
     if polygongrid:
-        print("successfully created FeatureCoverage with gridding",polygongrid)
+        print("successfully created",polygongrid.type(),"with gridding",polygongrid.name())
         print("FeatureCount is",polygongrid.featureCount())
     else:
         print("couln't create FeatureCoverage with gridding")
@@ -19,16 +19,16 @@ def main():
     #FeatureCoverage
     fc = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
     if fc:
-        print("successfully loaded", fc)
-        print(fc ,"contains:",fc.featureCount(),"Features")
+        print("successfully loaded", fc.name())
+        print(fc.name() ,"contains:",fc.featureCount(),"Features")
 
         print("-----------------------------------------------")
         #adding new attribute to coverage
         if fc.addAttribute("highest","value"):
-            print("value attribute 'highest' was added to",fc)
+            print("value attribute 'highest' was added to",fc.name())
             print(fc.attributes())
         else:
-            print("couln't add value attribute 'highest' to",fc)
+            print("couln't add value attribute 'highest' to",fc.name())
         print("-----------------------------------------------")
         #iterating over features
         sum = 0
@@ -56,12 +56,12 @@ def main():
     print("CoordinateSystems")
     cs1 = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
     if cs1:
-        print(cs1)
+        print(cs1.name())
     else:
         print("Coudn't create CoordinateSystem from proy4 definition!")
     cs2 = CoordinateSystem("code=epsg:23035")
     if cs2:
-        print(cs2)
+        print(cs2.name())
     else:
         print("Coudn't create CoordinateSystem from EPSG code!")
     print("-----------------------------------------------")
@@ -69,22 +69,22 @@ def main():
     rc = RasterCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
 #    rc.connectTo()
     if (rc):
-        print("successfully loaded",rc)
-        print(rc,".value(342,342,0)=>",rc.value(342,342,0))
+        print("successfully loaded",rc.name())
+        print(rc.name(),".value(342,342,0)=>",rc.value(342,342,0))
         aa7 = Engine.do("aa7.mpr","sin(n000302.mpr)")
-        print("sin(n000302.mpr)=>",aa7)
-        print(aa7,".value(342,342,0)=>",aa7.value(342,342,0))
+        print("sin(n000302.mpr)=>",aa7.name())
+        print(aa7.name(),".value(342,342,0)=>",aa7.value(342,342,0))
         print("-----------------------------------------------")
-        print(rc,".value(342,342,0)=>",rc.value(342,342,0))
+        print(rc.name(),".value(342,342,0)=>",rc.value(342,342,0))
         aa1 = rc + rc
-        print(rc, " + ", rc, " = ", aa1)
-        print(aa1,".value(342,342,0)=>",aa1.value(342,342,0))
+        print(rc.name(), " + ", rc.name(), " = ", aa1.name())
+        print(aa1.name(),".value(342,342,0)=>",aa1.value(342,342,0))
         aa2 = rc + 2
-        print(rc, " + 2 = ", aa2)
-        print(aa2,".value(342,342,0)=>",aa2.value(342,342,0))
+        print(rc.name(), " + 2 = ", aa2.name())
+        print(aa2.name(),".value(342,342,0)=>",aa2.value(342,342,0))
         aa3 = 2 + rc
-        print("2 + ", rc, " = ", aa3)
-        print(aa3,".value(342,342,0)=>",aa3.value(342,342,0))
+        print("2 + ", rc.name(), " = ", aa3.name())
+        print(aa3.name(),".value(342,342,0)=>",aa3.value(342,342,0))
         print("-----------------------------------------------")
         #store to file
         aa1.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/aa1.tif", "GTiff","gdal",IlwisObject.cmOUTPUT)

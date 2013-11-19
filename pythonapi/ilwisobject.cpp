@@ -34,21 +34,35 @@ bool IlwisObject::__bool__() const{
 
 const char* IlwisObject::__str__(){
     if (this->__bool__())
-        return QString("%1(%2)").arg(Ilwis::IlwisObject::type2Name((*this->ptr())->ilwisType())).arg((*this->ptr())->name()).toLocal8Bit();
+        return QString("%1%2").arg(NAME_ALIAS).arg((*this->ptr())->id()).toLocal8Bit();
+    else
+        return QString("invalid IlwisObject!").toLocal8Bit();
+}
+
+const char* IlwisObject::name(){
+    if (this->__bool__())
+        return (*this->ptr())->name().toLocal8Bit();
+    else
+        return QString("invalid IlwisObject!").toLocal8Bit();
+}
+
+const char *IlwisObject::type(){
+    if (this->__bool__())
+        return Ilwis::IlwisObject::type2Name((*this->ptr())->ilwisType()).toLocal8Bit();
     else
         return QString("invalid IlwisObject!").toLocal8Bit();
 }
 
 const char *IlwisObject::__add__(const char *value){
     if (this->__bool__())
-        return QString("%2%1").arg(value).arg((*this->ptr())->name()).toLocal8Bit();
+        return QString("%2%1").arg(value).arg(this->__str__()).toLocal8Bit();
     else
         return QString("invalid IlwisObject!").toLocal8Bit();
 }
 
 const char *IlwisObject::__radd__(const char *value){
     if (this->__bool__())
-        return QString("%1%2").arg(value).arg((*this->ptr())->name()).toLocal8Bit();
+        return QString("%1%2").arg(value).arg(this->__str__()).toLocal8Bit();
     else
         return QString("invalid IlwisObject!").toLocal8Bit();
 }

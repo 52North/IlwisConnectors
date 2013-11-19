@@ -3,6 +3,9 @@
 
 #include "ilwisobject.h"
 
+#include <string>
+#include <vector>
+
 namespace pythonapi{
 
     class Coverage : public IlwisObject{
@@ -10,6 +13,8 @@ namespace pythonapi{
             Coverage();
             virtual ~Coverage(){};
             bool addAttribute(const char* name, const char* domain);
+            quint32 attributeCount();
+            std::vector<std::string> attributes();
     };
 
 }

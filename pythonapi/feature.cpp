@@ -19,6 +19,7 @@
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 
 #include "feature.h"
+#include "featurecoverage.h"
 
 #include <QVariant>
 

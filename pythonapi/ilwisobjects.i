@@ -60,21 +60,21 @@ namespace pythonapi {
                             if len (args) > 6:
                                 if len (args) > 7:
                                     if len (args) > 8:
-                                        obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]),repr(args[4]),repr(args[5]),repr(args[6]),repr(args[7]),repr(args[8]))
+                                        obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]),str(args[4]),str(args[5]),str(args[6]),str(args[7]),str(args[8]))
                                     else:
-                                        obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]),repr(args[4]),repr(args[5]),repr(args[6]),repr(args[7]))
+                                        obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]),str(args[4]),str(args[5]),str(args[6]),str(args[7]))
                                 else:
-                                    obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]),repr(args[4]),repr(args[5]),repr(args[6]))
+                                    obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]),str(args[4]),str(args[5]),str(args[6]))
                             else:
-                                obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]),repr(args[4]),repr(args[5]))
+                                obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]),str(args[4]),str(args[5]))
                         else:
-                            obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]),repr(args[4]))
+                            obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]),str(args[4]))
                     else:
-                        obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]),repr(args[3]))
+                        obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]))
                 else:
-                    obj = Engine__do(repr(args[0]),repr(args[1]),repr(args[2]))
+                    obj = Engine__do(str(args[0]),str(args[1]),str(args[2]))
             else:
-                obj = Engine__do(repr(args[0]),repr(args[1]))
+                obj = Engine__do(str(args[0]),str(args[1]))
         else:
             raise IlwisError("no operation given!")
         if obj.ilwisType() == 8:
@@ -117,6 +117,13 @@ namespace pythonapi {
             raise StopIteration
 %}
 }
+
+//%include "std_vector.i"
+//%include "std_string.i"
+//// Instantiate templates used by example
+//namespace std {
+// %template(StdVector_String) vector<string>;
+//}
 
 %extend pythonapi::FeatureCoverage {
 %insert("python") %{
