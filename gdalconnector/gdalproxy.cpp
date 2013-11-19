@@ -253,7 +253,7 @@ void GDALProxy::closeFile(const QString &filename, quint64 asker){
 }
 
 OGRSpatialReferenceH GDALProxy::srsHandle(GdalHandle* handle, const QString& source) {
-    if (handle == nullptr){
+    if (handle != nullptr){
         OGRSpatialReferenceH srshandle = nullptr;
         if (handle->_type == GdalHandle::etGDALDatasetH){
             srshandle = newSpatialRef(NULL);

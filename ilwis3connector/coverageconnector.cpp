@@ -77,7 +77,12 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
 
     ITable attTable;
     if ( basemaptype != "Map" ) {
-        Resource resource(QUrl(QString("ilwis://internalcatalog/%1").arg(_resource.name())), itFLATTABLE);
+        QString name = _resource.name();
+        int index = -1;
+        if ( (index = name.indexOf(".")) != -1){
+            name = name.left(index);
+        }
+        Resource resource(QUrl(QString("ilwis://internalcatalog/%1").arg(name)), itFLATTABLE);
         if(!attTable.prepare(resource)) {
             ERROR1(ERR_NO_INITIALIZED_1,resource.name());
             return ITable();
@@ -243,10 +248,13 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
         } else if ( dom->valueType() == itNAMEDITEM) {
             INamedIdDomain iddom = dom.get<NamedIdDomain>();
             QString domName = _odf->file();
-            int index;
-            if ( (index=domName.lastIndexOf("."))!= -1)             {
-                domName = domName.left(index);
-            }
+            QFileInfo localInfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(domName);
+            domName = localInfo.baseName();
+//            int index;
+//            if ( (index=domName.lastIndexOf("."))!= -1)             {
+//                domName = domName.left(index);
+//            }
+
             QString domInfo = QString("%1;;Int;id;%2;;").arg(domName).arg(iddom->count());
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
             _odf->setKeyValue("BaseMap","Domain",domName);

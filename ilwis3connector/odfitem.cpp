@@ -125,7 +125,7 @@ bool ODFItem::setFileId(const QHash<QString, quint64> &names, const QString& val
         if ( resource.isValid()) {
             fileid = resource.id();
         } else {
-            fileid = mastercatalog()->resource2id(url, tp);
+            fileid = mastercatalog()->url2id(url, tp);
             if ( fileid == i64UNDEF) {
                 kernel()->issues()->log(TR(ERR_MISSING_1).arg(completeName));
                 fileid = i64UNDEF;

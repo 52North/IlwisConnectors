@@ -31,21 +31,17 @@ GDALItems::GDALItems(const QUrl &url, const UPContainerConnector &containerc)
         if ( count == 0)
             return;
         //TODO at the moment simplistic approach; all is corners georef and domain value
-        // and a homogenous type if files. when we have example of more complex nature we wille xtend this
+        // and a homogenous type if files. when we have example of more complex nature we wille xtend this+
         quint64 csyId = addCsy(handle, file, url);
-        Resource resGrf(url, itGEOREF);
-        resGrf.addProperty("coordinatesystem", csyId);
-        resGrf.setExtendedType(itCONVENTIONALCOORDSYSTEM);
-        insert(resGrf);
-        if ( count == 1) {
+        if ( handle->type() == GdalHandle::etGDALDatasetH) {
+            Resource resGrf(url, itGEOREF);
+            resGrf.addProperty("coordinatesystem", csyId);
+            resGrf.setExtendedType(itCONVENTIONALCOORDSYSTEM);
+            insert(resGrf);
             addItem(url, csyId, resGrf.id());
-        } else {
-    //        for(int layer=0; layer < count; ++layer) {
-    //            QUrl url2(QString("file:///" + path + "#layerindex=%1").arg(layer));
-    //            addItem(url2,csyId, resGrf.id());
-    //        }
-    //        addItem(url, csyId, resGrf.id(), itRASTERCOVERAGELIST);
-        }
+        } else
+            addItem(url, csyId, iUNDEF, itFEATURE);
+
 
         gdal()->closeFile(file.absoluteFilePath(), i64UNDEF);
     }
@@ -53,11 +49,15 @@ GDALItems::GDALItems(const QUrl &url, const UPContainerConnector &containerc)
 
 void GDALItems::addItem(const QUrl& url, quint64 csyid, quint64 grfId, IlwisTypes tp) {
     Resource gdalItem(url, tp);
-    Resource resValue = mastercatalog()->name2Resource("code=value",itNUMERICDOMAIN);
-    gdalItem.addProperty("domain", resValue.id());
     gdalItem.addProperty("coordinatesystem", csyid);
-    gdalItem.addProperty("georeference", grfId);
-    gdalItem.setExtendedType(itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM);
+    if ( tp == itRASTER){
+        Resource resValue = mastercatalog()->name2Resource("code=value",itNUMERICDOMAIN);
+        gdalItem.addProperty("domain", resValue.id());
+        gdalItem.addProperty("georeference", grfId);
+        gdalItem.setExtendedType(itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM);
+    }else
+       gdalItem.setExtendedType(itCONVENTIONALCOORDSYSTEM);
+
     insert(gdalItem);
 }
 
