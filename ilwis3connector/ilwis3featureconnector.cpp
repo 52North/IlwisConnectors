@@ -606,8 +606,8 @@ bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& da
 }
 
 bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
-    if ( type == 0)
-        return false;
+    if ( type == itUNKNOWN)
+        return true;//if type is itUNKNOWN we dont store
     DataDefinition datadef;
 
     ITable attTable = fcov->attributeTable();
