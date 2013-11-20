@@ -2,6 +2,7 @@
 #define PYTHONAPI_FEATURE_H
 
 #include "pythonapi_pyvariant.h"
+#include "pythonapi_geometry.h"
 
 namespace Ilwis{
     class SPFeatureI;
@@ -19,6 +20,7 @@ namespace pythonapi{
         PyVariant* attribute(const char* name, int index = -1);
         void attribute(const char* name, PyVariant &value, int index = -1);
         IlwisTypes ilwisType();
+        Geometry* geometry(int index = 0);
 
     private:
         //TODO: replace with std::shared_ptr of that feature if done in IlwisCore

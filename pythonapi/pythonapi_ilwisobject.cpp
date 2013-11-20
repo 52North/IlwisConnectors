@@ -24,8 +24,8 @@ void IlwisObject::connectTo(const char *url, const char *format, const char *fna
     }
 }
 
-bool IlwisObject::store(IlwisObject::ConnectorMode storeMode){
-    return (*this->ptr())->store((Ilwis::IlwisObject::ConnectorMode)storeMode);
+bool IlwisObject::store(IlwisObject::StoreMode storeMode){
+    return (*this->ptr())->store((Ilwis::IlwisObject::StoreMode)storeMode);
 }
 
 bool IlwisObject::__bool__() const{

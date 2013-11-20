@@ -2,6 +2,7 @@
 #define PYTHONAPI_COVERAGE_H
 
 #include "pythonapi_ilwisobject.h"
+#include "pythonapi_coordinatesystem.h"
 
 #include <string>
 #include <vector>
@@ -15,6 +16,7 @@ namespace pythonapi{
             bool addAttribute(const char* name, const char* domain);
             quint32 attributeCount();
             std::vector<std::string> attributes();
+            CoordinateSystem coordinateSystem();
     };
 
 }

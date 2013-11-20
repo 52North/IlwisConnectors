@@ -23,6 +23,9 @@ CoordinateSystem::CoordinateSystem(){
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(cs));
 }
 
+CoordinateSystem::CoordinateSystem(Ilwis::ICoordinateSystem *cs): IlwisObject(new Ilwis::IIlwisObject(*cs)){
+}
+
 CoordinateSystem::CoordinateSystem(const char *resource){
     Ilwis::ICoordinateSystem cs;
     cs.prepare(QString(resource));

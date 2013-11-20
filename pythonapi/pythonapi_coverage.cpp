@@ -30,3 +30,7 @@ std::vector<std::string> Coverage::attributes(){
     return ret;
 }
 
+CoordinateSystem Coverage::coordinateSystem(){
+    return CoordinateSystem(new Ilwis::ICoordinateSystem(this->ptr()->get<Ilwis::Coverage>()->coordinateSystem()));
+}
+

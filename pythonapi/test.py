@@ -9,7 +9,7 @@ def main():
     print("-----------------------------------------------")
     #Gridding
     localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
-    polygongrid = Engine.do("polygongrid","gridding",localcoordsystem,"coordinate(225358.6605, 3849480.5700)","1000.0","1000.0","12","12")
+    polygongrid = Engine.do("polygongrid","gridding",localcoordsystem,"coordinate(225358.6605, 3849480.5700)",1000.0,1000.0,12,12)
     if polygongrid:
         print("successfully created",polygongrid.type(),"with gridding",polygongrid.name())
         print("FeatureCount is",polygongrid.featureCount())
@@ -113,27 +113,23 @@ def main():
 
 
 def claudio_example():#and martins solution proposal
+    #muteIssueLogger()
     ilwisengine = Engine()
-#    #create a feature coverage
-    distribution = FeatureCoverage()#ilwisengine.features()
-#    #link it to a local shape file with species distribution. the attributes will contain an attribute 'distribution'.
-    distribution.connectTo("file://d:/somepath/species.shp");
-#    #create a coordinate system; we could also use the csy of the distribution map but lets create (for interface sake) a coordinate system
-#    localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
-#    #a variant could be
-    localcoordsystem = CoordinateSystem("code=epsg:23035")
-#    #setting the bounds
-#    localcoordsystem.bounds(1003700, 239900, 1004600, 2409000)
-#    # create a polygon grid
-    polygongrid = ilwisengine.do("gridding", localcoordsystem,10039939, 2399393, 10045997, 2405000, 1000)
-#    #add an attribute for the highest distribution ; name plus domain as parameters. Others could include ranges and such. Keep it simple here
-    polygongrid.addAttribute("highest","numeric")
-#    #small trivial algorithm for detecting the highest point attribute per polygon
+    Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata")
+    distribution = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/rainfall.mpp")
+    polygongrid = ilwisengine.do("polygongrid","gridding", distribution.coordinateSystem(),"coordinate(795865.29,8089682.52)",10,10,12,12)
+    polygongrid.addAttribute("highest","value")
     for polygon in polygongrid:
         for point in distribution:
-#            if polygon.contains(distribution.coordinatesystem(), point)
+            if polygon.geometry().contains(point.geometry()):
                 maxval = max(polygon.attribute("highest"), point.attribute("distribution"))
                 polygon.attribute("highest", maxval)
+
+    polygongrid.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/polygongrid", "segmentmap", "ilwis3", IlwisObject.cmOUTPUT)
+    if polygongrid.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
+        print("job done!")
+    else:
+        print("couln't save to aaa_out.mpp")
 
 def martin_example():
     nir = RasterCoverage("file:///C:/some/dir/nir_2010.img")
@@ -220,5 +216,5 @@ def raul_martin_solution():
                     kmeansvoronoi.attribute("numberOfObservation", kmeansvoronoi.attribute("numberOfObservation") + 1)
 
 if __name__ == "__main__":
-    main()
-
+#    main()
+    claudio_example()

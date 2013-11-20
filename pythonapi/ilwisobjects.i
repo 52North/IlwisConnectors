@@ -9,13 +9,15 @@
 #include "pythonapi_object.h"
 #include "pythonapi_engine.h"
 #include "pythonapi_ilwisobject.h"
+#include "pythonapi_coordinatesystem.h"
 #include "pythonapi_coverage.h"
 #include "pythonapi_pyvariant.h"
+#include "pythonapi_object.h"
+#include "pythonapi_geometry.h"
 #include "pythonapi_feature.h"
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_featureiterator.h"
 #include "pythonapi_rastercoverage.h"
-#include "pythonapi_coordinatesystem.h"
 %}
 
 %init %{
@@ -51,32 +53,11 @@ namespace pythonapi {
 %include "pythonapi_engine.h"
 %extend pythonapi::Engine {
 %insert("python") %{
-    def do(*args):
-        if len(args) > 1:
-            if len (args) > 2:
-                if len (args) > 3:
-                    if len (args) > 4:
-                        if len (args) > 5:
-                            if len (args) > 6:
-                                if len (args) > 7:
-                                    if len (args) > 8:
-                                        obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]),str(args[4]),str(args[5]),str(args[6]),str(args[7]),str(args[8]))
-                                    else:
-                                        obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]),str(args[4]),str(args[5]),str(args[6]),str(args[7]))
-                                else:
-                                    obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]),str(args[4]),str(args[5]),str(args[6]))
-                            else:
-                                obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]),str(args[4]),str(args[5]))
-                        else:
-                            obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]),str(args[4]))
-                    else:
-                        obj = Engine__do(str(args[0]),str(args[1]),str(args[2]),str(args[3]))
-                else:
-                    obj = Engine__do(str(args[0]),str(args[1]),str(args[2]))
-            else:
-                obj = Engine__do(str(args[0]),str(args[1]))
+    def do(self,out,operation,arg1="",arg2="",arg3="",arg4="",arg5="",arg6="",arg7=""):
+        if str(out) != "" or str(operation) == "":
+            obj = Engine__do(str(out),str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7))
         else:
-            raise IlwisError("no operation given!")
+            raise IlwisError("invalid output name or no operation given!")
         if obj.ilwisType() == 8:
             return RasterCoverage.toRasterCoverage(obj)
         elif (obj.ilwisType() <= 7) and (obj.ilwisType() >= 1):
@@ -92,9 +73,15 @@ namespace pythonapi {
 
 %include "pythonapi_ilwisobject.h"
 
+%include "pythonapi_coordinatesystem.h"
+
 %include "pythonapi_coverage.h"
 
 %include "pythonapi_pyvariant.h"
+
+%include "pythonapi_object.h"
+
+%include "pythonapi_geometry.h"
 
 %newobject pythonapi::Feature::attribute(const char*, int);//possibly no effect
 %include "pythonapi_feature.h"
@@ -133,5 +120,3 @@ namespace pythonapi {
 }
 
 %include "pythonapi_rastercoverage.h"
-
-%include "pythonapi_coordinatesystem.h"

@@ -53,6 +53,10 @@ IlwisTypes Feature::ilwisType(){
     return itFEATURE;
 }
 
+Geometry* Feature::geometry(int index){
+    return new Geometry(new Ilwis::Geometry(this->ptr()->geometry(index)));
+}
+
 Ilwis::SPFeatureI Feature::ptr() const{
     if (!this->__bool__())
         throw Ilwis::ErrorObject(QString("invalid Feature!"));
