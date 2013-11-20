@@ -122,7 +122,7 @@ def claudio_example():#and martins solution proposal
 
     polygongrid.addAttribute("max","value")
     for polygon in polygongrid:
-#        polygon.setAttribute("max", 0)
+        polygon.setAttribute("max", 0)
         for point in distribution:
             if polygon.geometry().contains(point.geometry()):
                 maxval = max(int(polygon.attribute("max")), int(point.attribute("may")))
@@ -130,9 +130,9 @@ def claudio_example():#and martins solution proposal
 
     polygongrid.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/polygongrid", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
     polygongrid.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA)
-    check = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/polygongrid.mpa")
-    for poly in check:
-        print(poly.id(),"==",poly.attribute("max"))
+#    check = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/polygongrid.mpa")
+#    for poly in check:
+#        print(poly.id(),"==",poly.attribute("max"))
 
 def martin_example():
     nir = RasterCoverage("file:///C:/some/dir/nir_2010.img")

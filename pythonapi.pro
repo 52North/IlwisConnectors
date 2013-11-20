@@ -52,7 +52,8 @@ OTHER_FILES += \
     pythonapi/test.sh \
     pythonapi/test.bat \
     pythonapi/qt.conf \
-    pythonapi/ilwisobjects.conf
+    pythonapi/ilwisobjects.conf \
+    pythonapi/prepare_PATH.bat
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
