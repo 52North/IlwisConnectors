@@ -17,8 +17,17 @@ namespace pythonapi{
         Feature(Ilwis::SPFeatureI* ilwisFeature, FeatureCoverage* fc);
         bool __bool__() const;
         const char* __str__();
+        quint64 id();
         PyVariant* attribute(const char* name, int index = -1);
-        void attribute(const char* name, PyVariant &value, int index = -1);
+        void setAttribute(const char* name, PyVariant &value, int index = -1);
+        void setAttribute(const char* name, int value, int index = -1);
+        void setAttribute(const char* name, uint value, int index = -1);
+        void setAttribute(const char* name, qlonglong value, int index = -1);
+        void setAttribute(const char* name, qulonglong value, int index = -1);
+        void setAttribute(const char* name, bool value, int index = -1);
+        void setAttribute(const char* name, double value, int index = -1);
+        void setAttribute(const char* name, float value, int index = -1);
+        void setAttribute(const char* name, const char* value, int index = -1);
         IlwisTypes ilwisType();
         Geometry* geometry(int index = 0);
 
