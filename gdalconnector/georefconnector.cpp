@@ -73,7 +73,7 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
 
 IlwisObject *GeorefConnector::create() const{
     //TODO tiepoints georef
-    return GeoReference::create("corners");
+    return GeoReference::create("corners", Resource());
 
 
 
