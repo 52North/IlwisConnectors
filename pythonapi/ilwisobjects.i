@@ -53,7 +53,7 @@ namespace pythonapi {
 %include "pythonapi_engine.h"
 %extend pythonapi::Engine {
 %insert("python") %{
-    def do(self,out,operation,arg1="",arg2="",arg3="",arg4="",arg5="",arg6="",arg7=""):
+    def do(out,operation,arg1="",arg2="",arg3="",arg4="",arg5="",arg6="",arg7=""):
         if str(out) != "" or str(operation) == "":
             obj = Engine__do(str(out),str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7))
         else:
@@ -68,6 +68,7 @@ namespace pythonapi {
             raise TypeError("unknown IlwisType")
         else:
             return obj
+    if _newclass: do = staticmethod(do)
 %}
 }
 
