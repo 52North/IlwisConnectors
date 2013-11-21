@@ -1,23 +1,32 @@
 #include "../../IlwisCore/core/kernel.h"
 #include "../../IlwisCore/core/errorobject.h"
 
-#include "ilwis.h"
-#include "qissuelogger.h"
+#include "pythonapi_ilwis.h"
+#include "pythonapi_qissuelogger.h"
 
 #include <QtCore/QCoreApplication>
 #include <QString>
 #include <QFileInfo>
 
-static pythonapi::QIssueLogger* logger;
+namespace pythonapi {
+
+    static QIssueLogger* logger;
+    static QMetaObject::Connection connection;
+
+}
 
 bool pythonapi::initIlwisObjects(){
     int argc = 0;
     char* argv[0];
     QCoreApplication app(argc, argv);
     bool ret = Ilwis::initIlwis(QFileInfo("C:/Python33/Lib/site-packages/ilwisobjects.conf"));
-    logger = new pythonapi::QIssueLogger();
-    QObject::connect(Ilwis::kernel()->issues().data(),SIGNAL(ilwiserrormessage(QString)),logger,SLOT(ilwiserrormessage(QString)));
+    pythonapi::logger = new pythonapi::QIssueLogger();
+    pythonapi::connection = QObject::connect(Ilwis::kernel()->issues().data(),SIGNAL(ilwiserrormessage(QString)),pythonapi::logger,SLOT(ilwiserrormessage(QString)));
     return ret;
+}
+
+void pythonapi::muteIssueLogger(){
+    QObject::disconnect(pythonapi::connection);
 }
 
 size_t pythonapi::ilwisErrorObject_type_info(){

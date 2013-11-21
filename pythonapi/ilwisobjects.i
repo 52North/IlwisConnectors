@@ -5,13 +5,19 @@
 %include "exception.i"
 
 %{
-#include "ilwis.h"
-#include "ilwisobject.h"
-#include "coverage.h"
-#include "pyvariant.h"
-#include "feature.h"
-#include "featurecoverage.h"
-#include "featureiterator.h"
+#include "pythonapi_ilwis.h"
+#include "pythonapi_object.h"
+#include "pythonapi_engine.h"
+#include "pythonapi_ilwisobject.h"
+#include "pythonapi_coordinatesystem.h"
+#include "pythonapi_coverage.h"
+#include "pythonapi_pyvariant.h"
+#include "pythonapi_object.h"
+#include "pythonapi_geometry.h"
+#include "pythonapi_feature.h"
+#include "pythonapi_featurecoverage.h"
+#include "pythonapi_featureiterator.h"
+#include "pythonapi_rastercoverage.h"
 %}
 
 %init %{
@@ -37,18 +43,53 @@
     }
 }
 
-%include "ilwisobject.h"
 
-%include "coverage.h"
+namespace pythonapi {
+    void muteIssueLogger(); //(pythonapi_ilwis.h)
+}
 
-%include "pyvariant.h"
+%include "pythonapi_object.h"
 
-%newobject pythonapi::Feature::cell(const char*, int);//possibly no effect
-%include "feature.h"
+%include "pythonapi_engine.h"
+%extend pythonapi::Engine {
+%insert("python") %{
+    def do(out,operation,arg1="",arg2="",arg3="",arg4="",arg5="",arg6="",arg7=""):
+        if str(out) != "" or str(operation) == "":
+            obj = Engine__do(str(out),str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7))
+        else:
+            raise IlwisError("invalid output name or no operation given!")
+        if obj.ilwisType() == 8:
+            return RasterCoverage.toRasterCoverage(obj)
+        elif (obj.ilwisType() <= 7) and (obj.ilwisType() >= 1):
+            return FeatureCoverage.toFeatureCoverage(obj)
+        elif obj.ilwisType() <= 0xFFFFFFFFFFFFFFFF:
+            return PyVariant.toPyVariant(obj)
+        elif obj.ilwisType() == 0:
+            raise TypeError("unknown IlwisType")
+        else:
+            return obj
+    if _newclass: do = staticmethod(do)
+%}
+}
 
-%include "featurecoverage.h"
+%include "pythonapi_ilwisobject.h"
 
-%include "featureiterator.h"
+%include "pythonapi_coordinatesystem.h"
+
+%include "pythonapi_coverage.h"
+
+%include "pythonapi_pyvariant.h"
+
+%include "pythonapi_object.h"
+
+%include "pythonapi_geometry.h"
+
+%newobject pythonapi::Feature::attribute(const char*, int);//possibly no effect
+%include "pythonapi_feature.h"
+
+%include "pythonapi_featurecoverage.h"
+
+%include "pythonapi_featureiterator.h"
 
 %extend pythonapi::FeatureIterator {
 %insert("python") %{
@@ -65,6 +106,13 @@
 %}
 }
 
+//%include "std_vector.i"
+//%include "std_string.i"
+//// Instantiate templates used by example
+//namespace std {
+// %template(StdVector_String) vector<string>;
+//}
+
 %extend pythonapi::FeatureCoverage {
 %insert("python") %{
     def __iter__(self):
@@ -72,3 +120,4 @@
 %}
 }
 
+%include "pythonapi_rastercoverage.h"

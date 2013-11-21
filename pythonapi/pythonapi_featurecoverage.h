@@ -1,8 +1,7 @@
 #ifndef PYTHONAPI_FEATURECOVERAGE_H
 #define PYTHONAPI_FEATURECOVERAGE_H
 
-#include "coverage.h"
-#include "string"
+#include "pythonapi_coverage.h"
 
 namespace Ilwis {
     class FeatureCoverage;
@@ -11,12 +10,15 @@ namespace Ilwis {
 
 namespace pythonapi {
 
+    class FeatureIterator;
+
     class FeatureCoverage : public Coverage{
+        friend class FeatureIterator;
     public:
         FeatureCoverage();
         FeatureCoverage(const char* resource);
-        ~FeatureCoverage();
         unsigned int featureCount() const;
+        static FeatureCoverage* toFeatureCoverage(Object *obj);
     };
 }
 

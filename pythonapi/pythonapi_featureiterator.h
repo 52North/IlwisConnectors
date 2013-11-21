@@ -1,8 +1,8 @@
 #ifndef PYTHONAPI_FEATUREITERATOR_H
 #define PYTHONAPI_FEATUREITERATOR_H
 
-#include "feature.h"
-#include "featurecoverage.h"
+#include "pythonapi_feature.h"
+#include "pythonapi_featurecoverage.h"
 
 namespace Ilwis {
     class FeatureIterator;
@@ -13,7 +13,7 @@ namespace pythonapi {
 class FeatureIterator
 {
 public:
-    FeatureIterator(FeatureCoverage fc);
+    FeatureIterator(FeatureCoverage* fc);
     ~FeatureIterator();
     /**
      * @brief next confusingly returns current value bevore iterating to the next item
@@ -25,6 +25,7 @@ public:
     bool hasNext();
 private:
     Ilwis::FeatureIterator* _ilwisFeatureIterator;
+    FeatureCoverage* _coverage;
 };
 
 }

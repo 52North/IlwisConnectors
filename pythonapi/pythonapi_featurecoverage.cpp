@@ -21,25 +21,33 @@
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
 
-#include "featurecoverage.h"
+#include "pythonapi_featurecoverage.h"
 
 using namespace pythonapi;
 
 FeatureCoverage::FeatureCoverage(){
+    Ilwis::IFeatureCoverage fc;
+    fc.prepare();
+    if (fc.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
 }
 
 FeatureCoverage::FeatureCoverage(const char* resource){
     Ilwis::IFeatureCoverage fc;
     fc.prepare(QString(resource));
     if (fc.isValid())
-        this->_ilwisObjectID = fc->id();
-}
-
-FeatureCoverage::~FeatureCoverage(){
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
 }
 
 unsigned int FeatureCoverage::featureCount() const{
-    return this->ptr().get<Ilwis::FeatureCoverage>()->featureCount();
+    return this->ptr()->get<Ilwis::FeatureCoverage>()->featureCount();
+}
+
+FeatureCoverage *FeatureCoverage::toFeatureCoverage(Object *obj){
+    FeatureCoverage* ptr = static_cast<FeatureCoverage*>(obj);
+    if(!ptr)
+        throw Ilwis::ErrorObject(QString("cast to FeatureCoverage not possible"));
+    return ptr;
 }
 
 

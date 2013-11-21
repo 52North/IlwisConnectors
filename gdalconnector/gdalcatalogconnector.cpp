@@ -36,6 +36,7 @@ bool GdalCatalogConnector::loadItems()
     QStringList filters = gdal()->getRasterExtensions();
     filters.append(gdal()->getFeatureExtensions());
     filters.removeOne("*.hdr");
+        //namefilter << gdal()->getFeatureExtensions();
 
     std::vector<QUrl> files = containerConnector()->sources(filters
                                                       ,ContainerConnector::foFULLPATHS | ContainerConnector::foEXTENSIONFILTER);
