@@ -643,7 +643,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     }
     if ( fcov->featureTypes() & itLINE){
         ok = storeMetaLine(fcov, dataFile);
-        ext = "mpp";
+        ext = "mps";
     }
 
     _odf->store(ext, containerConnector());
