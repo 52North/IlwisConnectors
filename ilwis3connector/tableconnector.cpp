@@ -217,6 +217,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
     const Table *tbl = static_cast<const Table *>(obj);
     int reduceColumns = _attributeDomain == "" ? 0 : 1; // the featured_id column will not be go the ilwis3, useless info at that level
 
+
     _odf->setKeyValue("Ilwis", "Type", "Table");
     _odf->setKeyValue("Ilwis", "Class", "Table");
     _odf->setKeyValue("Table", "Domain", _attributeDomain);
@@ -245,7 +246,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         _odf->setKeyValue(colName, "Time", Time::now().toString());
         _odf->setKeyValue(colName, "Version", "3.1");
         _odf->setKeyValue(colName, "Class", "Column");
-        _odf->setKeyValue(colName, "Domain", domName);
+        _odf->setKeyValue(colName, "Domain", domName.indexOf(".dom") != -1 ? domName : domName + ".dom");
         //_odf->setKeyValue(colName, "Time", Time::now().toString());
         _odf->setKeyValue(colName, "DomainChangeable", "Yes");
         _odf->setKeyValue(colName, "ValueRangeChangeable", "Yes");
@@ -270,7 +271,11 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
                 storeType = "Int"  ;
             else if ( conv.storeType() & itUINT8 )
                  storeType = "Byte"  ;
-            domainInfo = QString("%1;%2;value;0;%3;%4;0.1;offset=%5").arg(dmColumn->name()).
+            QString attrdomname = dmColumn->name();
+            int index = attrdomname.indexOf(".dom");
+            if ( index == -1)
+                attrdomname += ".dom";
+            domainInfo = QString("%1;%2;value;0;%3;%4;0.1;offset=%5").arg(attrdomname).
                     arg(storeType).
                     arg(numdmrange->min()).
                     arg(numdmrange->max()).
