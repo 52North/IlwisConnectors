@@ -13,6 +13,8 @@ PyObject* pythonapi::ilwisException;
 PyObject* pythonapi::translate_Exception_type(std::exception& e){
     if (typeid(e) == typeid(std::domain_error)){
         return PyExc_TypeError;
+    }else if (typeid(e) == typeid(std::out_of_range)){
+        return PyExc_IndexError;
     }else if(typeid(e).hash_code() == ilwisErrorObject_type_info()){
         return ilwisException;
     }
