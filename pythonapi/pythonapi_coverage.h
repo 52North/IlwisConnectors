@@ -16,6 +16,8 @@ namespace pythonapi{
             bool addAttribute(const char* name, const char* domain);
             quint32 attributeCount();
             std::vector<std::string> attributes();
+            int __len__();
+            const char* __getitem__(int i);
             CoordinateSystem coordinateSystem();
     };
 

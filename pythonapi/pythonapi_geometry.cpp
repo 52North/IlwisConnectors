@@ -12,7 +12,10 @@
 
 #include "pythonapi_geometry.h"
 
-using namespace pythonapi;
+namespace pythonapi{
+
+Geometry::Geometry():_ilwisGeometry(nullptr){
+}
 
 Geometry::Geometry(Ilwis::Geometry* geometry):_ilwisGeometry(geometry){
 }
@@ -44,3 +47,25 @@ IlwisTypes Geometry::ilwisType(){
         throw Ilwis::ErrorObject(QString("invalid Feature!"));
     return this->_ilwisGeometry->ilwisType();
 }
+
+
+Coordinate::Coordinate(double x, double y, double z): _x(x), _y(y), _z(z){
+    this->_2d = (this->_z == -1e308); //rUNDEF = -1e308
+}
+
+const char* pythonapi::Coordinate::__str__(){
+    if (this->_2d)
+        return QString("coordinate(%1,%2)").arg(this->_x).arg(this->_y).toLocal8Bit();
+    else
+        return QString("coordinate(%1,%2,%3)").arg(this->_x).arg(this->_y).arg(this->_z).toLocal8Bit();
+}
+
+
+Pixel::Pixel(qint32 x, qint32 y): _x(x), _y(y){
+}
+
+const char* Pixel::__str__(){
+    return QString("pixel(%1,%2)").arg(this->_x).arg(this->_y).toLocal8Bit();
+}
+
+}//namespace pythonapi

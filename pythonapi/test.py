@@ -3,6 +3,60 @@
 
 from ilwisobjects import *
 
+def claudio_example():#and martins solution proposal
+    #muteIssueLogger()
+
+    ilwisengine = Engine()
+    ilwisengine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata/example")
+
+    distribution = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/example/freq.mpp")
+    polygongrid = ilwisengine.do("polygongrid","gridding", distribution.coordinateSystem(),Coordinate(26.5,4.5),1,1,15,13)
+
+    polygongrid.addAttribute("maxY","value")
+    for polygon in polygongrid:
+        polygon.setAttribute("maxY", 0)
+        for point in distribution:
+            if polygon.geometry().contains(point.geometry()):
+                maxval = max(int(polygon.attribute("maxY")), int(point.attribute("freq_speciesY")))
+                polygon.setAttribute("maxY", maxval)
+
+    polygongrid.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/example/polygongrid", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+    polygongrid.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA)
+
+
+#    check = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/example/polygongrid.mpa")
+#    for poly in check:
+#        print(poly.id(),"==",poly.attribute("max"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def main():
     Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape")
     #muteIssueLogger()
@@ -26,7 +80,8 @@ def main():
         #adding new attribute to coverage
         if fc.addAttribute("highest","value"):
             print("value attribute 'highest' was added to",fc.name())
-            print(fc.attributes())
+            for i in range(len(fc)):
+                print(fc[i], end="|")
         else:
             print("couln't add value attribute 'highest' to",fc.name())
         print("-----------------------------------------------")
@@ -35,7 +90,10 @@ def main():
         for f in fc:
             sum += int(f.attribute("MAY"))
             f.setAttribute("highest",sum)
-            print(f, ":", f.attribute("coverage_key"), ",", f.attribute("MAY"), ",", f.attribute("RAINFALL"), ",", f.attribute("highest"));
+            print(f, end=":");
+            for i in range(len(fc)):
+                print(f.attribute(fc[i]), end="|")
+            print()
         print("sum of rainfall values in may:",sum)
         del sum
 
@@ -109,30 +167,6 @@ def main():
             print("could not save aa1.tif.tif")
     else:
         print("couldn't load RasterCoverage")
-
-
-
-def claudio_example():#and martins solution proposal
-    #muteIssueLogger()
-    ilwisengine = Engine()
-    ilwisengine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata")
-
-    distribution = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/rainfall.mpp")
-    polygongrid = ilwisengine.do("polygongrid","gridding", distribution.coordinateSystem(),"coordinate(795828.95,8073988.25)",1000,1000,13,17)
-
-    polygongrid.addAttribute("max","value")
-    for polygon in polygongrid:
-        polygon.setAttribute("max", 0)
-        for point in distribution:
-            if polygon.geometry().contains(point.geometry()):
-                maxval = max(int(polygon.attribute("max")), int(point.attribute("may")))
-                polygon.setAttribute("max", maxval)
-
-    polygongrid.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/polygongrid", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
-    polygongrid.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA)
-#    check = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/polygongrid.mpa")
-#    for poly in check:
-#        print(poly.id(),"==",poly.attribute("max"))
 
 def martin_example():
     nir = RasterCoverage("file:///C:/some/dir/nir_2010.img")

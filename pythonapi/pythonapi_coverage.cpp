@@ -30,6 +30,18 @@ std::vector<std::string> Coverage::attributes(){
     return ret;
 }
 
+int Coverage::__len__(){
+    return (*this->ptr()).get<Ilwis::Coverage>()->attributeTable()->columnCount();
+}
+
+const char *Coverage::__getitem__(int i){
+    Ilwis::ITable tbl = (*this->ptr()).get<Ilwis::Coverage>()->attributeTable();
+    if (i < tbl->columnCount() && i >= 0)
+        return tbl->columndefinition(i).name().toLocal8Bit();
+    else
+        throw std::out_of_range("index out of range");
+}
+
 CoordinateSystem Coverage::coordinateSystem(){
     return CoordinateSystem(new Ilwis::ICoordinateSystem(this->ptr()->get<Ilwis::Coverage>()->coordinateSystem()));
 }
