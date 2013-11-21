@@ -432,6 +432,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         _odf->setKeyValue("MapList",QString("Map%1").arg(i),mapName);
 
         Resource resource(itRASTER);
+        resource.setName(mapName);
         resource.addProperty("size", IVARIANT(Size(sz.xsize(), sz.ysize())));
         resource.addProperty("bounds", IVARIANT(raster->envelope()));
         resource.addProperty("georeference", raster->georeference()->id());
@@ -441,11 +442,6 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
 
         IRasterCoverage gcMap;
         bool ok = gcMap.prepare(resource);
-//        gcMap->georeference(raster->georeference());
-//        gcMap->setCoordinateSystem(raster->coordinateSystem());
-//        gcMap->datadef().domain(raster->datadef().domain());
-//        gcMap->size(sz);
-//        gcMap->setName(mapName);
         gcMap->copyBinary(raster, i);
         int index = _odf->file().lastIndexOf("/");
         QString path = _odf->file().left(index);
@@ -464,7 +460,14 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
         ERROR2(ERR_NO_INITIALIZED_2, "Georeference", raster->name());
         return sUNDEF;
     }
-    QString localName = Resource::toLocalFile(grf->source().url(),false);
+    QString name = grf->source(IlwisObject::cmOUTPUT).url().toString();
+    if ( grf->isAnonymous()) {
+        name = raster->source(IlwisObject::cmOUTPUT).url().toString();
+        int index = name.lastIndexOf(".");
+        name = name.left(index);
+        name += ".grf";
+    }
+    QString localName = Resource::toLocalFile(QUrl(name),false);
     QFileInfo localGrf(localName);
     if ( !localGrf.exists()) {
         //QFileInfo coveragePath(Resource::toLocalFile(obj->target()));
