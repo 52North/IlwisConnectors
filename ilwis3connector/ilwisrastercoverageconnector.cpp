@@ -329,7 +329,7 @@ Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
         }
         //tbl->addColumn(COVERAGEKEYCOLUMN,covdom);
         for(quint32 i=0; i < tbl->recordCount() ; ++i) {
-            tbl->cell(COVERAGEKEYCOLUMN,i, QVariant(i));
+            tbl->setCell(COVERAGEKEYCOLUMN,i, QVariant(i));
         }
     }
     return grid;
@@ -397,6 +397,10 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
                 ok = save<quint16>(output_file,conv, raster,sz);
             }
         }
+    }
+    ITable attTable = raster->attributeTable();
+    if ( attTable.isValid()) {
+        attTable->store(IlwisObject::smBINARYDATA);
     }
     return ok;
 
