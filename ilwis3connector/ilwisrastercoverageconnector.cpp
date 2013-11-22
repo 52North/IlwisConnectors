@@ -398,6 +398,10 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
             }
         }
     }
+    ITable attTable = raster->attributeTable();
+    if ( attTable.isValid()) {
+        attTable->store(IlwisObject::smBINARYDATA);
+    }
     return ok;
 
 }
