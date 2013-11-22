@@ -105,6 +105,20 @@ ColumnDefinition TableConnector::makeColumn(const QString& colName, quint64 inde
     RawConverter conv = Ilwis3Range::converter(_odf,section);
     _converters[colName] = conv;
     ColumnDefinition col(colName, dom, index );
+    if ( dom->ilwisType() == itNUMERICDOMAIN){
+        QString range = _odf->value(section,"Range");
+        QStringList parts = range.split(":");
+        if ( parts.size() >= 2) {
+            double resolution = 1.0;
+            double vmin = parts[0].toDouble();
+            double vmax = parts[1].toDouble();
+            if ( parts.size() > 3) {
+                resolution = parts[2].toDouble();
+            }
+            col.datadef().range(new NumericRange(vmin, vmax, resolution));
+        }
+
+    }
     return col;
 }
 
@@ -162,8 +176,8 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
                 }
             }
             table->column(colName,varlist);
-            if ( hasType(valueType, itNUMBER))
-                table->columndefinition(i).datadef().range(new NumericRange(vmin, vmax));
+//            if ( hasType(valueType, itNUMBER))
+//                table->columndefinition(i).datadef().range(new NumericRange(vmin, vmax));
         } else {
             kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("column", colName));
             return false;
@@ -215,7 +229,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         return false;
 
     const Table *tbl = static_cast<const Table *>(obj);
-    int reduceColumns = _attributeDomain == "" ? 0 : 1; // the featured_id column will not be go the ilwis3, useless info at that level
+    int reduceColumns = 1; // the featured_id column will not be go the ilwis3, useless info at that level
 
 
     _odf->setKeyValue("Ilwis", "Type", "Table");
@@ -230,7 +244,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
     QFileInfo tblOdf(_resource.toLocalFile(true));
     QString dataFile = tblOdf.baseName() + ".tb#";
     _odf->setKeyValue("TableStore", "Data", dataFile);
-    for(int i=0; i < tbl->columnCount(); ++i) {
+    for(int i=0,index=1; i < tbl->columnCount(); ++i) {
         ColumnDefinition def = tbl->columndefinition(i);
         if ( def.name() == FEATUREIDCOLUMN)
             continue;
@@ -241,7 +255,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
             DomainConnector conn(dmColumn->source(), itDOMAIN);
             conn.storeMetaData(dmColumn.ptr());
         }
-        _odf->setKeyValue("TableStore", QString("Col%1").arg(i - reduceColumns), def.name());
+        _odf->setKeyValue("TableStore", QString("Col%1").arg(index - reduceColumns), def.name());
         QString colName = QString("Col:%1").arg(def.name());
         _odf->setKeyValue(colName, "Time", Time::now().toString());
         _odf->setKeyValue(colName, "Version", "3.1");
@@ -262,7 +276,13 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
             }
             SPNumericRange numrange = def.datadef().range().dynamicCast<NumericRange>();
             RawConverter conv(numrange->min(), numrange->max(), numrange->resolution());
-            QString range = QString("%1:%2:%3:offset=%4").arg(numrange->min()).arg(numrange->max()).arg(numrange->resolution()).arg(conv.offset());
+            double resolution = numrange->resolution();
+            QString range;
+            if ( resolution != 1)
+                range = QString("%1:%2:%3:offset=%4").arg(numrange->min()).arg(numrange->max()).arg(resolution).arg(conv.offset());
+            else
+                range = QString("%1:%2:offset=%3").arg(numrange->min()).arg(numrange->max()).arg(conv.offset());
+
             _odf->setKeyValue(colName,"Range",range);
             QString storeType = "Real";
             if ( conv.storeType() & itINT32 )
@@ -293,6 +313,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
             _odf->setKeyValue(colName, "StoreType", "Long");
         }
         _odf->setKeyValue(colName, "DomainInfo", domainInfo);
+        ++index;
 
     }
     _odf->setKeyValue("TableStore", "StoreTime", Time::now().toString());
