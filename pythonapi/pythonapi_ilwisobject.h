@@ -29,7 +29,7 @@ namespace pythonapi {
         virtual ~IlwisObject();
 
         void connectTo(const char* url, const char* format  = "", const char* fnamespace = "", ConnectorMode cmode = cmINPUT);
-        bool store(StoreMode storeMode);
+        bool store(int storeMode = smMETADATA | smBINARYDATA);
         bool __bool__() const;
         const char *__str__();
         const char *__add__(const char* value);

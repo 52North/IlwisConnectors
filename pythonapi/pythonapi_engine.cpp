@@ -40,10 +40,17 @@ using namespace pythonapi;
 Engine::Engine(){
 }
 
-Object *Engine::_do(const char* output_name,const char* operation, const char *c3, const char *c4, const char *c5,const char* c6, const char* c7, const char* c8, const char* c9){
+Object *Engine::_do(const char* operation, const char *c3, const char *c4, const char *c5,const char* c6, const char* c7, const char* c8, const char* c9, const char* output_name){
     Ilwis::SymbolTable symtbl;
     Ilwis::ExecutionContext ctx;
     ctx.clear();
+    //is no internal result name is given it will look like operation_id
+    //but the id is to be added afterwards
+    bool rename = false;
+    if (QString(output_name).isEmpty()){
+        output_name = operation;
+        rename = true;
+    }
     QString command;
     if (!QString(c3).isEmpty()){
         if(!QString(c4).isEmpty()){
@@ -77,11 +84,19 @@ Object *Engine::_do(const char* output_name,const char* operation, const char *c
     if (Ilwis::commandhandler()->execute(command,&ctx, symtbl) && !ctx._results.empty()){
         Ilwis::Symbol result = symtbl.getSymbol(ctx._results[0]);
         if (result._type == itRASTER){
-            if (result._var.canConvert<Ilwis::IRasterCoverage>())
-                return new IlwisObject(new Ilwis::IIlwisObject(result._var.value<Ilwis::IRasterCoverage>()));
+            if (result._var.canConvert<Ilwis::IRasterCoverage>()){
+                Ilwis::IIlwisObject* obj = new Ilwis::IIlwisObject(result._var.value<Ilwis::IRasterCoverage>());
+                if (rename)
+                    (*obj)->setName(QString("%1_%2").arg(operation).arg((*obj)->id()));
+                return new IlwisObject(obj);
+            }
         }else if (result._type == itFEATURE){
-            if (result._var.canConvert<Ilwis::IFeatureCoverage>())
-                return new IlwisObject(new Ilwis::IIlwisObject(result._var.value<Ilwis::IFeatureCoverage>()));
+            if (result._var.canConvert<Ilwis::IFeatureCoverage>()){
+                Ilwis::IIlwisObject* obj = new Ilwis::IIlwisObject(result._var.value<Ilwis::IFeatureCoverage>());
+                if (rename)
+                    (*obj)->setName(QString("%1_%2").arg(operation).arg((*obj)->id()));
+                return new IlwisObject(obj);
+            }
         }
         return new PyVariant(new QVariant(result._var));
     }else{

@@ -3,60 +3,7 @@
 
 from ilwisobjects import *
 
-def claudio_example():#and martins solution proposal
-    #muteIssueLogger()
-
-    ilwisengine = Engine()
-    ilwisengine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata/example")
-
-    distribution = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/example/freq.mpp")
-    polygongrid = ilwisengine.do("polygongrid","gridding", distribution.coordinateSystem(),Coordinate(26.5,4.5),1,1,15,13)
-
-    polygongrid.addAttribute("maxY","value")
-    for polygon in polygongrid:
-        polygon.setAttribute("maxY", 0)
-        for point in distribution:
-            if polygon.geometry().contains(point.geometry()):
-                maxval = max(int(polygon.attribute("maxY")), int(point.attribute("freq_speciesY")))
-                polygon.setAttribute("maxY", maxval)
-
-    polygongrid.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/example/polygongrid", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
-    polygongrid.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA)
-
-
-#    check = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/example/polygongrid.mpa")
-#    for poly in check:
-#        print(poly.id(),"==",poly.attribute("max"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#further tests on all the working api calls
 def main():
     Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape")
     #muteIssueLogger()
@@ -168,6 +115,30 @@ def main():
     else:
         print("couldn't load RasterCoverage")
 
+
+#=======================================================================================
+#everything below here is just copy & paste from proposals of user requirement meetings
+#Heinrich tries to make most of this working soon
+#=======================================================================================
+
+def claudio_example():#and martins solution proposal <== example code for presentation
+    ilwisengine = Engine()
+    ilwisengine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata/example")
+
+    distribution = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/example/freq.mpp")
+    polygongrid = ilwisengine.do("gridding", distribution.coordinateSystem(),Coordinate(26.5,4.5),1,1,15,13)
+    print(polygongrid.name())
+    polygongrid.addAttribute("maxY","value")
+    for polygon in polygongrid:
+#        polygon.setAttribute("maxY", 0)
+        for point in distribution:
+            if polygon.geometry().contains(point.geometry()):
+                maxval = max(int(polygon.attribute("maxY")), int(point.attribute("freq_speciesY")))
+                polygon.setAttribute("maxY", maxval)
+
+    polygongrid.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/example/polygongrid", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+    polygongrid.store()
+
 def martin_example():
     nir = RasterCoverage("file:///C:/some/dir/nir_2010.img")
     vis = RasterCoverage("file:///C:/some/dir/vis_2010.img")
@@ -252,6 +223,8 @@ def raul_martin_solution():
                 if area.contains(observations.coordinatesystem(), point):
                     kmeansvoronoi.attribute("numberOfObservation", kmeansvoronoi.attribute("numberOfObservation") + 1)
 
+
+#here you can chose which test case will be executed
 if __name__ == "__main__":
 #    main()
     claudio_example()

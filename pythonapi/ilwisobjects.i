@@ -53,11 +53,12 @@ namespace pythonapi {
 %include "pythonapi_engine.h"
 %extend pythonapi::Engine {
 %insert("python") %{
-    def do(out,operation,arg1="",arg2="",arg3="",arg4="",arg5="",arg6="",arg7=""):
-        if str(out) != "" or str(operation) == "":
-            obj = Engine__do(str(out),str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7))
+    @staticmethod
+    def do(operation,arg1="",arg2="",arg3="",arg4="",arg5="",arg6="",arg7="",out=""):
+        if str(operation) != "":
+            obj = Engine__do(str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7),str(out))
         else:
-            raise IlwisError("invalid output name or no operation given!")
+            raise IlwisException("no operation given!")
         if obj.ilwisType() == 8:
             return RasterCoverage.toRasterCoverage(obj)
         elif (obj.ilwisType() <= 7) and (obj.ilwisType() >= 1):
@@ -68,7 +69,6 @@ namespace pythonapi {
             raise TypeError("unknown IlwisType")
         else:
             return obj
-    if _newclass: do = staticmethod(do)
 %}
 }
 
