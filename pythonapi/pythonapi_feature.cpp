@@ -44,60 +44,60 @@ quint64 Feature::id(){
 }
 
 PyVariant *Feature::attribute(const char *name, int index){
-    return new PyVariant(new QVariant(this->ptr()(QString(name),index)));
+    return new PyVariant(new QVariant(this->ptr()(QString(name),index),false));
 }
 
 void Feature::setAttribute(const char *name, PyVariant &value, int index){
     QVariant* tmp = value.clone();
-    this->ptr()->cell(QString(name), (*tmp), index);
+    this->ptr()->setCell(QString(name), (*tmp), index);
     delete tmp;
 }
 
 void Feature::setAttribute(const char *name, int value, int index){
     QVariant* tmp = new QVariant(value);
-    this->ptr()->cell(QString(name), (*tmp), index);
+    this->ptr()->setCell(QString(name), (*tmp), index);
     delete tmp;
 }
 
 void Feature::setAttribute(const char *name, uint value, int index){
     QVariant* tmp = new QVariant(value);
-    this->ptr()->cell(QString(name), (*tmp), index);
+    this->ptr()->setCell(QString(name), (*tmp), index);
     delete tmp;
 }
 
 void Feature::setAttribute(const char *name, qlonglong value, int index){
     QVariant* tmp = new QVariant(value);
-    this->ptr()->cell(QString(name), (*tmp), index);
+    this->ptr()->setCell(QString(name), (*tmp), index);
     delete tmp;
 }
 
 void Feature::setAttribute(const char *name, qulonglong value, int index){
     QVariant* tmp = new QVariant(value);
-    this->ptr()->cell(QString(name), (*tmp), index);
+    this->ptr()->setCell(QString(name), (*tmp), index);
     delete tmp;
 }
 
 void Feature::setAttribute(const char *name, bool value, int index){
     QVariant* tmp = new QVariant(value);
-    this->ptr()->cell(QString(name), (*tmp), index);
+    this->ptr()->setCell(QString(name), (*tmp), index);
     delete tmp;
 }
 
 void Feature::setAttribute(const char *name, double value, int index){
     QVariant* tmp = new QVariant(value);
-    this->ptr()->cell(QString(name), (*tmp), index);
+    this->ptr()->setCell(QString(name), (*tmp), index);
     delete tmp;
 }
 
 void Feature::setAttribute(const char *name, float value, int index){
     QVariant* tmp = new QVariant(value);
-    this->ptr()->cell(QString(name), (*tmp), index);
+    this->ptr()->setCell(QString(name), (*tmp), index);
     delete tmp;
 }
 
 void Feature::setAttribute(const char *name, const char *value, int index){
     QVariant* tmp = new QVariant(value);
-    this->ptr()->cell(QString(name), (*tmp), index);
+    this->ptr()->setCell(QString(name), (*tmp), index);
     delete tmp;
 }
 

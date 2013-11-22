@@ -416,7 +416,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillLine(FeatureCoverage *fcoverag
              double x,y,z;
              gdal()->getPoints(geometry, i,&x,&y,&z);
              line[i] = Coordinate2d(x,y);
-//             attTable->cell(FEATUREVALUECOLUMN, rec, QVariant(z));
+//             attTable->setCell(FEATUREVALUECOLUMN, rec, QVariant(z));
          }
         ret.push_back(fcoverage->newFeature({line}));
         return ret;
@@ -444,7 +444,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
                 double x,y,z;
                 gdal()->getPoints(hSubGeometry, i,&x,&y,&z);
                 ring[i] = Coordinate2d(x,y);
-//                tbl->cell(FEATUREVALUECOLUMN, i, QVariant(z));
+//                tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(z));
             }
 
             pol.inners().resize(subGeomCount-1);
@@ -460,7 +460,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
                         double x,y,z;
                         gdal()->getPoints(hSubGeometry, i,&x,&y,&z);
                         ring[i] = Coordinate2d(x,y);
-//                        tbl->cell(FEATUREVALUECOLUMN, i, QVariant(z));
+//                        tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(z));
                     }
                 }
             }

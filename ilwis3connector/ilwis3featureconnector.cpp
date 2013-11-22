@@ -97,14 +97,14 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
             }
             polTable.get(i, colValue, v);
             if ( isNumeric) {
-                tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(i));
-                tbl->cell(FEATUREVALUECOLUMN, i, QVariant(v));
+                tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
+                tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(v));
                 fcoverage->newFeature({polygon});
             } else {
                 quint32 itemId = v;
-                tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
+                tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
                 SPFeatureI feature = fcoverage->newFeature({polygon});
-                tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+                tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
             }
         }
     }
@@ -224,15 +224,15 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         for(quint32 i=0; i< numberOfHoles;++i)
             readRing(stream, pol.inners()[i]);
         if ( isNumeric) {
-            tbl->cell(COVERAGEKEYCOLUMN, j, QVariant(j));
-            tbl->cell(FEATUREVALUECOLUMN, j, QVariant(value));
+            tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(j));
+            tbl->setCell(FEATUREVALUECOLUMN, j, QVariant(value));
             SPFeatureI feature = fcoverage->newFeature({pol});
-            tbl->cell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
+            tbl->setCell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         } else {
             quint32 itemId = value;
-            tbl->cell(COVERAGEKEYCOLUMN, j, QVariant(itemId));
+            tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(itemId));
             SPFeatureI feature = fcoverage->newFeature({pol});
-            tbl->cell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
+            tbl->setCell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         }
 
     }
@@ -287,16 +287,16 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
         std::copy(coords.begin(), coords.end(), line.begin());
         mpsTable.get(i, colItemId,value);
         if ( isNumeric) {
-            tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(i));
-            tbl->cell(FEATUREVALUECOLUMN, i, QVariant(value));
+            tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
+            tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(value));
             SPFeatureI feature = fcoverage->newFeature({line});
-            tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+            tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
 
         } else {
             quint32 itemId = value;
-            tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
+            tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
             SPFeatureI feature = fcoverage->newFeature({line});
-            tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+            tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
         }
 
 
@@ -334,11 +334,11 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
         }
         mppTable.get(i, colItemId,itemIdT);
         quint32 itemId = itemIdT;
-        tbl->cell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
+        tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
 
         SPFeatureI feature = fcoverage->newFeature({c});
 
-        tbl->cell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+        tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
 
     }
     return true;

@@ -329,7 +329,7 @@ Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
         }
         //tbl->addColumn(COVERAGEKEYCOLUMN,covdom);
         for(quint32 i=0; i < tbl->recordCount() ; ++i) {
-            tbl->cell(COVERAGEKEYCOLUMN,i, QVariant(i));
+            tbl->setCell(COVERAGEKEYCOLUMN,i, QVariant(i));
         }
     }
     return grid;
