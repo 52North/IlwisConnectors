@@ -23,6 +23,7 @@
 #include "attributerecord.h"
 #include "feature.h"
 #include "featurecoverage.h"
+#include "featureiterator.h"
 #include "gdalproxy.h"
 #include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
@@ -385,7 +386,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPoint(FeatureCoverage *fcovera
         double x,y,z;
         gdal()->getPoints(geometry, 0,&x,&y,&z);
         Coordinate coord(x,y,z);
-        Geometry point(coord);
+        Geometry point(coord, fcoverage->coordinateSystem());
         ret.push_back(fcoverage->newFeature({point}));
         return ret;
     }
@@ -418,7 +419,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillLine(FeatureCoverage *fcoverag
              line[i] = Coordinate2d(x,y);
 //             attTable->setCell(FEATUREVALUECOLUMN, rec, QVariant(z));
          }
-        ret.push_back(fcoverage->newFeature({line}));
+        ret.push_back(fcoverage->newFeature({line, fcoverage->coordinateSystem()}));
         return ret;
     }
 }
@@ -464,7 +465,7 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
                     }
                 }
             }
-            ret.push_back(fcoverage->newFeature({pol}));
+            ret.push_back(fcoverage->newFeature({pol, fcoverage->coordinateSystem()}));
             return ret;
         }else{
             ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"polygon for a record",_filename.toString());
@@ -485,7 +486,102 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
     }
 }
 
+bool GdalFeatureConnector::createFileBasedDataSource(IlwisTypes tp, const QString& postfix, const QFileInfo& fileinfo, FeatureSetHandles &datasources) {
+    QString outputname = fileinfo.absolutePath() + "/" + fileinfo.baseName() + postfix + "." + fileinfo.suffix();
+    OGRDataSourceH datasource = gdal()->createDatasource(_driver, outputname.toLocal8Bit(),0);
+    if ( datasource == 0) {
+        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data source",fileinfo.fileName());
+    }
+    datasources[0][tp] = LayerHandles(datasource);
+
+    return true;
+}
+
+//bool GdalFeatureConnector::case1(const IFeatureCoverage& features) {
+//    int maxFiles = features->maxIndex();
+
+//    QFileInfo fileinfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(_filename);
+//    QString outputname = fileinfo.absolutePath() + "/" + fileinfo.baseName() + postfix + "." + fileinfo.suffix();
+//    OGRDataSourceH datasource = gdal()->createDatasource(_driver, outputname.toLocal8Bit(),0);
+//    if ( datasource == 0) {
+//        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data source",fileinfo.fileName());
+//    }
+
+//    AttributeTable tbl = features->attributeTable();
+//    for(int i=0; i < tbl->columnCount(); ++i){
+//        if ( tbl->columndefinition(i).name() == FEATUREIDCOLUMN )
+//            continue;
+//        OGRFieldType ogrtype = ilwisType2GdalFieldType(tbl->columndefinition(i).datadef().domain()->valueType());
+//        OGRFieldDefnH fieldef = gdal()->createAttributeDefintion(tbl->columndefinition(i).name().toLocal8Bit(),ogrtype);
+//        if(!gdal()->addAttribute(layer,fieldef,TRUE)){
+//            return ERROR2(ERR_NO_INITIALIZED_2,tbl->columndefinition(i).name(),tbl->name());
+//        }
+//        gdal()->destroyAttributeDefintion(fieldef);
+//    }
+
+//FeatureSetHandles datasources(1);
+//  IlwisTypes types = features->featureTypes();
+//  if ( hasType(types, itPOINT)){
+//      if (!createFileBasedDataSource(itPOINT, "_point", fileinfo, datasources))
+//          return false;
+//  }
+//  if ( hasType(types, itLINE)){
+//      if (!createFileBasedDataSource(itLINE, "_line", fileinfo, datasources))
+//          return false;
+//  }
+//  if ( hasType(types, itPOINT)){
+//      if (!createFileBasedDataSource(itPOLYGON, "_polygon", fileinfo, datasources))
+//          return false;
+//  }
+//  OGRSpatialReferenceH srs = createSRS(features->coordinateSystem());
+
+//  FeatureIterator fiter(features);
+//  std::for_each(fiter, fiter.end(), [&](const SPFeatureI& feature){
+//      if ( hasType(feature->geometry().ilwisType(), itPOINT)) {
+//          LayerHandles& lyr = datasources[0][itPOINT];
+//          if ( lyr._layer.size() == 0){
+//              QString name = features->name() + "_points";
+//              OGRLayerH layer = gdal()->createOgrLayer(lyr._source, name.toLocal8Bit(),srs,wkbPoint, 0);
+//              if ( layer == 0)
+//                  return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "layer",fileinfo.fileName());
+//              lyr._layer.push_back(layer);
+//              AttributeTable tbl = features->attributeTable();
+//              for(int i=0; i < tbl->columnCount(); ++i){
+//                  if ( tbl->columndefinition(i).name() == FEATUREIDCOLUMN )
+//                      continue;
+//                  OGRFieldType ogrtype = ilwisType2GdalFieldType(tbl->columndefinition(i).datadef().domain()->valueType());
+//                  OGRFieldDefnH fieldef = gdal()->createAttributeDefintion(tbl->columndefinition(i).name().toLocal8Bit(),ogrtype);
+//                  if(!gdal()->addAttribute(layer,fieldef,TRUE)){
+//                      return ERROR2(ERR_NO_INITIALIZED_2,tbl->columndefinition(i).name(),tbl->name());
+//                  }
+//                  gdal()->destroyAttributeDefintion(fieldef);
+//              }
+//          }
+
+
+
+//      }
+//  });
+
+
+//  for(auto& layer : datasources) {
+//      for(auto& fttypes : layer) {
+//          if ( fttypes.second._source != 0){
+//              gdal()->destroyDataSource(fttypes.second._source);
+//              fttypes.second._source = 0;
+//          }
+//      }
+//  }
+
+////}
+
 bool GdalFeatureConnector::store(IlwisObject *obj, IlwisTypes type)
 {
-    return CoverageConnector::store(obj, type);
+    bool ok = CoverageConnector::store(obj, type);
+    if (!ok)
+        return false;
+
+    IFeatureCoverage features;
+    features.set(static_cast<FeatureCoverage *>(obj));
+
 }
