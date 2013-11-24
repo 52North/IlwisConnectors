@@ -20,11 +20,13 @@ public:
     QString format() const;
 protected:
     static GDALDataType ilwisType2GdalType(IlwisTypes tp) ;
+    static OGRFieldType ilwisType2GdalFieldType(IlwisTypes tp);
     QString constructOutputName(GDALDriverH hdriver) const;
     QUrl _filename;
     QString _internalPath;
     QString _gdalShortName;
     GdalHandle* _handle;
+    GDALDriverH _driver;
 };
 }
 }

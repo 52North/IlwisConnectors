@@ -60,11 +60,11 @@ bool GdalConnector::loadMetaData(IlwisObject *data){
 
 bool GdalConnector::store(IlwisObject *, int )
 {
-    GDALDriverH hdriver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
-    if ( !hdriver ) {
+    _driver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
+    if ( !_driver ) {
         return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _filename.toString());
     }
-    const char* metaitem = gdal()->getMetaDataItem(hdriver, GDAL_DCAP_CREATE, NULL);
+    const char* metaitem = gdal()->getMetaDataItem(_driver, GDAL_DCAP_CREATE, NULL);
     if (QString(metaitem).toLower() != "yes") {
         return ERROR2(ERR_OPERATION_NOTSUPPORTED2, "write data-source", _filename.toString());
     }
@@ -107,6 +107,16 @@ GDALDataType GdalConnector::ilwisType2GdalType(IlwisTypes tp) {
     default:
         return GDT_Float64;
     }
+}
+
+OGRFieldType GdalConnector::ilwisType2GdalFieldType(IlwisTypes tp) {
+    if ( hasType(tp, itINTEGER))
+        return OFTInteger;
+    if ( hasType(tp, (itFLOAT | itDOUBLE)))
+        return OFTReal;
+    if ( hasType(tp, itTIME))
+        return OFTDateTime;
+    return OFTString;
 }
 
 QString GdalConnector::constructOutputName(GDALDriverH hdriver) const
