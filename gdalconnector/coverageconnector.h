@@ -16,6 +16,7 @@ public:
 protected:
     bool store(IlwisObject *obj, IlwisTypes type);
 
+    OGRSpatialReferenceH createSRS(const ICoordinateSystem &coordsystem) const;
 private:
     //void setCsy(Coverage *coverage);
 };

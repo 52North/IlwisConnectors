@@ -13,6 +13,10 @@
 #include "numericdomain.h"
 #include "numericrange.h"
 #include "columndefinition.h"
+#include "ellipsoid.h"
+#include "geodeticdatum.h"
+#include "coordinatesystem.h"
+#include "conventionalcoordinatesystem.h"
 #include "table.h"
 #include "containerconnector.h"
 #include "ilwisobjectconnector.h"
@@ -51,6 +55,17 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data){
 bool CoverageConnector::store(IlwisObject *obj, IlwisTypes type)
 {
     return GdalConnector::store(obj, type);
+}
+
+OGRSpatialReferenceH CoverageConnector::createSRS(const ICoordinateSystem& coordsystem) const{
+    IConventionalCoordinateSystem csy = coordsystem.get<ConventionalCoordinateSystem>();
+    QString proj4def = csy->projection()->toProj4();
+    OGRSpatialReferenceH srsH = gdal()->newSpatialRef(0);
+    OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());
+    if ( errOgr != OGRERR_NONE) {
+        return 0;
+    }
+    return srsH;
 }
 
 
