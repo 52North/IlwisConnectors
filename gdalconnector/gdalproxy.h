@@ -86,6 +86,25 @@ typedef const char* (*ICPLGetLastErrorMsg)();
 typedef void (*IFree)( void * );
 typedef int (*IOGRGetGeomFieldCoun) (OGRFeatureH);
 typedef void (*IOGR_DS_Destroy) (OGRDataSourceH);
+typedef OGRDataSourceH  (*IOGR_Dr_CreateDataSource)(OGRSFDriverH,const char *,char ** );
+typedef OGRLayerH (*IOGR_DS_CreateLayer)(OGRDataSourceH,const char *,OGRSpatialReferenceH,OGRwkbGeometryType,char ** );
+typedef OGRFieldDefnH (*IOGR_Fld_Create)(const char *,OGRFieldType);
+typedef OGRErr (*IOGR_L_CreateField)(OGRLayerH,OGRFieldDefnH,int);
+typedef void (*IOGR_Fld_Destroy)(OGRFieldDefnH);
+typedef OGRFeatureH (*IOGR_F_Create)(OGRFeatureDefnH);
+typedef OGRFeatureDefnH  (*IOGR_L_GetLayerDefn)(OGRLayerH);
+typedef int (*IOGR_F_GetFieldIndex)(OGRFeatureH,const char);
+typedef void (* IOGR_F_SetFieldDouble)(OGRFeatureH,int, double);
+typedef void (* IOGR_F_SetFieldInteger)(OGRFeatureH,int, int);
+typedef void (* IOGR_F_SetFieldString)(OGRFeatureH,int, const char *);
+typedef OGRGeometryH (*IOGR_G_CreateGeometry)(OGRwkbGeometryType);
+typedef void (*IOGR_G_SetPoint_2D)(	OGRGeometryH ,int,double,double);
+typedef OGRErr (*IOGR_F_SetGeometry)(OGRFeatureH, OGRGeometryH)	;
+typedef void (*IOGR_G_DestroyGeometry)(	OGRGeometryH);
+typedef OGRErr (*IOGR_L_CreateFeature)(OGRLayerH,OGRFeatureH);
+
+
+
 
 typedef FILE* (*IVSIFileFromMemBuffer)( const char *, GByte *, vsi_l_offset ,int  );
 typedef int (*IVSIFCloseL)( FILE * );
@@ -217,6 +236,22 @@ public:
     IOGRGetSpatialFilter getSpatialFilter;
     IOGRGetEnvelope3D getEnvelope3D;
     IOGR_DS_Destroy destroyDataSource;
+    IOGR_Dr_CreateDataSource createDatasource;
+    IOGR_DS_CreateLayer createOgrLayer;
+    IOGR_Fld_Create createAttributeDefintion;
+    IOGR_L_CreateField addAttribute;
+    IOGR_Fld_Destroy destroyAttributeDefintion;
+    IOGR_F_Create createFeature;
+    IOGR_L_GetLayerDefn getLayerSchema;
+    IOGR_F_GetFieldIndex getFieldIndex;
+    IOGR_F_SetFieldString setStringAttribute;
+    IOGR_F_SetFieldInteger setIntegerAttribute;
+    IOGR_F_SetFieldDouble setDoubleAttribute;
+    IOGR_G_CreateGeometry createGeometry;
+    IOGR_G_SetPoint_2D add2dPoint;
+    IOGR_F_SetGeometry setGeometry;
+    IOGR_G_DestroyGeometry destroyGeometry;
+    IOGR_L_CreateFeature addFeature2Layer;
 
     IVSIFileFromMemBuffer vsiFileFromMem;
     IVSIFCloseL vsiClose;

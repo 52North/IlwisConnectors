@@ -135,6 +135,22 @@ bool GDALProxy::prepare() {
     getSpatialFilter = add<IOGRGetSpatialFilter>("OGR_L_GetSpatialFilter");
     getEnvelope3D = add<IOGRGetEnvelope3D>("OGR_G_GetEnvelope3D");
     destroyDataSource = add<IOGR_DS_Destroy>("OGR_DS_Destroy");
+    createDatasource = add<IOGR_Dr_CreateDataSource>("OGR_Dr_CreateDataSource");
+    createOgrLayer = add<IOGR_DS_CreateLayer>("OGR_DS_CreateLayer");
+    createAttributeDefintion = add<IOGR_Fld_Create>("OGR_Fld_Create");
+    addAttribute = add<IOGR_L_CreateField>("OGR_L_CreateField");
+    destroyAttributeDefintion = add<IOGR_Fld_Destroy>("OGR_Fld_Destroy");
+    createFeature = add<IOGR_F_Create>("OGR_F_Create");
+    getLayerSchema = add<IOGR_L_GetLayerDefn>("OGR_L_GetLayerDefn");
+    getFieldIndex = add<IOGR_F_GetFieldIndex>("OGR_F_GetFieldIndex");
+    setStringAttribute = add<IOGR_F_SetFieldString>("OGR_F_SetFieldString");
+    setIntegerAttribute = add<IOGR_F_SetFieldInteger>("OGR_F_SetFieldInteger");
+    setDoubleAttribute = add<IOGR_F_SetFieldDouble>("OGR_F_SetFieldDouble");
+    createGeometry = add<IOGR_G_CreateGeometry>("OGR_G_CreateGeometry");
+    add2dPoint = add<IOGR_G_SetPoint_2D>("OGR_G_SetPoint_2D");
+    setGeometry = add<IOGR_F_SetGeometry>("IOGR_F_SetGeometry");
+    destroyGeometry = add<IOGR_G_DestroyGeometry>("OGR_G_DestroyGeometry");
+    addFeature2Layer = add<IOGR_L_CreateFeature>("OGR_L_CreateFeature");
 
     pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
     getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");
