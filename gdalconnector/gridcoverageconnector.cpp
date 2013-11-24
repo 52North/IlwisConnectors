@@ -229,13 +229,9 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
     raster->datadef().domain(dom);
     Size sz = raster->size();
     GDALDataType gdalType = ilwisType2GdalType(raster->datadef().range()->determineType());
-    GDALDriverH hdriver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
-    if ( hdriver == 0) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "driver",_gdalShortName);
-    }
-    QString filename = constructOutputName(hdriver);
+    QString filename = constructOutputName(_driver);
 
-    GDALDatasetH dataset = gdal()->create( hdriver, filename.toLocal8Bit(), sz.xsize(), sz.ysize(), sz.zsize(), gdalType, 0 );
+    GDALDatasetH dataset = gdal()->create( _driver, filename.toLocal8Bit(), sz.xsize(), sz.ysize(), sz.zsize(), gdalType, 0 );
     if ( dataset == 0) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data set",_filename.toLocalFile());
     }
@@ -272,11 +268,8 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
 
 bool RasterCoverageConnector::setSRS(Coverage *raster, GDALDatasetH dataset) const
 {
-    IConventionalCoordinateSystem csy = raster->coordinateSystem().get<ConventionalCoordinateSystem>();
-    QString proj4def = csy->projection()->toProj4();
-    OGRSpatialReferenceH srsH = gdal()->newSpatialRef(0);
-    OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());
-    if ( errOgr != OGRERR_NONE) {
+    OGRSpatialReferenceH srsH = createSRS(raster->coordinateSystem());
+    if ( srsH == 0) {
         reportError(dataset);
         return false;
     }
