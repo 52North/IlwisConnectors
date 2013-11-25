@@ -49,11 +49,7 @@ const char* PyVariant::__str__(){
 
 int PyVariant::__int__(){
     if(!this->_data->canConvert(QVariant::Int))
-        if (this->_data->isValid())
-            throw std::domain_error(QString("QVariant cannot convert '%1' to int").arg(this->_data->toString()).toStdString());
-        else
-            return 0;//TODO decent handling of undefined values necessary
-//            throw std::domain_error(QString("undefined Value").toStdString());
+        throw std::domain_error(QString("QVariant cannot convert '%1' to int").arg(this->_data->toString()).toStdString());
     else{
         bool ok = false;
         int ret = this->_data->toInt(&ok);

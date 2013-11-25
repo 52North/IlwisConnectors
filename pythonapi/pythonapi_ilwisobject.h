@@ -35,6 +35,7 @@ namespace pythonapi {
         const char *__add__(const char* value);
         const char *__radd__(const char* value);
         const char *name();
+        void name(const char* name);
         const char *type();
         quint64 ilwisID() const;
         IlwisTypes ilwisType();

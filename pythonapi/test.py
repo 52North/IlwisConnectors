@@ -60,6 +60,7 @@ def main():
     print("-----------------------------------------------")
     print("CoordinateSystems")
     cs1 = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
+    cs1.name("myCSY")
     if cs1:
         print(cs1.name())
     else:

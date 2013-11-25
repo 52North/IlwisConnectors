@@ -46,6 +46,10 @@ const char* IlwisObject::name(){
         return QString("invalid IlwisObject!").toLocal8Bit();
 }
 
+void IlwisObject::name(const char* name){
+    (*this->ptr())->setName(QString(name));
+}
+
 const char *IlwisObject::type(){
     if (this->__bool__())
         return Ilwis::IlwisObject::type2Name((*this->ptr())->ilwisType()).toLocal8Bit();
