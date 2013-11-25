@@ -7,7 +7,7 @@
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
 
 #include "pythonapi_coverage.h"
-#include "pythonapi_vector.h"
+#include "pythonapi_container.h"
 
 
 using namespace pythonapi;
@@ -25,9 +25,9 @@ quint32 Coverage::attributeCount(){
 
 PyObject* Coverage::attributes(){
     Ilwis::ITable tbl = (*this->ptr()).get<Ilwis::Coverage>()->attributeTable();
-    PyObject* list = newPyList(tbl->columnCount());
+    PyObject* list = newPyTuple(tbl->columnCount());
     for(int i = 0; i < tbl->columnCount(); i++){
-        if (!setListItem(list, i,tbl->columndefinition(i).name().toLocal8Bit().data()))
+        if (!setTupleItem(list, i,tbl->columndefinition(i).name().toLocal8Bit().data()))
             throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of attributes").arg(tbl->columndefinition(i).name()));
     }
     return list;

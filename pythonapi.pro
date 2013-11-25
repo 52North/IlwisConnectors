@@ -25,7 +25,7 @@ HEADERS += \
     pythonapi/pythonapi_qissuelogger.h \
     pythonapi/pythonapi_pyvariant.h \
     pythonapi/pythonapi_geometry.h \
-    pythonapi/pythonapi_vector.h
+    pythonapi/pythonapi_container.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
@@ -42,7 +42,7 @@ SOURCES += \
     pythonapi/pythonapi_pyvariant.cpp \
     pythonapi/pythonapi_pyerror.cpp \
     pythonapi/pythonapi_geometry.cpp \
-    pythonapi/pythonapi_vector.cpp
+    pythonapi/pythonapi_pycontainer.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \
