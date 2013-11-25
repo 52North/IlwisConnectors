@@ -148,7 +148,7 @@ bool GDALProxy::prepare() {
     setDoubleAttribute = add<IOGR_F_SetFieldDouble>("OGR_F_SetFieldDouble");
     createGeometry = add<IOGR_G_CreateGeometry>("OGR_G_CreateGeometry");
     add2dPoint = add<IOGR_G_SetPoint_2D>("OGR_G_SetPoint_2D");
-    setGeometry = add<IOGR_F_SetGeometry>("IOGR_F_SetGeometry");
+    setGeometry = add<IOGR_F_SetGeometry>("OGR_F_SetGeometry");
     destroyGeometry = add<IOGR_G_DestroyGeometry>("OGR_G_DestroyGeometry");
     addFeature2Layer = add<IOGR_L_CreateFeature>("OGR_L_CreateFeature");
 
