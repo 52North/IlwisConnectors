@@ -16,6 +16,7 @@ namespace pythonapi{
     class PyVariant: public Object{
     public:
         PyVariant();
+        PyVariant(PyVariant& pv);
         PyVariant(QVariant* data);
 
         //QVartiant constructor wrapper

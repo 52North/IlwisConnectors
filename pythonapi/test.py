@@ -35,7 +35,7 @@ def main():
         #iterating over features
         sum = 0
         for f in fc:
-            sum += int(f.attribute("MAY"))
+            sum += int(f.attribute("MAY",PyVariant(0)))
             f.setAttribute("highest",sum)
             print(f, end=":");
             for a in fc.attributes():

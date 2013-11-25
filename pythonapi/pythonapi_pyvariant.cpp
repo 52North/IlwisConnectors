@@ -9,6 +9,9 @@ using namespace pythonapi;
 PyVariant::PyVariant(): _data(std::unique_ptr<QVariant>(new QVariant())){
 }
 
+PyVariant::PyVariant(PyVariant &pv): _data(std::unique_ptr<QVariant>(new QVariant((*pv._data)))){
+}
+
 PyVariant::PyVariant(QVariant* data): _data(std::unique_ptr<QVariant>(data)){
 }
 

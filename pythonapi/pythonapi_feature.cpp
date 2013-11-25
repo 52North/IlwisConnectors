@@ -47,6 +47,11 @@ PyVariant *Feature::attribute(const char *name, int index){
     return new PyVariant(new QVariant(this->ptr()(QString(name),index,false)));
 }
 
+PyVariant *Feature::attribute(const char *name, PyVariant &defaultValue, int index){
+    Ilwis::DataDefinition d = this->ptr()->columndefinition().datadef();
+    return new PyVariant(defaultValue);
+}
+
 void Feature::setAttribute(const char *name, PyVariant &value, int index){
     QVariant* tmp = value.clone();
     this->ptr()->setCell(QString(name), (*tmp), index);

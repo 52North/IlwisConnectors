@@ -19,6 +19,7 @@ namespace pythonapi{
         const char* __str__();
         quint64 id();
         PyVariant* attribute(const char* name, int index = -1);
+        PyVariant* attribute(const char* name, PyVariant &defaultValue, int index = -1);
         void setAttribute(const char* name, PyVariant &value, int index = -1);
         void setAttribute(const char* name, int value, int index = -1);
         void setAttribute(const char* name, uint value, int index = -1);
