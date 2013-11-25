@@ -99,7 +99,7 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
             if ( isNumeric) {
                 tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
                 tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(v));
-                fcoverage->newFeature({polygon});
+                fcoverage->newFeature({polygon,fcoverage->coordinateSystem()});
             } else {
                 quint32 itemId = v;
                 tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
@@ -226,12 +226,12 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         if ( isNumeric) {
             tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(j));
             tbl->setCell(FEATUREVALUECOLUMN, j, QVariant(value));
-            SPFeatureI feature = fcoverage->newFeature({pol});
+            SPFeatureI feature = fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
             tbl->setCell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         } else {
             quint32 itemId = value;
             tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(itemId));
-            SPFeatureI feature = fcoverage->newFeature({pol});
+            SPFeatureI feature = fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
             tbl->setCell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         }
 
@@ -289,13 +289,13 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
         if ( isNumeric) {
             tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
             tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(value));
-            SPFeatureI feature = fcoverage->newFeature({line});
+            SPFeatureI feature = fcoverage->newFeature({line, fcoverage->coordinateSystem()});
             tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
 
         } else {
             quint32 itemId = value;
             tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
-            SPFeatureI feature = fcoverage->newFeature({line});
+            SPFeatureI feature = fcoverage->newFeature({line, fcoverage->coordinateSystem()});
             tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
         }
 
@@ -336,7 +336,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
         quint32 itemId = itemIdT;
         tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
 
-        SPFeatureI feature = fcoverage->newFeature({c});
+        SPFeatureI feature = fcoverage->newFeature({c, fcoverage->coordinateSystem()});
 
         tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
 
