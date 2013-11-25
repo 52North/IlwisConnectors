@@ -1,6 +1,8 @@
 /* The ILWIS SWIG interface file*/
 
-%module ilwisobjects
+%module(docstring="The Python API for ILWIS NG") ilwisobjects
+
+%feature("autodoc","1");
 
 %include "exception.i"
 
