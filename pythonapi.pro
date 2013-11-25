@@ -24,7 +24,8 @@ HEADERS += \
     pythonapi/pythonapi_object.h \
     pythonapi/pythonapi_qissuelogger.h \
     pythonapi/pythonapi_pyvariant.h \
-    pythonapi/pythonapi_geometry.h
+    pythonapi/pythonapi_geometry.h \
+    pythonapi/pythonapi_vector.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
@@ -40,7 +41,8 @@ SOURCES += \
     pythonapi/pythonapi_rastercoverage.cpp \
     pythonapi/pythonapi_pyvariant.cpp \
     pythonapi/pythonapi_pyerror.cpp \
-    pythonapi/pythonapi_geometry.cpp
+    pythonapi/pythonapi_geometry.cpp \
+    pythonapi/pythonapi_vector.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \

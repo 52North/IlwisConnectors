@@ -10,7 +10,7 @@ def main():
     print("-----------------------------------------------")
     #Gridding
     localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
-    polygongrid = Engine.do("polygongrid","gridding",localcoordsystem,"coordinate(225358.6605, 3849480.5700)",1000.0,1000.0,12,12)
+    polygongrid = Engine.do("gridding",localcoordsystem,"coordinate(225358.6605, 3849480.5700)",1000.0,1000.0,12,12)
     if polygongrid:
         print("successfully created",polygongrid.type(),"with gridding",polygongrid.name())
         print("FeatureCount is",polygongrid.featureCount())
@@ -27,8 +27,8 @@ def main():
         #adding new attribute to coverage
         if fc.addAttribute("highest","value"):
             print("value attribute 'highest' was added to",fc.name())
-            for i in range(len(fc)):
-                print(fc[i], end="|")
+            att = fc.attributes();
+            print("attributes(",len(att),")",att)
         else:
             print("couln't add value attribute 'highest' to",fc.name())
         print("-----------------------------------------------")
@@ -38,14 +38,14 @@ def main():
             sum += int(f.attribute("MAY"))
             f.setAttribute("highest",sum)
             print(f, end=":");
-            for i in range(len(fc)):
-                print(f.attribute(fc[i]), end="|")
+            for a in fc.attributes():
+                print(f.attribute(a), end="|")
             print()
         print("sum of rainfall values in may:",sum)
         del sum
 
         print("-----------------------------------------------")
-        #catching native python exception
+        print("catching native python exception")
         it = fc.__iter__();
         f = it.next()
         v = f.attribute("RAINFALL")
@@ -78,7 +78,7 @@ def main():
         print(rc.name()+".value(342,342,0) =>",rc.value(342,342,0))
         print(rctif.name()+".value(342,342,0) =>",rctif.value(342,342,0))
         print("-----------------------------------------------")
-        aa7 = Engine.do("aa7.mpr","sin(n000302.mpr)")
+        aa7 = Engine.do("sin","n000302.mpr")
         print("sin(n000302.mpr)=>",aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
         print("-----------------------------------------------")
         aa1 = rc + rc
@@ -115,12 +115,6 @@ def main():
     else:
         print("couldn't load RasterCoverage")
 
-
-#=======================================================================================
-#everything below here is just copy & paste from proposals of user requirement meetings
-#Heinrich tries to make most of this working soon
-#=======================================================================================
-
 def claudio_example():#and martins solution proposal <== example code for presentation
     ilwisengine = Engine()
     ilwisengine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata/example")
@@ -138,6 +132,11 @@ def claudio_example():#and martins solution proposal <== example code for presen
 
     polygongrid.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/example/polygongrid", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
     polygongrid.store()
+
+#=======================================================================================
+#everything below here is just copy & paste from proposals of user requirement meetings
+#Heinrich tries to make most of this working soon
+#=======================================================================================
 
 def martin_example():
     nir = RasterCoverage("file:///C:/some/dir/nir_2010.img")
@@ -226,5 +225,5 @@ def raul_martin_solution():
 
 #here you can chose which test case will be executed
 if __name__ == "__main__":
-#    main()
-    claudio_example()
+    main()
+#    claudio_example()

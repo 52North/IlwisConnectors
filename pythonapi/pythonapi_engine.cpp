@@ -40,7 +40,7 @@ using namespace pythonapi;
 Engine::Engine(){
 }
 
-Object *Engine::_do(const char* operation, const char *c3, const char *c4, const char *c5,const char* c6, const char* c7, const char* c8, const char* c9, const char* output_name){
+Object *Engine::_do(const char* output_name, const char* operation, const char *c3, const char *c4, const char *c5,const char* c6, const char* c7, const char* c8, const char* c9){
     Ilwis::SymbolTable symtbl;
     Ilwis::ExecutionContext ctx;
     ctx.clear();

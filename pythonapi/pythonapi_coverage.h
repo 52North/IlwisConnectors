@@ -4,8 +4,9 @@
 #include "pythonapi_ilwisobject.h"
 #include "pythonapi_coordinatesystem.h"
 
-#include <string>
 #include <vector>
+
+typedef struct _object PyObject;
 
 namespace pythonapi{
 
@@ -15,9 +16,7 @@ namespace pythonapi{
             virtual ~Coverage(){};
             bool addAttribute(const char* name, const char* domain);
             quint32 attributeCount();
-            std::vector<std::string> attributes();
-            int __len__();
-            const char* __getitem__(int i);
+            PyObject *attributes();
             CoordinateSystem coordinateSystem();
     };
 

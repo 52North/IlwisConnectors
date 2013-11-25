@@ -7,6 +7,8 @@
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
 
 #include "pythonapi_coverage.h"
+#include "pythonapi_vector.h"
+
 
 using namespace pythonapi;
 
@@ -21,25 +23,14 @@ quint32 Coverage::attributeCount(){
     return (*this->ptr()).get<Ilwis::Coverage>()->attributeTable()->columnCount();
 }
 
-std::vector<std::string> Coverage::attributes(){
-    std::vector<std::string> ret;
+PyObject* Coverage::attributes(){
     Ilwis::ITable tbl = (*this->ptr()).get<Ilwis::Coverage>()->attributeTable();
+    PyObject* list = newPyList(tbl->columnCount());
     for(int i = 0; i < tbl->columnCount(); i++){
-        ret.push_back(tbl->columndefinition(i).name().toStdString());
+        if (!setListItem(list, i,tbl->columndefinition(i).name().toLocal8Bit().data()))
+            throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of attributes").arg(tbl->columndefinition(i).name()));
     }
-    return ret;
-}
-
-int Coverage::__len__(){
-    return (*this->ptr()).get<Ilwis::Coverage>()->attributeTable()->columnCount();
-}
-
-const char *Coverage::__getitem__(int i){
-    Ilwis::ITable tbl = (*this->ptr()).get<Ilwis::Coverage>()->attributeTable();
-    if (i < tbl->columnCount() && i >= 0)
-        return tbl->columndefinition(i).name().toLocal8Bit();
-    else
-        throw std::out_of_range("index out of range");
+    return list;
 }
 
 CoordinateSystem Coverage::coordinateSystem(){

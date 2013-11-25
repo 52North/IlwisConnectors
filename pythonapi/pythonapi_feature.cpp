@@ -44,7 +44,7 @@ quint64 Feature::id(){
 }
 
 PyVariant *Feature::attribute(const char *name, int index){
-    return new PyVariant(new QVariant(this->ptr()(QString(name),index),false));
+    return new PyVariant(new QVariant(this->ptr()(QString(name),index,false)));
 }
 
 void Feature::setAttribute(const char *name, PyVariant &value, int index){
