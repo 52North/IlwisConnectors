@@ -72,14 +72,15 @@ mytarget.files = pythonapi/ilwisobjects.py \
     pythonapi/test.sh \
     pythonapi/test.bat \
     pythonapi/ilwisobjects.conf \
-    pythonapi/qt.conf
+    pythonapi/qt.conf \
+    pythonapi/prepare_PATH.bat
 mytarget.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
 
-python_target.files = pythonapi/ilwisobjects.py \
-    pythonapi/ilwisobjects.conf
+python_target.files = pythonapi/ilwisobjects.py
 python_target.path = C:/Python33/Lib/site-packages
 
-python_base_tg.files = pythonapi/qt.conf
+python_base_tg.files = pythonapi/qt.conf \
+    pythonapi/ilwisobjects.conf
 python_base_tg.files = C:/Python33
 
 target.path = C:/Python33/Lib/site-packages

@@ -23,13 +23,21 @@
 %}
 
 %init %{
-    //init QtCoreApllication, Ilwis library and IssueLogger connection
-    pythonapi::initIlwisObjects();
-
     //init IlwisException for Python
     pythonapi::ilwisException = PyErr_NewException("_ilwisobjects.IlwisException",NULL,NULL);
     Py_INCREF(pythonapi::ilwisException);
     PyModule_AddObject(m, "IlwisException", pythonapi::ilwisException);//m is SWIG declaration for Python C API modul creation
+
+    //init QtCoreApllication, Ilwis library and IssueLogger connection
+    try {
+        if (!pythonapi::initIlwisObjects()){
+            PyErr_SetString(pythonapi::ilwisException,"ILWIS couldn't be initiallized!");
+            return NULL;
+        }
+    }catch (std::exception& e) {
+        PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+        return NULL;
+    }
 %}
 //adds the export flag to pyd library for the IlwisException
 %pythoncode %{
