@@ -60,7 +60,7 @@ bool DomainConnector::handleThematicDomains(IlwisObject* ) {
 }
 
 bool DomainConnector::handleValueDomains(IlwisObject* data) {
-    NumericDomain *vdata = static_cast<NumericDomain*>(data);
+    //NumericDomain *vdata = static_cast<NumericDomain*>(data);
     //TODO adjust the range
     return true;
 }
