@@ -50,14 +50,26 @@ const char* PyVariant::__str__(){
     return this->_data->toString().toLocal8Bit();
 }
 
-int PyVariant::__int__(){
-    if(!this->_data->canConvert(QVariant::Int))
-        throw std::domain_error(QString("QVariant cannot convert '%1' to int").arg(this->_data->toString()).toStdString());
+qlonglong PyVariant::__int__(){
+    if(!this->_data->canConvert(QVariant::LongLong))
+        throw std::domain_error(QString("PyVariant cannot convert '%1' to int").arg(this->_data->toString()).toStdString());
     else{
         bool ok = false;
-        int ret = this->_data->toInt(&ok);
+        int ret = this->_data->toLongLong(&ok);
         if (!ok)
-            throw std::domain_error(QString("QVariant cannot convert '%1' to int").arg(this->_data->toString()).toStdString());
+            throw std::domain_error(QString("PyVariant cannot convert '%1' to int").arg(this->_data->toString()).toStdString());
+        return ret;
+    }
+}
+
+double PyVariant::__float__(){
+    if(!this->_data->canConvert(QVariant::Double))
+        throw std::domain_error(QString("PyVariant cannot convert '%1' to float").arg(this->_data->toString()).toStdString());
+    else{
+        bool ok = false;
+        int ret = this->_data->toDouble(&ok);
+        if (!ok)
+            throw std::domain_error(QString("PyVariant cannot convert '%1' to float").arg(this->_data->toString()).toStdString());
         return ret;
     }
 }

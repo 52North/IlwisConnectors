@@ -5,20 +5,20 @@ from ilwisobjects import *
 
 #further tests on all the working api calls
 def main():
-    Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape")
+    Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest")
     #muteIssueLogger()
     print("-----------------------------------------------")
     #Gridding
     localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
     polygongrid = Engine.do("gridding",localcoordsystem,"coordinate(225358.6605, 3849480.5700)",1000.0,1000.0,12,12)
     if polygongrid:
-        print("successfully created",polygongrid.type(),"with gridding",polygongrid.name())
+        print("successfully created",polygongrid.type(),"(",polygongrid.name(),") with gridding")
         print("FeatureCount is",polygongrid.featureCount())
     else:
         print("couln't create FeatureCoverage with gridding")
     print("-----------------------------------------------")
     #FeatureCoverage
-    fc = FeatureCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/shape/rainfall.shp")
+    fc = FeatureCoverage("rainfall.shp")
     if fc:
         print("successfully loaded", fc.name())
         print(fc.name() ,"contains:",fc.featureCount(),"Features")
@@ -35,11 +35,11 @@ def main():
         #iterating over features
         sum = 0
         for f in fc:
-            sum += int(f.attribute("MAY",PyVariant(0)))
+            sum += float(f.attribute("MAY",PyVariant(0)))
             f.setAttribute("highest",sum)
             print(f, end=":");
             for a in fc.attributes():
-                print(f.attribute(a), end="|")
+                print(f.attribute(a,PyVariant("")), end="|")
             print()
         print("sum of rainfall values in may:",sum)
         del sum
@@ -71,9 +71,8 @@ def main():
     else:
         print("Coudn't create CoordinateSystem from EPSG code!")
     print("-----------------------------------------------")
-    Engine.setWorkingCatalog("file:///C:/Users/Poku/dev/Ilwis4/testdata")
-    rc = RasterCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.mpr")
-    rctif = RasterCoverage("file:///C:/Users/Poku/dev/Ilwis4/testdata/n000302.tif")
+    rc = RasterCoverage("n000302.mpr")
+    rctif = RasterCoverage("n0.mpr")
     if (rc and rctif):
         print("successfully loaded",rc.name(),"and",rctif.name())
         print(rc.name()+".value(342,342,0) =>",rc.value(342,342,0))
@@ -82,37 +81,40 @@ def main():
         aa7 = Engine.do("sin","n000302.mpr")
         print("sin(n000302.mpr)=>",aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
         print("-----------------------------------------------")
-        aa1 = rc + rc
-        print(rc.name(), " + ", rc.name(), " = ", aa1.name()+".value(342,342,0)=>",aa1.value(342,342,0))
+        aa1 = rc + rctif
+        print(rc.name(), " + ", rctif.name(), " = ", aa1.name()+".value(342,342,0)=>",aa1.value(342,342,0))
         aa2 = rc + 2
         print(rc.name(), " + 2 = ", aa2.name()+".value(342,342,0)=>",aa2.value(342,342,0))
         aa3 = 2 + rc
         print("2 + ", rc.name(), " = ", aa3.name()+".value(342,342,0)=>",aa3.value(342,342,0))
-        aa4 = rc - rc
+        aa4 = rc - rctif
         print(rc.name(), " - ", rc.name(), " = ", aa4.name()+".value(342,342,0)=>",aa4.value(342,342,0))
         aa5 = 2 - rc
         print("2 - ", rc.name(), " = ", aa5.name()+".value(342,342,0)=>",aa5.value(342,342,0))
         aa6 = rc - 2
         print(rc.name(), " - 2 = ", aa6.name()+".value(342,342,0)=>",aa6.value(342,342,0))
-        aa7 = rc / rc
+        aa7 = rc / rctif
         print(rc.name(), " / ", rc.name(), " = ", aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
         aa8 = 2 / rc
         print("2 / ", rc.name(), " = ", aa8.name()+".value(342,342,0)=>",aa8.value(342,342,0))
         aa9 = rc / 2
         print(rc.name(), " / 2 = ", aa9.name()+".value(342,342,0)=>",aa9.value(342,342,0))
-        aa10 = rc * rc
+        aa10 = rc * rctif
         print(rc.name(), " * ", rc.name(), " = ", aa10.name()+".value(342,342,0)=>",aa10.value(342,342,0))
         aa11 = 2 * rc
         print("2 * ", rc.name(), " = ", aa11.name()+".value(342,342,0)=>",aa11.value(342,342,0))
         aa12 = rc * 2
         print(rc.name(), " * 2 = ", aa12.name()+".value(342,342,0)=>",aa12.value(342,342,0))
+
+        fl = float(aa8.value(342,342,0))+0.5
+        print("14.99=",fl)
         print("-----------------------------------------------")
         #store to file
-        aa1.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/aa1.tif", "GTiff","gdal",IlwisObject.cmOUTPUT)
-        if aa1.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
-            print("successfully saved aa1.tif.tif")
+        rctif.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest/aa1", "GTiff","gdal",IlwisObject.cmOUTPUT)
+        if rctif.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
+            print("successfully saved aa1.tif")
         else:
-            print("could not save aa1.tif.tif")
+            print("could not save aa1.tif")
     else:
         print("couldn't load RasterCoverage")
 

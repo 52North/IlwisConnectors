@@ -48,8 +48,28 @@ PyVariant *Feature::attribute(const char *name, int index){
 }
 
 PyVariant *Feature::attribute(const char *name, PyVariant &defaultValue, int index){
-    Ilwis::DataDefinition d = this->ptr()->columndefinition().datadef();
-    return new PyVariant(defaultValue);
+    QVariant* var = new QVariant(this->ptr()(QString(name),index,false));
+    Ilwis::ColumnDefinition coldef = this->ptr()->columndefinition(QString(name));
+    if (coldef.isValid()){
+        if( coldef.datadef().domain()->ilwisType() & itNUMERICDOMAIN){
+            if(var->canConvert(QVariant::Double)){
+                if(var->toDouble() == Ilwis::rUNDEF){
+                    return new PyVariant(defaultValue);
+                }else{
+                    return new PyVariant(var);
+                }
+            }
+        }else if((coldef.datadef().domain()->ilwisType() & itTEXTDOMAIN) || (coldef.datadef().domain()->ilwisType() & itITEMDOMAIN)){
+            if(var->canConvert(QVariant::String)){
+                if(var->toString().compare(sUNDEF) == 0){
+                    return new PyVariant(defaultValue);
+                }else{
+                    return new PyVariant(var);
+                }
+            }
+        }
+    }
+    throw Ilwis::ErrorObject(QString("invalid value (maybe wrong column name '%1' due to case sensitivity?)").arg(name));
 }
 
 void Feature::setAttribute(const char *name, PyVariant &value, int index){
