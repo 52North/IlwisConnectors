@@ -232,29 +232,25 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
-        QString source = Resource::toLocalFile(dom->source().url(), true);
+        //QString source = Resource::toLocalFile(dom->source().url(), true);
         if ( dom->valueType() == itTHEMATICITEM && coverage->ilwisType() == itRASTER) {
+            QString domName =  Resource::toLocalFile(dom->source().url(), true);
             IThematicDomain themdom = dom.get<ThematicDomain>();
             if ( themdom.isValid()) {
-                QString domInfo = QString("%1;Byte;class;%2;;").arg(source).arg(themdom->count());
+                QString domInfo = QString("%1;Byte;class;%2;;").arg(domName).arg(themdom->count());
                 _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
-                _odf->setKeyValue("BaseMap","Domain",source);
+                _odf->setKeyValue("BaseMap","Domain",domName);
             }
         } else if(dom->valueType() == itINDEXEDITEM) {
-            QString domName = _odf->file();
+            QString domName = QFileInfo(QUrl(_odf->file()).toLocalFile()).fileName();
             QString domInfo = QString("%1;Long;UniqueID;0;;").arg(domName);
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
             _odf->setKeyValue("BaseMap","Domain",domName);
         } else if ( dom->valueType() == itNAMEDITEM) {
             INamedIdDomain iddom = dom.get<NamedIdDomain>();
-            QString domName = _odf->file();
-            QFileInfo localInfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(domName);
-            domName = localInfo.baseName();
-//            int index;
-//            if ( (index=domName.lastIndexOf("."))!= -1)             {
-//                domName = domName.left(index);
-//            }
-
+            QString domName = Resource::toLocalFile(dom->source().url(), true);
+            if ( domName == sUNDEF)
+                domName = QFileInfo(QUrl(_odf->file()).toLocalFile()).baseName() + ".dom";
             QString domInfo = QString("%1;;Int;id;%2;;").arg(domName).arg(iddom->count());
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
             _odf->setKeyValue("BaseMap","Domain",domName);
