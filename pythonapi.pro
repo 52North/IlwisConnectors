@@ -55,7 +55,8 @@ OTHER_FILES += \
     pythonapi/test.bat \
     pythonapi/qt.conf \
     pythonapi/ilwisobjects.conf \
-    pythonapi/prepare_PATH.bat
+    pythonapi/prepare_PATH.bat \
+    pythonapi/prepare_PATH.sh
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
@@ -73,7 +74,8 @@ mytarget.files = pythonapi/ilwisobjects.py \
     pythonapi/test.bat \
     pythonapi/ilwisobjects.conf \
     pythonapi/qt.conf \
-    pythonapi/prepare_PATH.bat
+    pythonapi/prepare_PATH.bat \
+    pythonapi/prepare_PATH.sh
 mytarget.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
 
 python_target.files = pythonapi/ilwisobjects.py

@@ -30,3 +30,5 @@ or in the directory of the executable (<yourPathToPython.exe>/).
 
 The ILWIS directory will also contain a subdirectory log containing the log files of the last session.
 Note: This way different sessions pointing to the same ILWIS directory, will overwrite their logfiles!
+
+prepare_PATH.sh can be used in bash like this ". ./prepare_PATH.sh" of "source ./prepare_PATH.sh"
