@@ -158,14 +158,11 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
             std::vector<QVariant> varlist(tbl.rows());
             RawConverter conv = _converters[colName];
             IlwisTypes valueType = col.datadef().domain()->valueType();
-            double vmax = -1e300; double vmin = 1e300;
             for(quint32 j = 0; j < tbl.rows(); ++j){
                 if ( (valueType >= itINT8 && valueType <= itDOUBLE) || ((valueType & itDOMAINITEM) != 0)) {
                     double value;
                     if (tbl.get(j,i,value)) {
                         double v = conv.raw2real(value);
-                        vmax = Ilwis::max(vmax, v);
-                        vmin = Ilwis::min(vmin, v);
                         varlist[j] =  v;
                     }
                 } else if (valueType == itSTRING ) {
