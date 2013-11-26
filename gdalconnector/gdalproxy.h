@@ -93,7 +93,7 @@ typedef OGRErr (*IOGR_L_CreateField)(OGRLayerH,OGRFieldDefnH,int);
 typedef void (*IOGR_Fld_Destroy)(OGRFieldDefnH);
 typedef OGRFeatureH (*IOGR_F_Create)(OGRFeatureDefnH);
 typedef OGRFeatureDefnH  (*IOGR_L_GetLayerDefn)(OGRLayerH);
-typedef int (*IOGR_F_GetFieldIndex)(OGRFeatureH,const char);
+typedef int (*IOGR_F_GetFieldIndex)(OGRFeatureH,const char *);
 typedef void (* IOGR_F_SetFieldDouble)(OGRFeatureH,int, double);
 typedef void (* IOGR_F_SetFieldInteger)(OGRFeatureH,int, int);
 typedef void (* IOGR_F_SetFieldString)(OGRFeatureH,int, const char *);
