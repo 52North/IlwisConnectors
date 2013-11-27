@@ -39,7 +39,7 @@ def main():
             f.setAttribute("highest",sum)
             print(f, end=":");
             for a in fc.attributes():
-                print(f.attribute(a,PyVariant("")), end="|")
+                print(f.attribute(a,PyVariant("-")), end="|")
             print()
         print("sum of rainfall values in may:",sum)
         del sum
@@ -82,36 +82,36 @@ def main():
         print("sin(n000302.mpr)=>",aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
         print("-----------------------------------------------")
         aa1 = rc + rctif
-        print(rc.name(), " + ", rctif.name(), " = ", aa1.name()+".value(342,342,0)=>",aa1.value(342,342,0))
-        aa2 = rc + 2
-        print(rc.name(), " + 2 = ", aa2.name()+".value(342,342,0)=>",aa2.value(342,342,0))
-        aa3 = 2 + rc
-        print("2 + ", rc.name(), " = ", aa3.name()+".value(342,342,0)=>",aa3.value(342,342,0))
-        aa4 = rc - rctif
-        print(rc.name(), " - ", rc.name(), " = ", aa4.name()+".value(342,342,0)=>",aa4.value(342,342,0))
-        aa5 = 2 - rc
-        print("2 - ", rc.name(), " = ", aa5.name()+".value(342,342,0)=>",aa5.value(342,342,0))
-        aa6 = rc - 2
-        print(rc.name(), " - 2 = ", aa6.name()+".value(342,342,0)=>",aa6.value(342,342,0))
-        aa7 = rc / rctif
-        print(rc.name(), " / ", rc.name(), " = ", aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
-        aa8 = 2 / rc
-        print("2 / ", rc.name(), " = ", aa8.name()+".value(342,342,0)=>",aa8.value(342,342,0))
-        aa9 = rc / 2
-        print(rc.name(), " / 2 = ", aa9.name()+".value(342,342,0)=>",aa9.value(342,342,0))
-        aa10 = rc * rctif
-        print(rc.name(), " * ", rc.name(), " = ", aa10.name()+".value(342,342,0)=>",aa10.value(342,342,0))
-        aa11 = 2 * rc
-        print("2 * ", rc.name(), " = ", aa11.name()+".value(342,342,0)=>",aa11.value(342,342,0))
-        aa12 = rc * 2
-        print(rc.name(), " * 2 = ", aa12.name()+".value(342,342,0)=>",aa12.value(342,342,0))
+#        print(rc.name(), " + ", rctif.name(), " = ", aa1.name()+".value(342,342,0)=>",aa1.value(342,342,0))
+#        aa2 = rc + 2
+#        print(rc.name(), " + 2 = ", aa2.name()+".value(342,342,0)=>",aa2.value(342,342,0))
+#        aa3 = 2 + rc
+#        print("2 + ", rc.name(), " = ", aa3.name()+".value(342,342,0)=>",aa3.value(342,342,0))
+#        aa4 = rc - rctif
+#        print(rc.name(), " - ", rc.name(), " = ", aa4.name()+".value(342,342,0)=>",aa4.value(342,342,0))
+#        aa5 = 2 - rc
+#        print("2 - ", rc.name(), " = ", aa5.name()+".value(342,342,0)=>",aa5.value(342,342,0))
+#        aa6 = rc - 2
+#        print(rc.name(), " - 2 = ", aa6.name()+".value(342,342,0)=>",aa6.value(342,342,0))
+#        aa7 = rc / rctif
+#        print(rc.name(), " / ", rc.name(), " = ", aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
+#        aa8 = 2 / rc
+#        print("2 / ", rc.name(), " = ", aa8.name()+".value(342,342,0)=>",aa8.value(342,342,0))
+#        aa9 = rc / 2
+#        print(rc.name(), " / 2 = ", aa9.name()+".value(342,342,0)=>",aa9.value(342,342,0))
+#        aa10 = rc * rctif
+#        print(rc.name(), " * ", rc.name(), " = ", aa10.name()+".value(342,342,0)=>",aa10.value(342,342,0))
+#        aa11 = 2 * rc
+#        print("2 * ", rc.name(), " = ", aa11.name()+".value(342,342,0)=>",aa11.value(342,342,0))
+#        aa12 = rc * 2
+#        print(rc.name(), " * 2 = ", aa12.name()+".value(342,342,0)=>",aa12.value(342,342,0))
 
-        fl = float(aa8.value(342,342,0))+0.5
-        print("14.99=",fl)
+#        fl = float(aa8.value(342,342,0))+0.5
+#        print("14.99=",fl)
         print("-----------------------------------------------")
         #store to file
-        rctif.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest/aa1", "GTiff","gdal",IlwisObject.cmOUTPUT)
-        if rctif.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
+        aa1.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest/aa1", "GTiff","gdal",IlwisObject.cmOUTPUT)
+        if aa1.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
             print("successfully saved aa1.tif")
         else:
             print("could not save aa1.tif")
