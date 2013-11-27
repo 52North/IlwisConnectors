@@ -79,51 +79,35 @@ void Feature::setAttribute(const char *name, PyVariant &value, int index){
 }
 
 void Feature::setAttribute(const char *name, int value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, uint value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, qlonglong value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, qulonglong value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, bool value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, double value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, float value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, const char *value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 IlwisTypes Feature::ilwisType(){
@@ -132,6 +116,10 @@ IlwisTypes Feature::ilwisType(){
 
 Geometry* Feature::geometry(int index){
     return new Geometry(new Ilwis::Geometry(this->ptr()->geometry(index)));
+}
+
+void Feature::setGeometry(Geometry &geometry, int index){
+    this->ptr()->set((*geometry._ilwisGeometry));
 }
 
 Ilwis::SPFeatureI Feature::ptr() const{

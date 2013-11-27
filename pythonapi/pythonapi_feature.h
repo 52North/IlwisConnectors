@@ -31,6 +31,7 @@ namespace pythonapi{
         void setAttribute(const char* name, const char* value, int index = -1);
         IlwisTypes ilwisType();
         Geometry* geometry(int index = 0);
+        void setGeometry(Geometry &geometry, int index = -1);
 
     private:
         //TODO: replace with std::shared_ptr of that feature if done in IlwisCore
