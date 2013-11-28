@@ -210,7 +210,6 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     QDataStream stream(&file);
     int nrPolygons = fcoverage->featureCount(itPOLYGON);
     fcoverage->setFeatureCount(itPOLYGON, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
-    SPAttributeRecord record( new AttributeRecord(tbl,FEATUREIDCOLUMN));
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
     for(int j=0; j < nrPolygons; ++j) {
