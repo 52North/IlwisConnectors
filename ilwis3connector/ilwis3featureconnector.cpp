@@ -102,7 +102,7 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
                 fcoverage->newFeature({polygon,fcoverage->coordinateSystem()});
             } else {
                 quint32 itemId = v;
-                tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
+                tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
                 SPFeatureI feature = fcoverage->newFeature({polygon});
                 tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
             }
@@ -230,7 +230,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
             tbl->setCell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         } else {
             quint32 itemId = value;
-            tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(itemId));
+            tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(itemId - 1));
             SPFeatureI feature = fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
             tbl->setCell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         }
@@ -294,7 +294,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
 
         } else {
             quint32 itemId = value;
-            tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
+            tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
             SPFeatureI feature = fcoverage->newFeature({line, fcoverage->coordinateSystem()});
             tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
         }
@@ -334,7 +334,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
         }
         mppTable.get(i, colItemId,itemIdT);
         quint32 itemId = itemIdT;
-        tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
+        tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
 
         SPFeatureI feature = fcoverage->newFeature({c, fcoverage->coordinateSystem()});
 
@@ -372,7 +372,7 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
         for(quint32 rowExt=0; rowExt < extTable->recordCount(); ++rowExt) {
             vector<QVariant> rec = extTable->record(rowExt);
             for(quint32 rowAtt = 0; rowAtt < attTbl->recordCount(); ++rowAtt ) {
-                if ( attTbl->cell(keyIndex, rowAtt) == rowExt + 1) {
+                if ( attTbl->cell(keyIndex, rowAtt) == rowExt) {
                     attTbl->record(rowAtt,rec);
                 }
             }
