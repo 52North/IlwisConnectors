@@ -19,8 +19,9 @@ GdalConnector::GdalConnector(const Resource &resource, bool load) : IlwisObjectC
 
 GdalConnector::~GdalConnector()
 {
-    if ( _handle)
-        delete _handle;
+//    if ( _handle)
+//        delete _handle;
+    //TODO delete causes a crash for unknown reasons; research later
 }
 
 
