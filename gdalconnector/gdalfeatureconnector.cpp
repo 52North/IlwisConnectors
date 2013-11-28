@@ -489,6 +489,13 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
 
 OGRDataSourceH GdalFeatureConnector::createFileBasedDataSource(const QString& postfix, const QFileInfo& fileinfo) const {
     QString outputname = fileinfo.absolutePath() + "/" + fileinfo.baseName() + postfix + "." + fileinfo.suffix();
+    if ( QFileInfo(outputname).exists()){
+        if ( remove(outputname.toLocal8Bit())!= 0){
+            //if(!QFile::remove(outputname)) {
+                ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,outputname);
+                //return 0;
+            }
+    }
     OGRDataSourceH datasource = gdal()->createDatasource(_driver, outputname.toLocal8Bit(),0);
     if ( datasource == 0) {
         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data source",fileinfo.fileName());
@@ -509,18 +516,19 @@ OGRLayerH GdalFeatureConnector::createLayer(const QString& name,OGRwkbGeometryTy
     return layer;
 }
 
-bool GdalFeatureConnector::createAttributes(const ITable& tbl, OGRLayerH layer, const std::vector<OGRFieldDefnH>& fielddefs) {
+bool GdalFeatureConnector::createAttributes(const ITable& tbl, OGRLayerH layer, const std::vector<OGRFieldDefnH>& fielddefs,std::vector<bool>& validAttributes) {
     if ( layer == 0)
         return false;
 
     int index=0;
     for(int i=0; i < tbl->columnCount(); ++i){
-        if ( tbl->columndefinition(i).name() == FEATUREIDCOLUMN )
-            continue;
-        if(gdal()->addAttribute(layer,fielddefs[index],TRUE) != OGRERR_NONE){
-            return ERROR2(ERR_NO_INITIALIZED_2,tbl->columndefinition(i).name(),tbl->name());
+        if ( validAttributes[i]) {
+            if(gdal()->addAttribute(layer,fielddefs[index],TRUE) != OGRERR_NONE){
+                validAttributes[i] = false;
+                WARN2(ERR_NO_INITIALIZED_2,tbl->columndefinition(i).name(),tbl->name());
+            }
+            ++index;
         }
-        ++index;
     }
     return true;
 }
@@ -537,94 +545,160 @@ OGRwkbGeometryType GdalFeatureConnector::ilwisType2GdalFeatureType(IlwisTypes tp
     return wkbUnknown;
 }
 
-bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& features) {
-    QFileInfo fileinfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(_filename);
+void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, SPFeatureI feature, const std::vector<bool>& validAttributes) {
+    int index = 0;
+    for(int i=0; i < feature->attributeColumnCount(); ++i){
+        const ColumnDefinition& coldef  = feature->columndefinition(i);
+        if ( !validAttributes[i])
+            continue;
 
+        if(hasType(coldef.datadef().domain()->valueType(),itINTEGER)) {
+            qint32 val = feature->cell(coldef.name()).toInt();
+            gdal()->setIntegerAttribute(hfeature,index,val);
+        } else if (hasType(coldef.datadef().domain()->valueType(),itDOUBLE | itFLOAT)) {
+            double val = feature->cell(coldef.name()).toDouble();
+            gdal()->setDoubleAttribute(hfeature,index,val);
+        } else if (hasType(coldef.datadef().domain()->valueType(),itDOMAINITEM)) {
+            QString val = feature->cell(coldef.name(),-1, false).toString();
+            gdal()->setStringAttribute(hfeature,index,val.toLocal8Bit());
+        }
+        //TODO coords, time ..
+        ++index;
+    }
+
+}
+
+bool GdalFeatureConnector::setDataSourceAndLayers(const IFeatureCoverage& features, std::vector<SourceHandles>& datasources,std::vector<bool>& validAttributes) {
+
+    QFileInfo fileinfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(_filename);
     AttributeTable tbl = features->attributeTable();
+    validAttributes.resize(tbl->columnCount(), false);
     std::vector<OGRFieldDefnH> fielddefs(tbl->columnCount() - 1); // no feature_id in external table
 
     int index = 0;
     for(int i=0; i < tbl->columnCount(); ++i){
-        if ( tbl->columndefinition(i).name() == FEATUREIDCOLUMN )
+        if ( tbl->columndefinition(i).name() == FEATUREIDCOLUMN ){
             continue;
+        }
         OGRFieldType ogrtype = ilwisType2GdalFieldType(tbl->columndefinition(i).datadef().domain()->valueType());
         OGRFieldDefnH fieldef = gdal()->createAttributeDefintion(tbl->columndefinition(i).name().toLocal8Bit(),ogrtype);
+        if ( fieldef == 0){
+            WARN2(ERR_INVALID_INIT_FOR_2, TR("data-type"), tbl->columndefinition(i).name());
+        }else
+            validAttributes[i] = true;
+
         fielddefs[index++] = fieldef;
     }
 
+    OGRSpatialReferenceH srs = createSRS(features->coordinateSystem());
     IlwisTypes types = features->featureTypes();
     bool multipleoutputs = (types == (itPOINT | itLINE)) || (types == (itPOINT | itPOLYGON)) || (types == (itLINE | itPOLYGON));
-    OGRSpatialReferenceH srs = createSRS(features->coordinateSystem());
-    std::vector<SourceHandles> datasources(3);
-    datasources[0]._layers.resize(1);
     if ( multipleoutputs){
         if ((features->featureTypes() & itPOINT) != 0) {
-            datasources[0]._source =  createFileBasedDataSource("_point", fileinfo);
-            datasources[0]._layers[0] = createLayer(features->name() + "_points", ilwisType2GdalFeatureType(itPOINT), srs,datasources[0]._source);
-            createAttributes(tbl, datasources[0]._layers[0], fielddefs);
+            datasources[ilwisType2Index(itPOINT)]._source =  createFileBasedDataSource("_poinst", fileinfo);
+            datasources[ilwisType2Index(itPOINT)]._layers[0] = createLayer(features->name() + "_points", ilwisType2GdalFeatureType(itPOINT), srs,datasources[0]._source);
+            if(!createAttributes(tbl, datasources[ilwisType2Index(itPOINT)]._layers[0], fielddefs, validAttributes))
+                return false;
 
         }
         if ((features->featureTypes() & itLINE) != 0) {
-            datasources[1] =  createFileBasedDataSource("_lines", fileinfo);
+            datasources[ilwisType2Index(itLINE)] =  createFileBasedDataSource("_lines", fileinfo);
         }
         if ((features->featureTypes() & itPOLYGON) != 0) {
-            datasources[2] =  createFileBasedDataSource("_polygon", fileinfo);
+            datasources[ilwisType2Index(itPOLYGON)] =  createFileBasedDataSource("_polygon", fileinfo);
         }
     }else {
-        datasources[0]._source =  createFileBasedDataSource("", fileinfo);
-        datasources[0]._layers[0] = createLayer(features->name(), ilwisType2GdalFeatureType(itPOINT), srs,datasources[0]._source);
-        createAttributes(tbl, datasources[0]._layers[0], fielddefs);
+        int typeIndex  = ilwisType2Index(types);
+        datasources[typeIndex]._source =  createFileBasedDataSource("", fileinfo);
+        if ( datasources[typeIndex]._source == 0)
+            return false;
+        datasources[typeIndex]._layers.push_back(createLayer(features->name(), ilwisType2GdalFeatureType(types), srs,datasources[typeIndex]._source));
+        if (  datasources[typeIndex]._layers.back() == 0)
+            return false;
+
+        createAttributes(tbl, datasources[typeIndex]._layers[0], fielddefs,validAttributes);
     }
+
+    for(OGRFieldDefnH fieldef : fielddefs) {
+        gdal()->destroyAttributeDefintion(fieldef);
+    }
+    return true;
+}
+
+OGRGeometryH GdalFeatureConnector::createPoint2D(const SPFeatureI& feature) {
+    OGRGeometryH hgeom = gdal()->createGeometry(wkbPoint);
+    Coordinate2d crd = feature->geometry().toType<Coordinate>();
+    gdal()->add2dPoint(hgeom,0, crd.x(), crd.y());
+    return hgeom;
+}
+
+int GdalFeatureConnector::ilwisType2Index(IlwisTypes tp)
+{
+    switch (tp){
+        case itPOINT:
+            return 0;
+        case itLINE:
+            return 1;
+        case itPOLYGON:
+            return 2;
+    }
+    throw ErrorObject(TR("Illegal use of ilwisType2Index method"));
+}
+
+OGRGeometryH GdalFeatureConnector::createLine2D(const SPFeatureI& feature) {
+    OGRGeometryH hgeom = gdal()->createGeometry(wkbLineString);
+    Line2D<Coordinate2d> line = feature->geometry().toType<Line2D<Coordinate2d>>();
+    for(int i=0; i < line.size(); ++i) {
+        Coordinate crd = line[i];
+        gdal()->add2dPoint(hgeom,i, crd.x(), crd.y());
+    }
+    return hgeom;
+
+}
+
+bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& features) {
+
+
+    std::vector<SourceHandles> datasources(3);
+    std::vector<bool> validAttributes;
+    if(!setDataSourceAndLayers(features, datasources, validAttributes))
+        return false;
 
     FeatureIterator fiter(features);
     FeatureIterator endIter = end(features);
     //std::for_each(fiter, fiter.end(), [&](const SPFeatureI& feature){
     for(; fiter != endIter; ++fiter) {
         SPFeatureI feature = *fiter;
+        OGRLayerH lyr = datasources[ilwisType2Index(feature->ilwisType())]._layers[0];
+        OGRFeatureH hfeature = gdal()->createFeature(gdal()->getLayerDef(lyr));
+        setAttributes(hfeature, feature, validAttributes);
+        OGRGeometryH hgeom = 0;
         if ( hasType(feature->geometry().ilwisType(), itPOINT)) {
-            OGRLayerH lyr = datasources[0]._layers[0];
-            OGRFeatureH hfeature = gdal()->createFeature(gdal()->getLayerDef(lyr));
-            for(int i=0; i < tbl->columnCount(); ++i){
-                const ColumnDefinition& coldef  = tbl->columndefinition(i);
-                if ( coldef.name() == FEATUREIDCOLUMN )
-                    continue;
-                if(hasType(coldef.datadef().domain()->valueType(),itINTEGER)) {
-                    qint32 val = feature->cell(coldef.name()).toInt();
-                    gdal()->setIntegerAttribute(hfeature,gdal()->getFieldIndex(hfeature, coldef.name().toLocal8Bit()),val);
-                } else if (hasType(coldef.datadef().domain()->valueType(),itDOUBLE | itFLOAT)) {
-                    double val = feature->cell(coldef.name()).toDouble();
-                    gdal()->setDoubleAttribute(hfeature,gdal()->getFieldIndex(hfeature, coldef.name().toLocal8Bit()),val);
-                } else if (hasType(coldef.datadef().domain()->valueType(),itDOMAINITEM)) {
-                    QString val = feature->cell(coldef.name(),-1, false).toString();
-                    gdal()->setStringAttribute(hfeature,gdal()->getFieldIndex(hfeature, coldef.name().toLocal8Bit()),val.toLocal8Bit());
-                }
-                //TODO coords, time ..
-            }
-            OGRGeometryH hgeom = gdal()->createGeometry(wkbPoint);
-            //Box2D<double> box = feature->geometry().envelope();
-            Coordinate2d crd = feature->geometry().toType<Coordinate>();
-            gdal()->add2dPoint(hgeom,0, crd.x(), crd.y());
-            gdal()->setGeometry(hfeature,hgeom);
-            gdal()->destroyGeometry(hgeom);
+            hgeom = createPoint2D(feature);
+        }
+        if ( hasType(feature->geometry().ilwisType(), itLINE)) {
+            hgeom = createLine2D(feature);
+        }
+        gdal()->setGeometry(hfeature,hgeom);
+        gdal()->destroyGeometry(hgeom);
+
+        if ( hfeature) {
             if (gdal()->addFeature2Layer(lyr, hfeature) != OGRERR_NONE) {
-                return false;
+                ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("feature"), features->name());
             }
             gdal()->destroyFeature(hfeature);
-
-        }
-    };
-
-    for(OGRFieldDefnH fieldef : fielddefs) {
-        gdal()->destroyAttributeDefintion(fieldef);
+        };
     }
-
-    gdal()->destroyDataSource(datasources[0]._source);
+    for(auto& datasource : datasources){
+        if ( datasource._source != 0)
+            gdal()->destroyDataSource(datasource._source);
+    }
     return true;
-
 }
 
 bool GdalFeatureConnector::loadDriver()
 {
+
     _driver = gdal()->getDriverByName(_gdalShortName.toLocal8Bit());
     if ( !_driver ) {
         return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _filename.toString());
@@ -640,13 +714,15 @@ bool GdalFeatureConnector::loadDriver()
 
 bool GdalFeatureConnector::store(IlwisObject *obj, int )
 {
+
     if (!loadDriver())
         return false;
 
     IFeatureCoverage features;
     features.set(static_cast<FeatureCoverage *>(obj));
 
-    oneLayerPerFeatureType(features);
+    if(!oneLayerPerFeatureType(features))
+        return false;
 
     return true;
 
