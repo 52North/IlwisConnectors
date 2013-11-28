@@ -36,7 +36,7 @@ CoverageConnector::CoverageConnector(const Resource &resource, bool load) : Ilwi
 {
 }
 
-bool CoverageConnector::getRawInfo(const QString& range, double& vmin, double& vmax, double& scale, double& offset) {
+bool CoverageConnector::getRawInfo(const QString& range, double& vmin, double& vmax, double& scale, double& offset) const{
     QStringList parts = range.split(":");
     if ( parts.size() >= 2) {
         bool ok1, ok2;
@@ -53,7 +53,7 @@ bool CoverageConnector::getRawInfo(const QString& range, double& vmin, double& v
             scale = parts[2].toDouble();
             offset = parts[3].mid(7).toDouble();
         }
-         _converter = RawConverter(offset, scale, vmin, vmax);
+         const_cast<CoverageConnector *>(this)->_converter = RawConverter(offset, scale, vmin, vmax);
          return true;
     }
     return false;
@@ -96,7 +96,8 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
         attTable = extTable;
     }
     if ( attTable->columnIndex(FEATUREIDCOLUMN) == iUNDEF) { // external tables might already have these
-        attTable->addColumn(COVERAGEKEYCOLUMN,covdom);
+        DataDefinition def = determineDataDefintion();
+        attTable->addColumn(ColumnDefinition(COVERAGEKEYCOLUMN,def, attTable->columnCount()));
         attTable->addColumn(FEATUREIDCOLUMN,covdom);
     }
 
@@ -312,4 +313,29 @@ TableConnector *CoverageConnector::createTableConnector(ITable& attTable, Covera
     conn->attributeDomain(attDom);
 
     return conn;
+}
+DataDefinition CoverageConnector::determineDataDefintion() const{
+    IDomain dom;
+    if(!dom.prepare(_odf->file())) {
+        ERROR2(ERR_NO_INITIALIZED_2,"domain",_odf->file());
+        return DataDefinition();
+    }
+
+    DataDefinition def(dom);
+    double vmax,vmin,scale,offset;
+    QString range = _odf->value("BaseMap","Range");
+    if ( range != sUNDEF ) {
+        if ( getRawInfo(range, vmin,vmax,scale,offset)) {
+            if ( scale == 1.0) {
+                def.range(new NumericRange(vmin, vmax,1));
+
+            }
+            else {
+                def.range(new NumericRange(vmin, vmax));
+            }
+
+
+        }
+    }
+    return def;
 }
