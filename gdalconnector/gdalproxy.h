@@ -119,6 +119,7 @@ class GdalHandle {
         };
 
         GdalHandle(void* h, GdalHandleType t, quint64 o=i64UNDEF);
+        ~GdalHandle();
         GdalHandleType type();
         void* handle();
     private:

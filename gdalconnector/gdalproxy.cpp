@@ -28,6 +28,11 @@ using namespace Gdal;
 
 GdalHandle::GdalHandle(void* h, GdalHandleType t, quint64 o): _handle(h),_type(t),_owner(o){}
 
+GdalHandle::~GdalHandle()
+{
+
+}
+
 GdalHandle::GdalHandleType GdalHandle::type(){
     return _type;
 }
@@ -251,14 +256,14 @@ GdalHandle* GDALProxy::openFile(const QFileInfo& filename, quint64 asker, GDALAc
 }
 
 void GDALProxy::closeFile(const QString &filename, quint64 asker){
-    QString name = filename.toLower();
+    QString name = filename;
     auto iter = _openedDatasets.find(name);
     if (iter != _openedDatasets.end() && iter.value()->_owner == asker) {
         GdalHandle* handle = _openedDatasets[name];
         if (handle->type() == GdalHandle::etGDALDatasetH){
             close(handle->handle());
         }else if(handle->etOGRDataSourceH){
-            if (OGRErr err = releaseDataSource(handle->handle()) != OGRERR_NONE){
+            if (OGRErr err = releaseDataSource((OGRDataSourceH)handle->handle()) != OGRERR_NONE){
                 ERROR2(ERR_INVALID_PROPERTY_FOR_2, QString("OGRDataSource (ERR %1)").arg(err), name);
             }
         }else{
