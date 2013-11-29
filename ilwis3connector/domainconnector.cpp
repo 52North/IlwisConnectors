@@ -166,6 +166,10 @@ QString DomainConnector::parseDomainInfo(const QString& inf) const{
 }
 
 bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
+
+    if(!needsStore(dom))
+        return true;
+
     ItemDomain<NamedIdentifier> *piddomain = static_cast< ItemDomain<NamedIdentifier> *>(dom);
     INamedIdDomain iddomain;
     iddomain.set(piddomain);

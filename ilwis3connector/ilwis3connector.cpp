@@ -206,6 +206,9 @@ QString Ilwis3Connector::unquote(const QString &name) const
 
 bool Ilwis3Connector::store(IlwisObject *obj, int storemode)
 {
+    if(!needsStore(obj))
+        return true;
+
     bool ok = true;
     if ( storemode & IlwisObject::smMETADATA)
         ok &= storeMetaData(obj);
@@ -213,6 +216,18 @@ bool Ilwis3Connector::store(IlwisObject *obj, int storemode)
         ok &= storeBinaryData(obj);
 
     return ok;
+}
+
+bool Ilwis3Connector::needsStore(IlwisObject *obj) const
+{
+    if ( !obj->hasChanged()) { // objects that have not changed and that are linked to a still existing source need no save
+        QUrl source = obj->source().url();
+        QFileInfo info = containerConnector()->toLocalFile(source);
+        if ( info.exists()){
+            return false;
+        }
+    }
+    return true;
 }
 
 QString Ilwis3Connector::ilwis3ClassName(IlwisTypes type) const {
