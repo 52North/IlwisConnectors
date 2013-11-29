@@ -102,7 +102,7 @@ typedef void (*IOGR_G_SetPoint_2D)(	OGRGeometryH ,int,double,double);
 typedef OGRErr (*IOGR_F_SetGeometry)(OGRFeatureH, OGRGeometryH)	;
 typedef void (*IOGR_G_DestroyGeometry)(	OGRGeometryH);
 typedef OGRErr (*IOGR_L_CreateFeature)(OGRLayerH,OGRFeatureH);
-
+typedef OGRErr (*IOGR_G_AddGeometry)(OGRGeometryH,OGRGeometryH);
 
 
 
@@ -253,6 +253,7 @@ public:
     IOGR_F_SetGeometry setGeometry;
     IOGR_G_DestroyGeometry destroyGeometry;
     IOGR_L_CreateFeature addFeature2Layer;
+    IOGR_G_AddGeometry add2Geometry;
 
     IVSIFileFromMemBuffer vsiFileFromMem;
     IVSIFCloseL vsiClose;

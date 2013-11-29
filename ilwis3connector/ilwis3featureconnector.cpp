@@ -384,11 +384,11 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
 
     int features = _odf->value("PointMap","Points").toInt(&ok);
     if (!ok) {
-        coverageType = itLINE;
-        features = _odf->value("SegmentMapStore","Segments").toInt(&ok);
+        coverageType = itPOLYGON;
+        features = _odf->value("PolygonMapStore","Polygons").toInt(&ok);
         if (!ok) {
-            coverageType = itPOLYGON;
-            features = _odf->value("PolygonMapStore","Polygons").toInt(&ok);
+            coverageType = itLINE;
+            features = _odf->value("SegmentMapStore","Segments").toInt(&ok);
         }
     }
 

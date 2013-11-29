@@ -156,6 +156,7 @@ bool GDALProxy::prepare() {
     setGeometry = add<IOGR_F_SetGeometry>("OGR_F_SetGeometry");
     destroyGeometry = add<IOGR_G_DestroyGeometry>("OGR_G_DestroyGeometry");
     addFeature2Layer = add<IOGR_L_CreateFeature>("OGR_L_CreateFeature");
+    add2Geometry = add<IOGR_G_AddGeometry>("OGR_G_AddGeometry");
 
     pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
     getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");

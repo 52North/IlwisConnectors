@@ -53,6 +53,7 @@ private:
     bool setDataSourceAndLayers(const IFeatureCoverage &features, std::vector<SourceHandles> &datasources,std::vector<bool>& validAttributes);
     OGRGeometryH createLine2D(const SPFeatureI &feature);
     OGRGeometryH createPoint2D(const SPFeatureI &feature);
+    OGRGeometryH createPolygon2D(const SPFeatureI &feature);
 
     static int ilwisType2Index(IlwisTypes);
 };
