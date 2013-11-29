@@ -148,7 +148,15 @@ bool Ilwis3Connector::isSystemObject(const QString& filename) {
     return true;
 }
 
-QString Ilwis3Connector::name2Code(const QString& name, const QString& type) {
+QString Ilwis3Connector::name2Code(const QString& nameIn, const QString& type) {
+    QString name = nameIn;
+    int index = nameIn.indexOf(".");
+    if ( index != -1){
+        QString ext = name.mid(index + 1);
+        if ( ext == "dom" )
+            name = name.left(index).toLower();
+    }
+
     QSqlQuery db(kernel()->database());
     QString query = QString("Select code from aliasses where alias='%1' and type='%2' and source='ilwis3'").arg(name, type);
     if ( !db.exec(query)) {
