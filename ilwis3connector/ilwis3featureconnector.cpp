@@ -223,15 +223,14 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         for(quint32 i=0; i< numberOfHoles;++i)
             readRing(stream, pol.inners()[i]);
         if ( isNumeric) {
+
+            fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
             tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(j));
             tbl->setCell(FEATUREVALUECOLUMN, j, QVariant(value));
-            SPFeatureI feature = fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
-            tbl->setCell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         } else {
             quint32 itemId = value;
+            fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
             tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(itemId - 1));
-            SPFeatureI feature = fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
-            tbl->setCell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         }
 
     }
@@ -286,16 +285,14 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
         std::copy(coords.begin(), coords.end(), line.begin());
         mpsTable.get(i, colItemId,value);
         if ( isNumeric) {
+            fcoverage->newFeature({line, fcoverage->coordinateSystem()});
             tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
             tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(value));
-            SPFeatureI feature = fcoverage->newFeature({line, fcoverage->coordinateSystem()});
-            tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
 
         } else {
             quint32 itemId = value;
             tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
-            SPFeatureI feature = fcoverage->newFeature({line, fcoverage->coordinateSystem()});
-            tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+            fcoverage->newFeature({line, fcoverage->coordinateSystem()});
         }
 
 
@@ -333,11 +330,8 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
         }
         mppTable.get(i, colItemId,itemIdT);
         quint32 itemId = itemIdT;
+        fcoverage->newFeature({c, fcoverage->coordinateSystem()});
         tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
-
-        SPFeatureI feature = fcoverage->newFeature({c, fcoverage->coordinateSystem()});
-
-        tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
 
     }
     return true;
