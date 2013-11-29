@@ -326,7 +326,7 @@ IlwisObject *DomainConnector::create() const
         subtype =_odf->value("Domain", "Type");
         if ( subtype == "DomainIdentifier" || subtype == "DomainUniqueID")
             return new ItemDomain<IndexedIdentifier>(_resource);
-        if ( subtype == "DomainClass")
+        if ( subtype == "DomainClass" || subtype == "DomainSort")
             return new ItemDomain<ThematicItem>(_resource);
     }
     return 0;
