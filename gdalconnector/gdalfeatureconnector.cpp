@@ -553,13 +553,13 @@ void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, SPFeatureI featur
             continue;
 
         if(hasType(coldef.datadef().domain()->valueType(),itINTEGER)) {
-            qint32 val = feature->cell(coldef.name()).toInt();
+            qint32 val = feature->cell(coldef.columnindex()).toInt();
             gdal()->setIntegerAttribute(hfeature,index,val);
         } else if (hasType(coldef.datadef().domain()->valueType(),itDOUBLE | itFLOAT)) {
-            double val = feature->cell(coldef.name()).toDouble();
+            double val = feature->cell(coldef.columnindex()).toDouble();
             gdal()->setDoubleAttribute(hfeature,index,val);
         } else if (hasType(coldef.datadef().domain()->valueType(),itDOMAINITEM)) {
-            QString val = feature->cell(coldef.name(),-1, false).toString();
+            QString val = feature->cell(coldef.columnindex(),-1, false).toString();
             gdal()->setStringAttribute(hfeature,index,val.toLocal8Bit());
         }
         //TODO coords, time ..
@@ -656,6 +656,35 @@ OGRGeometryH GdalFeatureConnector::createLine2D(const SPFeatureI& feature) {
 
 }
 
+OGRGeometryH GdalFeatureConnector::createPolygon2D(const SPFeatureI& feature){
+    OGRGeometryH hgeom = gdal()->createGeometry(wkbPolygon);
+    Polygon polygon = feature->geometry().toType<Polygon>();
+    OGRGeometryH hgeomring = gdal()->createGeometry(wkbLinearRing);
+    for(int i=0; i < polygon.outer().size(); ++i) {
+        Coordinate crd = polygon.outer()[i];
+        gdal()->add2dPoint(hgeomring,i, crd.x(), crd.y());
+    }
+    gdal()->add2Geometry(hgeom, hgeomring);
+    gdal()->destroyGeometry(hgeomring);
+
+    for(int hole=0; hole < polygon.inners().size(); ++hole){
+        const std::vector<Coordinate2d>& holecrd = polygon.inners()[hole];
+        OGRGeometryH hinnerring = gdal()->createGeometry(wkbLinearRing);
+        for(int i=0; i < holecrd.size(); ++i) {
+            Coordinate crd = holecrd[i];
+            gdal()->add2dPoint(hinnerring,i, crd.x(), crd.y());
+        }
+        gdal()->add2Geometry(hgeom, hinnerring);
+        gdal()->destroyGeometry(hinnerring);
+
+    }
+
+
+    return hgeom;
+
+
+}
+
 bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& features) {
 
 
@@ -666,7 +695,7 @@ bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& featur
 
     FeatureIterator fiter(features);
     FeatureIterator endIter = end(features);
-    //std::for_each(fiter, fiter.end(), [&](const SPFeatureI& feature){
+    int count = 0;
     for(; fiter != endIter; ++fiter) {
         SPFeatureI feature = *fiter;
         OGRLayerH lyr = datasources[ilwisType2Index(feature->ilwisType())]._layers[0];
@@ -679,6 +708,9 @@ bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& featur
         if ( hasType(feature->geometry().ilwisType(), itLINE)) {
             hgeom = createLine2D(feature);
         }
+        if ( hasType(feature->geometry().ilwisType(), itPOLYGON)) {
+            hgeom = createPolygon2D(feature);
+        }
         gdal()->setGeometry(hfeature,hgeom);
         gdal()->destroyGeometry(hgeom);
 
@@ -688,6 +720,9 @@ bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& featur
             }
             gdal()->destroyFeature(hfeature);
         };
+        if ( count % 100 == 0)
+            qDebug() << count;
+        ++count;
     }
     for(auto& datasource : datasources){
         if ( datasource._source != 0)
@@ -703,10 +738,6 @@ bool GdalFeatureConnector::loadDriver()
     if ( !_driver ) {
         return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _filename.toString());
     }
-    //int ret = gdal()->testDriverCapability(_driver,"ODrCCreateDataSource");
-    //if ( ret == FALSE){
-    //    return ERROR2(ERR_OPERATION_NOTSUPPORTED2, "write data-source", _filename.toString());
-    //}
 
 
     return true;
