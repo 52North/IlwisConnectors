@@ -316,7 +316,12 @@ TableConnector *CoverageConnector::createTableConnector(ITable& attTable, Covera
 }
 DataDefinition CoverageConnector::determineDataDefintion() const{
     IDomain dom;
-    if(!dom.prepare(_odf->file())) {
+    QString domainTemp = _odf->value("BaseMap","Domain");
+    QString domain = name2Code(domainTemp, "domain");
+    if ( domain == sUNDEF)
+        domain = domainTemp;
+
+    if(!dom.prepare(domain)) {
         ERROR2(ERR_NO_INITIALIZED_2,"domain",_odf->file());
         return DataDefinition();
     }
