@@ -705,7 +705,6 @@ bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& featur
 
     FeatureIterator fiter(features);
     FeatureIterator endIter = end(features);
-    int count = 0;
     std::vector<ColumnDefinition> defs;
     for(int i=0; i < features->attributeTable()->columnCount(); ++i){
         defs.push_back(features->attributeTable()->columndefinition(i));
@@ -734,9 +733,6 @@ bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& featur
             }
             gdal()->destroyFeature(hfeature);
         };
-        if ( count % 100 == 0)
-            qDebug() << count;
-        ++count;
     }
     for(auto& datasource : datasources){
         if ( datasource._source != 0)
