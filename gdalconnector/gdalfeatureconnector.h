@@ -49,13 +49,20 @@ private:
     bool createAttributes(const ITable &tbl, OGRLayerH layer, const std::vector<OGRFieldDefnH> &fielddefs,std::vector<bool>& validAttributes);
     bool loadDriver();
     OGRwkbGeometryType ilwisType2GdalFeatureType(IlwisTypes tp);
-    void setAttributes(OGRFeatureH hfeature, Ilwis::SPFeatureI feature, const std::vector<bool> &validAttributes);
+    void setAttributes(OGRFeatureH hfeature, Ilwis::SPFeatureI feature, const std::vector<bool> &validAttributes, const std::vector<Ilwis::ColumnDefinition> &def);
     bool setDataSourceAndLayers(const IFeatureCoverage &features, std::vector<SourceHandles> &datasources,std::vector<bool>& validAttributes);
     OGRGeometryH createLine2D(const SPFeatureI &feature);
     OGRGeometryH createPoint2D(const SPFeatureI &feature);
     OGRGeometryH createPolygon2D(const SPFeatureI &feature);
 
     static int ilwisType2Index(IlwisTypes);
+    bool createDataSourceAndLayers(IlwisTypes types,
+                                   const QString &postfix,
+                                   const IFeatureCoverage &features,
+                                   OGRSpatialReferenceH srs,
+                                   const std::vector<OGRFieldDefnH> &fielddefs,
+                                   std::vector<SourceHandles> &datasources,
+                                   std::vector<bool> &validAttributes);
 };
 }
 }
