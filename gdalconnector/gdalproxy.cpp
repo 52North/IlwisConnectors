@@ -195,7 +195,7 @@ bool GDALProxy::prepare() {
                 if (hDriver != nullptr){//ODrCDeleteDataSource is aso possible
                     _featureExtensions.append(QString("*.").append(key));
                     if (testDriverCapability(hDriver, ODrCCreateDataSource)){
-                        //TODO: save a bool for this driver capability to expose it to the store-method
+                        //TODO:: save a bool for this driver capability to expose it to the store-method
                     }
                 }else{
                     ERROR2(ERR_NO_INITIALIZED_2,QString("File format (%1) support").arg(key),"OGR-Library (gdall.dll)");
@@ -289,7 +289,7 @@ OGRSpatialReferenceH GDALProxy::srsHandle(GdalHandle* handle, const QString& sou
             strcpy(wkt, cwkt);
 
             OGRErr err = importFromWkt(srshandle, &wkt2);
-            char *pwkt;//TODO only for debug?
+            char *pwkt;//TODO: only for debug?
             exportToPrettyWkt(srshandle, &pwkt,0);
             free(pwkt);
 

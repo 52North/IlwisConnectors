@@ -21,7 +21,7 @@ GdalConnector::~GdalConnector()
 {
 //    if ( _handle)
 //        delete _handle;
-    //TODO delete causes a crash for unknown reasons; research later
+    //TODO: delete causes a crash for unknown reasons; research later
 }
 
 
@@ -41,7 +41,7 @@ IlwisTypes GdalConnector::ilwisType(const QString &name)
         return itRASTER;
     if ( gdal()->getFeatureExtensions().contains(filter,Qt::CaseInsensitive))
         return itFEATURE;
-    return itUNKNOWN; //TODO add table formats here
+    return itUNKNOWN; //TODO: add table formats here
 }
 
 bool GdalConnector::loadMetaData(IlwisObject *data){

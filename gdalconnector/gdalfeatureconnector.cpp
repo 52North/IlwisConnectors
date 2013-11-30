@@ -131,7 +131,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
                     case OFTDateTime:{  // Date and Time
                         INumericDomain ndomain;
                         ndomain.prepare("value");
-                        ndomain->range(new TimeInterval());//TODO: ilwisType of Domain should change to itTIMEDOMAIN
+                        ndomain->range(new TimeInterval());//TODO:: ilwisType of Domain should change to itTIMEDOMAIN
                         domain = ndomain;  break;
                     }
                 }
@@ -203,7 +203,7 @@ QVariant GdalFeatureConnector::fillIntegerColumn(OGRFeatureH featureH, int colIn
         (*nrange) += (double)v;
     return QVariant(v);
 }
-//TODO: not yet tested
+//TODO:: not yet tested
 QVariant GdalFeatureConnector::fillDoubleColumn(OGRFeatureH featureH, int colIntex, SPRange range){
     double v = gdal()->getFieldAsDouble(featureH, colIntex);
     SPNumericRange nrange = range.staticCast<NumericRange>();
@@ -211,7 +211,7 @@ QVariant GdalFeatureConnector::fillDoubleColumn(OGRFeatureH featureH, int colInt
         (*nrange) += v;
     return QVariant(v);
 }
-//TODO: not yet tested
+//TODO:: not yet tested
 QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colIntex, SPRange range){
     Time time;
     double v = rUNDEF;
@@ -562,7 +562,7 @@ void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, SPFeatureI featur
             QString val = columnDef[i].datadef().domain()->value(var);
             gdal()->setStringAttribute(hfeature,index,val.toLocal8Bit());
         }
-        //TODO coords, time ..
+        //TODO: coords, time ..
         ++index;
     }
 
