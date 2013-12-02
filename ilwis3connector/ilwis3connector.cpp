@@ -58,6 +58,10 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
 {
     if ( obj == nullptr)
         return ERROR1(ERR_NO_INITIALIZED_1,"Object");
+
+    if(!willStore(obj))
+        return false;
+
     if ( obj->isReadOnly()) {
         kernel()->issues()->log(QString(WARN_HAS_STATUS2).arg(obj->name().arg("read-only")));
         return false;
@@ -206,8 +210,8 @@ QString Ilwis3Connector::unquote(const QString &name) const
 
 bool Ilwis3Connector::store(IlwisObject *obj, int storemode)
 {
-    if(!needsStore(obj))
-        return true;
+    if(!willStore(obj))
+        return false;
 
     bool ok = true;
     if ( storemode & IlwisObject::smMETADATA)
@@ -218,7 +222,7 @@ bool Ilwis3Connector::store(IlwisObject *obj, int storemode)
     return ok;
 }
 
-bool Ilwis3Connector::needsStore(IlwisObject *obj) const
+bool Ilwis3Connector::willStore(const Ilwis::IlwisObject *obj) const
 {
     if ( !obj->hasChanged()) { // objects that have not changed and that are linked to a still existing source need no save
         QUrl source = obj->source().url();
@@ -226,6 +230,9 @@ bool Ilwis3Connector::needsStore(IlwisObject *obj) const
         if ( info.exists()){
             return false;
         }
+    }
+    if ( obj->isReadOnly()) {
+        return ERROR2(WARN_HAS_STATUS2,obj->name(),"read-only");
     }
     return true;
 }
