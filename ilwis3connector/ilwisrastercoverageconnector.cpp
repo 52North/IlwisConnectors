@@ -469,7 +469,7 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
         grf->setName(localName);
         QUrl url = makeUrl( _odf->file(), localName);
         if(!grf->connectTo(url, "georef", "ilwis3", Ilwis::IlwisObject::cmOUTPUT))
-            return false;
+            return sUNDEF;
 
         grf->store(IlwisObject::smMETADATA);
     } else
