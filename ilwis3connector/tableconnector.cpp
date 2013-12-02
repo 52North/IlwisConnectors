@@ -327,7 +327,7 @@ QString TableConnector::valueType2DataType(IlwisTypes ty) {
     } else if ( ty == itSTRING) {
         vType = "Text";
     } else {
-        //TODO other domain types
+        //TODO: other domain types
     }
     return vType;
 }

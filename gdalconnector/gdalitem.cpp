@@ -30,7 +30,7 @@ GDALItems::GDALItems(const QUrl &url, const UPContainerConnector &containerc)
         }
         if ( count == 0)
             return;
-        //TODO at the moment simplistic approach; all is corners georef and domain value
+        //TODO: at the moment simplistic approach; all is corners georef and domain value
         // and a homogenous type if files. when we have example of more complex nature we wille xtend this+
         quint64 csyId = addCsy(handle, file, url);
         if ( handle->type() == GdalHandle::etGDALDatasetH) {

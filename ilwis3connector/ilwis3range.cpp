@@ -45,7 +45,7 @@ Range *Ilwis3Range::findRange(const ODF &odf, const QString& section) {
                 vmax = vrparts[1].toDouble();
             }
             if( vrparts.size() >= 3 && vrparts[2].size() != 0) {
-                resolution = 0; // TODO find a better rule for resolution; maybe based on minmax;
+                resolution = 0; // TODO: find a better rule for resolution; maybe based on minmax;
             }
 
         }

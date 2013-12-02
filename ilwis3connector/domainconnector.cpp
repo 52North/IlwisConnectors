@@ -119,7 +119,7 @@ bool DomainConnector::handleValueDomains(IlwisObject* data) {
             return false;
         }
     }
-    // TODO columns domain handling, no seperate odf, so special type(??)
+    // TODO: columns domain handling, no seperate odf, so special type(??)
 
     if (!range) {
         kernel()->issues()->log(TR(ERR_NO_INITIALIZED_1).arg(data->name()));
@@ -310,7 +310,7 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
 
 IlwisObject *DomainConnector::create() const
 {
-    //TODO other domain types time, coordinatesystem
+    //TODO: other domain types time, coordinatesystem
     QString subtype = sUNDEF;
     if ( type() & itCOVERAGE) {
         subtype = parseDomainInfo( _odf->value("BaseMap","DomainInfo"));

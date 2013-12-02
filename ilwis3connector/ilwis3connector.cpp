@@ -83,7 +83,7 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
     if ( (obj->ilwisType() & itGEOREF))
         _odf->setKeyValue("Ilwis","Type", "GeoRef");
 
-    //TODO other types
+    //TODO: other types
     return true;
 }
 
@@ -242,7 +242,7 @@ QString Ilwis3Connector::ilwis3ClassName(IlwisTypes type) const {
     else if ( type & itTABLE)
         return "Table";
 
-    //TODO other types
+    //TODO: other types
 
     return sUNDEF;
 }
@@ -365,7 +365,7 @@ QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name) {
     QString fileurl = path;
     if ( fileurl == "")
         fileurl = _resource.url().toString();
-    //TODO container pathing here; grf uses local path
+    //TODO: container pathing here; grf uses local path
     QFileInfo inf = containerConnector()->toLocalFile(fileurl);
     QString localpath = inf.absolutePath();
     QString filename =  localpath + "/" + (name != sUNDEF ? name : inf.baseName());
