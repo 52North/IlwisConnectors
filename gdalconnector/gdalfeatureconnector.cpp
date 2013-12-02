@@ -715,13 +715,13 @@ bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& featur
         OGRFeatureH hfeature = gdal()->createFeature(gdal()->getLayerDef(lyr));
         setAttributes(hfeature, feature, validAttributes, defs);
         OGRGeometryH hgeom = 0;
-        if ( hasType(feature->geometry().featureType(), itPOINT)) {
+        if ( hasType(feature->geometry().geometryType(), itPOINT)) {
             hgeom = createPoint2D(feature);
         }
-        if ( hasType(feature->geometry().featureType(), itLINE)) {
+        if ( hasType(feature->geometry().geometryType(), itLINE)) {
             hgeom = createLine2D(feature);
         }
-        if ( hasType(feature->geometry().featureType(), itPOLYGON)) {
+        if ( hasType(feature->geometry().geometryType(), itPOLYGON)) {
             hgeom = createPolygon2D(feature);
         }
         gdal()->setGeometry(hfeature,hgeom);

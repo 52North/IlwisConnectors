@@ -418,7 +418,7 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     for_each(iter, iter.end(), [&](SPFeatureI feature){
         const Geometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
-            if ( geom.featureType() == itPOLYGON) {
+            if ( geom.geometryType() == itPOLYGON) {
                 Polygon pol = geom.toType<Polygon>();
                 writeCoords(output_file, pol.outer());
                 output_file.write((char *)&raw,8);
@@ -460,7 +460,7 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
     for_each(iter, iter.end(), [&](SPFeatureI feature){
         const Geometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
-            if ( geom.featureType() == itLINE) {
+            if ( geom.geometryType() == itLINE) {
                 Line2D<Coordinate2d> line = geom.toType<Line2D<Coordinate2d>>();
                 const Coordinate2d& crdmin = geom.envelope().min_corner();
                 const Coordinate2d& crdmax = geom.envelope().max_corner();
