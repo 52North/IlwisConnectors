@@ -45,13 +45,19 @@ def main():
         del sum
 
         print("-----------------------------------------------")
-        print("catching native python exception")
+        print("alter Geometry using WKT")
         it = fc.__iter__()
         f = it.next()
         v = f.attribute("RAINFALL")
         print(f.geometry().toWKT())
-        f.geometry().fromWKT("POLYGON((34.5 6.65), (54.3 54.3))")
-        print(f.geometry().toWKT())
+        check = False
+        try:
+            check = f.geometry().fromWKT("POINT M(34.5 6.65 49)")
+        except Exception as a:
+            print(a)
+        print(check, " -> ",f.geometry().toWKT())
+        print("-----------------------------------------------")
+        print("catching native python exception")
         try:
             print(int(v))
         except TypeError as err:

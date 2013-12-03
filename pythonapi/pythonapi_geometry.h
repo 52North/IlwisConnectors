@@ -7,16 +7,17 @@
 
 namespace Ilwis{
     class Geometry;
+    class SPFeatureI;
 }
 
 namespace pythonapi {
 
+    class Feature;
+
     class Geometry : public Object{
         friend class Feature;
     public:
-        Geometry();
-        Geometry(Ilwis::Geometry* geometry);
-        Geometry(const char* wkt);
+        Geometry(Feature* feature, int index);
         ~Geometry();
         bool within(const Geometry& geometry) const;
         bool contains(const Geometry& geometry) const;
@@ -26,9 +27,13 @@ namespace pythonapi {
         bool fromWKT(const char*  wkt);
         const char* toWKT();
     private:
-        std::unique_ptr<Ilwis::Geometry> _ilwisGeometry;
+        Ilwis::Geometry &ptr() const;
+        std::unique_ptr<Feature> _feature;
+        int _index;
     };
 
+
+    //input helper classes: no IlwisObject management
 
     class Coordinate{
     public:
@@ -46,6 +51,8 @@ namespace pythonapi {
     private:
         qint32 _x,_y;
     };
+
+
 } // namespace pythonapi
 
 #endif // PYTHONAPI_GEOMETRY_H

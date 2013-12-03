@@ -13,6 +13,7 @@ namespace pythonapi{
     class FeatureCoverage;
 
     class Feature: public Object{
+        friend class Geometry;
     public:
         Feature(Ilwis::SPFeatureI* ilwisFeature, FeatureCoverage* fc);
         bool __bool__() const;

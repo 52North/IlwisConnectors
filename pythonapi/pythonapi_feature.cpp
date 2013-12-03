@@ -29,7 +29,7 @@ Feature::Feature(Ilwis::SPFeatureI* ilwisFeature, FeatureCoverage* fc): _ilwisSP
 }
 
 bool Feature::__bool__() const{
-    return !this->_ilwisSPFeatureI->isNull() && this->_coverage != NULL && this->_coverage->__bool__() && this->_ilwisSPFeatureI->data()->isValid();
+    return !this->_ilwisSPFeatureI->isNull() && this->_coverage != NULL && this->_coverage->__bool__();// && this->_ilwisSPFeatureI->data()->isValid();
 }
 
 const char* Feature::__str__(){
@@ -115,11 +115,11 @@ IlwisTypes Feature::ilwisType(){
 }
 
 Geometry* Feature::geometry(int index){
-    return new Geometry(new Ilwis::Geometry(this->ptr()->geometry(index)));
+    return new Geometry(this, index);
 }
 
 void Feature::setGeometry(Geometry &geometry, int index){
-    this->ptr()->set((*geometry._ilwisGeometry));
+    this->ptr()->set(geometry.ptr());
 }
 
 Ilwis::SPFeatureI Feature::ptr() const{
