@@ -7,6 +7,7 @@
 %include "exception.i"
 
 %{
+#include "pythonapi_qtGNUTypedefs.h"
 #include "pythonapi_ilwis.h"
 #include "pythonapi_object.h"
 #include "pythonapi_engine.h"
@@ -21,6 +22,8 @@
 #include "pythonapi_featureiterator.h"
 #include "pythonapi_rastercoverage.h"
 %}
+
+%include "pythonapi_qtGNUTypedefs.h"
 
 %init %{
     //init IlwisException for Python
@@ -42,6 +45,12 @@
 //adds the export flag to pyd library for the IlwisException
 %pythoncode %{
     IlwisException = _ilwisobjects.IlwisException
+    shUNDEF = -32767
+    iUNDEF  = -2147483647
+    rUNDEF = -1e308
+    flUNDEF = -1e38
+    i64UNDEF = -9223372036854775808
+    sUNDEF = "?"
 %}
 //catch std::exception's on all C API function calls
 %exception{

@@ -10,7 +10,7 @@ def main():
     print("-----------------------------------------------")
     #Gridding
     localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
-    polygongrid = Engine.do("gridding",localcoordsystem,"coordinate(225358.6605, 3849480.5700)",1000.0,1000.0,12,12)
+    polygongrid = Engine.do("gridding",localcoordsystem,Coordinate(225358.6605, 3849480.5700),1000.0,1000.0,12,12)
     if polygongrid:
         print("successfully created",polygongrid.type(),"(",polygongrid.name(),") with gridding")
         print("FeatureCount is",polygongrid.featureCount())
@@ -27,7 +27,7 @@ def main():
         #adding new attribute to coverage
         if fc.addAttribute("highest","value"):
             print("value attribute 'highest' was added to",fc.name())
-            att = fc.attributes();
+            att = fc.attributes()
             print("attributes(",len(att),")",att)
         else:
             print("couln't add value attribute 'highest' to",fc.name())
@@ -37,7 +37,7 @@ def main():
         for f in fc:
             sum += float(f.attribute("MAY",PyVariant(0)))
             f.setAttribute("highest",sum)
-            print(f, end=":");
+            print(f, end=":")
             for a in fc.attributes():
                 print(f.attribute(a,PyVariant("-")), end="|")
             print()
@@ -46,9 +46,12 @@ def main():
 
         print("-----------------------------------------------")
         print("catching native python exception")
-        it = fc.__iter__();
+        it = fc.__iter__()
         f = it.next()
         v = f.attribute("RAINFALL")
+        print(f.geometry().toWKT())
+        f.geometry().fromWKT("POLYGON((34.5 6.65), (54.3 54.3))")
+        print(f.geometry().toWKT())
         try:
             print(int(v))
         except TypeError as err:
@@ -173,7 +176,7 @@ def raul_example():
     #merge small regions into dominant neighbor
     for region in regions:
         if region.area() < 5000:
-            cov = regions.clone();
+            cov = regions.clone()
             cov.clear()
             regionclone = region.clone()
             cov.addFeature(regionclone)

@@ -25,7 +25,8 @@ HEADERS += \
     pythonapi/pythonapi_qissuelogger.h \
     pythonapi/pythonapi_pyvariant.h \
     pythonapi/pythonapi_geometry.h \
-    pythonapi/pythonapi_container.h
+    pythonapi/pythonapi_container.h \
+    pythonapi/pythonapi_qtGNUTypedefs.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
@@ -50,7 +51,6 @@ OTHER_FILES += \
     pythonapi/README \
     pythonapi/ilwisobjects.i \
     pythonapi/ilwisobjects.sip \
-    pythonapi/configure.py \
     pythonapi/test.sh \
     pythonapi/test.bat \
     pythonapi/qt.conf \

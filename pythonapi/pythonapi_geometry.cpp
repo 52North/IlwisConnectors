@@ -20,6 +20,10 @@ Geometry::Geometry():_ilwisGeometry(nullptr){
 Geometry::Geometry(Ilwis::Geometry* geometry):_ilwisGeometry(geometry){
 }
 
+Geometry::Geometry(const char *wkt){
+    this->_ilwisGeometry.reset(new Ilwis::Geometry(QString(wkt)));
+}
+
 Geometry::~Geometry(){
 }
 
@@ -46,6 +50,14 @@ IlwisTypes Geometry::ilwisType(){
     if (!this->__bool__())
         throw Ilwis::ErrorObject(QString("invalid Feature!"));
     return this->_ilwisGeometry->ilwisType();
+}
+
+bool Geometry::fromWKT(const char* wkt){
+    return this->_ilwisGeometry->fromWKT(QString(wkt));
+}
+
+const char *Geometry::toWKT(){
+    return this->_ilwisGeometry->toWKT().toLocal8Bit();
 }
 
 
