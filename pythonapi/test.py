@@ -113,11 +113,13 @@ def main():
 #        print("14.99=",fl)
         print("-----------------------------------------------")
         #store to file
-        aa1.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest/aa1", "GTiff","gdal",IlwisObject.cmOUTPUT)
-        if aa1.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
-            print("successfully saved aa1.tif")
+        if aa1.connectTo("file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest/aa1", "GTiff","gdal",IlwisObject.cmOUTPUT):
+            if aa1.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
+                print("successfully saved aa1.tif")
+            else:
+                print("could not save aa1.tif")
         else:
-            print("could not save aa1.tif")
+            print("connectTo file failed!")
     else:
         print("couldn't load RasterCoverage")
 

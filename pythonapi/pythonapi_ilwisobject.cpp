@@ -14,13 +14,15 @@ IlwisObject::IlwisObject(Ilwis::IIlwisObject *object): _ilwisObject(std::shared_
 IlwisObject::~IlwisObject(){
 }
 
-void IlwisObject::connectTo(const char *url, const char *format, const char *fnamespace, ConnectorMode cmode){
+bool IlwisObject::connectTo(const char *url, const char *format, const char *fnamespace, ConnectorMode cmode){
     Ilwis::IIlwisObject io = (*this->ptr());
     if (cmode == cmINPUT || cmode == cmEXTENDED){
         if (!io.prepare(QString(url), io->ilwisType()))
             throw Ilwis::ErrorObject(QString("Cannot reconnect %1 for input").arg(url));
+        else
+            return true;
     }else{
-        io->connectTo(QUrl(url), QString(format), QString(fnamespace), (Ilwis::IlwisObject::ConnectorMode)cmode);
+        return io->connectTo(QUrl(url), QString(format), QString(fnamespace), (Ilwis::IlwisObject::ConnectorMode)cmode);
     }
 }
 
