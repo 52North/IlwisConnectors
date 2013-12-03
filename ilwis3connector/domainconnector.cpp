@@ -167,7 +167,7 @@ QString DomainConnector::parseDomainInfo(const QString& inf) const{
 
 bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
 
-    if(!needsStore(dom))
+    if(!willStore(dom))
         return true;
 
     ItemDomain<NamedIdentifier> *piddomain = static_cast< ItemDomain<NamedIdentifier> *>(dom);
@@ -270,7 +270,8 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
     QString alias = kernel()->database().findAlias(dmName,"domain","ilwis3");
     if ( alias != sUNDEF)
         return true; // nothing to be done, already exists as a system domain
-    Ilwis3Connector::storeMetaData(data, itDOMAIN);
+    if(!Ilwis3Connector::storeMetaData(data, itDOMAIN))
+        return false;
 
     _odf->setKeyValue("Ilwis", "Type", "Domain");
     if ( dom->ilwisType() == itNUMERICDOMAIN) {

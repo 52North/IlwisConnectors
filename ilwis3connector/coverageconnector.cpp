@@ -256,7 +256,8 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
             _odf->setKeyValue("BaseMap","Domain",domName);
             QUrl url = makeUrl(_odf->file(),domName);
-            iddom->connectTo(url,"domain","ilwis3", IlwisObject::cmOUTPUT);
+            if(!iddom->connectTo(url,"domain","ilwis3", IlwisObject::cmOUTPUT))
+                return false;
             iddom->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
         }
     }
@@ -316,12 +317,12 @@ TableConnector *CoverageConnector::createTableConnector(ITable& attTable, Covera
 }
 DataDefinition CoverageConnector::determineDataDefintion() const{
     IDomain dom;
-    QString domainTemp = _odf->value("BaseMap","Domain");
-    QString domain = name2Code(domainTemp, "domain");
-    if ( domain == sUNDEF)
-        domain = domainTemp;
+//    QString domainTemp = _odf->value("BaseMap","Domain");
+//    QString domain = name2Code(domainTemp, "domain");
+//    if ( domain == sUNDEF)
+//        domain = domainTemp;
 
-    if(!dom.prepare(domain)) {
+    if(!dom.prepare(_odf->file())) {
         ERROR2(ERR_NO_INITIALIZED_2,"domain",_odf->file());
         return DataDefinition();
     }

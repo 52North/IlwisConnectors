@@ -711,17 +711,17 @@ bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& featur
     }
     for(; fiter != endIter; ++fiter) {
         SPFeatureI feature = *fiter;
-        OGRLayerH lyr = datasources[ilwisType2Index(feature->ilwisType())]._layers[0];
+        OGRLayerH lyr = datasources[ilwisType2Index(feature->geometryType())]._layers[0];
         OGRFeatureH hfeature = gdal()->createFeature(gdal()->getLayerDef(lyr));
         setAttributes(hfeature, feature, validAttributes, defs);
         OGRGeometryH hgeom = 0;
-        if ( hasType(feature->geometry().ilwisType(), itPOINT)) {
+        if ( hasType(feature->geometry().geometryType(), itPOINT)) {
             hgeom = createPoint2D(feature);
         }
-        if ( hasType(feature->geometry().ilwisType(), itLINE)) {
+        if ( hasType(feature->geometry().geometryType(), itLINE)) {
             hgeom = createLine2D(feature);
         }
-        if ( hasType(feature->geometry().ilwisType(), itPOLYGON)) {
+        if ( hasType(feature->geometry().geometryType(), itPOLYGON)) {
             hgeom = createPolygon2D(feature);
         }
         gdal()->setGeometry(hfeature,hgeom);
