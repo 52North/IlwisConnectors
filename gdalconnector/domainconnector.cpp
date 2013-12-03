@@ -55,20 +55,20 @@ bool DomainConnector::loadMetaData(IlwisObject *data){
 }
 
 bool DomainConnector::handleThematicDomains(IlwisObject* ) {
-    //TODO handle thematic raster domains
+    //TODO: handle thematic raster domains
     return false;
 }
 
 bool DomainConnector::handleValueDomains(IlwisObject* data) {
-    NumericDomain *vdata = static_cast<NumericDomain*>(data);
-    //TODO adjust the range
+    //NumericDomain *vdata = static_cast<NumericDomain*>(data);
+    //TODO: adjust the range
     return true;
 }
 
 IlwisObject *DomainConnector::create() const
 {
-    //TODO other domain types time, identifier
-    //TODO what about other system domain types that are value derived.
+    //TODO: other domain types time, identifier
+    //TODO: what about other system domain types that are value derived.
     if ( type() == itNUMERICDOMAIN)
         return new NumericDomain(_resource);
     //else if ( type() == itTHEMATICDOMAIN) {

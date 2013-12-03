@@ -119,7 +119,7 @@ bool DomainConnector::handleValueDomains(IlwisObject* data) {
             return false;
         }
     }
-    // TODO columns domain handling, no seperate odf, so special type(??)
+    // TODO: columns domain handling, no seperate odf, so special type(??)
 
     if (!range) {
         kernel()->issues()->log(TR(ERR_NO_INITIALIZED_1).arg(data->name()));
@@ -166,6 +166,10 @@ QString DomainConnector::parseDomainInfo(const QString& inf) const{
 }
 
 bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
+
+    if(!willStore(dom))
+        return true;
+
     ItemDomain<NamedIdentifier> *piddomain = static_cast< ItemDomain<NamedIdentifier> *>(dom);
     INamedIdDomain iddomain;
     iddomain.set(piddomain);
@@ -266,7 +270,8 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
     QString alias = kernel()->database().findAlias(dmName,"domain","ilwis3");
     if ( alias != sUNDEF)
         return true; // nothing to be done, already exists as a system domain
-    Ilwis3Connector::storeMetaData(data, itDOMAIN);
+    if(!Ilwis3Connector::storeMetaData(data, itDOMAIN))
+        return false;
 
     _odf->setKeyValue("Ilwis", "Type", "Domain");
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
@@ -306,7 +311,7 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
 
 IlwisObject *DomainConnector::create() const
 {
-    //TODO other domain types time, coordinatesystem
+    //TODO: other domain types time, coordinatesystem
     QString subtype = sUNDEF;
     if ( type() & itCOVERAGE) {
         subtype = parseDomainInfo( _odf->value("BaseMap","DomainInfo"));
@@ -326,7 +331,7 @@ IlwisObject *DomainConnector::create() const
         subtype =_odf->value("Domain", "Type");
         if ( subtype == "DomainIdentifier" || subtype == "DomainUniqueID")
             return new ItemDomain<IndexedIdentifier>(_resource);
-        if ( subtype == "DomainClass")
+        if ( subtype == "DomainClass" || subtype == "DomainSort")
             return new ItemDomain<ThematicItem>(_resource);
     }
     return 0;

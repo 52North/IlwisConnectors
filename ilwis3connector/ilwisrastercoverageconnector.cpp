@@ -129,32 +129,15 @@ void RasterCoverageConnector::setStoreType(const QString& storeType) {
     _converter.storeType(_storetype);
 }
 
-bool RasterCoverageConnector::setDataDefinition(IlwisObject *data) {
+bool RasterCoverageConnector::setDataType(IlwisObject *data) {
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
-    IDomain dom;
-    if(!dom.prepare(_odf->file())) {
-        kernel()->issues()->log(data->name(),TR(ERR_NO_INITIALIZED_1).arg(data->name()));
+    DataDefinition def = determineDataDefintion();
+    if ( !def.isValid()) {
         return false;
     }
-
-    raster->datadef() = DataDefinition(dom);
-    double vmax,vmin,scale,offset;
-    QString range = _odf->value("BaseMap","Range");
-    if ( range != sUNDEF ) {
-        if ( getRawInfo(range, vmin,vmax,scale,offset)) {
-            if ( scale == 1.0) {
-                raster->datadef().range(new NumericRange(vmin, vmax,1));
-
-            }
-            else {
-                raster->datadef().range(new NumericRange(vmin, vmax));
-            }
-
-
-        }
-    } else {
+    if ( def.domain()->valueType() != itNUMBER){
         QString dminfo = _odf->value("BaseMap","DomainInfo");
         if ( dminfo != sUNDEF) {
             int index = dminfo.indexOf("class;");
@@ -174,6 +157,8 @@ bool RasterCoverageConnector::setDataDefinition(IlwisObject *data) {
 
         }
     }
+
+    raster->datadef() = def;
     return true;
 }
 
@@ -182,7 +167,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data)
     Locker lock(_mutex);
 
     QFileInfo inf(_resource.toLocalFile());
-    if(!setDataDefinition(data))
+    if(!setDataType(data))
         return false;
 
     bool isMapList  = inf.suffix().toLower() == "mpl";
@@ -450,7 +435,8 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         int index = _odf->file().lastIndexOf("/");
         QString path = _odf->file().left(index);
         QUrl url = makeUrl( path + "/" + mapName);
-        gcMap->connectTo(url, "map", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
+        if(!gcMap->connectTo(url, "map", "ilwis3", Ilwis::IlwisObject::cmOUTPUT))
+            return false;
         gcMap->store(IlwisObject::smBINARYDATA | IlwisObject::smMETADATA);
     }
 
@@ -482,7 +468,9 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
         localName += ".grf";
         grf->setName(localName);
         QUrl url = makeUrl( _odf->file(), localName);
-        grf->connectTo(url, "georef", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
+        if(!grf->connectTo(url, "georef", "ilwis3", Ilwis::IlwisObject::cmOUTPUT))
+            return sUNDEF;
+
         grf->store(IlwisObject::smMETADATA);
     } else
         localName = localGrf.fileName();

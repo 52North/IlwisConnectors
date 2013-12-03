@@ -202,8 +202,11 @@ void IniFile::store(const QString& ext, const UPContainerConnector &container )
 
     QTextStream text(&fileIni);
     Sections::iterator iterSect;
+    bool first = true;
     for (iterSect = _sections.begin(); iterSect != _sections.end(); ++iterSect)
     {
+        if ( !first)
+            text << "\n";
         text << "[" << iterSect.key() << "]"  << "\n";
         SectionEntries& entries = iterSect.value();
         SectionEntries::iterator iterEntry;
@@ -213,6 +216,7 @@ void IniFile::store(const QString& ext, const UPContainerConnector &container )
             key[0] = key[0].toUpper();
             text <<  key.trimmed() << "=" << iterEntry.value() << "\n";
         }
+        first = false;
     }
     text.flush();
     fileIni.close();

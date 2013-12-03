@@ -10,10 +10,10 @@ class GDALCONNECTORSHARED_EXPORT GdalConnector : public IlwisObjectConnector
 {
 public:
     GdalConnector(const Ilwis::Resource &resource, bool load=true);
+    virtual ~GdalConnector();
     static IlwisTypes ilwisType(const QString &name);
 
     bool loadMetaData(IlwisObject* data);
-    bool store(IlwisObject *, int);
 
     QString provider() const;
     void format(const QString&);
@@ -26,7 +26,6 @@ protected:
     QString _internalPath;
     QString _gdalShortName;
     GdalHandle* _handle;
-    GDALDriverH _driver;
 };
 }
 }

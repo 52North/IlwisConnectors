@@ -24,6 +24,7 @@ public:
     bool store(IlwisObject *, int storemode);
 
 protected:
+    bool willStore(const Ilwis::IlwisObject *obj) const;
     QString suffix(IlwisTypes type) const;
     QUrl resolve(const Resource &resource) const;
     bool isSystemObject(const QString &filename);

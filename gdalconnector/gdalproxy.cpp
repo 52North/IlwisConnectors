@@ -28,6 +28,11 @@ using namespace Gdal;
 
 GdalHandle::GdalHandle(void* h, GdalHandleType t, quint64 o): _handle(h),_type(t),_owner(o){}
 
+GdalHandle::~GdalHandle()
+{
+
+}
+
 GdalHandle::GdalHandleType GdalHandle::type(){
     return _type;
 }
@@ -151,6 +156,7 @@ bool GDALProxy::prepare() {
     setGeometry = add<IOGR_F_SetGeometry>("OGR_F_SetGeometry");
     destroyGeometry = add<IOGR_G_DestroyGeometry>("OGR_G_DestroyGeometry");
     addFeature2Layer = add<IOGR_L_CreateFeature>("OGR_L_CreateFeature");
+    add2Geometry = add<IOGR_G_AddGeometry>("OGR_G_AddGeometry");
 
     pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
     getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");
@@ -189,7 +195,7 @@ bool GDALProxy::prepare() {
                 if (hDriver != nullptr){//ODrCDeleteDataSource is aso possible
                     _featureExtensions.append(QString("*.").append(key));
                     if (testDriverCapability(hDriver, ODrCCreateDataSource)){
-                        //TODO: save a bool for this driver capability to expose it to the store-method
+                        //TODO:: save a bool for this driver capability to expose it to the store-method
                     }
                 }else{
                     ERROR2(ERR_NO_INITIALIZED_2,QString("File format (%1) support").arg(key),"OGR-Library (gdall.dll)");
@@ -251,14 +257,14 @@ GdalHandle* GDALProxy::openFile(const QFileInfo& filename, quint64 asker, GDALAc
 }
 
 void GDALProxy::closeFile(const QString &filename, quint64 asker){
-    QString name = filename.toLower();
+    QString name = filename;
     auto iter = _openedDatasets.find(name);
     if (iter != _openedDatasets.end() && iter.value()->_owner == asker) {
         GdalHandle* handle = _openedDatasets[name];
         if (handle->type() == GdalHandle::etGDALDatasetH){
             close(handle->handle());
         }else if(handle->etOGRDataSourceH){
-            if (OGRErr err = releaseDataSource(handle->handle()) != OGRERR_NONE){
+            if (OGRErr err = releaseDataSource((OGRDataSourceH)handle->handle()) != OGRERR_NONE){
                 ERROR2(ERR_INVALID_PROPERTY_FOR_2, QString("OGRDataSource (ERR %1)").arg(err), name);
             }
         }else{
@@ -283,7 +289,7 @@ OGRSpatialReferenceH GDALProxy::srsHandle(GdalHandle* handle, const QString& sou
             strcpy(wkt, cwkt);
 
             OGRErr err = importFromWkt(srshandle, &wkt2);
-            char *pwkt;//TODO only for debug?
+            char *pwkt;//TODO: only for debug?
             exportToPrettyWkt(srshandle, &pwkt,0);
             free(pwkt);
 

@@ -215,15 +215,29 @@ bool RasterCoverageConnector::setGeotransform(RasterCoverage *raster,GDALDataset
     return ERROR2(ERR_OPERATION_NOTSUPPORTED2,TR("Georeference type"), "Gdal");
 }
 
+bool RasterCoverageConnector::loadDriver()
+{
+    _driver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
+    if ( !_driver ) {
+        return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _filename.toString());
+    }
+    const char* metaitem = gdal()->getMetaDataItem(_driver, GDAL_DCAP_CREATE, NULL);
+    if (QString(metaitem).toLower() != "yes") {
+        return ERROR2(ERR_OPERATION_NOTSUPPORTED2, "write data-source", _filename.toString());
+    }
+
+    return true;
+}
+
 bool RasterCoverageConnector::store(IlwisObject *obj, int )
 {
-    if(!GdalConnector::store(obj, 0))
+    if(!loadDriver())
         return false;
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
 
     IDomain dom;
-    if(!dom.prepare("code=value")) { //TODO  for the moment only value maps in gdal
+    if(!dom.prepare("code=value")) { //TODO:  for the moment only value maps in gdal
         return ERROR1(ERR_NO_INITIALIZED_1,obj->name());
     }
     raster->datadef().domain(dom);

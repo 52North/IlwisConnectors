@@ -14,7 +14,7 @@ public:
 
 
 protected:
-    bool getRawInfo(const QString &range, double &vmin, double &vmax, double &scale, double &offset);
+    bool getRawInfo(const QString &range, double &vmin, double &vmax, double &scale, double &offset) const;
     virtual void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const = 0;
     bool loadMetaData(Ilwis::IlwisObject *data);
     bool storeMetaData(IlwisObject *obj, IlwisTypes type, const DataDefinition& datadef) ;
@@ -22,6 +22,7 @@ protected:
     TableConnector *createTableConnector(ITable &attTable, Coverage *coverage, IlwisTypes tp);
 
     RawConverter _converter;
+    DataDefinition determineDataDefintion() const;
 private:
     ITable prepareAttributeTable(const QString &file, const QString& basemaptype) const;
 };

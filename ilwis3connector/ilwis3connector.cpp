@@ -58,6 +58,10 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
 {
     if ( obj == nullptr)
         return ERROR1(ERR_NO_INITIALIZED_1,"Object");
+
+    if(!willStore(obj))
+        return false;
+
     if ( obj->isReadOnly()) {
         kernel()->issues()->log(QString(WARN_HAS_STATUS2).arg(obj->name().arg("read-only")));
         return false;
@@ -83,7 +87,7 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
     if ( (obj->ilwisType() & itGEOREF))
         _odf->setKeyValue("Ilwis","Type", "GeoRef");
 
-    //TODO other types
+    //TODO: other types
     return true;
 }
 
@@ -148,7 +152,15 @@ bool Ilwis3Connector::isSystemObject(const QString& filename) {
     return true;
 }
 
-QString Ilwis3Connector::name2Code(const QString& name, const QString& type) {
+QString Ilwis3Connector::name2Code(const QString& nameIn, const QString& type) {
+    QString name = nameIn;
+    int index = nameIn.indexOf(".");
+    if ( index != -1){
+        QString ext = name.mid(index + 1);
+        if ( ext == "dom" )
+            name = name.left(index).toLower();
+    }
+
     QSqlQuery db(kernel()->database());
     QString query = QString("Select code from aliasses where alias='%1' and type='%2' and source='ilwis3'").arg(name, type);
     if ( !db.exec(query)) {
@@ -198,6 +210,9 @@ QString Ilwis3Connector::unquote(const QString &name) const
 
 bool Ilwis3Connector::store(IlwisObject *obj, int storemode)
 {
+    if(!willStore(obj))
+        return false;
+
     bool ok = true;
     if ( storemode & IlwisObject::smMETADATA)
         ok &= storeMetaData(obj);
@@ -205,6 +220,21 @@ bool Ilwis3Connector::store(IlwisObject *obj, int storemode)
         ok &= storeBinaryData(obj);
 
     return ok;
+}
+
+bool Ilwis3Connector::willStore(const Ilwis::IlwisObject *obj) const
+{
+    if ( !obj->hasChanged()) { // objects that have not changed and that are linked to a still existing source need no save
+        QUrl source = obj->source().url();
+        QFileInfo info = containerConnector()->toLocalFile(source);
+        if ( info.exists()){
+            return false;
+        }
+    }
+    if ( obj->isReadOnly()) {
+        return ERROR2(WARN_HAS_STATUS2,obj->name(),"read-only");
+    }
+    return true;
 }
 
 QString Ilwis3Connector::ilwis3ClassName(IlwisTypes type) const {
@@ -219,7 +249,7 @@ QString Ilwis3Connector::ilwis3ClassName(IlwisTypes type) const {
     else if ( type & itTABLE)
         return "Table";
 
-    //TODO other types
+    //TODO: other types
 
     return sUNDEF;
 }
@@ -342,7 +372,7 @@ QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name) {
     QString fileurl = path;
     if ( fileurl == "")
         fileurl = _resource.url().toString();
-    //TODO container pathing here; grf uses local path
+    //TODO: container pathing here; grf uses local path
     QFileInfo inf = containerConnector()->toLocalFile(fileurl);
     QString localpath = inf.absolutePath();
     QString filename =  localpath + "/" + (name != sUNDEF ? name : inf.baseName());

@@ -388,7 +388,7 @@ quint64 ODFItem::partSize(const QUrl& file, const QString& section, const QStrin
         odf.setIniFile(file, containerc);
         QString filename = odf.value(section,key);
         if ( !filename.contains(QRegExp("\\\\|/"))) {
-            //TODO changes this for files that are in non folder containers
+            //TODO: changes this for files that are in non folder containers
             filename = part.absolutePath() + "/" + filename;
             part = QFileInfo(filename);
         }

@@ -88,6 +88,8 @@ void GdalModule::prepare()
     cfactory->addCreator(itFEATURE,"gdal", GdalFeatureConnector::create);
     cfactory->addCreator(itFLATTABLE,"gdal", GdalFeatureTableConnector::create);
 
+    cfactory->addCreator("ESRI Shapefile","gdal",GdalFeatureConnector::create);
+
     for(int i=0; i < gdal()->getDriverCount(); ++i) {
         GDALDriverH driv = gdal()->getDriver(i);
         if ( driv) {

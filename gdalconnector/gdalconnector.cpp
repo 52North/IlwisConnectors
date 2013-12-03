@@ -17,6 +17,13 @@ GdalConnector::GdalConnector(const Resource &resource, bool load) : IlwisObjectC
     _filename = resource.url();
 }
 
+GdalConnector::~GdalConnector()
+{
+//    if ( _handle)
+//        delete _handle;
+    //TODO: delete causes a crash for unknown reasons; research later
+}
+
 
 IlwisTypes GdalConnector::ilwisType(const QString &name)
 {
@@ -34,7 +41,7 @@ IlwisTypes GdalConnector::ilwisType(const QString &name)
         return itRASTER;
     if ( gdal()->getFeatureExtensions().contains(filter,Qt::CaseInsensitive))
         return itFEATURE;
-    return itUNKNOWN; //TODO add table formats here
+    return itUNKNOWN; //TODO: add table formats here
 }
 
 bool GdalConnector::loadMetaData(IlwisObject *data){
@@ -58,19 +65,6 @@ bool GdalConnector::loadMetaData(IlwisObject *data){
     return true;
 }
 
-bool GdalConnector::store(IlwisObject *, int )
-{
-    _driver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
-    if ( !_driver ) {
-        return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _filename.toString());
-    }
-    const char* metaitem = gdal()->getMetaDataItem(_driver, GDAL_DCAP_CREATE, NULL);
-    if (QString(metaitem).toLower() != "yes") {
-        return ERROR2(ERR_OPERATION_NOTSUPPORTED2, "write data-source", _filename.toString());
-    }
-
-    return true;
-}
 
 QString GdalConnector::provider() const
 {

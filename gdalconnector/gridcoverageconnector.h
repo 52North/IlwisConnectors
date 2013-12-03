@@ -24,6 +24,7 @@ private:
     int _layers;
     GDALDataType _gdalValueType;
     int _typeSize;
+    GDALDriverH _driver;
 
     double value(char *block, int index) const;
     bool setGeotransform(RasterCoverage *raster, GDALDatasetH dataset);
@@ -55,6 +56,7 @@ private:
         return true;
     }
 
+    bool loadDriver();
 };
 }
 }

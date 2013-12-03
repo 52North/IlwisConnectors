@@ -65,7 +65,11 @@ bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
         QUrl resource = mastercatalog()->name2url(name, itGEOREF);
         IniFile odf;
         odf.setIniFile(resource, containerConnector());
-        return loadGeoref(odf,data);
+        bool ok = loadGeoref(odf,data);
+        if (!ok)
+            return false;
+        grf->size(Size(columns, lines)); // we dont want the size of the parent georef
+        return true;
     } else if ( type == "GeoRefCTP"){
         return loadGeorefTiepoints(odf, grf);
     }

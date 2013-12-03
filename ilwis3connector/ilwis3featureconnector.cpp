@@ -102,8 +102,8 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
                 fcoverage->newFeature({polygon,fcoverage->coordinateSystem()});
             } else {
                 quint32 itemId = v;
-                tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
-                SPFeatureI feature = fcoverage->newFeature({polygon});
+                tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
+                SPFeatureI feature = fcoverage->newFeature({polygon,fcoverage->coordinateSystem()});
                 tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
             }
         }
@@ -210,7 +210,6 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     QDataStream stream(&file);
     int nrPolygons = fcoverage->featureCount(itPOLYGON);
     fcoverage->setFeatureCount(itPOLYGON, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
-    SPAttributeRecord record( new AttributeRecord(tbl,FEATUREIDCOLUMN));
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
     for(int j=0; j < nrPolygons; ++j) {
@@ -224,15 +223,14 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         for(quint32 i=0; i< numberOfHoles;++i)
             readRing(stream, pol.inners()[i]);
         if ( isNumeric) {
+
+            fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
             tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(j));
             tbl->setCell(FEATUREVALUECOLUMN, j, QVariant(value));
-            SPFeatureI feature = fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
-            tbl->setCell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
         } else {
             quint32 itemId = value;
-            tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(itemId));
-            SPFeatureI feature = fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
-            tbl->setCell(FEATUREIDCOLUMN, j, QVariant(feature->featureid()));
+            fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
+            tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(itemId - 1));
         }
 
     }
@@ -287,16 +285,14 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
         std::copy(coords.begin(), coords.end(), line.begin());
         mpsTable.get(i, colItemId,value);
         if ( isNumeric) {
+            fcoverage->newFeature({line, fcoverage->coordinateSystem()});
             tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
             tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(value));
-            SPFeatureI feature = fcoverage->newFeature({line, fcoverage->coordinateSystem()});
-            tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
 
         } else {
             quint32 itemId = value;
-            tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
-            SPFeatureI feature = fcoverage->newFeature({line, fcoverage->coordinateSystem()});
-            tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+            tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
+            fcoverage->newFeature({line, fcoverage->coordinateSystem()});
         }
 
 
@@ -334,11 +330,8 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
         }
         mppTable.get(i, colItemId,itemIdT);
         quint32 itemId = itemIdT;
-        tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId));
-
-        SPFeatureI feature = fcoverage->newFeature({c, fcoverage->coordinateSystem()});
-
-        tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+        fcoverage->newFeature({c, fcoverage->coordinateSystem()});
+        tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
 
     }
     return true;
@@ -372,7 +365,7 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
         for(quint32 rowExt=0; rowExt < extTable->recordCount(); ++rowExt) {
             vector<QVariant> rec = extTable->record(rowExt);
             for(quint32 rowAtt = 0; rowAtt < attTbl->recordCount(); ++rowAtt ) {
-                if ( attTbl->cell(keyIndex, rowAtt) == rowExt + 1) {
+                if ( attTbl->cell(keyIndex, rowAtt) == rowExt) {
                     attTbl->record(rowAtt,rec);
                 }
             }
@@ -391,11 +384,11 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
 
     int features = _odf->value("PointMap","Points").toInt(&ok);
     if (!ok) {
-        coverageType = itLINE;
-        features = _odf->value("SegmentMapStore","Segments").toInt(&ok);
+        coverageType = itPOLYGON;
+        features = _odf->value("PolygonMapStore","Polygons").toInt(&ok);
         if (!ok) {
-            coverageType = itPOLYGON;
-            features = _odf->value("PolygonMapStore","Polygons").toInt(&ok);
+            coverageType = itLINE;
+            features = _odf->value("SegmentMapStore","Segments").toInt(&ok);
         }
     }
 
@@ -425,7 +418,7 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     for_each(iter, iter.end(), [&](SPFeatureI feature){
         const Geometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
-            if ( geom.ilwisType() == itPOLYGON) {
+            if ( geom.geometryType() == itPOLYGON) {
                 Polygon pol = geom.toType<Polygon>();
                 writeCoords(output_file, pol.outer());
                 output_file.write((char *)&raw,8);
@@ -467,7 +460,7 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
     for_each(iter, iter.end(), [&](SPFeatureI feature){
         const Geometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
-            if ( geom.ilwisType() == itLINE) {
+            if ( geom.geometryType() == itLINE) {
                 Line2D<Coordinate2d> line = geom.toType<Line2D<Coordinate2d>>();
                 const Coordinate2d& crdmin = geom.envelope().min_corner();
                 const Coordinate2d& crdmax = geom.envelope().max_corner();

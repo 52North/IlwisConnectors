@@ -36,7 +36,7 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
     if(!GdalConnector::loadMetaData(data))
         return false;
 
-    //TODO tiepoints grf
+    //TODO: tiepoints grf
 
     GeoReference * grf = static_cast<GeoReference *>(data);
 
@@ -72,7 +72,7 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
 }
 
 IlwisObject *GeorefConnector::create() const{
-    //TODO tiepoints georef
+    //TODO: tiepoints georef
     return GeoReference::create("corners", Resource());
 
 
