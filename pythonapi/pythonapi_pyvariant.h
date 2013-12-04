@@ -16,6 +16,7 @@ namespace pythonapi{
     class PyVariant: public Object{
     public:
         PyVariant();
+        PyVariant(PyVariant& pv);
         PyVariant(QVariant* data);
 
         //QVartiant constructor wrapper
@@ -31,7 +32,8 @@ namespace pythonapi{
         ~PyVariant();
         void __del__();
         const char* __str__();
-        int __int__();
+        qlonglong __int__();
+        double __float__();
         bool __bool__() const;
         IlwisTypes ilwisType();
 

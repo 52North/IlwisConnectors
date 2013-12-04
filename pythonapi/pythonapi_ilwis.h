@@ -2,6 +2,9 @@
 #define PYTHONAPI_ILWIS_H
 
 #include <stdexcept>
+#include <limits>
+
+#include "pythonapi_qtGNUTypedefs.h"
 
 //predeclaration of PyObject from object.h
 typedef struct _object PyObject;

@@ -24,7 +24,9 @@ HEADERS += \
     pythonapi/pythonapi_object.h \
     pythonapi/pythonapi_qissuelogger.h \
     pythonapi/pythonapi_pyvariant.h \
-    pythonapi/pythonapi_geometry.h
+    pythonapi/pythonapi_geometry.h \
+    pythonapi/pythonapi_container.h \
+    pythonapi/pythonapi_qtGNUTypedefs.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
@@ -40,7 +42,8 @@ SOURCES += \
     pythonapi/pythonapi_rastercoverage.cpp \
     pythonapi/pythonapi_pyvariant.cpp \
     pythonapi/pythonapi_pyerror.cpp \
-    pythonapi/pythonapi_geometry.cpp
+    pythonapi/pythonapi_geometry.cpp \
+    pythonapi/pythonapi_pycontainer.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \
@@ -48,12 +51,12 @@ OTHER_FILES += \
     pythonapi/README \
     pythonapi/ilwisobjects.i \
     pythonapi/ilwisobjects.sip \
-    pythonapi/configure.py \
     pythonapi/test.sh \
     pythonapi/test.bat \
     pythonapi/qt.conf \
     pythonapi/ilwisobjects.conf \
-    pythonapi/prepare_PATH.bat
+    pythonapi/prepare_PATH.bat \
+    pythonapi/prepare_PATH.sh
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
@@ -70,14 +73,16 @@ mytarget.files = pythonapi/ilwisobjects.py \
     pythonapi/test.sh \
     pythonapi/test.bat \
     pythonapi/ilwisobjects.conf \
-    pythonapi/qt.conf
+    pythonapi/qt.conf \
+    pythonapi/prepare_PATH.bat \
+    pythonapi/prepare_PATH.sh
 mytarget.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
 
-python_target.files = pythonapi/ilwisobjects.py \
-    pythonapi/ilwisobjects.conf
+python_target.files = pythonapi/ilwisobjects.py
 python_target.path = C:/Python33/Lib/site-packages
 
-python_base_tg.files = pythonapi/qt.conf
+python_base_tg.files = pythonapi/qt.conf \
+    pythonapi/ilwisobjects.conf
 python_base_tg.files = C:/Python33
 
 target.path = C:/Python33/Lib/site-packages
