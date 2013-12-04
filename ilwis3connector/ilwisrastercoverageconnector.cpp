@@ -340,9 +340,9 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
     if (!dom.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Domain", raster->name());
 
-    QFileInfo inf(obj->name());
-    QString dir = context()->workingCatalog()->location().toLocalFile();
-    QString filename = dir + "/" + inf.baseName() + ".mp#";
+    QFileInfo inf(obj->source(IlwisObject::cmOUTPUT).toLocalFile());
+    //QString dir = context()->workingCatalog()->location().toLocalFile();
+    QString filename = inf.absolutePath() + "/" + inf.baseName() + ".mp#";
     Size sz = raster->size();
     bool ok = false;
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
