@@ -52,7 +52,7 @@ def main():
         print(f.geometry().toWKT())
         check = False
         try:
-            check = f.geometry().fromWKT("POINT M(34.5 6.65 49)")
+            check = f.geometry().fromWKT("POINT Z(34.5 6.65 49)")
         except Exception as a:
             print(a)
         print(check, " -> ",f.geometry().toWKT())
