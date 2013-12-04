@@ -18,6 +18,7 @@ namespace pythonapi{
             quint32 attributeCount();
             PyObject *attributes();
             CoordinateSystem coordinateSystem();
+            void setCoordinateSystem(const CoordinateSystem &cs);
     };
 
 }

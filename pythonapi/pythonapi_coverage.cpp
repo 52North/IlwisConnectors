@@ -37,3 +37,7 @@ CoordinateSystem Coverage::coordinateSystem(){
     return CoordinateSystem(new Ilwis::ICoordinateSystem(this->ptr()->get<Ilwis::Coverage>()->coordinateSystem()));
 }
 
+void Coverage::setCoordinateSystem(const CoordinateSystem &cs){
+    this->ptr()->get<Ilwis::Coverage>()->setCoordinateSystem(cs.ptr()->get<Ilwis::CoordinateSystem>());
+}
+
