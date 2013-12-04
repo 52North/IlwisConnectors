@@ -17,7 +17,7 @@ public:
     static QString createCsyFromCode(const QString &code);
 private:
     GeodeticDatum *getDatum(QString& ellipsoid);
-    IProjection getProjection();
+    IProjection getProjection(Ilwis::ConventionalCoordinateSystem *csycc);
     IEllipsoid getEllipsoid();
 };
 }

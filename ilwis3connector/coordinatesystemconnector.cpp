@@ -72,7 +72,7 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject* data)
 
     if ( type() == itCONVENTIONALCOORDSYSTEM ) {
         ConventionalCoordinateSystem *csycc = static_cast<ConventionalCoordinateSystem *>(csy);
-        IProjection proj = getProjection();
+        IProjection proj = getProjection(csycc);
         if ( !proj.isValid()) {
             return ERROR1(ERR_NO_INITIALIZED_1, "projection");
         }
@@ -181,12 +181,15 @@ GeodeticDatum *CoordinateSystemConnector::getDatum(QString& ellipsoid) {
     return 0;
 }
 
-IProjection CoordinateSystemConnector::getProjection() {
+IProjection CoordinateSystemConnector::getProjection(ConventionalCoordinateSystem *csycc) {
     QString projection = _odf->value("CoordSystem","Projection");
     if (projection == "?") {
         QString type = _odf->value("CoordSystem","Type");
         if ( type == "LatLon") {
             projection = type;
+            GeodeticDatum *gdata = new GeodeticDatum();
+            gdata->fromCode("DWGS84");
+            csycc->setDatum(gdata);
         } else
             return IProjection();
     }
