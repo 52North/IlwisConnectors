@@ -182,8 +182,8 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",data->name());
     }
 
-//    ITable tbl = fcoverage->attributeTable();
-//    tbl->setRows(fcoverage->featureCount());
+    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
+    gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
 
     return true;
 }
@@ -233,8 +233,10 @@ QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colI
 }
 
 bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
-    if ( data == nullptr)
+
+    if(!GdalConnector::loadMetaData(data))
         return false;
+
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     if ( fcoverage->isValid() ) {
         ITable attTable = fcoverage->attributeTable();
@@ -340,6 +342,10 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
             }
 //      }
     }
+
+    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
+    gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
+
     return true;
 }
 
