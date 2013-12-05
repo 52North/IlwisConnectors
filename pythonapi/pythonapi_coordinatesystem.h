@@ -11,6 +11,7 @@ namespace Ilwis{
 namespace pythonapi {
 
     class CoordinateSystem : public pythonapi::IlwisObject{
+        friend class Coverage;
     public:
         CoordinateSystem();
         CoordinateSystem(Ilwis::ICoordinateSystem* cs);

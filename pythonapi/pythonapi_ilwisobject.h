@@ -28,13 +28,14 @@ namespace pythonapi {
         IlwisObject(Ilwis::IIlwisObject* object);
         virtual ~IlwisObject();
 
-        void connectTo(const char* url, const char* format  = "", const char* fnamespace = "", ConnectorMode cmode = cmINPUT);
-        bool store(StoreMode storeMode);
+        bool connectTo(const char* url, const char* format  = "", const char* fnamespace = "", ConnectorMode cmode = cmINPUT);
+        bool store(int storeMode = smMETADATA | smBINARYDATA);
         bool __bool__() const;
         const char *__str__();
         const char *__add__(const char* value);
         const char *__radd__(const char* value);
         const char *name();
+        void name(const char* name);
         const char *type();
         quint64 ilwisID() const;
         IlwisTypes ilwisType();

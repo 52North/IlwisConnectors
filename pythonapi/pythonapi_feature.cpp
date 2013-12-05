@@ -29,7 +29,7 @@ Feature::Feature(Ilwis::SPFeatureI* ilwisFeature, FeatureCoverage* fc): _ilwisSP
 }
 
 bool Feature::__bool__() const{
-    return !this->_ilwisSPFeatureI->isNull() && this->_coverage != NULL && this->_coverage->__bool__() && this->_ilwisSPFeatureI->data()->isValid();
+    return !this->_ilwisSPFeatureI->isNull() && this->_coverage != NULL && this->_coverage->__bool__();// && this->_ilwisSPFeatureI->data()->isValid();
 }
 
 const char* Feature::__str__(){
@@ -44,7 +44,32 @@ quint64 Feature::id(){
 }
 
 PyVariant *Feature::attribute(const char *name, int index){
-    return new PyVariant(new QVariant(this->ptr()(QString(name),index),false));
+    return new PyVariant(new QVariant(this->ptr()(QString(name),index,false)));
+}
+
+PyVariant *Feature::attribute(const char *name, PyVariant &defaultValue, int index){
+    QVariant* var = new QVariant(this->ptr()(QString(name),index,false));
+    Ilwis::ColumnDefinition coldef = this->ptr()->columndefinition(QString(name));
+    if (coldef.isValid()){
+        if( coldef.datadef().domain()->ilwisType() & itNUMERICDOMAIN){
+            if(var->canConvert(QVariant::Double)){
+                if(var->toDouble() == Ilwis::rUNDEF){
+                    return new PyVariant(defaultValue);
+                }else{
+                    return new PyVariant(var);
+                }
+            }
+        }else if((coldef.datadef().domain()->ilwisType() & itTEXTDOMAIN) || (coldef.datadef().domain()->ilwisType() & itITEMDOMAIN)){
+            if(var->canConvert(QVariant::String)){
+                if(var->toString().compare(sUNDEF) == 0){
+                    return new PyVariant(defaultValue);
+                }else{
+                    return new PyVariant(var);
+                }
+            }
+        }
+    }
+    throw Ilwis::ErrorObject(QString("invalid value (maybe wrong column name '%1' due to case sensitivity?)").arg(name));
 }
 
 void Feature::setAttribute(const char *name, PyVariant &value, int index){
@@ -54,51 +79,35 @@ void Feature::setAttribute(const char *name, PyVariant &value, int index){
 }
 
 void Feature::setAttribute(const char *name, int value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, uint value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, qlonglong value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, qulonglong value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, bool value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, double value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, float value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 void Feature::setAttribute(const char *name, const char *value, int index){
-    QVariant* tmp = new QVariant(value);
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
 IlwisTypes Feature::ilwisType(){
@@ -106,7 +115,11 @@ IlwisTypes Feature::ilwisType(){
 }
 
 Geometry* Feature::geometry(int index){
-    return new Geometry(new Ilwis::Geometry(this->ptr()->geometry(index)));
+    return new Geometry(this, index);
+}
+
+void Feature::setGeometry(Geometry &geometry, int index){
+    this->ptr()->set(geometry.ptr());
 }
 
 Ilwis::SPFeatureI Feature::ptr() const{

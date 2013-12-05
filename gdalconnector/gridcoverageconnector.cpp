@@ -70,9 +70,10 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
         if(!grf.prepare(_resource.url().toLocalFile()))
             return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
 
+        Size sz(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
+        grf->size(sz);
         gcoverage->georeference(grf);
 
-        Size sz(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
         gcoverage->size(sz);
 
         int layerIndex = 1;

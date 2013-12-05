@@ -10,21 +10,27 @@
 #include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/geometry.h"
 
+#include "../../IlwisCore/core/ilwisobjects/domain/domain.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/datadefinition.h"
+#include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
+#include "../../IlwisCore/core/ilwisobjects/table/table.h"
+#include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
+
+#include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
+
 #include "pythonapi_geometry.h"
+#include "pythonapi_feature.h"
 
 namespace pythonapi{
 
-Geometry::Geometry():_ilwisGeometry(nullptr){
-}
-
-Geometry::Geometry(Ilwis::Geometry* geometry):_ilwisGeometry(geometry){
+Geometry::Geometry(Feature *feature, int index):_feature(feature), _index(index){
 }
 
 Geometry::~Geometry(){
 }
 
 bool Geometry::within(const Geometry &geometry) const{
-    return this->_ilwisGeometry->within((*geometry._ilwisGeometry));
+    return this->ptr().within(geometry.ptr());
 }
 
 bool Geometry::contains(const Geometry &geometry) const{
@@ -32,7 +38,7 @@ bool Geometry::contains(const Geometry &geometry) const{
 }
 
 bool Geometry::__bool__() const{
-    return (bool)this->_ilwisGeometry && this->_ilwisGeometry->isValid();
+    return this->_feature != nullptr && (bool)this->_feature && this->_feature->__bool__() && this->_feature->ptr()->geometry(this->_index).isValid();
 }
 
 const char* Geometry::__str__(){
@@ -45,7 +51,21 @@ const char* Geometry::__str__(){
 IlwisTypes Geometry::ilwisType(){
     if (!this->__bool__())
         throw Ilwis::ErrorObject(QString("invalid Feature!"));
-    return this->_ilwisGeometry->ilwisType();
+    return this->ptr().geometryType();
+}
+
+bool Geometry::fromWKT(const char* wkt){
+    return this->_feature->ptr()->geometry().fromWKT(QString(wkt));
+}
+
+const char *Geometry::toWKT(){
+    return this->ptr().toWKT().toLocal8Bit();
+}
+
+Ilwis::Geometry &Geometry::ptr() const{
+    if (!this->__bool__())
+        throw Ilwis::ErrorObject(QString("invalid Geometry!"));
+    return this->_feature->ptr()->geometry(this->_index);
 }
 
 

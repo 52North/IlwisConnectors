@@ -13,12 +13,14 @@ namespace pythonapi{
     class FeatureCoverage;
 
     class Feature: public Object{
+        friend class Geometry;
     public:
         Feature(Ilwis::SPFeatureI* ilwisFeature, FeatureCoverage* fc);
         bool __bool__() const;
         const char* __str__();
         quint64 id();
         PyVariant* attribute(const char* name, int index = -1);
+        PyVariant* attribute(const char* name, PyVariant &defaultValue, int index = -1);
         void setAttribute(const char* name, PyVariant &value, int index = -1);
         void setAttribute(const char* name, int value, int index = -1);
         void setAttribute(const char* name, uint value, int index = -1);
@@ -30,6 +32,7 @@ namespace pythonapi{
         void setAttribute(const char* name, const char* value, int index = -1);
         IlwisTypes ilwisType();
         Geometry* geometry(int index = 0);
+        void setGeometry(Geometry &geometry, int index = -1);
 
     private:
         //TODO: replace with std::shared_ptr of that feature if done in IlwisCore

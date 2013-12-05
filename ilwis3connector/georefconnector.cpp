@@ -216,11 +216,11 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
 IlwisObject *GeorefConnector::createGeoreference(const IniFile &odf) const{
     QString type = odf.value("GeoRef","Type");
     if ( type == "GeoRefCorners"){
-        return GeoReference::create("corners", Resource());
+        return GeoReference::create("corners", _resource);
 
     }
     if ( type == "GeoRefCTP") {
-        return GeoReference::create("tiepoints", Resource());
+        return GeoReference::create("tiepoints", _resource);
     }
     if ( type == "GeoRefSubMap") {
         auto name = _odf->value("GeoRefSubMap","GeoRef");
