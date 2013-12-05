@@ -4,16 +4,16 @@
 from ilwisobjects import *
 
 def hello_raster():
-    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata" #"file:///C:/some/dir"
+    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/baby" #"file:///C:/some/dir"
     Engine.setWorkingCatalog(workingDir)
     rc = RasterCoverage("n000302.mpr")
-    res = Engine.do("aggregateraster",rc,"Avg",10,"true")
+    res = Engine.do("aggregateraster",rc,"Avg",10,True)
     if res.connectTo(workingDir+"/avg_n000302", "map","ilwis3",IlwisObject.cmOUTPUT):
         if res.store():
             print("done!")
 
 def hello_feature():
-    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata" #"file:///C:/some/dir"
+    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/baby" #"file:///C:/some/dir"
     Engine.setWorkingCatalog(workingDir)
     fc_soils = FeatureCoverage("aafsoils.shp")
     count = 0
@@ -262,7 +262,7 @@ def raul_martin_solution():
 
 #here you can chose which test case will be executed
 if __name__ == "__main__":
+    hello_raster()
+    hello_feature()
 #    main()
 #    claudio_example()
-#    hello_raster()
-    hello_feature()
