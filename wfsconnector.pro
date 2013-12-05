@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+QT = sql network
+
 CONFIG += plugin
 TARGET = wfsconnector
 
@@ -12,8 +14,6 @@ include(global.pri)
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
 DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
-QT       -= gui
-
 TEMPLATE = lib
 
 DEFINES += WFSCONNECTOR_LIBRARY
@@ -21,17 +21,21 @@ DEFINES += WFSCONNECTOR_LIBRARY
 SOURCES += \
     wfsconnector/wfsobjectfactory.cpp \
     wfsconnector/wfsconnector.cpp \
-    wfsconnector/wfscatalogconnector.cpp
+    wfsconnector/wfscatalogconnector.cpp \
+    wfsconnector/wfsmodule.cpp
 
 HEADERS += \
     wfsconnector/wfsobjectfactory.h \
     wfsconnector/wfsConnector_global.h \
     wfsconnector/wfsconnector.h \
-    wfsconnector/wfscatalogconnector.h
+    wfsconnector/wfscatalogconnector.h \
+    wfsconnector/wfsmodule.h
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+                                              -L$$PWD/../libraries/$$PLATFORM$$CONF/pugixml/ -lpugixml
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+                                              -L$$PWD/../libraries/$$PLATFORM$$CONF/pugixml/ -lpugixml
 
 INCLUDEPATH += $$PWD/core
 DEPENDPATH += $$PWD/core
