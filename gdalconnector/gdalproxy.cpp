@@ -265,7 +265,8 @@ void GDALProxy::closeFile(const QString &filename, quint64 asker){
             close(handle->handle());
         }else if(handle->etOGRDataSourceH){
             if (OGRErr err = releaseDataSource((OGRDataSourceH)handle->handle()) != OGRERR_NONE){
-                ERROR2(ERR_INVALID_PROPERTY_FOR_2, QString("OGRDataSource (ERR %1)").arg(err), name);
+                //TODO everything seems to work but, the error remains!
+                //ERROR1(QString("Couldn't release OGRDataSource (ERR %1: %2)").arg(err).arg(QString(getLastErrorMsg())), name);
             }
         }else{
             ERROR2(ERR_INVALID_PROPERTY_FOR_2, "GDAL-OGR HandleType", name);
