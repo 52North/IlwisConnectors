@@ -3,6 +3,26 @@
 
 from ilwisobjects import *
 
+def hello_raster():
+    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata" #"file:///C:/some/dir"
+    Engine.setWorkingCatalog(workingDir)
+    rc = RasterCoverage("n000302.mpr")
+    res = Engine.do("aggregateraster",rc,"Avg",10,"true")
+    if res.connectTo(workingDir+"/avg_n000302", "map","ilwis3",IlwisObject.cmOUTPUT):
+        if res.store():
+            print("done!")
+
+def hello_feature():
+    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata" #"file:///C:/some/dir"
+    Engine.setWorkingCatalog(workingDir)
+    fc_soils = FeatureCoverage("aafsoils.shp")
+    count = 0
+    for feature in fc_soils:
+        if float(feature.attribute("AREA")) == 0.123:
+            count += 1
+            print(feature.geometry().toWKT())
+    print("contains ",count," features with an AREA equal to 0.123" )
+
 #further tests on all the working api calls
 def main():
     workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest"
@@ -122,7 +142,7 @@ def main():
         print("-----------------------------------------------")
         #store to file
         if aa1.connectTo(workingDir+"/aa1", "GTiff","gdal",IlwisObject.cmOUTPUT):
-            if aa1.store(IlwisObject.smBINARYDATA + IlwisObject.smMETADATA):
+            if aa1.store():
                 print("successfully saved aa1.tif")
             else:
                 print("could not save aa1.tif")
@@ -242,5 +262,7 @@ def raul_martin_solution():
 
 #here you can chose which test case will be executed
 if __name__ == "__main__":
-    main()
+#    main()
 #    claudio_example()
+#    hello_raster()
+    hello_feature()
