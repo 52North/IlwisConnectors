@@ -23,7 +23,7 @@
 
 namespace pythonapi{
 
-Geometry::Geometry(const char *wkt): _standalone(false), _wkt(std::string(wkt)){
+Geometry::Geometry(const char *wkt): _standalone(true), _wkt(std::string(wkt)){
 }
 
 Geometry::Geometry(Feature *feature, int index): _standalone(false),_feature(feature), _index(index){
@@ -66,7 +66,10 @@ bool Geometry::fromWKT(const char* wkt){
 }
 
 const char *Geometry::toWKT(){
-    return this->ptr().toWKT().toLocal8Bit();
+    if(this->_standalone)
+        return _wkt.c_str();
+    else
+        return this->ptr().toWKT().toLocal8Bit();
 }
 
 Ilwis::Geometry &Geometry::ptr() const{

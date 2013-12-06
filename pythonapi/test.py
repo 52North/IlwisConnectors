@@ -23,7 +23,6 @@ def main():
     if fc:
         print("successfully loaded", fc.name())
         print(fc.name() ,"contains:",fc.featureCount(),"Features")
-
         print("-----------------------------------------------")
         #adding new attribute to coverage
         if fc.addAttribute("highest","value"):
@@ -32,6 +31,10 @@ def main():
             print("attributes(",len(att),")",att)
         else:
             print("couln't add value attribute 'highest' to",fc.name())
+        print("-----------------------------------------------")
+        #adding new feature to coverage
+        g = Geometry("POINT Z(54 6 9)")
+        fc.newFeature(g);
         print("-----------------------------------------------")
         #iterating over features
         sum = 0
