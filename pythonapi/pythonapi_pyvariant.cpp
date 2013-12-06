@@ -67,7 +67,7 @@ double PyVariant::__float__(){
         throw std::domain_error(QString("PyVariant cannot convert '%1' to float").arg(this->_data->toString()).toStdString());
     else{
         bool ok = false;
-        int ret = this->_data->toDouble(&ok);
+        double ret = this->_data->toDouble(&ok);
         if (!ok)
             throw std::domain_error(QString("PyVariant cannot convert '%1' to float").arg(this->_data->toString()).toStdString());
         return ret;
