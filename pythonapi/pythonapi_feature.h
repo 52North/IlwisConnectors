@@ -6,10 +6,8 @@
 
 #include <memory>
 
-namespace Ilwis{
-    class SPFeatureI;
+namespace Ilwis{    
     class FeatureInterface;
-    typedef std::unique_ptr<FeatureInterface> PFeature;
 }
 
 namespace pythonapi{
@@ -19,8 +17,7 @@ namespace pythonapi{
     class Feature: public Object{
         friend class Geometry;
     public:
-        Feature(Ilwis::SPFeatureI* ilwisFeature, FeatureCoverage* fc);
-        Feature(Ilwis::PFeature &ilwisFeature, FeatureCoverage *fc);
+        Feature(std::unique_ptr<Ilwis::FeatureInterface>& ilwisFeature, FeatureCoverage* fc);
         bool __bool__() const;
         const char* __str__();
         quint64 id();
@@ -42,8 +39,8 @@ namespace pythonapi{
 
     private:
         //TODO: replace with std::shared_ptr of that feature if done in IlwisCore
-        Ilwis::SPFeatureI ptr() const;
-        Ilwis::SPFeatureI* _ilwisSPFeatureI;
+        std::unique_ptr<Ilwis::FeatureInterface>& ptr() const;
+        std::unique_ptr<Ilwis::FeatureInterface>& _ilwisSPFeatureI;
         FeatureCoverage* _coverage;
     };
 

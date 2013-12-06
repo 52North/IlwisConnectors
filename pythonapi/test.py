@@ -49,16 +49,20 @@ def main():
         print("alter Geometry using WKT")
         it = fc.__iter__()
         f = it.next()
-        v = f.attribute("RAINFALL")
-        print(f.geometry().toWKT())
+        print(f.geometry())
         check = False
         try:
             check = f.geometry().fromWKT("POINT Z(34.5 6.65 49)")
         except Exception as a:
             print(a)
-        print(check, " -> ",f.geometry().toWKT())
+        print(check, " -> ",f.geometry())
         print("-----------------------------------------------")
         print("catching native python exception")
+        try:
+            v = f["RAINFAL"]
+        except Exception as e:
+            print(e)
+            v = f.attribute("RAINFALL")
         try:
             print(int(v))
         except TypeError as err:
@@ -167,7 +171,7 @@ def hello_feature():
     for feature in fc_soils:
         if float(feature.attribute("AREA")) == 0.123:
             count += 1
-            print(feature.geometry().toWKT())
+            print(feature.geometry())
     print("contains ",count," features with an AREA equal to 0.123" )
 
 #=======================================================================================
@@ -263,6 +267,6 @@ def raul_martin_solution():
 #here you can chose which test case will be executed
 if __name__ == "__main__":
     main()
-    hello_raster()
-    hello_feature()
-    claudio_example()
+#    hello_raster()
+#    hello_feature()
+#    claudio_example()

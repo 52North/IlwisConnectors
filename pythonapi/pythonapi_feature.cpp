@@ -25,20 +25,16 @@
 
 using namespace pythonapi;
 
-Feature::Feature(Ilwis::SPFeatureI* ilwisFeature, FeatureCoverage* fc): _ilwisSPFeatureI(ilwisFeature), _coverage(fc){
-}
-
-Feature::Feature(Ilwis::PFeature &ilwisFeature, FeatureCoverage *fc){
-
+Feature::Feature(std::unique_ptr<Ilwis::FeatureInterface> &ilwisFeature, FeatureCoverage* fc): _ilwisSPFeatureI(ilwisFeature), _coverage(fc){
 }
 
 bool Feature::__bool__() const{
-    return !this->_ilwisSPFeatureI->isNull() && this->_coverage != NULL && this->_coverage->__bool__();// && this->_ilwisSPFeatureI->data()->isValid();
+    return (bool)this->_ilwisSPFeatureI && this->_coverage != NULL && this->_coverage->__bool__();// && this->_ilwisSPFeatureI->data()->isValid();
 }
 
 const char* Feature::__str__(){
     if (this->__bool__())
-        return QString("Feature(%1)").arg(this->_ilwisSPFeatureI->data()->featureid()).toLocal8Bit();
+        return QString("Feature(%1)").arg(this->_ilwisSPFeatureI->featureid()).toLocal8Bit();
     else
         return QString("invalid Feature!").toLocal8Bit();
 }
@@ -48,18 +44,21 @@ quint64 Feature::id(){
 }
 
 PyVariant *Feature::__getitem__(const char *name){
-    PyVariant* ret = new PyVariant(new QVariant(this->ptr()(QString(name),-1,false)));
+    PyVariant* ret = new PyVariant(new QVariant(this->ptr()->cell(QString(name),-1,false)));
     if (!ret->__bool__())
         throw std::out_of_range(QString("No attribute '%1' found").arg(name).toStdString());
     return ret;
 }
 
 PyVariant *Feature::attribute(const char *name, int index){
-    return new PyVariant(new QVariant(this->ptr()(QString(name),index,false)));
+    PyVariant* ret =  new PyVariant(new QVariant(this->ptr()->cell(QString(name),index,false)));
+    if (!ret->__bool__())
+        throw std::out_of_range(QString("No attribute '%1' at index '%2' found").arg(name).arg(index).toStdString());
+    return ret;
 }
 
 PyVariant *Feature::attribute(const char *name, PyVariant &defaultValue, int index){
-    QVariant* var = new QVariant(this->ptr()(QString(name),index,false));
+    QVariant* var = new QVariant(this->ptr()->cell(QString(name),index,false));
     Ilwis::ColumnDefinition coldef = this->ptr()->columndefinition(QString(name));
     if (coldef.isValid()){
         if( coldef.datadef().domain()->ilwisType() & itNUMERICDOMAIN){
@@ -80,7 +79,8 @@ PyVariant *Feature::attribute(const char *name, PyVariant &defaultValue, int ind
             }
         }
     }
-    throw Ilwis::ErrorObject(QString("invalid value (maybe wrong column name '%1' due to case sensitivity?)").arg(name));
+    delete var;
+    throw std::out_of_range(QString("No attribute '%1' at index '%2' found").arg(name).arg(index).toStdString());
 }
 
 void Feature::setAttribute(const char *name, PyVariant &value, int index){
@@ -133,8 +133,8 @@ void Feature::setGeometry(Geometry &geometry, int index){
     this->ptr()->set(geometry.ptr());
 }
 
-Ilwis::SPFeatureI Feature::ptr() const{
+std::unique_ptr<Ilwis::FeatureInterface> &Feature::ptr() const{
     if (!this->__bool__())
         throw Ilwis::ErrorObject(QString("invalid Feature!"));
-    return (*this->_ilwisSPFeatureI);
+    return this->_ilwisSPFeatureI;
 }

@@ -29,10 +29,9 @@ FeatureIterator::~FeatureIterator(){
 }
 
 Feature FeatureIterator::next(){
-    Ilwis::SPFeatureI f = (*(*this->_ilwisFeatureIterator));
+    std::unique_ptr<Ilwis::FeatureInterface>& f = (*(*this->_ilwisFeatureIterator));
     (*this->_ilwisFeatureIterator)++;
-    Ilwis::SPFeatureI* f_ptr = new Ilwis::SPFeatureI(f.data());
-    return Feature(f_ptr, this->_coverage);
+    return Feature(f, this->_coverage);
 }
 
 bool FeatureIterator::hasNext(){

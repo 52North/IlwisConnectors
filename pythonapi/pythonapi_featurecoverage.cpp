@@ -43,6 +43,11 @@ unsigned int FeatureCoverage::featureCount() const{
     return this->ptr()->get<Ilwis::FeatureCoverage>()->featureCount();
 }
 
+Feature FeatureCoverage::newFeature(Geometry &geometry){
+    Ilwis::Geometry geom(QString(geometry.toWKT()), this->ptr()->get<Ilwis::Coverage>()->coordinateSystem());
+    return Feature(this->ptr()->get<Ilwis::FeatureCoverage>()->newFeature(geom),this);
+}
+
 FeatureCoverage *FeatureCoverage::toFeatureCoverage(Object *obj){
     FeatureCoverage* ptr = static_cast<FeatureCoverage*>(obj);
     if(!ptr)
