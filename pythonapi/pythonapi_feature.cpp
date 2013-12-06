@@ -28,6 +28,10 @@ using namespace pythonapi;
 Feature::Feature(Ilwis::SPFeatureI* ilwisFeature, FeatureCoverage* fc): _ilwisSPFeatureI(ilwisFeature), _coverage(fc){
 }
 
+Feature::Feature(Ilwis::PFeature &ilwisFeature, FeatureCoverage *fc){
+
+}
+
 bool Feature::__bool__() const{
     return !this->_ilwisSPFeatureI->isNull() && this->_coverage != NULL && this->_coverage->__bool__();// && this->_ilwisSPFeatureI->data()->isValid();
 }
@@ -41,6 +45,13 @@ const char* Feature::__str__(){
 
 quint64 Feature::id(){
     return this->ptr()->featureid();
+}
+
+PyVariant *Feature::__getitem__(const char *name){
+    PyVariant* ret = new PyVariant(new QVariant(this->ptr()(QString(name),-1,false)));
+    if (!ret->__bool__())
+        throw std::out_of_range(QString("No attribute '%1' found").arg(name).toStdString());
+    return ret;
 }
 
 PyVariant *Feature::attribute(const char *name, int index){
