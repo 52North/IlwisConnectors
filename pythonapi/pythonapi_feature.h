@@ -22,10 +22,12 @@ namespace pythonapi{
         const char* __str__();
         quint64 id();
         PyVariant* __getitem__(const char* name);
-        PyVariant* attribute(const char* name, int index = -1);
         PyVariant* __getitem__(quint32 colIndex);
-        PyVariant *attribute(quint32 colIndex, int index);
         PyVariant* attribute(const char* name, PyVariant &defaultValue, int index = -1);
+        PyVariant* attribute(const char* name, qlonglong defaultValue, int index = -1);
+        PyVariant* attribute(const char* name, qulonglong defaultValue, int index = -1);
+        PyVariant* attribute(const char* name, double defaultValue, int index = -1);
+        PyVariant* attribute(const char* name, const char* defaultValue, int index = -1);
         void __setitem__(const char *name, PyVariant &value);
         void setAttribute(const char* name, PyVariant &value, int index = -1);
         void __setitem__(const char *name, int value);

@@ -43,7 +43,7 @@ def main():
         #iterating over features
         sum = 0
         for f in fc:
-            sum += float(f.attribute("MAY",PyVariant(0)))
+            sum += float(f.attribute("MAY",0))
             f.setAttribute("highest",sum)
             print(f, end=":")
             print(f.geometry(), end=">")
@@ -68,7 +68,7 @@ def main():
             v = f["RAINFAL"]
         except Exception as e:
             print(e)
-            v = f.attribute("RAINFALL")
+            v = f["RAINFALL"]
         try:
             print(int(v))
         except TypeError as err:
@@ -151,7 +151,7 @@ def claudio_example():#and martins solution proposal <== example code for presen
 #        polygon.setAttribute("maxY", 0)
         for point in distribution:
             if polygon.geometry().contains(point.geometry()):
-                maxval = max(int(polygon.attribute("maxY",PyVariant(0))), int(point.attribute("freq_speciesY",PyVariant(0))))
+                maxval = max(int(polygon.attribute("maxY",0)), int(point.attribute("freq_speciesY",0)))
                 polygon.setAttribute("maxY", maxval)
 
     polygongrid.connectTo(workingDir+"/polygongrid", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
@@ -172,7 +172,7 @@ def hello_feature():
     fc_soils = FeatureCoverage("aafsoils.shp")
     count = 0
     for feature in fc_soils:
-        if float(feature.attribute("AREA")) == 0.123:
+        if float(feature["AREA"]) == 0.123:
             count += 1
             print(feature.geometry())
     print("contains ",count," features with an AREA equal to 0.123" )
@@ -270,6 +270,6 @@ def raul_martin_solution():
 #here you can chose which test case will be executed
 if __name__ == "__main__":
     main()
-#    hello_raster()
-#    hello_feature()
-#    claudio_example()
+    hello_raster()
+    hello_feature()
+    claudio_example()
