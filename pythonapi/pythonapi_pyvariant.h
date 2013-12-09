@@ -19,14 +19,12 @@ namespace pythonapi{
         PyVariant(PyVariant& pv);
         PyVariant(QVariant* data);//takes ownership of this QVariant instance
 
+        bool isValid();
+
         //QVartiant constructor wrapper
-        PyVariant(int value);
-        PyVariant(uint value);
         PyVariant(qlonglong value);
         PyVariant(qulonglong value);
-        PyVariant(bool value);
         PyVariant(double value);
-        PyVariant(float value);
         PyVariant(const char* value);
 
         ~PyVariant();

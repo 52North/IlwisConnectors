@@ -45,28 +45,28 @@ quint64 Feature::id(){
 
 PyVariant *Feature::__getitem__(const char *name){
     PyVariant* ret = new PyVariant(new QVariant(this->ptr()->cell(QString(name),-1,false)));
-    if (!ret->__bool__())
+    if (!ret->isValid())
         throw std::out_of_range(QString("No attribute '%1' found").arg(name).toStdString());
     return ret;
 }
 
 PyVariant* Feature::__getitem__(quint32 colIndex){
     PyVariant* ret = new PyVariant(new QVariant(this->ptr()->cell(colIndex,-1,false)));
-    if (!ret->__bool__())
+    if (!ret->isValid())
         throw std::out_of_range(QString("No attribute in '%1.' column found").arg(colIndex).toStdString());
     return ret;
 }
 
 PyVariant *Feature::attribute(const char *name, int index){
     PyVariant* ret =  new PyVariant(new QVariant(this->ptr()->cell(QString(name),index,false)));
-    if (!ret->__bool__())
+    if (!ret->isValid())
         throw std::out_of_range(QString("No attribute '%1' at index '%2' found").arg(name).arg(index).toStdString());
     return ret;
 }
 
 PyVariant *Feature::attribute(quint32 colIndex, int index){
     PyVariant* ret =  new PyVariant(new QVariant(this->ptr()->cell(colIndex,index,false)));
-    if (!ret->__bool__())
+    if (!ret->isValid())
         throw std::out_of_range(QString("No attribute in '%1.' column at index '%2' found").arg(colIndex).arg(index).toStdString());
     return ret;
 }
