@@ -25,9 +25,9 @@ quint32 Coverage::attributeCount(){
 
 PyObject* Coverage::attributes(){
     Ilwis::ITable tbl = (*this->ptr()).get<Ilwis::Coverage>()->attributeTable();
-    PyObject* list = newPyTuple(tbl->columnCount());
-    for(int i = 0; i < tbl->columnCount(); i++){
-        if (!setTupleItem(list, i,tbl->columndefinition(i).name().toLocal8Bit().data()))
+    PyObject* list = newPyTuple(tbl->columnCount()-1);//skip 'feature_id'
+    for(int i = 1; i < tbl->columnCount(); i++){
+        if (!setTupleItem(list, i-1,tbl->columndefinition(i).name().toLocal8Bit().data()))
             throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of attributes").arg(tbl->columndefinition(i).name()));
     }
     return list;

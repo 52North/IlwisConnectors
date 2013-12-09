@@ -50,10 +50,24 @@ PyVariant *Feature::__getitem__(const char *name){
     return ret;
 }
 
+PyVariant* Feature::__getitem__(quint32 colIndex){
+    PyVariant* ret = new PyVariant(new QVariant(this->ptr()->cell(colIndex,-1,false)));
+    if (!ret->__bool__())
+        throw std::out_of_range(QString("No attribute in '%1.' column found").arg(colIndex).toStdString());
+    return ret;
+}
+
 PyVariant *Feature::attribute(const char *name, int index){
     PyVariant* ret =  new PyVariant(new QVariant(this->ptr()->cell(QString(name),index,false)));
     if (!ret->__bool__())
         throw std::out_of_range(QString("No attribute '%1' at index '%2' found").arg(name).arg(index).toStdString());
+    return ret;
+}
+
+PyVariant *Feature::attribute(quint32 colIndex, int index){
+    PyVariant* ret =  new PyVariant(new QVariant(this->ptr()->cell(colIndex,index,false)));
+    if (!ret->__bool__())
+        throw std::out_of_range(QString("No attribute in '%1.' column at index '%2' found").arg(colIndex).arg(index).toStdString());
     return ret;
 }
 
@@ -83,41 +97,75 @@ PyVariant *Feature::attribute(const char *name, PyVariant &defaultValue, int ind
     throw std::out_of_range(QString("No attribute '%1' at index '%2' found").arg(name).arg(index).toStdString());
 }
 
+void Feature::__setitem__(const char *name,PyVariant &value){
+    this->setAttribute(name,value);
+}
+
 void Feature::setAttribute(const char *name, PyVariant &value, int index){
-    QVariant* tmp = value.clone();
-    this->ptr()->setCell(QString(name), (*tmp), index);
-    delete tmp;
+    this->ptr()->setCell(QString(name), value.data(), index);
+}
+
+void Feature::__setitem__(const char *name,int value){
+    this->setAttribute(name,value);
 }
 
 void Feature::setAttribute(const char *name, int value, int index){
     this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
+void Feature::__setitem__(const char *name,uint value){
+    this->setAttribute(name,value);
+}
+
 void Feature::setAttribute(const char *name, uint value, int index){
     this->ptr()->setCell(QString(name), QVariant(value), index);
+}
+
+void Feature::__setitem__(const char *name,qlonglong value){
+    this->setAttribute(name,value);
 }
 
 void Feature::setAttribute(const char *name, qlonglong value, int index){
     this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
+void Feature::__setitem__(const char *name,qulonglong value){
+    this->setAttribute(name,value);
+}
+
 void Feature::setAttribute(const char *name, qulonglong value, int index){
     this->ptr()->setCell(QString(name), QVariant(value), index);
+}
+
+void Feature::__setitem__(const char *name,bool value){
+    this->setAttribute(name,value);
 }
 
 void Feature::setAttribute(const char *name, bool value, int index){
     this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
+void Feature::__setitem__(const char *name,double value){
+    this->setAttribute(name,value);
+}
+
 void Feature::setAttribute(const char *name, double value, int index){
     this->ptr()->setCell(QString(name), QVariant(value), index);
+}
+
+void Feature::__setitem__(const char *name,float value){
+    this->setAttribute(name,value);
 }
 
 void Feature::setAttribute(const char *name, float value, int index){
     this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
-void Feature::setAttribute(const char *name, const char *value, int index){
+void Feature::__setitem__(const char *name,const char* value){
+    this->setAttribute(name,value);
+}
+
+void Feature::setAttribute(const char *name, const char* value, int index){
     this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 

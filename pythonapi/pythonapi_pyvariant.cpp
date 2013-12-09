@@ -82,8 +82,8 @@ IlwisTypes PyVariant::ilwisType(){
     return itANY;
 }
 
-QVariant *PyVariant::clone(){
-    return new QVariant(*this->_data);
+QVariant& PyVariant::data(){
+    return (*this->_data.get());
 }
 
 PyVariant* PyVariant::toPyVariant(Object* obj){

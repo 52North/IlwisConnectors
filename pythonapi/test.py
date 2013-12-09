@@ -33,8 +33,11 @@ def main():
             print("couln't add value attribute 'highest' to",fc.name())
         print("-----------------------------------------------")
         #adding new feature to coverage
+        it = fc.__iter__()#loadBinaryData
         g = Geometry("POINT Z(54 6 9)")
-        fc.newFeature(g);
+        f = fc.newFeature(g);
+        for c in fc.attributes():
+            f[c] = 12.0
         print("-----------------------------------------------")
         #iterating over features
         sum = 0
@@ -50,7 +53,6 @@ def main():
 
         print("-----------------------------------------------")
         print("alter Geometry using WKT")
-        it = fc.__iter__()
         f = it.next()
         print(f.geometry())
         check = False

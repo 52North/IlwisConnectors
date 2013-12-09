@@ -37,7 +37,7 @@ namespace pythonapi{
         bool __bool__() const;
         IlwisTypes ilwisType();
 
-        QVariant* clone();
+        QVariant& data();
 
         /**
         * \brief toPyVariant provides static_cast for the return Value of the Engine.do() method on Python side
