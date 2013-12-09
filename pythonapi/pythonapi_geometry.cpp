@@ -23,7 +23,10 @@
 
 namespace pythonapi{
 
-Geometry::Geometry(Feature *feature, int index):_feature(feature), _index(index){
+Geometry::Geometry(const char *wkt): _standalone(true), _wkt(std::string(wkt)){
+}
+
+Geometry::Geometry(Feature *feature, int index): _standalone(false),_feature(feature), _index(index){
 }
 
 Geometry::~Geometry(){
@@ -38,12 +41,16 @@ bool Geometry::contains(const Geometry &geometry) const{
 }
 
 bool Geometry::__bool__() const{
-    return this->_feature != nullptr && (bool)this->_feature && this->_feature->__bool__() && this->_feature->ptr()->geometry(this->_index).isValid();
+    if (this->_standalone){
+        return !_wkt.empty();
+    }else{
+        return this->_feature != nullptr && (bool)this->_feature && this->_feature->__bool__() && this->_feature->ptr()->geometry(this->_index).isValid();
+    }
 }
 
 const char* Geometry::__str__(){
     if (this->__bool__())
-        return "Geometry";
+        return this->toWKT();
     else
         return "invalid Geometry!";
 }
@@ -59,7 +66,10 @@ bool Geometry::fromWKT(const char* wkt){
 }
 
 const char *Geometry::toWKT(){
-    return this->ptr().toWKT().toLocal8Bit();
+    if(this->_standalone)
+        return _wkt.c_str();
+    else
+        return this->ptr().toWKT().toLocal8Bit();
 }
 
 Ilwis::Geometry &Geometry::ptr() const{

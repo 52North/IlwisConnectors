@@ -103,8 +103,7 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
             } else {
                 quint32 itemId = v;
                 tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
-                SPFeatureI feature = fcoverage->newFeature({polygon,fcoverage->coordinateSystem()});
-                tbl->setCell(FEATUREIDCOLUMN, i, QVariant(feature->featureid()));
+                fcoverage->newFeature({polygon,fcoverage->coordinateSystem()});
             }
         }
     }
@@ -352,24 +351,27 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
         }
     }
     bool ok = false;
-     if (fcoverage->featureTypes() == itPOINT)
-        ok = loadBinaryPoints(fcoverage);
-    else if (fcoverage->featureTypes() == itLINE)
-        ok = loadBinarySegments(fcoverage);
-    else if (fcoverage->featureTypes() == itPOLYGON)
-        ok = loadBinaryPolygons(fcoverage);
+    try {
+        if (fcoverage->featureTypes() == itPOINT)
+            ok = loadBinaryPoints(fcoverage);
+        else if (fcoverage->featureTypes() == itLINE)
+            ok = loadBinarySegments(fcoverage);
+        else if (fcoverage->featureTypes() == itPOLYGON)
+            ok = loadBinaryPolygons(fcoverage);
 
-    if ( ok && extTable.isValid()) {
-        ITable attTbl = fcoverage->attributeTable();
-        quint32 keyIndex = attTbl->columnIndex(COVERAGEKEYCOLUMN);
-        for(quint32 rowExt=0; rowExt < extTable->recordCount(); ++rowExt) {
-            vector<QVariant> rec = extTable->record(rowExt);
-            for(quint32 rowAtt = 0; rowAtt < attTbl->recordCount(); ++rowAtt ) {
-                if ( attTbl->cell(keyIndex, rowAtt) == rowExt) {
-                    attTbl->record(rowAtt,rec);
+        if ( ok && extTable.isValid()) {
+            ITable attTbl = fcoverage->attributeTable();
+            quint32 keyIndex = attTbl->columnIndex(COVERAGEKEYCOLUMN);
+            for(quint32 rowExt=0; rowExt < extTable->recordCount(); ++rowExt) {
+                vector<QVariant> rec = extTable->record(rowExt);
+                for(quint32 rowAtt = 0; rowAtt < attTbl->recordCount(); ++rowAtt ) {
+                    if ( attTbl->cell(keyIndex, rowAtt) == rowExt) {
+                        attTbl->record(rowAtt,rec);
+                    }
                 }
             }
         }
+    } catch (FeatureCreationError& ) {
     }
     return ok;
 }
@@ -415,7 +417,7 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     cov.set(fcov);
     FeatureIterator iter(cov);
     double raw = 1;
-    for_each(iter, iter.end(), [&](SPFeatureI feature){
+    for_each(iter, iter.end(), [&](SPFeatureI& feature){
         const Geometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
             if ( geom.geometryType() == itPOLYGON) {
@@ -457,7 +459,7 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
     FeatureIterator iter(cov);
     quint32 raw = 1;
 
-    for_each(iter, iter.end(), [&](SPFeatureI feature){
+    for_each(iter, iter.end(), [&](SPFeatureI& feature){
         const Geometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
             if ( geom.geometryType() == itLINE) {

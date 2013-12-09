@@ -9,7 +9,6 @@ namespace Ilwis {
 
     template<class T> class IlwisData;
     typedef IlwisData<IlwisObject> IIlwisObject;
-    typedef std::shared_ptr<IlwisObject> ESPIlwisObject;
 }
 
 namespace pythonapi {

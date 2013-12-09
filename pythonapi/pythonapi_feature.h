@@ -4,8 +4,10 @@
 #include "pythonapi_pyvariant.h"
 #include "pythonapi_geometry.h"
 
-namespace Ilwis{
-    class SPFeatureI;
+#include <memory>
+
+namespace Ilwis{    
+    class FeatureInterface;
 }
 
 namespace pythonapi{
@@ -15,10 +17,11 @@ namespace pythonapi{
     class Feature: public Object{
         friend class Geometry;
     public:
-        Feature(Ilwis::SPFeatureI* ilwisFeature, FeatureCoverage* fc);
+        Feature(std::unique_ptr<Ilwis::FeatureInterface>& ilwisFeature, FeatureCoverage* fc);
         bool __bool__() const;
         const char* __str__();
         quint64 id();
+        PyVariant* __getitem__(const char* name);
         PyVariant* attribute(const char* name, int index = -1);
         PyVariant* attribute(const char* name, PyVariant &defaultValue, int index = -1);
         void setAttribute(const char* name, PyVariant &value, int index = -1);
@@ -36,8 +39,8 @@ namespace pythonapi{
 
     private:
         //TODO: replace with std::shared_ptr of that feature if done in IlwisCore
-        Ilwis::SPFeatureI ptr() const;
-        Ilwis::SPFeatureI* _ilwisSPFeatureI;
+        std::unique_ptr<Ilwis::FeatureInterface>& ptr() const;
+        std::unique_ptr<Ilwis::FeatureInterface>& _ilwisSPFeatureI;
         FeatureCoverage* _coverage;
     };
 

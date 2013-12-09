@@ -54,18 +54,18 @@ bool GdalCatalogConnector::loadItems()
                 gdalitems += items;
             } else {
                 Resource resource(url, itCATALOG);
-                QUrl container;
+//                QUrl container;
                 //drives have the format file:///c:/ while folders have file:///c:/myfolder; note the slash
                 //drives must be recognized as container and formatted as such
-                QString name = url.toString();
-                int index = name.lastIndexOf(QRegExp("\\\\|/"));
-                if ( index != -1 && name[index - 1] == ':') { // is it a drive? (windows)
-                    if ( index == name.size() - 1)
-                        container = QUrl("file://");
-                    else
-                        container = QUrl(name.left(index));
-                }
-                resource.addContainer(container);
+//                QString name = url.toString();
+//                int index = name.lastIndexOf(QRegExp("\\\\|/"));
+//                if ( index != -1 && name[index - 1] == ':') { // is it a drive? (windows)
+//                    if ( index == name.size() - 1)
+//                        container = QUrl("file://");
+//                    else
+//                        container = QUrl(name.left(index));
+//                }
+//                resource.addContainer(container);
                 //QFileInfo inf(resource.toLocalFile());
                 QString filename = file.isRoot() ? file.absoluteFilePath() : file.fileName();
                 resource.setName(filename);

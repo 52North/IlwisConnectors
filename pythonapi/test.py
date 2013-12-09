@@ -3,26 +3,6 @@
 
 from ilwisobjects import *
 
-def hello_raster():
-    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/baby" #"file:///C:/some/dir"
-    Engine.setWorkingCatalog(workingDir)
-    rc = RasterCoverage("n000302.mpr")
-    res = Engine.do("aggregateraster",rc,"Avg",10,True)
-    if res.connectTo(workingDir+"/avg_n000302", "map","ilwis3",IlwisObject.cmOUTPUT):
-        if res.store():
-            print("done!")
-
-def hello_feature():
-    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/baby" #"file:///C:/some/dir"
-    Engine.setWorkingCatalog(workingDir)
-    fc_soils = FeatureCoverage("aafsoils.shp")
-    count = 0
-    for feature in fc_soils:
-        if float(feature.attribute("AREA")) == 0.123:
-            count += 1
-            print(feature.geometry().toWKT())
-    print("contains ",count," features with an AREA equal to 0.123" )
-
 #further tests on all the working api calls
 def main():
     workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest"
@@ -43,7 +23,6 @@ def main():
     if fc:
         print("successfully loaded", fc.name())
         print(fc.name() ,"contains:",fc.featureCount(),"Features")
-
         print("-----------------------------------------------")
         #adding new attribute to coverage
         if fc.addAttribute("highest","value"):
@@ -53,6 +32,10 @@ def main():
         else:
             print("couln't add value attribute 'highest' to",fc.name())
         print("-----------------------------------------------")
+        #adding new feature to coverage
+        g = Geometry("POINT Z(54 6 9)")
+        fc.newFeature(g);
+        print("-----------------------------------------------")
         #iterating over features
         sum = 0
         for f in fc:
@@ -60,7 +43,7 @@ def main():
             f.setAttribute("highest",sum)
             print(f, end=":")
             for a in fc.attributes():
-                print(f.attribute(a,PyVariant("-")), end="|")
+                print(f[a], end="|")
             print()
         print("sum of rainfall values in may:",sum)
         del sum
@@ -69,16 +52,20 @@ def main():
         print("alter Geometry using WKT")
         it = fc.__iter__()
         f = it.next()
-        v = f.attribute("RAINFALL")
-        print(f.geometry().toWKT())
+        print(f.geometry())
         check = False
         try:
             check = f.geometry().fromWKT("POINT Z(34.5 6.65 49)")
         except Exception as a:
             print(a)
-        print(check, " -> ",f.geometry().toWKT())
+        print(check, " -> ",f.geometry())
         print("-----------------------------------------------")
         print("catching native python exception")
+        try:
+            v = f["RAINFAL"]
+        except Exception as e:
+            print(e)
+            v = f.attribute("RAINFALL")
         try:
             print(int(v))
         except TypeError as err:
@@ -164,11 +151,31 @@ def claudio_example():#and martins solution proposal <== example code for presen
 #        polygon.setAttribute("maxY", 0)
         for point in distribution:
             if polygon.geometry().contains(point.geometry()):
-                maxval = max(int(polygon.attribute("maxY")), int(point.attribute("freq_speciesY")))
+                maxval = max(int(polygon.attribute("maxY",PyVariant(0))), int(point.attribute("freq_speciesY",PyVariant(0))))
                 polygon.setAttribute("maxY", maxval)
 
     polygongrid.connectTo(workingDir+"/polygongrid", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
     polygongrid.store()
+
+def hello_raster():
+    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/baby" #"file:///C:/some/dir"
+    Engine.setWorkingCatalog(workingDir)
+    rc = RasterCoverage("n000302.mpr")
+    res = Engine.do("aggregateraster",rc,"Avg",10,True)
+    if res.connectTo(workingDir+"/avg_n000302", "map","ilwis3",IlwisObject.cmOUTPUT):
+        if res.store():
+            print("done!")
+
+def hello_feature():
+    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/baby" #"file:///C:/some/dir"
+    Engine.setWorkingCatalog(workingDir)
+    fc_soils = FeatureCoverage("aafsoils.shp")
+    count = 0
+    for feature in fc_soils:
+        if float(feature.attribute("AREA")) == 0.123:
+            count += 1
+            print(feature.geometry())
+    print("contains ",count," features with an AREA equal to 0.123" )
 
 #=======================================================================================
 #everything below here is just copy & paste from proposals of user requirement meetings
@@ -262,7 +269,7 @@ def raul_martin_solution():
 
 #here you can chose which test case will be executed
 if __name__ == "__main__":
-    hello_raster()
-    hello_feature()
-#    main()
+    main()
+#    hello_raster()
+#    hello_feature()
 #    claudio_example()

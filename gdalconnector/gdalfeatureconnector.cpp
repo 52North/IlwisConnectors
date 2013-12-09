@@ -314,29 +314,32 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
 
 
                 quint64 rec = 0;
-                OGRFeatureH hFeature;
+                OGRFeatureH hFeature = 0;
                 gdal()->resetReading(hLayer);
                 //each FEATURE
-                while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
-                    //create ilwisFeatures from Geometry - multiple on wkbMultiPolygon/-Line/-Point and wkbGeometryCollection
-                    std::vector<SPFeatureI> features = fillFeature(fcoverage, gdal()->getGeometryRef(hFeature));
-                    if (!features.empty()){
-                        record[1] = QVariant(++rec);//COVERAGEKEYCOLUMN
-                        //each OGR_F_FIELD > RECORD
-                        for (int i = 2; i < attTable->columnCount();i++){
-                            if (columnDefinitions[i]){
-                                record[i] = (this->*columnDefinitions[i]->fillFunc)(hFeature, columnDefinitions[i]->index, columnDefinitions[i]->range);
-                            }
-                        }
-                        for(const SPFeatureI& feat : features) {
-                            record[0] = QVariant(feat->featureid());
-                            attTable->record(attTable->recordCount()-1,record);//should overwrite the last record in attTable, which hopefully is the one created by fcoverage->newFeature({geometry}) within FillFeature
-                        }
-                    }else{
-                        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, QString("Record: %1").arg(rec), _filename.toString());
-                    }
+                try {
+                    while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
+                        std::vector<Geometry> geometries;
+                        fillFeature(fcoverage, gdal()->getGeometryRef(hFeature), geometries);
+                        for(auto &geometry : geometries){
 
+                            SPFeatureI& feature =  fcoverage->newFeature(geometry);
+                            record[1] = QVariant(++rec);//COVERAGEKEYCOLUMN
+                            //each OGR_F_FIELD > RECORD
+                            for (int i = 2; i < attTable->columnCount();i++){
+                                if (columnDefinitions[i]){
+                                    record[i] = (this->*columnDefinitions[i]->fillFunc)(hFeature, columnDefinitions[i]->index, columnDefinitions[i]->range);
+                                }
+                            }
+                            record[0] = QVariant(feature->featureid());
+                            attTable->record(attTable->recordCount() - 1,record);//should overwrite the last record in attTable, which hopefully is the one created by fcoverage->newFeature({geometry}) within FillFeature
+                        }
+
+                        gdal()->destroyFeature( hFeature );
+                    }
+                } catch (FeatureCreationError& ) {
                     gdal()->destroyFeature( hFeature );
+                    return false;
                 }
 
             }
@@ -349,73 +352,67 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
     return true;
 }
 
-std::vector<SPFeatureI> GdalFeatureConnector::fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry) const{
-    std::vector<SPFeatureI> ret;
+void GdalFeatureConnector::fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry,std::vector<Geometry>& outGeoms) const{
     if (geometry){
         OGRwkbGeometryType type = gdal()->getGeometryType(geometry);
         switch (translateOGRType(type)){
-            case itUNKNOWN: ERROR2(ERR_INVALID_PROPERTY_FOR_2, "GeometryType of a Feature", _filename.toString()); return ret;
-            case itPOINT:   return fillPoint(fcoverage, geometry);    break;
-            case itLINE:    return fillLine(fcoverage, geometry);     break;
-            case itPOLYGON: return fillPolygon(fcoverage, geometry, type);  break;
+            case itUNKNOWN: ERROR2(ERR_INVALID_PROPERTY_FOR_2, "GeometryType of a Feature", _filename.toString()); return ;
+            case itPOINT:   fillPoint(fcoverage, geometry, outGeoms);    break;
+            case itLINE:    fillLine(fcoverage, geometry, outGeoms);     break;
+            case itPOLYGON: fillPolygon(fcoverage, geometry, type,outGeoms);  break;
             default:{ //possibly wkbGeometryCollection or other kind of mixture
                 int subGeomCount = gdal()->getSubGeometryCount(geometry);
                 if(subGeomCount){
                     for(int i = 0; i < subGeomCount; ++i) {
                         OGRGeometryH hSubGeometry = gdal()->getSubGeometryRef(geometry, i);
                         if(hSubGeometry){
-                            std::vector<SPFeatureI> tmp =  fillFeature(fcoverage, hSubGeometry);
-                            ret.insert(ret.end(), tmp.begin(), tmp.end());
+                            fillFeature(fcoverage, hSubGeometry, outGeoms);
                         }
                     }
-                    return ret;
+                    return ;
                 }
                 break;
             }
         }
     }
-    return ret;
+
+    return ;
 }
-std::vector<SPFeatureI> GdalFeatureConnector::fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry) const{
+void GdalFeatureConnector::fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry,std::vector<Geometry>& outGeoms ) const{
     int subGeomCount = gdal()->getSubGeometryCount(geometry);
-    std::vector<SPFeatureI> ret;
     if(subGeomCount > 0){
         for(int i = 0; i < subGeomCount; ++i) {
             OGRGeometryH hSubGeometry = gdal()->getSubGeometryRef(geometry, i);
             if(hSubGeometry){
-                std::vector<SPFeatureI> tmp =  fillPoint(fcoverage, hSubGeometry);
-                ret.insert(ret.end(), tmp.begin(), tmp.end());
+                fillPoint(fcoverage, hSubGeometry, outGeoms);
             }
         }
-        return ret;
+        return ;
     }else{
         double x,y,z;
         gdal()->getPoints(geometry, 0,&x,&y,&z);
         Coordinate coord(x,y,z);
         Geometry point(coord, fcoverage->coordinateSystem());
-        ret.push_back(fcoverage->newFeature({point}));
-        return ret;
+        outGeoms.push_back(point);
     }
 }
-std::vector<SPFeatureI> GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry) const{
+void GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry,std::vector<Geometry>& outGeoms) const{
     int subGeomCount = gdal()->getSubGeometryCount(geometry);
-    std::vector<SPFeatureI> ret;
     if(subGeomCount > 0){
         for(int i = 0; i < subGeomCount; ++i) {
             OGRGeometryH hSubGeometry = gdal()->getSubGeometryRef(geometry, i);
             if(hSubGeometry){
-                std::vector<SPFeatureI> tmp =  fillLine(fcoverage, hSubGeometry);
-                ret.insert(ret.end(), tmp.begin(), tmp.end());
+                fillLine(fcoverage, hSubGeometry, outGeoms);
             }
         }
-        return ret;
+        return ;
     }else{
         int count = gdal()->getPointCount(geometry);
          if ( count == 0)
-             return ret;
+             return ;
          ITable attTable = fcoverage->attributeTable();
          if (!attTable.isValid())
-             return ret;
+             return ;
 
          Line2D<Coordinate2d > line;
          line.resize(count);
@@ -425,23 +422,21 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillLine(FeatureCoverage *fcoverag
              line[i] = Coordinate2d(x,y);
 //             attTable->setCell(FEATUREVALUECOLUMN, rec, QVariant(z));
          }
-        ret.push_back(fcoverage->newFeature({line, fcoverage->coordinateSystem()}));
-        return ret;
+        outGeoms.push_back(Geometry(line, fcoverage->coordinateSystem()));
     }
 }
 
-std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, OGRwkbGeometryType type) const{
+void GdalFeatureConnector::fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, OGRwkbGeometryType type,std::vector<Geometry>& outGeoms) const{
     int subGeomCount = gdal()->getSubGeometryCount(geometry);//error!check type!
-    std::vector<SPFeatureI> ret;
     if ( type == wkbPolygon || type == wkbPolygon25D ){
         OGRGeometryH hSubGeometry = gdal()->getSubGeometryRef(geometry, 0);
         if(hSubGeometry){
             int count = gdal()->getPointCount(hSubGeometry);
             if ( count == 0)
-                return ret;
+                return ;
             ITable attTable = fcoverage->attributeTable();
             if (!attTable.isValid())
-                return ret;
+                return ;
 
             Polygon pol;
             std::vector<Coordinate2d>& ring = pol.outer();
@@ -451,7 +446,6 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
                 double x,y,z;
                 gdal()->getPoints(hSubGeometry, i,&x,&y,&z);
                 ring[i] = Coordinate2d(x,y);
-//                tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(z));
             }
 
             pol.inners().resize(subGeomCount-1);
@@ -471,24 +465,20 @@ std::vector<SPFeatureI> GdalFeatureConnector::fillPolygon(FeatureCoverage *fcove
                     }
                 }
             }
-            ret.push_back(fcoverage->newFeature({pol, fcoverage->coordinateSystem()}));
-            return ret;
+            outGeoms.push_back(Geometry(pol, fcoverage->coordinateSystem()));
         }else{
             ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"polygon for a record",_filename.toString());
-            return ret;
+            return ;
         }
     }else if (type == wkbMultiPolygon || type == wkbMultiPolygon25D){
         for(int i = 0; i < subGeomCount; ++i) {
             OGRGeometryH hSubGeometry = gdal()->getSubGeometryRef(geometry, i);
             if(hSubGeometry){
-                std::vector<SPFeatureI> tmp =  fillPolygon(fcoverage, hSubGeometry, wkbPolygon);
-                ret.insert(ret.end(), tmp.begin(), tmp.end());
+                fillPolygon(fcoverage, hSubGeometry, wkbPolygon, outGeoms);
             }
         }
-        return ret;
     }else{
         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"polygon for a record",_filename.toString());
-        return ret;
     }
 }
 
@@ -551,7 +541,7 @@ OGRwkbGeometryType GdalFeatureConnector::ilwisType2GdalFeatureType(IlwisTypes tp
     return wkbUnknown;
 }
 
-void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, SPFeatureI feature, const std::vector<bool>& validAttributes, const std::vector<ColumnDefinition>& columnDef) {
+void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, SPFeatureI& feature, const std::vector<bool>& validAttributes, const std::vector<ColumnDefinition>& columnDef) {
     int index = 0;
     for(int i=0; i < feature->attributeColumnCount(); ++i){
         if ( !validAttributes[i])
@@ -716,7 +706,7 @@ bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& featur
         defs.push_back(features->attributeTable()->columndefinition(i));
     }
     for(; fiter != endIter; ++fiter) {
-        SPFeatureI feature = *fiter;
+        SPFeatureI& feature = *fiter;
         OGRLayerH lyr = datasources[ilwisType2Index(feature->geometryType())]._layers[0];
         OGRFeatureH hfeature = gdal()->createFeature(gdal()->getLayerDef(lyr));
         setAttributes(hfeature, feature, validAttributes, defs);

@@ -17,6 +17,7 @@ namespace pythonapi {
     class Geometry : public Object{
         friend class Feature;
     public:
+        Geometry(const char* wkt);
         Geometry(Feature* feature, int index);
         ~Geometry();
         bool within(const Geometry& geometry) const;
@@ -27,9 +28,13 @@ namespace pythonapi {
         bool fromWKT(const char*  wkt);
         const char* toWKT();
     private:
+        bool _standalone;
+
         Ilwis::Geometry &ptr() const;
         std::unique_ptr<Feature> _feature;
         int _index;
+
+        std::string _wkt;
     };
 
 

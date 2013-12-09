@@ -17,7 +17,7 @@ namespace pythonapi{
     public:
         PyVariant();
         PyVariant(PyVariant& pv);
-        PyVariant(QVariant* data);
+        PyVariant(QVariant* data);//takes ownership of this QVariant instance
 
         //QVartiant constructor wrapper
         PyVariant(int value);
