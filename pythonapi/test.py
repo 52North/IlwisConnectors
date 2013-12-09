@@ -34,10 +34,11 @@ def main():
         print("-----------------------------------------------")
         #adding new feature to coverage
         it = fc.__iter__()#loadBinaryData
-        g = Geometry("POINT Z(54 6 9)")
-        f = fc.newFeature(g);
+        g = Geometry("POINT(5.4 6 9.0)")
+        print(g)
+        newF = fc.newFeature(g);
         for c in fc.attributes():
-            f[c] = 12.0
+            newF[c] = 12.0
         print("-----------------------------------------------")
         #iterating over features
         sum = 0
@@ -45,19 +46,19 @@ def main():
             sum += float(f.attribute("MAY",PyVariant(0)))
             f.setAttribute("highest",sum)
             print(f, end=":")
+            print(f.geometry(), end=">")
             for a in fc.attributes():
                 print(f[a], end="|")
             print()
         print("sum of rainfall values in may:",sum)
         del sum
-
         print("-----------------------------------------------")
         print("alter Geometry using WKT")
         f = it.next()
         print(f.geometry())
         check = False
         try:
-            check = f.geometry().fromWKT("POINT Z(34.5 6.65 49)")
+            check = f.geometry().fromWKT(newF.geometry().toWKT())
         except Exception as a:
             print(a)
         print(check, " -> ",f.geometry())
@@ -103,31 +104,28 @@ def main():
         print("-----------------------------------------------")
         aa1 = rc + rctif
         print(rc.name(), " + ", rctif.name(), " = ", aa1.name()+".value(342,342,0)=>",aa1.value(342,342,0))
-        aa2 = rc + 2
-        print(rc.name(), " + 2 = ", aa2.name()+".value(342,342,0)=>",aa2.value(342,342,0))
-        aa3 = 2 + rc
-        print("2 + ", rc.name(), " = ", aa3.name()+".value(342,342,0)=>",aa3.value(342,342,0))
-        aa4 = rc - rctif
-        print(rc.name(), " - ", rc.name(), " = ", aa4.name()+".value(342,342,0)=>",aa4.value(342,342,0))
-        aa5 = 2 - rc #until now this is parsed as "rc - 2" :(
-        print("2 - ", rc.name(), " = ", aa5.name()+".value(342,342,0)=>",aa5.value(342,342,0))
-        aa6 = rc - 2
-        print(rc.name(), " - 2 = ", aa6.name()+".value(342,342,0)=>",aa6.value(342,342,0))
-        aa7 = rc / rctif
-        print(rc.name(), " / ", rc.name(), " = ", aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
-        aa8 = 2 / rc #until now this is parsed as "rc / 2" :(
-        print("2 / ", rc.name(), " = ", aa8.name()+".value(342,342,0)=>",aa8.value(342,342,0))
-        aa9 = rc / 2
-        print(rc.name(), " / 2 = ", aa9.name()+".value(342,342,0)=>",aa9.value(342,342,0))
-        aa10 = rc * rctif
-        print(rc.name(), " * ", rc.name(), " = ", aa10.name()+".value(342,342,0)=>",aa10.value(342,342,0))
-        aa11 = 2 * rc
-        print("2 * ", rc.name(), " = ", aa11.name()+".value(342,342,0)=>",aa11.value(342,342,0))
-        aa12 = rc * 2
-        print(rc.name(), " * 2 = ", aa12.name()+".value(342,342,0)=>",aa12.value(342,342,0))
-
-        fl = float(aa8.value(342,342,0))+0.5
-        print("14.99=",fl)
+#        aa2 = rc + 2
+#        print(rc.name(), " + 2 = ", aa2.name()+".value(342,342,0)=>",aa2.value(342,342,0))
+#        aa3 = 2 + rc
+#        print("2 + ", rc.name(), " = ", aa3.name()+".value(342,342,0)=>",aa3.value(342,342,0))
+#        aa4 = rc - rctif
+#        print(rc.name(), " - ", rc.name(), " = ", aa4.name()+".value(342,342,0)=>",aa4.value(342,342,0))
+#        aa5 = 2 - rc #until now this is parsed as "rc - 2" :(
+#        print("2 - ", rc.name(), " = ", aa5.name()+".value(342,342,0)=>",aa5.value(342,342,0))
+#        aa6 = rc - 2
+#        print(rc.name(), " - 2 = ", aa6.name()+".value(342,342,0)=>",aa6.value(342,342,0))
+#        aa7 = rc / rctif
+#        print(rc.name(), " / ", rc.name(), " = ", aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
+#        aa8 = 2 / rc #until now this is parsed as "rc / 2" :(
+#        print("2 / ", rc.name(), " = ", aa8.name()+".value(342,342,0)=>",aa8.value(342,342,0))
+#        aa9 = rc / 2
+#        print(rc.name(), " / 2 = ", aa9.name()+".value(342,342,0)=>",aa9.value(342,342,0))
+#        aa10 = rc * rctif
+#        print(rc.name(), " * ", rc.name(), " = ", aa10.name()+".value(342,342,0)=>",aa10.value(342,342,0))
+#        aa11 = 2 * rc
+#        print("2 * ", rc.name(), " = ", aa11.name()+".value(342,342,0)=>",aa11.value(342,342,0))
+#        aa12 = rc * 2
+#        print(rc.name(), " * 2 = ", aa12.name()+".value(342,342,0)=>",aa12.value(342,342,0))
         print("-----------------------------------------------")
         #store to file
         if aa1.connectTo(workingDir+"/aa1", "GTiff","gdal",IlwisObject.cmOUTPUT):
