@@ -1,4 +1,5 @@
 #include <QSqlQuery>
+#include <QObject>
 #include <QStringList>
 #include <QSqlError>
 #include <QHash>

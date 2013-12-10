@@ -1,6 +1,10 @@
 #include <QUrl>
-#include <QNetworkRequest>
+#include <QString>
+#include <QObject>
 #include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QNetworkAccessManager>
+#include "wfsConnector_global.h"
 
 #include "kernel.h"
 #include "ilwisdata.h"
@@ -8,6 +12,7 @@
 #include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "wfsconnector.h"
+#include "wfs.h"
 
 
 using namespace Ilwis;
@@ -19,16 +24,15 @@ WfsConnector::WfsConnector(const Resource &resource, bool load) : IlwisObjectCon
 }
 
 
-QString WfsConnector::provider() const {
-
+QString WfsConnector::provider() const
+{
+    return QString("wfs");
 }
-
 
 bool WfsConnector::loadMetaData(IlwisObject *data)
 {
-    QNetworkReply *reply =_networkManager->get(QNetworkRequest(_resource.url()));
-    QObject::connect(_networkManager, SIGNAL(finished(QNetworkReply*)),
-                     this, SLOT(finishedSlot(QNetworkReply*)));
+    WebFeatureService wfs(_resource.url());
+    wfs.getCapabilities();
 
     return false;
 }
@@ -36,6 +40,11 @@ bool WfsConnector::loadMetaData(IlwisObject *data)
 bool WfsConnector::storeMetaData(const IlwisObject *obj, IlwisTypes type) const
 {
     return false;
+}
+
+void WfsConnector::finishedSlot(QNetworkReply *reply)
+{
+
 }
 
 

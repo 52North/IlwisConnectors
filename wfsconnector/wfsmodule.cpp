@@ -3,18 +3,36 @@
 #include <functional>
 
 #include "kernel.h"
+#include "ilwisdata.h"
+#include "geometries.h"
+#include "range.h"
+#include "domain.h"
 #include "datadefinition.h"
-#include "wfsconnector.h"
+#include "ellipsoid.h"
+#include "geodeticdatum.h"
+#include "projection.h"
+#include "coordinatesystem.h"
+#include "columndefinition.h"
+#include "table.h"
+#include "catalog.h"
+#include "containerconnector.h"
+#include "ilwisobjectconnector.h"
 #include "polygon.h"
 #include "geometry.h"
 #include "attributerecord.h"
 #include "feature.h"
+#include "coverage.h"
 #include "featurecoverage.h"
+#include "abstractfactory.h"
+#include "connectorfactory.h"
+#include "abstractfactory.h"
+#include "connectorfactory.h"
+#include "catalogconnectorfactory.h"
+#include "symboltable.h"
+#include "OperationExpression.h"
+#include "wfsmodule.h"
 #include "wfsconnector.h"
-#include "abstractfactory.h"
-#include "connectorfactory.h"
-#include "abstractfactory.h"
-#include "connectorfactory.h"
+#include "wfsfeatureconnector.h"
 #include "catalogconnector.h"
 #include "wfscatalogconnector.h"
 #include "ilwisobjectfactory.h"
@@ -30,8 +48,7 @@ WfsModule::WfsModule(QObject *parent) :
 
 WfsModule::~WfsModule()
 {
-    if ( gdal())
-        delete gdal();
+
 }
 
 QString WfsModule::getInterfaceVersion() const
@@ -54,8 +71,8 @@ void WfsModule::prepare()
     if (!cfactory)
         return ;
 
-    cfactory->addCreator(itFEATURE,"wfs", WfsConnector::create);
-    IlwisObject::addTypeFunction(WfsConnector::ilwisType);
+    cfactory->addCreator(itFEATURE,"wfs", WfsFeatureConnector::create);
+    //IlwisObject::addTypeFunction(WfsConnector::ilwisType);
 }
 
 QString WfsModule::getName() const

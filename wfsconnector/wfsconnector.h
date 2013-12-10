@@ -1,17 +1,27 @@
 #ifndef WFSCONNECTOR_H
 #define WFSCONNECTOR_H
 
-#include <QNetworkReply>
-#include <QNetworkAccessManager>
-#include "wfsConnector_global.h"
+#include <QObject>
 
+#include "WfsConnector_global.h"
+#include "kernel.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
+#include "catalog.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+
+class QString;
+class QNetworkReply;
+class QNetworkAccessManager;
 
 namespace Ilwis {
 
 namespace Wfs {
 
-class WFSCONNECTORSHARED_EXPORT WfsConnector : public Ilwis::IlwisObjectConnector {
+class WFSCONNECTORSHARED_EXPORT WfsConnector : public QObject, public Ilwis::IlwisObjectConnector {
 
+    Q_OBJECT
 
 public:
     WfsConnector(const Ilwis::Resource &resource, bool load=true);
@@ -23,12 +33,6 @@ protected:
     bool storeMetaData(const IlwisObject* data, IlwisTypes type) const;
     bool loadBinaryData(IlwisObject* ) { return false; }
 
-private:
-    QNetworkAccessManager* _networkManager;
-
-
-private slots:
-    void finishedSlot(QNetworkReply* reply);
 };
 }
 

@@ -22,14 +22,18 @@ SOURCES += \
     wfsconnector/wfsobjectfactory.cpp \
     wfsconnector/wfsconnector.cpp \
     wfsconnector/wfscatalogconnector.cpp \
-    wfsconnector/wfsmodule.cpp
+    wfsconnector/wfsmodule.cpp \
+    wfsconnector/wfsfeatureconnector.cpp \
+    wfsconnector/wfs.cpp
 
 HEADERS += \
     wfsconnector/wfsobjectfactory.h \
-    wfsconnector/wfsConnector_global.h \
     wfsconnector/wfsconnector.h \
     wfsconnector/wfscatalogconnector.h \
-    wfsconnector/wfsmodule.h
+    wfsconnector/wfsmodule.h \
+    wfsconnector/wfsfeatureconnector.h \
+    wfsconnector/wfs.h \
+    wfsconnector/wfsconnector_global.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
@@ -37,7 +41,8 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$C
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
                                               -L$$PWD/../libraries/$$PLATFORM$$CONF/pugixml/ -lpugixml
 
-INCLUDEPATH += $$PWD/core
+INCLUDEPATH += $$PWD/core \
+            $$PWD/../external/
 DEPENDPATH += $$PWD/core
 
 OTHER_FILES += \

@@ -1,6 +1,8 @@
 #ifndef WFSCATALOGCONNECTOR_H
 #define WFSCATALOGCONNECTOR_H
 
+class QUrl;
+
 namespace Ilwis {
 
 namespace Wfs {
@@ -18,6 +20,8 @@ public:
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool);
 
+private:
+    bool isValidWfsUrl(QUrl url) const;
 };
 }
 }

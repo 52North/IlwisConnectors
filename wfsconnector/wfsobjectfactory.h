@@ -3,6 +3,8 @@
 
 namespace Ilwis {
 
+namespace Wfs {
+
 class WfsObjectFactory : public IlwisObjectFactory
 {
 public:
@@ -15,5 +17,8 @@ public:
 };
 
 }
+}
+
+
 
 #endif // WfsOBJECTFACTORY_H
