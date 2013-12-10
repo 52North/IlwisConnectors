@@ -64,7 +64,9 @@
 
 
 namespace pythonapi {
-    void muteIssueLogger(); //(pythonapi_ilwis.h)
+    //(pythonapi_ilwis.h)
+    void disconnectIssueLogger();
+    void connectIssueLogger();
 }
 
 %include "pythonapi_object.h"

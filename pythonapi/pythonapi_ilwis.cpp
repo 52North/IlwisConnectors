@@ -41,8 +41,12 @@ bool pythonapi::initIlwisObjects(){
     return ret;
 }
 
-void pythonapi::muteIssueLogger(){
+void pythonapi::disconnectIssueLogger(){
     QObject::disconnect(pythonapi::connection);
+}
+
+void pythonapi::connectIssueLogger(){
+    pythonapi::connection = QObject::connect(Ilwis::kernel()->issues().data(),SIGNAL(ilwiserrormessage(QString)),pythonapi::logger,SLOT(ilwiserrormessage(QString)));
 }
 
 size_t pythonapi::ilwisErrorObject_type_info(){

@@ -25,7 +25,8 @@ def data():
 def main():
     workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest"
     Engine.setWorkingCatalog(workingDir)
-    #muteIssueLogger()
+    disconnectIssueLogger()
+    connectIssueLogger()
     print("-----------------------------------------------")
     #Gridding
     localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
