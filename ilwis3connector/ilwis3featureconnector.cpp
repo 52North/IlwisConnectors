@@ -492,9 +492,7 @@ bool FeatureConnector::storeBinaryData(FeatureCoverage *fcov, IlwisTypes type) {
         return true;
     if (!CoverageConnector::storeBinaryData(fcov, type)) // attribute tables
         return false;
-    QFileInfo inf(fcov->name());
-    QString dir = context()->workingCatalog()->location().toLocalFile();
-    QString baseName = dir + "/" + inf.baseName();
+    QString baseName = Ilwis3Connector::outputNameFor(fcov);
     bool ok = false;
     if ( hasType(type, itPOLYGON)) {
         ok = storeBinaryDataPolygon(fcov, baseName);
@@ -548,7 +546,8 @@ void FeatureConnector::storeColumn(const QString& colName, const QString& domNam
     _odf->setKeyValue(colName, "Type", "ColumnStore");
 }
 
-bool FeatureConnector::storeMetaLine(FeatureCoverage *fcov, const QString& dataFile){
+bool FeatureConnector::storeMetaLine(FeatureCoverage *fcov, const QString& filepath){
+    QString dataFile = QFileInfo(filepath).fileName();
 
     _odf->setKeyValue("BaseMap","Type","SegmentMap");
     _odf->setKeyValue("SegmentMap","Type","SegmentMapStore");
@@ -565,8 +564,7 @@ bool FeatureConnector::storeMetaLine(FeatureCoverage *fcov, const QString& dataF
     _odf->setKeyValue("Table", "Records", QString::number(noOfLines));
     _odf->setKeyValue("Table", "Type", "TableStore");
 
-    QString localFile = dataFile + ".mps#";
-    _odf->setKeyValue("TableStore", "Data", localFile);
+    _odf->setKeyValue("TableStore", "Data", dataFile + ".mps#");
     _odf->setKeyValue("TableStore", "UseAs", "No");
     _odf->setKeyValue("TableStore", "Type", "TableBinary");
     _odf->setKeyValue("TableStore", "Col0", "MinCoords");
@@ -584,7 +582,8 @@ bool FeatureConnector::storeMetaLine(FeatureCoverage *fcov, const QString& dataF
     return true;
 }
 
-bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& dataFile){
+bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& filepath){
+    QString dataFile = QFileInfo(filepath).fileName();
 
     _odf->setKeyValue("BaseMap","Type","PolygonMap");
     _odf->setKeyValue("PolygonMap","Type","PolygonMapStore");
@@ -620,7 +619,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     if ( !ok)
         return false;
 
-    QString dataFile = fcov->name();
+    QString dataFile = Ilwis3Connector::outputNameFor(fcov);
     int index = dataFile.lastIndexOf(".");
     if ( index != -1) {
         dataFile = dataFile.left(index);
