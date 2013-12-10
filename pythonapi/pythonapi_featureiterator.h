@@ -14,7 +14,6 @@ class FeatureIterator
 {
 public:
     FeatureIterator(FeatureCoverage* fc);
-    ~FeatureIterator();
     /**
      * @brief next confusingly returns current value bevore iterating to the next item
      * brings together C++ style "std::iterator it != it.end()" with end() pointing the back (after last entry)
@@ -24,8 +23,8 @@ public:
     Feature next();
     bool hasNext();
 private:
-    Ilwis::FeatureIterator* _ilwisFeatureIterator;
     FeatureCoverage* _coverage;
+    std::shared_ptr<Ilwis::FeatureIterator> _ilwisFeatureIterator;
 };
 
 }

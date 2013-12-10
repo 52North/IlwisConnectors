@@ -157,6 +157,10 @@ def main():
             print("connectTo file failed!")
     else:
         print("couldn't load RasterCoverage")
+    rcl = RasterCoverage("small.mpl")
+    if rcl:
+        for v in rcl:
+            print(v,out="|")
 
 def claudio_example():#and martins solution proposal <== example code for presentation
     ilwisengine = Engine()

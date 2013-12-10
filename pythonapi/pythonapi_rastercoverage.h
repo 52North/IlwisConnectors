@@ -12,6 +12,7 @@ namespace Ilwis {
 namespace pythonapi {
 
     class RasterCoverage : public Coverage{
+         friend class PixelIterator;
     public:
         RasterCoverage();
         RasterCoverage(const char* resource);
