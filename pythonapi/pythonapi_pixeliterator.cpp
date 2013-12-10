@@ -13,9 +13,9 @@ namespace pythonapi {
 PixelIterator::PixelIterator(RasterCoverage *rc): _coverage(rc), _ilwisPixelIterator(new Ilwis::PixelIterator((*rc->ptr()))){
 }
 
-double& PixelIterator::next(){
-    double& d = (*(*this->_ilwisPixelIterator));
-    (*this->_ilwisPixelIterator)++;
+double PixelIterator::next(){
+    double d = (*(*this->_ilwisPixelIterator));
+    this->_ilwisPixelIterator->operator ++();
     return d;
 }
 

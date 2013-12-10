@@ -18,7 +18,7 @@ class PixelIterator{
          * and Python style "for it in it:" using the __next__() also to retrieve first item.
          * @return
          */
-        double& next();
+        double next();
         bool hasNext();
     private:
         RasterCoverage* _coverage;

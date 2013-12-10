@@ -160,7 +160,7 @@ def main():
     rcl = RasterCoverage("small.mpl")
     if rcl:
         for v in rcl:
-            print(v,out="|")
+            print(v,end="|")
 
 def claudio_example():#and martins solution proposal <== example code for presentation
     ilwisengine = Engine()
