@@ -3,6 +3,24 @@
 
 from ilwisobjects import *
 
+def data():
+    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest"
+    Engine.setWorkingCatalog(workingDir)
+    fc = FeatureCoverage("rainfall.shp")
+    testvalues = (-9223372036854775808,-9223372036854775809,18446744073709551615,18446744073709551616,0.432,23.4e-32)
+    if fc:
+        print("successfully loaded", fc.name())
+        if fc.addAttribute("highest","value"):
+            i = 0
+            for f in fc:
+                try:
+                    f["highest"] = testvalues[i%len(testvalues)]
+                    print(testvalues[i%len(testvalues)],"::",f["highest"])
+                except OverflowError as e:
+                    print(e)
+                i += 1
+
+
 #further tests on all the working api calls
 def main():
     workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest"
@@ -44,7 +62,7 @@ def main():
         sum = 0
         for f in fc:
             sum += float(f.attribute("MAY",0))
-            f.setAttribute("highest",sum)
+            f["highest"] = sum
             print(f, end=":")
             print(f.geometry(), end=">")
             for a in fc.attributes():
@@ -269,7 +287,8 @@ def raul_martin_solution():
 
 #here you can chose which test case will be executed
 if __name__ == "__main__":
+#    data()
     main()
-    hello_raster()
-    hello_feature()
-    claudio_example()
+#    hello_raster()
+#    hello_feature()
+#    claudio_example()
