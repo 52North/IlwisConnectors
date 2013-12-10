@@ -244,6 +244,7 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
         ilw3tbl.addStoreDefinition(deftxt);
     }
 
+    std::map<quint32, std::vector<QVariant>> orderedRecords;
     for(SPDomainItem item : iddomain){
         std::vector<QVariant> record(tp == itTHEMATICITEM ? 5 : 3);
         record[0] = item->name();
@@ -254,7 +255,11 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
             record[3] = thematicItem->code();
             record[4] = thematicItem->description();
         }
-        ilw3tbl.storeRecord(output_file, record);
+        orderedRecords[item->raw()] = record;
+    }
+    for(const auto& rec : orderedRecords){
+
+        ilw3tbl.storeRecord(output_file, rec.second);
     }
 
     output_file.close();
