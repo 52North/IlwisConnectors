@@ -15,10 +15,8 @@ PyVariant::PyVariant(PyVariant &pv): _data(std::unique_ptr<QVariant>(new QVarian
 PyVariant::PyVariant(QVariant* data): _data(std::unique_ptr<QVariant>(data)){
 }
 
-PyVariant::PyVariant(int value): PyVariant(new QVariant(value)){
-}
-
-PyVariant::PyVariant(uint value): PyVariant(new QVariant(value)){
+bool PyVariant::isValid(){
+    return (bool)this->_data && !this->_data->isNull();
 }
 
 PyVariant::PyVariant(qlonglong value): PyVariant(new QVariant(value)){
@@ -27,13 +25,7 @@ PyVariant::PyVariant(qlonglong value): PyVariant(new QVariant(value)){
 PyVariant::PyVariant(qulonglong value): PyVariant(new QVariant(value)){
 }
 
-PyVariant::PyVariant(bool value): PyVariant(new QVariant(value)){
-}
-
 PyVariant::PyVariant(double value): PyVariant(new QVariant(value)){
-}
-
-PyVariant::PyVariant(float value): PyVariant(new QVariant(value)){
 }
 
 PyVariant::PyVariant(const char *value): PyVariant(new QVariant(value)){
@@ -75,15 +67,19 @@ double PyVariant::__float__(){
 }
 
 bool PyVariant::__bool__() const{
-    return (bool)this->_data && !this->_data->isNull();
+    if(!this->_data->canConvert(QVariant::Bool))
+        throw std::domain_error(QString("PyVariant cannot convert '%1' to bool").arg(this->_data->toString()).toStdString());
+    else{
+        return this->_data->toBool();
+    }
 }
 
 IlwisTypes PyVariant::ilwisType(){
     return itANY;
 }
 
-QVariant *PyVariant::clone(){
-    return new QVariant(*this->_data);
+QVariant& PyVariant::data(){
+    return (*this->_data.get());
 }
 
 PyVariant* PyVariant::toPyVariant(Object* obj){

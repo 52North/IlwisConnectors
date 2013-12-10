@@ -33,29 +33,32 @@ def main():
             print("couln't add value attribute 'highest' to",fc.name())
         print("-----------------------------------------------")
         #adding new feature to coverage
-        g = Geometry("POINT Z(54 6 9)")
-        fc.newFeature(g);
+        it = fc.__iter__()#loadBinaryData
+        g = Geometry("POINT(5.4 6 9.0)")
+        print(g)
+        newF = fc.newFeature(g);
+        for c in fc.attributes():
+            newF[c] = 12.0
         print("-----------------------------------------------")
         #iterating over features
         sum = 0
         for f in fc:
-            sum += float(f.attribute("MAY",PyVariant(0)))
+            sum += float(f.attribute("MAY",0))
             f.setAttribute("highest",sum)
             print(f, end=":")
+            print(f.geometry(), end=">")
             for a in fc.attributes():
                 print(f[a], end="|")
             print()
         print("sum of rainfall values in may:",sum)
         del sum
-
         print("-----------------------------------------------")
         print("alter Geometry using WKT")
-        it = fc.__iter__()
         f = it.next()
         print(f.geometry())
         check = False
         try:
-            check = f.geometry().fromWKT("POINT Z(34.5 6.65 49)")
+            check = f.geometry().fromWKT(newF.geometry().toWKT())
         except Exception as a:
             print(a)
         print(check, " -> ",f.geometry())
@@ -65,7 +68,7 @@ def main():
             v = f["RAINFAL"]
         except Exception as e:
             print(e)
-            v = f.attribute("RAINFALL")
+            v = f["RAINFALL"]
         try:
             print(int(v))
         except TypeError as err:
@@ -101,31 +104,28 @@ def main():
         print("-----------------------------------------------")
         aa1 = rc + rctif
         print(rc.name(), " + ", rctif.name(), " = ", aa1.name()+".value(342,342,0)=>",aa1.value(342,342,0))
-        aa2 = rc + 2
-        print(rc.name(), " + 2 = ", aa2.name()+".value(342,342,0)=>",aa2.value(342,342,0))
-        aa3 = 2 + rc
-        print("2 + ", rc.name(), " = ", aa3.name()+".value(342,342,0)=>",aa3.value(342,342,0))
-        aa4 = rc - rctif
-        print(rc.name(), " - ", rc.name(), " = ", aa4.name()+".value(342,342,0)=>",aa4.value(342,342,0))
-        aa5 = 2 - rc #until now this is parsed as "rc - 2" :(
-        print("2 - ", rc.name(), " = ", aa5.name()+".value(342,342,0)=>",aa5.value(342,342,0))
-        aa6 = rc - 2
-        print(rc.name(), " - 2 = ", aa6.name()+".value(342,342,0)=>",aa6.value(342,342,0))
-        aa7 = rc / rctif
-        print(rc.name(), " / ", rc.name(), " = ", aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
-        aa8 = 2 / rc #until now this is parsed as "rc / 2" :(
-        print("2 / ", rc.name(), " = ", aa8.name()+".value(342,342,0)=>",aa8.value(342,342,0))
-        aa9 = rc / 2
-        print(rc.name(), " / 2 = ", aa9.name()+".value(342,342,0)=>",aa9.value(342,342,0))
-        aa10 = rc * rctif
-        print(rc.name(), " * ", rc.name(), " = ", aa10.name()+".value(342,342,0)=>",aa10.value(342,342,0))
-        aa11 = 2 * rc
-        print("2 * ", rc.name(), " = ", aa11.name()+".value(342,342,0)=>",aa11.value(342,342,0))
-        aa12 = rc * 2
-        print(rc.name(), " * 2 = ", aa12.name()+".value(342,342,0)=>",aa12.value(342,342,0))
-
-        fl = float(aa8.value(342,342,0))+0.5
-        print("14.99=",fl)
+#        aa2 = rc + 2
+#        print(rc.name(), " + 2 = ", aa2.name()+".value(342,342,0)=>",aa2.value(342,342,0))
+#        aa3 = 2 + rc
+#        print("2 + ", rc.name(), " = ", aa3.name()+".value(342,342,0)=>",aa3.value(342,342,0))
+#        aa4 = rc - rctif
+#        print(rc.name(), " - ", rc.name(), " = ", aa4.name()+".value(342,342,0)=>",aa4.value(342,342,0))
+#        aa5 = 2 - rc #until now this is parsed as "rc - 2" :(
+#        print("2 - ", rc.name(), " = ", aa5.name()+".value(342,342,0)=>",aa5.value(342,342,0))
+#        aa6 = rc - 2
+#        print(rc.name(), " - 2 = ", aa6.name()+".value(342,342,0)=>",aa6.value(342,342,0))
+#        aa7 = rc / rctif
+#        print(rc.name(), " / ", rc.name(), " = ", aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
+#        aa8 = 2 / rc #until now this is parsed as "rc / 2" :(
+#        print("2 / ", rc.name(), " = ", aa8.name()+".value(342,342,0)=>",aa8.value(342,342,0))
+#        aa9 = rc / 2
+#        print(rc.name(), " / 2 = ", aa9.name()+".value(342,342,0)=>",aa9.value(342,342,0))
+#        aa10 = rc * rctif
+#        print(rc.name(), " * ", rc.name(), " = ", aa10.name()+".value(342,342,0)=>",aa10.value(342,342,0))
+#        aa11 = 2 * rc
+#        print("2 * ", rc.name(), " = ", aa11.name()+".value(342,342,0)=>",aa11.value(342,342,0))
+#        aa12 = rc * 2
+#        print(rc.name(), " * 2 = ", aa12.name()+".value(342,342,0)=>",aa12.value(342,342,0))
         print("-----------------------------------------------")
         #store to file
         if aa1.connectTo(workingDir+"/aa1", "GTiff","gdal",IlwisObject.cmOUTPUT):
@@ -151,7 +151,7 @@ def claudio_example():#and martins solution proposal <== example code for presen
 #        polygon.setAttribute("maxY", 0)
         for point in distribution:
             if polygon.geometry().contains(point.geometry()):
-                maxval = max(int(polygon.attribute("maxY",PyVariant(0))), int(point.attribute("freq_speciesY",PyVariant(0))))
+                maxval = max(int(polygon.attribute("maxY",0)), int(point.attribute("freq_speciesY",0)))
                 polygon.setAttribute("maxY", maxval)
 
     polygongrid.connectTo(workingDir+"/polygongrid", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
@@ -172,7 +172,7 @@ def hello_feature():
     fc_soils = FeatureCoverage("aafsoils.shp")
     count = 0
     for feature in fc_soils:
-        if float(feature.attribute("AREA")) == 0.123:
+        if float(feature["AREA"]) == 0.123:
             count += 1
             print(feature.geometry())
     print("contains ",count," features with an AREA equal to 0.123" )
@@ -270,6 +270,6 @@ def raul_martin_solution():
 #here you can chose which test case will be executed
 if __name__ == "__main__":
     main()
-#    hello_raster()
-#    hello_feature()
-#    claudio_example()
+    hello_raster()
+    hello_feature()
+    claudio_example()
