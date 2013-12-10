@@ -78,18 +78,22 @@ Ilwis::Geometry &Geometry::ptr() const{
     return this->_feature->ptr()->geometry(this->_index);
 }
 
-
-Coordinate::Coordinate(double x, double y, double z): _x(x), _y(y), _z(z){
-    this->_2d = (this->_z == -1e308); //rUNDEF = -1e308
+Coordinate::Coordinate(double x, double y): _2d(true), _data(new Ilwis::Point3D<double>(x,y,0)){
 }
 
-const char* pythonapi::Coordinate::__str__(){
+Coordinate::Coordinate(double x, double y, double z): _2d(false), _data(new Ilwis::Point3D<double>(x,y,z)){
+}
+
+const char* Coordinate::__str__(){
     if (this->_2d)
-        return QString("coordinate(%1,%2)").arg(this->_x).arg(this->_y).toLocal8Bit();
+        return QString("coordinate(%1,%2)").arg(this->_data->x()).arg(this->_data->y()).toLocal8Bit();
     else
-        return QString("coordinate(%1,%2,%3)").arg(this->_x).arg(this->_y).arg(this->_z).toLocal8Bit();
+        return QString("coordinate(%1,%2,%3)").arg(this->_data->x()).arg(this->_data->y()).arg(this->_data->z()).toLocal8Bit();
 }
 
+Ilwis::Point3D<double>& Coordinate::data(){
+    return (*this->_data);
+}
 
 Pixel::Pixel(qint32 x, qint32 y): _x(x), _y(y){
 }

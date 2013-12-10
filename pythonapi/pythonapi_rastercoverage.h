@@ -2,6 +2,7 @@
 #define PYTHONAPI_RASTERCOVERAGE_H
 
 #include "pythonapi_coverage.h"
+#include "pythonapi_geometry.h"
 
 namespace Ilwis {
     class RasterCoverage;
@@ -26,7 +27,8 @@ namespace pythonapi {
         RasterCoverage* __truediv__(RasterCoverage &rc);
         RasterCoverage* __truediv__(double value);
         RasterCoverage* __rtruediv__(double value);
-        double value(double x, double y, double z);
+        double coord2value(pythonapi::Coordinate &c);
+        double pix2value(double x, double y, double z);
         static RasterCoverage* toRasterCoverage(Object *obj);
     };
 

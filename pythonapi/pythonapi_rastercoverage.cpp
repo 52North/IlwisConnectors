@@ -81,8 +81,12 @@ RasterCoverage *RasterCoverage::__rtruediv__(double value){
     return (RasterCoverage*)Engine::_do(QString("div_%2_%1").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%2 / %1").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
 }
 
-double RasterCoverage::value(double x, double y, double z){
-    return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(Coordinate(x,y,z));
+double RasterCoverage::coord2value(pythonapi::Coordinate &c){
+    return this->ptr()->get<Ilwis::RasterCoverage>()->coord2value(c.data());
+}
+
+double RasterCoverage::pix2value(double x, double y, double z){
+    return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(Ilwis::Point3D<double>(x,y,z));
 }
 
 RasterCoverage* RasterCoverage::toRasterCoverage(Object* obj){
