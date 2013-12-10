@@ -264,7 +264,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
 
     ITable attTable = coverage->attributeTable();
     if ( attTable.isValid()) {
-        QScopedPointer<TableConnector> conn(createTableConnector(attTable, coverage, type));
+        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, coverage, type));
         conn->storeMetaData(attTable.ptr());
     }
     return true;
@@ -275,7 +275,7 @@ bool CoverageConnector::storeBinaryData(IlwisObject *obj, IlwisTypes tp)
     Coverage *coverage = static_cast<Coverage *>(obj);
     ITable attTable = coverage->attributeTable();
     if ( attTable.isValid()) {
-        QScopedPointer<TableConnector> conn(createTableConnector(attTable, coverage, tp));
+        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, coverage, tp));
         return conn->storeBinaryData(attTable.ptr());
 
     }
@@ -283,8 +283,15 @@ bool CoverageConnector::storeBinaryData(IlwisObject *obj, IlwisTypes tp)
     return false;
 }
 
-TableConnector *CoverageConnector::createTableConnector(ITable& attTable, Coverage *coverage, IlwisTypes tp) {
-    QString dataFile = coverage->name();
+TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, Coverage *coverage, IlwisTypes tp) {
+    QString dataFile;
+    QUrl url = coverage->source(IlwisObject::cmOUTPUT).url();
+    if ( url.scheme() == "file"){
+        QFileInfo inf(url.toLocalFile());
+        dataFile = inf.absolutePath() + "/" + inf.baseName();
+    }else{
+       dataFile = context()->workingCatalog()->location().toLocalFile() + "/"+ coverage->name();
+    }
     QString attDom = dataFile;
     if ( hasType(tp,itRASTER)) {
         RasterCoverage *raster = static_cast<RasterCoverage *>(coverage);
@@ -307,8 +314,7 @@ TableConnector *CoverageConnector::createTableConnector(ITable& attTable, Covera
     }
     _odf->setKeyValue("BaseMap","AttributeTable",dataFile + ".tbt");
     attTable->setName(dataFile);
-    QString dir = context()->workingCatalog()->location().toLocalFile();
-    QString filename = dir + "/" + dataFile + ".tbt";
+    QString filename = dataFile + ".tbt";
     TableConnector *conn = new TableConnector(Resource(QUrl::fromLocalFile(filename), itTABLE), false);
     //attribute domains are comming from ilwis4 always uniqueid and based on the map
     conn->attributeDomain(attDom);

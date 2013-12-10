@@ -379,6 +379,17 @@ QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name) {
     return QUrl::fromLocalFile(filename);
 }
 
+QString Ilwis3Connector::outputNameFor(const IlwisObject *obj) {
+    QUrl url = obj->source(IlwisObject::cmOUTPUT).url();
+    if ( url.isValid() && url.scheme() == "file") {
+        QFileInfo inf(url.toLocalFile());
+        return inf.absolutePath() + "/"+ inf.baseName();
+    } else {
+        QString dir = context()->workingCatalog()->location().toLocalFile();
+        return dir + "/" + obj->name();
+    }
+    return sUNDEF;
+}
 
 
 

@@ -19,7 +19,7 @@ protected:
     bool loadMetaData(Ilwis::IlwisObject *data);
     bool storeMetaData(IlwisObject *obj, IlwisTypes type, const DataDefinition& datadef) ;
     bool storeBinaryData(IlwisObject *obj, IlwisTypes tp);
-    TableConnector *createTableConnector(ITable &attTable, Coverage *coverage, IlwisTypes tp);
+    TableConnector *createTableStoreConnector(ITable &attTable, Coverage *coverage, IlwisTypes tp);
 
     RawConverter _converter;
     DataDefinition determineDataDefintion() const;
