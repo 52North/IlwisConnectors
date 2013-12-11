@@ -279,7 +279,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     for(quint32 i= 0; i < mpsTable.rows(); ++i) {
         std::vector<Coordinate > coords;
         mpsTable.get(i,colCoords,coords);
-        Line2D<Coordinate2d > line;
+        Line2D line;
         line.resize(coords.size());
         std::copy(coords.begin(), coords.end(), line.begin());
         mpsTable.get(i, colItemId,value);
@@ -463,7 +463,7 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
         const Geometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
             if ( geom.geometryType() == itLINE) {
-                Line2D<Coordinate2d> line = geom.toType<Line2D<Coordinate2d>>();
+                Line2D line = geom.toType<Line2D>();
                 const Coordinate2d& crdmin = geom.envelope().min_corner();
                 const Coordinate2d& crdmax = geom.envelope().max_corner();
                 writeCoord(output_file, crdmin);

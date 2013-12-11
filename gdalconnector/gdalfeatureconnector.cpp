@@ -414,7 +414,7 @@ void GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage, OGRGeometryH geo
          if (!attTable.isValid())
              return ;
 
-         Line2D<Coordinate2d > line;
+         Line2D line;
          line.resize(count);
          for(int i = 0; i < count; ++i) {
              double x,y,z;
@@ -653,7 +653,7 @@ int GdalFeatureConnector::ilwisType2Index(IlwisTypes tp)
 
 OGRGeometryH GdalFeatureConnector::createLine2D(const SPFeatureI& feature) {
     OGRGeometryH hgeom = gdal()->createGeometry(wkbLineString);
-    Line2D<Coordinate2d> line = feature->geometry().toType<Line2D<Coordinate2d>>();
+    Line2D line = feature->geometry().toType<Line2D>();
     for(int i=0; i < line.size(); ++i) {
         Coordinate crd = line[i];
         gdal()->add2dPoint(hgeom,i, crd.x(), crd.y());
