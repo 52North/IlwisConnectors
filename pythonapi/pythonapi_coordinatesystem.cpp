@@ -16,13 +16,6 @@
 
 using namespace pythonapi;
 
-CoordinateSystem::CoordinateSystem(){
-    Ilwis::IConventionalCoordinateSystem cs;
-    cs.prepare();
-    if (cs.isValid())
-        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(cs));
-}
-
 CoordinateSystem::CoordinateSystem(Ilwis::ICoordinateSystem *cs): IlwisObject(new Ilwis::IIlwisObject(*cs)){
 }
 
