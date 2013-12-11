@@ -24,7 +24,8 @@ SOURCES += \
     wfsconnector/wfscatalogconnector.cpp \
     wfsconnector/wfsmodule.cpp \
     wfsconnector/wfsfeatureconnector.cpp \
-    wfsconnector/wfs.cpp
+    wfsconnector/wfs.cpp \
+    wfsconnector/wfsresponse.cpp
 
 HEADERS += \
     wfsconnector/wfsobjectfactory.h \
@@ -33,7 +34,8 @@ HEADERS += \
     wfsconnector/wfsmodule.h \
     wfsconnector/wfsfeatureconnector.h \
     wfsconnector/wfs.h \
-    wfsconnector/wfsconnector_global.h
+    wfsconnector/wfsconnector_global.h \
+    wfsconnector/wfsresponse.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \

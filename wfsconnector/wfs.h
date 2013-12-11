@@ -1,29 +1,31 @@
 #ifndef WFS_H
 #define WFS_H
 
-#include <QObject>
-#include <QNetworkReply>
-#include <QNetworkAccessManager>
+#include "wfsconnector_global.h"
 
-#include "pugixml/pugixml.hpp"
+class WfsResponse;
+class QNetworkAccessManager;
+class QUrl;
 
 namespace Ilwis {
+
 namespace  Wfs {
 
-class WebFeatureService : public QObject
+class WFSCONNECTORSHARED_EXPORT WebFeatureService
 {
-    Q_OBJECT
 
 public:
-    WebFeatureService(const Resource &resource);
+    WebFeatureService(QUrl wfsUrl);
 
-    pugi::xml_parse_result getCapabilities();
-    pugi::xml_parse_result describeFeatureType(Resource &featureType);
-    pugi::xml_parse_result getFeature(Resource& featureType);
+    WfsResponse *getCapabilities();
+    WfsResponse *describeFeatureType();
+    WfsResponse *getFeature();
 
 private:
-    QNetworkAccessManager* _networkManager;
-    Resource& _resource;
+    QUrl _resource;
+
+    WfsResponse *performSyncRequest(QUrl request);
+    WfsResponse *performAsyncRequest(QUrl request);
 };
 
 }

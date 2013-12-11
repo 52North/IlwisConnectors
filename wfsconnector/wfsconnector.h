@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "WfsConnector_global.h"
+#include "wfsconnector_global.h"
 #include "kernel.h"
 #include "connectorinterface.h"
 #include "containerconnector.h"
@@ -30,7 +30,6 @@ public:
 
 protected:
     bool loadMetaData(IlwisObject* data);
-    bool storeMetaData(const IlwisObject* data, IlwisTypes type) const;
     bool loadBinaryData(IlwisObject* ) { return false; }
 
 };

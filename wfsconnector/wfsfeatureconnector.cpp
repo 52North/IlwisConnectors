@@ -42,9 +42,38 @@ Ilwis::IlwisObject* WfsFeatureConnector::create() const {
     return new FeatureCoverage(this->_resource);
 }
 
-bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
+bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
+{
+    if (!WfsConnector::loadMetaData(data)) {
+        return false;
+    }
+
+    // TODO: load Feature metadata and fill coverage
+
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+    IlwisTypes coverageType = itUNKNOWN;
+    int featureCount = 0;
+    Box2D<double> bbox;
+    bool initMinMax = 0;
+
+    ITable attTable;
+    Resource resource(QUrl(QString("ilwis://internalcatalog/%1_%2").arg(fcoverage->name()).arg(fcoverage->id())), itFLATTABLE);
+    if(!attTable.prepare(resource)) {//only internalTableconnector is used! own class not needed
+        ERROR1(ERR_NO_INITIALIZED_1,resource.name());
+        return false;
+    }
+    IDomain dmKey;
+    dmKey.prepare("count");
+    ColumnDefinition colKey(FEATUREIDCOLUMN, dmKey, 0);
+    attTable->addColumn(colKey);
+    ColumnDefinition colCovKey(COVERAGEKEYCOLUMN, dmKey, 1);
+    attTable->addColumn(colCovKey);
+
+    // TODO: Fill attribute/domains via DescribeFeatureType
 
 
+
+    return false;
 }
 
 

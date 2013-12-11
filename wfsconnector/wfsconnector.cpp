@@ -8,6 +8,23 @@
 
 #include "kernel.h"
 #include "ilwisdata.h"
+#include "geometries.h"
+#include "range.h"
+#include "domain.h"
+#include "datadefinition.h"
+#include "ellipsoid.h"
+#include "geodeticdatum.h"
+#include "projection.h"
+#include "coordinatesystem.h"
+#include "columndefinition.h"
+#include "table.h"
+#include "catalog.h"
+#include "polygon.h"
+#include "geometry.h"
+#include "attributerecord.h"
+#include "feature.h"
+#include "coverage.h"
+#include "featurecoverage.h"
 #include "connectorinterface.h"
 #include "containerconnector.h"
 #include "ilwisobjectconnector.h"
@@ -31,21 +48,12 @@ QString WfsConnector::provider() const
 
 bool WfsConnector::loadMetaData(IlwisObject *data)
 {
-    WebFeatureService wfs(_resource.url());
-    wfs.getCapabilities();
+    // TODO: load WFS metadata
 
     return false;
 }
 
-bool WfsConnector::storeMetaData(const IlwisObject *obj, IlwisTypes type) const
-{
-    return false;
-}
 
-void WfsConnector::finishedSlot(QNetworkReply *reply)
-{
-
-}
 
 
 

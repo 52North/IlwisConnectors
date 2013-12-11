@@ -37,6 +37,8 @@
 #include "wfscatalogconnector.h"
 #include "ilwisobjectfactory.h"
 #include "wfsobjectfactory.h"
+#include "wfsresponse.h"
+#include "wfs.h"
 
 using namespace Ilwis;
 using namespace Wfs;
@@ -63,15 +65,17 @@ void WfsModule::prepare()
     factory->prepare();
     kernel()->addFactory(factory );
 
-    CatalogConnectorFactory *catfact = kernel()->factory<CatalogConnectorFactory>("catalogconnectorfactory", "ilwis");
-    if ( catfact)
+    CatalogConnectorFactory *catfact = kernel()->factory<CatalogConnectorFactory>("ilwis::catalogconnectorfactory");
+    if ( catfact) {
         catfact->add(WfsCatalogConnector::create);
+    }
 
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    if (!cfactory)
-        return ;
+    if (cfactory) {
+        cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
+    }
 
-    cfactory->addCreator(itFEATURE,"wfs", WfsFeatureConnector::create);
+
     //IlwisObject::addTypeFunction(WfsConnector::ilwisType);
 }
 
