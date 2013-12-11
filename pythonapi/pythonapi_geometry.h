@@ -8,6 +8,7 @@
 namespace Ilwis{
     class Geometry;
     class SPFeatureI;
+    template<typename CrdType> class Point3D;
 }
 
 namespace pythonapi {
@@ -42,11 +43,23 @@ namespace pythonapi {
 
     class Coordinate{
     public:
-        Coordinate(double x, double y, double z = -1e308);//rUNDEF = -1e308
+        Coordinate(double x, double y);
+        Coordinate(double x, double y, double z);
         const char* __str__();
+        Ilwis::Point3D<double>& data();
     private:
         bool _2d;
-        double _x,_y,_z;
+        std::shared_ptr<Ilwis::Point3D<double> > _data;
+    };
+
+    class Voxel{
+    public:
+        Voxel(const Ilwis::Point3D<qint32>& vox);
+        Voxel(qint32 x, qint32 y, qint32 z);
+        const char* __str__();
+        Ilwis::Point3D<qint32>& data();
+    private:
+        std::shared_ptr<Ilwis::Point3D<qint32> > _data;
     };
 
     class Pixel{

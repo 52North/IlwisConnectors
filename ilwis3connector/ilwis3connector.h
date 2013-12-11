@@ -16,6 +16,8 @@ public:
     static IlwisTypes ilwisType(const QString &name);
     static QString name2Code(const QString &name, const QString &type);
     static QString code2name(const QString &code, const QString &type);
+    static QString outputNameFor(const IlwisObject *obj);
+
     QString provider() const;
     virtual bool storeBinaryData(IlwisObject* ) { return false; }
     virtual bool storeMetaData(IlwisObject* )  { return false; }

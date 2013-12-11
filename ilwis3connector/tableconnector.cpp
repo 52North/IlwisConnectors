@@ -228,11 +228,11 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
     const Table *tbl = static_cast<const Table *>(obj);
     int reduceColumns = 1; // the featured_id column will not be go the ilwis3, useless info at that level
 
-
+    QFileInfo inf(_attributeDomain);
     _odf->setKeyValue("Ilwis", "Type", "Table");
     _odf->setKeyValue("Ilwis", "Class", "Table");
-    _odf->setKeyValue("Table", "Domain", _attributeDomain);
-    _odf->setKeyValue("Table", "DomainInfo", QString("%1;Long;UniqueID;0;;").arg(_attributeDomain));
+    _odf->setKeyValue("Table", "Domain", inf.fileName());
+    _odf->setKeyValue("Table", "DomainInfo", QString("%1;Long;UniqueID;0;;").arg(inf.fileName()));
     _odf->setKeyValue("Table", "Columns", QString::number(tbl->columnCount() - reduceColumns));
     _odf->setKeyValue("Table", "Records", QString::number(tbl->recordCount()));
     _odf->setKeyValue("Table", "Type", "TableStore");

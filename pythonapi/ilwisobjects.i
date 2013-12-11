@@ -21,6 +21,7 @@
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_featureiterator.h"
 #include "pythonapi_rastercoverage.h"
+#include "pythonapi_pixeliterator.h"
 %}
 
 %include "pythonapi_qtGNUTypedefs.h"
@@ -64,7 +65,9 @@
 
 
 namespace pythonapi {
-    void muteIssueLogger(); //(pythonapi_ilwis.h)
+    //(pythonapi_ilwis.h)
+    void disconnectIssueLogger();
+    void connectIssueLogger();
 }
 
 %include "pythonapi_object.h"
@@ -114,9 +117,6 @@ namespace pythonapi {
 %insert("python") %{
     def __iter__(self):
         return self
-%}
-
-%insert("python") %{
     def __next__(self):
         if self.hasNext():
             return self.next()
@@ -124,13 +124,6 @@ namespace pythonapi {
             raise StopIteration
 %}
 }
-
-//%include "std_vector.i"
-//%include "std_string.i"
-//// Instantiate templates used by example
-//namespace std {
-// %template(StdVector_String) vector<string>;
-//}
 
 %extend pythonapi::FeatureCoverage {
 %insert("python") %{
@@ -140,3 +133,25 @@ namespace pythonapi {
 }
 
 %include "pythonapi_rastercoverage.h"
+
+%include "pythonapi_pixeliterator.h"
+
+%extend pythonapi::PixelIterator {
+%insert("python") %{
+    def __iter__(self):
+        return self
+    def __next__(self):
+        if self.hasNext():
+            return self.next()
+        else:
+            raise StopIteration
+%}
+}
+
+%extend pythonapi::RasterCoverage {
+%insert("python") %{
+    def __iter__(self):
+        return PixelIterator(self)
+%}
+}
+

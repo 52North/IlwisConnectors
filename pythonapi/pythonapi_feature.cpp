@@ -118,22 +118,6 @@ void Feature::setAttribute(const char *name, PyVariant &value, int index){
     this->ptr()->setCell(QString(name), value.data(), index);
 }
 
-void Feature::__setitem__(const char *name,int value){
-    this->setAttribute(name,value);
-}
-
-void Feature::setAttribute(const char *name, int value, int index){
-    this->ptr()->setCell(QString(name), QVariant(value), index);
-}
-
-void Feature::__setitem__(const char *name,uint value){
-    this->setAttribute(name,value);
-}
-
-void Feature::setAttribute(const char *name, uint value, int index){
-    this->ptr()->setCell(QString(name), QVariant(value), index);
-}
-
 void Feature::__setitem__(const char *name,qlonglong value){
     this->setAttribute(name,value);
 }
@@ -150,27 +134,11 @@ void Feature::setAttribute(const char *name, qulonglong value, int index){
     this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 
-void Feature::__setitem__(const char *name,bool value){
-    this->setAttribute(name,value);
-}
-
-void Feature::setAttribute(const char *name, bool value, int index){
-    this->ptr()->setCell(QString(name), QVariant(value), index);
-}
-
 void Feature::__setitem__(const char *name,double value){
     this->setAttribute(name,value);
 }
 
 void Feature::setAttribute(const char *name, double value, int index){
-    this->ptr()->setCell(QString(name), QVariant(value), index);
-}
-
-void Feature::__setitem__(const char *name,float value){
-    this->setAttribute(name,value);
-}
-
-void Feature::setAttribute(const char *name, float value, int index){
     this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 

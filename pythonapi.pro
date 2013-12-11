@@ -26,7 +26,8 @@ HEADERS += \
     pythonapi/pythonapi_pyvariant.h \
     pythonapi/pythonapi_geometry.h \
     pythonapi/pythonapi_container.h \
-    pythonapi/pythonapi_qtGNUTypedefs.h
+    pythonapi/pythonapi_qtGNUTypedefs.h \
+    pythonapi/pythonapi_pixeliterator.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
@@ -43,7 +44,8 @@ SOURCES += \
     pythonapi/pythonapi_pyvariant.cpp \
     pythonapi/pythonapi_pyerror.cpp \
     pythonapi/pythonapi_geometry.cpp \
-    pythonapi/pythonapi_pycontainer.cpp
+    pythonapi/pythonapi_pycontainer.cpp \
+    pythonapi/pythonapi_pixeliterator.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \

@@ -3,11 +3,30 @@
 
 from ilwisobjects import *
 
+def data():
+    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest"
+    Engine.setWorkingCatalog(workingDir)
+    fc = FeatureCoverage("rainfall.shp")
+    testvalues = (-9223372036854775808,-9223372036854775809,18446744073709551615,18446744073709551616,0.432,23.4e-32)
+    if fc:
+        print("successfully loaded", fc.name())
+        if fc.addAttribute("highest","value"):
+            i = 0
+            for f in fc:
+                try:
+                    f["highest"] = testvalues[i%len(testvalues)]
+                    print(testvalues[i%len(testvalues)],"::",f["highest"])
+                except OverflowError as e:
+                    print(e)
+                i += 1
+
+
 #further tests on all the working api calls
 def main():
     workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata/pytest"
     Engine.setWorkingCatalog(workingDir)
-    #muteIssueLogger()
+    disconnectIssueLogger()
+    connectIssueLogger()
     print("-----------------------------------------------")
     #Gridding
     localcoordsystem = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
@@ -44,7 +63,7 @@ def main():
         sum = 0
         for f in fc:
             sum += float(f.attribute("MAY",0))
-            f.setAttribute("highest",sum)
+            f["highest"] = sum
             print(f, end=":")
             print(f.geometry(), end=">")
             for a in fc.attributes():
@@ -96,36 +115,37 @@ def main():
     rctif = RasterCoverage("n0.mpr")
     if (rc and rctif):
         print("successfully loaded",rc.name(),"and",rctif.name())
-        print(rc.name()+".value(342,342,0) =>",rc.value(342,342,0))
-        print(rctif.name()+".value(342,342,0) =>",rctif.value(342,342,0))
+        print(rc.name()+".pix2value(342,342,0) =>",rc.pix2value(342,342,0))
+        print(rc.name()+".coord2value(Coordinate(-1871900.47,1874237.55)) =>",rc.coord2value(Coordinate(-1871900.47,1874237.55)))
+        print(rctif.name()+".pix2value(342,342,0) =>",rctif.pix2value(342,342,0))
         print("-----------------------------------------------")
         aa7 = Engine.do("sin","n000302.mpr")
-        print("sin(n000302.mpr)=>",aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
+        print("sin(n000302.mpr)=>",aa7.name()+".pix2value(342,342,0)=>",aa7.pix2value(342,342,0))
         print("-----------------------------------------------")
         aa1 = rc + rctif
-        print(rc.name(), " + ", rctif.name(), " = ", aa1.name()+".value(342,342,0)=>",aa1.value(342,342,0))
+        print(rc.name(), " + ", rctif.name(), " = ", aa1.name()+".pix2value(342,342,0)=>",aa1.pix2value(342,342,0))
 #        aa2 = rc + 2
-#        print(rc.name(), " + 2 = ", aa2.name()+".value(342,342,0)=>",aa2.value(342,342,0))
+#        print(rc.name(), " + 2 = ", aa2.name()+".pix2value(342,342,0)=>",aa2.pix2value(342,342,0))
 #        aa3 = 2 + rc
-#        print("2 + ", rc.name(), " = ", aa3.name()+".value(342,342,0)=>",aa3.value(342,342,0))
+#        print("2 + ", rc.name(), " = ", aa3.name()+".pix2value(342,342,0)=>",aa3.pix2value(342,342,0))
 #        aa4 = rc - rctif
-#        print(rc.name(), " - ", rc.name(), " = ", aa4.name()+".value(342,342,0)=>",aa4.value(342,342,0))
+#        print(rc.name(), " - ", rc.name(), " = ", aa4.name()+".pix2value(342,342,0)=>",aa4.pix2value(342,342,0))
 #        aa5 = 2 - rc #until now this is parsed as "rc - 2" :(
-#        print("2 - ", rc.name(), " = ", aa5.name()+".value(342,342,0)=>",aa5.value(342,342,0))
+#        print("2 - ", rc.name(), " = ", aa5.name()+".pix2value(342,342,0)=>",aa5.pix2value(342,342,0))
 #        aa6 = rc - 2
-#        print(rc.name(), " - 2 = ", aa6.name()+".value(342,342,0)=>",aa6.value(342,342,0))
+#        print(rc.name(), " - 2 = ", aa6.name()+".pix2value(342,342,0)=>",aa6.pix2value(342,342,0))
 #        aa7 = rc / rctif
-#        print(rc.name(), " / ", rc.name(), " = ", aa7.name()+".value(342,342,0)=>",aa7.value(342,342,0))
+#        print(rc.name(), " / ", rc.name(), " = ", aa7.name()+".pix2value(342,342,0)=>",aa7.pix2value(342,342,0))
 #        aa8 = 2 / rc #until now this is parsed as "rc / 2" :(
-#        print("2 / ", rc.name(), " = ", aa8.name()+".value(342,342,0)=>",aa8.value(342,342,0))
+#        print("2 / ", rc.name(), " = ", aa8.name()+".pix2value(342,342,0)=>",aa8.pix2value(342,342,0))
 #        aa9 = rc / 2
-#        print(rc.name(), " / 2 = ", aa9.name()+".value(342,342,0)=>",aa9.value(342,342,0))
+#        print(rc.name(), " / 2 = ", aa9.name()+".pix2value(342,342,0)=>",aa9.pix2value(342,342,0))
 #        aa10 = rc * rctif
-#        print(rc.name(), " * ", rc.name(), " = ", aa10.name()+".value(342,342,0)=>",aa10.value(342,342,0))
+#        print(rc.name(), " * ", rc.name(), " = ", aa10.name()+".pix2value(342,342,0)=>",aa10.pix2value(342,342,0))
 #        aa11 = 2 * rc
-#        print("2 * ", rc.name(), " = ", aa11.name()+".value(342,342,0)=>",aa11.value(342,342,0))
+#        print("2 * ", rc.name(), " = ", aa11.name()+".pix2value(342,342,0)=>",aa11.pix2value(342,342,0))
 #        aa12 = rc * 2
-#        print(rc.name(), " * 2 = ", aa12.name()+".value(342,342,0)=>",aa12.value(342,342,0))
+#        print(rc.name(), " * 2 = ", aa12.name()+".pix2value(342,342,0)=>",aa12.pix2value(342,342,0))
         print("-----------------------------------------------")
         #store to file
         if aa1.connectTo(workingDir+"/aa1", "GTiff","gdal",IlwisObject.cmOUTPUT):
@@ -137,6 +157,10 @@ def main():
             print("connectTo file failed!")
     else:
         print("couldn't load RasterCoverage")
+    rcl = RasterCoverage("small.mpl")
+    if rcl:
+        for v in rcl:
+            print(v,end="|")
 
 def claudio_example():#and martins solution proposal <== example code for presentation
     ilwisengine = Engine()
@@ -269,7 +293,8 @@ def raul_martin_solution():
 
 #here you can chose which test case will be executed
 if __name__ == "__main__":
+#    data()
     main()
-    hello_raster()
-    hello_feature()
-    claudio_example()
+#    hello_raster()
+#    hello_feature()
+#    claudio_example()

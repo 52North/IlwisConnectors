@@ -19,13 +19,7 @@
 
 using namespace pythonapi;
 
-FeatureIterator::FeatureIterator(FeatureCoverage* fc){
-    this->_coverage = fc;
-    this->_ilwisFeatureIterator = new Ilwis::FeatureIterator((*fc->ptr()));
-}
-
-FeatureIterator::~FeatureIterator(){
-    delete this->_ilwisFeatureIterator;
+FeatureIterator::FeatureIterator(FeatureCoverage* fc):  _coverage(fc),_ilwisFeatureIterator(new Ilwis::FeatureIterator((*fc->ptr()))){
 }
 
 Feature FeatureIterator::next(){
