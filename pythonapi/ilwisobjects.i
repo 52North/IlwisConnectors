@@ -18,10 +18,10 @@
 #include "pythonapi_object.h"
 #include "pythonapi_geometry.h"
 #include "pythonapi_feature.h"
-#include "pythonapi_featurecoverage.h"
 #include "pythonapi_featureiterator.h"
-#include "pythonapi_rastercoverage.h"
+#include "pythonapi_featurecoverage.h"
 #include "pythonapi_pixeliterator.h"
+#include "pythonapi_rastercoverage.h"
 %}
 
 %include "pythonapi_qtGNUTypedefs.h"
@@ -63,9 +63,8 @@
     }
 }
 
-
 namespace pythonapi {
-    //(pythonapi_ilwis.h)
+    //instead of including whole (pythonapi_ilwis.h)
     void disconnectIssueLogger();
     void connectIssueLogger();
 }
@@ -106,52 +105,13 @@ namespace pythonapi {
 
 %include "pythonapi_geometry.h"
 
-%newobject pythonapi::Feature::attribute(const char*, int);//possibly no effect
 %include "pythonapi_feature.h"
-
-%include "pythonapi_featurecoverage.h"
 
 %include "pythonapi_featureiterator.h"
 
-%extend pythonapi::FeatureIterator {
-%insert("python") %{
-    def __iter__(self):
-        return self
-    def __next__(self):
-        if self.hasNext():
-            return self.next()
-        else:
-            raise StopIteration
-%}
-}
-
-%extend pythonapi::FeatureCoverage {
-%insert("python") %{
-    def __iter__(self):
-        return FeatureIterator(self)
-%}
-}
-
-%include "pythonapi_rastercoverage.h"
+%include "pythonapi_featurecoverage.h"
 
 %include "pythonapi_pixeliterator.h"
 
-%extend pythonapi::PixelIterator {
-%insert("python") %{
-    def __iter__(self):
-        return self
-    def __next__(self):
-        if self.hasNext():
-            return self.next()
-        else:
-            raise StopIteration
-%}
-}
-
-%extend pythonapi::RasterCoverage {
-%insert("python") %{
-    def __iter__(self):
-        return PixelIterator(self)
-%}
-}
+%include "pythonapi_rastercoverage.h"
 

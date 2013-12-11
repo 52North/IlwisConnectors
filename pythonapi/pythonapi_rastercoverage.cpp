@@ -85,6 +85,10 @@ double RasterCoverage::coord2value(pythonapi::Coordinate &c){
     return this->ptr()->get<Ilwis::RasterCoverage>()->coord2value(c.data());
 }
 
+PixelIterator RasterCoverage::__iter__(){
+    return PixelIterator(this);
+}
+
 double RasterCoverage::pix2value(double x, double y, double z){
     return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(Ilwis::Point3D<double>(x,y,z));
 }

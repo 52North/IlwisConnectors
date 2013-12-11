@@ -16,18 +16,24 @@
 #include "../../IlwisCore/core/ilwisobjects/coverage/featureiterator.h"
 
 #include "pythonapi_featureiterator.h"
+#include "pythonapi_ilwis.h"
+#include "pythonapi_featurecoverage.h"
 
 using namespace pythonapi;
 
 FeatureIterator::FeatureIterator(FeatureCoverage* fc):  _coverage(fc),_ilwisFeatureIterator(new Ilwis::FeatureIterator((*fc->ptr()))){
 }
 
-Feature FeatureIterator::next(){
-    std::unique_ptr<Ilwis::FeatureInterface>& f = (*(*this->_ilwisFeatureIterator));
-    (*this->_ilwisFeatureIterator)++;
-    return Feature(f, this->_coverage);
+Feature FeatureIterator::__next__(){
+    if ((*this->_ilwisFeatureIterator) != this->_ilwisFeatureIterator->end()){
+        std::unique_ptr<Ilwis::FeatureInterface>& f = (*(*this->_ilwisFeatureIterator));
+        (*this->_ilwisFeatureIterator)++;
+        return Feature(f, this->_coverage);
+    }else{
+        throw StopIteration();
+    }
 }
 
-bool FeatureIterator::hasNext(){
-    return ((*this->_ilwisFeatureIterator) != this->_ilwisFeatureIterator->end());
+FeatureIterator *FeatureIterator::__iter__(){
+    return this;
 }

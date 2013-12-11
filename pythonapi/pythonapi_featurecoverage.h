@@ -4,6 +4,7 @@
 #include "pythonapi_coverage.h"
 #include "pythonapi_feature.h"
 #include "pythonapi_geometry.h"
+#include "pythonapi_featureiterator.h"
 
 namespace Ilwis {
     class FeatureCoverage;
@@ -19,6 +20,7 @@ namespace pythonapi {
     public:
         FeatureCoverage();
         FeatureCoverage(const char* resource);
+        FeatureIterator __iter__();
         unsigned int featureCount() const;
         Feature newFeature(Geometry& geometry);
         static FeatureCoverage* toFeatureCoverage(Object *obj);

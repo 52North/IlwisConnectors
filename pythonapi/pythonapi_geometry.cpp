@@ -109,6 +109,7 @@ Voxel::Voxel(qint32 x, qint32 y, qint32 z): _data(new Ilwis::Point3D<>(x,y,z)){
 }
 
 const char* Voxel::__str__(){
+    //TODO kept (3D)pixel as string representation for use in Engine.do(..) better change to voxel(,,,)
     return QString("pixel(%1,%2,%3)").arg(this->_data->x()).arg(this->_data->y()).arg(this->_data->z()).toLocal8Bit();
 }
 

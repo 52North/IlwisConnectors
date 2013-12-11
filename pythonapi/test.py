@@ -52,7 +52,7 @@ def main():
             print("couln't add value attribute 'highest' to",fc.name())
         print("-----------------------------------------------")
         #adding new feature to coverage
-        it = fc.__iter__()#loadBinaryData
+        it = iter(fc)#loadBinaryData
         g = Geometry("POINT(5.4 6 9.0)")
         print(g)
         newF = fc.newFeature(g);
@@ -73,7 +73,7 @@ def main():
         del sum
         print("-----------------------------------------------")
         print("alter Geometry using WKT")
-        f = it.next()
+        f = next(it)
         print(f.geometry())
         check = False
         try:
@@ -157,10 +157,36 @@ def main():
             print("connectTo file failed!")
     else:
         print("couldn't load RasterCoverage")
+    print("-----------------------------------------------")
+    #iterate over pixel
     rcl = RasterCoverage("small.mpl")
     if rcl:
         for v in rcl:
             print(v,end="|")
+        print()
+        rit = iter(rcl)
+        if rit:
+            print("successfully created",rit)
+            print("iter(small.mpl)[23]=>",rit[23])
+            print("float(iter(small.mpl))=>",float(rit))
+            rit2 = rit + 3
+            print(rit.position(), "==", rit2.position(),"=>",rit == rit2)
+            print("float(iter(small.mpl)+=1)=>",float(rit2))
+            print("iter(small.mpl)[23]=434")
+            rit[23] = 434
+            print("iter(small.mpl)[23]=>",rit[23])
+            rit2 = PixelIterator(rit[Voxel(2,2,2)])
+            print("next(iter(small.mpl)[",rit.position(),"==",int(rit),"])=>",next(rit))
+            print(rit.position(),rit.xChanged(),rit.yChanged(),rit.zChanged())
+            print(rit.position(), "==", rit2.position(),"=>",rit == rit2)
+            print(rit.position(), "!=", rit2.position(),"=>",rit != rit2)
+            print(rit.position(), ">=", rit2.position(),"=>",rit >= rit2)
+            print(rit.position(), ">", rit2.position(),"=>",rit > rit2)
+            print(rit.position(), "<=", rit2.position(),"=>",rit <= rit2)
+            print(rit.position(), "<", rit2.position(),"=>",rit < rit2)
+            print("float(iter(small.mpl)[",rit.position(),"==",int(rit),"])=>",float(rit))
+    print("-----------------------------------------------")
+
 
 def claudio_example():#and martins solution proposal <== example code for presentation
     ilwisengine = Engine()
@@ -179,6 +205,8 @@ def claudio_example():#and martins solution proposal <== example code for presen
                 polygon.setAttribute("maxY", maxval)
 
     polygongrid.connectTo(workingDir+"/polygongrid", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+    polygongrid.store()
+    polygongrid.connectTo(workingDir+"/polygongrid", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
     polygongrid.store()
 
 def hello_raster():
