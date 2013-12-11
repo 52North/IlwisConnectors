@@ -52,6 +52,16 @@ namespace pythonapi {
         std::shared_ptr<Ilwis::Point3D<double> > _data;
     };
 
+    class Voxel{
+    public:
+        Voxel(const Ilwis::Point3D<qint32>& vox);
+        Voxel(qint32 x, qint32 y, qint32 z);
+        const char* __str__();
+        Ilwis::Point3D<qint32>& data();
+    private:
+        std::shared_ptr<Ilwis::Point3D<qint32> > _data;
+    };
+
     class Pixel{
     public:
         Pixel(qint32 x, qint32 y);
