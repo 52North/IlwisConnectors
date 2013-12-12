@@ -113,7 +113,24 @@ const char* Voxel::__str__(){
     return QString("pixel(%1,%2,%3)").arg(this->_data->x()).arg(this->_data->y()).arg(this->_data->z()).toLocal8Bit();
 }
 
-Ilwis::Point3D<qint32> &Voxel::data(){
+Ilwis::Point3D<qint32> &Voxel::data() const{
+    return (*this->_data);
+}
+
+Box::Box(): _data(new Ilwis::Box3D<>()){
+}
+
+Box::Box(const char *envelope): _data(new Ilwis::Box3D<>(envelope)){
+}
+
+Box::Box(const Voxel &min, const Voxel &max): _data(new Ilwis::Box3D<>(min.data(), max.data())){
+}
+
+const char *Box::__str__(){
+    return this->data().toString().toLocal8Bit();
+}
+
+Ilwis::Box3D<qint32> &Box::data() const{
     return (*this->_data);
 }
 

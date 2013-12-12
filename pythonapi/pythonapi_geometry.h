@@ -9,6 +9,8 @@ namespace Ilwis{
     class Geometry;
     class SPFeatureI;
     template<typename CrdType> class Point3D;
+    template<class CsyType> class Box2D;
+    template<class CsyType> class Box3D;
 }
 
 namespace pythonapi {
@@ -57,7 +59,7 @@ namespace pythonapi {
         Voxel(const Ilwis::Point3D<qint32>& vox);
         Voxel(qint32 x, qint32 y, qint32 z);
         const char* __str__();
-        Ilwis::Point3D<qint32>& data();
+        Ilwis::Point3D<qint32>& data() const;
     private:
         std::shared_ptr<Ilwis::Point3D<qint32> > _data;
     };
@@ -68,6 +70,17 @@ namespace pythonapi {
         const char* __str__();
     private:
         qint32 _x,_y;
+    };
+
+    class Box{
+    public:
+        Box();
+        Box(const char* envelope);
+        Box(const Voxel& min,const Voxel& max);
+        const char* __str__();
+        Ilwis::Box3D<qint32>& data() const;
+    private:
+        std::shared_ptr<Ilwis::Box3D<qint32> > _data;
     };
 
 

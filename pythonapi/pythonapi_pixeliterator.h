@@ -15,7 +15,8 @@ class RasterCoverage;
 class PixelIterator{
     public:
         PixelIterator(const PixelIterator &pi);
-        PixelIterator(RasterCoverage* rc);
+        PixelIterator(RasterCoverage* rc, const Box &b = Box());
+        ~PixelIterator();
         /**
          * @brief next confusingly returns current value bevore iterating to the next item
          * brings together C++ style "std::iterator it != it.end()" with end() pointing the back (after last entry)
@@ -44,20 +45,21 @@ class PixelIterator{
         PixelIterator& __getitem__(Voxel& vox);
         double __getitem__(quint32 position);
         void __setitem__(quint32 position, double value);
-        PixelIterator __add__(int n);
+        PixelIterator operator+ (int n);
         PixelIterator __radd__(int n);
-        PixelIterator* __iadd__(int n);
+        PixelIterator* operator+= (int n);
 
-        bool __eq__(const PixelIterator& other);
-        bool __ne__(const PixelIterator& other);
-        bool __le__(const PixelIterator& other);
-        bool __lt__(const PixelIterator& other);
-        bool __ge__(const PixelIterator& other);
-        bool __gt__(const PixelIterator& other);
+        bool operator==(const PixelIterator& other);
+        bool operator!=(const PixelIterator& other);
+        bool operator<=(const PixelIterator& other);
+        bool operator< (const PixelIterator& other);
+        bool operator>=(const PixelIterator& other);
+        bool operator> (const PixelIterator& other);
 private:
         Ilwis::PixelIterator& ptr() const;
         RasterCoverage* _coverage;
         std::shared_ptr<Ilwis::PixelIterator> _ilwisPixelIterator;
+        quint64 _endposition;
 };
 
 } // namespace pythonapi

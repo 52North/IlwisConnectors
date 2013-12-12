@@ -12,12 +12,18 @@
 
 namespace pythonapi {
 
-PixelIterator::PixelIterator(const PixelIterator& pi): _coverage(pi._coverage), _ilwisPixelIterator(new Ilwis::PixelIterator(pi.ptr())){
+PixelIterator::PixelIterator(const PixelIterator& pi): _coverage(pi._coverage), _ilwisPixelIterator(new Ilwis::PixelIterator(pi.ptr())), _endposition(pi._endposition){
 }
 
-PixelIterator::PixelIterator(RasterCoverage *rc): _coverage(rc){
-    if (rc && rc->__bool__())
-        this->_ilwisPixelIterator.reset(new Ilwis::PixelIterator((*rc->ptr())));
+PixelIterator::PixelIterator(RasterCoverage *rc, const Box &b): _coverage(rc){
+    if (rc && rc->__bool__()){
+        this->_ilwisPixelIterator.reset(new Ilwis::PixelIterator((*rc->ptr()), b.data()));
+        if ((bool)this->_ilwisPixelIterator && this->_ilwisPixelIterator->isValid())
+            this->_endposition = this->_ilwisPixelIterator->end().linearPosition();
+    }
+}
+
+PixelIterator::~PixelIterator(){
 }
 
 PixelIterator* PixelIterator::__iter__(){
@@ -26,7 +32,7 @@ PixelIterator* PixelIterator::__iter__(){
 
 double PixelIterator::__next__(){
     Ilwis::PixelIterator& iter = this->ptr();
-    if (iter != iter.end()){
+    if (iter.linearPosition() != this->_endposition){
         double d = (*iter);
         ++iter;
         return d;
@@ -41,7 +47,7 @@ bool PixelIterator::__bool__() const{
 
 const char *PixelIterator::__str__(){
     if (this->__bool__())
-        return QString("PixelIterator for %1").arg(this->_coverage->__str__()).toLocal8Bit();
+        return QString("PixelIterator for %1 at position %2").arg(QString(QByteArray(this->_coverage->name()))).arg((QString(QByteArray(this->position().__str__())))).toLocal8Bit();
     else
         return "invalid PixelIterator";
 }
@@ -83,44 +89,44 @@ void PixelIterator::__setitem__(quint32 position, double value){
     this->ptr()[position] = value;
 }
 
-PixelIterator PixelIterator::__add__(int n){
+PixelIterator PixelIterator::operator+ (int n){
     PixelIterator iter(*this);
-    iter.ptr() + n;
+    iter.ptr() += n;
     return iter;
 }
 
 PixelIterator PixelIterator::__radd__(int n){
     PixelIterator iter(*this);
-    iter.ptr() + n;
+    iter.ptr() += n;
     return iter;
 }
 
-PixelIterator* PixelIterator::__iadd__(int n){
+PixelIterator* PixelIterator::operator+= (int n){
     this->ptr() += n;
     return this;
 }
 
-bool PixelIterator::__eq__(const PixelIterator &other){
+bool PixelIterator::operator== (const PixelIterator &other){
     return this->ptr() == other.ptr();
 }
 
-bool PixelIterator::__ne__(const PixelIterator &other){
+bool PixelIterator::operator!= (const PixelIterator &other){
     return this->ptr() != other.ptr();
 }
 
-bool PixelIterator::__le__(const PixelIterator &other){
+bool PixelIterator::operator<=(const PixelIterator &other){
     return this->ptr() <= other.ptr();
 }
 
-bool PixelIterator::__lt__(const PixelIterator &other){
+bool PixelIterator::operator< (const PixelIterator &other){
     return this->ptr() < other.ptr();
 }
 
-bool PixelIterator::__ge__(const PixelIterator &other){
+bool PixelIterator::operator>=(const PixelIterator &other){
     return this->ptr() >= other.ptr();
 }
 
-bool PixelIterator::__gt__(const PixelIterator &other){
+bool PixelIterator::operator> (const PixelIterator &other){
     return this->ptr() > other.ptr();
 }
 
