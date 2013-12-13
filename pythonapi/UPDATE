@@ -12,6 +12,10 @@ installation directory:
 --2-- ILWIS Binaries
 copy the new version of ILWIS (ilwiscore.dll) and associated plug-ins to your ILWIS installation directory:
 
-<yourPathToILWIS>\ <---contains ilwiscore.dll|log|extensions|qml|resources
+<yourPathToILWIS>\ <---contains ilwiscore.dll|log|extensions|resources
 
-The configuration of qt can remain as stated in the INSTALL instructions.
+The configuration of qt.conf the PATH environment and ilwisobjects.conf can remain as stated in the INSTALL
+instructions.
+
+--3-- test.py
+The test script contains new/changed API calls which might be interesting to you as well...
