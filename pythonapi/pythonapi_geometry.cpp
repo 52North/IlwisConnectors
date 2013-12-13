@@ -117,7 +117,10 @@ Ilwis::Point3D<qint32> &Voxel::data() const{
     return (*this->_data);
 }
 
-Box::Box(): _data(new Ilwis::Box3D<>()){
+Box::Box():_data(new Ilwis::Box3D<>()){
+}
+
+Box::Box(const Ilwis::Box3D<qint32>& box): _data(new Ilwis::Box3D<>(box)){
 }
 
 Box::Box(const char *envelope): _data(new Ilwis::Box3D<>(envelope)){
@@ -130,8 +133,72 @@ const char *Box::__str__(){
     return this->data().toString().toLocal8Bit();
 }
 
+Size Box::size(){
+    return Size(this->data().size());
+}
+
 Ilwis::Box3D<qint32> &Box::data() const{
     return (*this->_data);
 }
+
+Size::Size(qint32 x, qint32 y, qint32 z):_data(new Ilwis::Size(x,y,z)){
+}
+
+Size::Size(const Ilwis::Size &size):_data(new Ilwis::Size(size)){
+}
+
+Size* Size::operator+=(const Size &sz){
+    return new Size(this->data() += sz.data());
+}
+
+Size* Size::operator-=(const Size &sz){
+    return new Size(this->data() -= sz.data());
+}
+
+Size* Size::operator*=(double f){
+    return new Size(this->data() *= f);
+}
+
+qint32 Size::xsize() const{
+    return this->data().xsize();
+}
+
+qint32 Size::ysize() const{
+    return this->data().ysize();
+}
+
+qint32 Size::zsize() const{
+    return this->data().zsize();
+}
+
+void Size::xsize(qint32 x){
+    this->data().xsize(x);
+}
+
+void Size::ysize(qint32 y){
+    this->data().ysize(y);
+}
+
+void Size::zsize(qint32 z){
+    this->data().zsize(z);
+}
+
+quint64 Size::linearSize() const{
+    return this->data().totalSize();
+}
+
+bool Size::contains(qint32 x, qint32 y, qint32 z) const{
+    return this->data().contains(x,y,z);
+}
+
+std::string Size::__str__(){
+    return QString("Size(%1 %2 %3)").arg(this->data().xsize()).arg(this->data().ysize()).arg(this->data().zsize()).toStdString();
+}
+
+Ilwis::Size &Size::data() const{
+    return (*this->_data);
+}
+
+
 
 }//namespace pythonapi

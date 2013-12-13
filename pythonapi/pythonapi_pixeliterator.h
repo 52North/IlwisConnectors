@@ -38,6 +38,8 @@ class PixelIterator{
          */
         quint64 __int__();
 
+        bool contains(qint32 x, qint32 y, qint32 z);
+        Box box();
         Voxel position();
         bool xChanged();
         bool yChanged();

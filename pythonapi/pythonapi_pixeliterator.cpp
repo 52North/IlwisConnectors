@@ -60,6 +60,15 @@ quint64 PixelIterator::__int__(){
     return this->ptr().linearPosition();
 }
 
+bool PixelIterator::contains(qint32 x, qint32 y, qint32 z){
+    //TODO Ilwis::PixelIterator::contains(Pixel==Point2D) is not good for 3D Iterator
+    return this->ptr().contains(Ilwis::Point2D<qint32>(x,y));
+}
+
+Box PixelIterator::box(){
+    return Box(this->ptr().box());
+}
+
 Voxel PixelIterator::position(){
     return Voxel(this->ptr().position());
 }

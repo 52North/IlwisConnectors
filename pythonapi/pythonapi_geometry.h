@@ -11,6 +11,7 @@ namespace Ilwis{
     template<typename CrdType> class Point3D;
     template<class CsyType> class Box2D;
     template<class CsyType> class Box3D;
+    class Size;
 }
 
 namespace pythonapi {
@@ -72,17 +73,41 @@ namespace pythonapi {
         qint32 _x,_y;
     };
 
+    class Size{
+    public:
+        Size(qint32 x, qint32 y, qint32 z=1);
+        Size(const Ilwis::Size& size);
+
+        Size* operator+=(const Size& sz);
+        Size* operator-=(const Size& sz);
+        Size* operator*=(double f);
+        qint32 xsize() const;
+        qint32 ysize() const;
+        qint32 zsize() const;
+        void xsize(qint32 x);
+        void ysize(qint32 y);
+        void zsize(qint32 z);
+        quint64 linearSize() const;
+
+        bool contains(qint32 x, qint32 y, qint32 z=0) const;
+        std::string __str__();
+        Ilwis::Size& data() const;
+    private:
+        std::shared_ptr<Ilwis::Size > _data;
+    };
+
     class Box{
     public:
         Box();
+        Box(const Ilwis::Box3D<qint32>& box);
         Box(const char* envelope);
         Box(const Voxel& min,const Voxel& max);
         const char* __str__();
+        Size size();
         Ilwis::Box3D<qint32>& data() const;
     private:
         std::shared_ptr<Ilwis::Box3D<qint32> > _data;
     };
-
 
 } // namespace pythonapi
 

@@ -10,16 +10,11 @@ def main():
     feature("/pytest")
     data("/pytest")
     coordinateSystem("/pytest")
-    pixelIterator("/pytest")
     raster("/pytest")
     hello_raster("/baby")
     hello_feature("/baby")
     claudio_example("/example")
-
-def cheese():
-    c = Cheese("Gouda")
-    dic = {c : "lecker"}
-    print("ist",dic[c], hash(c))
+    pixelIterator("/pytest")
 
 def data(subDir):
     Engine.setWorkingCatalog(workingDir+subDir)
@@ -68,7 +63,7 @@ def feature(subDir):
             print("couln't add value attribute 'highest' to",fc.name())
         print("-----------------------------------------------")
         #adding new feature to coverage
-        it = iter(fc)#loadBinaryData
+        it = iter(fc)#a HACK to loadBinaryData before newFeature is created/added to the FeatureCoverage!
         g = Geometry("POINT(5.4 6 9.0)")
         print(g)
         newF = fc.newFeature(g);
@@ -183,12 +178,18 @@ def pixelIterator(subDir):
     #iterate over pixel
     rcl = RasterCoverage("small.mpl")
     if rcl:
-        for v in rcl:
-            print(v,end="|")
+        print()
+        it = iter(rcl)
+        if it:
+            for i in range(175):
+                print(next(it),end="|")
+                if it.yChanged():
+                    print()
+                if it.zChanged():
+                    print("====================")
         print()
         rit = iter(rcl)
         if rit:
-            print("successfully created",rit)
             rit += 4
             rit2 = rit + 3
             rit3 = 13 + rit
@@ -209,6 +210,17 @@ def pixelIterator(subDir):
             print(rit.position(), "<=", rit2.position(),"=>",rit <= rit2)
             print(rit.position(), "<", rit2.position(),"=>",rit < rit2)
             print("float(iter(small.mpl)[",rit.position(),"==",int(rit),"])=>",float(rit))
+        box = Box("(1 1 0,2 2 3)")
+        print("PixelIterator(",rcl.name(),",",box,")")
+        bit = PixelIterator(rcl,box)
+        if bit:
+            for i in range(bit.box().size().linearSize()):
+                print("(",bit.position(),")",next(bit),end="|")
+                if bit.yChanged():
+                    print()
+                if bit.zChanged():
+                    print("====================")
+            print()
 
 
 def claudio_example(subDir):#and martins solution proposal <== example code for presentation
@@ -251,3 +263,5 @@ def hello_feature(subDir):
 #here you can chose which test case will be executed
 if __name__ == "__main__":
     main()
+
+
