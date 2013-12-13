@@ -79,7 +79,7 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data){
             }
             QString ellipsoidName(gdal()->getAttributeValue(srshandle,"SPHEROID",0));
             IEllipsoid ellipsoid;
-            if ( ellipsoidName != "unnamed") {
+            if ( (ellipsoidName.compare("unnamed",Qt::CaseInsensitive) != 0) && (ellipsoidName.compare("unknown",Qt::CaseInsensitive) != 0)) {
                 ellipsoid.prepare("code=wkt:" + ellipsoidName);
                 if ( ellipsoid.isValid())
                     csyp->setEllipsoid(ellipsoid);
