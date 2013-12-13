@@ -8,6 +8,7 @@
 *removed uncought ERROR output on failed script execution
 *replaced the single muteIssueLogger() by the complementary dis-/connectIssueLogger() functions
 *fixed some issues on storing ilwis3 format files
+*reorganised test.py to more modular testcases
 !unresolved bug if create FeatureCoverage.newFeature(Geometry) before the binary data is loaded - please avoid that!
 
 --20131205--

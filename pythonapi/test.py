@@ -239,8 +239,6 @@ def claudio_example(subDir):#and martins solution proposal <== example code for 
 
     polygongrid.connectTo(workingDir+subDir+"/polygongrid", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
     polygongrid.store()
-    polygongrid.connectTo(workingDir+subDir+"/polygongrid", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
-    polygongrid.store()
 
 def hello_raster(subDir):
     Engine.setWorkingCatalog(workingDir+subDir)

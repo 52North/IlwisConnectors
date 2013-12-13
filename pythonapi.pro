@@ -60,7 +60,7 @@ OTHER_FILES += \
     pythonapi/prepare_PATH.bat \
     pythonapi/prepare_PATH.sh \
     pythonapi/UPDATE \
-    pythonapi/CHANGELOG.txt
+    pythonapi/CHANGELOG
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
