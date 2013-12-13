@@ -1,0 +1,15 @@
+==================CHANGELOG===================
+
+--20131213--
+*added PixelIterator and various geometry helper classes like Voxel, Box and Size
+*fixed WKT in/output for 3D geometries
+*avoid access to "feature_id" attribute of the FeatureCoverage/Feature
+*added conveniance functionality for attribute access of features (now with hidden PyVariant)
+*removed uncought ERROR output on failed script execution
+*replaced the single muteIssueLogger() by the complementary dis-/connectIssueLogger() functions
+*fixed some issues on storing ilwis3 format files
+!unresolved bug if create FeatureCoverage.newFeature(Geometry) before the binary data is loaded - please avoid that!
+
+--20131205--
+*first release to demonstrate some functionality of ILWIS NG using its new Python API
+*contains classes like FeatureCoverage,RasterCoverage,PyVariant,FeatureIterator,Geometry,Feature,Engine, corrdinateSystem
