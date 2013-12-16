@@ -50,7 +50,6 @@ SOURCES += \
 OTHER_FILES += \
     pythonapi/test.py \
     pythonapi/setup.py \
-    pythonapi/README \
     pythonapi/ilwisobjects.i \
     pythonapi/ilwisobjects.sip \
     pythonapi/test.sh \
@@ -59,6 +58,7 @@ OTHER_FILES += \
     pythonapi/ilwisobjects.conf \
     pythonapi/prepare_PATH.bat \
     pythonapi/prepare_PATH.sh \
+    pythonapi/README \
     pythonapi/UPDATE \
     pythonapi/CHANGELOG
 
@@ -73,13 +73,15 @@ DEPENDPATH += $$PWD/../ilwiscore/core
 
 mytarget.files = pythonapi/ilwisobjects.py \
     pythonapi/test.py \
-    pythonapi/README \
     pythonapi/test.sh \
     pythonapi/test.bat \
     pythonapi/ilwisobjects.conf \
     pythonapi/qt.conf \
     pythonapi/prepare_PATH.bat \
-    pythonapi/prepare_PATH.sh
+    pythonapi/prepare_PATH.sh \
+    pythonapi/README \
+    pythonapi/UPDATE \
+    pythonapi/CHANGELOG
 mytarget.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
 
 python_target.files = pythonapi/ilwisobjects.py
