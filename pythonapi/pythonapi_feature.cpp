@@ -29,7 +29,7 @@ Feature::Feature(std::unique_ptr<Ilwis::FeatureInterface> &ilwisFeature, Feature
 }
 
 bool Feature::__bool__() const{
-    return (bool)this->_ilwisSPFeatureI && this->_coverage != NULL && this->_coverage->__bool__();// && this->_ilwisSPFeatureI->data()->isValid();
+    return (bool)this->_ilwisSPFeatureI && this->_ilwisSPFeatureI->isValid() && this->_coverage != NULL && this->_coverage->__bool__();
 }
 
 const char* Feature::__str__(){
@@ -95,11 +95,6 @@ PyVariant *Feature::attribute(const char *name, qlonglong defaultValue, int inde
     return this->attribute(name,tmp,index);
 }
 
-PyVariant *Feature::attribute(const char *name, qulonglong defaultValue, int index){
-    PyVariant tmp(defaultValue);
-    return this->attribute(name,tmp,index);
-}
-
 PyVariant *Feature::attribute(const char *name, double defaultValue, int index){
     PyVariant tmp(defaultValue);
     return this->attribute(name,tmp,index);
@@ -123,14 +118,6 @@ void Feature::__setitem__(const char *name,qlonglong value){
 }
 
 void Feature::setAttribute(const char *name, qlonglong value, int index){
-    this->ptr()->setCell(QString(name), QVariant(value), index);
-}
-
-void Feature::__setitem__(const char *name,qulonglong value){
-    this->setAttribute(name,value);
-}
-
-void Feature::setAttribute(const char *name, qulonglong value, int index){
     this->ptr()->setCell(QString(name), QVariant(value), index);
 }
 

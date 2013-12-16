@@ -22,9 +22,6 @@ bool PyVariant::isValid(){
 PyVariant::PyVariant(qlonglong value): PyVariant(new QVariant(value)){
 }
 
-PyVariant::PyVariant(qulonglong value): PyVariant(new QVariant(value)){
-}
-
 PyVariant::PyVariant(double value): PyVariant(new QVariant(value)){
 }
 
@@ -47,9 +44,9 @@ qlonglong PyVariant::__int__(){
         throw std::domain_error(QString("PyVariant cannot convert '%1' to int").arg(this->_data->toString()).toStdString());
     else{
         bool ok = false;
-        int ret = this->_data->toLongLong(&ok);
+        qlonglong ret = this->_data->toLongLong(&ok);
         if (!ok)
-            throw std::domain_error(QString("PyVariant cannot convert '%1' to int").arg(this->_data->toString()).toStdString());
+            throw std::domain_error(QString("PyVariant cannot convert '%1' to int(qlonglong)").arg(this->_data->toString()).toStdString());
         return ret;
     }
 }

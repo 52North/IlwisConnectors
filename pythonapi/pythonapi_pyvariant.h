@@ -7,7 +7,6 @@
 //Qt typedefs
 typedef unsigned int uint;
 typedef qint64 qlonglong;
-typedef quint64 qulonglong;
 
 class QVariant;
 
@@ -23,7 +22,6 @@ namespace pythonapi{
 
         //QVartiant constructor wrapper
         PyVariant(qlonglong value);
-        PyVariant(qulonglong value);
         PyVariant(double value);
         PyVariant(const char* value);
 

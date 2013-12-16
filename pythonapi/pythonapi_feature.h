@@ -25,13 +25,10 @@ namespace pythonapi{
         PyVariant* __getitem__(quint32 colIndex);
         PyVariant* attribute(const char* name, PyVariant &defaultValue, int index = -1);
         PyVariant* attribute(const char* name, qlonglong defaultValue, int index = -1);
-        PyVariant* attribute(const char* name, qulonglong defaultValue, int index = -1);
         PyVariant* attribute(const char* name, double defaultValue, int index = -1);
         PyVariant* attribute(const char* name, const char* defaultValue, int index = -1);
         void __setitem__(const char *name, PyVariant &value);
         void setAttribute(const char* name, PyVariant &value, int index = -1);
-        void __setitem__(const char *name, qulonglong value);
-        void setAttribute(const char* name, qulonglong value, int index = -1);
         void __setitem__(const char *name, qlonglong value);
         void setAttribute(const char* name, qlonglong value, int index = -1);
         void __setitem__(const char *name, double value);
