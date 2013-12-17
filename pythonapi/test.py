@@ -1,7 +1,5 @@
 #!/usr/bin python
 # -*- coding: utf-8 -*-
-import unittest as ut
-
 try:
     from ilwisobjects import *
 
@@ -10,6 +8,7 @@ try:
     babyDir = "/baby"
     exampleDir = "/example"
 
+    import unittest as ut
 
     #@ut.skip("temporarily")
     class TestModule(ut.TestCase):
@@ -27,7 +26,6 @@ try:
             self.assertTrue(bool(fc))
             fc = FeatureCoverage("nonexistent.file")
             self.assertTrue(bool(fc))
-
 
     #@ut.skip("temporarily")
     class TestData(ut.TestCase):
@@ -54,7 +52,6 @@ try:
             pv = PyVariant(23.4e-32)
             self.assertEqual(float(pv), 23.4e-32)
 
-
     #@ut.skip("temporarily")
     class TestOperation(ut.TestCase):
         def setUp(self):
@@ -77,7 +74,6 @@ try:
                              msg="generated name should begin with gridding_ and end with its ID")
             self.assertEqual(polygongrid.featureCount(), 144, msg="wrong number of polygons in gridding result!")
 
-
     #@ut.skip("temporarily")
     class TestFeature(ut.TestCase):
         def setUp(self):
@@ -99,8 +95,8 @@ try:
             self.assertTrue(self.fc.addAttribute("sum", "value"), msg="FeatureCoverage.addAttribute failed!")
             att = self.fc.attributes()
             self.assertTupleEqual(att, (
-                'coverage_key', 'RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY',
-                'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum'
+                'coverage_key', 'RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+                'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum'
             ), msg="wring list of attributes!")
             self.assertEqual(len(att), 18, msg="wrong number of attributes")
             iter(self.fc)  # a HACK to loadBinaryData before newfeatureeature is created/added to the FeatureCoverage!
@@ -141,7 +137,6 @@ try:
             with self.assertRaises(TypeError, msg="no TypeError on attempt to convert non-numerical string to int"):
                 print(int(v))
 
-
     #@ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
@@ -167,7 +162,6 @@ try:
             cs2 = CoordinateSystem("code=epsg:23035")
             self.assertTrue(bool(cs2))
             self.assertEqual(cs2.name(), r"ED50 / UTM zone 35N")
-
 
     #@ut.skip("temporarily")
     class TestRaster(ut.TestCase):
@@ -282,11 +276,11 @@ try:
                 if it.yChanged():
                     self.assertTrue(i % 5 == 0, msg="yChanged not only every 5th step (i=" + str(i) + ")")
                 else:
-                    self.assertFalse((i % 5 == 0) and (i != 0), msg="yChanged not only every 2nd step (i=" + str(i) + ")")
+                    self.assertFalse((i % 5 == 0) and (i != 0), msg="yChanged not only every 2nd step (i="+str(i)+")")
                 if it.zChanged():
                     self.assertTrue(i % 25 == 0, msg="zChanged not only every 25th step (i=" + str(i) + ")")
                 else:
-                    self.assertFalse((i % 25 == 0) and (i != 0), msg="zChanged not only every 2nd step (i=" + str(i) + ")")
+                    self.assertFalse((i % 25 == 0) and (i != 0), msg="zChanged not only every 2nd step (i="+str(i)+")")
                 self.assertEqual(next(it), small[i])
 
             rit = iter(rcl)
@@ -340,13 +334,12 @@ try:
                 if bit.yChanged():
                     self.assertTrue(i % 2 == 0, msg="yChanged not only every 2nd step (i=" + str(i) + ")")
                 else:
-                    self.assertFalse((i % 2 == 0) and (i != 0), msg="yChanged not only every 2nd step (i=" + str(i) + ")")
+                    self.assertFalse((i % 2 == 0) and (i != 0), msg="yChanged not only every 2nd step (i="+str(i)+")")
                 if bit.zChanged():
                     self.assertTrue(i % 4 == 0, msg="zChanged not only every 4th step (i=" + str(i) + ")")
                 else:
-                    self.assertFalse((i % 4 == 0) and (i != 0), msg="zChanged not only every 4th step (i=" + str(i) + ")")
+                    self.assertFalse((i % 4 == 0) and (i != 0), msg="zChanged not only every 4th step (i="+str(i)+")")
                 self.assertEqual(next(bit), boxed_small[i][1])
-
 
     #@ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
@@ -372,7 +365,6 @@ try:
                                                   IlwisObject.cmOUTPUT))
             self.assertTrue(polygongrid.store())
 
-
     #@ut.skip("temporarily")
     class TestBaby(ut.TestCase):
         def setUp(self):
@@ -396,16 +388,11 @@ try:
                     self.assertRegex(str(feature.geometry()), r"POLYGON\([\s\.\-\,\(\)0-9]*\)",
                                      msg="wrong WKT representation of geometry!")
             self.assertEqual(count, 3,
-                             msg="wrong count value!")  # print("contains ", count, " features with an AREA equal to 0.123")
+                             msg="wrong count value!")  # print("contains",count,"features with an AREA equal to 0.123")
 
+    #here you can chose which test case will be executed
+    if __name__ == "__main__":
+        ut.main(verbosity=2)
 
 except ImportError as e:
     print(e)
-except Exception as e:
-    print(e)
-
-#here you can chose which test case will be executed
-if __name__ == "__main__":
-    ut.main(verbosity=2)
-
-

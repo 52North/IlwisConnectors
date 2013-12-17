@@ -13,8 +13,8 @@
 
 namespace pythonapi {
 
-    static QIssueLogger* logger;
-    static QMetaObject::Connection connection;
+static QIssueLogger* logger;
+static QMetaObject::Connection connection;
 
 }
 
@@ -32,8 +32,7 @@ bool pythonapi::initIlwisObjects(){
         if (config.exists()){
             ret = Ilwis::initIlwis(config.absoluteFilePath());
         }else{
-            throw Ilwis::ErrorObject(QString("None of the following configuration files exist: \n%1\n%2\n runtime directory for ILWIS is unknown!").arg(local,config.absoluteFilePath()));
-            return false;
+            throw ImportError(QString("None of the following configuration files exist: \n%1\n%2\n runtime directory for ILWIS is unknown!").arg(local,config.absoluteFilePath()).toStdString());
         }
     }
     pythonapi::logger = new pythonapi::QIssueLogger();

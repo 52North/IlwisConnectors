@@ -17,6 +17,8 @@ PyObject* pythonapi::translate_Exception_type(std::exception& e){
         return PyExc_IndexError;
     }else if(typeid(e).hash_code() == ilwisErrorObject_type_info()){
         return ilwisException;
+    }else if (typeid(e) == typeid(ImportError)){
+        return PyExc_ImportError;
     }else if(typeid(e) == typeid(StopIteration)){
         return PyExc_StopIteration;
     }

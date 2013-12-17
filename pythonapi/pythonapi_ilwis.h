@@ -11,6 +11,19 @@ typedef struct _object PyObject;
 
 namespace pythonapi{
 
+    //to indicate an error during module initialization
+    class ImportError : public std::exception{
+    private:
+        std::string _what;
+    public:
+        ImportError(const std::string& what ){
+            this->_what = what;
+        }
+        virtual const char* what() const throw(){
+            return this->_what.c_str();
+        }
+    };
+
     //to indicate next() == it.end() the Python way
     class StopIteration : public std::exception{
     public:

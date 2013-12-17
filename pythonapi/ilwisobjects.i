@@ -35,7 +35,7 @@
     //init QtCoreApllication, Ilwis library and IssueLogger connection
     try {
         if (!pythonapi::initIlwisObjects()){
-            PyErr_SetString(pythonapi::ilwisException,"ILWIS couldn't be initiallized!");
+            PyErr_SetString(PyExc_ImportError,"ILWIS couldn't be initiallized!");
             return NULL;
         }
     }catch (std::exception& e) {

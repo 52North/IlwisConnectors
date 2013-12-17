@@ -1,5 +1,9 @@
 ==================CHANGELOG===================
 
+--20131220--
+*test.py is now unittest and autmatically skips tests if catalog(directory) could not be found
+*added extra Python API Exceptions like ImportError
+
 --20131213--
 *added PixelIterator and various geometry helper classes like Voxel, Box and Size
 *fixed WKT in/output for 3D geometries
