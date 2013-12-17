@@ -75,7 +75,7 @@ const char *IlwisObject::__radd__(const char *value){
 
 std::shared_ptr<Ilwis::IIlwisObject> IlwisObject::ptr() const{
     if (!this->__bool__())
-        throw Ilwis::ErrorObject(QString("invalid IlwisObject"));
+        throw InvalidObject("invalid IlwisObject");
     return this->_ilwisObject;
 }
 

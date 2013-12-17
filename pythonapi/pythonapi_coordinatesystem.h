@@ -12,8 +12,10 @@ namespace pythonapi {
 
     class CoordinateSystem : public pythonapi::IlwisObject{
         friend class Coverage;
-    public:
+        friend class Engine;
+    private:
         CoordinateSystem(Ilwis::ICoordinateSystem* cs);
+    public:
         CoordinateSystem(const char* resource);
         static CoordinateSystem* toCoordinateSystem(Object *obj);
     };

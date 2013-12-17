@@ -80,8 +80,5 @@ QVariant& PyVariant::data(){
 }
 
 PyVariant* PyVariant::toPyVariant(Object* obj){
-    PyVariant* ptr = static_cast<PyVariant*>(obj);
-    if(!ptr)
-        throw Ilwis::ErrorObject(QString("cast to PyVariant not possible"));
-    return ptr;
+    return static_cast<PyVariant*>(obj);
 }

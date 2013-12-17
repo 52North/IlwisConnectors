@@ -12,6 +12,9 @@
 
 using namespace pythonapi;
 
+Coverage::Coverage(Ilwis::ICoverage *coverage):IlwisObject(new Ilwis::IIlwisObject(*coverage)){
+}
+
 Coverage::Coverage():IlwisObject(){
 }
 

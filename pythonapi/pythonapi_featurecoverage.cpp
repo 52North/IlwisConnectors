@@ -25,6 +25,9 @@
 
 using namespace pythonapi;
 
+FeatureCoverage::FeatureCoverage(Ilwis::IFeatureCoverage *coverage):Coverage(new Ilwis::ICoverage(*coverage)){
+}
+
 FeatureCoverage::FeatureCoverage(){
     Ilwis::IFeatureCoverage fc;
     fc.prepare();
@@ -53,9 +56,9 @@ Feature FeatureCoverage::newFeature(Geometry &geometry){
 }
 
 FeatureCoverage *FeatureCoverage::toFeatureCoverage(Object *obj){
-    FeatureCoverage* ptr = static_cast<FeatureCoverage*>(obj);
+    FeatureCoverage* ptr = dynamic_cast<FeatureCoverage*>(obj);
     if(!ptr)
-        throw Ilwis::ErrorObject(QString("cast to FeatureCoverage not possible"));
+        throw InvalidObject("cast to FeatureCoverage not possible");
     return ptr;
 }
 

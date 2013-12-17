@@ -14,17 +14,18 @@ namespace Ilwis {
 namespace pythonapi {
 
     class IlwisObject: public Object{
+        friend class Engine;
     public:
         //should be the same as enum Ilwis::IlwisObject::ConnectorMode (ilwisobject.h)
         enum ConnectorMode{cmINPUT=1, cmOUTPUT=2, cmEXTENDED=4};
         enum StoreMode{smMETADATA=1, smBINARYDATA=2};
 
     protected:
+        IlwisObject(Ilwis::IIlwisObject* object);
         std::shared_ptr<Ilwis::IIlwisObject> _ilwisObject;
         std::shared_ptr<Ilwis::IIlwisObject> ptr() const;
     public:
         IlwisObject();
-        IlwisObject(Ilwis::IIlwisObject* object);
         virtual ~IlwisObject();
 
         bool connectTo(const char* url, const char* format  = "", const char* fnamespace = "", ConnectorMode cmode = cmINPUT);

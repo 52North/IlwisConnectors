@@ -8,9 +8,16 @@
 
 typedef struct _object PyObject;
 
+namespace Ilwis {
+    class Coverage;
+    typedef IlwisData<Coverage> ICoverage;
+}
+
 namespace pythonapi{
 
     class Coverage : public IlwisObject{
+        protected:
+            Coverage(Ilwis::ICoverage* coverage);
         public:
             Coverage();
             virtual ~Coverage(){};

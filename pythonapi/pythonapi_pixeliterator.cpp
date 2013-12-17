@@ -141,7 +141,7 @@ bool PixelIterator::operator> (const PixelIterator &other){
 
 Ilwis::PixelIterator& PixelIterator::ptr() const{
     if (!this->__bool__())
-        throw Ilwis::ErrorObject("use of invalid PixelIterator (ptr)");
+        throw InvalidObject("use of invalid PixelIterator (ptr)");
     return (*this->_ilwisPixelIterator);
 }
 

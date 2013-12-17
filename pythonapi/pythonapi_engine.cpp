@@ -34,6 +34,8 @@
 #include "pythonapi_object.h"
 #include "pythonapi_engine.h"
 #include "pythonapi_pyvariant.h"
+#include "pythonapi_rastercoverage.h"
+#include "pythonapi_featurecoverage.h"
 
 using namespace pythonapi;
 
@@ -85,17 +87,24 @@ Object *Engine::_do(const char* output_name, const char* operation, const char *
         Ilwis::Symbol result = symtbl.getSymbol(ctx._results[0]);
         if (result._type == itRASTER){
             if (result._var.canConvert<Ilwis::IRasterCoverage>()){
-                Ilwis::IIlwisObject* obj = new Ilwis::IIlwisObject(result._var.value<Ilwis::IRasterCoverage>());
+                Ilwis::IRasterCoverage* obj = new Ilwis::IRasterCoverage(result._var.value<Ilwis::IRasterCoverage>());
                 if (rename)
                     (*obj)->setName(QString("%1_%2").arg(operation).arg((*obj)->id()));
-                return new IlwisObject(obj);
+                return new RasterCoverage(obj);
             }
         }else if (result._type == itFEATURE){
             if (result._var.canConvert<Ilwis::IFeatureCoverage>()){
-                Ilwis::IIlwisObject* obj = new Ilwis::IIlwisObject(result._var.value<Ilwis::IFeatureCoverage>());
+                Ilwis::IFeatureCoverage* obj = new Ilwis::IFeatureCoverage(result._var.value<Ilwis::IFeatureCoverage>());
                 if (rename)
                     (*obj)->setName(QString("%1_%2").arg(operation).arg((*obj)->id()));
-                return new IlwisObject(obj);
+                return new FeatureCoverage(obj);
+            }
+        }else if (result._type == itCOORDSYSTEM){
+            if (result._var.canConvert<Ilwis::ICoordinateSystem>()){
+                Ilwis::ICoordinateSystem* obj = new Ilwis::ICoordinateSystem(result._var.value<Ilwis::ICoordinateSystem>());
+                if (rename)
+                    (*obj)->setName(QString("%1_%2").arg(operation).arg((*obj)->id()));
+                return new CoordinateSystem(obj);
             }
         }
         return new PyVariant(new QVariant(result._var));

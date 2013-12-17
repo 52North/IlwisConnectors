@@ -19,6 +19,11 @@
 
 using namespace pythonapi;
 
+
+
+RasterCoverage::RasterCoverage(Ilwis::IRasterCoverage *coverage):Coverage(new Ilwis::ICoverage(*coverage)){
+}
+
 RasterCoverage::RasterCoverage(){
     Ilwis::IRasterCoverage fc;
     fc.prepare();
@@ -106,8 +111,8 @@ void RasterCoverage::unloadBinary(){
 }
 
 RasterCoverage* RasterCoverage::toRasterCoverage(Object* obj){
-    RasterCoverage* ptr = static_cast<RasterCoverage*>(obj);
+    RasterCoverage* ptr = dynamic_cast<RasterCoverage*>(obj);
     if(!ptr)
-        throw Ilwis::ErrorObject(QString("cast to RasterCoverage not possible"));
+        throw InvalidObject("cast to RasterCoverage not possible");
     return ptr;
 }

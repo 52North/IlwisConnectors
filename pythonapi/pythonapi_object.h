@@ -2,6 +2,7 @@
 #define PYTHONAPI_OBJECT_H
 
 #include "pythonapi_qtGNUTypedefs.h"
+#include "pythonapi_ilwis.h"
 
 typedef quint64 IlwisTypes;
 

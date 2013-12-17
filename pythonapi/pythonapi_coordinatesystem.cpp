@@ -27,8 +27,8 @@ CoordinateSystem::CoordinateSystem(const char *resource){
 }
 
 CoordinateSystem *CoordinateSystem::toCoordinateSystem(Object *obj){
-    CoordinateSystem* ptr = static_cast<CoordinateSystem*>(obj);
+    CoordinateSystem* ptr = dynamic_cast<CoordinateSystem*>(obj);
     if(!ptr)
-        throw Ilwis::ErrorObject(QString("cast to FeatureCoverage not possible"));
+        throw InvalidObject("cast to CoordinateSystem not possible");
     return ptr;
 }
