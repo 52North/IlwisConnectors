@@ -59,6 +59,9 @@ namespace pythonapi {
     public:
         Voxel(const Ilwis::Point3D<qint32>& vox);
         Voxel(qint32 x, qint32 y, qint32 z);
+        qint32 x() const;
+        qint32 y() const;
+        qint32 z() const;
         std::string __str__();
         Ilwis::Point3D<qint32>& data() const;
     private:
@@ -81,6 +84,7 @@ namespace pythonapi {
         Size* operator+=(const Size& sz);
         Size* operator-=(const Size& sz);
         Size* operator*=(double f);
+        bool operator==(const Size& sz);
         qint32 xsize() const;
         qint32 ysize() const;
         qint32 zsize() const;
@@ -89,7 +93,7 @@ namespace pythonapi {
         void setZsize(qint32 z);
         quint64 linearSize() const;
 
-        bool contains(qint32 x, qint32 y, qint32 z=0) const;
+        bool contains(const Voxel& vox) const;
         std::string __str__();
         Ilwis::Size& data() const;
     private:

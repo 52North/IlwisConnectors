@@ -12,11 +12,34 @@ try:
 
     #@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
+        def test_Geometry(self):
+            g = Geometry("POINT(5.4 6 9.0)")
+            self.assertEqual(str(g), "POINT(5.4 6 9.0)", "standalone Geometry(fromWKT) failed!")
+            self.assertEqual(g.toWKT(), "POINT(5.4 6 9.0)", "standalone Geometry(fromWKT) failed!")
+            self.assertTrue(bool(g))
+            g = Geometry("Pihkdjfhskdf")
+            self.assertEqual(str(g), "Pihkdjfhskdf", "standalone Geometry(fromWKT) failed!")
+            self.assertEqual(g.toWKT(), "Pihkdjfhskdf", "standalone Geometry(fromWKT) failed!")
+
         def test_Size(self):
             sz = Size(2, 4, 5)
-            self.assertEqual(str(sz),"Size(2, 4, 5)")
+            self.assertEqual(str(sz), "Size(2, 4, 5)")
+            self.assertEqual(sz.linearSize(),2*4*5)
+            sz *= 2
+            self.assertEqual(str(sz), "Size(4, 8, 10)")
+            sz.xsize = 3
+            self.assertEqual(sz.xsize, 3)
+            self.assertTrue(sz.contains(Voxel(1, 1, 1)))
+            self.assertFalse(sz.contains(Voxel(5, 5, 5)))
 
-    @ut.skip("temporarily")
+        def test_Box(self):
+            b = Box(Voxel(3, 4, 5), Voxel(4, 5, 6,))
+            self.assertEqual(str(b), "POLYGON(3 4 5,4 5 6)")
+            self.assertEqual(str(b.size()), "Size(2, 2, 2)")
+            self.assertTrue(b.size() == Size(2, 2, 2))
+            self.assertEqual(b.size().linearSize(),2*2*2)
+
+    #@ut.skip("temporarily")
     class TestModule(ut.TestCase):
         def setUp(self):
             try:
@@ -65,7 +88,7 @@ try:
             pv = PyVariant(23.4e-32)
             self.assertEqual(float(pv), 23.4e-32)
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestOperation(ut.TestCase):
         def setUp(self):
             try:
@@ -87,7 +110,7 @@ try:
                              msg="generated name should begin with gridding_ and end with its ID")
             self.assertEqual(polygongrid.featureCount(), 144, msg="wrong number of polygons in gridding result!")
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestFeature(ut.TestCase):
         def setUp(self):
             try:
@@ -114,7 +137,6 @@ try:
             self.assertEqual(len(att), 18, msg="wrong number of attributes")
             iter(self.fc)  # a HACK to loadBinaryData before newfeatureeature is created/added to the FeatureCoverage!
             g = Geometry("POINT(5.4 6 9.0)")
-            self.assertEqual(str(g), "POINT(5.4 6 9.0)", "standalone Geometry(fromWKT) failed!")
             newfeature = self.fc.newFeature(g)
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
             for c in self.fc.attributes():
@@ -150,7 +172,7 @@ try:
             with self.assertRaises(TypeError, msg="no TypeError on attempt to convert non-numerical string to int"):
                 print(int(v))
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
             try:
@@ -176,7 +198,7 @@ try:
             self.assertTrue(bool(cs2))
             self.assertEqual(cs2.name(), r"ED50 / UTM zone 35N")
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestRaster(ut.TestCase):
         def setUp(self):
             try:
@@ -184,7 +206,7 @@ try:
             except IlwisException:
                 self.skipTest("could not set working directory!")
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_RasterCalculation(self):
             rc = RasterCoverage("n000302.mpr")
             rctif = RasterCoverage("n0.mpr")
@@ -363,7 +385,7 @@ try:
                     self.assertFalse((i % 4 == 0) and (i != 0), msg="zChanged not only every 4th step (i="+str(i)+")")
                 self.assertEqual(next(bit), boxed_small[i][1])
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
         def setUp(self):
             try:
@@ -387,7 +409,7 @@ try:
                                                   IlwisObject.cmOUTPUT))
             self.assertTrue(polygongrid.store())
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestBaby(ut.TestCase):
         def setUp(self):
             try:

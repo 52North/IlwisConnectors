@@ -108,6 +108,18 @@ Voxel::Voxel(const Ilwis::Point3D<qint32> &vox): _data(new Ilwis::Point3D<>(vox)
 Voxel::Voxel(qint32 x, qint32 y, qint32 z): _data(new Ilwis::Point3D<>(x,y,z)){
 }
 
+qint32 Voxel::x() const{
+    return this->data().x();
+}
+
+qint32 Voxel::y() const{
+    return this->data().y();
+}
+
+qint32 Voxel::z() const{
+    return this->data().z();
+}
+
 std::string Voxel::__str__(){
     //TODO kept (3D)pixel as string representation for use in Engine.do(..) better change to voxel(,,,)
     return QString("pixel(%1,%2,%3)").arg(this->_data->x()).arg(this->_data->y()).arg(this->_data->z()).toStdString();
@@ -159,6 +171,10 @@ Size* Size::operator*=(double f){
     return new Size(this->data() *= f);
 }
 
+bool Size::operator==(const Size &sz){
+    return xsize() == sz.xsize() && ysize() == sz.ysize() && zsize() == sz.zsize();
+}
+
 qint32 Size::xsize() const{
     return this->data().xsize();
 }
@@ -187,8 +203,8 @@ quint64 Size::linearSize() const{
     return this->data().totalSize();
 }
 
-bool Size::contains(qint32 x, qint32 y, qint32 z) const{
-    return this->data().contains(x,y,z);
+bool Size::contains(const Voxel &vox) const{
+    return this->data().contains(vox.x(),vox.y(),vox.z());
 }
 
 std::string Size::__str__(){
