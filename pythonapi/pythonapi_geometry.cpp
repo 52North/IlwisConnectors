@@ -141,7 +141,7 @@ Ilwis::Box3D<qint32> &Box::data() const{
     return (*this->_data);
 }
 
-Size::Size(qint32 x, qint32 y, qint32 z):_data(new Ilwis::Size(x,y,z)){
+Size::Size(qint32 xsize, qint32 ysize, qint32 zsize):_data(new Ilwis::Size(xsize,ysize,zsize)){
 }
 
 Size::Size(const Ilwis::Size &size):_data(new Ilwis::Size(size)){
@@ -171,15 +171,15 @@ qint32 Size::zsize() const{
     return this->data().zsize();
 }
 
-void Size::xsize(qint32 x){
+void Size::setXsize(qint32 x){
     this->data().xsize(x);
 }
 
-void Size::ysize(qint32 y){
+void Size::setYsize(qint32 y){
     this->data().ysize(y);
 }
 
-void Size::zsize(qint32 z){
+void Size::setZsize(qint32 z){
     this->data().zsize(z);
 }
 

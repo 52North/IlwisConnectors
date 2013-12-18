@@ -60,9 +60,8 @@ quint64 PixelIterator::__int__(){
     return this->ptr().linearPosition();
 }
 
-bool PixelIterator::contains(qint32 x, qint32 y, qint32 z){
-    //TODO Ilwis::PixelIterator::contains(Pixel==Point2D) is not good for 3D Iterator
-    return this->ptr().contains(Ilwis::Point2D<qint32>(x,y));
+bool PixelIterator::contains(const Voxel &vox){
+    return this->ptr().contains(vox.data());
 }
 
 Box PixelIterator::box(){
@@ -85,17 +84,17 @@ bool PixelIterator::zChanged(){
     return this->ptr().zchanged();
 }
 
-PixelIterator& PixelIterator::__getitem__(Voxel &vox){
+PixelIterator& PixelIterator::__getitem__(const Voxel &vox){
     this->ptr()[vox.data()];
     return (*this);
 }
 
-double PixelIterator::__getitem__(quint32 position){
-    return this->ptr()[position];
+double PixelIterator::__getitem__(quint32 linearPosition){
+    return this->ptr()[linearPosition];
 }
 
-void PixelIterator::__setitem__(quint32 position, double value){
-    this->ptr()[position] = value;
+void PixelIterator::__setitem__(quint32 linearPosition, double value){
+    this->ptr()[linearPosition] = value;
 }
 
 PixelIterator PixelIterator::operator+ (int n){

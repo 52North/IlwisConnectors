@@ -75,7 +75,7 @@ namespace pythonapi {
 
     class Size{
     public:
-        Size(qint32 x, qint32 y, qint32 z=1);
+        Size(qint32 xsize, qint32 ysize, qint32 zsize=1);
         Size(const Ilwis::Size& size);
 
         Size* operator+=(const Size& sz);
@@ -84,9 +84,9 @@ namespace pythonapi {
         qint32 xsize() const;
         qint32 ysize() const;
         qint32 zsize() const;
-        void xsize(qint32 x);
-        void ysize(qint32 y);
-        void zsize(qint32 z);
+        void setXsize(qint32 x);
+        void setYsize(qint32 y);
+        void setZsize(qint32 z);
         quint64 linearSize() const;
 
         bool contains(qint32 x, qint32 y, qint32 z=0) const;

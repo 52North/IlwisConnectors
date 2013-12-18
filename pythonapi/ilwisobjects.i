@@ -5,6 +5,7 @@
 %feature("autodoc","1");
 
 %include "exception.i"
+%include "std_string.i"
 
 %{
 #include "pythonapi_qtGNUTypedefs.h"
@@ -114,7 +115,20 @@ namespace pythonapi {
 %include "pythonapi_object.h"
 
 %include "pythonapi_geometry.h"
-
+%extend pythonapi::Size {
+%insert("python") %{
+    __swig_getmethods__["xsize"] = xsize
+    __swig_getmethods__["ysize"] = ysize
+    __swig_getmethods__["zsize"] = zsize
+    __swig_setmethods__["xsize"] = setXsize
+    __swig_setmethods__["ysize"] = setYsize
+    __swig_setmethods__["zsize"] = setZsize
+    if _newclass:
+        xsize = property(xsize,setXsize)
+        ysize = property(ysize,setYsize)
+        zsize = property(zsize,setZsize)
+%}
+}
 %include "pythonapi_feature.h"
 
 %include "pythonapi_featureiterator.h"

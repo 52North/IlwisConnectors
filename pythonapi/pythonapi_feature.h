@@ -40,7 +40,6 @@ namespace pythonapi{
         void setGeometry(Geometry &geometry, int index = -1);
 
     private:
-        //TODO: replace with std::shared_ptr of that feature if done in IlwisCore
         std::unique_ptr<Ilwis::FeatureInterface>& ptr() const;
         std::unique_ptr<Ilwis::FeatureInterface>& _ilwisSPFeatureI;
         FeatureCoverage* _coverage;

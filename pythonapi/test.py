@@ -20,12 +20,9 @@ try:
 
         def test_IssueLogger(self):
             disconnectIssueLogger()
+            fc = FeatureCoverage(workingDir+pytestDir+"nonexistent.file")
+            self.assertFalse(bool(fc))
             connectIssueLogger()
-            #TODO should return error.....
-            fc = FeatureCoverage("nonexistent.mpr")
-            self.assertTrue(bool(fc))
-            fc = FeatureCoverage("nonexistent.file")
-            self.assertTrue(bool(fc))
 
     #@ut.skip("temporarily")
     class TestData(ut.TestCase):
@@ -285,11 +282,16 @@ try:
 
             rit = iter(rcl)
             self.assertTrue(bool(rit))
+            self.assertEqual(str(rit.position()), "pixel(0,0,0)")
             rit += 4
+            self.assertEqual(str(rit.position()), "pixel(4,0,0)")
             rit2 = rit + 3
+            self.assertEqual(str(rit2.position()), "pixel(2,1,0)")
             rit3 = 13 + rit
             self.assertEqual(str(rit3.position()), "pixel(2,3,0)")
-            self.assertEqual(str(rit2.position()), "pixel(2,1,0)")
+            self.assertEqual(str(rit.position()), "pixel(4,0,0)")
+            self.assertTrue(rit.contains(Voxel(1, 1, 1)))
+            self.assertFalse(rit.contains(Voxel(5, 1, 1)))
             self.assertFalse(rit3 == rit2)
             self.assertEqual(float(rit2), 22.0)
             self.assertEqual(rit[23], 120.0)
@@ -327,6 +329,8 @@ try:
                 ("pixel(1,1,3)", 174.0), ("pixel(2,1,3)", 174.0),
                 ("pixel(1,2,3)", 78.0), ("pixel(2,2,3)", 174.0),
             ]
+            self.assertTrue(bit.contains(Voxel(1, 1, 1)))
+            self.assertFalse(bit.contains(Voxel(0, 0, 0)))
             lin = bit.box().size().linearSize()
             self.assertEqual(lin, 16)
             for i in range(lin):
