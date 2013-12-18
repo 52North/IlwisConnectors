@@ -15,7 +15,6 @@ namespace pythonapi {
 
 static QIssueLogger* logger;
 static QMetaObject::Connection connection;
-
 }
 
 bool pythonapi::initIlwisObjects(){

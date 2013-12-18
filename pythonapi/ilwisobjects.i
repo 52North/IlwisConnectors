@@ -52,12 +52,32 @@
 %pythoncode %{
     IlwisException = _ilwisobjects.IlwisException
     InvalidObjectException = _ilwisobjects.InvalidObjectException
-    shUNDEF = -32767
-    iUNDEF  = -2147483647
-    rUNDEF = -1e308
-    flUNDEF = -1e38
-    i64UNDEF = -9223372036854775808
-    sUNDEF = "?"
+
+    def readOnly():
+        raise TypeError("this property is read only!")
+
+
+    class ReadOnly(type):
+        @property
+        def sUNDEF(cls):
+            return "?"
+        @property
+        def shUNDEF(cls):
+            return -32767
+        @property
+        def iUNDEF(cls):
+            return -2147483647
+        @property
+        def rUNDEF(cls):
+            return -1e308
+        @property
+        def flUNDEF(cls):
+            return -1e38
+        @property
+        def i64UNDEF(cls):
+            return -9223372036854775808
+
+    class Const(metaclass=ReadOnly):pass
 %}
 //catch std::exception's on all C API function calls
 %exception{
@@ -73,6 +93,12 @@ namespace pythonapi {
     //instead of including whole (pythonapi_ilwis.h)
     void disconnectIssueLogger();
     void connectIssueLogger();
+//    class UNDEF{
+//    public:
+//        static std::string __str__();
+//        static double __float__();
+//        static qint64 __int__();
+//    };
 }
 
 %include "pythonapi_object.h"

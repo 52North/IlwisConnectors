@@ -11,6 +11,12 @@ try:
     import unittest as ut
 
     #@ut.skip("temporarily")
+    class TestGeometry(ut.TestCase):
+        def test_Size(self):
+            sz = Size(2, 4, 5)
+            self.assertEqual(str(sz),"Size(2, 4, 5)")
+
+    @ut.skip("temporarily")
     class TestModule(ut.TestCase):
         def setUp(self):
             try:
@@ -39,6 +45,16 @@ try:
             with self.assertRaises(TypeError, msg="did not overflow unsigned long long int"):
                 int(pv)
 
+        def test_UNDEF(self):
+            with self.assertRaises(AttributeError, msg="property is not read only!"):
+                Const.sUNDEF = "test"
+            self.assertEqual(Const.sUNDEF, "?")
+            self.assertEqual(Const.shUNDEF, -32767)
+            self.assertEqual(Const.iUNDEF, -2147483647)
+            self.assertEqual(Const.flUNDEF, -1e38)
+            self.assertEqual(Const.rUNDEF, -1e308)
+            self.assertEqual(Const.i64UNDEF, -9223372036854775808)
+
         def test_floatValues(self):
             pv = PyVariant("9223372036854775808")
             self.assertEqual(float(pv), 9223372036854775808)
@@ -49,7 +65,7 @@ try:
             pv = PyVariant(23.4e-32)
             self.assertEqual(float(pv), 23.4e-32)
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestOperation(ut.TestCase):
         def setUp(self):
             try:
@@ -71,7 +87,7 @@ try:
                              msg="generated name should begin with gridding_ and end with its ID")
             self.assertEqual(polygongrid.featureCount(), 144, msg="wrong number of polygons in gridding result!")
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestFeature(ut.TestCase):
         def setUp(self):
             try:
@@ -134,7 +150,7 @@ try:
             with self.assertRaises(TypeError, msg="no TypeError on attempt to convert non-numerical string to int"):
                 print(int(v))
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
             try:
@@ -160,7 +176,7 @@ try:
             self.assertTrue(bool(cs2))
             self.assertEqual(cs2.name(), r"ED50 / UTM zone 35N")
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestRaster(ut.TestCase):
         def setUp(self):
             try:
@@ -347,7 +363,7 @@ try:
                     self.assertFalse((i % 4 == 0) and (i != 0), msg="zChanged not only every 4th step (i="+str(i)+")")
                 self.assertEqual(next(bit), boxed_small[i][1])
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
         def setUp(self):
             try:
@@ -371,7 +387,7 @@ try:
                                                   IlwisObject.cmOUTPUT))
             self.assertTrue(polygongrid.store())
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestBaby(ut.TestCase):
         def setUp(self):
             try:

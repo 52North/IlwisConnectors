@@ -192,7 +192,7 @@ bool Size::contains(qint32 x, qint32 y, qint32 z) const{
 }
 
 std::string Size::__str__(){
-    return QString("Size(%1 %2 %3)").arg(this->data().xsize()).arg(this->data().ysize()).arg(this->data().zsize()).toStdString();
+    return QString("Size(%1, %2, %3)").arg(this->data().xsize()).arg(this->data().ysize()).arg(this->data().zsize()).toStdString();
 }
 
 Ilwis::Size &Size::data() const{
