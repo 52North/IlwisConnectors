@@ -17,9 +17,9 @@ namespace pythonapi{
 
     class Coverage : public IlwisObject{
         protected:
+            Coverage();
             Coverage(Ilwis::ICoverage* coverage);
         public:
-            Coverage();
             virtual ~Coverage(){};
             bool addAttribute(const std::string& name, const std::string& domain);
             quint32 attributeCount();
