@@ -32,6 +32,16 @@ try:
 
     #@ut.skip("temporarily")
     class TestData(ut.TestCase):
+        def test_UNDEF(self):
+            with self.assertRaises(AttributeError, msg="property is not read only!"):
+                Const.sUNDEF = "test"
+            self.assertEqual(Const.sUNDEF, "?")
+            self.assertEqual(Const.shUNDEF, -32767)
+            self.assertEqual(Const.iUNDEF, -2147483647)
+            self.assertEqual(Const.flUNDEF, -1e38)
+            self.assertEqual(Const.rUNDEF, -1e308)
+            self.assertEqual(Const.i64UNDEF, -9223372036854775808)
+
         def test_integerValues(self):
             pv = PyVariant(-9223372036854775808)
             self.assertEqual(int(pv), -9223372036854775808)  # MIN(qlonglong)
@@ -44,16 +54,6 @@ try:
             pv = PyVariant("9223372036854775808")
             with self.assertRaises(TypeError, msg="did not overflow unsigned long long int"):
                 int(pv)
-
-        def test_UNDEF(self):
-            with self.assertRaises(AttributeError, msg="property is not read only!"):
-                Const.sUNDEF = "test"
-            self.assertEqual(Const.sUNDEF, "?")
-            self.assertEqual(Const.shUNDEF, -32767)
-            self.assertEqual(Const.iUNDEF, -2147483647)
-            self.assertEqual(Const.flUNDEF, -1e38)
-            self.assertEqual(Const.rUNDEF, -1e308)
-            self.assertEqual(Const.i64UNDEF, -9223372036854775808)
 
         def test_floatValues(self):
             pv = PyVariant("9223372036854775808")
