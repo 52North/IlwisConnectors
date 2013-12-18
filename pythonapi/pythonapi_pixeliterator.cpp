@@ -45,11 +45,11 @@ bool PixelIterator::__bool__() const{
     return (this->_coverage && this->_coverage->__bool__() && (bool)this->_ilwisPixelIterator && this->_ilwisPixelIterator->isValid());
 }
 
-const char *PixelIterator::__str__(){
+std::string PixelIterator::__str__(){
     if (this->__bool__())
-        return QString("PixelIterator for %1 at position %2").arg(QString(QByteArray(this->_coverage->name()))).arg((QString(QByteArray(this->position().__str__())))).toLocal8Bit();
+        return QString("PixelIterator for %1 at position %2").arg(QString::fromStdString(this->_coverage->name())).arg((QString::fromStdString(this->position().__str__()))).toStdString();
     else
-        return "invalid PixelIterator";
+        return  std::string("invalid PixelIterator");
 }
 
 double PixelIterator::__float__(){

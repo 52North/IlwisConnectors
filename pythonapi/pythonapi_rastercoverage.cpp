@@ -31,59 +31,59 @@ RasterCoverage::RasterCoverage(){
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
 }
 
-RasterCoverage::RasterCoverage(const char *resource){
+RasterCoverage::RasterCoverage(std::string resource){
     Ilwis::IRasterCoverage fc;
-    fc.prepare(QString(resource));
+    fc.prepare(QString::fromStdString(resource));
     if (fc.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
 }
 
 RasterCoverage* RasterCoverage::operator+(RasterCoverage &rc){
-    return (RasterCoverage*)Engine::_do(QString("add_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toLocal8Bit(),QString("%1 + %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("add_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),QString("%1 + %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toStdString());
 }
 
 RasterCoverage *RasterCoverage::operator+ (double value){
-    return (RasterCoverage*)Engine::_do(QString("add_%1_%2").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%1 + %2").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("add_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%1 + %2").arg((*this->ptr())->name()).arg(value).toStdString());
 }
 
 RasterCoverage *RasterCoverage::__radd__(double value){
-    return (RasterCoverage*)Engine::_do(QString("add_%2_%1").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%2 + %1").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("add_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%2 + %1").arg((*this->ptr())->name()).arg(value).toStdString());
 }
 
 RasterCoverage *RasterCoverage::operator-(RasterCoverage &rc){
-    return (RasterCoverage*)Engine::_do(QString("sub_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toLocal8Bit(),QString("%1 - %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("sub_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),QString("%1 - %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toStdString());
 }
 
 RasterCoverage *RasterCoverage::operator-(double value){
-    return (RasterCoverage*)Engine::_do(QString("sub_%1_%2").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%1 - %2").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("sub_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%1 - %2").arg((*this->ptr())->name()).arg(value).toStdString());
 }
 
 RasterCoverage *RasterCoverage::__rsub__(double value){
-    return (RasterCoverage*)Engine::_do(QString("sub_%2_%1").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%2 - %1").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("sub_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%2 - %1").arg((*this->ptr())->name()).arg(value).toStdString());
 }
 
 RasterCoverage *RasterCoverage::operator*(RasterCoverage &rc){
-    return (RasterCoverage*)Engine::_do(QString("mul_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toLocal8Bit(),QString("%1 * %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("mul_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),QString("%1 * %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toStdString());
 }
 
 RasterCoverage *RasterCoverage::operator*(double value){
-    return (RasterCoverage*)Engine::_do(QString("mul_%1_%2").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%1 * %2").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("mul_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%1 * %2").arg((*this->ptr())->name()).arg(value).toStdString());
 }
 
 RasterCoverage *RasterCoverage::__rmul__(double value){
-    return (RasterCoverage*)Engine::_do(QString("mul_%2_%1").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%2 * %1").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("mul_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%2 * %1").arg((*this->ptr())->name()).arg(value).toStdString());
 }
 
 RasterCoverage *RasterCoverage::__truediv__(RasterCoverage &rc){
-    return (RasterCoverage*)Engine::_do(QString("div_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toLocal8Bit(),QString("%1 / %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("div_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),QString("%1 / %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toStdString());
 }
 
 RasterCoverage *RasterCoverage::__truediv__(double value){
-    return (RasterCoverage*)Engine::_do(QString("div_%1_%2").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%1 / %2").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("div_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%1 / %2").arg((*this->ptr())->name()).arg(value).toStdString());
 }
 
 RasterCoverage *RasterCoverage::__rtruediv__(double value){
-    return (RasterCoverage*)Engine::_do(QString("div_%2_%1").arg((*this->ptr())->id()).arg(value).toLocal8Bit(),QString("%2 / %1").arg((*this->ptr())->name()).arg(value).toLocal8Bit());
+    return (RasterCoverage*)Engine::_do(QString("div_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%2 / %1").arg((*this->ptr())->name()).arg(value).toStdString());
 }
 
 double RasterCoverage::coord2value(pythonapi::Coordinate &c){

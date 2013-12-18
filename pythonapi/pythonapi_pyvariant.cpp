@@ -25,7 +25,7 @@ PyVariant::PyVariant(qlonglong value): PyVariant(new QVariant(value)){
 PyVariant::PyVariant(double value): PyVariant(new QVariant(value)){
 }
 
-PyVariant::PyVariant(const char *value): PyVariant(new QVariant(value)){
+PyVariant::PyVariant(std::string value): PyVariant(new QVariant(value.c_str())){
 }
 
 PyVariant::~PyVariant(){
@@ -35,8 +35,8 @@ void PyVariant::__del__(){
     this->~PyVariant();
 }
 
-const char* PyVariant::__str__(){
-    return this->_data->toString().toLocal8Bit();
+std::string PyVariant::__str__(){
+    return this->_data->toString().toStdString();
 }
 
 qlonglong PyVariant::__int__(){

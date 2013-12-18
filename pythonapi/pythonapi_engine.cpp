@@ -42,46 +42,46 @@ using namespace pythonapi;
 Engine::Engine(){
 }
 
-Object *Engine::_do(const char* output_name, const char* operation, const char *c3, const char *c4, const char *c5,const char* c6, const char* c7, const char* c8, const char* c9){
+Object *Engine::_do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5,std::string c6, std::string c7, std::string c8, std::string c9){
     Ilwis::SymbolTable symtbl;
     Ilwis::ExecutionContext ctx;
     ctx.clear();
     //is no internal result name is given it will look like operation_id
     //but the id is to be added afterwards
     bool rename = false;
-    if (QString(output_name).isEmpty()){
+    if (output_name.empty()){
         output_name = operation;
         rename = true;
     }
     QString command;
-    if (!QString(c3).isEmpty()){
-        if(!QString(c4).isEmpty()){
-            if(!QString(c5).isEmpty()){
-                if(!QString(c6).isEmpty()){
-                    if(!QString(c7).isEmpty()){
-                        if(!QString(c8).isEmpty()){
-                            if(!QString(c9).isEmpty()){
-                                command = QString("script %1=%2(%3,%4,%5,%6,%7,%8,%9)").arg(output_name,operation,c3,c4,c5,c6,c7,c8,c9);
+    if (!c3.empty()){
+        if(!c4.empty()){
+            if(!c5.empty()){
+                if(!c6.empty()){
+                    if(!c7.empty()){
+                        if(!c8.empty()){
+                            if(!c9.empty()){
+                                command = QString("script %1=%2(%3,%4,%5,%6,%7,%8,%9)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str(),c9.c_str());
                             }else{
-                                command = QString("script %1=%2(%3,%4,%5,%6,%7,%8)").arg(output_name,operation,c3,c4,c5,c6,c7,c8);
+                                command = QString("script %1=%2(%3,%4,%5,%6,%7,%8)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str());
                             }
                         }else{
-                            command = QString("script %1=%2(%3,%4,%5,%6,%7)").arg(output_name,operation,c3,c4,c5,c6,c7);
+                            command = QString("script %1=%2(%3,%4,%5,%6,%7)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str());
                         }
                     }else{
-                        command = QString("script %1=%2(%3,%4,%5,%6)").arg(output_name,operation,c3,c4,c5,c6);
+                        command = QString("script %1=%2(%3,%4,%5,%6)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str());
                     }
                 }else{
-                    command = QString("script %1=%2(%3,%4,%5)").arg(output_name,operation,c3,c4,c5);
+                    command = QString("script %1=%2(%3,%4,%5)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str());
                 }
             }else{
-                command = QString("script %1=%2(%3,%4)").arg(output_name,operation,c3,c4);
+                command = QString("script %1=%2(%3,%4)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str());
             }
         }else{
-            command = QString("script %1=%2(%3)").arg(output_name,operation,c3);
+            command = QString("script %1=%2(%3)").arg(output_name.c_str(),operation.c_str(),c3.c_str());
         }
     }else{
-        command = QString("script %1=%2").arg(output_name,operation);
+        command = QString("script %1=%2").arg(output_name.c_str(),operation.c_str());
     }
     if (Ilwis::commandhandler()->execute(command,&ctx, symtbl) && !ctx._results.empty()){
         Ilwis::Symbol result = symtbl.getSymbol(ctx._results[0]);
@@ -89,21 +89,21 @@ Object *Engine::_do(const char* output_name, const char* operation, const char *
             if (result._var.canConvert<Ilwis::IRasterCoverage>()){
                 Ilwis::IRasterCoverage* obj = new Ilwis::IRasterCoverage(result._var.value<Ilwis::IRasterCoverage>());
                 if (rename)
-                    (*obj)->setName(QString("%1_%2").arg(operation).arg((*obj)->id()));
+                    (*obj)->setName(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
                 return new RasterCoverage(obj);
             }
         }else if (result._type == itFEATURE){
             if (result._var.canConvert<Ilwis::IFeatureCoverage>()){
                 Ilwis::IFeatureCoverage* obj = new Ilwis::IFeatureCoverage(result._var.value<Ilwis::IFeatureCoverage>());
                 if (rename)
-                    (*obj)->setName(QString("%1_%2").arg(operation).arg((*obj)->id()));
+                    (*obj)->setName(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
                 return new FeatureCoverage(obj);
             }
         }else if (result._type == itCOORDSYSTEM){
             if (result._var.canConvert<Ilwis::ICoordinateSystem>()){
                 Ilwis::ICoordinateSystem* obj = new Ilwis::ICoordinateSystem(result._var.value<Ilwis::ICoordinateSystem>());
                 if (rename)
-                    (*obj)->setName(QString("%1_%2").arg(operation).arg((*obj)->id()));
+                    (*obj)->setName(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
                 return new CoordinateSystem(obj);
             }
         }
@@ -113,12 +113,12 @@ Object *Engine::_do(const char* output_name, const char* operation, const char *
     }
 }
 
-bool Engine::setWorkingCatalog(const char *location){
+bool Engine::setWorkingCatalog(const std::string& location){
     Ilwis::Catalog cat;
-    cat.prepare(QString(location), QString("container='%1'").arg(location));
+    cat.prepare(QString::fromStdString(location), QString("container='%1'").arg(location.c_str()));
     if(cat.isValid()){
         Ilwis::context()->setWorkingCatalog(cat);
         return true;
     }else
-        throw Ilwis::ErrorObject(QString("invalid container location: '%1'").arg(location));
+        throw Ilwis::ErrorObject(QString("invalid container location: '%1'").arg(location.c_str()));
 }

@@ -28,15 +28,15 @@ namespace pythonapi {
         IlwisObject();
         virtual ~IlwisObject();
 
-        bool connectTo(const char* url, const char* format  = "", const char* fnamespace = "", ConnectorMode cmode = cmINPUT);
+        bool connectTo( const std::string& url,  const std::string& format  = "",  const std::string& fnamespace = "", ConnectorMode cmode = cmINPUT);
         bool store(int storeMode = smMETADATA | smBINARYDATA);
         bool __bool__() const;
-        const char *__str__();
-        const char *__add__(const char* value);
-        const char *__radd__(const char* value);
-        const char *name();
-        void name(const char* name);
-        const char *type();
+        std::string __str__();
+        std::string __add__(std::string value);
+        std::string __radd__(std::string value);
+        std::string name();
+        void name(std::string name);
+        std::string type();
         quint64 ilwisID() const;
         IlwisTypes ilwisType();
     };

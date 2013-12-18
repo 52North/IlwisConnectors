@@ -23,7 +23,7 @@
 
 namespace pythonapi{
 
-Geometry::Geometry(const char *wkt): _standalone(true), _wkt(std::string(wkt)){
+Geometry::Geometry(std::string wkt): _standalone(true), _wkt(wkt){
 }
 
 Geometry::Geometry(Feature *feature, int index): _standalone(false),_feature(feature), _index(index){
@@ -48,7 +48,7 @@ bool Geometry::__bool__() const{
     }
 }
 
-const char* Geometry::__str__(){
+std::string Geometry::__str__(){
     if (this->__bool__())
         return this->toWKT();
     else
@@ -61,15 +61,15 @@ IlwisTypes Geometry::ilwisType(){
     return this->ptr().geometryType();
 }
 
-bool Geometry::fromWKT(const char* wkt){
-    return this->_feature->ptr()->geometry().fromWKT(QString(wkt));
+bool Geometry::fromWKT(const std::string& wkt){
+    return this->_feature->ptr()->geometry().fromWKT(QString::fromStdString(wkt));
 }
 
-const char *Geometry::toWKT(){
+std::string Geometry::toWKT(){
     if(this->_standalone)
         return _wkt.c_str();
     else
-        return this->ptr().toWKT().toLocal8Bit();
+        return this->ptr().toWKT().toStdString();
 }
 
 Ilwis::Geometry &Geometry::ptr() const{
@@ -84,11 +84,11 @@ Coordinate::Coordinate(double x, double y): _2d(true), _data(new Ilwis::Point3D<
 Coordinate::Coordinate(double x, double y, double z): _2d(false), _data(new Ilwis::Point3D<double>(x,y,z)){
 }
 
-const char* Coordinate::__str__(){
+std::string Coordinate::__str__(){
     if (this->_2d)
-        return QString("coordinate(%1,%2)").arg(this->_data->x()).arg(this->_data->y()).toLocal8Bit();
+        return QString("coordinate(%1,%2)").arg(this->_data->x()).arg(this->_data->y()).toStdString();
     else
-        return QString("coordinate(%1,%2,%3)").arg(this->_data->x()).arg(this->_data->y()).arg(this->_data->z()).toLocal8Bit();
+        return QString("coordinate(%1,%2,%3)").arg(this->_data->x()).arg(this->_data->y()).arg(this->_data->z()).toStdString();
 }
 
 Ilwis::Point3D<double>& Coordinate::data(){
@@ -98,8 +98,8 @@ Ilwis::Point3D<double>& Coordinate::data(){
 Pixel::Pixel(qint32 x, qint32 y): _x(x), _y(y){
 }
 
-const char* Pixel::__str__(){
-    return QString("pixel(%1,%2)").arg(this->_x).arg(this->_y).toLocal8Bit();
+std::string Pixel::__str__(){
+    return QString("pixel(%1,%2)").arg(this->_x).arg(this->_y).toStdString();
 }
 
 Voxel::Voxel(const Ilwis::Point3D<qint32> &vox): _data(new Ilwis::Point3D<>(vox)){
@@ -108,9 +108,9 @@ Voxel::Voxel(const Ilwis::Point3D<qint32> &vox): _data(new Ilwis::Point3D<>(vox)
 Voxel::Voxel(qint32 x, qint32 y, qint32 z): _data(new Ilwis::Point3D<>(x,y,z)){
 }
 
-const char* Voxel::__str__(){
+std::string Voxel::__str__(){
     //TODO kept (3D)pixel as string representation for use in Engine.do(..) better change to voxel(,,,)
-    return QString("pixel(%1,%2,%3)").arg(this->_data->x()).arg(this->_data->y()).arg(this->_data->z()).toLocal8Bit();
+    return QString("pixel(%1,%2,%3)").arg(this->_data->x()).arg(this->_data->y()).arg(this->_data->z()).toStdString();
 }
 
 Ilwis::Point3D<qint32> &Voxel::data() const{
@@ -123,14 +123,14 @@ Box::Box():_data(new Ilwis::Box3D<>()){
 Box::Box(const Ilwis::Box3D<qint32>& box): _data(new Ilwis::Box3D<>(box)){
 }
 
-Box::Box(const char *envelope): _data(new Ilwis::Box3D<>(envelope)){
+Box::Box(const std::string& envelope): _data(new Ilwis::Box3D<>(QString::fromStdString(envelope))){
 }
 
 Box::Box(const Voxel &min, const Voxel &max): _data(new Ilwis::Box3D<>(min.data(), max.data())){
 }
 
-const char *Box::__str__(){
-    return this->data().toString().toLocal8Bit();
+std::string Box::__str__(){
+    return this->data().toString().toStdString();
 }
 
 Size Box::size(){

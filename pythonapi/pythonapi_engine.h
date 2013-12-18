@@ -8,8 +8,8 @@ namespace pythonapi {
     class Engine{
     public:
         Engine();
-        static Object* _do(const char* output_name, const char* operation,const char* c3 = "",const char* c4 = "",const char* c5 = "",const char* c6 = "",const char* c7="", const char* c8="", const char* c9="");
-        static bool setWorkingCatalog(const char* location);
+        static Object* _do(std::string output_name, std::string operation,std::string c3 = "",std::string c4 = "",std::string c5 = "",std::string c6 = "",std::string c7="", std::string c8="", std::string c9="");
+        static bool setWorkingCatalog(const std::string& location);
     };
 
 }

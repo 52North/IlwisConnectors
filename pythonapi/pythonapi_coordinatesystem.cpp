@@ -19,9 +19,9 @@ using namespace pythonapi;
 CoordinateSystem::CoordinateSystem(Ilwis::ICoordinateSystem *cs): IlwisObject(new Ilwis::IIlwisObject(*cs)){
 }
 
-CoordinateSystem::CoordinateSystem(const char *resource){
+CoordinateSystem::CoordinateSystem(const std::string& resource){
     Ilwis::ICoordinateSystem cs;
-    cs.prepare(QString(resource));
+    cs.prepare(QString::fromStdString(resource));
     if (cs.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(cs));
 }

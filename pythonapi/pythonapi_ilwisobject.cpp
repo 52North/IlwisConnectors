@@ -14,15 +14,15 @@ IlwisObject::IlwisObject(Ilwis::IIlwisObject *object): _ilwisObject(std::shared_
 IlwisObject::~IlwisObject(){
 }
 
-bool IlwisObject::connectTo(const char *url, const char *format, const char *fnamespace, ConnectorMode cmode){
+bool IlwisObject::connectTo(const std::string& url, const std::string& format, const std::string& fnamespace, ConnectorMode cmode){
     Ilwis::IIlwisObject io = (*this->ptr());
     if (cmode == cmINPUT || cmode == cmEXTENDED){
-        if (!io.prepare(QString(url), io->ilwisType()))
-            throw Ilwis::ErrorObject(QString("Cannot reconnect %1 for input").arg(url));
+        if (!io.prepare(QString::fromStdString(url), io->ilwisType()))
+            throw Ilwis::ErrorObject(QString("Cannot reconnect %1 for input").arg(url.c_str()));
         else
             return true;
     }else{
-        return io->connectTo(QUrl(url), QString(format), QString(fnamespace), (Ilwis::IlwisObject::ConnectorMode)cmode);
+        return io->connectTo(QUrl(url.c_str()), QString::fromStdString(format), QString::fromStdString(fnamespace), (Ilwis::IlwisObject::ConnectorMode)cmode);
     }
 }
 
@@ -34,43 +34,43 @@ bool IlwisObject::__bool__() const{
     return this->_ilwisObject != NULL && this->_ilwisObject->isValid() && (*this->_ilwisObject)->isValid();
 }
 
-const char* IlwisObject::__str__(){
+std::string IlwisObject::__str__(){
     if (this->__bool__())
-        return QString("%1%2").arg(NAME_ALIAS).arg((*this->ptr())->id()).toLocal8Bit();
+        return QString("%1%2").arg(NAME_ALIAS).arg((*this->ptr())->id()).toStdString();
     else
-        return QString("invalid IlwisObject!").toLocal8Bit();
+        return  std::string("invalid IlwisObject!");
 }
 
-const char* IlwisObject::name(){
+std::string IlwisObject::name(){
     if (this->__bool__())
-        return (*this->ptr())->name().toLocal8Bit();
+        return (*this->ptr())->name().toStdString();
     else
-        return QString("invalid IlwisObject!").toLocal8Bit();
+        return  std::string("invalid IlwisObject!");
 }
 
-void IlwisObject::name(const char* name){
-    (*this->ptr())->setName(QString(name));
+void IlwisObject::name(std::string name){
+    (*this->ptr())->setName(QString::fromStdString(name));
 }
 
-const char *IlwisObject::type(){
+std::string IlwisObject::type(){
     if (this->__bool__())
-        return Ilwis::IlwisObject::type2Name((*this->ptr())->ilwisType()).toLocal8Bit();
+        return Ilwis::IlwisObject::type2Name((*this->ptr())->ilwisType()).toStdString();
     else
-        return QString("invalid IlwisObject!").toLocal8Bit();
+        return  std::string("invalid IlwisObject!");
 }
 
-const char *IlwisObject::__add__(const char *value){
+std::string IlwisObject::__add__(std::string value){
     if (this->__bool__())
-        return QString("%2%1").arg(value).arg(this->__str__()).toLocal8Bit();
+        return this->__str__()+value;
     else
-        return QString("invalid IlwisObject!").toLocal8Bit();
+        return std::string("invalid IlwisObject!");
 }
 
-const char *IlwisObject::__radd__(const char *value){
+std::string IlwisObject::__radd__(std::string value){
     if (this->__bool__())
-        return QString("%1%2").arg(value).arg(this->__str__()).toLocal8Bit();
+        return value+this->__str__();
     else
-        return QString("invalid IlwisObject!").toLocal8Bit();
+        return std::string("invalid IlwisObject!");
 }
 
 std::shared_ptr<Ilwis::IIlwisObject> IlwisObject::ptr() const{

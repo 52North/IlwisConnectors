@@ -23,11 +23,11 @@ namespace pythonapi{
         //QVartiant constructor wrapper
         PyVariant(qlonglong value);
         PyVariant(double value);
-        PyVariant(const char* value);
+        PyVariant(std::string value);
 
         ~PyVariant();
         void __del__();
-        const char* __str__();
+        std::string __str__();
         qlonglong __int__();
         double __float__();
         bool __bool__() const;

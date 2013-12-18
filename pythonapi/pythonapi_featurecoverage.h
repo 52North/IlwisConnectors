@@ -22,7 +22,7 @@ namespace pythonapi {
         FeatureCoverage(Ilwis::IFeatureCoverage* coverage);
     public:
         FeatureCoverage();
-        FeatureCoverage(const char* resource);
+        FeatureCoverage(std::string resource);
         FeatureIterator __iter__();
         unsigned int featureCount() const;
         Feature newFeature(Geometry& geometry);

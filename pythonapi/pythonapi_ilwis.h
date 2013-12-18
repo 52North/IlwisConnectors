@@ -75,11 +75,11 @@ namespace pythonapi{
     void disconnectIssueLogger(); // (ilwis.cpp)
     void connectIssueLogger();
     //can retrieve Ilwis::ErrorObject::message() or std::exception::what() (ilwis.cpp)
-    const char* get_err_message(std::exception& e);
+    const char *get_err_message(std::exception& e);
     //returns typeid(Ilwis::ErrorObject) to compare in translate_Exception_type (ilwis.cpp)
     size_t ilwisErrorObject_type_info();
     //invokes PySys_WriteStderr() call (pythonapi_pyerror.cpp)
-    void log(const char* message);
+    void log(std::string message);
     //new native Python Exception objects (pythonapi_pyerror.cpp)
     extern PyObject* ilwisException;
     extern PyObject* wrapperException;

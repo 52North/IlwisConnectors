@@ -4,8 +4,8 @@
 
 #include <typeinfo>
 
-void pythonapi::log(const char *message){
-    PySys_WriteStderr("ILWIS ERROR: %s \n",message);
+void pythonapi::log(std::string message){
+    PySys_WriteStderr("ILWIS ERROR: %s \n",message.c_str());
 }
 
 PyObject* pythonapi::ilwisException;

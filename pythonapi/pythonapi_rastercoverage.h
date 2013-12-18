@@ -19,7 +19,7 @@ namespace pythonapi {
          RasterCoverage(Ilwis::IRasterCoverage* coverage);
     public:
         RasterCoverage();
-        RasterCoverage(const char* resource);
+        RasterCoverage(std::string resource);
         RasterCoverage* operator+ (RasterCoverage &rc);
         RasterCoverage* operator+ (double value);
         RasterCoverage* __radd__(double value);

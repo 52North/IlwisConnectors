@@ -35,9 +35,9 @@ FeatureCoverage::FeatureCoverage(){
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
 }
 
-FeatureCoverage::FeatureCoverage(const char* resource){
+FeatureCoverage::FeatureCoverage(std::string resource){
     Ilwis::IFeatureCoverage fc;
-    fc.prepare(QString(resource));
+    fc.prepare(QString::fromStdString(resource));
     if (fc.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
 }
@@ -51,7 +51,7 @@ unsigned int FeatureCoverage::featureCount() const{
 }
 
 Feature FeatureCoverage::newFeature(Geometry &geometry){
-    Ilwis::Geometry geom(QString(geometry.toWKT()), this->ptr()->get<Ilwis::Coverage>()->coordinateSystem());
+    Ilwis::Geometry geom(QString::fromStdString(geometry.toWKT()), this->ptr()->get<Ilwis::Coverage>()->coordinateSystem());
     return Feature(this->ptr()->get<Ilwis::FeatureCoverage>()->newFeature(geom),this);
 }
 

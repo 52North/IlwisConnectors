@@ -18,8 +18,8 @@ Coverage::Coverage(Ilwis::ICoverage *coverage):IlwisObject(new Ilwis::IIlwisObje
 Coverage::Coverage():IlwisObject(){
 }
 
-bool Coverage::addAttribute(const char *name, const char *domain){
-    return (*this->ptr()).get<Ilwis::Coverage>()->attributeTable()->addColumn(QString(name),QString(domain));
+bool Coverage::addAttribute(const std::string& name, const std::string& domain){
+    return (*this->ptr()).get<Ilwis::Coverage>()->attributeTable()->addColumn(QString::fromStdString(name),QString::fromStdString(domain));
 }
 
 quint32 Coverage::attributeCount(){
@@ -30,7 +30,7 @@ PyObject* Coverage::attributes(){
     Ilwis::ITable tbl = (*this->ptr()).get<Ilwis::Coverage>()->attributeTable();
     PyObject* list = newPyTuple(tbl->columnCount()-1);//skip 'feature_id'
     for(int i = 1; i < tbl->columnCount(); i++){
-        if (!setTupleItem(list, i-1,tbl->columndefinition(i).name().toLocal8Bit().data()))
+        if (!setTupleItem(list, i-1,tbl->columndefinition(i).name().toStdString().data()))
             throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of attributes").arg(tbl->columndefinition(i).name()));
     }
     return list;

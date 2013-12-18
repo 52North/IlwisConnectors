@@ -21,16 +21,16 @@ namespace pythonapi {
     class Geometry : public Object{
         friend class Feature;
     public:
-        Geometry(const char* wkt);
+        Geometry(std::string wkt);
         Geometry(Feature* feature, int index);
         ~Geometry();
         bool within(const Geometry& geometry) const;
         bool contains(const Geometry& geometry) const;
         bool __bool__() const ;
-        const char* __str__();
+        std::string __str__();
         IlwisTypes ilwisType();
-        bool fromWKT(const char*  wkt);
-        const char* toWKT();
+        bool fromWKT(const std::string& wkt);
+        std::string toWKT();
     private:
         bool _standalone;
 
@@ -48,7 +48,7 @@ namespace pythonapi {
     public:
         Coordinate(double x, double y);
         Coordinate(double x, double y, double z);
-        const char* __str__();
+        std::string __str__();
         Ilwis::Point3D<double>& data();
     private:
         bool _2d;
@@ -59,7 +59,7 @@ namespace pythonapi {
     public:
         Voxel(const Ilwis::Point3D<qint32>& vox);
         Voxel(qint32 x, qint32 y, qint32 z);
-        const char* __str__();
+        std::string __str__();
         Ilwis::Point3D<qint32>& data() const;
     private:
         std::shared_ptr<Ilwis::Point3D<qint32> > _data;
@@ -68,7 +68,7 @@ namespace pythonapi {
     class Pixel{
     public:
         Pixel(qint32 x, qint32 y);
-        const char* __str__();
+        std::string __str__();
     private:
         qint32 _x,_y;
     };
@@ -100,9 +100,9 @@ namespace pythonapi {
     public:
         Box();
         Box(const Ilwis::Box3D<qint32>& box);
-        Box(const char* envelope);
+        Box(const std::string &envelope);
         Box(const Voxel& min,const Voxel& max);
-        const char* __str__();
+        std::string __str__();
         Size size();
         Ilwis::Box3D<qint32>& data() const;
     private:

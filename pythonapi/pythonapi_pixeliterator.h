@@ -26,7 +26,7 @@ class PixelIterator{
         PixelIterator* __iter__();
         double __next__();
         bool __bool__() const;
-        const char* __str__();
+        std::string __str__();
         /**
          * @brief __float__ returns value on current position
          * @return returns value on current position

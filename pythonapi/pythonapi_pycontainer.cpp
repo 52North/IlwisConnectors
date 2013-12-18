@@ -8,7 +8,7 @@ PyObject* newPyTuple(int size){
     return PyTuple_New(size);
 }
 
-bool setTupleItem(PyObject *tuple, int i, const char *value){
+bool setTupleItem(PyObject *tuple, int i, const char* value){
     PyObject *v = PyUnicode_FromString(value);
     if (!v) {
         Py_DECREF(tuple);

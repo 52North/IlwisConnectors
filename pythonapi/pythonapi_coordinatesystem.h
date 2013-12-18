@@ -16,7 +16,7 @@ namespace pythonapi {
     private:
         CoordinateSystem(Ilwis::ICoordinateSystem* cs);
     public:
-        CoordinateSystem(const char* resource);
+        CoordinateSystem(const std::string &resource);
         static CoordinateSystem* toCoordinateSystem(Object *obj);
     };
 

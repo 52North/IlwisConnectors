@@ -21,7 +21,7 @@ namespace pythonapi{
         public:
             Coverage();
             virtual ~Coverage(){};
-            bool addAttribute(const char* name, const char* domain);
+            bool addAttribute(const std::string& name, const std::string& domain);
             quint32 attributeCount();
             PyObject *attributes();
             CoordinateSystem coordinateSystem();
