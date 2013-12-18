@@ -14,7 +14,7 @@ try:
     class TestModule(ut.TestCase):
         def setUp(self):
             try:
-                Engine.setWorkingCatalog(workingDir)
+                Engine.setWorkingCatalog(workingDir+pytestDir)
             except IlwisException:
                 self.skipTest("could not set working directory!")
 
@@ -168,7 +168,7 @@ try:
             except IlwisException:
                 self.skipTest("could not set working directory!")
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_RasterCalculation(self):
             rc = RasterCoverage("n000302.mpr")
             rctif = RasterCoverage("n0.mpr")
@@ -266,7 +266,9 @@ try:
                 i += 1
 
             it = iter(rcl)
-            self.assertTrue(bool(it), msg="couln't create PixelIterator from small.mpl")
+            self.assertEqual(str(it),"PixelIterator for small.mpl at position pixel(0,0,0)",
+                             msg="wrong string representation for PixelIterator")
+            self.assertTrue(bool(it), msg="couldn't create PixelIterator from small.mpl")
             lin = rcl.size().linearSize()
             self.assertEqual(lin, 175, msg="wrong linear size of small.mpl")
             for i in range(lin):

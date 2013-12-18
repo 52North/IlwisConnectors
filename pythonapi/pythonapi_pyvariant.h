@@ -20,7 +20,6 @@ namespace pythonapi{
 
         bool isValid();
 
-        //QVartiant constructor wrapper
         PyVariant(qlonglong value);
         PyVariant(double value);
         PyVariant(std::string value);

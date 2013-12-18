@@ -9,7 +9,6 @@ void pythonapi::log(std::string message){
 }
 
 PyObject* pythonapi::ilwisException;
-PyObject* pythonapi::wrapperException;
 PyObject* pythonapi::invalidObjectException;
 
 PyObject* pythonapi::translate_Exception_type(std::exception& e){
@@ -27,8 +26,6 @@ PyObject* pythonapi::translate_Exception_type(std::exception& e){
         return invalidObjectException;
     }else if (typeid(e) == typeid(NotImplementedError)){
         return PyExc_NotImplementedError;
-    }else if (typeid(e) == typeid(WrapperError)){
-        return wrapperException;
     }else if (typeid(e) == typeid(ImportError)){
         return PyExc_ImportError;
     }else if(typeid(e) == typeid(StopIteration)){

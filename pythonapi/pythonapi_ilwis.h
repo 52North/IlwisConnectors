@@ -24,19 +24,6 @@ namespace pythonapi{
         }
     };
 
-    //to indicate an error caused by wrapper classes of the Python API
-    class WrapperError : public std::exception{
-    private:
-        std::string _what;
-    public:
-        WrapperError(const std::string& what ){
-            this->_what = what;
-        }
-        virtual const char* what() const throw(){
-            return this->_what.c_str();
-        }
-    };
-
     //to indicate an error during module initialization
     class ImportError : public std::exception{
     private:
@@ -82,7 +69,6 @@ namespace pythonapi{
     void log(std::string message);
     //new native Python Exception objects (pythonapi_pyerror.cpp)
     extern PyObject* ilwisException;
-    extern PyObject* wrapperException;
     extern PyObject* invalidObjectException;
     //tries to translate stdexcept's into native Python Exceptions (pythonapi_pyerror.cpp)
     PyObject* translate_Exception_type(std::exception& e);

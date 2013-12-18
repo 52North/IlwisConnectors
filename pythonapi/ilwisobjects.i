@@ -32,10 +32,6 @@
     pythonapi::ilwisException = PyErr_NewException("_ilwisobjects.IlwisException",NULL,NULL);
     Py_INCREF(pythonapi::ilwisException);
     PyModule_AddObject(m, "IlwisException", pythonapi::ilwisException);//m is SWIG declaration for Python C API modul creation
-    //init WrapperException for Python
-    pythonapi::wrapperException = PyErr_NewException("_ilwisobjects.WrapperException",NULL,NULL);
-    Py_INCREF(pythonapi::wrapperException);
-    PyModule_AddObject(m, "WrapperException", pythonapi::wrapperException);//m is SWIG declaration for Python C API modul creation
     //init InvalidObjectException for Python
     pythonapi::invalidObjectException = PyErr_NewException("_ilwisobjects.InvalidObjectException",NULL,NULL);
     Py_INCREF(pythonapi::invalidObjectException);
@@ -55,7 +51,6 @@
 //adds the export flag to pyd library for the IlwisException
 %pythoncode %{
     IlwisException = _ilwisobjects.IlwisException
-    WrapperException = _ilwisobjects.WrapperException
     InvalidObjectException = _ilwisobjects.InvalidObjectException
     shUNDEF = -32767
     iUNDEF  = -2147483647

@@ -51,7 +51,6 @@ OTHER_FILES += \
     pythonapi/test.py \
     pythonapi/setup.py \
     pythonapi/ilwisobjects.i \
-    pythonapi/ilwisobjects.sip \
     pythonapi/test.sh \
     pythonapi/test.bat \
     pythonapi/qt.conf \
