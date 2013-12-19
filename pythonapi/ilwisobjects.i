@@ -140,6 +140,20 @@ namespace pythonapi {
         zsize = property(zsize,setZsize)
 %}
 }
+%extend pythonapi::Voxel {
+%insert("python") %{
+    __swig_getmethods__["x"] = x
+    __swig_getmethods__["y"] = y
+    __swig_getmethods__["z"] = z
+    __swig_setmethods__["x"] = setX
+    __swig_setmethods__["y"] = setY
+    __swig_setmethods__["z"] = setZ
+    if _newclass:
+        x = property(x,setX)
+        y = property(y,setY)
+        z = property(z,setZ)
+%}
+}
 
 %include "pythonapi_geometry.h"
 

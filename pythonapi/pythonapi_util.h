@@ -31,6 +31,9 @@ namespace pythonapi {
         qint32 x() const;
         qint32 y() const;
         qint32 z() const;
+        void setX(qint32 v);
+        void setY(qint32 v);
+        void setZ(qint32 v);
         std::string __str__();
         Ilwis::Point3D<qint32>& data() const;
     private:

@@ -52,6 +52,18 @@ qint32 Voxel::z() const{
     return this->data().z();
 }
 
+void Voxel::setX(qint32 v){
+    this->data().x(v);
+}
+
+void Voxel::setY(qint32 v){
+    this->data().y(v);
+}
+
+void Voxel::setZ(qint32 v){
+    this->data().z(v);
+}
+
 std::string Voxel::__str__(){
     //TODO kept (3D)pixel as string representation for use in Engine.do(..) better change to voxel(,,,)
     return QString("pixel(%1,%2,%3)").arg(this->_data->x()).arg(this->_data->y()).arg(this->_data->z()).toStdString();

@@ -40,6 +40,17 @@ try:
             self.assertTrue(b.size() == Size(2, 2, 2))
             self.assertEqual(b.size().linearSize(),2*2*2)
 
+        def test_Voxel(self):
+            v = Voxel(4, 5, 6,)
+            self.assertEqual(str(v), "pixel(4,5,6)")
+            self.assertEqual(v.x, 4)
+            v.x = 32
+            self.assertEqual(v.x, 32)
+            v.y = 32
+            self.assertEqual(v.y, 32)
+            v.z = 32
+            self.assertEqual(v.z, 32)
+
     #@ut.skip("temporarily")
     class TestModule(ut.TestCase):
         def setUp(self):
