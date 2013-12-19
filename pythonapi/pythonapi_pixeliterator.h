@@ -38,7 +38,7 @@ class PixelIterator{
          */
         quint64 __int__();
 
-        bool contains(const Voxel& vox);
+        bool __contains__(const Voxel& vox);
         Box box();
         Voxel position();
         bool xChanged();

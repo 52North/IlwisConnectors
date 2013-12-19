@@ -29,8 +29,8 @@ try:
             self.assertEqual(str(sz), "Size(4, 8, 10)")
             sz.xsize = 3
             self.assertEqual(sz.xsize, 3)
-            self.assertTrue(sz.contains(Voxel(1, 1, 1)))
-            self.assertFalse(sz.contains(Voxel(5, 5, 5)))
+            self.assertTrue(Voxel(1, 1, 1) in sz)
+            self.assertFalse(Voxel(5, 5, 5) in sz)
 
         def test_Box(self):
             b = Box(Voxel(3, 4, 5), Voxel(4, 5, 6,))
@@ -39,7 +39,7 @@ try:
             self.assertTrue(b.size() == Size(2, 2, 2))
             self.assertEqual(b.size().linearSize(),2*2*2)
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestModule(ut.TestCase):
         def setUp(self):
             try:
@@ -53,7 +53,7 @@ try:
             self.assertFalse(bool(fc))
             connectIssueLogger()
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestData(ut.TestCase):
         def test_UNDEF(self):
             with self.assertRaises(AttributeError, msg="property is not read only!"):
@@ -88,7 +88,7 @@ try:
             pv = PyVariant(23.4e-32)
             self.assertEqual(float(pv), 23.4e-32)
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestOperation(ut.TestCase):
         def setUp(self):
             try:
@@ -224,7 +224,7 @@ try:
             except IlwisException:
                 self.skipTest("could not set working directory!")
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_RasterCalculation(self):
             rc = RasterCoverage("n000302.mpr")
             rctif = RasterCoverage("n0.mpr")
@@ -348,8 +348,8 @@ try:
             rit3 = 13 + rit
             self.assertEqual(str(rit3.position()), "pixel(2,3,0)")
             self.assertEqual(str(rit.position()), "pixel(4,0,0)")
-            self.assertTrue(rit.contains(Voxel(1, 1, 1)))
-            self.assertFalse(rit.contains(Voxel(5, 1, 1)))
+            self.assertTrue(Voxel(1, 1, 1) in rit)
+            self.assertFalse(Voxel(5, 1, 1) in rit)
             self.assertFalse(rit3 == rit2)
             self.assertEqual(float(rit2), 22.0)
             self.assertEqual(rit[23], 120.0)
@@ -387,8 +387,8 @@ try:
                 ("pixel(1,1,3)", 174.0), ("pixel(2,1,3)", 174.0),
                 ("pixel(1,2,3)", 78.0), ("pixel(2,2,3)", 174.0),
             ]
-            self.assertTrue(bit.contains(Voxel(1, 1, 1)))
-            self.assertFalse(bit.contains(Voxel(0, 0, 0)))
+            self.assertTrue(Voxel(1, 1, 1) in bit)
+            self.assertFalse(Voxel(0, 0, 0) in bit)
             lin = bit.box().size().linearSize()
             self.assertEqual(lin, 16)
             for i in range(lin):

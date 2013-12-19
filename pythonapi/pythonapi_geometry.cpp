@@ -203,7 +203,7 @@ quint64 Size::linearSize() const{
     return this->data().totalSize();
 }
 
-bool Size::contains(const Voxel &vox) const{
+bool Size::__contains__(const Voxel &vox) const{
     return this->data().contains(vox.x(),vox.y(),vox.z());
 }
 

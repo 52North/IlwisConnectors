@@ -93,7 +93,7 @@ namespace pythonapi {
         void setZsize(qint32 z);
         quint64 linearSize() const;
 
-        bool contains(const Voxel& vox) const;
+        bool __contains__(const Voxel& vox) const;
         std::string __str__();
         Ilwis::Size& data() const;
     private:

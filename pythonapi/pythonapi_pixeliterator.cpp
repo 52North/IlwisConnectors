@@ -60,7 +60,7 @@ quint64 PixelIterator::__int__(){
     return this->ptr().linearPosition();
 }
 
-bool PixelIterator::contains(const Voxel &vox){
+bool PixelIterator::__contains__(const Voxel &vox){
     return this->ptr().contains(vox.data());
 }
 
