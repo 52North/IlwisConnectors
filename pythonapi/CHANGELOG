@@ -2,7 +2,10 @@
 
 --20131220--
 *test.py is now unittest and autmatically skips tests if catalog(directory) could not be found
-*added extra Python API Exceptions like ImportError
+*added extra Python API Exceptions like ImportError and InvalidObjectException
+*improved geometry integrity
+*improved Size and Voxel functionality
+*added Const.xxUNDEFs for constants (UNDEFs)
 
 --20131213--
 *added PixelIterator and various geometry helper classes like Voxel, Box and Size
