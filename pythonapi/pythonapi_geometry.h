@@ -2,6 +2,7 @@
 #define PYTHONAPI_GEOMETRY_H
 
 #include "pythonapi_object.h"
+#include "pythonapi_coordinatesystem.h"
 
 #include <memory>
 
@@ -17,8 +18,9 @@ namespace pythonapi {
     class Geometry : public Object{
         friend class Feature;
     public:
-        Geometry(std::string wkt);
+        Geometry(std::string wkt, const CoordinateSystem& cs);
         Geometry(Feature* feature, int index);
+        Geometry(Ilwis::Geometry* geometry);
         ~Geometry();
         bool within(const Geometry& geometry) const;
         bool contains(const Geometry& geometry) const;
@@ -27,16 +29,18 @@ namespace pythonapi {
         IlwisTypes ilwisType();
         bool fromWKT(const std::string& wkt);
         std::string toWKT();
+        CoordinateSystem coordinateSystem();
+        void setCoordinateSystem(const CoordinateSystem& cs);
     private:
+        Ilwis::Geometry &ptr() const;
         bool _standalone;
 
-        Ilwis::Geometry &ptr() const;
+        //_standalone == false
         std::unique_ptr<Feature> _feature;
         int _index;
 
-        std::string _wkt;
-    };
-
+        //_standalone == true
+        std::unique_ptr<Ilwis::Geometry> _ilwisGeometry;
     };
 
 } // namespace pythonapi

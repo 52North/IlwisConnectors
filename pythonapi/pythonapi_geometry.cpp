@@ -23,10 +23,13 @@
 
 namespace pythonapi{
 
-Geometry::Geometry(std::string wkt): _standalone(true), _wkt(wkt){
+Geometry::Geometry(std::string wkt, const CoordinateSystem& cs): _standalone(true),_feature(nullptr),_index(-1), _ilwisGeometry(new Ilwis::Geometry(QString::fromStdString(wkt),cs.ptr()->get<Ilwis::CoordinateSystem>())){
 }
 
-Geometry::Geometry(Feature *feature, int index): _standalone(false),_feature(feature), _index(index){
+Geometry::Geometry(Ilwis::Geometry *geometry): _standalone(true),_feature(nullptr),_index(-1),_ilwisGeometry(geometry){
+}
+
+Geometry::Geometry(Feature *feature, int index): _standalone(false),_feature(feature), _index(index), _ilwisGeometry(nullptr){
 }
 
 Geometry::~Geometry(){
@@ -42,7 +45,7 @@ bool Geometry::contains(const Geometry &geometry) const{
 
 bool Geometry::__bool__() const{
     if (this->_standalone){
-        return !_wkt.empty();
+        return this->_ilwisGeometry != nullptr && (bool)this->_ilwisGeometry && this->_ilwisGeometry->isValid();
     }else{
         return this->_feature != nullptr && (bool)this->_feature && this->_feature->__bool__() && this->_feature->ptr()->geometry(this->_index).isValid();
     }
@@ -52,40 +55,61 @@ std::string Geometry::__str__(){
     if (this->__bool__())
         return this->toWKT();
     else
-        return "invalid Geometry!";
+        if (this->_standalone)
+            return "invalid Geometry!";
+        else
+            return "invalid standalone Geometry!";
 }
 
 IlwisTypes Geometry::ilwisType(){
-    if (!this->__bool__())
-        throw Ilwis::ErrorObject(QString("invalid Feature!"));
     return this->ptr().geometryType();
 }
 
 bool Geometry::fromWKT(const std::string& wkt){
-    return this->_feature->ptr()->geometry().fromWKT(QString::fromStdString(wkt));
+    if (!this->__bool__()){
+        if (this->_standalone){
+            this->_standalone = true;
+            this->_feature = nullptr;
+            this->_index = -1;
+            this->_ilwisGeometry.reset(new Ilwis::Geometry(QString::fromStdString(wkt)));
+            return this->_ilwisGeometry->isValid();
+        }else{
+            if (this->_feature != nullptr && (bool)this->_feature && this->_feature->__bool__())
+                return this->_feature->ptr()->geometry(this->_index).fromWKT(QString::fromStdString(wkt));
+            else
+                throw InvalidObject("invalid referenc to hosting feature of non-standalone geometry!");
+        }
+    }else{
+        if (_standalone){
+            return this->_ilwisGeometry->fromWKT(QString::fromStdString(wkt));
+        }else{
+            return this->_feature->ptr()->geometry(this->_index).fromWKT(QString::fromStdString(wkt));
+        }
+    }
 }
 
 std::string Geometry::toWKT(){
-    if(this->_standalone)
-        return _wkt.c_str();
-    else
-        return this->ptr().toWKT().toStdString();
-}
-
-Ilwis::Geometry &Geometry::ptr() const{
-    if (!this->__bool__())
-        throw Ilwis::ErrorObject(QString("invalid Geometry!"));
-    return this->_feature->ptr()->geometry(this->_index);
+    return this->ptr().toWKT().toStdString();
 }
 
 CoordinateSystem Geometry::coordinateSystem(){
+    return CoordinateSystem(new Ilwis::ICoordinateSystem(this->ptr().coordinateSystem()));
 }
 
+void Geometry::setCoordinateSystem(const CoordinateSystem &cs){
+    this->ptr().coordinateSystem(cs.ptr()->get<Ilwis::CoordinateSystem>());
 }
 
 Ilwis::Geometry &Geometry::ptr() const{
-    else
+    if (this->_standalone){
+        if (!this->__bool__())
+            throw InvalidObject("invalid standalone Geometry!");
+        return (*this->_ilwisGeometry);
+    }else{
+        if (!this->__bool__())
+            throw InvalidObject("invalid Geometry!");
         return this->_feature->ptr()->geometry(this->_index);
+    }
 }
 
 }//namespace pythonapi

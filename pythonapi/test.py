@@ -13,18 +13,19 @@ try:
     #@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
         def test_Geometry(self):
-            g = Geometry("POINT(5.4 6 9.0)")
-            self.assertEqual(str(g), "POINT(5.4 6 9.0)", "standalone Geometry(fromWKT) failed!")
-            self.assertEqual(g.toWKT(), "POINT(5.4 6 9.0)", "standalone Geometry(fromWKT) failed!")
+            g = Geometry("POINT(5.4 6 9.0)", CoordinateSystem("code=epsg:5464"))
+            self.assertEqual(str(g), "POINT(5.4 6 9)", "standalone Geometry(fromWKT) failed!")
+            self.assertEqual(g.toWKT(), "POINT(5.4 6 9)", "standalone Geometry(fromWKT) failed!")
             self.assertTrue(bool(g))
-            g = Geometry("Pihkdjfhskdf")
-            self.assertEqual(str(g), "Pihkdjfhskdf", "standalone Geometry(fromWKT) failed!")
-            self.assertEqual(g.toWKT(), "Pihkdjfhskdf", "standalone Geometry(fromWKT) failed!")
+            disconnectIssueLogger()
+            g = Geometry("Pihkdjfhskdf", CoordinateSystem("code=epsg:5464"))
+            connectIssueLogger()
+            self.assertFalse(bool(g))
 
         def test_Size(self):
             sz = Size(2, 4, 5)
             self.assertEqual(str(sz), "Size(2, 4, 5)")
-            self.assertEqual(sz.linearSize(),2*4*5)
+            self.assertEqual(sz.linearSize(), 2*4*5)
             sz *= 2
             self.assertEqual(str(sz), "Size(4, 8, 10)")
             sz.xsize = 3
@@ -39,7 +40,7 @@ try:
             self.assertTrue(b.size() == Size(2, 2, 2))
             self.assertEqual(b.size().linearSize(),2*2*2)
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestModule(ut.TestCase):
         def setUp(self):
             try:
@@ -53,7 +54,7 @@ try:
             self.assertFalse(bool(fc))
             connectIssueLogger()
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestData(ut.TestCase):
         def test_UNDEF(self):
             with self.assertRaises(AttributeError, msg="property is not read only!"):
@@ -88,7 +89,7 @@ try:
             pv = PyVariant(23.4e-32)
             self.assertEqual(float(pv), 23.4e-32)
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestOperation(ut.TestCase):
         def setUp(self):
             try:
@@ -137,7 +138,7 @@ try:
             ), msg="wring list of attributes!")
             self.assertEqual(len(att), 18, msg="wrong number of attributes")
             iter(self.fc)  # a HACK to loadBinaryData before newfeatureeature is created/added to the FeatureCoverage!
-            g = Geometry("POINT(5.4 6 9.0)")
+            g = Geometry("POINT(5.4 6 9.0)", CoordinateSystem("code=epsg:5464"))
             newfeature = self.fc.newFeature(g)
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
             for c in self.fc.attributes():
@@ -190,7 +191,7 @@ try:
             self.assertTrue(str(f),"Feature(0)")
 
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
             try:
@@ -224,7 +225,7 @@ try:
             except IlwisException:
                 self.skipTest("could not set working directory!")
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_RasterCalculation(self):
             rc = RasterCoverage("n000302.mpr")
             rctif = RasterCoverage("n0.mpr")
@@ -435,6 +436,7 @@ try:
             except IlwisException:
                 self.skipTest("could not set working directory!")
 
+        #@ut.skip("temporarily")
         def test_helloRaster(self):
             rc = RasterCoverage("n000302.mpr")
             res = Engine.do("aggregateraster", rc, "Avg", 10, True)
