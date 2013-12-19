@@ -17,6 +17,7 @@
 #include "pythonapi_coverage.h"
 #include "pythonapi_pyvariant.h"
 #include "pythonapi_object.h"
+#include "pythonapi_util.h"
 #include "pythonapi_geometry.h"
 #include "pythonapi_feature.h"
 #include "pythonapi_featureiterator.h"
@@ -124,7 +125,7 @@ namespace pythonapi {
 
 %include "pythonapi_object.h"
 
-%include "pythonapi_geometry.h"
+%include "pythonapi_util.h"
 %extend pythonapi::Size {
 %insert("python") %{
     __swig_getmethods__["xsize"] = xsize
@@ -139,6 +140,9 @@ namespace pythonapi {
         zsize = property(zsize,setZsize)
 %}
 }
+
+%include "pythonapi_geometry.h"
+
 %include "pythonapi_feature.h"
 
 %include "pythonapi_featureiterator.h"

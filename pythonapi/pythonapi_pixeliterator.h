@@ -7,6 +7,7 @@ namespace Ilwis {
 
 #include "pythonapi_qtGNUTypedefs.h"
 #include "pythonapi_geometry.h"
+#include "pythonapi_util.h"
 
 namespace pythonapi {
 
