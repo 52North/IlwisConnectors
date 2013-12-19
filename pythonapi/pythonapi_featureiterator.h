@@ -14,6 +14,7 @@ namespace pythonapi {
     class FeatureIterator{
         public:
             FeatureIterator(FeatureCoverage* fc);
+            FeatureIterator(const FeatureIterator& it);
             /**
              * @brief next confusingly returns current value bevore iterating to the next item
              * brings together C++ style "std::iterator it != it.end()" with end() pointing the back (after last entry)
@@ -21,10 +22,24 @@ namespace pythonapi {
              * @return
              */
             Feature __next__();
+            Feature current();
             FeatureIterator* __iter__();
-        private:
+
+            std::string __str__();
+            bool __bool__() const;
+
+            bool operator==(const FeatureIterator& other);
+            bool operator!=(const FeatureIterator &other);
+
+            FeatureIterator operator+(int n);
+            FeatureIterator __radd__(int n);
+            FeatureIterator operator-(int n);
+    private:
             FeatureCoverage* _coverage;
             std::shared_ptr<Ilwis::FeatureIterator> _ilwisFeatureIterator;
+            std::shared_ptr<Ilwis::FeatureIterator> _end;
+            Ilwis::FeatureIterator& ptr() const;
+
     };
 
 }

@@ -124,6 +124,7 @@ try:
         def tearDown(self):
             del self.fc
 
+        #@ut.skip("temporarily")
         def test_FeatureCoverage(self):
             self.assertEqual(self.fc.name(), "rainfall.shp", msg="internal FeatureCoverage name wrong!")
             self.assertEqual(self.fc.featureCount(), 13, msg="feature count wrong")
@@ -143,18 +144,10 @@ try:
                 newfeature[c] = 12.0
                 self.assertEqual(float(newfeature[c]), 12.0, msg="new value of feature attribute not correct!")
 
-            summ = 0
-            for f in self.fc:
-                summ += float(f.attribute("MAY", 0))
-                f["sum"] = summ
-                self.assertRegex(str(f), r"Feature\([0-9]*\)", msg="wrong feature representation")
-                self.assertRegex(str(f.geometry()),
-                                 r"POINT\(([0-9]+|\-1e\+308|5\.4)\s([0-9]+|\-1e\+308|[0-9]+\.[0-9]+e\+[0-9]+)\s(0|9)\)",
-                                 msg="wrong geometry representation")
-            self.assertEqual(summ, 298.0, msg="wrong sum over rainfall in MAY!")
-            del summ
+            self.assertEqual(self.fc.featureCount(), 14, msg="new feature count wrong")
 
-        def test_FeatureIterator(self):
+        #@ut.skip("temporarily")
+        def test_Feature(self):
             it = iter(self.fc)
             f = next(it)
 
@@ -172,7 +165,32 @@ try:
             with self.assertRaises(TypeError, msg="no TypeError on attempt to convert non-numerical string to int"):
                 print(int(v))
 
-    #@ut.skip("temporarily")
+        def test_FeatureIterator(self):
+            summ = 0
+            for f in self.fc:
+                summ += float(f.attribute("MAY", 0))
+                f["sum"] = summ
+                self.assertRegex(str(f), r"Feature\([0-9]*\)", msg="wrong feature representation")
+                self.assertRegex(str(f.geometry()),
+                                 r"POINT\(([0-9]+|\-1e\+308|5\.4)\s([0-9]+|\-1e\+308|[0-9]+\.[0-9]+e\+[0-9]+)\s(0|9)\)",
+                                 msg="wrong geometry representation")
+            self.assertEqual(summ, 286.0, msg="wrong sum over rainfall in MAY!")
+            del summ
+            it = iter(self.fc)
+            self.assertTrue(bool(it))
+            self.assertEqual(str(it),"FeatureIterator for rainfall.shp")
+            it2 = it + 2
+            self.assertTrue(it != it2)
+            self.assertFalse(it == it2)
+            it3 = it2 - 2
+            self.assertTrue(it == it3)
+            f = it3.current()
+            self.assertTrue(str(f),"Feature(0)")
+            f = next(it3)
+            self.assertTrue(str(f),"Feature(0)")
+
+
+    @ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
             try:
