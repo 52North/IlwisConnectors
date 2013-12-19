@@ -79,14 +79,14 @@ FAIL 3: "QSqlDatabase: QSQLITE driver not loaded
 TODO: Qt dynamically loads plugins like the SQLite driver from the qt.conf file. You get tis error and followed up errors
 if either the file is missing, or it doesn't point to a folder containing the plugins. Read --2-- again!
 
-FAIL 4: "_ilwisObjects.IlwisException: ILWIS couldn't be initialized!"
+FAIL 4: "ImportError: ILWIS couldn't be initialized!"
 TODO: The <yourPathToIlwis>/ points to a directory which doesn't contain the ilwiscore.dll. Read --3-- again!
 
 FAIL 5: "_ilwisObjects.IlwisException: invalid container location: 'file:///C:/somedir/'"
 TODO: You managed to get the extension running! Now check if the script itself does things you want.
 The delivered test.py might contain pathes to nonexistent folders (like C:/somedir/).
 
-FAIL 6: "_ilwisObjects.IlwisException: ILWIS ErrorObject: None of the following configuration files exist: ..."
+FAIL 6: "ImportError: None of the following configuration files exist: ..."
 TODO: Read --3-- again!
 
 FAIL 7: "ILWIS ERROR: ...."
