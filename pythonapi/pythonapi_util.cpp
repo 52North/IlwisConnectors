@@ -73,29 +73,32 @@ Ilwis::Point3D<qint32> &Voxel::data() const{
     return (*this->_data);
 }
 
-Box::Box():_data(new Ilwis::Box3D<>()){
+template<class T> BoxTemplate<T>::BoxTemplate():_data(new Ilwis::Box3D<T>()){
 }
 
-Box::Box(const Ilwis::Box3D<qint32>& box): _data(new Ilwis::Box3D<>(box)){
+template<class T> BoxTemplate<T>::BoxTemplate(const Ilwis::Box3D<T> &box): _data(new Ilwis::Box3D<T>(box)){
 }
 
-Box::Box(const std::string& envelope): _data(new Ilwis::Box3D<>(QString::fromStdString(envelope))){
+template<class T> BoxTemplate<T>::BoxTemplate(const std::string& envelope): _data(new Ilwis::Box3D<T>(QString::fromStdString(envelope))){
 }
 
-Box::Box(const Voxel &min, const Voxel &max): _data(new Ilwis::Box3D<>(min.data(), max.data())){
+template<class T> BoxTemplate<T>::BoxTemplate(const Voxel &min, const Voxel &max): _data(new Ilwis::Box3D<T>(min.data(), max.data())){
 }
 
-std::string Box::__str__(){
+template<class T> std::string BoxTemplate<T>::__str__(){
     return this->data().toString().toStdString();
 }
 
-Size Box::size(){
+template<class T> Size BoxTemplate<T>::size(){
     return Size(this->data().size());
 }
 
-Ilwis::Box3D<qint32> &Box::data() const{
+template<class T> Ilwis::Box3D<T> &BoxTemplate<T>::data() const{
     return (*this->_data);
 }
+
+template class BoxTemplate<qint32>;
+template class BoxTemplate<double>;
 
 Size::Size(qint32 xsize, qint32 ysize, qint32 zsize):_data(new Ilwis::Size(xsize,ysize,zsize)){
 }

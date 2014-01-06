@@ -10,7 +10,7 @@ try:
 
     import unittest as ut
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
         def test_Geometry(self):
             g = Geometry("POINT(5.4 6 9.0)", CoordinateSystem("code=epsg:5464"))
@@ -51,12 +51,15 @@ try:
             v.z = 32
             self.assertEqual(v.z, 32)
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestModule(ut.TestCase):
         def setUp(self):
             try:
+                disconnectIssueLogger()
                 Engine.setWorkingCatalog(workingDir+pytestDir)
+                connectIssueLogger()
             except IlwisException:
+                connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
         def test_IssueLogger(self):
@@ -65,7 +68,7 @@ try:
             self.assertFalse(bool(fc))
             connectIssueLogger()
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestData(ut.TestCase):
         def test_UNDEF(self):
             with self.assertRaises(AttributeError, msg="property is not read only!"):
@@ -100,12 +103,15 @@ try:
             pv = PyVariant(23.4e-32)
             self.assertEqual(float(pv), 23.4e-32)
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestOperation(ut.TestCase):
         def setUp(self):
             try:
-                Engine.setWorkingCatalog(workingDir + pytestDir)
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir+pytestDir)
+                connectIssueLogger()
             except IlwisException:
+                connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
             self.cs = CoordinateSystem(
@@ -122,12 +128,15 @@ try:
                              msg="generated name should begin with gridding_ and end with its ID")
             self.assertEqual(polygongrid.featureCount(), 144, msg="wrong number of polygons in gridding result!")
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestFeature(ut.TestCase):
         def setUp(self):
             try:
-                Engine.setWorkingCatalog(workingDir + pytestDir)
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir+pytestDir)
+                connectIssueLogger()
             except IlwisException:
+                connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
             self.fc = FeatureCoverage("rainfall.shp")
@@ -149,7 +158,7 @@ try:
             ), msg="wring list of attributes!")
             self.assertEqual(len(att), 18, msg="wrong number of attributes")
             iter(self.fc)  # a HACK to loadBinaryData before newfeatureeature is created/added to the FeatureCoverage!
-            g = Geometry("POINT(5.4 6 9.0)", CoordinateSystem("code=epsg:5464"))
+            g = Geometry("POINT(5.4 6 9.0)", self.fc.coordinateSystem())
             newfeature = self.fc.newFeature(g)
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
             for c in self.fc.attributes():
@@ -158,7 +167,7 @@ try:
 
             self.assertEqual(self.fc.featureCount(), 14, msg="new feature count wrong")
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_Feature(self):
             it = iter(self.fc)
             f = next(it)
@@ -206,13 +215,26 @@ try:
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
             try:
-                Engine.setWorkingCatalog(workingDir + pytestDir)
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir+pytestDir)
+                connectIssueLogger()
             except IlwisException:
+                connectIssueLogger()
                 self.skipTest("could not set working directory!")
             self.fc = FeatureCoverage("rainfall.shp")
 
         def tearDown(self):
             del self.fc
+
+        def test_FromFile(self):
+            csy = CoordinateSystem("Cochabamba.csy")
+            # g = Geometry("POINT(5.4 6 9.0)", CoordinateSystem("code=epsg:5464"))
+            # self.assertEqual(str(CoordinateSystem("code=epsg:5464").name()),str(self.fc.coordinateSystem().name()))
+            self.assertEqual("Cochabamba.csy",csy.name())
+            fc = FeatureCoverage("Rainfall.mpp")
+            rainCsy = fc.coordinateSystem()
+            self.assertEqual(csy.ilwisID(),rainCsy.ilwisID())
+            self.assertEqual(str(csy.envelope()),str(rainCsy.envelope()))
 
         def test_Proj4(self):
             cs1 = CoordinateSystem(
@@ -228,15 +250,18 @@ try:
             self.assertTrue(bool(cs2))
             self.assertEqual(cs2.name(), r"ED50 / UTM zone 35N")
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestRaster(ut.TestCase):
         def setUp(self):
             try:
-                Engine.setWorkingCatalog(workingDir + pytestDir)
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir+pytestDir)
+                connectIssueLogger()
             except IlwisException:
+                connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_RasterCalculation(self):
             rc = RasterCoverage("n000302.mpr")
             rctif = RasterCoverage("n0.mpr")
@@ -415,12 +440,15 @@ try:
                     self.assertFalse((i % 4 == 0) and (i != 0), msg="zChanged not only every 4th step (i="+str(i)+")")
                 self.assertEqual(next(bit), boxed_small[i][1])
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
         def setUp(self):
             try:
+                disconnectIssueLogger()
                 Engine.setWorkingCatalog(workingDir + exampleDir)
+                connectIssueLogger()
             except IlwisException:
+                connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
         def test_claudio(self):
@@ -439,15 +467,17 @@ try:
                                                   IlwisObject.cmOUTPUT))
             self.assertTrue(polygongrid.store())
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestBaby(ut.TestCase):
         def setUp(self):
             try:
+                disconnectIssueLogger()
                 Engine.setWorkingCatalog(workingDir + babyDir)
+                connectIssueLogger()
             except IlwisException:
                 self.skipTest("could not set working directory!")
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_helloRaster(self):
             rc = RasterCoverage("n000302.mpr")
             res = Engine.do("aggregateraster", rc, "Avg", 10, True)

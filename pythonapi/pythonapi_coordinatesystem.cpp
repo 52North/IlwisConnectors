@@ -26,6 +26,10 @@ CoordinateSystem::CoordinateSystem(const std::string& resource){
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(cs));
 }
 
+Envelope CoordinateSystem::envelope(){
+    return Envelope(this->ptr()->get<Ilwis::CoordinateSystem>()->envelope());
+}
+
 CoordinateSystem *CoordinateSystem::toCoordinateSystem(Object *obj){
     CoordinateSystem* ptr = dynamic_cast<CoordinateSystem*>(obj);
     if(!ptr)

@@ -126,6 +126,11 @@ namespace pythonapi {
 %include "pythonapi_object.h"
 
 %include "pythonapi_util.h"
+
+namespace pythonapi {
+%template(Box) BoxTemplate<qint32>;
+%template(Envelope) BoxTemplate<double>;
+}
 %extend pythonapi::Size {
 %insert("python") %{
     __swig_getmethods__["xsize"] = xsize

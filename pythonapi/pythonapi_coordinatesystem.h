@@ -2,6 +2,7 @@
 #define PYTHONAPI_COORDINATESYSTEM_H
 
 #include "pythonapi_ilwisobject.h"
+#include "pythonapi_util.h"
 
 namespace Ilwis{
     class CoordinateSystem;
@@ -18,6 +19,7 @@ namespace pythonapi {
         CoordinateSystem(Ilwis::ICoordinateSystem* cs);
     public:
         CoordinateSystem(const std::string &resource);
+        pythonapi::Envelope envelope();
         static CoordinateSystem* toCoordinateSystem(Object *obj);
     };
 
