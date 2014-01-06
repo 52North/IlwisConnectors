@@ -30,6 +30,10 @@ Envelope CoordinateSystem::envelope(){
     return Envelope(this->ptr()->get<Ilwis::CoordinateSystem>()->envelope());
 }
 
+bool CoordinateSystem::operator==(const CoordinateSystem &csy){
+    return (this->ptr()->ptr()->ilwisType() == itCONVENTIONALCOORDSYSTEM) && this->ptr()->get<Ilwis::ConventionalCoordinateSystem>()->isEqual(csy.ptr()->ptr());
+}
+
 CoordinateSystem *CoordinateSystem::toCoordinateSystem(Object *obj){
     CoordinateSystem* ptr = dynamic_cast<CoordinateSystem*>(obj);
     if(!ptr)

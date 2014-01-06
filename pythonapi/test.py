@@ -228,8 +228,6 @@ try:
 
         def test_FromFile(self):
             csy = CoordinateSystem("Cochabamba.csy")
-            # g = Geometry("POINT(5.4 6 9.0)", CoordinateSystem("code=epsg:5464"))
-            # self.assertEqual(str(CoordinateSystem("code=epsg:5464").name()),str(self.fc.coordinateSystem().name()))
             self.assertEqual("Cochabamba.csy",csy.name())
             fc = FeatureCoverage("Rainfall.mpp")
             rainCsy = fc.coordinateSystem()
@@ -249,6 +247,12 @@ try:
             cs2 = CoordinateSystem("code=epsg:23035")
             self.assertTrue(bool(cs2))
             self.assertEqual(cs2.name(), r"ED50 / UTM zone 35N")
+
+        def test_IsEqual(self):
+            cs1 = CoordinateSystem(
+                "code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
+            cs2 = CoordinateSystem("code=epsg:23035")
+            self.assertTrue(cs1 == cs2)
 
     @ut.skip("temporarily")
     class TestRaster(ut.TestCase):
