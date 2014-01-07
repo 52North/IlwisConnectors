@@ -21,6 +21,7 @@ namespace pythonapi {
         CoordinateSystem(const std::string &resource);
         pythonapi::Envelope envelope();
         bool operator==(const CoordinateSystem& csy);
+        bool operator!=(const CoordinateSystem& csy);
         static CoordinateSystem* toCoordinateSystem(Object *obj);
     };
 

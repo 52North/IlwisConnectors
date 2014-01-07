@@ -29,7 +29,7 @@ namespace pythonapi {
             bool __bool__() const;
 
             bool operator==(const FeatureIterator& other);
-            bool operator!=(const FeatureIterator &other);
+            bool operator!=(const FeatureIterator& other);
 
             FeatureIterator operator+(int n);
             FeatureIterator __radd__(int n);

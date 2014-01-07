@@ -34,6 +34,10 @@ bool CoordinateSystem::operator==(const CoordinateSystem &csy){
     return (this->ptr()->ptr()->ilwisType() == itCONVENTIONALCOORDSYSTEM) && this->ptr()->get<Ilwis::ConventionalCoordinateSystem>()->isEqual(csy.ptr()->ptr());
 }
 
+bool CoordinateSystem::operator!=(const CoordinateSystem &csy){
+    return !this->operator==(csy);
+}
+
 CoordinateSystem *CoordinateSystem::toCoordinateSystem(Object *obj){
     CoordinateSystem* ptr = dynamic_cast<CoordinateSystem*>(obj);
     if(!ptr)

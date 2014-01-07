@@ -128,7 +128,7 @@ try:
                              msg="generated name should begin with gridding_ and end with its ID")
             self.assertEqual(polygongrid.featureCount(), 144, msg="wrong number of polygons in gridding result!")
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestFeature(ut.TestCase):
         def setUp(self):
             try:
@@ -167,7 +167,7 @@ try:
 
             self.assertEqual(self.fc.featureCount(), 14, msg="new feature count wrong")
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_Feature(self):
             it = iter(self.fc)
             f = next(it)
@@ -209,6 +209,8 @@ try:
             self.assertTrue(str(f),"Feature(0)")
             f = next(it3)
             self.assertTrue(str(f),"Feature(0)")
+            f = next(it3)
+            self.assertTrue(str(f),"Feature(1)")
 
 
     #@ut.skip("temporarily")
@@ -253,6 +255,7 @@ try:
                 "code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
             cs2 = CoordinateSystem("code=epsg:23035")
             self.assertTrue(cs1 == cs2)
+            self.assertFalse(cs1 != cs2)
 
     @ut.skip("temporarily")
     class TestRaster(ut.TestCase):
