@@ -5,48 +5,63 @@
 #include <memory>
 
 namespace Ilwis{
+    template<typename CrdType> class Point2D;
     template<typename CrdType> class Point3D;
-    template<class CsyType> class Box2D;
     template<class CsyType> class Box3D;
     class Size;
 }
 
 namespace pythonapi {
 
-    class Coordinate{
+    template<class T> class Point2DTemplate{
     public:
-        Coordinate(double x, double y);
-        Coordinate(double x, double y, double z);
+        Point2DTemplate(const Ilwis::Point2D<T>& point);
+        Point2DTemplate(T x, T y);
+        T x() const;
+        T y() const;
+        void setX(T v);
+        void setY(T v);
+
+        Ilwis::Point2D<T>& data() const;
+
+        //implemented in spezialized templates only
         std::string __str__();
-        Ilwis::Point3D<double>& data();
+
     private:
-        bool _2d;
-        std::shared_ptr<Ilwis::Point3D<double> > _data;
+        std::shared_ptr<Ilwis::Point2D<T> > _data;
     };
 
-    class Voxel{
+    template<> std::string Point2DTemplate<qint32>::__str__();
+    template<> std::string Point2DTemplate<double>::__str__();
+
+    typedef Point2DTemplate<double> Coordinate2D;
+    typedef Point2DTemplate<qint32> Pixel;
+
+
+    template<class T> class Point3DTemplate{
     public:
-        Voxel(const Ilwis::Point3D<qint32>& vox);
-        Voxel(qint32 x, qint32 y, qint32 z);
-        qint32 x() const;
-        qint32 y() const;
-        qint32 z() const;
-        void setX(qint32 v);
-        void setY(qint32 v);
-        void setZ(qint32 v);
+        Point3DTemplate(const Ilwis::Point3D<T>& point);
+        Point3DTemplate(T x, T y, T z);
+        T x() const;
+        T y() const;
+        T z() const;
+        void setX(T v);
+        void setY(T v);
+        void setZ(T v);
+
+        Ilwis::Point3D<T>& data() const;
+
+        //implemented in spezialized templates only
         std::string __str__();
-        Ilwis::Point3D<qint32>& data() const;
     private:
-        std::shared_ptr<Ilwis::Point3D<qint32> > _data;
+        std::shared_ptr<Ilwis::Point3D<T> > _data;
     };
 
-    class Pixel{
-    public:
-        Pixel(qint32 x, qint32 y);
-        std::string __str__();
-    private:
-        qint32 _x,_y;
-    };
+    template<> std::string Point3DTemplate<qint32>::__str__();
+    template<> std::string Point3DTemplate<double>::__str__();
+
+    typedef Point3DTemplate<double> Coordinate;
+    typedef Point3DTemplate<qint32> Voxel;
 
     class Size{
     public:
@@ -82,6 +97,7 @@ namespace pythonapi {
         BoxTemplate(const Ilwis::Box3D<T>& box);
         BoxTemplate(const std::string &envelope);
         BoxTemplate(const Voxel& min,const Voxel& max);
+        BoxTemplate(const Coordinate& min,const Coordinate& max);
         std::string __str__();
         Size size();
         Ilwis::Box3D<T>& data() const;
