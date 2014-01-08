@@ -44,7 +44,7 @@ namespace pythonapi {
 
     //template spezializations
     template<> std::string Point2DTemplate<double>::__str__(){
-        return QString("coordinate(%1,%2)").arg(this->data().x()).arg(this->data().y()).toStdString();
+    return QString("coordinate(%1,%2)").arg(this->data().x(),0,'f',6).arg(this->data().y(),0,'f',6).toStdString();
     }
 
     template<> std::string Point2DTemplate<qint32>::__str__(){
@@ -76,7 +76,7 @@ namespace pythonapi {
 
     //template spezializations
     template<> std::string Point3DTemplate<double>::__str__(){
-        return QString("coordinate(%1,%2,%3)").arg(this->data().x()).arg(this->data().y()).arg(this->data().z()).toStdString();
+        return QString("coordinate(%1,%2,%3)").arg(this->data().x(),0,'f',6).arg(this->data().y(),0,'f',6).arg(this->data().z(),0,'f',6).toStdString();
     }
 
     template<> std::string Point3DTemplate<qint32>::__str__(){
@@ -104,12 +104,31 @@ namespace pythonapi {
     template<class T> BoxTemplate<T>::BoxTemplate(const Coordinate &min, const Coordinate &max): _data(new Ilwis::Box3D<T>(min.data(), max.data())){
     }
 
+    template<class T> BoxTemplate<T>::BoxTemplate(const Size &size): _data(new Ilwis::Box3D<T>(size.data())){
+    }
+
     template<class T> std::string BoxTemplate<T>::__str__(){
         return this->data().toString().toStdString();
     }
 
     template<class T> Size BoxTemplate<T>::size(){
-        return Size(this->data().size());
+    return Size(this->data().size());
+    }
+
+    template<class T> Point3DTemplate<T> BoxTemplate<T>::minCorner(){
+        return Point3DTemplate<T>(this->data().min_corner());
+    }
+
+    template<class T> Point3DTemplate<T> BoxTemplate<T>::maxCorner(){
+        return Point3DTemplate<T>(this->data().max_corner());
+    }
+
+    template<class T> bool BoxTemplate<T>::contains(const Point3DTemplate<T> &point){
+        return this->data().contains(point.data());
+    }
+
+    template<class T> bool BoxTemplate<T>::contains(const BoxTemplate<T>& box){
+        return this->data().contains(box.data());
     }
 
     template<class T> Ilwis::Box3D<T> &BoxTemplate<T>::data() const{

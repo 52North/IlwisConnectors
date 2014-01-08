@@ -26,10 +26,10 @@ namespace pythonapi{
 Geometry::Geometry(std::string wkt, const CoordinateSystem& cs): _standalone(true),_feature(nullptr),_index(-1), _ilwisGeometry(new Ilwis::Geometry(QString::fromStdString(wkt),cs.ptr()->get<Ilwis::CoordinateSystem>())){
 }
 
-Geometry::Geometry(Ilwis::Geometry *geometry): _standalone(true),_feature(nullptr),_index(-1),_ilwisGeometry(geometry){
+Geometry::Geometry(Ilwis::Geometry* geometry): _standalone(true),_feature(nullptr),_index(-1),_ilwisGeometry(geometry){
 }
 
-Geometry::Geometry(Feature *feature, int index): _standalone(false),_feature(feature), _index(index), _ilwisGeometry(nullptr){
+Geometry::Geometry(Feature* feature, int index): _standalone(false),_feature(feature), _index(index), _ilwisGeometry(nullptr){
 }
 
 Geometry::~Geometry(){
@@ -100,7 +100,7 @@ void Geometry::setCoordinateSystem(const CoordinateSystem &cs){
     this->ptr().coordinateSystem(cs.ptr()->get<Ilwis::CoordinateSystem>());
 }
 
-Ilwis::Geometry &Geometry::ptr() const{
+Ilwis::Geometry& Geometry::ptr() const{
     if (this->_standalone){
         if (!this->__bool__())
             throw InvalidObject("invalid standalone Geometry!");

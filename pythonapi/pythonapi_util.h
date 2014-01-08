@@ -81,19 +81,25 @@ namespace pythonapi {
             std::shared_ptr<Ilwis::Size > _data;
         };
 
-        /**
-         * since the implementation of this template class is not included in the header file,
-         * only the previously instanciated types (currently only Envelope and Box) can be used.
-         */
-        template<class T> class BoxTemplate{
+    /**
+     * since the implementation of this template class is not included in the header file,
+     * only the previously instanciated types (currently only Envelope and Box) can be used.
+     */
+    template<class T> class BoxTemplate{
         public:
             BoxTemplate();
             BoxTemplate(const Ilwis::Box3D<T>& box);
             BoxTemplate(const std::string &envelope);
             BoxTemplate(const Voxel& min,const Voxel& max);
             BoxTemplate(const Coordinate& min,const Coordinate& max);
+            BoxTemplate(const Size& size);
             std::string __str__();
             Size size();
+            Point3DTemplate<T> minCorner();
+            Point3DTemplate<T> maxCorner();
+            bool contains(const Point3DTemplate<T>& point);
+            bool contains(const BoxTemplate<T>& box);
+
             Ilwis::Box3D<T>& data() const;
         private:
             std::shared_ptr<Ilwis::Box3D<T> > _data;
