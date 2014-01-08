@@ -2,7 +2,7 @@
 
 --20140110--
 *improved Coordinate/Coordinate2D(new!)/Voxel/Pixel and Envelope(new!)/Box
-*improved CoordinateSystem (added envelope and __eq__/__ne__)
+*improved CoordinateSystem (added envelope() and __eq__()/__ne__())
 
 --20131220--
 *test.py is now unittest and autmatically skips tests if catalog(directory) could not be found

@@ -61,6 +61,8 @@ try:
             b = Box(Voxel(3, 4, 5), Voxel(4, 5, 6,))
             self.assertEqual(str(b), "POLYGON(3 4 5,4 5 6)")
             self.assertEqual(str(b.minCorner()), "pixel(3,4,5)")
+            b.minCorner().x = 39
+            self.assertEqual(str(b.minCorner()), "pixel(3,4,5)")
             self.assertEqual(str(b.maxCorner()), "pixel(4,5,6)")
             self.assertEqual(str(b.size()), "Size(2, 2, 2)")
             self.assertTrue(b.size() == Size(2, 2, 2))
