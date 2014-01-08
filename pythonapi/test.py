@@ -10,7 +10,7 @@ try:
 
     import unittest as ut
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
         def test_Geometry(self):
             g = Geometry("POINT(5.4 6 9.0)", CoordinateSystem("code=epsg:5464"))
@@ -22,9 +22,9 @@ try:
             connectIssueLogger()
             self.assertFalse(bool(g))
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestUtil(ut.TestCase):
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_Size(self):
             sz = Size(2, 4, 5)
             self.assertEqual(str(sz), "Size(2, 4, 5)")
@@ -43,6 +43,9 @@ try:
             self.assertEqual(str(b.size()), "Size(2, 2, 2)")
             self.assertTrue(b.size() == Size(2, 2, 2))
             self.assertEqual(b.size().linearSize(),2*2*2)
+            b = Envelope(Coordinate(3.6111119, 4.7, 5.9), Coordinate(4.7, 5.8, 6.9))
+            self.assertEqual(str(b), "POLYGON(3.611112 4.700000 5.900000,4.700000 5.800000 6.900000)")
+            self.assertEqual(str(b.size()), "Size(2, 2, 2)")
             b = Envelope("POLYGON(3.6111119 4.7 5.9,4.7 5.8 6.9)")
             self.assertEqual(str(b), "POLYGON(3.611112 4.700000 5.900000,4.700000 5.800000 6.900000)")
             self.assertEqual(str(b.size()), "Size(2, 2, 2)")
@@ -63,8 +66,12 @@ try:
             self.assertEqual(str(c), "coordinate(-1.8719e+06,1.87424e+06)")
             c = Coordinate(-1871900.47, 1874237.55, 2)
             self.assertEqual(str(c), "coordinate(-1.8719e+06,1.87424e+06,2)")
+            with self.assertRaises(NotImplementedError, msg="could construct 2D coordinate with 3 parameters!"):
+                c = Coordinate2D(4, 5, 6)
+            with self.assertRaises(NotImplementedError, msg="could construct 3D coordinate with only 2 parameters!"):
+                c = Coordinate2D(4, 5)
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestModule(ut.TestCase):
         def setUp(self):
             try:
@@ -81,7 +88,7 @@ try:
             self.assertFalse(bool(fc))
             connectIssueLogger()
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestData(ut.TestCase):
         def test_UNDEF(self):
             with self.assertRaises(AttributeError, msg="property is not read only!"):
@@ -116,7 +123,7 @@ try:
             pv = PyVariant(23.4e-32)
             self.assertEqual(float(pv), 23.4e-32)
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestOperation(ut.TestCase):
         def setUp(self):
             try:
@@ -141,7 +148,7 @@ try:
                              msg="generated name should begin with gridding_ and end with its ID")
             self.assertEqual(polygongrid.featureCount(), 144, msg="wrong number of polygons in gridding result!")
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestFeature(ut.TestCase):
         def setUp(self):
             try:
@@ -158,7 +165,7 @@ try:
         def tearDown(self):
             del self.fc
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_FeatureCoverage(self):
             self.assertEqual(self.fc.name(), "rainfall.shp", msg="internal FeatureCoverage name wrong!")
             self.assertEqual(self.fc.featureCount(), 13, msg="feature count wrong")
@@ -180,7 +187,7 @@ try:
 
             self.assertEqual(self.fc.featureCount(), 14, msg="new feature count wrong")
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_Feature(self):
             it = iter(self.fc)
             f = next(it)
@@ -226,7 +233,7 @@ try:
             self.assertTrue(str(f),"Feature(1)")
 
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
             try:
@@ -270,7 +277,7 @@ try:
             self.assertTrue(cs1 == cs2)
             self.assertFalse(cs1 != cs2)
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestRaster(ut.TestCase):
         def setUp(self):
             try:
@@ -281,7 +288,7 @@ try:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_RasterCalculation(self):
             rc = RasterCoverage("n000302.mpr")
             rctif = RasterCoverage("n0.mpr")
@@ -460,7 +467,7 @@ try:
                     self.assertFalse((i % 4 == 0) and (i != 0), msg="zChanged not only every 4th step (i="+str(i)+")")
                 self.assertEqual(next(bit), boxed_small[i][1])
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
         def setUp(self):
             try:
@@ -487,7 +494,7 @@ try:
                                                   IlwisObject.cmOUTPUT))
             self.assertTrue(polygongrid.store())
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestBaby(ut.TestCase):
         def setUp(self):
             try:
@@ -497,7 +504,7 @@ try:
             except IlwisException:
                 self.skipTest("could not set working directory!")
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_helloRaster(self):
             rc = RasterCoverage("n000302.mpr")
             res = Engine.do("aggregateraster", rc, "Avg", 10, True)
