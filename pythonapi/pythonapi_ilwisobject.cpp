@@ -14,7 +14,7 @@ IlwisObject::IlwisObject(Ilwis::IIlwisObject *object): _ilwisObject(std::shared_
 IlwisObject::~IlwisObject(){
 }
 
-bool IlwisObject::connectTo(const std::string& url, const std::string& format, const std::string& fnamespace, ConnectorMode cmode){
+bool IlwisObject::setConnection(const std::string& url, const std::string& format, const std::string& fnamespace, ConnectorMode cmode){
     Ilwis::IIlwisObject io = (*this->ptr());
     if (cmode == cmINPUT || cmode == cmEXTENDED){
         if (!io.prepare(QString::fromStdString(url), io->ilwisType()))
@@ -26,8 +26,9 @@ bool IlwisObject::connectTo(const std::string& url, const std::string& format, c
     }
 }
 
-bool IlwisObject::store(int storeMode){
-    return (*this->ptr())->store(storeMode);
+void IlwisObject::store(int storeMode){
+    if (!(*this->ptr())->store(storeMode))
+        throw OSError(std::string("IOError on attempt to store ")+this->name());
 }
 
 bool IlwisObject::__bool__() const{

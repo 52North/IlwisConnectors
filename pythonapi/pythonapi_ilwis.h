@@ -37,6 +37,19 @@ namespace pythonapi{
         }
     };
 
+    //to indicate an error system interaction (like IO error)
+    class OSError : public std::exception{
+    private:
+        std::string _what;
+    public:
+        OSError(const std::string& what ){
+            this->_what = what;
+        }
+        virtual const char* what() const throw(){
+            return this->_what.c_str();
+        }
+    };
+
     //to indicate that this ilwis functionality is not yet implemented
     class NotImplementedError : public std::exception{
     private:

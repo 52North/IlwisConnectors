@@ -28,8 +28,8 @@ namespace pythonapi {
     public:
         virtual ~IlwisObject();
 
-        bool connectTo( const std::string& url,  const std::string& format  = "",  const std::string& fnamespace = "", ConnectorMode cmode = cmINPUT);
-        bool store(int storeMode = smMETADATA | smBINARYDATA);
+        bool setConnection( const std::string& url,  const std::string& format  = "",  const std::string& fnamespace = "", ConnectorMode cmode = cmINPUT);
+        void store(int storeMode = smMETADATA | smBINARYDATA);
         bool __bool__() const;
         std::string __str__();
         std::string __add__(std::string value);

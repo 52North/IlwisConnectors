@@ -362,9 +362,9 @@ try:
             aa12 = rc * 2
             self.assertEqual(aa12.pix2value(342, 342, 0), 29.0 * 2)
 
-            self.assertTrue(aa1.connectTo(workingDir + pytestDir + "/aa1", "GTiff", "gdal", IlwisObject.cmOUTPUT),
-                            msg="connectTo file failed!")
-            self.assertTrue(aa1.store(), msg="could not save aa1.tif")
+            self.assertTrue(aa1.setConnection(workingDir + pytestDir + "/aa1", "GTiff", "gdal", IlwisObject.cmOUTPUT),
+                            msg="setConnection file failed!")
+            aa1.store()
 
         def test_PixelIterator(self):
             rcl = RasterCoverage("small.mpl")
@@ -523,9 +523,9 @@ try:
                         maxval = max(int(polygon.attribute("maxY", 0)), int(point.attribute("freq_speciesY", 0)))
                         polygon.setAttribute("maxY", maxval)
 
-            self.assertTrue(polygongrid.connectTo(workingDir + exampleDir + "/polygongrid", "polygonmap", "ilwis3",
+            self.assertTrue(polygongrid.setConnection(workingDir + exampleDir + "/polygongrid", "polygonmap", "ilwis3",
                                                   IlwisObject.cmOUTPUT))
-            self.assertTrue(polygongrid.store())
+            polygongrid.store()
 
     @ut.skip("temporarily")
     class TestBaby(ut.TestCase):
@@ -541,8 +541,8 @@ try:
         def test_helloRaster(self):
             rc = RasterCoverage("n000302.mpr")
             res = Engine.do("aggregateraster", rc, "Avg", 10, True)
-            self.assertTrue(res.connectTo(workingDir + babyDir + "/avg_n000302", "map", "ilwis3", IlwisObject.cmOUTPUT))
-            self.assertTrue(res.store())
+            self.assertTrue(res.setConnection(workingDir + babyDir + "/avg_n000302", "map", "ilwis3", IlwisObject.cmOUTPUT))
+            res.store()
 
         def test_helloFeature(self):
             fc_soils = FeatureCoverage("aafsoils.shp")

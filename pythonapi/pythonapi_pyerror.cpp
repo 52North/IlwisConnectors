@@ -28,6 +28,8 @@ PyObject* pythonapi::translate_Exception_type(std::exception& e){
         return PyExc_NotImplementedError;
     }else if (typeid(e) == typeid(ImportError)){
         return PyExc_ImportError;
+    }else if (typeid(e) == typeid(OSError)){
+        return PyExc_OSError;
     }else if(typeid(e) == typeid(StopIteration)){
         return PyExc_StopIteration;
     }
