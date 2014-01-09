@@ -430,7 +430,8 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         mastercatalog()->addItems({resource});
 
         IRasterCoverage gcMap;
-        bool ok = gcMap.prepare(resource);
+        if (!gcMap.prepare(resource))
+            return false;
         gcMap->copyBinary(raster, i);
         int index = _odf->file().lastIndexOf("/");
         QString path = _odf->file().left(index);
@@ -461,7 +462,9 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
     QFileInfo localGrf(localName);
     if ( !localGrf.exists()) {
         //QFileInfo coveragePath(Resource::toLocalFile(obj->target()));
-        localName = raster->name();
+//        localName = raster->name();
+        QFileInfo res(_odf->file());
+        localName = res.fileName();
         int index;
         if ( (index = localName.indexOf(".")) != -1)
             localName = localName.left(index);
