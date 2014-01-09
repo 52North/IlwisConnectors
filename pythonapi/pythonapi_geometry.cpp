@@ -100,6 +100,14 @@ void Geometry::setCoordinateSystem(const CoordinateSystem &cs){
     this->ptr().coordinateSystem(cs.ptr()->get<Ilwis::CoordinateSystem>());
 }
 
+Geometry* Geometry::transform(const CoordinateSystem &cs){
+    return new Geometry(new Ilwis::Geometry(this->ptr().transform(cs.ptr()->get<Ilwis::CoordinateSystem>())));
+}
+
+Envelope Geometry::envelope(){
+    return Envelope(this->ptr().envelope());
+}
+
 Ilwis::Geometry& Geometry::ptr() const{
     if (this->_standalone){
         if (!this->__bool__())

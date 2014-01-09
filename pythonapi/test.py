@@ -10,7 +10,7 @@ try:
 
     import unittest as ut
 
-    #@ut.skip("temporarily")
+    ##@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
         def setUp(self):
             self.csy = CoordinateSystem("code=epsg:5464")
@@ -18,6 +18,7 @@ try:
         def tearDown(self):
             del self.csy
 
+        #@ut.skip("temporarily")
         def test_Geometry(self):
             g = Geometry("POINT(5.4 6 9.0)", self.csy)
             self.assertEqual(str(g), "POINT(5.4 6 9)", "standalone Geometry(fromWKT) failed!")
@@ -25,6 +26,30 @@ try:
             self.assertTrue(bool(g))
             self.assertEqual(g.ilwisType(), 1)
             self.assertEqual(g.coordinateSystem().name(), "Sibun Gorge 1922")
+
+        def test_Transform(self):
+            g = Geometry("POINT(766489.647 6840642.671)", CoordinateSystem("code=epsg:3857"))
+            self.assertEqual("POLYGON(766489.647000 6840642.671000 0.000000,766489.647000 6840642.671000 0.000000)",
+                             str(g.envelope()))
+            self.assertEqual("POINT(766490 6.84064e+006)", str(g), msg="weird toWKT from BOOST")
+            g1 = g.transform(CoordinateSystem("code=epsg:3329"))
+            self.assertEqual("POINT(4.94595e+006 5.81942e+006)", g1.toWKT())
+            #g = Geometry("POINT(6.5 52.1)", CoordinateSystem("code=proj4:+proj=longlat +ellps=WGS84 +datum=WGS84"))
+            #g1 = g.transform(CoordinateSystem("code=epsg:3329"))
+            #self.assertEqual("POINT(4.94595e+006 5.81942e+006)", g1.toWKT())
+
+        #@ut.skip("temporarily")
+        def test_Envelope(self):
+            g = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
+            e = g.envelope()
+            self.assertEqual("POLYGON(1.000000 1.000000 0.000000,10.000000 10.000000 0.000000)", str(e))
+            g = Geometry("POINT(1 1 1)", self.csy)
+            e = g.envelope()
+            self.assertEqual("POLYGON(1.000000 1.000000 0.000000,1.000000 1.000000 0.000000)", str(e),
+                             msg="z's are always 0, since boost can only manage 2D geometries until now")
+
+        #@ut.skip("temporarily")
+        def test_BadWKT(self):
             disconnectIssueLogger()
             g = Geometry("Pihkdjfhskdf", self.csy)
             connectIssueLogger()
@@ -33,6 +58,9 @@ try:
             self.assertTrue(bool(g))
             self.assertFalse(g.fromWKT("fdsfsds"))
             self.assertFalse(bool(g))
+
+        #@ut.skip("temporarily")
+        def test_Contains(self):
             p = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
             self.assertEqual(str(p), "POLYGON((1 1,1 10,10 10,10 1,1 1))")
             self.assertTrue(bool(p))
@@ -500,7 +528,7 @@ try:
                     self.assertFalse((i % 4 == 0) and (i != 0), msg="zChanged not only every 4th step (i="+str(i)+")")
                 self.assertEqual(next(bit), boxed_small[i][1])
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
         def setUp(self):
             try:

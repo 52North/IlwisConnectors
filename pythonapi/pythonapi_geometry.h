@@ -31,6 +31,8 @@ namespace pythonapi {
         std::string toWKT();
         CoordinateSystem coordinateSystem();
         void setCoordinateSystem(const CoordinateSystem& cs);
+        Geometry* transform(const CoordinateSystem& cs);
+        Envelope envelope();
     private:
         Ilwis::Geometry &ptr() const;
         bool _standalone;
