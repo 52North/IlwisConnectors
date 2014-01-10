@@ -3,6 +3,9 @@
 --20140110--
 *improved Coordinate/Coordinate2D(new!)/Voxel/Pixel and Envelope(new!)/Box
 *improved CoordinateSystem (added envelope() and __eq__()/__ne__())
+*changed IlwisObject.store() to raise OSError's on fail (no more bool return value) and renamed connectTo to setConnection
+*fixed ilwis3 georeference file naming (*.grf)
+*added Geometry.transform for reprojection
 
 --20131220--
 *test.py is now unittest and autmatically skips tests if catalog(directory) could not be found
