@@ -1,4 +1,4 @@
-#include "pythonapi_container.h"
+#include "pythonapi_pycontainer.h"
 
 #include "Python.h"
 
@@ -39,6 +39,15 @@ bool setTupleItem(PyObject *tuple, int i, double value){
     }
     PyTuple_SET_ITEM(tuple, i, v);   // reference to str stolen
     return true;
+}
+
+
+Py_buffer* newPyBuffer(void* buf, int len, int readOnly){
+    Py_buffer* ret =(Py_buffer*)malloc(sizeof *ret);
+    if (PyBuffer_FillInfo(ret, NULL,  buf, len, readOnly, PyBUF_WRITEABLE)) {
+      throw PyExc_BufferError;
+    }
+    return ret;
 }
 
 } // namespace pythonapi

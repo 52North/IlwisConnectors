@@ -196,6 +196,10 @@ namespace pythonapi {
 
 %include "pythonapi_featurecoverage.h"
 
+%typemap(out) Py_buffer* {
+    $result = PyMemoryView_FromBuffer($1);
+}
+
 %include "pythonapi_pixeliterator.h"
 
 %include "pythonapi_rastercoverage.h"

@@ -25,10 +25,10 @@ HEADERS += \
     pythonapi/pythonapi_qissuelogger.h \
     pythonapi/pythonapi_pyvariant.h \
     pythonapi/pythonapi_geometry.h \
-    pythonapi/pythonapi_container.h \
     pythonapi/pythonapi_qtGNUTypedefs.h \
     pythonapi/pythonapi_pixeliterator.h \
-    pythonapi/pythonapi_util.h
+    pythonapi/pythonapi_util.h \
+    pythonapi/pythonapi_pycontainer.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \

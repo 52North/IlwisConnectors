@@ -9,6 +9,7 @@
 #include "pythonapi_pixeliterator.h"
 #include "pythonapi_ilwis.h"
 #include "pythonapi_rastercoverage.h"
+#include "pythonapi_pycontainer.h"
 
 namespace pythonapi {
 
@@ -136,6 +137,10 @@ bool PixelIterator::operator>=(const PixelIterator &other){
 
 bool PixelIterator::operator> (const PixelIterator &other){
     return this->ptr() > other.ptr();
+}
+
+Py_buffer* PixelIterator::asBuffer(){
+    return newPyBuffer(this->ptr().operator->(),sizeof(double)*this->ptr().box().size().totalSize(), false);
 }
 
 Ilwis::PixelIterator& PixelIterator::ptr() const{

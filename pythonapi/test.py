@@ -3,7 +3,7 @@
 try:
     from ilwisobjects import *
 
-    workingDir = "file:///C:/Users/Poku/dev/Ilwis4/testdata"
+    workingDir = "file:///D:/Profiles/KiesslingHG/ILWIS/testdata"
     pytestDir = "/pytest"
     babyDir = "/baby"
     exampleDir = "/example"
@@ -345,6 +345,49 @@ try:
                 disconnectIssueLogger()
                 Engine.setWorkingCatalog(workingDir+pytestDir)
                 connectIssueLogger()
+                self.small = [
+                    3.0, 80.0, 80.0, 80.0, 3.0,
+                    15.0, 22.0, 22.0, 130.0, 100.0,
+                    15.0, 132.0, 35.0, 21.0, 100.0,
+                    15.0, 34.0, 67.0, 179.0, 100.0,
+                    3.0, 120.0, 120.0, 120.0, 3.0,
+
+                    2.0, 99.0, 99.0, 99.0, 2.0,
+                    20.0, 32.0, 73.0, 44.0, 55.0,
+                    20.0, 78.0, 24.0, 44.0, 55.0,
+                    20.0, 34.0, 132.0, 86.0, 55.0,
+                    2.0, 145.0, 145.0, 145.0, 2.0,
+
+                    1.0, 30.0, 30.0, 30.0, 1.0,
+                    70.0, 60.0, 15.0, 32.0, 150.0,
+                    70.0, 12.0, 10.0, 101.0, 150.0,
+                    70.0, 69.0, 170.0, 99.0, 150.0,
+                    1.0, 120.0, 120.0, 120.0, 1.0,
+
+                    34.0, 34.0, 123.0, 123.0, 45.0,
+                    34.0, 174.0, 174.0, -1e+308, 45.0,
+                    78.0, 78.0, 174.0, -1e+308, 29.0,
+                    78.0, 78.0, 1.0, 156.0, 29.0,
+                    78.0, 78.0, 7.0, 7.0, 29.0,
+
+                    32.0, 150.0, 150.0, 22.0, 22.0,
+                    32.0, 77.0, 88.0, 131.0, 22.0,
+                    117.0, 117.0, 88.0, 5.0, 5.0,
+                    45.0, 2.0, 88.0, 2.0, 101.0,
+                    45.0, 45.0, 150.0, 101.0, 101.0,
+
+                    90.0, 6.0, 135.0, 90.0, 120.0,
+                    90.0, 2.0, 117.0, 4.0, 90.0,
+                    45.0, 45.0, 135.0, 45.0, 45.0,
+                    90.0, 3.0, 78.0, 5.0, 90.0,
+                    7.0, 90.0, 135.0, 90.0, 9.0,
+
+                    179.0, 110.0, 179.0, 67.0, 110.0,
+                    90.0, 179.0, 23.0, 90.0, 110.0,
+                    110.0, 34.0, 67.0, 110.0, 78.0,
+                    179.0, 67.0, 90.0, 110.0, 67.0,
+                    90.0, 179.0, 77.0, 90.0, 88.0,
+                ]
             except IlwisException:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
@@ -398,52 +441,10 @@ try:
             rcl = RasterCoverage("small.mpl")
             self.assertTrue(bool(rcl), msg="couldn't load small.mpl")
             self.assertEqual(rcl.name(), "small.mpl")
-            small = [
-                3.0, 80.0, 80.0, 80.0, 3.0,
-                15.0, 22.0, 22.0, 130.0, 100.0,
-                15.0, 132.0, 35.0, 21.0, 100.0,
-                15.0, 34.0, 67.0, 179.0, 100.0,
-                3.0, 120.0, 120.0, 120.0, 3.0,
 
-                2.0, 99.0, 99.0, 99.0, 2.0,
-                20.0, 32.0, 73.0, 44.0, 55.0,
-                20.0, 78.0, 24.0, 44.0, 55.0,
-                20.0, 34.0, 132.0, 86.0, 55.0,
-                2.0, 145.0, 145.0, 145.0, 2.0,
-
-                1.0, 30.0, 30.0, 30.0, 1.0,
-                70.0, 60.0, 15.0, 32.0, 150.0,
-                70.0, 12.0, 10.0, 101.0, 150.0,
-                70.0, 69.0, 170.0, 99.0, 150.0,
-                1.0, 120.0, 120.0, 120.0, 1.0,
-
-                34.0, 34.0, 123.0, 123.0, 45.0,
-                34.0, 174.0, 174.0, -1e+308, 45.0,
-                78.0, 78.0, 174.0, -1e+308, 29.0,
-                78.0, 78.0, 1.0, 156.0, 29.0,
-                78.0, 78.0, 7.0, 7.0, 29.0,
-
-                32.0, 150.0, 150.0, 22.0, 22.0,
-                32.0, 77.0, 88.0, 131.0, 22.0,
-                117.0, 117.0, 88.0, 5.0, 5.0,
-                45.0, 2.0, 88.0, 2.0, 101.0,
-                45.0, 45.0, 150.0, 101.0, 101.0,
-
-                90.0, 6.0, 135.0, 90.0, 120.0,
-                90.0, 2.0, 117.0, 4.0, 90.0,
-                45.0, 45.0, 135.0, 45.0, 45.0,
-                90.0, 3.0, 78.0, 5.0, 90.0,
-                7.0, 90.0, 135.0, 90.0, 9.0,
-
-                179.0, 110.0, 179.0, 67.0, 110.0,
-                90.0, 179.0, 23.0, 90.0, 110.0,
-                110.0, 34.0, 67.0, 110.0, 78.0,
-                179.0, 67.0, 90.0, 110.0, 67.0,
-                90.0, 179.0, 77.0, 90.0, 88.0,
-            ]
             i = 0
             for v in rcl:
-                self.assertEqual(v, small[i])
+                self.assertEqual(v, self.small[i])
                 i += 1
 
             it = iter(rcl)
@@ -461,7 +462,7 @@ try:
                     self.assertTrue(i % 25 == 0, msg="zChanged not only every 25th step (i=" + str(i) + ")")
                 else:
                     self.assertFalse((i % 25 == 0) and (i != 0), msg="zChanged not only every 2nd step (i="+str(i)+")")
-                self.assertEqual(next(it), small[i])
+                self.assertEqual(next(it), self.small[i])
 
             rit = iter(rcl)
             self.assertTrue(bool(rit))
@@ -527,6 +528,36 @@ try:
                 else:
                     self.assertFalse((i % 4 == 0) and (i != 0), msg="zChanged not only every 4th step (i="+str(i)+")")
                 self.assertEqual(next(bit), boxed_small[i][1])
+
+        def test_NumPy(self):
+            try:
+                import numpy as np
+            except ImportError:
+                self.skipTest("numpy not available")
+
+            rcl = RasterCoverage("small.mpl")
+            it = iter(rcl)
+            a = np.fromiter(it, np.int, 25)
+            small = self.small[0:25]
+            self.assertTrue((small == a).any())
+
+            #  this is !!experimental!! direct access for NumPy, we don't encourage you to use PixelIterator.asBuffer()
+            #  because so far no consistency check is done on memory access and the blocks of a raster(-list) are not
+            #  contiguous, so make sure numpy.ndarrays (views) point only to contiguous memory by adjusting the size
+            #  to the actual block size of the current block (interface still missing)
+            b = np.frombuffer(it.asBuffer(), np.float, 25)
+            small = self.small[25:50]
+            self.assertTrue((small == b).any())
+
+            rc = RasterCoverage("n000302.mpr")
+            it2 = PixelIterator(rc)
+            self.assertEqual(1152*1152, it2.box().size().linearSize())
+            bu = np.frombuffer(it2.asBuffer(), np.float, 500*1152, 0)
+            for v in bu:
+                self.assertGreaterEqual(v, 0)
+                self.assertLessEqual(v, 255)
+
+
 
     @ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation

@@ -1,6 +1,8 @@
 #ifndef PYTHONAPI_PIXELITERATOR_H
 #define PYTHONAPI_PIXELITERATOR_H
 
+typedef struct bufferinfo Py_buffer;
+
 namespace Ilwis {
     class PixelIterator;
 }
@@ -58,6 +60,8 @@ class PixelIterator{
         bool operator< (const PixelIterator& other);
         bool operator>=(const PixelIterator& other);
         bool operator> (const PixelIterator& other);
+
+        Py_buffer* asBuffer();
 private:
         Ilwis::PixelIterator& ptr() const;
         RasterCoverage* _coverage;
