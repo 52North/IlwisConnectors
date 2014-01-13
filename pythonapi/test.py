@@ -537,26 +537,20 @@ try:
 
             rcl = RasterCoverage("small.mpl")
             it = iter(rcl)
-            a = np.fromiter(it, np.int, 25)
-            small = self.small[0:25]
-            self.assertTrue((small == a).any())
+            a = np.fromiter(it, np.float, it.box().size().linearSize())
+            b = np.equal(self.small, a)
+            self.assertTrue(all(v for v in b))
 
-            #  this is !!experimental!! direct access for NumPy, we don't encourage you to use PixelIterator.asBuffer()
-            #  because so far no consistency check is done on memory access and the blocks of a raster(-list) are not
-            #  contiguous, so make sure numpy.ndarrays (views) point only to contiguous memory by adjusting the size
-            #  to the actual block size of the current block (interface still missing)
-            b = np.frombuffer(it.asBuffer(), np.float, 25)
-            small = self.small[25:50]
-            self.assertTrue((small == b).any())
+            # this is !!experimental!! direct access for NumPy. We don't encourage to use PixelIterator.asBuffer()
+            # because so far no consistency check is done on memory access and the blocks of a raster(-list) are not
+            # contiguous, so make sure numpy.ndarrays (views) point only to contiguous memory by adjusting the size
+            # to the actual block size of the current block (interface still missing)
 
             rc = RasterCoverage("n000302.mpr")
             it2 = PixelIterator(rc)
             self.assertEqual(1152*1152, it2.box().size().linearSize())
-            bu = np.frombuffer(it2.asBuffer(), np.float, 500*1152, 0)
-            for v in bu:
-                self.assertGreaterEqual(v, 0)
-                self.assertLessEqual(v, 255)
-
+            bu = np.frombuffer(it2.asBuffer(), np.float, 500*1152, 0)  # numpy-array only from first block (500 lines)
+            self.assertTrue(all(0 <= v <= 255 for v in bu))
 
 
     @ut.skip("temporarily")
