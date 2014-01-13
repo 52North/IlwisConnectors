@@ -1,5 +1,9 @@
 ==================CHANGELOG===================
 
+--20140117--
+*enabled direct access to RasterGrid for NumPy arrays via PyBuffer interface
+*ILWIS is now also available with Qt5.2
+
 --20140110--
 *improved Coordinate/Coordinate2D(new!)/Voxel/Pixel and Envelope(new!)/Box
 *improved CoordinateSystem (added envelope() and __eq__()/__ne__())
