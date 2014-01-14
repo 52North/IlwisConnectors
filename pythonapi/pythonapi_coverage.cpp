@@ -19,11 +19,11 @@ Coverage::Coverage(Ilwis::ICoverage *coverage):IlwisObject(new Ilwis::IIlwisObje
 }
 
 bool Coverage::addAttribute(const std::string& name, const std::string& domain){
-    return (*this->ptr()).get<Ilwis::Coverage>()->attributeTable()->addColumn(QString::fromStdString(name),QString::fromStdString(domain));
+    return this->ptr()->get<Ilwis::Coverage>()->attributeTable()->addColumn(QString::fromStdString(name),QString::fromStdString(domain));
 }
 
 quint32 Coverage::attributeCount(){
-    return (*this->ptr()).get<Ilwis::Coverage>()->attributeTable()->columnCount();
+    return this->ptr()->get<Ilwis::Coverage>()->attributeTable()->columnCount();
 }
 
 PyObject* Coverage::attributes(){
@@ -34,6 +34,10 @@ PyObject* Coverage::attributes(){
             throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of attributes").arg(tbl->columndefinition(i).name()));
     }
     return list;
+}
+
+Table Coverage::attributeTable(AttributeType attType){
+    return Table(new Ilwis::ITable(this->ptr()->get<Ilwis::Coverage>()->attributeTable((Ilwis::Coverage::AttributeType)attType)));
 }
 
 CoordinateSystem Coverage::coordinateSystem(){

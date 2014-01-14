@@ -28,7 +28,8 @@ HEADERS += \
     pythonapi/pythonapi_qtGNUTypedefs.h \
     pythonapi/pythonapi_pixeliterator.h \
     pythonapi/pythonapi_util.h \
-    pythonapi/pythonapi_pycontainer.h
+    pythonapi/pythonapi_pycontainer.h \
+    pythonapi/pythonapi_table.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
@@ -47,7 +48,8 @@ SOURCES += \
     pythonapi/pythonapi_geometry.cpp \
     pythonapi/pythonapi_pycontainer.cpp \
     pythonapi/pythonapi_pixeliterator.cpp \
-    pythonapi/pythonapi_util.cpp
+    pythonapi/pythonapi_util.cpp \
+    pythonapi/pythonapi_table.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \

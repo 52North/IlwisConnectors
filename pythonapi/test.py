@@ -10,6 +10,47 @@ try:
 
     import unittest as ut
 
+    class TestTable(ut.TestCase):
+        def setUp(self):
+            try:
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir+pytestDir)
+                connectIssueLogger()
+            except IlwisException:
+                connectIssueLogger()
+                self.skipTest("could not set working directory!")
+
+        def test_AttributeTable(self):
+            fc = FeatureCoverage("Rainfall.mpp")
+            t = fc.attributeTable(Coverage.atCOVERAGE)
+            self.assertEqual("Rainfall", t.name())
+
+        def test_StandaloneTable(self):
+            t = Table("rainfall.tbt")
+            self.assertEqual("rainfall.tbt", t.name())
+            self.assertEqual(12, t.recordCount())
+            self.assertEqual(14, t.columnCount())
+            t.addColumn("newColumn", "value")
+            self.assertEqual(15, t.columnCount())
+            self.assertEqual(
+                ('february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november',
+                 'december', 'newcol', 'ident', 'newColumn'),
+                t.columns()
+            )
+            self.assertEqual((4, 5, 6), t.select("march < 100 AND march != 87"))
+            self.assertEqual((9, 10, 11), t.select("march == "+str(Const.rUNDEF) ))
+            self.assertEqual(13, t.columnIndex("ident"))
+            self.assertEqual(81, int(t.cell("march", 4)))
+            self.assertEqual(2, t.columnIndex("march"))
+            self.assertEqual([81, 76, 79], [int(t.cell(2, rec)) for rec in t.select("march < 100 AND march != 87")])
+            self.assertEqual(Const.rUNDEF, float(t.cell("newColumn", 0)))
+            t.setCell("newColumn", 0, 32)
+            self.assertEqual(32, int(t.cell("newColumn", 0)))
+            disconnectIssueLogger()
+            t.setCell("newColumn", 0, "text")
+            connectIssueLogger()
+            self.assertEqual(Const.rUNDEF, float(t.cell("newColumn", 0)))
+
     ##@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
         def setUp(self):
