@@ -26,7 +26,7 @@ bool setTupleItem(PyObject *tuple, int i, const quint32& value){
         tuple = NULL;
         return false;
     }
-    PyTuple_SET_ITEM(tuple, i, v);   // reference to str stolen
+    PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen
     return true;
 }
 
@@ -37,7 +37,7 @@ bool setTupleItem(PyObject *tuple, int i, const qint64& value){
         tuple = NULL;
         return false;
     }
-    PyTuple_SET_ITEM(tuple, i, v);   // reference to str stolen
+    PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen
     return true;
 }
 
@@ -48,7 +48,7 @@ bool setTupleItem(PyObject *tuple, int i, const double& value){
         tuple = NULL;
         return false;
     }
-    PyTuple_SET_ITEM(tuple, i, v);   // reference to str stolen
+    PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen
     return true;
 }
 

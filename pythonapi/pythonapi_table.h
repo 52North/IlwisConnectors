@@ -18,13 +18,17 @@ namespace pythonapi {
             Table(Ilwis::ITable* table);
             Table(std::string resource);
 
-            quint32 recordCount() const;
             quint32 columnCount() const;
             PyObject* columns() const;
             bool addColumn(const std::string& name, const std::string &domain);
-            PyObject* select(const std::string& conditions) const;
-
             quint32 columnIndex(const std::string& name) const;
+            PyObject* column(const std::string& name) const;
+            PyObject* column(quint32 columnIndex) const;
+
+            quint32 recordCount() const;
+            PyObject* select(const std::string& conditions) const;
+            PyObject* record(quint32 rec) const;
+
             PyVariant* cell(const std::string& name, quint32 rec);
             PyVariant* cell(quint32 colIndex, quint32 rec);
             void setCell(const std::string &name, quint32 rec, PyVariant &value);
