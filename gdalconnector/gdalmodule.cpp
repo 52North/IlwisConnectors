@@ -45,6 +45,7 @@
 #include "ilwisobjectfactory.h"
 #include "gdalobjectfactory.h"
 #include "gdalproxy.h"
+#include "gdalcontainerconnector.h"
 
 using namespace Ilwis;
 using namespace Gdal;
@@ -86,7 +87,8 @@ void GdalModule::prepare()
     cfactory->addCreator(itGEOREF,"gdal", GeorefConnector::create);
     cfactory->addCreator(itCOORDSYSTEM,"gdal", CoordinateSystemConnector::create);
     cfactory->addCreator(itFEATURE,"gdal", GdalFeatureConnector::create);
-    cfactory->addCreator(itFLATTABLE,"gdal", GdalFeatureTableConnector::create);
+    cfactory->addCreator(itTABLE,"gdal", GdalFeatureTableConnector::create);
+    cfactory->addCreator(itCONTAINER,"gdal", GdalContainerConnector::create);
 
     cfactory->addCreator("ESRI Shapefile","gdal",GdalFeatureConnector::create);
 

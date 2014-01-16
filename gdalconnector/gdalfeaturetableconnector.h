@@ -14,7 +14,7 @@ namespace Ilwis{
                 bool loadMetaData(IlwisObject* data);
                 bool storeMetaData(Ilwis::IlwisObject *obj);
 
-                bool loadBinaryData(IlwisObject *);
+                bool loadBinaryData(IlwisObject *data);
                 bool storeBinaryData(IlwisObject* obj);
         };
 

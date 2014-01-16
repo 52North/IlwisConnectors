@@ -77,11 +77,12 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     bool initMinMax = 0;
 
     ITable attTable;
-    Resource resource(QUrl(QString("ilwis://internalcatalog/%1_%2").arg(fcoverage->name()).arg(fcoverage->id())), itFLATTABLE);
-    if(!attTable.prepare(resource)) {//only internalTableconnector is used! own class not needed
+    Resource resource(QUrl(QString("gdal://attributetable/%2/%1").arg(fcoverage->name()).arg(fcoverage->id())), itFLATTABLE);
+    if(!attTable.prepare(resource)) {
         ERROR1(ERR_NO_INITIALIZED_1,resource.name());
         return false;
     }
+    attTable->setParent(fcoverage);//to enable the GdalFeatureTableConnector to initiate loadBinaryData through this connector
     IDomain dmKey;
     dmKey.prepare("count");
     ColumnDefinition colKey(FEATUREIDCOLUMN, dmKey, 0);
@@ -240,6 +241,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     if ( fcoverage->isValid() ) {
         ITable attTable = fcoverage->attributeTable();
+        attTable->setParent(0);//to prevent the GdalFeatureTableConnector of attTable to start loading the binaryData again
         if (!attTable.isValid()){
             ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename.toString());
             return false;
