@@ -28,16 +28,15 @@ private:
 
     enum OutputState { osIndex2Layer=1,osType2Layer=2, osLayer2DataSource=4};
     struct FillerColumnDef{
-        FillerColumnDef(QVariant(GdalFeatureConnector::* func)(OGRFeatureH,  int, SPRange), int i, SPRange r): fillFunc(func), index(i), range(r){}
-        QVariant (GdalFeatureConnector::* fillFunc)(OGRFeatureH,  int, SPRange);
+        FillerColumnDef(QVariant(GdalFeatureConnector::* func)(OGRFeatureH,  int), int i): fillFunc(func), index(i){}
+        QVariant (GdalFeatureConnector::* fillFunc)(OGRFeatureH,  int);
         int index;
-        SPRange range;
     };
-    QVariant fillEmptyColumn(OGRFeatureH, int, SPRange);
-    QVariant fillStringColumn(OGRFeatureH featureH, int colIntex, SPRange range);
-    QVariant fillIntegerColumn(OGRFeatureH featureH, int colIntex, SPRange range);
-    QVariant fillDoubleColumn(OGRFeatureH featureH, int colIntex, SPRange range);
-    QVariant fillDateTimeColumn(OGRFeatureH featureH, int colIntex, SPRange range);
+    QVariant fillEmptyColumn(OGRFeatureH, int);
+    QVariant fillStringColumn(OGRFeatureH featureH, int colIntex);
+    QVariant fillIntegerColumn(OGRFeatureH featureH, int colIntex);
+    QVariant fillDoubleColumn(OGRFeatureH featureH, int colIntex);
+    QVariant fillDateTimeColumn(OGRFeatureH featureH, int colIntex);
     IlwisTypes translateOGRType(OGRwkbGeometryType type) const;
     void fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry, std::vector<Ilwis::Geometry> &outGeoms) const;
     void fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry, std::vector<Ilwis::Geometry> &outGeoms) const;
