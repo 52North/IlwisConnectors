@@ -118,9 +118,8 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
                     }
                     case OFTRealList:break; // List of doubles
                     case OFTString:{ // String of ASCII chars
-                        ITextDomain tdomain;
-                        tdomain.prepare();
-                        domain = tdomain; break;
+                        domain.prepare("code=domain:text",itTEXTDOMAIN);
+                        break;
                     }
                     case OFTStringList: // Array of strings
                     case OFTWideString:// deprecated
