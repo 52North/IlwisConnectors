@@ -340,11 +340,11 @@ try:
             it3 = it2 - 2
             self.assertTrue(it == it3)
             f = it3.current()
-            self.assertTrue(str(f),"Feature(0)")
+            self.assertTrue(str(f), "Feature(0)")
             f = next(it3)
-            self.assertTrue(str(f),"Feature(0)")
+            self.assertTrue(str(f), "Feature(0)")
             f = next(it3)
-            self.assertTrue(str(f),"Feature(1)")
+            self.assertTrue(str(f), "Feature(1)")
 
 
     #@ut.skip("temporarily")
@@ -649,14 +649,20 @@ try:
 
         def test_helloFeature(self):
             fc_soils = FeatureCoverage("aafsoils.shp")
+            fc_soils.setCoordinateSystem(CoordinateSystem("soils_select.csy"))
             count = 0
             for feature in fc_soils:
                 if float(feature["AREA"]) == 0.123:
                     count += 1
+                    # newFC.newFeature(feature.geometry())
                     self.assertRegex(str(feature.geometry()), r"POLYGON\([\s\.\-\,\(\)0-9]*\)",
                                      msg="wrong WKT representation of geometry!")
+                else:
+                    feature.setGeometry(Geometry("POINT(0 0)", fc_soils.coordinateSystem()))
             self.assertEqual(count, 3,
                              msg="wrong count value!")  # print("contains",count,"features with an AREA equal to 0.123")
+            fc_soils.setConnection(workingDir + babyDir + "/soils", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+            fc_soils.store()
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
