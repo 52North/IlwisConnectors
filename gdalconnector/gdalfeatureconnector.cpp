@@ -87,8 +87,6 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     dmKey.prepare("count");
     ColumnDefinition colKey(FEATUREIDCOLUMN, dmKey, 0);
     attTable->addColumn(colKey);
-    ColumnDefinition colCovKey(COVERAGEKEYCOLUMN, dmKey, 1);
-    attTable->addColumn(colCovKey);
 
 //    for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
         int layer = 0;//only first layer will be read/fit into single FeatureCoverage(*data)
@@ -136,7 +134,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
                     }
                 }
 
-                ColumnDefinition colDef(name, domain,i+2);
+                ColumnDefinition colDef(name, domain,i+1);
                 attTable->addColumn(colDef);
             }
 
@@ -249,8 +247,8 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                 //check again if attTable ColumnDefinitions match still gdalFieldDefinition (additional or removed columns are detected by names
                 OGRFeatureDefnH hLayerDef = gdal()->getLayerDef(hLayer);
                 int gdalFieldCount = gdal()->getFieldCount(hLayerDef);
-                int offset = -2;
-                for (int i = 2; i < attTable->columnCount();i++){
+                int offset = -1;
+                for (int i = 1; i < attTable->columnCount();i++){
                     if (i+offset < gdalFieldCount){//check if coulumn was added to metadata
                         OGRFieldDefnH hFieldDefn = gdal()->getFieldDfn(hLayerDef, i+offset);
                         QString name = QString(gdal()->getFieldName(hFieldDefn));
@@ -304,7 +302,6 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                 record.resize(attTable->columnCount());
 
 
-                quint64 rec = 0;
                 OGRFeatureH hFeature = 0;
                 gdal()->resetReading(hLayer);
                 //each FEATURE
@@ -315,9 +312,8 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                         for(auto &geometry : geometries){
 
                             SPFeatureI& feature =  fcoverage->newFeature(geometry);
-                            record[1] = QVariant(++rec);//COVERAGEKEYCOLUMN
                             //each OGR_F_FIELD > RECORD
-                            for (int i = 2; i < attTable->columnCount();i++){
+                            for (int i = 1; i < attTable->columnCount();i++){
                                 if (columnDefinitions[i]){
                                     record[i] = (this->*columnDefinitions[i]->fillFunc)(hFeature, columnDefinitions[i]->index);
                                 }
