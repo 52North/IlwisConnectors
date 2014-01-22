@@ -31,7 +31,8 @@ SOURCES += \
     gdalconnector/gdalobjectfactory.cpp \
     gdalconnector/georefconnector.cpp \
     gdalconnector/gdalfeatureconnector.cpp \
-    gdalconnector/gdalfeaturetableconnector.cpp
+    gdalconnector/gdalfeaturetableconnector.cpp \
+    gdalconnector/gdalcontainerconnector.cpp
 
 HEADERS += gdalconnector/gdalconnector.h\
         gdalconnector/gdalconnector_global.h \
@@ -46,7 +47,8 @@ HEADERS += gdalconnector/gdalconnector.h\
     gdalconnector/gdalobjectfactory.h \
     gdalconnector/georefconnector.h \
     gdalconnector/gdalfeatureconnector.h \
-    gdalconnector/gdalfeaturetableconnector.h
+    gdalconnector/gdalfeaturetableconnector.h \
+    gdalconnector/gdalcontainerconnector.h
 		
 
 

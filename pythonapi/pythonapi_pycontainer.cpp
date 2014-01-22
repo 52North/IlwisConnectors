@@ -19,25 +19,36 @@ bool setTupleItem(PyObject *tuple, int i, const char* value){
     return true;
 }
 
-bool setTupleItem(PyObject *tuple, int i, int value){
+bool setTupleItem(PyObject *tuple, int i, const quint32& value){
     PyObject *v = PyLong_FromSize_t(value);
     if (!v) {
         Py_DECREF(tuple);
         tuple = NULL;
         return false;
     }
-    PyTuple_SET_ITEM(tuple, i, v);   // reference to str stolen
+    PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen
     return true;
 }
 
-bool setTupleItem(PyObject *tuple, int i, double value){
+bool setTupleItem(PyObject *tuple, int i, const qint64& value){
+    PyObject *v = PyLong_FromLong(value);
+    if (!v) {
+        Py_DECREF(tuple);
+        tuple = NULL;
+        return false;
+    }
+    PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen
+    return true;
+}
+
+bool setTupleItem(PyObject *tuple, int i, const double& value){
     PyObject *v = PyFloat_FromDouble(value);
     if (!v) {
         Py_DECREF(tuple);
         tuple = NULL;
         return false;
     }
-    PyTuple_SET_ITEM(tuple, i, v);   // reference to str stolen
+    PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen
     return true;
 }
 

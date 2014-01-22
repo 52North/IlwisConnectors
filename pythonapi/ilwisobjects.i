@@ -14,6 +14,7 @@
 #include "pythonapi_engine.h"
 #include "pythonapi_ilwisobject.h"
 #include "pythonapi_coordinatesystem.h"
+#include "pythonapi_table.h"
 #include "pythonapi_coverage.h"
 #include "pythonapi_pyvariant.h"
 #include "pythonapi_object.h"
@@ -118,6 +119,8 @@ namespace pythonapi {
 %include "pythonapi_ilwisobject.h"
 
 %include "pythonapi_coordinatesystem.h"
+
+%include "pythonapi_table.h"
 
 %include "pythonapi_coverage.h"
 

@@ -11,6 +11,57 @@ try:
     import unittest as ut
 
     ##@ut.skip("temporarily")
+    class TestTable(ut.TestCase):
+        def setUp(self):
+            try:
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir+pytestDir)
+                connectIssueLogger()
+            except IlwisException:
+                connectIssueLogger()
+                self.skipTest("could not set working directory!")
+
+        def test_AttributeTable(self):
+            fc = FeatureCoverage("rainfall.shp")
+            t = fc.attributeTable(Coverage.atCOVERAGE)
+            self.assertRegex(t.name(), "rainfall.shp")
+            self.assertEqual(
+                ('feature_id', 'RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL',
+                 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT'),
+                t.columns()
+            )
+            self.assertEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column("OCTOBER"))
+
+        def test_StandaloneTable(self):
+            t = Table("rainfall.tbt")
+            self.assertEqual("rainfall.tbt", t.name())
+            self.assertEqual(12, t.recordCount())
+            self.assertEqual(14, t.columnCount())
+            t.addColumn("newColumn", "value")
+            self.assertEqual(15, t.columnCount())
+            self.assertEqual(
+                ('january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november',
+                 'december', 'newcol', 'ident', 'newColumn'),
+                t.columns()
+            )
+            self.assertEqual((4, 5, 6), t.select("march < 100 AND march != 87"))
+            self.assertEqual((9, 10, 11), t.select("march == "+str(Const.rUNDEF) ))
+            self.assertEqual(13, t.columnIndex("ident"))
+            self.assertEqual(81, int(t.cell("march", 4)))
+            self.assertEqual(2, t.columnIndex("march"))
+            self.assertEqual([81, 76, 79], [int(t.cell(2, rec)) for rec in t.select("march < 100 AND march != 87")])
+            self.assertEqual(Const.rUNDEF, float(t.cell("newColumn", 0)))
+            t.setCell("newColumn", 0, 32)
+            self.assertEqual(32, int(t.cell("newColumn", 0)))
+            disconnectIssueLogger()
+            t.setCell("newColumn", 0, "text")
+            connectIssueLogger()
+            self.assertEqual(Const.rUNDEF, float(t.cell("newColumn", 0)))
+            self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column("march"))
+            self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
+            self.assertEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
+
+    ##@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
         def setUp(self):
             self.csy = CoordinateSystem("code=epsg:5464")
@@ -18,7 +69,7 @@ try:
         def tearDown(self):
             del self.csy
 
-        #@ut.skip("temporarily")
+        ##@ut.skip("temporarily")
         def test_Geometry(self):
             g = Geometry("POINT(5.4 6 9.0)", self.csy)
             self.assertEqual(str(g), "POINT(5.4 6 9)", "standalone Geometry(fromWKT) failed!")
@@ -38,7 +89,7 @@ try:
             #g1 = g.transform(CoordinateSystem("code=epsg:3329"))
             #self.assertEqual("POINT(4.94595e+006 5.81942e+006)", g1.toWKT())
 
-        #@ut.skip("temporarily")
+        ##@ut.skip("temporarily")
         def test_Envelope(self):
             g = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
             e = g.envelope()
@@ -48,7 +99,7 @@ try:
             self.assertEqual("POLYGON(1.000000 1.000000 0.000000,1.000000 1.000000 0.000000)", str(e),
                              msg="z's are always 0, since boost can only manage 2D geometries until now")
 
-        #@ut.skip("temporarily")
+        ##@ut.skip("temporarily")
         def test_BadWKT(self):
             disconnectIssueLogger()
             g = Geometry("Pihkdjfhskdf", self.csy)
@@ -59,7 +110,7 @@ try:
             self.assertFalse(g.fromWKT("fdsfsds"))
             self.assertFalse(bool(g))
 
-        #@ut.skip("temporarily")
+        ##@ut.skip("temporarily")
         def test_Contains(self):
             p = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
             self.assertEqual(str(p), "POLYGON((1 1,1 10,10 10,10 1,1 1))")
@@ -70,9 +121,9 @@ try:
             self.assertTrue(p.contains(pin))
             self.assertTrue(pin.within(p))
 
-    #@ut.skip("temporarily")
+    ##@ut.skip("temporarily")
     class TestUtil(ut.TestCase):
-        #@ut.skip("temporarily")
+        ##@ut.skip("temporarily")
         def test_Size(self):
             sz = Size(2, 4, 5)
             self.assertEqual(str(sz), "Size(2, 4, 5)")
@@ -84,7 +135,7 @@ try:
             self.assertTrue(Voxel(1, 1, 1) in sz)
             self.assertFalse(Voxel(5, 5, 5) in sz)
 
-        #@ut.skip("temporarily")
+        ##@ut.skip("temporarily")
         def test_BoxEnvelope(self):
             b = Box(Voxel(3, 4, 5), Voxel(4, 5, 6,))
             self.assertEqual(str(b), "POLYGON(3 4 5,4 5 6)")
@@ -134,7 +185,7 @@ try:
             with self.assertRaises(NotImplementedError, msg="could construct 3D coordinate with only 2 parameters!"):
                 c = Coordinate(4, 5)
 
-    #@ut.skip("temporarily")
+    ##@ut.skip("temporarily")
     class TestModule(ut.TestCase):
         def test_Exceptions(self):
             with self.assertRaises(IlwisException):
@@ -152,7 +203,7 @@ try:
             self.assertFalse(bool(fc))
             connectIssueLogger()
 
-    #@ut.skip("temporarily")
+    ##@ut.skip("temporarily")
     class TestData(ut.TestCase):
         def test_UNDEF(self):
             with self.assertRaises(AttributeError, msg="property is not read only!"):
@@ -187,7 +238,7 @@ try:
             pv = PyVariant(23.4e-32)
             self.assertEqual(float(pv), 23.4e-32)
 
-    #@ut.skip("temporarily")
+    ##@ut.skip("temporarily")
     class TestOperation(ut.TestCase):
         def setUp(self):
             try:
@@ -212,7 +263,7 @@ try:
                              msg="generated name should begin with gridding_ and end with its ID")
             self.assertEqual(polygongrid.featureCount(), 144, msg="wrong number of polygons in gridding result!")
 
-    #@ut.skip("temporarily")
+    ##@ut.skip("temporarily")
     class TestFeature(ut.TestCase):
         def setUp(self):
             try:
@@ -229,7 +280,7 @@ try:
         def tearDown(self):
             del self.fc
 
-        #@ut.skip("temporarily")
+        ##@ut.skip("temporarily")
         def test_FeatureCoverage(self):
             self.assertEqual(self.fc.name(), "rainfall.shp", msg="internal FeatureCoverage name wrong!")
             self.assertEqual(self.fc.featureCount(), 13, msg="feature count wrong")
@@ -237,10 +288,10 @@ try:
             self.assertTrue(self.fc.addAttribute("sum", "value"), msg="FeatureCoverage.addAttribute failed!")
             att = self.fc.attributes()
             self.assertTupleEqual(att, (
-                'coverage_key', 'RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+                'RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
                 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum'
             ), msg="wring list of attributes!")
-            self.assertEqual(len(att), 18, msg="wrong number of attributes")
+            self.assertEqual(len(att), 17, msg="wrong number of attributes")
             iter(self.fc)  # a HACK to loadBinaryData before newfeatureeature is created/added to the FeatureCoverage!
             g = Geometry("POINT(5.4 6 9.0)", self.fc.coordinateSystem())
             newfeature = self.fc.newFeature(g)
@@ -251,7 +302,7 @@ try:
 
             self.assertEqual(self.fc.featureCount(), 14, msg="new feature count wrong")
 
-        #@ut.skip("temporarily")
+        ##@ut.skip("temporarily")
         def test_Feature(self):
             it = iter(self.fc)
             f = next(it)
@@ -290,14 +341,14 @@ try:
             it3 = it2 - 2
             self.assertTrue(it == it3)
             f = it3.current()
-            self.assertTrue(str(f),"Feature(0)")
+            self.assertTrue(str(f), "Feature(0)")
             f = next(it3)
-            self.assertTrue(str(f),"Feature(0)")
+            self.assertTrue(str(f), "Feature(0)")
             f = next(it3)
-            self.assertTrue(str(f),"Feature(1)")
+            self.assertTrue(str(f), "Feature(1)")
 
 
-    #@ut.skip("temporarily")
+    ##@ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
             try:
@@ -338,7 +389,7 @@ try:
             self.assertTrue(cs1 == cs2)
             self.assertFalse(cs1 != cs2)
 
-    #@ut.skip("temporarily")
+    ##@ut.skip("temporarily")
     class TestRaster(ut.TestCase):
         def setUp(self):
             try:
@@ -553,7 +604,7 @@ try:
             self.assertTrue(all(0 <= v <= 255 for v in bu))
 
 
-    @ut.skip("temporarily")
+    ##@ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
         def setUp(self):
             try:
@@ -580,7 +631,7 @@ try:
                                                   IlwisObject.cmOUTPUT))
             polygongrid.store()
 
-    @ut.skip("temporarily")
+    ###@ut.skip("temporarily")
     class TestBaby(ut.TestCase):
         def setUp(self):
             try:
@@ -590,7 +641,7 @@ try:
             except IlwisException:
                 self.skipTest("could not set working directory!")
 
-        #@ut.skip("temporarily")
+        ##@ut.skip("temporarily")
         def test_helloRaster(self):
             rc = RasterCoverage("n000302.mpr")
             res = Engine.do("aggregateraster", rc, "Avg", 10, True)
@@ -599,14 +650,21 @@ try:
 
         def test_helloFeature(self):
             fc_soils = FeatureCoverage("aafsoils.shp")
+            fc_soils.setCoordinateSystem(CoordinateSystem("soils_select.csy"))
             count = 0
+            fc_soils.addAttribute("selected", "boolean")
             for feature in fc_soils:
                 if float(feature["AREA"]) == 0.123:
                     count += 1
                     self.assertRegex(str(feature.geometry()), r"POLYGON\([\s\.\-\,\(\)0-9]*\)",
                                      msg="wrong WKT representation of geometry!")
+                    feature["selected"] = True
+                else:
+                    feature["selected"] = False
             self.assertEqual(count, 3,
                              msg="wrong count value!")  # print("contains",count,"features with an AREA equal to 0.123")
+            fc_soils.setConnection(workingDir + babyDir + "/soils", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+            fc_soils.store()
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":

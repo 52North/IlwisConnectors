@@ -77,17 +77,16 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     bool initMinMax = 0;
 
     ITable attTable;
-    Resource resource(QUrl(QString("ilwis://internalcatalog/%1_%2").arg(fcoverage->name()).arg(fcoverage->id())), itFLATTABLE);
-    if(!attTable.prepare(resource)) {//only internalTableconnector is used! own class not needed
+    Resource resource(QUrl(QString("gdal://attributetable/%2/%1").arg(fcoverage->name()).arg(fcoverage->id())), itFLATTABLE);
+    if(!attTable.prepare(resource)) {
         ERROR1(ERR_NO_INITIALIZED_1,resource.name());
         return false;
     }
+    attTable->setParent(fcoverage);//to enable the GdalFeatureTableConnector to initiate loadBinaryData through this connector
     IDomain dmKey;
     dmKey.prepare("count");
     ColumnDefinition colKey(FEATUREIDCOLUMN, dmKey, 0);
     attTable->addColumn(colKey);
-    ColumnDefinition colCovKey(COVERAGEKEYCOLUMN, dmKey, 1);
-    attTable->addColumn(colCovKey);
 
 //    for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
         int layer = 0;//only first layer will be read/fit into single FeatureCoverage(*data)
@@ -117,9 +116,8 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
                     }
                     case OFTRealList:break; // List of doubles
                     case OFTString:{ // String of ASCII chars
-                        ITextDomain tdomain;
-                        tdomain.prepare();
-                        domain = tdomain; break;
+                        domain.prepare("code=domain:text",itTEXTDOMAIN);
+                        break;
                     }
                     case OFTStringList: // Array of strings
                     case OFTWideString:// deprecated
@@ -136,7 +134,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
                     }
                 }
 
-                ColumnDefinition colDef(name, domain,i+2);
+                ColumnDefinition colDef(name, domain,i+1);
                 attTable->addColumn(colDef);
             }
 
@@ -188,31 +186,25 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     return true;
 }
 
-QVariant GdalFeatureConnector::fillEmptyColumn(OGRFeatureH , int , SPRange ){
+QVariant GdalFeatureConnector::fillEmptyColumn(OGRFeatureH , int ){
     return QVariant();
 }
 
-QVariant GdalFeatureConnector::fillStringColumn(OGRFeatureH featureH, int colIntex, SPRange range){
+QVariant GdalFeatureConnector::fillStringColumn(OGRFeatureH featureH, int colIntex){
     return QVariant(gdal()->getFieldAsString(featureH, colIntex));
 }
 
-QVariant GdalFeatureConnector::fillIntegerColumn(OGRFeatureH featureH, int colIntex, SPRange range){
+QVariant GdalFeatureConnector::fillIntegerColumn(OGRFeatureH featureH, int colIntex){
     int v = gdal()->getFieldAsInt(featureH, colIntex);
-    SPNumericRange nrange = range.staticCast<NumericRange>();
-    if (nrange)
-        (*nrange) += (double)v;
     return QVariant(v);
 }
 //TODO:: not yet tested
-QVariant GdalFeatureConnector::fillDoubleColumn(OGRFeatureH featureH, int colIntex, SPRange range){
+QVariant GdalFeatureConnector::fillDoubleColumn(OGRFeatureH featureH, int colIntex){
     double v = gdal()->getFieldAsDouble(featureH, colIntex);
-    SPNumericRange nrange = range.staticCast<NumericRange>();
-    if (nrange)
-        (*nrange) += v;
     return QVariant(v);
 }
 //TODO:: not yet tested
-QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colIntex, SPRange range){
+QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colIntex){
     Time time;
     double v = rUNDEF;
     int year,month,day,hour,minute,second,TZFlag;
@@ -225,10 +217,6 @@ QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colI
         time.setYear(year);
         v = time;
     }
-
-    SPNumericRange nrange = range.staticCast<NumericRange>();
-    if (nrange)
-        (*nrange) += v;
     return QVariant(v);
 }
 
@@ -240,6 +228,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     if ( fcoverage->isValid() ) {
         ITable attTable = fcoverage->attributeTable();
+        attTable->setParent(0);//to prevent the GdalFeatureTableConnector of attTable to start loading the binaryData again
         if (!attTable.isValid()){
             ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename.toString());
             return false;
@@ -258,18 +247,18 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                 //check again if attTable ColumnDefinitions match still gdalFieldDefinition (additional or removed columns are detected by names
                 OGRFeatureDefnH hLayerDef = gdal()->getLayerDef(hLayer);
                 int gdalFieldCount = gdal()->getFieldCount(hLayerDef);
-                int offset = -2;
-                for (int i = 2; i < attTable->columnCount();i++){
+                int offset = -1;
+                for (int i = 1; i < attTable->columnCount();i++){
                     if (i+offset < gdalFieldCount){//check if coulumn was added to metadata
                         OGRFieldDefnH hFieldDefn = gdal()->getFieldDfn(hLayerDef, i+offset);
                         QString name = QString(gdal()->getFieldName(hFieldDefn));
-                        ColumnDefinition coldef = attTable->columndefinition(i);
+                        ColumnDefinition& coldef = attTable->columndefinition(i);
                         if (coldef.name().compare(name,Qt::CaseSensitive) == 0){//check if column was deleted from metadata
-                            DataDefinition datadef = coldef.datadef();
+                            DataDefinition& datadef = coldef.datadef();
                             if(datadef.domain().isValid()){
                                 IlwisTypes tp = datadef.domain()->valueType();
                                 if (tp & itSTRING){
-                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillStringColumn, i+offset, datadef.range());
+                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillStringColumn, i+offset);
                                 }else if (tp & itINTEGER){
                                     NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
                                     //creating the actual range as invalid to be adjusted in the fillers
@@ -277,7 +266,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                                     r->min(r->max());
                                     r->max(min);
                                     datadef.range(r);
-                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillIntegerColumn, i+offset, datadef.range());
+                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillIntegerColumn, i+offset);
                                 }else if (tp & itDOUBLE){
                                     //creating the actual range as invalid to be adjusted in the fillers
                                     NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
@@ -285,7 +274,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                                     r->min(r->max());
                                     r->max(min);
                                     datadef.range(r);
-                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillDoubleColumn, i+offset, datadef.range());
+                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillDoubleColumn, i+offset);
                                 }else if (tp & itTIME){
                                     //creating the actual range as invalid to be adjusted in the fillers
                                     NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
@@ -293,7 +282,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                                     r->min(r->max());
                                     r->max(min);
                                     datadef.range(r);
-                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillDateTimeColumn, i+offset, datadef.range());
+                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillDateTimeColumn, i+offset);
                                 }else{
                                     columnDefinitions[i] = nullptr;
                                 }
@@ -301,11 +290,11 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                                 columnDefinitions[i] = nullptr;
                             }
                         }else{//column was deleted from metadata
-                            columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillEmptyColumn, -1, SPRange(NULL));
+                            columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillEmptyColumn, -1);
                             offset++;
                         }
                     }else{//coulumn was added to metadata
-                        columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillEmptyColumn, -1, SPRange(NULL));
+                        columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillEmptyColumn, -1);
                     }
                 }
 
@@ -313,7 +302,6 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                 record.resize(attTable->columnCount());
 
 
-                quint64 rec = 0;
                 OGRFeatureH hFeature = 0;
                 gdal()->resetReading(hLayer);
                 //each FEATURE
@@ -324,11 +312,10 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                         for(auto &geometry : geometries){
 
                             SPFeatureI& feature =  fcoverage->newFeature(geometry);
-                            record[1] = QVariant(++rec);//COVERAGEKEYCOLUMN
                             //each OGR_F_FIELD > RECORD
-                            for (int i = 2; i < attTable->columnCount();i++){
+                            for (int i = 1; i < attTable->columnCount();i++){
                                 if (columnDefinitions[i]){
-                                    record[i] = (this->*columnDefinitions[i]->fillFunc)(hFeature, columnDefinitions[i]->index, columnDefinitions[i]->range);
+                                    record[i] = (this->*columnDefinitions[i]->fillFunc)(hFeature, columnDefinitions[i]->index);
                                 }
                             }
                             record[0] = QVariant(feature->featureid());
@@ -344,6 +331,12 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
 
             }
 //      }
+            //TODO: this is only debug
+            for (quint32 i = 0; i < attTable->columnCount();i++){
+                ColumnDefinition& coldef = attTable->columndefinition(i);
+                SPRange r = coldef.datadef().range();
+            }
+
     }
 
     QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
