@@ -5,3 +5,4 @@ pythonapi/ilwisobjects_wrap.cxx
 .idea
 /docs
 /Doxyfile
+pythonapi/ilwisobjects.conf
