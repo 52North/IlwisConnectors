@@ -39,7 +39,8 @@ QNetworkReply *WfsResponse::performRequest(QNetworkRequest &request, bool async)
 
 QString WfsResponse::getContent()
 {
-
+    QString empty;
+    return _content == "" ? empty : _content;
 }
 
 void WfsResponse::readResponse(QNetworkReply *reply)
@@ -49,11 +50,6 @@ void WfsResponse::readResponse(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::NoError)
     {
         _content = reply->readAll();
-    }
-    else
-    {
-        // handle errors here
-        //qDebug() << "error occured!";
     }
 
     // set state and cleanup after response is complete

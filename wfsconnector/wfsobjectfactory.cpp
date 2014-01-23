@@ -28,6 +28,8 @@ WfsObjectFactory::WfsObjectFactory() : IlwisObjectFactory("IlwisObjectFactory","
 IlwisObject *WfsObjectFactory::create(const Resource &resource) const
 {
      const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+
+     // TODO: check for table | feature
      WfsConnector *connector = factory->createFromResource<WfsConnector>(resource, "wfs");
 
     if(!connector) {
@@ -63,5 +65,8 @@ bool WfsObjectFactory::canUse(const Resource &resource) const
 
 bool WfsObjectFactory::prepare()
 {
+
+    // TODO
+
     return false;
 }

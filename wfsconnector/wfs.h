@@ -19,7 +19,8 @@ public:
 
     WfsResponse *getCapabilities();
     WfsResponse *describeFeatureType();
-    WfsResponse *getFeature();
+    WfsResponse *getFeature(QString typeName);
+    QUrl createGetFeatureUrl(QString typeName);
 
 private:
     QUrl _resource;

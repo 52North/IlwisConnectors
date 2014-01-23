@@ -25,7 +25,8 @@ SOURCES += \
     wfsconnector/wfsmodule.cpp \
     wfsconnector/wfsfeatureconnector.cpp \
     wfsconnector/wfs.cpp \
-    wfsconnector/wfsresponse.cpp
+    wfsconnector/wfsresponse.cpp \
+    wfsconnector/wfscontainerconnector.cpp
 
 HEADERS += \
     wfsconnector/wfsobjectfactory.h \
@@ -35,7 +36,8 @@ HEADERS += \
     wfsconnector/wfsfeatureconnector.h \
     wfsconnector/wfs.h \
     wfsconnector/wfsconnector_global.h \
-    wfsconnector/wfsresponse.h
+    wfsconnector/wfsresponse.h \
+    wfsconnector/wfscontainerconnector.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
@@ -48,6 +50,7 @@ INCLUDEPATH += $$PWD/core \
 DEPENDPATH += $$PWD/core
 
 OTHER_FILES += \
-    wfsconnector/wfsconnector.json
+    wfsconnector/wfsconnector.json \
+    wfsconnector/scratch_pad.txt
 
 

@@ -25,6 +25,7 @@
 #include "ilwiscontext.h"
 #include "wfscatalogconnector.h"
 #include "wfs.h"
+#include "wfsresponse.h"
 
 using namespace Ilwis;
 using namespace Wfs;
@@ -38,19 +39,28 @@ WfsCatalogConnector::WfsCatalogConnector(const Resource &resource) : CatalogConn
 {
 }
 
+WfsCatalogConnector::~WfsCatalogConnector()
+{
+}
 
 bool WfsCatalogConnector::loadItems()
 {
     if (!isValid())
         return false;
 
-    QSet<Resource> wfsitems;
-    WebFeatureService wfs(_location.url());
-    WfsResponse response = wfs.getCapabilities();
+    QStringList filters; // empty filter
+    std::vector<QUrl> getFeatureUrls = containerConnector()->sources(filters, ContainerConnector::foFULLPATHS);
 
-    //mastercatalog()->addItems(finalList);
+    QList<Resource> finalList;
+    foreach (QUrl url, getFeatureUrls) {
+        Resource featureUrl(url, itCOVERAGE);
+        finalList.push_back(featureUrl);
+    }
 
-    return false;
+    // TODO: eventually add feature description somewhere
+
+    mastercatalog()->addItems(finalList);
+    return true;
 }
 
 bool WfsCatalogConnector::canUse(const Resource &resource) const
@@ -70,10 +80,37 @@ QString WfsCatalogConnector::provider() const
 bool WfsCatalogConnector::isValidWfsUrl(QUrl url) const
 {
     QUrlQuery query(url);
+    QList<QPair<QString,QString>> queryItems = query.queryItems();
+    query.setQueryItems(lowerCaseKeys(queryItems));
+
     bool isHttpRequest = url.scheme().startsWith("http");
-    bool isWfsRequest = query.queryItemValue("service").toLower() == "wfs";
-    bool isSupportedVersion = query.queryItemValue("acceptVersions") == "1.1.0";
+    bool isWfsRequest = isExpectedValue(query.queryItemValue("service"), "wfs");
+    bool isSupportedVersion = isExpectedValue(query.queryItemValue("acceptversions"), "1.1.0");
     return isHttpRequest && isWfsRequest && isSupportedVersion;
+}
+
+QList<QPair<QString,QString>> WfsCatalogConnector::lowerCaseKeys(QList<QPair<QString,QString>> queryItems) const {
+    QList<QPair<QString,QString>> loweredKeysItems;
+    for(int i = 0; i < queryItems.length(); i++) {
+        QPair<QString,QString> item = queryItems[i];
+        item.first = item.first.toLower();
+        loweredKeysItems.append(item);
+    }
+    return loweredKeysItems;
+}
+
+/**
+ * @brief WfsCatalogConnector::hasParameterValue checks if a certain parameter value is present.
+ * @param actual the actual value to check.
+ * @param expected the expected value.
+ * @return true if the actual parameter is equal (incasesensitive) to the expected value.
+ */
+bool WfsCatalogConnector::isExpectedValue(QString actual, QString expected) const
+{
+    if (expected != "" && actual == "") {
+        return false;
+    }
+    return actual.compare(expected, Qt::CaseInsensitive);
 }
 
 

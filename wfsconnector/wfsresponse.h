@@ -1,6 +1,8 @@
 #ifndef WFSRESPONSE_H
 #define WFSRESPONSE_H
 
+#include "wfsConnector_global.h"
+
 #include <QObject>
 
 class QVariant;
@@ -8,7 +10,7 @@ class QNetworkReply;
 class QNetworkRequest;
 class QNetworkAccessManager;
 
-class WfsResponse: QObject
+class WFSCONNECTORSHARED_EXPORT WfsResponse: QObject
 {
 
     Q_OBJECT

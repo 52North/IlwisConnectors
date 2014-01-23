@@ -1,16 +1,17 @@
 #ifndef WFSCATALOGCONNECTOR_H
 #define WFSCATALOGCONNECTOR_H
 
-class QUrl;
+#include "wfsConnector_global.h"
 
 namespace Ilwis {
 
 namespace Wfs {
 
-class WfsCatalogConnector : public CatalogConnector
+class WFSCONNECTORSHARED_EXPORT WfsCatalogConnector : public CatalogConnector
 {
 public:
     WfsCatalogConnector(const Ilwis::Resource &resource);
+    ~WfsCatalogConnector();
 
     virtual bool loadItems();
 
@@ -22,6 +23,8 @@ public:
 
 private:
     bool isValidWfsUrl(QUrl url) const;
+    bool isExpectedValue(QString actual, QString value) const;
+    QList<QPair<QString,QString>> lowerCaseKeys(QList<QPair<QString,QString>> queryItems) const;
 };
 }
 }

@@ -1,0 +1,6 @@
+
+Change when query is stored in resource:
+----------------------------------------
+    - change wfs.h signatures to consume Resource instead of QUrl
+    - Actual QUrl has to be constructed depending on the base URL and its query
+    - Create GetFOI QUrls in WfsContainerConnector and create Resources in WfsCatalogConnector
