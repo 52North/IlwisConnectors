@@ -1,14 +1,17 @@
 #ifndef WFSRESPONSE_H
 #define WFSRESPONSE_H
 
-#include "wfsConnector_global.h"
-
 #include <QObject>
+
+#include "wfsConnector_global.h"
 
 class QVariant;
 class QNetworkReply;
 class QNetworkRequest;
 class QNetworkAccessManager;
+
+namespace Ilwis {
+namespace Wfs {
 
 class WFSCONNECTORSHARED_EXPORT WfsResponse: QObject
 {
@@ -23,13 +26,16 @@ public:
      * @brief hasFinished indicates if the request is still running or not (for async requests).
      * @return false if request is still pending and not (completely) received yet.
      */
-    bool hasFinished();
+    bool hasFinished() const;
 
     /**
+     * Checks is service response is an exception message. Please note that for asyncronous
+     * requests to check via hasFinished() if the response has already been received.
+     *
      * @brief isException indicates if the service response is an exception.
      * @return true if request failed due to a service exception.
      */
-    bool isException();
+    bool isException() const;
 
     /**
      * Starts performing request by means of the underlying network manager. The request
@@ -45,9 +51,15 @@ public:
 
     /**
      * @brief getContent reads the response content.
-     * @return the response as string.
+     * @return the response as string (never null).
      */
-    QString getContent();
+    QString getContent() const;
+
+    /**
+     * @brief setContent sets the responds content explicitly (useful for tests).
+     * @param content the content to set (if null, an empty string is set).
+     */
+    void setContent(QString content);
 
 public slots:
     /**
@@ -58,8 +70,10 @@ public slots:
 
 private:
     QNetworkAccessManager* _networkManager;
-    QString _content;
-    bool _finished;
+    QString _content = "";
+    bool _finished = false;
 };
+}
+}
 
 #endif // WFSRESPONSE_H
