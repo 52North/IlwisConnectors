@@ -23,7 +23,7 @@ try:
 
         def test_AttributeTable(self):
             fc = FeatureCoverage("rainfall.shp")
-            t = fc.attributeTable(Coverage.atCOVERAGE)
+            t = fc.attributeTable()
             self.assertRegex(t.name(), "rainfall.shp")
             self.assertEqual(
                 ('feature_id', 'RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL',
@@ -645,12 +645,12 @@ try:
         def test_helloRaster(self):
             rc = RasterCoverage("n000302.mpr")
             res = Engine.do("aggregateraster", rc, "Avg", 10, True)
-            self.assertTrue(res.setConnection(workingDir + babyDir + "/avg_n000302", "map", "ilwis3", IlwisObject.cmOUTPUT))
+            self.assertTrue(res.setConnection(workingDir+babyDir+"/avg_n000302", "map", "ilwis3", IlwisObject.cmOUTPUT))
             res.store()
 
         def test_helloFeature(self):
             fc_soils = FeatureCoverage("aafsoils.shp")
-            fc_soils.setCoordinateSystem(CoordinateSystem("soils_select.csy"))
+            fc_soils.setCoordinateSystem(CoordinateSystem("wgs.csy"))
             count = 0
             fc_soils.addAttribute("selected", "boolean")
             for feature in fc_soils:
@@ -661,9 +661,8 @@ try:
                     feature["selected"] = True
                 else:
                     feature["selected"] = False
-            self.assertEqual(count, 3,
-                             msg="wrong count value!")  # print("contains",count,"features with an AREA equal to 0.123")
-            fc_soils.setConnection(workingDir + babyDir + "/soils", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+            self.assertEqual(count, 3, msg="wrong count value!")
+            fc_soils.setConnection(workingDir + babyDir + "/soils_select", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
             fc_soils.store()
 
     #here you can chose which test case will be executed

@@ -497,9 +497,9 @@ bool FeatureConnector::storeBinaryData(FeatureCoverage *fcov, IlwisTypes type) {
     if ( hasType(type, itPOLYGON)) {
         ok = storeBinaryDataPolygon(fcov, baseName);
     } else if ( hasType(type, itLINE)) {
-        ok = storeBinaryDataLine(fcov, baseName)    ;
+        ok = storeBinaryDataLine(fcov, baseName);
     }
-
+    //TODO add storeBinarDataPoint(fcov, baseName);
     return ok;
 }
 

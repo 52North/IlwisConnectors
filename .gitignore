@@ -1,6 +1,7 @@
-*.user
+*.pro.user*
 pythonapi/ilwisobjects.py
 pythonapi/ilwisobjects_wrap.cxx
+pythonapi/ilwisobjects.conf
 */__pycache__/
 .idea
 /docs
