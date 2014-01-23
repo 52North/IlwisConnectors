@@ -35,6 +35,7 @@
 #include "wfsfeatureconnector.h"
 #include "catalogconnector.h"
 #include "wfscatalogconnector.h"
+#include "wfscontainerconnector.h"
 #include "ilwisobjectfactory.h"
 #include "wfsobjectfactory.h"
 #include "wfsresponse.h"
@@ -73,10 +74,11 @@ void WfsModule::prepare()
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (cfactory) {
         cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
+        cfactory->addCreator(itCONTAINER,"wfs", WfsContainerConnector::create);
     }
 
 
-    //IlwisObject::addTypeFunction(WfsConnector::ilwisType);
+    IlwisObject::addTypeFunction(WfsConnector::ilwisType);
 }
 
 QString WfsModule::getName() const

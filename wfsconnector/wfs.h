@@ -2,13 +2,12 @@
 #define WFS_H
 
 #include "wfsconnector_global.h"
+#include "wfsresponse.h"
 
-class WfsResponse;
 class QNetworkAccessManager;
 class QUrl;
 
 namespace Ilwis {
-
 namespace  Wfs {
 
 class WFSCONNECTORSHARED_EXPORT WebFeatureService
@@ -19,7 +18,8 @@ public:
 
     WfsResponse *getCapabilities();
     WfsResponse *describeFeatureType();
-    WfsResponse *getFeature();
+    WfsResponse *getFeature(QString typeName);
+    QUrl createGetFeatureUrl(QString typeName);
 
 private:
     QUrl _resource;

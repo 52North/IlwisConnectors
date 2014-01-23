@@ -20,7 +20,6 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-
 WebFeatureService::WebFeatureService(QUrl wfsUrl): _resource(wfsUrl)
 {
 }
@@ -40,12 +39,20 @@ WfsResponse *WebFeatureService::describeFeatureType()
 
 }
 
-WfsResponse *WebFeatureService::getFeature()
+WfsResponse *WebFeatureService::getFeature(QString name)
 {
     QUrl getCapabilitiesUrl = _resource;
 
     // TODO: adjust to GetFeature
     //WfsResponse *response = performAsyncRequest(getCapabilitiesUrl);
+}
+
+QUrl WebFeatureService::createGetFeatureUrl(QString typeName) {
+
+    // TODO: set query on _resource
+
+    //QUrlQuery query = _resource.getQuery();
+
 }
 
 WfsResponse *WebFeatureService::performSyncRequest(QUrl requestUrl)

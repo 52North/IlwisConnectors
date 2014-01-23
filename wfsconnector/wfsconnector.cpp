@@ -48,11 +48,45 @@ QString WfsConnector::provider() const
 
 bool WfsConnector::loadMetaData(IlwisObject *data)
 {
-    // TODO: load WFS metadata
+    // TODO: load WFS feature metadata
 
-    return false;
+    return true;
 }
 
+IlwisTypes WfsConnector::ilwisType(const QString &name) {
+//    QString filename = name;
+//    if (name.contains("?") == 0) {
+//        filename = name.split("?").front();
+//    }
+//    QFileInfo inf(filename);
+//    bool isCatalog =  inf.isDir();
+//    if ( isCatalog)
+//        return itCATALOG;
+
+//    QString ext = inf.suffix();
+//    if ( ext == "mpr")
+//        return itRASTER;
+//    if ( ext == "mpa")
+//        return itPOLYGON;
+//    if ( ext == "mps")
+//        return itLINE;
+//    if ( ext == "mpp")
+//        return itPOINT;
+//    if ( ext == "dom")
+//        return itDOMAIN;
+//    if ( ext == "csy")
+//        return itCOORDSYSTEM;
+//    if ( ext == "grf")
+//        return itGEOREF;
+//    if ( ext == "tbt")
+//        return itTABLE;
+//    if ( ext == "mpl")
+//        return itRASTER;
+//    if ( ext == "ioc")
+//        return itOBJECTCOLLECTION;
+
+    return itFEATURE;
+}
 
 
 

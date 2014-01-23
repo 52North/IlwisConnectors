@@ -27,6 +27,8 @@
 #include "ilwisobjectconnector.h"
 #include "wfsconnector.h"
 #include "wfsfeatureconnector.h"
+#include "wfs.h"
+#include "wfsresponse.h"
 
 using namespace Ilwis;
 using namespace Wfs;
@@ -47,6 +49,10 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
     if (!WfsConnector::loadMetaData(data)) {
         return false;
     }
+
+
+    WebFeatureService wfs(source().url());
+
 
     // TODO: load Feature metadata and fill coverage
 
@@ -71,19 +77,21 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
 
     // TODO: Fill attribute/domains via DescribeFeatureType
 
-
-
     return false;
 }
 
 
 bool Ilwis::Wfs::WfsFeatureConnector::store(IlwisObject *obj, int)
 {
+    // transactional not supported by this module
     return false;
 }
 
 
 bool Ilwis::Wfs::WfsFeatureConnector::loadBinaryData(IlwisObject *data)
 {
+
+    // TODO: request data and load it into *data
+
     return false;
 }

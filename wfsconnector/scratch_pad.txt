@@ -1,0 +1,11 @@
+
+* Prepare WFS:
+  - Change wfs.h signatures to consume Resource instead of QUrl
+  - Actual QUrl has to be constructed depending on the base URL and its query
+  - Create GetFOI QUrls in WfsContainerConnector and create Resources in WfsCatalogConnector
+  
+* Create a Feature Metadata class. objects are created from DescribeFeatureType and can be used by featureconnector and tableconnector
+
+* Load Metadata
+  - wfsfeatureconnector has 
+  
