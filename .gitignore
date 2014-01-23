@@ -5,3 +5,5 @@ pythonapi/ilwisobjects_wrap.cxx
 .idea
 /docs
 /Doxyfile
+wfsconnector/ConnectorWFS.cpp
+wfsconnector/ConnectorWFS.h
