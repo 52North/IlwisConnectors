@@ -307,17 +307,17 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                 //each FEATURE
                 try {
                     while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
+                        //ATTRIBUTES each OGR_F_FIELD > RECORD
+                        for (int i = 1; i < attTable->columnCount();i++){
+                            if (columnDefinitions[i]){
+                                record[i] = (this->*columnDefinitions[i]->fillFunc)(hFeature, columnDefinitions[i]->index);
+                            }
+                        }
+                        //GEOMETRIES
                         std::vector<Geometry> geometries;
                         fillFeature(fcoverage, gdal()->getGeometryRef(hFeature), geometries);
                         for(auto &geometry : geometries){
-
                             SPFeatureI& feature =  fcoverage->newFeature(geometry);
-                            //each OGR_F_FIELD > RECORD
-                            for (int i = 1; i < attTable->columnCount();i++){
-                                if (columnDefinitions[i]){
-                                    record[i] = (this->*columnDefinitions[i]->fillFunc)(hFeature, columnDefinitions[i]->index);
-                                }
-                            }
                             record[0] = QVariant(feature->featureid());
                             attTable->record(attTable->recordCount() - 1,record);//should overwrite the last record in attTable, which hopefully is the one created by fcoverage->newFeature({geometry}) within FillFeature
                         }
