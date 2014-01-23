@@ -4,21 +4,25 @@
 #include "wfsconnector_global.h"
 
 namespace Ilwis {
-    class WfsContainerConnector: public ContainerConnector{
-        public:
-            WfsContainerConnector();
-            WfsContainerConnector(const Resource& resource);
-            virtual ~WfsContainerConnector() {}
+namespace Wfs {
 
-            static ConnectorInterface *create(const Resource &res, bool);
+class WfsContainerConnector: public ContainerConnector{
+    public:
+        WfsContainerConnector();
+        WfsContainerConnector(const Resource& resource);
+        virtual ~WfsContainerConnector() {}
 
-            bool prepare();
-            std::vector<QUrl> sources(const QStringList& filter, int options=foFULLPATHS) const;
-            QFileInfo toLocalFile(const QUrl& datasource) const;
-            bool isValid() const;
-            QString provider() const;
-            bool canUse(const Resource& resource) const;
-    };
+        static ConnectorInterface *create(const Resource &res, bool);
+
+        bool prepare();
+        std::vector<QUrl> sources(const QStringList& filter, int options=foFULLPATHS) const;
+        QFileInfo toLocalFile(const QUrl& datasource) const;
+        bool isValid() const;
+        QString provider() const;
+        bool canUse(const Resource& resource) const;
+};
+
+}
 
 }
 

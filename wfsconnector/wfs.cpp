@@ -20,7 +20,6 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-
 WebFeatureService::WebFeatureService(QUrl wfsUrl): _resource(wfsUrl)
 {
 }
