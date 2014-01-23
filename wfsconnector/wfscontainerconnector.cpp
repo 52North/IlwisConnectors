@@ -39,7 +39,6 @@ bool WfsContainerConnector::prepare()
 
 std::vector<QUrl> WfsContainerConnector::sources(const QStringList &filter, int options) const
 {
-
     WebFeatureService wfs(source().url());
     WfsResponse *response = wfs.getCapabilities();
     QString capabilities = response->getContent();
@@ -48,28 +47,18 @@ std::vector<QUrl> WfsContainerConnector::sources(const QStringList &filter, int 
     std::istringstream cs(capabilities.toStdString());
     doc.load(cs);
 
-    std::vector<QUrl> ret;
+    std::vector<QUrl> wfsFeatures;
+    QUrl wfsUrl = source().url();
     pugi::xpath_node_set featureTypes = doc.select_nodes("/*/FeatureTypeList/FeatureType");
-    std::for_each (featureTypes.begin(), featureTypes.end(), [](pugi::xpath_node featureType) {
+    std::for_each (featureTypes.begin(), featureTypes.end(), [&](pugi::xpath_node featureType) {
+        QUrl getFeatureUrl;
         QString name(featureType.node().child("Name").text().as_string());
-        QString title(featureType.node().child("Title").text().as_string());
-        QString abstract(featureType.node().child("Abstract").text().as_string());
 
-        QUrl coverageUrl(source().url())
+        // TODO: getFeature for each FeatureType name
 
+        wfsFeatures.push_back(getFeatureUrl);
     });
-
-
-
-    // TODO: parse FeatureTypes from Capabilities
-
-    // TODO: getFeature for each FeatureType name
-
-    // TODO: create getFeature URLs for available features
-
-
-    ret.push_back(source().url());
-    return ret;
+    return wfsFeatures;
 }
 
 QFileInfo WfsContainerConnector::toLocalFile(const QUrl &datasource) const
