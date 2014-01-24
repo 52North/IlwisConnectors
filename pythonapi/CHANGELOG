@@ -1,8 +1,10 @@
 ==================CHANGELOG===================
 
---20140117--
+--20140124--
 *enabled direct access to RasterGrid for NumPy arrays via PyBuffer interface
 *ILWIS is now also available with Qt5.2
+*bugfixes in loading of shapefiles via GDAL
+*added Table(AttributeTable) as a separate IlwisObject
 
 --20140110--
 *improved Coordinate/Coordinate2D(new!)/Voxel/Pixel and Envelope(new!)/Box

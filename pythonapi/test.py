@@ -1,5 +1,7 @@
 #!/usr/bin python
 # -*- coding: utf-8 -*-
+from ilwisobjects import CoordinateSystem
+
 try:
     from ilwisobjects import *
 
@@ -7,10 +9,11 @@ try:
     pytestDir = "/pytest"
     babyDir = "/baby"
     exampleDir = "/example"
+    worldDir = "/world"
 
     import unittest as ut
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestTable(ut.TestCase):
         def setUp(self):
             try:
@@ -61,7 +64,7 @@ try:
             self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
             self.assertEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
         def setUp(self):
             self.csy = CoordinateSystem("code=epsg:5464")
@@ -69,7 +72,6 @@ try:
         def tearDown(self):
             del self.csy
 
-        ##@ut.skip("temporarily")
         def test_Geometry(self):
             g = Geometry("POINT(5.4 6 9.0)", self.csy)
             self.assertEqual(str(g), "POINT(5.4 6 9)", "standalone Geometry(fromWKT) failed!")
@@ -89,7 +91,6 @@ try:
             #g1 = g.transform(CoordinateSystem("code=epsg:3329"))
             #self.assertEqual("POINT(4.94595e+006 5.81942e+006)", g1.toWKT())
 
-        ##@ut.skip("temporarily")
         def test_Envelope(self):
             g = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
             e = g.envelope()
@@ -99,7 +100,6 @@ try:
             self.assertEqual("POLYGON(1.000000 1.000000 0.000000,1.000000 1.000000 0.000000)", str(e),
                              msg="z's are always 0, since boost can only manage 2D geometries until now")
 
-        ##@ut.skip("temporarily")
         def test_BadWKT(self):
             disconnectIssueLogger()
             g = Geometry("Pihkdjfhskdf", self.csy)
@@ -110,7 +110,6 @@ try:
             self.assertFalse(g.fromWKT("fdsfsds"))
             self.assertFalse(bool(g))
 
-        ##@ut.skip("temporarily")
         def test_Contains(self):
             p = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
             self.assertEqual(str(p), "POLYGON((1 1,1 10,10 10,10 1,1 1))")
@@ -121,9 +120,9 @@ try:
             self.assertTrue(p.contains(pin))
             self.assertTrue(pin.within(p))
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestUtil(ut.TestCase):
-        ##@ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_Size(self):
             sz = Size(2, 4, 5)
             self.assertEqual(str(sz), "Size(2, 4, 5)")
@@ -185,7 +184,7 @@ try:
             with self.assertRaises(NotImplementedError, msg="could construct 3D coordinate with only 2 parameters!"):
                 c = Coordinate(4, 5)
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestModule(ut.TestCase):
         def test_Exceptions(self):
             with self.assertRaises(IlwisException):
@@ -203,7 +202,7 @@ try:
             self.assertFalse(bool(fc))
             connectIssueLogger()
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestData(ut.TestCase):
         def test_UNDEF(self):
             with self.assertRaises(AttributeError, msg="property is not read only!"):
@@ -238,7 +237,7 @@ try:
             pv = PyVariant(23.4e-32)
             self.assertEqual(float(pv), 23.4e-32)
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestOperation(ut.TestCase):
         def setUp(self):
             try:
@@ -263,7 +262,7 @@ try:
                              msg="generated name should begin with gridding_ and end with its ID")
             self.assertEqual(polygongrid.featureCount(), 144, msg="wrong number of polygons in gridding result!")
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestFeature(ut.TestCase):
         def setUp(self):
             try:
@@ -348,7 +347,7 @@ try:
             self.assertTrue(str(f), "Feature(1)")
 
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
             try:
@@ -389,7 +388,7 @@ try:
             self.assertTrue(cs1 == cs2)
             self.assertFalse(cs1 != cs2)
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestRaster(ut.TestCase):
         def setUp(self):
             try:
@@ -443,7 +442,7 @@ try:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_RasterCalculation(self):
             rc = RasterCoverage("n000302.mpr")
             rctif = RasterCoverage("n0.mpr")
@@ -604,7 +603,7 @@ try:
             self.assertTrue(all(0 <= v <= 255 for v in bu))
 
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
         def setUp(self):
             try:
@@ -631,7 +630,7 @@ try:
                                                   IlwisObject.cmOUTPUT))
             polygongrid.store()
 
-    ###@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestBaby(ut.TestCase):
         def setUp(self):
             try:
@@ -641,7 +640,7 @@ try:
             except IlwisException:
                 self.skipTest("could not set working directory!")
 
-        ##@ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_helloRaster(self):
             rc = RasterCoverage("n000302.mpr")
             res = Engine.do("aggregateraster", rc, "Avg", 10, True)
@@ -664,6 +663,27 @@ try:
             self.assertEqual(count, 3, msg="wrong count value!")
             fc_soils.setConnection(workingDir + babyDir + "/soils_select", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
             fc_soils.store()
+
+    ##@ut.skip("temporarily")
+    class TestWorld(ut.TestCase):
+        def setUp(self):
+            try:
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir + worldDir)
+                connectIssueLogger()
+            except IlwisException:
+                self.skipTest("could not set working directory!")
+
+        ##@ut.skip("temporarily")
+        def test_helloWorld(self):
+            world = FeatureCoverage("ne_110m_admin_0_countries.shp")
+            self.assertTrue(bool(world))
+            self.assertEqual(177, world.featureCount())
+            iter(world)
+            self.assertEqual(286, world.featureCount())
+            world.setCoordinateSystem(CoordinateSystem("continent.csy"))
+            world.setConnection(workingDir + worldDir + "/continent", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.store()
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
