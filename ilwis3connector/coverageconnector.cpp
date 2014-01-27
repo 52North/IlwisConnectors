@@ -154,7 +154,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
         double miny = parts[1].toDouble();
         double maxx = parts[2].toDouble();
         double maxy = parts[3].toDouble();
-        Box2D<double> env(Coordinate(minx, miny), Coordinate(maxx, maxy));
+        Envelope env(Coordinate(minx, miny), Coordinate(maxx, maxy));
         coverage->envelope(env);
     } else {
         kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Coordinate boundaries", data->name()), IssueObject::itWarning);
@@ -184,15 +184,15 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
     }
     _odf->setKeyValue("BaseMap","CoordSystem", localName);
-    Box2D<double> bounds = coverage->envelope();
+    Envelope bounds = coverage->envelope();
     if(!bounds.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Bounds", coverage->name());
 
     _odf->setKeyValue("BaseMap","CoordBounds",QString("%1 %2 %3 %4").
-                      arg(bounds.min_corner().x(),10,'f').
-                      arg(bounds.min_corner().y(),10,'f').
-                      arg(bounds.max_corner().x(),10,'f').
-                      arg(bounds.max_corner().y(),10,'f'));
+                      arg(bounds.min_corner().x,10,'f').
+                      arg(bounds.min_corner().y,10,'f').
+                      arg(bounds.max_corner().x,10,'f').
+                      arg(bounds.max_corner().y,10,'f'));
 
     const IDomain dom = datadef.domain();
     if (!dom.isValid())

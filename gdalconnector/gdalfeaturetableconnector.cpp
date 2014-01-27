@@ -13,11 +13,10 @@
 #include "flattable.h"
 #include "coverage.h"
 #include "attributerecord.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "featureiterator.h"
+#include "gdaltableloader.h"
 
 using namespace Ilwis;
 using namespace Gdal;
@@ -35,6 +34,15 @@ IlwisObject* GdalFeatureTableConnector::create() const{
 
 
 bool GdalFeatureTableConnector::loadMetaData(IlwisObject* data){
+    if(!GdalConnector::loadMetaData(data))
+        return false;
+
+    int layer = 0;
+    OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
+    if ( hLayer){
+        GdalTableLoader loader;
+        loader.loadMetaData((Table *)data, hLayer);
+    }
     return true;
 }
 
@@ -43,14 +51,33 @@ bool GdalFeatureTableConnector::storeMetaData(Ilwis::IlwisObject *obj){
 }
 
 bool GdalFeatureTableConnector::loadBinaryData(IlwisObject * data){
-    Coverage* cov = static_cast<Coverage*>(data->parent());
-    if ((cov != 0) && cov->isValid()){
-        IFeatureCoverage fc;
-        fc.prepare(cov->id());
-        FeatureIterator it(fc);//TODO this is only a hack to call cov->connector()->loadBinartData(cov)
+    Table *attTable = static_cast<Table *>(data);
+
+    OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), 0);
+    if ( hLayer) {
+        std::vector<QVariant> record(attTable->columnCount());
+
+        GdalTableLoader loader;
+        loader.setColumnCallbacks(attTable, hLayer);
+        OGRFeatureH hFeature = 0;
+        gdal()->resetReading(hLayer);
+        //each FEATURE
+        try {
+            while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
+                loader.loadRecord(attTable, hFeature, record);
+                gdal()->destroyFeature( hFeature );
+            }
+            return true;
+        } catch (FeatureCreationError& ) {
+            gdal()->destroyFeature( hFeature );
+            return false;
+        }
     }
-    return true;// && cov->connector()->loadBinaryData(cov);
+    return false;
+
 }
+
+
 
 bool GdalFeatureTableConnector::storeBinaryData(IlwisObject* obj){
     return true;

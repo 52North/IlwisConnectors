@@ -394,7 +394,7 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
 void RasterCoverageConnector::calcStatics(const IlwisObject *obj, NumericStatistics::PropertySets set) const {
     IRasterCoverage raster = mastercatalog()->get(obj->id());
     if ( !raster->statistics().isValid()) {
-        PixelIterator iter(raster,Box3D<>(raster->size()));
+        PixelIterator iter(raster,BoundingBox(raster->size()));
         raster->statistics().calculate(iter, iter.end(),set);
     }
 }

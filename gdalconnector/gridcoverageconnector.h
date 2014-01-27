@@ -45,7 +45,7 @@ private:
                 v = *iter;
                 ++iter;
             });
-            gdal()->rasterIO(hband, GF_Write, 0, iter.position().y() - 1, columns, 1, (void *)&data[0],columns,1, gdaltype,0,0 );
+            gdal()->rasterIO(hband, GF_Write, 0, iter.position().y - 1, columns, 1, (void *)&data[0],columns,1, gdaltype,0,0 );
 
             if ( iter.zchanged())     {
                 hband = gdal()->getRasterBand(dataset,++bandcount);

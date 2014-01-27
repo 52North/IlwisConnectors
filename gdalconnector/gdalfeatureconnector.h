@@ -27,32 +27,24 @@ private:
     OGRSFDriverH _driver;
 
     enum OutputState { osIndex2Layer=1,osType2Layer=2, osLayer2DataSource=4};
-    struct FillerColumnDef{
-        FillerColumnDef(QVariant(GdalFeatureConnector::* func)(OGRFeatureH,  int), int i): fillFunc(func), index(i){}
-        QVariant (GdalFeatureConnector::* fillFunc)(OGRFeatureH,  int);
-        int index;
-    };
+
     QVariant fillEmptyColumn(OGRFeatureH, int);
-    QVariant fillStringColumn(OGRFeatureH featureH, int colIntex);
-    QVariant fillIntegerColumn(OGRFeatureH featureH, int colIntex);
-    QVariant fillDoubleColumn(OGRFeatureH featureH, int colIntex);
-    QVariant fillDateTimeColumn(OGRFeatureH featureH, int colIntex);
     IlwisTypes translateOGRType(OGRwkbGeometryType type) const;
-    void fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry, std::vector<Ilwis::Geometry> &outGeoms) const;
-    void fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry, std::vector<Ilwis::Geometry> &outGeoms) const;
-    void fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry, std::vector<Ilwis::Geometry> &outGeoms) const;
-    void fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, OGRwkbGeometryType type, std::vector<Ilwis::Geometry> &outGeoms) const;
+    void fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry, std::vector<geos::geom::Geometry *> &outGeoms) const;
+    void fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry, std::vector<geos::geom::Geometry *> &outGeoms) const;
+    void fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry, std::vector<geos::geom::Geometry *> &outGeoms) const;
+    void fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, OGRwkbGeometryType type, std::vector<geos::geom::Geometry*> &outGeoms) const;
     OGRDataSourceH createFileBasedDataSource(const QString &postfix, const QFileInfo &fileinfo) const;
     OGRLayerH createLayer(const QString &name, OGRwkbGeometryType type, OGRSpatialReferenceH srs, OGRDataSourceH source);
     bool oneLayerPerFeatureType(const IFeatureCoverage &features);
     bool createAttributes(const ITable &tbl, OGRLayerH layer, const std::vector<OGRFieldDefnH> &fielddefs,std::vector<bool>& validAttributes);
     bool loadDriver();
     OGRwkbGeometryType ilwisType2GdalFeatureType(IlwisTypes tp);
-    void setAttributes(OGRFeatureH hfeature, Ilwis::SPFeatureI& feature, const std::vector<bool> &validAttributes, const std::vector<Ilwis::ColumnDefinition> &def);
+    void setAttributes(OGRFeatureH hfeature, Ilwis::UPFeatureI& feature, const std::vector<bool> &validAttributes, const std::vector<Ilwis::ColumnDefinition> &def);
     bool setDataSourceAndLayers(const IFeatureCoverage &features, std::vector<SourceHandles> &datasources,std::vector<bool>& validAttributes);
-    OGRGeometryH createLine2D(const SPFeatureI &feature);
-    OGRGeometryH createPoint2D(const SPFeatureI &feature);
-    OGRGeometryH createPolygon2D(const SPFeatureI &feature);
+    OGRGeometryH createLine2D(const Ilwis::UPFeatureI &feature);
+    OGRGeometryH createPoint2D(const Ilwis::UPFeatureI &feature);
+    OGRGeometryH createPolygon2D(const Ilwis::UPFeatureI &feature);
 
     static int ilwisType2Index(IlwisTypes);
     bool createDataSourceAndLayers(IlwisTypes types,
@@ -62,6 +54,7 @@ private:
                                    const std::vector<OGRFieldDefnH> &fielddefs,
                                    std::vector<SourceHandles> &datasources,
                                    std::vector<bool> &validAttributes);
+    ITable prepareAttributeTable(OGRLayerH hLayer) const;
 };
 }
 }

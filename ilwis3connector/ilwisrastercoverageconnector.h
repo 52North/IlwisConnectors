@@ -32,7 +32,7 @@ private:
     bool setDataType(IlwisObject *data);
 
     template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& raster, const Size& sz) const{
-        PixelIterator pixiter(raster,Box3D<>(sz));
+        PixelIterator pixiter(raster, BoundingBox(sz));
         int  i=0;
         T c = 0;
         const char *ptr = reinterpret_cast<const char*>(&c);

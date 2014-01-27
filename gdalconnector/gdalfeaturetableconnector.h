@@ -16,6 +16,8 @@ namespace Ilwis{
 
                 bool loadBinaryData(IlwisObject *data);
                 bool storeBinaryData(IlwisObject* obj);
+        private:
+
         };
 
     }

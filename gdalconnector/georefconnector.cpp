@@ -14,7 +14,6 @@
 #include "gdalconnector.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
-#include "boostext.h"
 #include "georefimplementation.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
@@ -60,10 +59,10 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
         double b2 = geosys[5];
         Coordinate crdLeftup( a1 , b1);
         Coordinate crdRightDown(a1 + sz.width() * a2, b1 + sz.height() * b2 ) ;
-        Coordinate cMin( min(crdLeftup.x(), crdRightDown.x()), min(crdLeftup.y(), crdRightDown.y()));
-        Coordinate cMax( max(crdLeftup.x(), crdRightDown.x()), max(crdLeftup.y(), crdRightDown.y()));
+        Coordinate cMin( min(crdLeftup.x, crdRightDown.x), min(crdLeftup.y, crdRightDown.y));
+        Coordinate cMax( max(crdLeftup.x, crdRightDown.x), max(crdLeftup.y, crdRightDown.y));
 
-        grf->impl<CornersGeoReference>()->setEnvelope(Box2D<double>(cMin, cMax));
+        grf->impl<CornersGeoReference>()->setEnvelope(Envelope(cMin, cMax));
     }else{
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2, "Georeference", grf->name());
     }
