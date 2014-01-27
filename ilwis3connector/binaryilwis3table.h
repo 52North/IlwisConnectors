@@ -4,9 +4,16 @@
 namespace Ilwis {
 
 class DataDefinition;
+class Coordinate;
 
 namespace Ilwis3{
 
+struct Coordinate2d {
+    Coordinate2d(double px, double py) : x(px), y(py) {}
+    Coordinate2d(const geos::geom::Coordinate& crd) : x(crd.x), y(crd.y) {}
+    double x;
+    double y;
+};
 
 class BinaryIlwis3Table
 {
@@ -35,6 +42,7 @@ private:
         IlwisTypes _type;
         QString _name;
         RawConverter _conv;
+        qint32 _fieldSize;
     };
     quint32 _rows;
     quint32 _columns;

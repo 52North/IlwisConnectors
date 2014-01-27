@@ -7,6 +7,12 @@
 #include <fstream>
 
 #include "kernel.h"
+
+#include "geos/geom/CoordinateArraySequence.h"
+#include "geos/geom/Point.h"
+#include "geos/geom/LineString.h"
+#include "geos/geom/LinearRing.h"
+
 #include "raster.h"
 #include "connectorinterface.h"
 #include "containerconnector.h"

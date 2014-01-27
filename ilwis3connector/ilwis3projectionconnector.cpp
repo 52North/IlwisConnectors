@@ -7,7 +7,9 @@
 
 #include "kernel.h"
 #include "angle.h"
-#include "point.h"
+#include "geos/geom/Coordinate.h"
+#include "location.h"
+#include "coordinate.h"
 #include "connectorinterface.h"
 #include "containerconnector.h"
 #include "inifile.h"

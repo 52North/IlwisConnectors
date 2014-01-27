@@ -5,19 +5,23 @@
 
 #include "kernel.h"
 #include "coverage.h"
+#include "geos/geom/CoordinateArraySequence.h"
+#include "geos/geom/Point.h"
+#include "geos/geom/LineString.h"
+#include "geos/geom/LinearRing.h"
+#include "geos/geom/Polygon.h"
+#include "geos/geom/GeometryFactory.h"
 #include "module.h"
 #include "connectorinterface.h"
 #include "containerconnector.h"
 #include "inifile.h"
 #include "coverage.h"
-#include "polygon.h"
 #include "ilwiscontext.h"
 #include "catalog.h"
 #include "numericdomain.h"
 #include "numericrange.h"
 #include "columndefinition.h"
 #include "table.h"
-#include "geometry.h"
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "identifieritem.h"
@@ -84,68 +88,62 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
             continue;
         polTable.get(i,colTopStart,v);
         qint32 index = v;
-        std::vector<std::vector<Coordinate2d>> rings;
-        if (getRings(index, topTable, polTable, rings)) {
-            if ( rings.size() == 0)
+        std::vector<geos::geom::LinearRing *> *rings = new std::vector<geos::geom::LinearRing *>();
+        if (getRings(fcoverage,index, topTable, polTable, rings)) {
+            if ( rings->size() == 0)
                 continue;
-            Polygon polygon;
-            polygon.outer().resize(rings[0].size());
-            std::copy(rings[0].begin(), rings[0].end(), polygon.outer().begin());
-            for(int j = 1; j < rings.size(); ++j) {
-                polygon.inners()[j-1].resize(rings[j].size());
-                std::copy(rings[j].begin(), rings[j].end(), polygon.inners()[j-1].begin());
+            geos::geom::LinearRing *outer = rings->front();
+            vector<geos::geom::Geometry *> *geoms = new vector<geos::geom::Geometry *>(rings->size() - 1);
+            for(int i=1; i < rings->size(); ++i) {
+                (*geoms)[i-1] = rings->at(i);
             }
+
+            geos::geom::Polygon *polygon = fcoverage->geomfactory()->createPolygon(outer, geoms);
+            //std::copy(rings[0].begin(), rings[0].end(), polygon.outer().begin());
             polTable.get(i, colValue, v);
             if ( isNumeric) {
                 tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
                 tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(v));
-                fcoverage->newFeature({polygon,fcoverage->coordinateSystem()});
+                fcoverage->newFeature({polygon});
             } else {
                 quint32 itemId = v;
                 tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
-                fcoverage->newFeature({polygon,fcoverage->coordinateSystem()});
+                fcoverage->newFeature({polygon});
             }
         }
     }
     return true;
 }
 
-bool FeatureConnector::getRings(qint32 startIndex, const BinaryIlwis3Table& topTable, const BinaryIlwis3Table& polTable, std::vector<vector<Coordinate2d>>& rings ){
+bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, const BinaryIlwis3Table& topTable, const BinaryIlwis3Table& polTable, std::vector<geos::geom::LinearRing *> *rings ){
     qint32 row = startIndex;
     qint32 colCoords = topTable.index("Coords");
     qint32 colForward = topTable.index("ForwardLink");
     qint32 colBackward = topTable.index("BackwardLink");
-    std::vector<Coordinate> ring;
+    std::vector<geos::geom::Coordinate> *ring;
     bool forward = isForwardStartDirection(topTable,colForward, colBackward, colCoords, row);
     do{
         std::vector<Coordinate> coords;
         topTable.get(row,colCoords,coords);
         if( coords.size() == 0 ||coords.back() == coords.front()){
-            ring.resize(coords.size());
-            std::copy(coords.begin(), coords.end(), ring.begin());
-        } else if ( coords.back() == ring.back()) {
-            ring.resize(coords.size());
-            std::reverse_copy(coords.begin(), coords.end(), ring.begin());
-        } else if ( ring.front() == coords.front()) {
-            ring.resize(coords.size());
-            std::reverse_copy(coords.begin(), coords.end(), ring.begin());
-        } else if ( ring.front() == coords.back()) {
-            ring.resize(coords.size());
-            std::copy(coords.begin(), coords.end(), ring.begin());
+            ring = new std::vector<geos::geom::Coordinate>(coords.size());
+            std::copy(coords.begin(), coords.end(), ring->begin());
+        } else if ( coords.back() == ring->back()) {
+            ring = new std::vector<geos::geom::Coordinate>(coords.size());
+            std::reverse_copy(coords.begin(), coords.end(), ring->begin());
+        } else if ( ring->front() == coords.front()) {
+            ring = new std::vector<geos::geom::Coordinate>(coords.size());
+            std::reverse_copy(coords.begin(), coords.end(), ring->begin());
+        } else if ( ring->front() == coords.back()) {
+            ring = new std::vector<geos::geom::Coordinate>(coords.size());
+            std::copy(coords.begin(), coords.end(), ring->begin());
         }
 
-        if ( ring.front() == ring.back() && ring.size() > 3) {
-            std::vector<Coordinate2d> ring2d;
-            Coordinate crdOld;
-            for(const Coordinate& crd : ring) {
-                if ( crd == crdOld)  // remove duplicates
-                    continue;
-                ring2d.push_back(crd);
-                crdOld = crd;
-            }
-            rings.push_back(ring2d);
+        if ( ring->front() == ring->back() && ring->size() > 3) {
+            geos::geom::CoordinateArraySequence * ringIn = new geos::geom::CoordinateArraySequence(ring);
+            ringIn->removeRepeatedPoints();
+            rings->push_back( fcoverage->geomfactory()->createLinearRing(ringIn));
             coords.clear();
-            ring.clear();
         }
         qint32 oldIndex = row;
         double v;
@@ -178,7 +176,7 @@ bool FeatureConnector::isForwardStartDirection(const BinaryIlwis3Table& topTable
         return true;
     if ( index < 0)
         return false;
-    std::vector<Coordinate2d> startLine, forwardLine;
+    std::vector<Coordinate> startLine, forwardLine;
     topTable.get(abs(index), colCoords,startLine);
     topTable.get(abs(fwl), colCoords, forwardLine);
 
@@ -212,23 +210,27 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
     for(int j=0; j < nrPolygons; ++j) {
-        Polygon pol;
-        readRing(stream, pol.outer());
+        geos::geom::CoordinateArraySequence *outer = readRing(stream);
+        if ( !outer)
+            return false;
+
+        geos::geom::LinearRing *outerring = fcoverage->geomfactory()->createLinearRing(outer);
         double value;
         quint32 numberOfHoles;
         stream.readRawData((char *)&value, 8);
         stream.readRawData((char *)&numberOfHoles, 4);
-        pol.inners().resize(numberOfHoles);
+        std::vector<geos::geom::Geometry*> *inners = new std::vector<geos::geom::Geometry*>(numberOfHoles);
         for(quint32 i=0; i< numberOfHoles;++i)
-            readRing(stream, pol.inners()[i]);
+            (*inners)[i] = fcoverage->geomfactory()->createLinearRing(readRing(stream));
+        geos::geom::Polygon *pol = fcoverage->geomfactory()->createPolygon(outerring, inners);
         if ( isNumeric) {
 
-            fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
+            fcoverage->newFeature({pol});
             tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(j));
             tbl->setCell(FEATUREVALUECOLUMN, j, QVariant(value));
         } else {
             quint32 itemId = value;
-            fcoverage->newFeature({pol, fcoverage->coordinateSystem()});
+            fcoverage->newFeature({pol});
             tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(itemId - 1));
         }
 
@@ -238,19 +240,21 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     return true;
 }
 
-bool FeatureConnector::readRing(QDataStream& stream, std::vector<Coordinate2d> &ring ) {
+geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& stream ) {
     quint32 numberOfCoords;
 
-    if (stream.readRawData((char *)&numberOfCoords, 4) <= 0)
-        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,"data file");
+    if (stream.readRawData((char *)&numberOfCoords, 4) <= 0){
+        ERROR1(ERR_COULD_NOT_OPEN_READING_1,"data file");
+        return 0;
+    }
     vector<XYZ> pnts(numberOfCoords);
     stream.readRawData((char *)&pnts[0],numberOfCoords*3*8);
-    ring.resize(numberOfCoords);
+    geos::geom::CoordinateArraySequence *ring = new geos::geom::CoordinateArraySequence(numberOfCoords);
     for(quint32 i=0; i < numberOfCoords; ++i) {
-        ring[i] = Coordinate2d(pnts[i].x, pnts[i].y);
+        ring->setAt(geos::geom::Coordinate(pnts[i].x, pnts[i].y, pnts[i].z), i);
     }
 
-   return true;
+   return ring;
 }
 
 bool FeatureConnector::loadBinaryPolygons(FeatureCoverage *fcoverage) {
@@ -279,19 +283,20 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     for(quint32 i= 0; i < mpsTable.rows(); ++i) {
         std::vector<Coordinate > coords;
         mpsTable.get(i,colCoords,coords);
-        Line2D line;
-        line.resize(coords.size());
-        std::copy(coords.begin(), coords.end(), line.begin());
+        geos::geom::CoordinateArraySequence *vertices = new geos::geom::CoordinateArraySequence(coords.size());
+        for(int i=0; i < coords.size(); ++i)
+            vertices->setAt(geos::geom::Coordinate(coords[i].x, coords[i].y, coords[i].z), i);
+        geos::geom::LineString *line = fcoverage->geomfactory()->createLineString(vertices);
         mpsTable.get(i, colItemId,value);
         if ( isNumeric) {
-            fcoverage->newFeature({line, fcoverage->coordinateSystem()});
+            fcoverage->newFeature({line});
             tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
             tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(value));
 
         } else {
             quint32 itemId = value;
             tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
-            fcoverage->newFeature({line, fcoverage->coordinateSystem()});
+            fcoverage->newFeature({line});
         }
 
 
@@ -329,7 +334,8 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
         }
         mppTable.get(i, colItemId,itemIdT);
         quint32 itemId = itemIdT;
-        fcoverage->newFeature({c, fcoverage->coordinateSystem()});
+        geos::geom::Point *point = fcoverage->geomfactory()->createPoint(c);
+        fcoverage->newFeature(point);
         tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
 
     }
@@ -361,14 +367,14 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
 
         if ( ok && extTable.isValid()) {
             ITable attTbl = fcoverage->attributeTable();
-            quint32 keyIndex = attTbl->columnIndex(COVERAGEKEYCOLUMN);
+            //quint32 keyIndex = attTbl->columnIndex(COVERAGEKEYCOLUMN);
             for(quint32 rowExt=0; rowExt < extTable->recordCount(); ++rowExt) {
                 vector<QVariant> rec = extTable->record(rowExt);
-                for(quint32 rowAtt = 0; rowAtt < attTbl->recordCount(); ++rowAtt ) {
-                    if ( attTbl->cell(keyIndex, rowAtt) == rowExt) {
-                        attTbl->record(rowAtt,rec);
-                    }
-                }
+                //for(quint32 rowAtt = 0; rowAtt < attTbl->recordCount(); ++rowAtt ) {
+                //    if ( attTbl->cell(keyIndex, rowAtt) == rowExt) {
+                        attTbl->record(rowExt,rec);
+                //    }
+                //}
             }
         }
     } catch (FeatureCreationError& ) {
@@ -417,16 +423,18 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     cov.set(fcov);
     FeatureIterator iter(cov);
     double raw = 1;
-    for_each(iter, iter.end(), [&](SPFeatureI& feature){
-        const Geometry& geom = feature->geometry();
+    for_each(iter, iter.end(), [&](UPFeatureI& feature){
+        const UPGeometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
-            if ( geom.geometryType() == itPOLYGON) {
-                Polygon pol = geom.toType<Polygon>();
-                writeCoords(output_file, pol.outer());
+            if ( geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
+                const geos::geom::Polygon *polygon = dynamic_cast<const geos::geom::Polygon *>(geom.get());
+                const std::vector<geos::geom::Coordinate>* coords = polygon->getExteriorRing()->getCoordinates()->toVector();
+                writeCoords(output_file, coords);
                 output_file.write((char *)&raw,8);
-                quint32 holeCount = pol.inners().size();
+                quint32 holeCount = polygon->getNumInteriorRing();
                 output_file.write((char *)&holeCount,4);
-                for(const std::vector<Coordinate2d>& coords : pol.inners() ) {
+                for(int i=0; i < holeCount; ++i ) {
+                    const std::vector<geos::geom::Coordinate>* coords = polygon->getInteriorRingN(i)->getCoordinates()->toVector();
                     writeCoords(output_file, coords);
                 }
                 ++raw;
@@ -459,19 +467,21 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
     FeatureIterator iter(cov);
     quint32 raw = 1;
 
-    for_each(iter, iter.end(), [&](SPFeatureI& feature){
-        const Geometry& geom = feature->geometry();
+    for_each(iter, iter.end(), [&](UPFeatureI& feature){
+        const UPGeometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
-            if ( geom.geometryType() == itLINE) {
-                Line2D line = geom.toType<Line2D>();
-                const Coordinate2d& crdmin = geom.envelope().min_corner();
-                const Coordinate2d& crdmax = geom.envelope().max_corner();
+            if ( geom->getGeometryTypeId() == geos::geom::GEOS_LINESTRING) {
+                const geos::geom::Envelope *env = geom->getEnvelopeInternal();
+                const geos::geom::LineString *line = dynamic_cast<const geos::geom::LineString *>(geom.get());
+                const std::vector<geos::geom::Coordinate>* coords = line->getCoordinatesRO()->toVector();
+                const geos::geom::Coordinate crdmin(env->getMinX(), env->getMinY());
+                const geos::geom::Coordinate crdmax(env->getMaxX(), env->getMaxY());
                 writeCoord(output_file, crdmin);
                 writeCoord(output_file, crdmax);
-                int noOfCoordsBytes = line.size() * 16;
+                int noOfCoordsBytes = line->getNumPoints() * 16;
                 output_file.write((char *)&noOfCoordsBytes, 4);
-                for(const Coordinate2d& crd: line) {
-                    writeCoord(output_file, crd);
+                for(const Coordinate& crd: *coords) {
+                    writeCoord(output_file, geos::geom::Coordinate(crd));
                 }
                 long deleted=1;
                 output_file.write((char *)&deleted, 4);
@@ -516,16 +526,16 @@ bool FeatureConnector::storeBinaryData(IlwisObject *obj) {
     return ok;
 }
 
-void FeatureConnector::writeCoords(std::ofstream& output_file, const std::vector<Coordinate2d>& coords, bool singleton) {
-    quint32 crdCount = coords.size();
+void FeatureConnector::writeCoords(std::ofstream& output_file, const std::vector<geos::geom::Coordinate>* coords, bool singleton) {
+    quint32 crdCount = coords->size();
     if(!singleton) {
         output_file.write((char *)&crdCount,4);
     }
     std::vector<double> crds(crdCount * 3);
     quint32 count = 0;
-    for(const Coordinate2d& crd : coords) {
-        crds[count] = crd.x();
-        crds[count+1] = crd.y();
+    for(const geos::geom::Coordinate& crd : *coords) {
+        crds[count] = crd.x;
+        crds[count+1] = crd.y;
         crds[count+2] = 0;
         count +=3;
     }

@@ -22,8 +22,6 @@
 #include "coordinatesystemconnector.h"
 #include "coverageconnector.h"
 #include "gridcoverageconnector.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "attributerecord.h"
 #include "feature.h"
 #include "featurecoverage.h"

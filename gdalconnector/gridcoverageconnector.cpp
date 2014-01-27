@@ -59,11 +59,11 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
         double b2 = geosys[5];
         Pixel pix(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()));
         Coordinate crdLeftup( a1 , b1);
-        Coordinate crdRightDown(a1 + pix.x() * a2, b1 + pix.y() * b2 ) ;
-        Coordinate cMin( min(crdLeftup.x(), crdRightDown.x()), min(crdLeftup.y(), crdRightDown.y()));
-        Coordinate cMax( max(crdLeftup.x(), crdRightDown.x()), max(crdLeftup.y(), crdRightDown.y()));
+        Coordinate crdRightDown(a1 + pix.x * a2, b1 + pix.y * b2 ) ;
+        Coordinate cMin( min(crdLeftup.x, crdRightDown.x), min(crdLeftup.y, crdRightDown.y));
+        Coordinate cMax( max(crdLeftup.x, crdRightDown.x), max(crdLeftup.y, crdRightDown.y));
 
-        gcoverage->envelope(Box2D<double>(cMin, cMax));
+        gcoverage->envelope(Envelope(cMin, cMax));
         gcoverage->coordinateSystem()->envelope(gcoverage->envelope());
 
         IGeoReference grf;
@@ -201,10 +201,10 @@ Ilwis::IlwisObject *RasterCoverageConnector::create() const{
 bool RasterCoverageConnector::setGeotransform(RasterCoverage *raster,GDALDatasetH dataset) {
     if ( raster->georeference()->grfType<CornersGeoReference>()) {
         std::vector<double> sup = raster->georeference()->impl<CornersGeoReference>()->support();
-        Box2Dd env = raster->envelope();
-        double a2 = (env.max_corner().x() - env.min_corner().x()) / raster->size().xsize();
-        double b2 = (env.max_corner().y() - env.min_corner().y()) / raster->size().ysize();
-        double geoTransform[6] = { env.min_corner().x(), a2, sup[0], env.min_corner().y(), sup[1], b2 };
+        Envelope env = raster->envelope();
+        double a2 = (env.max_corner().x - env.min_corner().x) / raster->size().xsize();
+        double b2 = (env.max_corner().y - env.min_corner().y) / raster->size().ysize();
+        double geoTransform[6] = { env.min_corner().x, a2, sup[0], env.min_corner().y, sup[1], b2 };
 
         CPLErr err = gdal()->setGeoTransform(dataset,geoTransform);
         if ( err != CE_None) {

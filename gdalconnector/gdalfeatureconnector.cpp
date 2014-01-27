@@ -5,16 +5,19 @@
 
 #include "kernel.h"
 #include "coverage.h"
+#include "geos/geom/CoordinateArraySequence.h"
+#include "geos/geom/Point.h"
+#include "geos/geom/LineString.h"
+#include "geos/geom/LinearRing.h"
+#include "geos/geom/Polygon.h"
+#include "geos/geom/GeometryFactory.h"
 #include "module.h"
-#include "coverage.h"
-#include "polygon.h"
 #include "ilwiscontext.h"
 #include "catalog.h"
 #include "numericdomain.h"
 #include "numericrange.h"
 #include "columndefinition.h"
 #include "table.h"
-#include "geometry.h"
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "textdomain.h"
@@ -29,7 +32,7 @@
 #include "gdalconnector.h"
 #include "coverageconnector.h"
 #include "juliantime.h"
-
+#include "gdaltableloader.h"
 #include "gdalfeatureconnector.h"
 
 using namespace Ilwis;
@@ -64,7 +67,27 @@ IlwisTypes GdalFeatureConnector::translateOGRType(OGRwkbGeometryType type) const
     return ret;
 }
 
+ITable GdalFeatureConnector::prepareAttributeTable(OGRLayerH hLayer) const{
 
+    ITable attTable;
+    Resource resource(_filename, itFLATTABLE);
+    if(!attTable.prepare(resource)) {
+        ERROR1(ERR_NO_INITIALIZED_1,resource.name());
+        return ITable();
+    }
+    IDomain dmKey;
+    dmKey.prepare("count");
+    ColumnDefinition colKey(FEATUREIDCOLUMN, dmKey, 0);
+    attTable->addColumn(colKey);
+    ColumnDefinition colCovKey(COVERAGEKEYCOLUMN, dmKey, 1);
+    attTable->addColumn(colCovKey);
+
+    GdalTableLoader loader;
+    loader.loadMetaData(attTable.ptr(), hLayer);
+
+    return attTable;
+
+}
 bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
 
     if(!CoverageConnector::loadMetaData(data))
@@ -73,151 +96,65 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     IlwisTypes coverageType = itUNKNOWN;
     int featureCount = 0;
-    Box2D<double> bbox;
+    Envelope bbox;
     bool initMinMax = 0;
 
-    ITable attTable;
-    Resource resource(QUrl(QString("gdal://attributetable/%2/%1").arg(fcoverage->name()).arg(fcoverage->id())), itFLATTABLE);
-    if(!attTable.prepare(resource)) {
-        ERROR1(ERR_NO_INITIALIZED_1,resource.name());
-        return false;
-    }
-    attTable->setParent(fcoverage);//to enable the GdalFeatureTableConnector to initiate loadBinaryData through this connector
-    IDomain dmKey;
-    dmKey.prepare("count");
-    ColumnDefinition colKey(FEATUREIDCOLUMN, dmKey, 0);
-    attTable->addColumn(colKey);
 
-//    for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
-        int layer = 0;//only first layer will be read/fit into single FeatureCoverage(*data)
-        OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
-        if ( hLayer) {
 
-            OGRFeatureDefnH hLayerDef = gdal()->getLayerDef(hLayer);
-            int fieldCount = gdal()->getFieldCount(hLayerDef);
-            for (int i = 0; i < fieldCount; i++){
-                OGRFieldDefnH hFieldDefn = gdal()->getFieldDfn(hLayerDef, i);
-                QString name = QString(gdal()->getFieldName(hFieldDefn));
-                OGRFieldType type = gdal()->getFieldType(hFieldDefn);
-                //OGR_Fld_GetWidth, OGR_Fld_GetPrecision, OGR_Fld_IsIgnored
-                IDomain domain;
-                switch(type){
-                    case OFTInteger:{ // Simple 32bit integer
-                         INumericDomain ndomain;
-                         ndomain.prepare("integer");
-                         domain = ndomain;break;
-                    }
-                    case OFTIntegerList:break; // List of 32bit integers
+    int layer = 0;//only first layer will be read/fit into single FeatureCoverage(*data)
+    OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
+    if ( hLayer) {
+        ITable attTable = prepareAttributeTable(hLayer);
+        if (!attTable.isValid())
+            return false;
 
-                    case OFTReal:{ // Double Precision floating point
-                        INumericDomain ndomain;
-                        ndomain.prepare("value");
-                        domain = ndomain; break;
-                    }
-                    case OFTRealList:break; // List of doubles
-                    case OFTString:{ // String of ASCII chars
-                        domain.prepare("code=domain:text",itTEXTDOMAIN);
-                        break;
-                    }
-                    case OFTStringList: // Array of strings
-                    case OFTWideString:// deprecated
-                    case OFTWideStringList:// deprecated
-                    case OFTBinary: break; // Raw Binary data
+        fcoverage->attributeTable(attTable);
 
-                    case OFTDate:  // Date
-                    case OFTTime:  // itTime - itTIMEDOMAIN
-                    case OFTDateTime:{  // Date and Time
-                        INumericDomain ndomain;
-                        ndomain.prepare("value");
-                        ndomain->range(new TimeInterval());//TODO:: ilwisType of Domain should change to itTIMEDOMAIN
-                        domain = ndomain;  break;
-                    }
-                }
-
-                ColumnDefinition colDef(name, domain,i+1);
-                attTable->addColumn(colDef);
-            }
-
-            //feature types
-            IlwisTypes type = translateOGRType(gdal()->getLayerGeometry(hLayer));
-            if (type == itUNKNOWN){
-                ERROR2(ERR_COULD_NOT_LOAD_2,QString("layer from: %1").arg(_filename.toString()),QString(":%1").arg(gdal()->getLastErrorMsg()));
-            }
-            coverageType |= type;
-
-            //feature counts
-            int temp = gdal()->getFeatureCount(hLayer, FALSE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
-            featureCount = fcoverage->featureCount(type);
-            featureCount += (temp == -1) ? 0 : temp;
-            fcoverage->setFeatureCount(type, featureCount);
-
-            //layer envelopes/extents
-            OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
-            OGRErr er = gdal()->getLayerExtent(hLayer, &envelope , FALSE);//TRUE to FORCE
-            if (er ==  OGRERR_FAILURE){
-                ERROR2(ERR_COULD_NOT_LOAD_2,QString("(TRY FORCE) extent of a layer from: %2").arg(_filename.toString()),QString(":%1").arg(gdal()->getLastErrorMsg()));
-            }
-            if(!initMinMax){
-                bbox=Box2D<double>(Coordinate2d(envelope.MinX,envelope.MinY),Coordinate2d(envelope.MaxX,envelope.MaxY));
-            }else{
-                if(bbox.max_corner().x() < envelope.MaxX)
-                    bbox.max_corner().x(envelope.MaxX);
-                if(bbox.max_corner().y() < envelope.MaxY)
-                    bbox.max_corner().y(envelope.MaxY);
-                if(bbox.min_corner().x() > envelope.MinX)
-                    bbox.min_corner().x(envelope.MinX);
-                if(bbox.min_corner().y() > envelope.MinY)
-                    bbox.min_corner().y(envelope.MinY);
-            }
+        //feature types
+        IlwisTypes type = translateOGRType(gdal()->getLayerGeometry(hLayer));
+        if (type == itUNKNOWN){
+            ERROR2(ERR_COULD_NOT_LOAD_2,QString("layer from: %1").arg(_filename.toString()),QString(":%1").arg(gdal()->getLastErrorMsg()));
         }
-//    }
-    fcoverage->attributeTable(attTable);
+        coverageType |= type;
+
+        //feature counts
+        int temp = gdal()->getFeatureCount(hLayer, FALSE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
+        featureCount = fcoverage->featureCount(type);
+        featureCount += (temp == -1) ? 0 : temp;
+        fcoverage->setFeatureCount(type, featureCount);
+
+        //layer envelopes/extents
+        OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
+        OGRErr er = gdal()->getLayerExtent(hLayer, &envelope , FALSE);//TRUE to FORCE
+        if (er ==  OGRERR_FAILURE){
+            ERROR2(ERR_COULD_NOT_LOAD_2,QString("(TRY FORCE) extent of a layer from: %2").arg(_filename.toString()),QString(":%1").arg(gdal()->getLastErrorMsg()));
+        }
+        if(!initMinMax){
+            bbox=Envelope(Coordinate(envelope.MinX,envelope.MinY),Coordinate(envelope.MaxX,envelope.MaxY));
+        }else{
+            if(bbox.max_corner().x < envelope.MaxX)
+                bbox.max_corner().x = envelope.MaxX;
+            if(bbox.max_corner().y < envelope.MaxY)
+                bbox.max_corner().y = envelope.MaxY;
+            if(bbox.min_corner().x > envelope.MinX)
+                bbox.min_corner().x = envelope.MinX;
+            if(bbox.min_corner().y > envelope.MinY)
+                bbox.min_corner().y = envelope.MinY;
+        }
+    }
+    //    }
     if (coverageType != itUNKNOWN && featureCount >= 0){
         fcoverage->featureTypes(coverageType);
         fcoverage->envelope(bbox);
         fcoverage->coordinateSystem()->envelope(bbox);
     }else{
-       return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",data->name());
+        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",data->name());
     }
 
     QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
     gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
 
     return true;
-}
-
-QVariant GdalFeatureConnector::fillEmptyColumn(OGRFeatureH , int ){
-    return QVariant();
-}
-
-QVariant GdalFeatureConnector::fillStringColumn(OGRFeatureH featureH, int colIntex){
-    return QVariant(gdal()->getFieldAsString(featureH, colIntex));
-}
-
-QVariant GdalFeatureConnector::fillIntegerColumn(OGRFeatureH featureH, int colIntex){
-    int v = gdal()->getFieldAsInt(featureH, colIntex);
-    return QVariant(v);
-}
-//TODO:: not yet tested
-QVariant GdalFeatureConnector::fillDoubleColumn(OGRFeatureH featureH, int colIntex){
-    double v = gdal()->getFieldAsDouble(featureH, colIntex);
-    return QVariant(v);
-}
-//TODO:: not yet tested
-QVariant GdalFeatureConnector::fillDateTimeColumn(OGRFeatureH featureH, int colIntex){
-    Time time;
-    double v = rUNDEF;
-    int year,month,day,hour,minute,second,TZFlag;
-    if (gdal()->getFieldAsDateTime(featureH,colIntex,&year,&month,&day,&hour,&minute,&second,&TZFlag)){
-        time.setDay(day);
-        time.setHour(hour);
-        time.setMinute(minute);
-        time.setMonth(month);
-        time.setSecond(second);
-        time.setYear(year);
-        v = time;
-    }
-    return QVariant(v);
 }
 
 bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
@@ -228,114 +165,47 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     if ( fcoverage->isValid() ) {
         ITable attTable = fcoverage->attributeTable();
-        attTable->setParent(0);//to prevent the GdalFeatureTableConnector of attTable to start loading the binaryData again
         if (!attTable.isValid()){
             ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename.toString());
             return false;
         }
-        std::vector<FillerColumnDef*> columnDefinitions;
-        columnDefinitions.resize(attTable->columnCount());
         fcoverage->setFeatureCount(itPOLYGON, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
         fcoverage->setFeatureCount(itLINE, 0);
         fcoverage->setFeatureCount(itPOINT, 0);
 
         //each LAYER
-//      for(int layer = 0; layer < gdal()->getLayerCount(_handle->handle()) ; ++layer) {
-            int layer = 0;//only the first layer fits into one FeatureCoverage
-            OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
-            if ( hLayer) {
-                //check again if attTable ColumnDefinitions match still gdalFieldDefinition (additional or removed columns are detected by names
-                OGRFeatureDefnH hLayerDef = gdal()->getLayerDef(hLayer);
-                int gdalFieldCount = gdal()->getFieldCount(hLayerDef);
-                int offset = -1;
-                for (int i = 1; i < attTable->columnCount();i++){
-                    if (i+offset < gdalFieldCount){//check if coulumn was added to metadata
-                        OGRFieldDefnH hFieldDefn = gdal()->getFieldDfn(hLayerDef, i+offset);
-                        QString name = QString(gdal()->getFieldName(hFieldDefn));
-                        ColumnDefinition& coldef = attTable->columndefinition(i);
-                        if (coldef.name().compare(name,Qt::CaseSensitive) == 0){//check if column was deleted from metadata
-                            DataDefinition& datadef = coldef.datadef();
-                            if(datadef.domain().isValid()){
-                                IlwisTypes tp = datadef.domain()->valueType();
-                                if (tp & itSTRING){
-                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillStringColumn, i+offset);
-                                }else if (tp & itINTEGER){
-                                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
-                                    //creating the actual range as invalid to be adjusted in the fillers
-                                    double min = r->min();
-                                    r->min(r->max());
-                                    r->max(min);
-                                    datadef.range(r);
-                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillIntegerColumn, i+offset);
-                                }else if (tp & itDOUBLE){
-                                    //creating the actual range as invalid to be adjusted in the fillers
-                                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
-                                    double min = r->min();
-                                    r->min(r->max());
-                                    r->max(min);
-                                    datadef.range(r);
-                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillDoubleColumn, i+offset);
-                                }else if (tp & itTIME){
-                                    //creating the actual range as invalid to be adjusted in the fillers
-                                    NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
-                                    double min = r->min();
-                                    r->min(r->max());
-                                    r->max(min);
-                                    datadef.range(r);
-                                    columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillDateTimeColumn, i+offset);
-                                }else{
-                                    columnDefinitions[i] = nullptr;
-                                }
-                            }else{
-                                columnDefinitions[i] = nullptr;
-                            }
-                        }else{//column was deleted from metadata
-                            columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillEmptyColumn, -1);
-                            offset++;
-                        }
-                    }else{//coulumn was added to metadata
-                        columnDefinitions[i] = new FillerColumnDef(&GdalFeatureConnector::fillEmptyColumn, -1);
+        int layer = 0;//only the first layer fits into one FeatureCoverage
+        OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
+        if ( hLayer) {
+            GdalTableLoader loader;
+            attTable->dataLoaded(true); // new table, dont want any loading behaviour
+
+            loader.setColumnCallbacks(attTable.ptr(), hLayer);
+            std::vector<QVariant> record(attTable->columnCount());
+            OGRFeatureH hFeature = 0;
+            gdal()->resetReading(hLayer);
+            //each FEATURE
+            quint32 keyindex = attTable->columnIndex(COVERAGEKEYCOLUMN);
+            try {
+                quint32 count = 0;
+                while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
+                    loader.loadRecord(attTable.ptr(), hFeature, record);
+                    std::vector<geos::geom::Geometry *> geometries;
+                    fillFeature(fcoverage, gdal()->getGeometryRef(hFeature), geometries);
+                    record[keyindex] = count++;
+                    for(auto &geometry : geometries){
+                        attTable->record(attTable->recordCount(), record);
+                        fcoverage->newFeature(geometry);
                     }
-                }
 
-                std::vector<QVariant> record;
-                record.resize(attTable->columnCount());
-
-
-                OGRFeatureH hFeature = 0;
-                gdal()->resetReading(hLayer);
-                //each FEATURE
-                try {
-                    while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
-                        //ATTRIBUTES each OGR_F_FIELD > RECORD
-                        for (int i = 1; i < attTable->columnCount();i++){
-                            if (columnDefinitions[i]){
-                                record[i] = (this->*columnDefinitions[i]->fillFunc)(hFeature, columnDefinitions[i]->index);
-                            }
-                        }
-                        //GEOMETRIES
-                        std::vector<Geometry> geometries;
-                        fillFeature(fcoverage, gdal()->getGeometryRef(hFeature), geometries);
-                        for(auto &geometry : geometries){
-                            SPFeatureI& feature =  fcoverage->newFeature(geometry);
-                            record[0] = QVariant(feature->featureid());
-                            attTable->record(attTable->recordCount() - 1,record);//should overwrite the last record in attTable, which hopefully is the one created by fcoverage->newFeature({geometry}) within FillFeature
-                        }
-
-                        gdal()->destroyFeature( hFeature );
-                    }
-                } catch (FeatureCreationError& ) {
                     gdal()->destroyFeature( hFeature );
-                    return false;
                 }
+            } catch (FeatureCreationError& ) {
+                gdal()->destroyFeature( hFeature );
+                return false;
+            }
 
-            }
-//      }
-            //TODO: this is only debug
-            for (quint32 i = 0; i < attTable->columnCount();i++){
-                ColumnDefinition& coldef = attTable->columndefinition(i);
-                SPRange r = coldef.datadef().range();
-            }
+        }
 
     }
 
@@ -345,7 +215,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
     return true;
 }
 
-void GdalFeatureConnector::fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry,std::vector<Geometry>& outGeoms) const{
+void GdalFeatureConnector::fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry,std::vector<geos::geom::Geometry*>& outGeoms) const{
     if (geometry){
         OGRwkbGeometryType type = gdal()->getGeometryType(geometry);
         switch (translateOGRType(type)){
@@ -371,7 +241,7 @@ void GdalFeatureConnector::fillFeature(FeatureCoverage *fcoverage, OGRGeometryH 
 
     return ;
 }
-void GdalFeatureConnector::fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry,std::vector<Geometry>& outGeoms ) const{
+void GdalFeatureConnector::fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry,std::vector<geos::geom::Geometry*>& outGeoms ) const{
     int subGeomCount = gdal()->getSubGeometryCount(geometry);
     if(subGeomCount > 0){
         for(int i = 0; i < subGeomCount; ++i) {
@@ -385,11 +255,12 @@ void GdalFeatureConnector::fillPoint(FeatureCoverage *fcoverage, OGRGeometryH ge
         double x,y,z;
         gdal()->getPoints(geometry, 0,&x,&y,&z);
         Coordinate coord(x,y,z);
-        Geometry point(coord, fcoverage->coordinateSystem());
+        geos::geom::Point *point = fcoverage->geomfactory()->createPoint(coord);
+        //fcoverage->newFeature(point);
         outGeoms.push_back(point);
     }
 }
-void GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry,std::vector<Geometry>& outGeoms) const{
+void GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry,std::vector<geos::geom::Geometry*>& outGeoms) const{
     int subGeomCount = gdal()->getSubGeometryCount(geometry);
     if(subGeomCount > 0){
         for(int i = 0; i < subGeomCount; ++i) {
@@ -407,19 +278,20 @@ void GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage, OGRGeometryH geo
          if (!attTable.isValid())
              return ;
 
-         Line2D line;
-         line.resize(count);
+         geos::geom::CoordinateArraySequence *vertices = new geos::geom::CoordinateArraySequence(count);
          for(int i = 0; i < count; ++i) {
              double x,y,z;
              gdal()->getPoints(geometry, i,&x,&y,&z);
-             line[i] = Coordinate2d(x,y);
+             vertices->setAt(geos::geom::Coordinate(x,y), i);
 //             attTable->setCell(FEATUREVALUECOLUMN, rec, QVariant(z));
          }
-        outGeoms.push_back(Geometry(line, fcoverage->coordinateSystem()));
+        geos::geom::LineString *line = fcoverage->geomfactory()->createLineString(vertices);
+        //fcoverage->newFeature(line);
+        outGeoms.push_back(line);
     }
 }
 
-void GdalFeatureConnector::fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, OGRwkbGeometryType type,std::vector<Geometry>& outGeoms) const{
+void GdalFeatureConnector::fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, OGRwkbGeometryType type,std::vector<geos::geom::Geometry*>& outGeoms) const{
     int subGeomCount = gdal()->getSubGeometryCount(geometry);//error!check type!
     if ( type == wkbPolygon || type == wkbPolygon25D ){
         OGRGeometryH hSubGeometry = gdal()->getSubGeometryRef(geometry, 0);
@@ -431,34 +303,33 @@ void GdalFeatureConnector::fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH 
             if (!attTable.isValid())
                 return ;
 
-            Polygon pol;
-            std::vector<Coordinate2d>& ring = pol.outer();
-            ring.resize(count);
+            geos::geom::CoordinateArraySequence *outer = new geos::geom::CoordinateArraySequence(count);
 
             for(int i = 0; i < count; ++i) {
                 double x,y,z;
                 gdal()->getPoints(hSubGeometry, i,&x,&y,&z);
-                ring[i] = Coordinate2d(x,y);
+                outer->setAt(geos::geom::Coordinate(x,y),i);
             }
 
-            pol.inners().resize(subGeomCount-1);
+            geos::geom::LinearRing *outerring = fcoverage->geomfactory()->createLinearRing(outer);
+            std::vector<geos::geom::Geometry*> *inners = new std::vector<geos::geom::Geometry*>(subGeomCount - 1);
             for(int j = 1; j < subGeomCount; ++j) {
                 hSubGeometry = gdal()->getSubGeometryRef(geometry, j);
                 if(hSubGeometry){
                     count = gdal()->getPointCount(hSubGeometry);
                     if(count == 0)
                        continue;
-                    ring = pol.inners()[j-1];
-                    ring.resize(count);
+                    geos::geom::CoordinateArraySequence* innerring = new geos::geom::CoordinateArraySequence(count);
                     for(int i = 0; i < count; ++i) {
                         double x,y,z;
                         gdal()->getPoints(hSubGeometry, i,&x,&y,&z);
-                        ring[i] = Coordinate2d(x,y);
-//                        tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(z));
+                        innerring->setAt(geos::geom::Coordinate(x,y), i);
                     }
+                    (*inners)[j-1] = fcoverage->geomfactory()->createLinearRing(innerring);
                 }
             }
-            outGeoms.push_back(Geometry(pol, fcoverage->coordinateSystem()));
+            geos::geom::Polygon *pol = fcoverage->geomfactory()->createPolygon(outerring, inners);
+            outGeoms.push_back(pol);
         }else{
             ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"polygon for a record",_filename.toString());
             return ;
@@ -534,7 +405,7 @@ OGRwkbGeometryType GdalFeatureConnector::ilwisType2GdalFeatureType(IlwisTypes tp
     return wkbUnknown;
 }
 
-void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, SPFeatureI& feature, const std::vector<bool>& validAttributes, const std::vector<ColumnDefinition>& columnDef) {
+void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, UPFeatureI& feature, const std::vector<bool>& validAttributes, const std::vector<ColumnDefinition>& columnDef) {
     int index = 0;
     for(int i=0; i < feature->attributeColumnCount(); ++i){
         if ( !validAttributes[i])
@@ -624,10 +495,10 @@ bool GdalFeatureConnector::setDataSourceAndLayers(const IFeatureCoverage& featur
     return ok;
 }
 
-OGRGeometryH GdalFeatureConnector::createPoint2D(const SPFeatureI& feature) {
+OGRGeometryH GdalFeatureConnector::createPoint2D(const UPFeatureI& feature) {
     OGRGeometryH hgeom = gdal()->createGeometry(wkbPoint);
-    Coordinate2d crd = feature->geometry().toType<Coordinate>();
-    gdal()->add2dPoint(hgeom,0, crd.x(), crd.y());
+    const geos::geom::Coordinate *crd = feature->geometry()->getCoordinate();
+    gdal()->add2dPoint(hgeom,0, crd->x, crd->y);
     return hgeom;
 }
 
@@ -644,34 +515,35 @@ int GdalFeatureConnector::ilwisType2Index(IlwisTypes tp)
     throw ErrorObject(TR("Illegal use of ilwisType2Index method"));
 }
 
-OGRGeometryH GdalFeatureConnector::createLine2D(const SPFeatureI& feature) {
+OGRGeometryH GdalFeatureConnector::createLine2D(const UPFeatureI& feature) {
     OGRGeometryH hgeom = gdal()->createGeometry(wkbLineString);
-    Line2D line = feature->geometry().toType<Line2D>();
-    for(int i=0; i < line.size(); ++i) {
-        Coordinate crd = line[i];
-        gdal()->add2dPoint(hgeom,i, crd.x(), crd.y());
+    std::unique_ptr<geos::geom::CoordinateSequence> coords(feature->geometry()->getCoordinates());
+    for(int i=0; i < coords->size(); ++i) {
+        geos::geom::Coordinate crd = coords->getAt(i);
+        gdal()->add2dPoint(hgeom,i, crd.x, crd.y);
     }
     return hgeom;
 
 }
 
-OGRGeometryH GdalFeatureConnector::createPolygon2D(const SPFeatureI& feature){
+OGRGeometryH GdalFeatureConnector::createPolygon2D(const UPFeatureI& feature){
     OGRGeometryH hgeom = gdal()->createGeometry(wkbPolygon);
-    Polygon polygon = feature->geometry().toType<Polygon>();
+    geos::geom::Polygon *polygon = dynamic_cast<geos::geom::Polygon *>(feature->geometry().get());
     OGRGeometryH hgeomring = gdal()->createGeometry(wkbLinearRing);
-    for(int i=0; i < polygon.outer().size(); ++i) {
-        Coordinate crd = polygon.outer()[i];
-        gdal()->add2dPoint(hgeomring,i, crd.x(), crd.y());
+    const geos::geom::CoordinateSequence *outer = polygon->getExteriorRing()->getCoordinatesRO();
+    for(int i=0; i < outer->size(); ++i) {
+        Coordinate crd = outer->getAt(i);
+        gdal()->add2dPoint(hgeomring,i, crd.x, crd.y);
     }
     gdal()->add2Geometry(hgeom, hgeomring);
     gdal()->destroyGeometry(hgeomring);
 
-    for(int hole=0; hole < polygon.inners().size(); ++hole){
-        const std::vector<Coordinate2d>& holecrd = polygon.inners()[hole];
+    for(int hole=0; hole < polygon->getNumInteriorRing(); ++hole){
+        const geos::geom::CoordinateSequence *inner = polygon->getInteriorRingN(hole)->getCoordinatesRO();
         OGRGeometryH hinnerring = gdal()->createGeometry(wkbLinearRing);
-        for(int i=0; i < holecrd.size(); ++i) {
-            Coordinate crd = holecrd[i];
-            gdal()->add2dPoint(hinnerring,i, crd.x(), crd.y());
+        for(int i=0; i < inner->size(); ++i) {
+            Coordinate crd = inner->getAt(i);
+            gdal()->add2dPoint(hinnerring,i, crd.x, crd.y);
         }
         gdal()->add2Geometry(hgeom, hinnerring);
         gdal()->destroyGeometry(hinnerring);
@@ -699,18 +571,18 @@ bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& featur
         defs.push_back(features->attributeTable()->columndefinition(i));
     }
     for(; fiter != endIter; ++fiter) {
-        SPFeatureI& feature = *fiter;
+        UPFeatureI& feature = *fiter;
         OGRLayerH lyr = datasources[ilwisType2Index(feature->geometryType())]._layers[0];
         OGRFeatureH hfeature = gdal()->createFeature(gdal()->getLayerDef(lyr));
         setAttributes(hfeature, feature, validAttributes, defs);
         OGRGeometryH hgeom = 0;
-        if ( hasType(feature->geometry().geometryType(), itPOINT)) {
+        if ( feature->geometry()->getGeometryTypeId() == geos::geom::GEOS_POINT) {
             hgeom = createPoint2D(feature);
         }
-        if ( hasType(feature->geometry().geometryType(), itLINE)) {
+        if ( feature->geometry()->getGeometryTypeId() == geos::geom::GEOS_LINESTRING) {
             hgeom = createLine2D(feature);
         }
-        if ( hasType(feature->geometry().geometryType(), itPOLYGON)) {
+        if ( feature->geometry()->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
             hgeom = createPolygon2D(feature);
         }
         gdal()->setGeometry(hfeature,hgeom);

@@ -58,10 +58,10 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject* data)
     QStringList cbparts = cb.split(" ");
     if ( cbparts.size() == 4 && cbparts[0] != "-1e+308") {
         bool ok1, ok2, ok3, ok4;
-        Box3D<double> box( Coordinate2d(
+        Envelope box( Coordinate(
                                 cbparts[0].toDouble(&ok1),
                                 cbparts[1].toDouble(&ok2)),
-                           Coordinate2d(
+                           Coordinate(
                                 cbparts[2].toDouble(&ok3),
                                 cbparts[3].toDouble(&ok4)));
         if ( !( ok1 && ok2 && ok3 && ok4)) {

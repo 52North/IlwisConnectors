@@ -62,7 +62,7 @@ bool GdalObjectFactory::canUse(const Resource &resource) const
     if ( resource.url().scheme() == "ilwis") // can't use anything marked as internal
         return false;
 
-    if (resource.url().scheme() != "gdal" && !gdal()->supports(resource))
+    if (!gdal()->supports(resource))
         return false;
 
     IlwisTypes type = resource.ilwisType() ;

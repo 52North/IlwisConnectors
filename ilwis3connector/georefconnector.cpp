@@ -113,7 +113,7 @@ bool GeorefConnector::loadGeorefTiepoints(const IniFile& odf, GeoReference *grf)
 
         double active=1;
         tbl.get(rec,colindexes[ciiACT],active);
-        ControlPoint ctp(Coordinate(x,y,z),Pixel_d(xp,yp));
+        ControlPoint ctp(Coordinate(x,y,z),Pixeld(xp,yp));
         ctp.active(active != 0);
         grfctp->setControlPoint(ctp);
     }
@@ -160,10 +160,10 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
         _odf->setKeyValue("GeoRef","Type", "GeoRefCorners");
         Coordinate cmin = cgrf->envelope().min_corner();
         Coordinate cmax = cgrf->envelope().max_corner();
-        _odf->setKeyValue("GeoRefCorners", "MinX", QString::number(cmin.x()));
-        _odf->setKeyValue("GeoRefCorners", "MinY", QString::number(cmin.y()));
-        _odf->setKeyValue("GeoRefCorners", "MaxX", QString::number(cmax.x()));
-        _odf->setKeyValue("GeoRefCorners", "MaxY", QString::number(cmax.y()));
+        _odf->setKeyValue("GeoRefCorners", "MinX", QString::number(cmin.x));
+        _odf->setKeyValue("GeoRefCorners", "MinY", QString::number(cmin.y));
+        _odf->setKeyValue("GeoRefCorners", "MaxX", QString::number(cmax.x));
+        _odf->setKeyValue("GeoRefCorners", "MaxY", QString::number(cmax.y));
 
         std::vector<double> matrix = cgrf->matrix();
         _odf->setKeyValue("GeoRefSmpl", "a11", QString::number(matrix[0]));
@@ -208,7 +208,7 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
         return false;
     }
 
-    grf->impl<CornersGeoReference>()->setEnvelope(Box2D<double>(Coordinate(minx, miny), Coordinate(maxx, maxy)));
+    grf->impl<CornersGeoReference>()->setEnvelope(Envelope(Coordinate(minx, miny), Coordinate(maxx, maxy)));
     return true;
 }
 

@@ -3,7 +3,8 @@
 
 #include "kernel.h"
 #include "angle.h"
-#include "point.h"
+#include "geos/geom/Coordinate.h"
+#include "coordinate.h"
 #include "connectorinterface.h"
 #include "containerconnector.h"
 #include "inifile.h"
@@ -117,37 +118,45 @@ void BinaryIlwis3Table::getColumnInfo(const ODF& odf, const QString& prefix) {
         inf._isRaw = ( parts.size() == 4 || parts.size() == 3) && st != "Real";
         if ( st == "Long" ){
             inf._offset = _recordSize;
-            _recordSize+=4;
+            inf._fieldSize = 4;
+            _recordSize+=  inf._fieldSize;
             inf._type = itINT32;
         } if ( st == "Int" ){ // in practice same as long
             inf._offset = _recordSize;
-            _recordSize+=4;
+            inf._fieldSize = 4;
+            _recordSize+= inf._fieldSize;
             inf._type = itINT32;
         } if ( st == "Byte" ){ // in practive same as long
             inf._offset = _recordSize;
-            _recordSize+=4;
+            inf._fieldSize = 4;
+            _recordSize+= inf._fieldSize;
             inf._type = itINT32;
         } else if ( st == "String" ) {
             inf._offset = _recordSize;
             inf._type = itSTRING;
+            inf._fieldSize = iUNDEF;
             _recordSize+=4;
         } else if ( st == "CoordBuf" ) {
             inf._offset = _recordSize;
             _recordSize+=4;
+            inf._fieldSize = iUNDEF;
             inf._type = itBINARY;
         }
         else if ( st == "Real"){
             inf._offset = _recordSize;
             _recordSize+=8;
+            inf._fieldSize = 8;
             inf._type  = itDOUBLE;
         } else if ( st == "Coord" ) {
             inf._offset = _recordSize;
             _recordSize += 16;
-            inf._type = itCOORD2D;
+            inf._fieldSize = 16;
+            inf._type = itCOORDINATE;
         } else if ( st == "Coord3D" ) {
             inf._offset = _recordSize;
             _recordSize += 24;
-            inf._type = itCOORD3D;
+            inf._fieldSize = 24;
+            inf._type = itCOORDINATE;
         }
         _columnInfo[col] = inf;
 
@@ -167,13 +176,9 @@ void BinaryIlwis3Table::readData(char *memblock) {
                 *(double *)p = *(double *)(memblock + posFile);
                 //v33 = *(double *)p;
                 posFile += 8;
-            } else if ( info._type == itCOORD2D) {
-                memcpy(p,memblock + posFile,16);
-                //c33= *(double *)p;
-                posFile += 16;
-            } else if ( info._type == itCOORD3D) {
-                memcpy(p,memblock + posFile,24);
-                posFile += 24;
+            }  else if ( info._type == itCOORDINATE) {
+                memcpy(p,memblock + posFile, info._fieldSize);
+                posFile += info._fieldSize;
             } else if ( info._type == itSTRING) {
                 *(long *)p = *(long *)readString(memblock + posFile);
                 posFile+= ((QString *)p)->size() + 1;
@@ -230,9 +235,9 @@ bool BinaryIlwis3Table::get(quint32 row, quint32 column, Coordinate &c) const {
         return false;
     const ColumnInfo& field = _columnInfo.at(column);
     char *p = moveTo(row,  field);
-    c.x(*(double *)p);
-    c.y(*(double *)(p + sizeof(double)));
-    c.z(field._type == itCOORD3D ? *(double *)(p + sizeof(double)*2) : rUNDEF);
+    c.x = *(double *)p;
+    c.y = *(double *)(p + sizeof(double));
+    c.z = field._type == (field._fieldSize == 24) ? *(double *)(p + sizeof(double)*2) : rUNDEF;
 
     return true;
 }
@@ -388,19 +393,19 @@ void BinaryIlwis3Table::storeRecord(std::ofstream& output_file, const std::vecto
                     long size = points.size();
                     output_file.write((char *)&size, 4);
                     for(const QVariant& pnt : points) {
-                        Coordinate2d crd = pnt.value<Coordinate2d>();
-                        double v = crd.x();
+                        Coordinate crd = pnt.value<Coordinate>();
+                        double v = crd.x;
                         output_file.write((char *)&v, 8);
-                        v = crd.y();
+                        v = crd.y;
                         output_file.write((char *)&v, 8);
                         v = 0;
                         output_file.write((char *)&v, 8);
                     }
                 } else {
-                    Coordinate2d crd =  rec[x].value<Coordinate2d>();
-                    double v = crd.x();
+                    Coordinate crd =  rec[x].value<Coordinate>();
+                    double v = crd.x;
                     output_file.write((char *)&v, 8);
-                    v = crd.y();
+                    v = crd.y;
                     output_file.write((char *)&v, 8);
                     v = 0;
                     output_file.write((char *)&v, 8);
