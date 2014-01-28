@@ -67,6 +67,7 @@ bool GdalFeatureTableConnector::loadBinaryData(IlwisObject * data){
                 loader.loadRecord(attTable, hFeature, record);
                 gdal()->destroyFeature( hFeature );
             }
+             _binaryIsLoaded = true;
             return true;
         } catch (FeatureCreationError& ) {
             gdal()->destroyFeature( hFeature );

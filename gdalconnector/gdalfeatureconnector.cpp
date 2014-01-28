@@ -195,7 +195,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                     record[keyindex] = count++;
                     for(auto &geometry : geometries){
                         attTable->record(attTable->recordCount(), record);
-                        fcoverage->newFeature(geometry);
+                        fcoverage->newFeature(geometry, false);
                     }
 
                     gdal()->destroyFeature( hFeature );
@@ -211,7 +211,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
 
     QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
     gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
-
+    _binaryIsLoaded = true;
     return true;
 }
 

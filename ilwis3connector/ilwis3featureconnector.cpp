@@ -104,11 +104,11 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
             if ( isNumeric) {
                 tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
                 tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(v));
-                fcoverage->newFeature({polygon});
+                fcoverage->newFeature({polygon}, false);
             } else {
                 quint32 itemId = v;
                 tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
-                fcoverage->newFeature({polygon});
+                fcoverage->newFeature({polygon}, false);
             }
         }
     }
@@ -225,12 +225,12 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         geos::geom::Polygon *pol = fcoverage->geomfactory()->createPolygon(outerring, inners);
         if ( isNumeric) {
 
-            fcoverage->newFeature({pol});
+            fcoverage->newFeature({pol},false);
             tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(j));
             tbl->setCell(FEATUREVALUECOLUMN, j, QVariant(value));
         } else {
             quint32 itemId = value;
-            fcoverage->newFeature({pol});
+            fcoverage->newFeature({pol},false);
             tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(itemId - 1));
         }
 
@@ -289,14 +289,14 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
         geos::geom::LineString *line = fcoverage->geomfactory()->createLineString(vertices);
         mpsTable.get(i, colItemId,value);
         if ( isNumeric) {
-            fcoverage->newFeature({line});
+            fcoverage->newFeature({line},false);
             tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
             tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(value));
 
         } else {
             quint32 itemId = value;
             tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
-            fcoverage->newFeature({line});
+            fcoverage->newFeature({line},false);
         }
 
 
@@ -335,7 +335,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
         mppTable.get(i, colItemId,itemIdT);
         quint32 itemId = itemIdT;
         geos::geom::Point *point = fcoverage->geomfactory()->createPoint(c);
-        fcoverage->newFeature(point);
+        fcoverage->newFeature(point, false);
         tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
 
     }
@@ -370,15 +370,13 @@ bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
             //quint32 keyIndex = attTbl->columnIndex(COVERAGEKEYCOLUMN);
             for(quint32 rowExt=0; rowExt < extTable->recordCount(); ++rowExt) {
                 vector<QVariant> rec = extTable->record(rowExt);
-                //for(quint32 rowAtt = 0; rowAtt < attTbl->recordCount(); ++rowAtt ) {
-                //    if ( attTbl->cell(keyIndex, rowAtt) == rowExt) {
-                        attTbl->record(rowExt,rec);
-                //    }
-                //}
+                attTbl->record(rowExt,rec);
             }
         }
     } catch (FeatureCreationError& ) {
     }
+    if ( ok)
+        _binaryIsLoaded = true;
     return ok;
 }
 
