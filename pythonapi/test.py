@@ -84,12 +84,14 @@ try:
             self.assertEqual(g.coordinateSystem().name(), "Sibun Gorge 1922")
 
         def test_Transform(self):
-            g = Geometry("POINT(766489.647 6840642.671)", CoordinateSystem("code=epsg:3857"))
+            source = CoordinateSystem("code=epsg:3857")
+            g = Geometry("POINT(766489.647 6840642.671)", source)
             self.assertEqual("POLYGON(766490 6.84064e+06,766490 6.84064e+06)",
                              str(g.envelope()))
             self.assertEqual("POINT (766489.6469999999972060 6840642.6710000000894070)", str(g), msg="weird toWKT from BOOST")
-            g1 = g.transform(CoordinateSystem("code=epsg:3329"))
-            self.assertEqual("POINT(4.94595e+006 5.81942e+006)", g1.toWKT())
+            target = CoordinateSystem("code=epsg:3329")
+            g1 = g.transform(target)
+            self.assertEqual("POINT (4945949.0809892630204558 5819418.3890127958729863)", g1.toWKT())
             #g = Geometry("POINT(6.5 52.1)", CoordinateSystem("code=proj4:+proj=longlat +ellps=WGS84 +datum=WGS84"))
             #g1 = g.transform(CoordinateSystem("code=epsg:3329"))
             #self.assertEqual("POINT(4.94595e+006 5.81942e+006)", g1.toWKT())
