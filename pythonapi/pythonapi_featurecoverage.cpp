@@ -14,7 +14,7 @@
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
 #include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
 
-#include "../../external/geos/geom/Geometry.h"
+#include "geos/geom/Geometry.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
 

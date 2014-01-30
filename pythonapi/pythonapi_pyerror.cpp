@@ -2,7 +2,7 @@
 
 #include "pythonapi_ilwis.h"
 
-#include "../../external/geos/io/ParseException.h"
+#include "geos/io/ParseException.h"
 
 #include <typeinfo>
 

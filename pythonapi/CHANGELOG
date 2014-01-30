@@ -1,5 +1,12 @@
 ==================CHANGELOG===================
 
+--20140131--
+*small changes of WKT representation of Geometries due to switch from boost to geos geometries
+*no more extra Coordinate2D of Voxel - everything is handled by Coordinate or Pixel
+*several bugfixes for ILWIS3 and GDAL formats (connectors)
+*added linear raster filter to the set of operations
+
+
 --20140124--
 *enabled direct access to RasterGrid for NumPy arrays via PyBuffer interface
 *ILWIS is now also available with Qt5.2

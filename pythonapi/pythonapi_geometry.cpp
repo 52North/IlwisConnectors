@@ -3,13 +3,13 @@
 
 #include "../../IlwisCore/core/util/geometries.h"
 #include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h"
-#include "../../external/geos/io/ParseException.h"
+#include "geos/io/ParseException.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/geometryhelper.h"
 #include "../../IlwisCore/core/util/angle.h"
 
-#include "../../external/geos/geom/Geometry.h"
-#include "../../external/geos/geom/GeometryFactory.h"
-#include "../../external/geos/geom/Coordinate.h"
+#include "geos/geom/Geometry.h"
+#include "geos/geom/GeometryFactory.h"
+#include "geos/geom/Coordinate.h"
 #include "../../IlwisCore/core/util/location.h"
 #include "../../IlwisCore/core/util/coordinate.h"
 #include "../../IlwisCore/core/util/box.h"

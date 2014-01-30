@@ -2,11 +2,11 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 
 #include "../../IlwisCore/core/util/angle.h"
-#include "../../external/geos/geom/Point.h"
-#include "../../external/geos/geom/LineString.h"
-#include "../../external/geos/geom/LinearRing.h"
-#include "../../external/geos/geom/Polygon.h"
-#include "../../external/geos/geom/Coordinate.h"
+#include "geos/geom/Point.h"
+#include "geos/geom/LineString.h"
+#include "geos/geom/LinearRing.h"
+#include "geos/geom/Polygon.h"
+#include "geos/geom/Coordinate.h"
 
 #include "../../IlwisCore/core/util/location.h"
 #include "../../IlwisCore/core/util/coordinate.h"

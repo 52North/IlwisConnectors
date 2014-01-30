@@ -74,8 +74,10 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/win32debug
 LIBS += -LC:\Python33\libs -lpython33
 
 INCLUDEPATH += $$PWD/../ilwiscore/core \
-                C:/Python33/include/
-DEPENDPATH += $$PWD/../ilwiscore/core
+               $$PWD/../external/geos \
+               C:/Python33/include/
+DEPENDPATH += $$PWD/../ilwiscore/core \
+              $$PWD/../external/geos
 
 mytarget.files = pythonapi/ilwisobjects.py \
     pythonapi/test.py \
