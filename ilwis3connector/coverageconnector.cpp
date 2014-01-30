@@ -148,7 +148,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     }
 
     QString cbounds = _odf->value("BaseMap","CoordBounds");
-    QStringList parts = cbounds.split(" ");
+    QStringList parts = cbounds.split(" ", QString::SkipEmptyParts);
     if ( parts.size() == 4) {
         double minx = parts[0].toDouble();
         double miny = parts[1].toDouble();
