@@ -317,6 +317,7 @@ Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
             tbl->setCell(COVERAGEKEYCOLUMN,i, QVariant(i));
         }
     }
+    _binaryIsLoaded = true;
     return grid;
 
 }

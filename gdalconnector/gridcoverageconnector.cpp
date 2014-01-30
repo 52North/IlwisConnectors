@@ -191,6 +191,7 @@ Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
     }
 
     delete [] block;
+    _binaryIsLoaded = true;
     return grid;
 }
 

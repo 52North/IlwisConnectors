@@ -173,15 +173,13 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
                 }
             }
             table->column(colName,varlist);
-//            if ( hasType(valueType, itNUMBER))
-//                table->columndefinition(i).datadef().range(new NumericRange(vmin, vmax));
         } else {
             kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("column", colName));
             return false;
         }
 
     }
-
+    _binaryIsLoaded = true;
 
     return true;
 }
@@ -213,10 +211,11 @@ bool TableConnector::storeBinaryData(IlwisObject *obj)
 }
 
 QString TableConnector::getDomainName(const IDomain& dom, bool& isSystem) {
+
     QString name = dom->code() != sUNDEF ? code2name(dom->code(), "domain") : sUNDEF;
     if ( name != sUNDEF)
         return name;
-    isSystem = false;
+    isSystem = dom->isSystemObject();
     return dom->source().toLocalFile(true);
 }
 
