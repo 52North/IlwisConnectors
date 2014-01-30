@@ -8,12 +8,12 @@ TIP 2: Sometimes if you describe a folder location it is important if the slash 
 
 --1-- Python
 
-Download the Version Python 3.3.3 from this source:
+Download the 32bit version of Python 3.3.3 from this source:
 
 http://www.python.org/ftp/python/3.3.3/python-3.3.3.msi
 
 During install procedure you can choose to add the installation directory to the PATH environment
-which allows to execute the python.exe from every folder.
+which allows to execute the Python33.exe from every folder.
 
 The folder "extension" contains the python extension binary (_ilwisobjecs.pyd) and source (ilwisobjects.py).
 Both files need to be copied into:
@@ -89,5 +89,5 @@ The delivered test.py might contain pathes to nonexistent folders (like C:/somed
 FAIL 6: "ImportError: None of the following configuration files exist: ..."
 TODO: Read --3-- again!
 
-FAIL 7: "ILWIS ERROR: ...."
+FAIL 7: "ILWIS Error: ..." / "ILWIS Warning: ..."
 TODO: Your ILWIS extension is running! Maybe your script asks things, that ILWIS can not do yet or you found a bug.
