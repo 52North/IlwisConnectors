@@ -162,7 +162,7 @@ bool TableConnector::loadBinaryData(IlwisObject* data ) {
                 if ( (valueType >= itINT8 && valueType <= itDOUBLE) || ((valueType & itDOMAINITEM) != 0)) {
                     double value;
                     if (tbl.get(j,i,value)) {
-                        double v = conv.raw2real(value);
+                        double v = conv.scale() == 0 ? value : conv.raw2real(value);
                         varlist[j] =  v;
                     }
                 } else if (valueType == itSTRING ) {
