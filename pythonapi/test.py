@@ -292,7 +292,6 @@ try:
                 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'coverage_key', 'sum'
             ), msg="wrong list of attributes!")
             self.assertEqual(len(att), 18, msg="wrong number of attributes")
-            iter(self.fc)  # a HACK to loadBinaryData before newfeatureeature is created/added to the FeatureCoverage!
             g = Geometry("POINT(5.4 6 9.0)", self.fc.coordinateSystem())
             newfeature = self.fc.newFeature(g)
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
@@ -306,13 +305,10 @@ try:
         def test_Feature(self):
             it = iter(self.fc)
             f = next(it)
-
             self.assertTrue(f.geometry().fromWKT("POINT(5.4 6 9.0)"), msg="set non-standalone Geometry fromWKT")
             self.assertEqual(f.geometry().toWKT(), "POINT (5.4000000000000004 6.0000000000000000)", msg="unsuccessfully altered geometry")
-
             with self.assertRaises(IndexError, msg="no IndexError on call of wrong attribute"):
                 v = f["RAINFAL"]
-
             v = f["RAINFALL"]
             self.assertEqual(str(v), "UMSS", msg="wrong attribute value")
             with self.assertRaises(TypeError, msg="no TypeError on attempt to convert non-numerical string to int"):
@@ -677,20 +673,22 @@ try:
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             self.assertTrue(bool(world))
             self.assertEqual(177, world.featureCount())
-            iter(world)
-            self.assertEqual(286, world.featureCount())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
             world.setConnection(workingDir + worldDir + "/countries", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
+            self.assertEqual(286, world.featureCount())
 
         def test_halloWorld(self):
-            world = FeatureCoverage("countries.mpa")
-            population = {}
-            self.assertEqual(286, world.featureCount())
-            for country in world:
-                name = str(country["iso_a2"])
-                if name not in population:
-                    population[name] = int(country["pop_est"])
+            world = FeatureCoverage(workingDir + worldDir + "/countries.mpa")
+            if bool(world):
+                population = {}
+                self.assertEqual(286, world.featureCount())
+                for country in world:
+                    name = str(country["iso_a2"])
+                    if name not in population:
+                        population[name] = int(country["pop_est"])
+            else:
+                self.skipTest("countries.mpa is missing")
             # print(sorted(population.items(), key=lambda x: x[1]))
 
     #here you can chose which test case will be executed

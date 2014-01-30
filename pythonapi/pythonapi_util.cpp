@@ -60,7 +60,7 @@ namespace pythonapi {
     }
 
     std::string Coordinate::__str__(){
-        if (this->data().z == Ilwis::rUNDEF) //TODO geos::geom::DoubleNotANumber??
+        if (this->data().z == Ilwis::rUNDEF) //TODO geos::geom::DoubleNotANumber might as well occur??
             return QString("coordinate(%1,%2)").arg(this->data().x,0,'f',6).arg(this->data().y,0,'f',6).toStdString();
         else
             return QString("coordinate(%1,%2,%3)").arg(this->data().x,0,'f',6).arg(this->data().y,0,'f',6).arg(this->data().z,0,'f',6).toStdString();

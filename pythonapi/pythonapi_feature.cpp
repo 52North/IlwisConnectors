@@ -147,7 +147,7 @@ Geometry* Feature::geometry(int index){
 }
 
 void Feature::setGeometry(Geometry &geometry, int index){
-    this->ptr()->set(geometry.ptr().get(), index);//TODO that is not a copy! two unique_ptr on the same object!?
+    this->ptr()->set(geometry.ptr()->clone(), index);
 }
 
 std::unique_ptr<Ilwis::FeatureInterface> &Feature::ptr() const{
