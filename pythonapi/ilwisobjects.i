@@ -131,12 +131,8 @@ namespace pythonapi {
 %include "pythonapi_util.h"
 
 namespace pythonapi {
-%template(Pixel) Point2DTemplate<qint32>;
-%template(Coordinate2D) Point2DTemplate<double>;
-%template(Voxel) Point3DTemplate<qint32>;
-%template(Coordinate) Point3DTemplate<double>;
-%template(Box) BoxTemplate<qint32>;
-%template(Envelope) BoxTemplate<double>;
+%template(Envelope) BoxTemplate<Ilwis::Coordinate, pythonapi::Coordinate>;
+%template(Box) BoxTemplate<Ilwis::Location<qint32, false>, pythonapi::Pixel>;
 }
 %extend pythonapi::Size {
 %insert("python") %{
@@ -152,41 +148,31 @@ namespace pythonapi {
         zsize = property(zsize,setZsize)
 %}
 }
-%extend pythonapi::Point2DTemplate<qint32> {//Pixel
+%extend pythonapi::Pixel {
 %insert("python") %{
     __swig_getmethods__["x"] = x
     __swig_getmethods__["y"] = y
-    __swig_setmethods__["x"] = setX
-    __swig_setmethods__["y"] = setY
-    if _newclass:
-        x = property(x,setX)
-        y = property(y,setY)
-%}
-}
-%extend pythonapi::Point2DTemplate<double> {//Coordinate2D
-%insert("python") %{
-    __swig_getmethods__["x"] = x
-    __swig_getmethods__["y"] = y
-    __swig_setmethods__["x"] = setX
-    __swig_setmethods__["y"] = setY
-    if _newclass:
-        x = property(x,setX)
-        y = property(y,setY)
-%}
-}
-%extend pythonapi::Point3DTemplate<qint32> {//Voxel
-%insert("python") %{
     __swig_getmethods__["z"] = z
+    __swig_setmethods__["x"] = setX
+    __swig_setmethods__["y"] = setY
     __swig_setmethods__["z"] = setZ
     if _newclass:
+        x = property(x,setX)
+        y = property(y,setY)
         z = property(z,setZ)
 %}
 }
-%extend pythonapi::Point3DTemplate<double> {//Coordinate
+%extend pythonapi::Coordinate {
 %insert("python") %{
+    __swig_getmethods__["x"] = x
+    __swig_getmethods__["y"] = y
     __swig_getmethods__["z"] = z
+    __swig_setmethods__["x"] = setX
+    __swig_setmethods__["y"] = setY
     __swig_setmethods__["z"] = setZ
     if _newclass:
+        x = property(x,setX)
+        y = property(y,setY)
         z = property(z,setZ)
 %}
 }

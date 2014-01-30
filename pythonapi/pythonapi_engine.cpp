@@ -23,11 +23,9 @@
 #include "../../IlwisCore/core/ilwisobjects/coverage/rastercoverage.h"
 
 #include "../../IlwisCore/core/util/angle.h"
-#include "../../IlwisCore/core/util/point.h"
-#include "../../IlwisCore/core/util/line.h"
+
 #include "../../IlwisCore/core/util/box.h"
-#include "../../IlwisCore/core/util/polygon.h"
-#include "../../IlwisCore/core/ilwisobjects/coverage/geometry.h"
+
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
 

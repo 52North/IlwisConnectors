@@ -2,6 +2,8 @@
 
 #include "pythonapi_ilwis.h"
 
+#include "../../external/geos/io/ParseException.h"
+
 #include <typeinfo>
 
 void pythonapi::log(std::string message){
@@ -32,6 +34,8 @@ PyObject* pythonapi::translate_Exception_type(std::exception& e){
         return PyExc_OSError;
     }else if(typeid(e) == typeid(StopIteration)){
         return PyExc_StopIteration;
+    }else if(typeid(e) == typeid(geos::io::ParseException)){
+        return PyExc_SyntaxError;
     }
     return PyExc_Exception;
 }

@@ -12,8 +12,7 @@
 
 using namespace pythonapi;
 
-Coverage::Coverage():IlwisObject(){
-}
+Coverage::Coverage():IlwisObject(){}
 
 Coverage::Coverage(Ilwis::ICoverage *coverage):IlwisObject(new Ilwis::IIlwisObject(*coverage)){
 }
@@ -28,10 +27,19 @@ quint32 Coverage::attributeCount(){
 
 PyObject* Coverage::attributes(){
     Ilwis::ITable tbl = (*this->ptr()).get<Ilwis::Coverage>()->attributeTable();
-    PyObject* list = newPyTuple(tbl->columnCount()-1);//skip 'feature_id'
-    for(int i = 1; i < tbl->columnCount(); i++){
-        if (!setTupleItem(list, i-1,tbl->columndefinition(i).name().toStdString().data()))
-            throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of attributes").arg(tbl->columndefinition(i).name()));
+    int colCount = tbl->columnCount();
+    if (tbl->columndefinition(FEATUREIDCOLUMN).isValid())
+        colCount--;
+    int offset = 0;
+    PyObject* list = newPyTuple(colCount);//skip 'feature_id'
+    for(int i = 0; i < tbl->columnCount(); i++){
+        QString name = tbl->columndefinition(i).name();
+        if (name != QString(FEATUREIDCOLUMN)){
+            if (!setTupleItem(list, i-offset, name.toStdString().data()))
+                throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of attributes").arg(tbl->columndefinition(i).name()));
+        }else{
+            offset++;
+        }
     }
     return list;
 }

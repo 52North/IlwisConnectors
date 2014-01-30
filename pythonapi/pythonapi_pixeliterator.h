@@ -41,13 +41,13 @@ class PixelIterator{
          */
         quint64 __int__();
 
-        bool __contains__(const Voxel& vox);
+        bool __contains__(const Pixel& vox);
         Box box();
-        Voxel position();
+        Pixel position();
         bool xChanged();
         bool yChanged();
         bool zChanged();
-        PixelIterator& __getitem__(const Voxel& vox);
+        PixelIterator& __getitem__(const Pixel& vox);
         double __getitem__(quint32 linearPosition);
         void __setitem__(quint32 linearPosition, double value);
         PixelIterator operator+ (int n);

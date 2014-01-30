@@ -2,13 +2,14 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 
 #include "../../IlwisCore/core/util/angle.h"
-#include "../../IlwisCore/core/util/point.h"
-#include "../../IlwisCore/core/util/line.h"
+
+#include "../../external/geos/geom/Geometry.h"
+#include "../../external/geos/geom/Coordinate.h"
+#include "../../IlwisCore/core/util/location.h"
+#include "../../IlwisCore/core/util/coordinate.h"
 #include "../../IlwisCore/core/util/box.h"
-#include "../../IlwisCore/core/util/polygon.h"
 
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
-#include "../../IlwisCore/core/ilwisobjects/coverage/geometry.h"
 
 #include "../../IlwisCore/core/ilwisobjects/domain/domain.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/datadefinition.h"
@@ -146,7 +147,7 @@ Geometry* Feature::geometry(int index){
 }
 
 void Feature::setGeometry(Geometry &geometry, int index){
-    this->ptr()->set(geometry.ptr());
+    this->ptr()->set(geometry.ptr().get(), index);//TODO that is not a copy! two unique_ptr on the same object!?
 }
 
 std::unique_ptr<Ilwis::FeatureInterface> &Feature::ptr() const{

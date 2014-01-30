@@ -61,7 +61,7 @@ quint64 PixelIterator::__int__(){
     return this->ptr().linearPosition();
 }
 
-bool PixelIterator::__contains__(const Voxel &vox){
+bool PixelIterator::__contains__(const Pixel &vox){
     return this->ptr().contains(vox.data());
 }
 
@@ -69,8 +69,8 @@ Box PixelIterator::box(){
     return Box(this->ptr().box());
 }
 
-Voxel PixelIterator::position(){
-    return Voxel(this->ptr().position());
+Pixel PixelIterator::position(){
+    return Pixel(this->ptr().position());
 }
 
 bool PixelIterator::xChanged(){
@@ -85,7 +85,7 @@ bool PixelIterator::zChanged(){
     return this->ptr().zchanged();
 }
 
-PixelIterator& PixelIterator::__getitem__(const Voxel &vox){
+PixelIterator& PixelIterator::__getitem__(const Pixel &vox){
     this->ptr()[vox.data()];
     return (*this);
 }

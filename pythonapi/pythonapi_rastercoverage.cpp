@@ -95,7 +95,7 @@ PixelIterator RasterCoverage::__iter__(){
 }
 
 double RasterCoverage::pix2value(double x, double y, double z){
-    return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(Ilwis::Point3D<double>(x,y,z));
+    return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(Ilwis::Pixeld(x,y,z));
 }
 
 Size RasterCoverage::size(){

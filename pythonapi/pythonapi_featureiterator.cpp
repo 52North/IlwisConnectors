@@ -9,8 +9,7 @@
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
 #include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
-#include "../../IlwisCore/core/util/polygon.h"
-#include "../../IlwisCore/core/ilwisobjects/coverage/geometry.h"
+
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/featureiterator.h"

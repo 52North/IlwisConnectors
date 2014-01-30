@@ -2,141 +2,171 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 
 #include "../../IlwisCore/core/util/angle.h"
-#include "../../IlwisCore/core/util/point.h"
-#include "../../IlwisCore/core/util/line.h"
+#include "../../external/geos/geom/Point.h"
+#include "../../external/geos/geom/LineString.h"
+#include "../../external/geos/geom/LinearRing.h"
+#include "../../external/geos/geom/Polygon.h"
+#include "../../external/geos/geom/Coordinate.h"
+
+#include "../../IlwisCore/core/util/location.h"
+#include "../../IlwisCore/core/util/coordinate.h"
 #include "../../IlwisCore/core/util/box.h"
-#include "../../IlwisCore/core/util/polygon.h"
+#include "../../IlwisCore/core/util/location.h"
 
 #include "pythonapi_util.h"
 
 namespace pythonapi {
 
-    //=============POINT2D=============================
+    //=============Coordinate=============================
 
-    template<class T> Point2DTemplate<T>::Point2DTemplate(const Ilwis::Point2D<T> &point): _data(new Ilwis::Point2D<T>(point)){
+    Coordinate::Coordinate(const Ilwis::Coordinate& coordinate): _data(new Ilwis::Coordinate(coordinate)){
     }
 
-    template<class T> Point2DTemplate<T>::Point2DTemplate(Ilwis::Point<T> *point): _data(point){
+    Coordinate::Coordinate(Ilwis::Coordinate* coordinate): _data(coordinate){
     }
 
-    template<class T> Point2DTemplate<T>::Point2DTemplate(T x, T y): _data(new Ilwis::Point2D<T>(x,y)){
+    Coordinate::Coordinate(double x, double y): _data(new Ilwis::Coordinate(x,y)){
     }
 
-    template<class T> Ilwis::Point2D<T>& Point2DTemplate<T>::data() const{
-        return (*(Ilwis::Point2D<T>*)this->_data.get());
+    Coordinate::Coordinate(double x, double y, double z): _data(new Ilwis::Coordinate(x,y,z)){
     }
 
-    template<class T> T Point2DTemplate<T>::x() const{
-        return this->data().x();
+    Ilwis::Coordinate& Coordinate::data() const{
+        return *this->_data;
     }
 
-    template<class T> T Point2DTemplate<T>::y() const{
-        return this->data().y();
+    double Coordinate::x() const{
+        return this->data().x;
     }
 
-    template<class T> void Point2DTemplate<T>::setX(T v){
-        this->data().x(v);
+    double Coordinate::y() const{
+        return this->data().y;
     }
 
-    template<class T> void Point2DTemplate<T>::setY(T v){
-        this->data().y(v);
+    double Coordinate::z() const{
+        return this->data().z;
     }
 
-    //template spezializations
-    template<> std::string Point2DTemplate<double>::__str__(){
-    return QString("coordinate(%1,%2)").arg(this->data().x(),0,'f',6).arg(this->data().y(),0,'f',6).toStdString();
+    void Coordinate::setX(double v){
+        this->data().x = v;
     }
 
-    template<> std::string Point2DTemplate<qint32>::__str__(){
-        return QString("pixel(%1,%2)").arg(this->data().x()).arg(this->data().y()).toStdString();
+    void Coordinate::setY(double v){
+        this->data().y = v;
     }
 
-    template class Point2DTemplate<qint32>;
-    template class Point2DTemplate<double>;
-
-    //=============POINT3D=============================
-
-    template<class T> Point3DTemplate<T>::Point3DTemplate(const Ilwis::Point3D<T> &point): Point2DTemplate<T>(new Ilwis::Point3D<T>(point)){
+    void Coordinate::setZ(double v){
+        this->data().z = v;
     }
 
-    template<class T> Point3DTemplate<T>::Point3DTemplate(T x, T y, T z): Point2DTemplate<T>(new Ilwis::Point3D<T>(x,y,z)){
+    std::string Coordinate::__str__(){
+        if (this->data().z == Ilwis::rUNDEF) //TODO geos::geom::DoubleNotANumber??
+            return QString("coordinate(%1,%2)").arg(this->data().x,0,'f',6).arg(this->data().y,0,'f',6).toStdString();
+        else
+            return QString("coordinate(%1,%2,%3)").arg(this->data().x,0,'f',6).arg(this->data().y,0,'f',6).arg(this->data().z,0,'f',6).toStdString();
     }
 
-    template<class T> Ilwis::Point3D<T>& Point3DTemplate<T>::data() const{
-        return (*(Ilwis::Point3D<T>*)this->_data.get());
+    //=============Pixel=============================
+
+    Pixel::Pixel(const Ilwis::Location<qint32, false>& pixel): _data(new Ilwis::Location<qint32, false>(pixel)){
     }
 
-    template<class T> T Point3DTemplate<T>::z() const{
-        return this->data().z();
+    Pixel::Pixel(Ilwis::Location<qint32, false>* pixel): _data(pixel){
     }
 
-    template<class T> void Point3DTemplate<T>::setZ(T v){
-        this->data().z(v);
+    Pixel::Pixel(qint32 x, qint32 y): _data(new Ilwis::Location<qint32, false>(x,y)){
     }
 
-    //template spezializations
-    template<> std::string Point3DTemplate<double>::__str__(){
-        return QString("coordinate(%1,%2,%3)").arg(this->data().x(),0,'f',6).arg(this->data().y(),0,'f',6).arg(this->data().z(),0,'f',6).toStdString();
+    Pixel::Pixel(qint32 x, qint32 y, qint32 z): _data(new Ilwis::Location<qint32, false>(x,y,z)){
     }
 
-    template<> std::string Point3DTemplate<qint32>::__str__(){
-        //TODO kept (3D)pixel as string representation for use in Engine.do(..) better change to voxel(,,,)
-        return QString("pixel(%1,%2,%3)").arg(this->data().x()).arg(this->data().y()).arg(this->data().z()).toStdString();
+    Ilwis::Location<qint32, false>& Pixel::data() const{
+        return *this->_data;
     }
 
-    template class Point3DTemplate<qint32>;
-    template class Point3DTemplate<double>;
+    qint32 Pixel::x() const{
+        return this->data().x;
+    }
+
+    qint32 Pixel::y() const{
+        return this->data().y;
+    }
+
+    qint32 Pixel::z() const{
+        return this->data().z;
+    }
+
+    void Pixel::setX(qint32 v){
+        this->data().x = v;
+    }
+
+    void Pixel::setY(qint32 v){
+        this->data().y = v;
+    }
+
+    void Pixel::setZ(qint32 v){
+        this->data().z = v;
+    }
+
+    std::string Pixel::__str__(){
+        if (this->data().is3D())
+            return QString("pixel(%1,%2,%3)").arg(this->data().x).arg(this->data().y).arg(this->data().z).toStdString();
+        else
+            return QString("pixel(%1,%2)").arg(this->data().x).arg(this->data().y).toStdString();
+    }
+
 
     //=============BOX=============================
 
-    template<class T> BoxTemplate<T>::BoxTemplate():_data(new Ilwis::Box3D<T>()){
+    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate():_data(new Ilwis::Box<IlwisType>()){
     }
 
-    template<class T> BoxTemplate<T>::BoxTemplate(const Ilwis::Box3D<T> &box): _data(new Ilwis::Box3D<T>(box)){
+    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const Ilwis::Box<IlwisType> &box): _data(new Ilwis::Box<IlwisType>(box)){
     }
 
-    template<class T> BoxTemplate<T>::BoxTemplate(const std::string& envelope): _data(new Ilwis::Box3D<T>(QString::fromStdString(envelope))){
+    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const std::string& envelope): _data(new Ilwis::Box<IlwisType>(QString::fromStdString(envelope))){
     }
 
-    template<class T> BoxTemplate<T>::BoxTemplate(const Voxel &min, const Voxel &max): _data(new Ilwis::Box3D<T>(min.data(), max.data())){
+    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const PyType &min, const PyType &max): _data(new Ilwis::Box<IlwisType>(min.data(), max.data())){
     }
 
-    template<class T> BoxTemplate<T>::BoxTemplate(const Coordinate &min, const Coordinate &max): _data(new Ilwis::Box3D<T>(min.data(), max.data())){
+    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const Size &size): _data(new Ilwis::Box<IlwisType>(size.data())){
     }
 
-    template<class T> BoxTemplate<T>::BoxTemplate(const Size &size): _data(new Ilwis::Box3D<T>(size.data())){
+    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const geos::geom::Envelope *envelope){
+        _data.reset(new Ilwis::Box<IlwisType>(IlwisType(envelope->getMinX(),envelope->getMinY()),IlwisType(envelope->getMaxX(),envelope->getMaxY())));
     }
 
-    template<class T> std::string BoxTemplate<T>::__str__(){
+    template<class IlwisType, class PyType> std::string BoxTemplate<IlwisType, PyType>::__str__(){
         return this->data().toString().toStdString();
     }
 
-    template<class T> Size BoxTemplate<T>::size(){
+    template<class IlwisType, class PyType> Size BoxTemplate<IlwisType, PyType>::size(){
     return Size(this->data().size());
     }
 
-    template<class T> Point3DTemplate<T> BoxTemplate<T>::minCorner(){
-        return Point3DTemplate<T>(this->data().min_corner());
+    template<class IlwisType, class PyType> PyType BoxTemplate<IlwisType, PyType>::minCorner(){
+        return PyType(this->data().min_corner());
     }
 
-    template<class T> Point3DTemplate<T> BoxTemplate<T>::maxCorner(){
-        return Point3DTemplate<T>(this->data().max_corner());
+    template<class IlwisType, class PyType> PyType BoxTemplate<IlwisType, PyType>::maxCorner(){
+        return PyType(this->data().max_corner());
     }
 
-    template<class T> bool BoxTemplate<T>::contains(const Point3DTemplate<T> &point){
+    template<class IlwisType, class PyType> bool BoxTemplate<IlwisType, PyType>::contains(const PyType &point){
         return this->data().contains(point.data());
     }
 
-    template<class T> bool BoxTemplate<T>::contains(const BoxTemplate<T>& box){
+    template<class IlwisType, class PyType> bool BoxTemplate<IlwisType, PyType>::contains(const BoxTemplate<IlwisType, PyType>& box){
         return this->data().contains(box.data());
     }
 
-    template<class T> Ilwis::Box3D<T> &BoxTemplate<T>::data() const{
+    template<class IlwisType, class PyType> Ilwis::Box<IlwisType>& BoxTemplate<IlwisType, PyType>::data() const{
         return (*this->_data);
     }
 
-    template class BoxTemplate<qint32>;
-    template class BoxTemplate<double>;
+    template class BoxTemplate<Ilwis::Coordinate, Coordinate>;
+    template class BoxTemplate<Ilwis::Location<qint32, false>, Pixel>;
 
     //=============SIZE=============================
 
@@ -190,7 +220,7 @@ namespace pythonapi {
         return this->data().totalSize();
     }
 
-    bool Size::__contains__(const Voxel &vox) const{
+    bool Size::__contains__(const Pixel &vox) const{
         return this->data().contains(vox.x(),vox.y(),vox.z());
     }
 

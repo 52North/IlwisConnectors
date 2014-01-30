@@ -6,9 +6,10 @@
 
 #include <memory>
 
-namespace Ilwis{
+namespace geos {
+namespace geom {
     class Geometry;
-    class SPFeatureI;
+}
 }
 
 namespace pythonapi {
@@ -17,10 +18,11 @@ namespace pythonapi {
 
     class Geometry : public Object{
         friend class Feature;
+        friend class FeatureCoverage;
     public:
-        Geometry(std::string wkt, const CoordinateSystem& cs);
+        Geometry(std::string wkt, const CoordinateSystem &csy);
         Geometry(Feature* feature, int index);
-        Geometry(Ilwis::Geometry* geometry);
+        Geometry(geos::geom::Geometry* geometry, const Ilwis::ICoordinateSystem& csy);
         ~Geometry();
         bool within(const Geometry& geometry) const;
         bool contains(const Geometry& geometry) const;
@@ -34,7 +36,7 @@ namespace pythonapi {
         Geometry* transform(const CoordinateSystem& cs);
         Envelope envelope();
     private:
-        Ilwis::Geometry &ptr() const;
+        const std::unique_ptr<geos::geom::Geometry>& ptr() const;
         bool _standalone;
 
         //_standalone == false
@@ -42,7 +44,7 @@ namespace pythonapi {
         int _index;
 
         //_standalone == true
-        std::unique_ptr<Ilwis::Geometry> _ilwisGeometry;
+        std::unique_ptr<geos::geom::Geometry> _ilwisGeometry;
     };
 
 } // namespace pythonapi
