@@ -82,8 +82,8 @@ ITable GdalFeatureConnector::prepareAttributeTable(OGRLayerH hLayer) const{
     ColumnDefinition colCovKey(COVERAGEKEYCOLUMN, dmKey, 1);
     attTable->addColumn(colCovKey);
 
-    GdalTableLoader loader;
-    loader.loadMetaData(attTable.ptr(), hLayer);
+//    GdalTableLoader loader;
+//    loader.loadMetaData(attTable.ptr(), hLayer);
 
     return attTable;
 
