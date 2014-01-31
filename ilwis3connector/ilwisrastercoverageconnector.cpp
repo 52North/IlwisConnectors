@@ -494,7 +494,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     if ( raster->size().zsize() > 1)
         return storeMetaDataMapList(obj);
 
-    bool ok = CoverageConnector::storeMetaData(obj, itRASTER, raster->datadef());
+    bool ok = CoverageConnector::storeMetaData(obj, itRASTER, raster->datadef().domain());
     if ( !ok)
         return false;
 
