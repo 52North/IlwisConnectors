@@ -281,7 +281,7 @@ bool CoverageConnector::storeBinaryData(IlwisObject *obj, IlwisTypes tp)
 
     }
 
-    return false;
+    return true; // no store needed
 }
 
 TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, Coverage *coverage, IlwisTypes tp) {
