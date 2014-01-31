@@ -1,6 +1,11 @@
 #ifndef FEATURECONNECTOR_H
 #define FEATURECONNECTOR_H
 
+namespace geos {
+    namespace geom{
+    class Polygon;
+    }
+}
 namespace Ilwis {
 
 class FeatureCoverage;
@@ -51,6 +56,8 @@ private:
         output_file.write((char *)&x, 8);
         output_file.write((char *)&y, 8);
     }
+    void writeLine(const geos::geom::LineString *line, std::ofstream &output_file, double raw);
+    void writePolygon(const geos::geom::Polygon *polygon, std::ofstream &output_file, double raw);
 };
 }
 }

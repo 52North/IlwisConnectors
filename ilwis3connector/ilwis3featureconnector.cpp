@@ -411,6 +411,21 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
 
 }
 
+void FeatureConnector::writePolygon(const geos::geom::Polygon* polygon, std::ofstream& output_file, double raw){
+    if (!polygon)
+        return;
+
+    const std::vector<geos::geom::Coordinate>* coords = polygon->getExteriorRing()->getCoordinates()->toVector();
+    writeCoords(output_file, coords);
+    output_file.write((char *)&raw,8);
+    quint32 holeCount = polygon->getNumInteriorRing();
+    output_file.write((char *)&holeCount,4);
+    for(int i=0; i < holeCount; ++i ) {
+        const std::vector<geos::geom::Coordinate>* coords = polygon->getInteriorRingN(i)->getCoordinates()->toVector();
+        writeCoords(output_file, coords);
+    }
+}
+
 bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QString& baseName) {
     QString filename = baseName + ".mpz#";
 
@@ -424,17 +439,20 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     for_each(iter, iter.end(), [&](UPFeatureI& feature){
         const UPGeometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
-            if ( geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
-                const geos::geom::Polygon *polygon = dynamic_cast<const geos::geom::Polygon *>(geom.get());
-                const std::vector<geos::geom::Coordinate>* coords = polygon->getExteriorRing()->getCoordinates()->toVector();
-                writeCoords(output_file, coords);
-                output_file.write((char *)&raw,8);
-                quint32 holeCount = polygon->getNumInteriorRing();
-                output_file.write((char *)&holeCount,4);
-                for(int i=0; i < holeCount; ++i ) {
-                    const std::vector<geos::geom::Coordinate>* coords = polygon->getInteriorRingN(i)->getCoordinates()->toVector();
-                    writeCoords(output_file, coords);
+            geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
+            if ( geostype == geos::geom::GEOS_POLYGON || geostype == geos::geom::GEOS_MULTIPOLYGON) {
+                const geos::geom::Geometry *polygons = geom.get();
+                if ( geostype == geos::geom::GEOS_POLYGON ){
+                    const geos::geom::Polygon *polygon = dynamic_cast<const geos::geom::Polygon*>(polygons);
+                    writePolygon(polygon,output_file,raw);
+                } else {
+                    int n = polygons->getNumGeometries();
+                    for(int i = 0; i < n ; ++i){
+                        const geos::geom::Polygon* polygon = dynamic_cast<const geos::geom::Polygon*>(polygons->getGeometryN(i));
+                        writePolygon(polygon,output_file,raw);
+                    }
                 }
+
                 ++raw;
             }
         }
@@ -447,6 +465,24 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
 }
 
 
+void FeatureConnector::writeLine(const geos::geom::LineString* line,std::ofstream& output_file,double raw ) {
+    if (!line)
+        return;
+    const geos::geom::Envelope *env = line->getEnvelopeInternal();
+    const std::vector<geos::geom::Coordinate>* coords = line->getCoordinatesRO()->toVector();
+    const geos::geom::Coordinate crdmin(env->getMinX(), env->getMinY());
+    const geos::geom::Coordinate crdmax(env->getMaxX(), env->getMaxY());
+    writeCoord(output_file, crdmin);
+    writeCoord(output_file, crdmax);
+    int noOfCoordsBytes = line->getNumPoints() * 16;
+    output_file.write((char *)&noOfCoordsBytes, 4);
+    for(const Coordinate& crd: *coords) {
+        writeCoord(output_file, geos::geom::Coordinate(crd));
+    }
+    long deleted=1;
+    output_file.write((char *)&deleted, 4);
+    output_file.write((char *)&raw, 8);
+}
 
 bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString& baseName) {
     std::ofstream output_file;
@@ -463,27 +499,25 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
     IFeatureCoverage cov;
     cov.set(fcov);
     FeatureIterator iter(cov);
-    quint32 raw = 1;
+    double raw = 1;
 
     for_each(iter, iter.end(), [&](UPFeatureI& feature){
         const UPGeometry& geom = feature->geometry();
         for(int i=0; i < feature->trackSize(); ++i) {
-            if ( geom->getGeometryTypeId() == geos::geom::GEOS_LINESTRING) {
-                const geos::geom::Envelope *env = geom->getEnvelopeInternal();
-                const geos::geom::LineString *line = dynamic_cast<const geos::geom::LineString *>(geom.get());
-                const std::vector<geos::geom::Coordinate>* coords = line->getCoordinatesRO()->toVector();
-                const geos::geom::Coordinate crdmin(env->getMinX(), env->getMinY());
-                const geos::geom::Coordinate crdmax(env->getMaxX(), env->getMaxY());
-                writeCoord(output_file, crdmin);
-                writeCoord(output_file, crdmax);
-                int noOfCoordsBytes = line->getNumPoints() * 16;
-                output_file.write((char *)&noOfCoordsBytes, 4);
-                for(const Coordinate& crd: *coords) {
-                    writeCoord(output_file, geos::geom::Coordinate(crd));
+            geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
+            if ( geostype == geos::geom::GEOS_MULTILINESTRING || geos::geom::GEOS_LINESTRING) {
+
+                const geos::geom::Geometry *lines = geom.get();
+                if ( geostype == geos::geom::GEOS_LINESTRING ){
+                    const geos::geom::LineString *line = dynamic_cast<const geos::geom::LineString*>(lines);
+                    writeLine(line,output_file,raw);
+                } else {
+                    int n = lines->getNumGeometries();
+                    for(int i = 0; i < n ; ++i){
+                        const geos::geom::LineString* line = dynamic_cast<const geos::geom::LineString*>(lines->getGeometryN(i));
+                        writeLine(line,output_file,raw);
+                    }
                 }
-                long deleted=1;
-                output_file.write((char *)&deleted, 4);
-                output_file.write((char *)&raw, 4);
                 ++raw;
             }
         }
@@ -617,13 +651,23 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     if ( coldef.isValid()) {
         datadef = coldef.datadef();
     } else {
-        IIndexedIdDomain indexdom;
+        INamedIdDomain indexdom;
+        //QFileInfo inf(QUrl(_odf->file()).toLocalFile());
+        //QString filename = QString("%1/%2.dom").arg(inf.absolutePath()).arg(inf.baseName());
+        //indexdom.prepare(QUrl::fromLocalFile(filename).toString());
         indexdom.prepare();
-        indexdom->setRange(IndexedIdentifierRange(type2Prefix(type),fcov->featureCount(type)));
+        indexdom->setName(fcov->name());
+        NamedIdentifierRange range;
+        for(int i=0; i < fcov->featureCount(type); ++i){
+            QStringList parts = Ilwis3Connector::ilwis3ClassName(type).split(" ");
+            QString itemname = QString("%1_%2").arg(parts[0]).arg(i);
+            range << itemname;
+        }
+        indexdom->setRange(range);
         datadef.domain(indexdom);
     }
 
-    bool ok = CoverageConnector::storeMetaData(fcov, type, datadef);
+    bool ok = CoverageConnector::storeMetaData(fcov, type, datadef.domain());
     if ( !ok)
         return false;
 
@@ -633,11 +677,13 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         dataFile = dataFile.left(index);
     }
 
-    _odf->setKeyValue("Domain","Type","DomainUniqueID");
-    _odf->setKeyValue("DomainSort","Sorting","AlphaNumeric");
-    _odf->setKeyValue("DomainSort","Prefix","feature");
-    _odf->setKeyValue("DomainSort","Class","Domain UniqueID");
-    _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(type)));
+    if ( datadef.domain()->valueType() == itINDEXEDITEM) {
+        _odf->setKeyValue("Domain","Type","DomainUniqueID");
+        _odf->setKeyValue("DomainSort","Sorting","AlphaNumeric");
+        _odf->setKeyValue("DomainSort","Prefix","feature");
+        _odf->setKeyValue("DomainSort","Class","Domain UniqueID");
+        _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(type)));
+    }
 
     QString ext = "mpa";
     if ( fcov->featureTypes() & itPOLYGON){
