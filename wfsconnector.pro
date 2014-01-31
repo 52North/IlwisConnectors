@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT = sql network
+QT = sql network xmlpatterns
 
 CONFIG += plugin
 TARGET = wfsconnector
@@ -26,7 +26,10 @@ SOURCES += \
     wfsconnector/wfsfeatureconnector.cpp \
     wfsconnector/wfs.cpp \
     wfsconnector/wfsresponse.cpp \
-    wfsconnector/wfscontainerconnector.cpp
+    wfsconnector/wfsfeature.cpp \
+    wfsconnector/wfscontainerconnector.cpp \
+    wfsconnector/wfscapabilitiesparser.cpp \
+    wfsconnector/xmlparser.cpp
 
 HEADERS += \
     wfsconnector/wfsobjectfactory.h \
@@ -37,13 +40,18 @@ HEADERS += \
     wfsconnector/wfs.h \
     wfsconnector/wfsconnector_global.h \
     wfsconnector/wfsresponse.h \
-    wfsconnector/wfscontainerconnector.h
+    wfsconnector/wfsfeature.h \
+    wfsconnector/wfscontainerconnector.h \
+    wfsconnector/wfscapabilitiesparser.h \
+    wfsconnector/xmlparser.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-                                              -L$$PWD/../libraries/$$PLATFORM$$CONF/pugixml/ -lpugixml
+                                              -L$$PWD/../libraries/$$PLATFORM$$CONF/pugixml/ -lpugixml \
+                                              -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-                                              -L$$PWD/../libraries/$$PLATFORM$$CONF/pugixml/ -lpugixml
+                                              -L$$PWD/../libraries/$$PLATFORM$$CONF/pugixml/ -lpugixml \
+                                              -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
 INCLUDEPATH += $$PWD/core \
             $$PWD/../external/

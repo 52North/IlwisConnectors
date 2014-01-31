@@ -3,6 +3,7 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
+#include <QXmlStreamReader>
 
 #include "pugixml/pugixml.hpp"
 
@@ -14,11 +15,18 @@ using namespace Wfs;
 
 WfsResponse::WfsResponse()
 {
+    _reader = new QXmlStreamReader();
+    QXmlStreamNamespaceDeclaration wfsNamespace("wfs", "http://www.opengis.net/wfs");
+    QXmlStreamNamespaceDeclaration owsNamespace("ows", "http://www.opengis.net/ows");
+    _reader->addExtraNamespaceDeclaration(wfsNamespace);
+    _reader->addExtraNamespaceDeclaration(owsNamespace);
+
     _networkManager = new QNetworkAccessManager(this);
 }
 
 WfsResponse::~WfsResponse()
 {
+    //delete _reader; creates segmentation faults
     _networkManager->deleteLater();
 }
 
@@ -68,7 +76,7 @@ bool WfsResponse::isException() const
         exceptionLog.append(serverMsg).append("\n");
     });
 
-    kernel()->issues()->log(TR("Server responded with an exception: \n%1").arg(exceptionLog));
+    ERROR1(TR("Server responded with an exception: ").append("%1"), exceptionLog);
     return true;
 }
 
@@ -97,11 +105,23 @@ void WfsResponse::setContent(QString content)
     _content = content;
 }
 
+QXmlStreamReader *WfsResponse::xmlReader() const
+{
+    return _reader;
+}
+
+
+void WfsResponse::setXmlReader(QXmlStreamReader *reader)
+{
+    _reader = reader;
+}
+
 void WfsResponse::readResponse(QNetworkReply *reply)
 {
     if (reply->error() == QNetworkReply::NoError)
     {
-        setContent(reply->readAll());
+        //setContent(reply->readAll());
+        _reader->addData(reply->readAll());
     } else {
         QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
         QVariant reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute);

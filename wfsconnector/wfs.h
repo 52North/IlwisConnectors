@@ -16,10 +16,10 @@ class WFSCONNECTORSHARED_EXPORT WebFeatureService
 public:
     WebFeatureService(QUrl wfsUrl);
 
-    WfsResponse *getCapabilities();
-    WfsResponse *describeFeatureType();
-    WfsResponse *getFeature(QString typeName);
-    QUrl createGetFeatureUrl(QString typeName);
+    QUrl url();
+    WfsResponse *getCapabilities(bool async=false);
+    WfsResponse *describeFeatureType(QUrlQuery query, bool async=false);
+    WfsResponse *getFeature(QUrlQuery query, bool async=false);
 
 private:
     QUrl _resource;

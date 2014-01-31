@@ -7,7 +7,6 @@
 #include "coverage.h"
 #include "module.h"
 #include "coverage.h"
-#include "polygon.h"
 #include "ilwiscontext.h"
 #include "catalog.h"
 #include "numericdomain.h"
@@ -50,16 +49,16 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
         return false;
     }
 
-
-    WebFeatureService wfs(source().url());
-
+    QUrl featureUrl = source().url();
+    featureUrl.setQuery(source().urlQuery());
+    WebFeatureService wfs(featureUrl);
 
     // TODO: load Feature metadata and fill coverage
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     IlwisTypes coverageType = itUNKNOWN;
     int featureCount = 0;
-    Box2D<double> bbox;
+    BoundingBox bbox;
     bool initMinMax = 0;
 
     ITable attTable;

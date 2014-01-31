@@ -1,11 +1,14 @@
 
-* Prepare WFS:
-  - Change wfs.h signatures to consume Resource instead of QUrl
-  - Actual QUrl has to be constructed depending on the base URL and its query
-  - Create GetFOI QUrls in WfsContainerConnector and create Resources in WfsCatalogConnector
-  
-* Create a Feature Metadata class. objects are created from DescribeFeatureType and can be used by featureconnector and tableconnector
+* using networkReply->readAll() to feed xml network response to qtxmlstreamreader: http://qt-project.org/doc/qt-5.0/qtcore/qxmlstreamreader.html
 
-* Load Metadata
-  - wfsfeatureconnector has 
+* IlwisObjectConnector constructor has unused bool 'load'
+
+* Make CatalogConnector standalone so that ContainerConnectors can be created by a CatalogConnector instance only if needed
+
+* Prepare WFS:
+  - Change wfs.h signatures to consume Resource instead of QUrl => possible for just calling GC?
+  - Actual QUrl has to be constructed depending on the base URL and its query
+  
+*  let WfsFeature inherit from resource. objects are created from DescribeFeatureType and can be used by featureconnector and tableconnector
+
   

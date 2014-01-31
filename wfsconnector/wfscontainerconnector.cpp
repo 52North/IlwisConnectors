@@ -39,25 +39,7 @@ bool WfsContainerConnector::prepare()
 
 std::vector<QUrl> WfsContainerConnector::sources(const QStringList &filter, int options) const
 {
-    WebFeatureService wfs(source().url());
-    WfsResponse *response = wfs.getCapabilities();
-    QString capabilities = response->getContent();
-
-    pugi::xml_document doc;
-    std::istringstream cs(capabilities.toStdString());
-    doc.load(cs);
-
     std::vector<QUrl> wfsFeatures;
-    QUrl wfsUrl = source().url();
-    pugi::xpath_node_set featureTypes = doc.select_nodes("/*/FeatureTypeList/FeatureType");
-    std::for_each (featureTypes.begin(), featureTypes.end(), [&](pugi::xpath_node featureType) {
-        QUrl getFeatureUrl;
-        QString name(featureType.node().child("Name").text().as_string());
-
-        // TODO: getFeature for each FeatureType name
-
-        wfsFeatures.push_back(getFeatureUrl);
-    });
     return wfsFeatures;
 }
 
@@ -89,10 +71,6 @@ bool WfsContainerConnector::canUse(const Resource &resource) const
 
     if ( scheme != "http" && scheme != "https")
         return false; // can't read non http based data
-
-//    QString filename = resource.url().toLocalFile();
-//    if ( filename == "")
-//        return false;
 
     IlwisTypes type = resource.ilwisType() ;
     if ( type & itCONTAINER)

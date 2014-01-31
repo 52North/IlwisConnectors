@@ -7,7 +7,6 @@
 #include "ilwisdata.h"
 #include "domain.h"
 #include "coverage.h"
-#include "polygon.h"
 #include "columndefinition.h"
 #include "geometry.h"
 #include "attributerecord.h"
@@ -20,39 +19,42 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-WebFeatureService::WebFeatureService(QUrl wfsUrl): _resource(wfsUrl)
+WebFeatureService::WebFeatureService(QUrl baseUrl): _resource(baseUrl)
 {
 }
 
-WfsResponse *WebFeatureService::getCapabilities()
+QUrl WebFeatureService::url()
 {
-    QUrl getCapabilitiesUrl = _resource;
-    return performSyncRequest(getCapabilitiesUrl);
+    return _resource;
 }
 
-WfsResponse *WebFeatureService::describeFeatureType()
+WfsResponse *WebFeatureService::getCapabilities(bool async)
 {
-    QUrl getCapabilitiesUrl = _resource;
+    if (!async) {
+        return performSyncRequest(_resource);
+    } else {
+        return performAsyncRequest(_resource);
+    }
+}
 
-    // TODO: adjust to DescribeFeatureType
-    //WfsResponse *response = performAsyncRequest(getCapabilitiesUrl);
+WfsResponse *WebFeatureService::describeFeatureType(QUrlQuery query, bool async)
+{
+    QUrl describeFeatureUrl = _resource;
+    describeFeatureUrl.setQuery(query);
+
+    // TODO: do an async request
+    //return performAsyncRequest(getCapabilitiesUrl);
+
+    return performSyncRequest(describeFeatureUrl);
 
 }
 
-WfsResponse *WebFeatureService::getFeature(QString name)
+WfsResponse *WebFeatureService::getFeature(QUrlQuery query, bool async)
 {
     QUrl getCapabilitiesUrl = _resource;
 
     // TODO: adjust to GetFeature
     //WfsResponse *response = performAsyncRequest(getCapabilitiesUrl);
-}
-
-QUrl WebFeatureService::createGetFeatureUrl(QString typeName) {
-
-    // TODO: set query on _resource
-
-    //QUrlQuery query = _resource.getQuery();
-
 }
 
 WfsResponse *WebFeatureService::performSyncRequest(QUrl requestUrl)
@@ -73,8 +75,8 @@ WfsResponse *WebFeatureService::performAsyncRequest(QUrl requestUrl)
 {
     QNetworkRequest request(requestUrl);
     WfsResponse *response = new WfsResponse;
-    QNetworkReply *reply = response->performRequest(request);
-
+    // response registers an async callback
+    response->performRequest(request);
     return response;
 }
 

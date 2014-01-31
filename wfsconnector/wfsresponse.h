@@ -8,6 +8,7 @@
 class QVariant;
 class QNetworkReply;
 class QNetworkRequest;
+class QXmlStreamReader;
 class QNetworkAccessManager;
 
 namespace Ilwis {
@@ -61,8 +62,15 @@ public:
      */
     void setContent(QString content);
 
+    QXmlStreamReader *xmlReader() const;
+
+    void setXmlReader(QXmlStreamReader *reader);
+
 public slots:
     /**
+     * Reads the network reply to string content. When done, state is set to finish and
+     * the network reply pointer is deleted later on.
+     *
      * @brief readResponse reads the network reply and indicates that hasFinished == true.
      * @param reply the network reply created after a request has been sent.
      */
@@ -70,6 +78,7 @@ public slots:
 
 private:
     QNetworkAccessManager* _networkManager;
+    QXmlStreamReader* _reader;
     QString _content = "";
     bool _finished = false;
 };

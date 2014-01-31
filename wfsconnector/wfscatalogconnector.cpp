@@ -8,7 +8,6 @@
 #include "ilwisdata.h"
 #include "domain.h"
 #include "coverage.h"
-#include "polygon.h"
 #include "columndefinition.h"
 #include "geometry.h"
 #include "attributerecord.h"
@@ -26,6 +25,8 @@
 #include "wfscatalogconnector.h"
 #include "wfs.h"
 #include "wfsresponse.h"
+#include "wfsfeature.h"
+#include "wfscapabilitiesparser.h"
 
 using namespace Ilwis;
 using namespace Wfs;
@@ -48,18 +49,20 @@ bool WfsCatalogConnector::loadItems()
     if (!isValid())
         return false;
 
-    QStringList filters; // empty filter
-    std::vector<QUrl> getFeatureUrls = containerConnector()->sources(filters, ContainerConnector::foFULLPATHS);
+    QUrl serviceUrl = source().url();
+    WebFeatureService wfs(serviceUrl);
+    WfsResponse *response = wfs.getCapabilities();
+    WfsCapabilitiesParser parser(response, serviceUrl);
 
-    QList<Resource> finalList;
-    foreach (QUrl url, getFeatureUrls) {
-        Resource featureUrl(url, itCOVERAGE);
-        finalList.push_back(featureUrl);
-    }
+    QList<WfsFeature> wfsFeatures;
+    parser.parseFeatures(wfsFeatures);
 
-    // TODO: eventually add feature description somewhere
+    QList<Resource> wfsResources;
+    std::for_each(wfsFeatures.begin(), wfsFeatures.end(), [&](WfsFeature &feature) {
+        wfsResources.push_back(feature);
+    });
 
-    mastercatalog()->addItems(finalList);
+    mastercatalog()->addItems(wfsResources);
     return true;
 }
 

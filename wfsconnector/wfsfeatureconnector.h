@@ -1,10 +1,12 @@
 #ifndef WFSFEATURECONNECTOR_H
 #define WFSFEATURECONNECTOR_H
 
+#include "wfsconnector_global.h"
+
 namespace Ilwis{
 namespace Wfs {
 
-class WfsFeatureConnector : public WfsConnector{
+class WFSCONNECTORSHARED_EXPORT WfsFeatureConnector : public WfsConnector{
 public:
     WfsFeatureConnector(const Ilwis::Resource &resource, bool load=true);
 
