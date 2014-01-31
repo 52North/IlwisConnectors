@@ -125,7 +125,7 @@ bool Engine::setWorkingCatalog(const std::string& location){
 
 PyObject* Engine::operations(const std::string& filter){
     Ilwis::Catalog opCat;
-    opCat.prepare(QUrl(QString("ilwis://operations/%1").arg(QString::fromStdString(filter))));
+    opCat.prepare(QUrl(QString("ilwis://operations")), "type='OperationMetaData'");
     std::list<Ilwis::Resource> ops = opCat.items();
     PyObject* list = newPyTuple(ops.size());
     int i = 0;
