@@ -29,9 +29,9 @@ PyObject* Coverage::attributes(){
     Ilwis::ITable tbl = (*this->ptr()).get<Ilwis::Coverage>()->attributeTable();
     int colCount = tbl->columnCount();
     if (tbl->columndefinition(FEATUREIDCOLUMN).isValid())
-        colCount--;
+        colCount--;//skip 'feature_id'
     int offset = 0;
-    PyObject* list = newPyTuple(colCount);//skip 'feature_id'
+    PyObject* list = newPyTuple(colCount);
     for(int i = 0; i < tbl->columnCount(); i++){
         QString name = tbl->columndefinition(i).name();
         if (name != QString(FEATUREIDCOLUMN)){

@@ -10,6 +10,7 @@ namespace pythonapi {
         Engine();
         static Object* _do(std::string output_name, std::string operation,std::string c3 = "",std::string c4 = "",std::string c5 = "",std::string c6 = "",std::string c7="", std::string c8="", std::string c9="");
         static bool setWorkingCatalog(const std::string& location);
+        PyObject* operations(const std::string& filter = "*");
     };
 
 }

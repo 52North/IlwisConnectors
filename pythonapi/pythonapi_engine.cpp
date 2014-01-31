@@ -34,6 +34,7 @@
 #include "pythonapi_pyvariant.h"
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_featurecoverage.h"
+#include "pythonapi_pycontainer.h"
 
 using namespace pythonapi;
 
@@ -119,4 +120,19 @@ bool Engine::setWorkingCatalog(const std::string& location){
         return true;
     }else
         throw Ilwis::ErrorObject(QString("invalid container location: '%1'").arg(location.c_str()));
+}
+
+
+PyObject* Engine::operations(const std::string& filter){
+    Ilwis::Catalog opCat;
+    opCat.prepare(QUrl(QString("ilwis://operations/%1").arg(QString::fromStdString(filter))));
+    std::list<Ilwis::Resource> ops = opCat.items();
+    PyObject* list = newPyTuple(ops.size());
+    int i = 0;
+    for(auto it = ops.begin(); it != ops.end(); it++){
+        if (!setTupleItem(list, i++, it->name().toStdString().data())){
+            throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of attributes").arg( it->name()));
+        }
+    }
+    return list;
 }

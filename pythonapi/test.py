@@ -164,7 +164,7 @@ try:
             self.assertTrue(e.contains(Coordinate(.5, .5, .5)))
             self.assertTrue(e.contains(e))
 
-        def test_Point(self):
+        def test_PixelCoordinate(self):
             p = Pixel(4, 5)
             self.assertEqual(str(p), "pixel(4,5)")
             v = Pixel(4, 5, 6)
@@ -239,7 +239,7 @@ try:
             self.assertEqual(float(pv), 23.4e-32)
 
     #@ut.skip("temporarily")
-    class TestOperation(ut.TestCase):
+    class TestEngine(ut.TestCase):
         def setUp(self):
             try:
                 disconnectIssueLogger()
@@ -255,7 +255,13 @@ try:
         def tearDown(self):
             del self.cs
 
-        def test_gridding(self):
+        @ut.skip("temporarily")
+        def test_Operations(self):
+            e = Engine()
+            ops = e.operations()
+            self.assertTupleEqual((), ops)
+
+        def test_Gridding(self):
             polygongrid = Engine.do("gridding", self.cs, Coordinate(225358.6605, 3849480.5700), 1000.0, 1000.0, 12, 12)
             self.assertTrue(bool(polygongrid), msg="gridding result is invalid!")
             self.assertEqual(polygongrid.type(), "FeatureCoverage", msg="wrong IlwisObject type")
