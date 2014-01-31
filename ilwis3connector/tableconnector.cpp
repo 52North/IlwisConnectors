@@ -188,6 +188,9 @@ bool TableConnector::storeBinaryData(IlwisObject *obj)
 {
     const Table *tbl = static_cast<const Table *>(obj);
 
+    if ( tbl && tbl->columnCount() == 1 && _attributeDomain != "") // only one column in attribute domains means only feature id, nothing to do
+        return true;
+
     int skip = iUNDEF;
     BinaryIlwis3Table ilw3tbl;
     std::ofstream output_file;
@@ -221,10 +224,14 @@ QString TableConnector::getDomainName(const IDomain& dom, bool& isSystem) {
 
 bool TableConnector::storeMetaData(IlwisObject *obj)
 {
+    const Table *tbl = static_cast<const Table *>(obj);
+
+    if ( tbl && tbl->columnCount() == 1 && _attributeDomain != "") // only one column in attribute domains means only feature id, nothing to do
+        return true;
+
     if(!Ilwis3Connector::storeMetaData(obj, itTABLE))
         return false;
 
-    const Table *tbl = static_cast<const Table *>(obj);
     int reduceColumns = 1; // the featured_id column will not be go the ilwis3, useless info at that level
 
     QFileInfo inf(_attributeDomain);
