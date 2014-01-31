@@ -164,8 +164,11 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     return true;
 }
 
-bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const DataDefinition& datadef)
+bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const Ilwis::IDomain &dom)
 {
+    if (!dom.isValid())
+        return ERROR2(ERR_NO_INITIALIZED_2, "Domain", obj->name());
+
     bool ok = Ilwis3Connector::storeMetaData(obj, type);
     if ( !ok)
         return false;
@@ -194,9 +197,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
                       arg(bounds.max_corner().x,10,'f').
                       arg(bounds.max_corner().y,10,'f'));
 
-    const IDomain dom = datadef.domain();
-    if (!dom.isValid())
-        return ERROR2(ERR_NO_INITIALIZED_2, "Domain", coverage->name());
+
 
     calcStatics(obj,NumericStatistics::pBASIC);
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
@@ -205,7 +206,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
         qint32 delta = coverage->statistics()[NumericStatistics::pDELTA];
         if ( delta >= 0 && delta < 256 && digits == 0){
             if ( delta >= 0 && delta < 256 && digits == 0){
-                if ( datadef.domain()->code() == "boolean"){
+                if ( dom->code() == "boolean"){
                     QString domInfo = QString("bool.dom;Byte;bool;0;;");
                     _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
                     _odf->setKeyValue("BaseMap","Range","0:1:offset=-1");
@@ -252,7 +253,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
             QString domName = Resource::toLocalFile(dom->source().url(), true);
             if ( domName == sUNDEF)
                 domName = QFileInfo(QUrl(_odf->file()).toLocalFile()).baseName() + ".dom";
-            QString domInfo = QString("%1;;Int;id;%2;;").arg(domName).arg(iddom->count());
+            QString domInfo = QString("%1;Int;id;%2;;").arg(domName).arg(iddom->count());
             _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
             _odf->setKeyValue("BaseMap","Domain",domName);
             QUrl url = makeUrl(_odf->file(),domName);
@@ -263,7 +264,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const D
     }
 
     ITable attTable = coverage->attributeTable();
-    if ( attTable.isValid()) {
+    if ( attTable.isValid() && attTable->columnCount() > 1) {
         QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, coverage, type));
         conn->storeMetaData(attTable.ptr());
     }
@@ -274,7 +275,7 @@ bool CoverageConnector::storeBinaryData(IlwisObject *obj, IlwisTypes tp)
 {
     Coverage *coverage = static_cast<Coverage *>(obj);
     ITable attTable = coverage->attributeTable();
-    if ( attTable.isValid()) {
+    if ( attTable.isValid() && attTable->columnCount() > 1) {
         QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, coverage, tp));
         return conn->storeBinaryData(attTable.ptr());
 
@@ -304,30 +305,27 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
         dataFile = dataFile.left(index);
     }else{
         if ( tp == itPOLYGON)
-            attDom += ".mpa";
+            attDom += ".dom";
         if ( tp == itRASTER)
             attDom += ".mpr";
         if ( tp == itPOINT)
-            attDom += ".mpp";
+            attDom += ".dom";
         if ( tp == itLINE)
-            attDom += ".mps";
+            attDom += ".dom";
     }
-    _odf->setKeyValue("BaseMap","AttributeTable",dataFile + ".tbt");
-    attTable->setName(dataFile);
-    QString filename = dataFile + ".tbt";
-    TableConnector *conn = new TableConnector(Resource(QUrl::fromLocalFile(filename), itTABLE), false);
-    //attribute domains are comming from ilwis4 always uniqueid and based on the map
-    conn->attributeDomain(attDom);
+    if ( attTable->columnCount() > 1) { // one column means only featurid which we dont save.
+        _odf->setKeyValue("BaseMap","AttributeTable",dataFile + ".tbt");
+        attTable->setName(dataFile);
+        QString filename = dataFile + ".tbt";
+        TableConnector *conn = new TableConnector(Resource(QUrl::fromLocalFile(filename), itTABLE), false);
+        conn->attributeDomain(attDom);
 
-    return conn;
+        return conn;
+    }
+    return 0;
 }
 DataDefinition CoverageConnector::determineDataDefintion() const{
     IDomain dom;
-//    QString domainTemp = _odf->value("BaseMap","Domain");
-//    QString domain = name2Code(domainTemp, "domain");
-//    if ( domain == sUNDEF)
-//        domain = domainTemp;
-
     if(!dom.prepare(_odf->file())) {
         ERROR2(ERR_NO_INITIALIZED_2,"domain",_odf->file());
         return DataDefinition();
