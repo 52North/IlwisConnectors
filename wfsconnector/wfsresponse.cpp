@@ -1,32 +1,27 @@
 #include <sstream>
 
+#include <QIODevice>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
 #include <QXmlStreamReader>
 
-#include "pugixml/pugixml.hpp"
-
 #include "kernel.h"
 #include "wfsresponse.h"
+#include "xpathparser.h"
+#include "xmlstreamparser.h"
 
 using namespace Ilwis;
 using namespace Wfs;
 
 WfsResponse::WfsResponse()
 {
-    _reader = new QXmlStreamReader();
-    QXmlStreamNamespaceDeclaration wfsNamespace("wfs", "http://www.opengis.net/wfs");
-    QXmlStreamNamespaceDeclaration owsNamespace("ows", "http://www.opengis.net/ows");
-    _reader->addExtraNamespaceDeclaration(wfsNamespace);
-    _reader->addExtraNamespaceDeclaration(owsNamespace);
-
     _networkManager = new QNetworkAccessManager(this);
 }
 
 WfsResponse::~WfsResponse()
 {
-    //delete _reader; creates segmentation faults
+    _iodevice->deleteLater();
     _networkManager->deleteLater();
 }
 
@@ -38,46 +33,76 @@ bool WfsResponse::hasFinished() const
 bool WfsResponse::isException() const
 {
     if (!hasFinished()) {
-        kernel()->issues()->log(TR("Request has not finished yet!"));
-        return false;
-    }
-    if (_content.isEmpty()) {
-        kernel()->issues()->log(TR("No content after request has finished!"));
-        return false;
-    }
-    pugi::xml_document doc;
-    std::istringstream cs(_content.toStdString());
-    doc.load(cs);
-
-    pugi::xpath_node report = doc.select_single_node("/*[local-name()='ExceptionReport']");
-    if (!report) {
         return false;
     }
 
+
+    XmlStreamParser parser(device());
+    parser.addNamespaceMapping("ows", "http://www.opengis.net/ows");
+
+    return parser.startParsing("ows:ExceptionReport");
+
+}
+
+QString WfsResponse::parseException() const
+{
     QString exceptionLog;
-    pugi::xpath_node_set exceptions = doc.select_nodes("/*/*[local-name()='Exception']");
-    std::for_each(exceptions.begin(), exceptions.end(), [&](pugi::xpath_node exception) {
-        QString exceptionCode = exception.node().attribute("exceptionCode").as_string();
-        QString locator = exception.node().attribute("locator").as_string();
+    if (!isException()) {
+        return exceptionLog;
+    }
 
-        QString serverMsg;
-        serverMsg.append(exceptionCode).append(": ");
-        serverMsg.append("'").append(locator).append("' ");
+    XmlStreamParser parser(device());
+    parser.addNamespaceMapping("ows", "http://www.opengis.net/ows");
 
-        QString details("(");
-        pugi::xpath_node_set exceptions = exception.node().select_nodes("*[local-name()='ExceptionText']");
-        std::for_each(exceptions.begin(), exceptions.end(), [&](pugi::xpath_node exception) {
-            details.append(exception.node().text().as_string());
-            details.append(", ");
-        });
+    QXmlStreamReader *reader = parser.reader();
+    if (parser.startParsing("ows:ExceptionReport")) {
+        QString current = reader->name().toString();
+        if (parser.moveTo("ows:Exception"), false) {
+            QXmlStreamAttributes attributes = parser.attributes();
 
-        details.append(").");
-        serverMsg.append(details);
-        exceptionLog.append(serverMsg).append("\n");
-    });
+        }
+    }
 
-    ERROR1(TR("Server responded with an exception: ").append("%1"), exceptionLog);
-    return true;
+    if (reader->hasError()) {
+        QString error(reader->error());
+        QString message(reader->errorString());
+        ERROR2(TR(QString("Unable to parse exception.")).append(" (%1): %2"), error, message);
+    }
+
+
+
+//    pugi::xml_document doc;
+//    std::istringstream cs(_content.toStdString());
+//    doc.load(cs);
+
+//    pugi::xpath_node report = doc.select_single_node("/*[local-name()='ExceptionReport']");
+//    if (!report) {
+//        return false;
+//    }
+
+//    pugi::xpath_node_set exceptions = doc.select_nodes("/*/*[local-name()='Exception']");
+//    std::for_each(exceptions.begin(), exceptions.end(), [&](pugi::xpath_node exception) {
+//        QString exceptionCode = exception.node().attribute("exceptionCode").as_string();
+//        QString locator = exception.node().attribute("locator").as_string();
+
+//        QString serverMsg;
+//        serverMsg.append(exceptionCode).append(": ");
+//        serverMsg.append("'").append(locator).append("' ");
+
+//        QString details("(");
+//        pugi::xpath_node_set exceptions = exception.node().select_nodes("*[local-name()='ExceptionText']");
+//        std::for_each(exceptions.begin(), exceptions.end(), [&](pugi::xpath_node exception) {
+//            details.append(exception.node().text().as_string());
+//            details.append(", ");
+//        });
+
+//        details.append(").");
+//        serverMsg.append(details);
+//        exceptionLog.append(serverMsg).append("\n");
+//    });
+
+
+    return exceptionLog;
 }
 
 
@@ -90,30 +115,30 @@ QNetworkReply *WfsResponse::performRequest(QNetworkRequest &request, bool async)
     return _networkManager->get(request);
 }
 
-QString WfsResponse::getContent() const
+//QString WfsResponse::getContent() const
+//{
+//    QString empty;
+//    return _content.isNull() ? empty : _content;
+//}
+
+//void WfsResponse::setContent(QString content)
+//{
+//    if (content.isNull()) {
+//        content = "";
+//    }
+//    _finished = true;
+//    _content = content;
+//}
+
+QIODevice *WfsResponse::device() const
 {
-    QString empty;
-    return _content.isNull() ? empty : _content;
+    return _iodevice;
 }
 
-void WfsResponse::setContent(QString content)
-{
-    if (content.isNull()) {
-        content = "";
-    }
-    _finished = true;
-    _content = content;
-}
 
-QXmlStreamReader *WfsResponse::xmlReader() const
+void WfsResponse::setDevice(QIODevice *device)
 {
-    return _reader;
-}
-
-
-void WfsResponse::setXmlReader(QXmlStreamReader *reader)
-{
-    _reader = reader;
+    _iodevice = device;
 }
 
 void WfsResponse::readResponse(QNetworkReply *reply)
@@ -121,13 +146,14 @@ void WfsResponse::readResponse(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::NoError)
     {
         //setContent(reply->readAll());
-        _reader->addData(reply->readAll());
+        //_reader->addData(reply->readAll());
+        _iodevice = reply;
     } else {
         QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
         QVariant reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute);
         kernel()->issues()->log(TR("Error: %1)").arg(statusCode.toString()));
         kernel()->issues()->log(TR("Reason: %1)").arg(reason.toString()));
     }
-    // cleanup network resources
-    reply->deleteLater();
+
+
 }

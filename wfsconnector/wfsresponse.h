@@ -6,6 +6,7 @@
 #include "wfsConnector_global.h"
 
 class QVariant;
+class QIODevice;
 class QNetworkReply;
 class QNetworkRequest;
 class QXmlStreamReader;
@@ -39,6 +40,13 @@ public:
     bool isException() const;
 
     /**
+     * Parses an exception message from the exception details.
+     *
+     * @return an exception message.
+     */
+    QString parseException() const;
+
+    /**
      * Starts performing request by means of the underlying network manager. The request
      * can be triggered synchronously or asynchronously. After the response is finished
      * and has been read it is being deleted.
@@ -50,21 +58,9 @@ public:
      */
     QNetworkReply *performRequest(QNetworkRequest &request, bool async=true);
 
-    /**
-     * @brief getContent reads the response content.
-     * @return the response as string (never null).
-     */
-    QString getContent() const;
+    QIODevice *device() const;
 
-    /**
-     * @brief setContent sets the responds content explicitly (useful for tests).
-     * @param content the content to set (if null, an empty string is set).
-     */
-    void setContent(QString content);
-
-    QXmlStreamReader *xmlReader() const;
-
-    void setXmlReader(QXmlStreamReader *reader);
+    void setDevice(QIODevice *device);
 
 public slots:
     /**
@@ -78,8 +74,7 @@ public slots:
 
 private:
     QNetworkAccessManager* _networkManager;
-    QXmlStreamReader* _reader;
-    QString _content = "";
+    QIODevice* _iodevice;
     bool _finished = false;
 };
 }

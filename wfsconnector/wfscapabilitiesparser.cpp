@@ -2,17 +2,17 @@
 
 #include <QUrl>
 #include <QString>
+#include <QXmlQuery>
 #include <QXmlStreamReader>
-
-#include "pugixml/pugixml_global.h"
-#include "pugixml/pugixml.hpp"
+#include <QXmlResultItems>
 
 #include "kernel.h"
 #include "geometries.h"
 #include "wfsresponse.h"
 #include "wfsfeature.h"
 #include "wfscapabilitiesparser.h"
-#include "xmlparser.h"
+#include "xmlstreamparser.h"
+#include "xpathparser.h"
 
 
 using namespace Ilwis;
@@ -20,92 +20,145 @@ using namespace Wfs;
 
 WfsCapabilitiesParser::WfsCapabilitiesParser(WfsResponse *response, QUrl wfsUrl): _url(wfsUrl)
 {
-//    std::istringstream cs(response->getContent().toStdString());
-//    _doc.load(cs);
-    _reader = response->xmlReader();
-    _xmlParser = new XmlParser(_reader);
-    _xmlParser->addNamespaceMapping("wfs", "http://www.opengis.net/wfs");
-    _xmlParser->addNamespaceMapping("ows", "http://www.opengis.net/ows");
-
+    _parser = new XPathParser(response->device());
+    _parser->addNamespaceMapping("wfs", "http://www.opengis.net/wfs");
+    _parser->addNamespaceMapping("ows", "http://www.opengis.net/ows");
 }
 
 WfsCapabilitiesParser::~WfsCapabilitiesParser()
 {
-
+    delete _parser;
 }
 
 void WfsCapabilitiesParser::parseFeatures(QList<WfsFeature> &wfsFeatures)
 {
-    if (_xmlParser->startParsing("wfs:WFS_Capabilities")) {
-        QString current = _reader->name().toString();
-        if (_xmlParser->moveTo("wfs:FeatureTypeList")) {
-            current = _reader->name().toString();
-            if (_xmlParser->moveTo("wfs:FeatureType", false)) {
-                current = _reader->name().toString();
-                do {
-                    WfsFeature feature;
-                    parseFeature( &feature);
-                    wfsFeatures.push_back(feature);
-                    _reader->readNextStartElement();
-                    current = _reader->name().toString();
-                } while (_xmlParser->isAtBeginningOf("wfs:FeatureType"));
-            }
+    QXmlResultItems results;
+    QXmlQuery *query = _parser->parseAbsolute("//wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType");
+
+    if (query->isValid()) {
+        query->evaluateTo( &results);
+        QXmlItem item(results.next());
+        while (!item.isNull()) {
+            WfsFeature feature;
+
+            QString name;
+            _parser->parseRelativeFrom(item, "./wfs:Name/string()");
+            query->evaluateTo( &name);
+            feature.setName(name);
+
+
+            QString title;
+            _parser->parseRelativeFrom(item, "./wfs:Title/string()");
+            query->evaluateTo( &title);
+            feature.setTitle(title);
+
+
+            QString abstract;
+            _parser->parseRelativeFrom(item, "./wfs:Abstract/string()");
+            query->evaluateTo( &abstract);
+            feature.setTitle(abstract);
+
+
+            QString srs;
+            _parser->parseRelativeFrom(item, "./wfs:DefaultSRS/string()");
+            query->evaluateTo( &srs);
+            feature.setTitle(srs);
+
+
+            QString llText;
+            _parser->parseRelativeFrom(item, "./ows:WGS84BoundingBox/ows:LowerCorner/string()");
+            query->evaluateTo( &llText);
+
+            QString urText;
+            _parser->parseRelativeFrom(item, "./ows:WGS84BoundingBox/ows:UpperCorner/string()");
+            query->evaluateTo( &urText);
+
+            QString ll = createCoordinateFromWgs84LatLon(llText);
+            QString ur = createCoordinateFromWgs84LatLon(urText);
+            Envelope envelope(ll, ur);
+            feature->setBBox(envelope);
+
+            wfsFeatures.push_back(feature);
+            item = results.next();
+        }
+        if (results.hasError()) {
+            ERROR0(TR(QString("XPath evaluation failed.")));
         }
     }
 
-    if (_reader->hasError()) {
-        QString error(_reader->error());
-        QString message(_reader->errorString());
-        ERROR2(TR(QString("Unable to parse features from capabilities")).append(" (%1): %2"), error, message);
-    }
+
+
+//    QXmlStreamReader *reader = _parser->reader();
+//    if (_parser->startParsing("wfs:WFS_Capabilities")) {
+//        QString current = reader->name().toString();
+//        if (_parser->moveTo("wfs:FeatureTypeList")) {
+//            current = reader->name().toString();
+//            if (_parser->moveTo("wfs:FeatureType", false)) {
+//                current = reader->name().toString();
+//                do {
+//                    WfsFeature feature;
+//                    parseFeature( &feature, reader);
+//                    wfsFeatures.push_back(feature);
+//                    reader->readNextStartElement();
+//                    current = reader->name().toString();
+//                } while (_parser->isAtBeginningOf("wfs:FeatureType"));
+//            }
+//        }
+//    }
+
+//    if (reader->hasError()) {
+//        QString error(reader->error());
+//        QString message(reader->errorString());
+//        ERROR2(TR(QString("Unable to parse features from capabilities")).append(" (%1): %2"), error, message);
+//    }
 }
 
-void WfsCapabilitiesParser::parseFeature(WfsFeature *feature) const
-{
-    while (!_xmlParser->isAtEndOf("wfs:FeatureType")) {
+//void WfsCapabilitiesParser::parseFeature(WfsFeature *feature, QXmlStreamReader *reader) const
+//{
+//    while (!_parser->isAtEndOf("wfs:FeatureType")) {
 
-        _reader->readNext();
-        if (_reader->isStartElement()) {
-            if (_reader->name() == "Keywords") {
-                _reader->skipCurrentElement();
-                continue;
-            }
-            if (_reader->name() == "Name") {
-                QString name = _reader->readElementText();
-                feature->setUrl(createGetFeatureUrl(name));
-                continue;
-            }
-            if (_reader->name() == "Title") {
-                feature->setTitle(_reader->readElementText());
-                continue;
-            }
-            if (_reader->name() == "Abstract") {
-                feature->setAbstract(_reader->readElementText());
-                continue;
-            }
-            if (_reader->name() == "DefaultSRS") {
-                QString srs = _reader->readElementText();
-                feature->setCode(normalizeEpsgCode(srs));
-                continue;
-            }
-            if (_reader->qualifiedName() == "ows:WGS84BoundingBox") {
+//        reader->readNext();
+//        if (reader->isStartElement()) {
+//            if (reader->name() == "Keywords") {
+//                reader->skipCurrentElement();
+//                continue;
+//            }
+//            if (reader->name() == "Name") {
+//                QString name = reader->readElementText();
+//                feature->setUrl(createGetFeatureUrl(name));
+//                continue;
+//            }
+//            if (reader->name() == "Title") {
+//                feature->setTitle(reader->readElementText());
+//                continue;
+//            }
+//            if (reader->name() == "Abstract") {
+//                feature->setAbstract(reader->readElementText());
+//                continue;
+//            }
+//            if (reader->name() == "DefaultSRS") {
+//                QString srs = reader->readElementText();
+//                feature->setCode(normalizeEpsgCode(srs));
+//                continue;
+//            }
+//            if (reader->qualifiedName() == "ows:WGS84BoundingBox") {
 
-                Coordinate ll, ur;
-                _reader->readNextStartElement();
-                if (_reader->name() == "LowerCorner") {
-                    ll = createCoordinateFromWgs84LatLon(_reader->readElementText());
-                }
-                _reader->readNextStartElement();
-                if (_reader->name() == "UpperCorner") {
-                    ur = createCoordinateFromWgs84LatLon(_reader->readElementText());
-                }
-                Envelope envelope(ll, ur);
-                feature->setBBox(envelope);
-                continue;
-            }
-        }
-    }
-}
+//                Coordinate ll, ur;
+//                reader->readNextStartElement();
+//                if (reader->name() == "LowerCorner") {
+//                    ll = createCoordinateFromWgs84LatLon(reader->readElementText());
+//                }
+//                reader->readNextStartElement();
+//                if (reader->name() == "UpperCorner") {
+//                    ur = createCoordinateFromWgs84LatLon(reader->readElementText());
+//                }
+//                Envelope envelope(ll, ur);
+//                feature->setBBox(envelope);
+//                continue;
+//            }
+//        }
+//    }
+//}
 
 QUrl WfsCapabilitiesParser::createGetFeatureUrl(QString featureName) const
 {

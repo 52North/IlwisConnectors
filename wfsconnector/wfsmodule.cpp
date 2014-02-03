@@ -18,7 +18,6 @@
 #include "catalog.h"
 #include "containerconnector.h"
 #include "ilwisobjectconnector.h"
-#include "geometry.h"
 #include "attributerecord.h"
 #include "feature.h"
 #include "coverage.h"

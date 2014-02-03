@@ -6,16 +6,38 @@
 class QXmlStreamReader;
 class QXmlStreamAttributes;
 
-class WFSCONNECTORSHARED_EXPORT XmlParser
+
+struct QName {
+    QName(QString qName) {
+        int splitIndex = qName.indexOf(":");
+        if (splitIndex > 0) {
+            prefix = qName.left(splitIndex);
+        }
+        name = qName.mid(splitIndex + 1);
+    }
+
+    QString prefix;
+    QString name;
+};
+
+class WFSCONNECTORSHARED_EXPORT XmlStreamParser
 {
 public:
-    XmlParser();
-    XmlParser(QXmlStreamReader *reader);
+
+    XmlStreamParser();
+    XmlStreamParser(QXmlStreamReader *reader);
+    XmlStreamParser(QIODevice *device);
 
     QXmlStreamReader *reader() const;
     void setXmlReader(QXmlStreamReader *reader);
     void addNamespaceMapping(QString prefix, QString ns);
 
+    /**
+     * Starts parsing the underlying xml by reading the next/first start element.
+     *
+     * @param qName the root element's name.
+     * @return true if element was found, false if not or the document has ended.
+     */
     bool startParsing(QString qName) const;
     bool hasError() const;
     bool atEnd() const;
@@ -35,8 +57,10 @@ public:
     bool isAtEndOf(QString qName) const;
 
 
-private:
+protected:
     QXmlStreamReader *_reader;
+
+private:
     QMap<QString,QString> _namespaces;
 
     bool isAtElement(QString qName) const;

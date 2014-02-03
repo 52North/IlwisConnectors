@@ -3,70 +3,90 @@
 #include <QString>
 #include <QXmlStreamReader>
 
-#include "xmlparser.h"
+#include "xmlstreamparser.h"
 
-XmlParser::XmlParser()
+XmlStreamParser::XmlStreamParser()
 {
 }
 
-XmlParser::XmlParser(QXmlStreamReader *reader): _reader(reader)
+XmlStreamParser::XmlStreamParser(QXmlStreamReader *reader): _reader(reader)
 {
 }
 
-QXmlStreamReader *XmlParser::reader() const
+XmlStreamParser::XmlStreamParser(QIODevice *device)
 {
-    return _reader;
+    _reader = new QXmlStreamReader(device);
 }
 
-void XmlParser::addNamespaceMapping(QString prefix, QString ns)
-{
-    _namespaces[prefix] = ns;
-}
-
-void XmlParser::setXmlReader(QXmlStreamReader *reader)
+void XmlStreamParser::setXmlReader(QXmlStreamReader *reader)
 {
     _reader = reader;
 }
 
-bool XmlParser::startParsing(QString qName) const
+QXmlStreamReader *XmlStreamParser::reader() const
+{
+    return _reader;
+}
+
+void XmlStreamParser::addNamespaceMapping(QString prefix, QString ns)
+{
+    _namespaces[prefix] = ns;
+}
+
+bool XmlStreamParser::startParsing(QString qName) const
 {
     return !atEnd() && _reader->readNextStartElement() && isAtBeginningOf(qName);
 }
 
-bool XmlParser::hasError() const
+bool XmlStreamParser::hasError() const
 {
     return _reader->hasError();
 }
 
-QXmlStreamAttributes XmlParser::attributes() const
+QXmlStreamAttributes XmlStreamParser::attributes() const
 {
     return _reader->attributes();
 }
 
-bool XmlParser::atEnd() const
+//QString XmlStreamParser::attribue(QString qName) const
+//{
+//    if (hasAttribute(qName)) {
+
+//    } else {
+//        return "";
+//    }
+//}
+
+//bool XmlStreamParser::hasAttribute(QString qName) const
+//{
+//    foreach (QXmlStreamAttribute attribute, attributes()) {
+
+//    }
+//}
+
+bool XmlStreamParser::atEnd() const
 {
     return _reader->atEnd();
 }
 
-QString XmlParser::readElementText() const
+QString XmlStreamParser::readElementText() const
 {
     return _reader->readElementText();
 }
 
 
-bool XmlParser::moveTo(QString qName, bool stepIn) const
+bool XmlStreamParser::moveTo(QString qName, bool stepIn) const
 {
     bool found = false;
     while ( !(_reader->atEnd() || isAtBeginningOf(qName, stepIn))) {
         _reader->skipCurrentElement();
         found  = _reader->readNextStartElement();
     }
-
     return found;
 }
 
 
-bool XmlParser::isAtBeginningOf(QString qName, bool stepIn) const
+bool XmlStreamParser::isAtBeginningOf(QString qName, bool stepIn) const
 {
 
     if (_reader->atEnd() || !_reader->isStartElement()) {
@@ -85,7 +105,7 @@ bool XmlParser::isAtBeginningOf(QString qName, bool stepIn) const
     }
 }
 
-bool XmlParser::isAtEndOf(QString qName) const
+bool XmlStreamParser::isAtEndOf(QString qName) const
 {
     if (_reader->atEnd() || !_reader->isEndElement()) {
         return false;
@@ -94,7 +114,7 @@ bool XmlParser::isAtEndOf(QString qName) const
 }
 
 
-bool XmlParser::isAtElement(QString qName) const
+bool XmlStreamParser::isAtElement(QString qName) const
 {
     QString prefix;
     int splitIndex = qName.indexOf(":");
@@ -102,6 +122,7 @@ bool XmlParser::isAtElement(QString qName) const
         prefix = qName.left(splitIndex);
     }
     QString name = qName.mid(splitIndex + 1);
+
     if (_reader->namespaceProcessing()) {
         QString currentNamespace = _reader->namespaceUri().toString();
         QString declaredNamespace = _namespaces[prefix];

@@ -13,7 +13,6 @@
 #include "numericrange.h"
 #include "columndefinition.h"
 #include "table.h"
-#include "geometry.h"
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "textdomain.h"

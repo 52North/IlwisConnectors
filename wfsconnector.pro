@@ -17,6 +17,7 @@ DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 TEMPLATE = lib
 
 DEFINES += WFSCONNECTOR_LIBRARY
+DEFINES +=TEST_WFS
 
 SOURCES += \
     wfsconnector/wfsobjectfactory.cpp \
@@ -29,7 +30,8 @@ SOURCES += \
     wfsconnector/wfsfeature.cpp \
     wfsconnector/wfscontainerconnector.cpp \
     wfsconnector/wfscapabilitiesparser.cpp \
-    wfsconnector/xmlparser.cpp
+    wfsconnector/xmlstreamparser.cpp \
+    wfsconnector/xpathparser.cpp
 
 HEADERS += \
     wfsconnector/wfsobjectfactory.h \
@@ -43,14 +45,13 @@ HEADERS += \
     wfsconnector/wfsfeature.h \
     wfsconnector/wfscontainerconnector.h \
     wfsconnector/wfscapabilitiesparser.h \
-    wfsconnector/xmlparser.h
+    wfsconnector/xmlstreamparser.h \
+    wfsconnector/xpathparser.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-                                              -L$$PWD/../libraries/$$PLATFORM$$CONF/pugixml/ -lpugixml \
                                               -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-                                              -L$$PWD/../libraries/$$PLATFORM$$CONF/pugixml/ -lpugixml \
                                               -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
 INCLUDEPATH += $$PWD/core \
