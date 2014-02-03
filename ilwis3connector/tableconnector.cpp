@@ -252,9 +252,9 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         if ( def.name() == FEATUREIDCOLUMN)
             continue;
         IDomain dmColumn = def.datadef().domain();
-        bool isSystem = true;
-        QString domName = getDomainName(dmColumn, isSystem);
-        if ( !isSystem) {
+        bool isOldSystem = true;
+        QString domName = getDomainName(dmColumn, isOldSystem);
+        if ( !isOldSystem) {
             DomainConnector conn(dmColumn->source(), itDOMAIN);
             conn.storeMetaData(dmColumn.ptr());
         }
@@ -280,6 +280,12 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
             SPNumericRange numrange = def.datadef().range().dynamicCast<NumericRange>();
             RawConverter conv(numrange->min(), numrange->max(), numrange->resolution());
             double resolution = numrange->resolution();
+            if ( domName == sUNDEF) {
+                domName = "value.dom";
+                if ( numdmrange->min() >= 0 && numdmrange->max() <=255 && resolution == 1)
+                    domName = "image.dom";
+            }
+            _odf->setKeyValue(colName, "Domain", domName.indexOf(".dom") != -1 ? domName : domName + ".dom");
             QString range;
             if ( resolution != 1)
                 range = QString("%1:%2:%3:offset=%4").arg(numrange->min()).arg(numrange->max()).arg(resolution).arg(conv.offset());
@@ -294,11 +300,11 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
                 storeType = "Int"  ;
             else if ( conv.storeType() & itUINT8 )
                  storeType = "Byte"  ;
-            QString attrdomname = dmColumn->name();
-            int index = attrdomname.indexOf(".dom");
-            if ( index == -1)
-                attrdomname += ".dom";
-            domainInfo = QString("%1;%2;value;0;%3;%4;0.1;offset=%5").arg(attrdomname).
+//            QString attrdomname = dmColumn->name();
+//            int index = attrdomname.indexOf(".dom");
+//            if ( index == -1)
+//                attrdomname += ".dom";
+            domainInfo = QString("%1;%2;value;0;%3;%4;0.1;offset=%5").arg(domName).
                     arg(storeType).
                     arg(numdmrange->min()).
                     arg(numdmrange->max()).

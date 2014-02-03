@@ -68,6 +68,12 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject* data)
             return ERROR2(ERR_NO_INITIALIZED_2, TR("envelop"), csy->name());
         }
         csy->envelope(box);
+    } else {
+        QString type = _odf->value("CoordSystem", "Type");
+        if ( type == "LatLon") {
+            Envelope box(Coordinate(-180,-90), Coordinate(180,90));
+            csy->envelope(box);
+        }
     }
 
     if ( type() == itCONVENTIONALCOORDSYSTEM ) {

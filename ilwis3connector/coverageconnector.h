@@ -23,8 +23,13 @@ protected:
 
     RawConverter _converter;
     DataDefinition determineDataDefintion() const;
+protected:
+    QString _domainName;
+    QString _domainInfo;
+    QString _csyName;
 private:
     ITable prepareAttributeTable(const QString &file, const QString& basemaptype) const;
+
 };
 }
 }

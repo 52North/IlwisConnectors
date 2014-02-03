@@ -444,11 +444,15 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
                 const geos::geom::Geometry *polygons = geom.get();
                 if ( geostype == geos::geom::GEOS_POLYGON ){
                     const geos::geom::Polygon *polygon = dynamic_cast<const geos::geom::Polygon*>(polygons);
+                    if ( !polygon)
+                        return ERROR2(ERR_NO_INITIALIZED_2, "polygon", fcov->name());
                     writePolygon(polygon,output_file,raw);
                 } else {
                     int n = polygons->getNumGeometries();
                     for(int i = 0; i < n ; ++i){
                         const geos::geom::Polygon* polygon = dynamic_cast<const geos::geom::Polygon*>(polygons->getGeometryN(i));
+                        if ( !polygon)
+                            return ERROR2(ERR_NO_INITIALIZED_2, "polygon", fcov->name());
                         writePolygon(polygon,output_file,raw);
                     }
                 }
@@ -510,12 +514,70 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
                 const geos::geom::Geometry *lines = geom.get();
                 if ( geostype == geos::geom::GEOS_LINESTRING ){
                     const geos::geom::LineString *line = dynamic_cast<const geos::geom::LineString*>(lines);
+                    if ( !line)
+                        return ERROR2(ERR_NO_INITIALIZED_2, "lines", fcov->name());
                     writeLine(line,output_file,raw);
                 } else {
                     int n = lines->getNumGeometries();
                     for(int i = 0; i < n ; ++i){
                         const geos::geom::LineString* line = dynamic_cast<const geos::geom::LineString*>(lines->getGeometryN(i));
+                        if ( !line)
+                            return ERROR2(ERR_NO_INITIALIZED_2, "lines", fcov->name());
                         writeLine(line,output_file,raw);
+                    }
+                }
+                ++raw;
+            }
+        }
+
+    });
+
+    output_file.close();
+
+    return true;
+}
+
+void FeatureConnector::writePoint(const geos::geom::Point* point,std::ofstream& output_file,long raw ) {
+    writeCoord(output_file, *(point->getCoordinate()));
+    output_file.write((char *)&raw, 4);
+}
+
+bool FeatureConnector::storeBinaryDataPoints(FeatureCoverage *fcov, const QString& baseName) {
+    std::ofstream output_file;
+    QFileInfo inf(baseName);
+    QString dir = context()->workingCatalog()->location().toLocalFile();
+    QString filename = dir + "/" + inf.baseName() + ".pt#";
+    output_file.open(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
+    if ( !output_file.is_open())
+        return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
+    char header[128];
+    memset(header, 0, 128);
+    output_file.write(header,128);
+
+    IFeatureCoverage cov;
+    cov.set(fcov);
+    FeatureIterator iter(cov);
+    double raw = 1;
+
+    for_each(iter, iter.end(), [&](UPFeatureI& feature){
+        const UPGeometry& geom = feature->geometry();
+        for(int i=0; i < feature->trackSize(); ++i) {
+            geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
+            if ( geostype == geos::geom::GEOS_MULTIPOINT ||geostype == geos::geom::GEOS_POINT) {
+
+                const geos::geom::Geometry *points = geom.get();
+                if ( geostype == geos::geom::GEOS_POINT ){
+                    const geos::geom::Point *point = dynamic_cast<const geos::geom::Point*>(points);
+                    if ( !point)
+                        return ERROR2(ERR_NO_INITIALIZED_2, "points", fcov->name());
+                    writePoint(point,output_file, raw);
+                } else {
+                    int n = points->getNumGeometries();
+                    for(int i = 0; i < n ; ++i){
+                        const geos::geom::Point* point = dynamic_cast<const geos::geom::Point*>(points->getGeometryN(i));
+                        if ( !point)
+                            return ERROR2(ERR_NO_INITIALIZED_2, "points", fcov->name());
+                        writePoint(point,output_file, raw);
                     }
                 }
                 ++raw;
@@ -535,13 +597,14 @@ bool FeatureConnector::storeBinaryData(FeatureCoverage *fcov, IlwisTypes type) {
     if (!CoverageConnector::storeBinaryData(fcov, type)) // attribute tables
         return false;
     QString baseName = Ilwis3Connector::outputNameFor(fcov);
-    bool ok = false;
+    bool ok = true;
     if ( hasType(type, itPOLYGON)) {
-        ok = storeBinaryDataPolygon(fcov, baseName);
+        ok &= storeBinaryDataPolygon(fcov, baseName);
     } else if ( hasType(type, itLINE)) {
-        ok = storeBinaryDataLine(fcov, baseName);
+        ok &= storeBinaryDataLine(fcov, baseName);
+    } else if ( hasType(type, itPOINT)){
+        ok &= storeBinaryDataPoints(fcov, baseName);
     }
-    //TODO add storeBinarDataPoint(fcov, baseName);
     return ok;
 }
 
@@ -619,7 +682,36 @@ bool FeatureConnector::storeMetaLine(FeatureCoverage *fcov, const QString& filep
     storeColumn("Col:MaxCoords","eth.csy","eth.csy;Coord;coord;0;;", "Coord");
     storeColumn("Col:Coords","CoordBuf.dom","CoordBuf.dom;?;coordbuf;0;;", "CoordBuf");
     storeColumn("Col:Deleted","bool.dom","bool.dom;Byte;bool;0;;", "Long");
-    storeColumn("Col:SegmentValue",dataFile + ".mps",dataFile + ".mps;Long;UniqueID;0;;", "Long");
+    storeColumn("Col:SegmentValue",_domainName,_domainInfo, "Long");
+
+    return true;
+}
+
+bool FeatureConnector::storeMetaPoint(FeatureCoverage *fcov, const QString& filepath){
+    QString dataFile = QFileInfo(filepath).fileName();
+
+    _odf->setKeyValue("BaseMap","Type","PointMap");
+    _odf->setKeyValue("PointMap","Type","PointMapStore");
+    _odf->setKeyValue("PointMapStore","Format",QString::number(2));
+    _odf->setKeyValue("Ilwis","Class","ILWIS::Point Map");
+
+    int noOfPoints = fcov->featureCount(itPOINT);
+    _odf->setKeyValue("PointMap", "Points", QString::number(noOfPoints));
+
+    _odf->setKeyValue("Table", "Domain", "None.dom");
+    _odf->setKeyValue("Table", "DomainInfo", "None.dom;Byte;none;0;;");
+    _odf->setKeyValue("Table", "Columns", QString::number(2));
+    _odf->setKeyValue("Table", "Records", QString::number(noOfPoints));
+    _odf->setKeyValue("Table", "Type", "TableStore");
+
+    _odf->setKeyValue("TableStore", "Data", dataFile + ".pt#");
+    _odf->setKeyValue("TableStore", "UseAs", "No");
+    _odf->setKeyValue("TableStore", "Type", "TableBinary");
+    _odf->setKeyValue("TableStore", "Col0", "Coordinate");
+    _odf->setKeyValue("TableStore", "Col1", "Name");
+
+    storeColumn("Col:Coordinate",_csyName,_csyName + ";Coord;coord;0;;","Coord");
+    storeColumn("Col:Name",_domainName,_domainInfo, "Long");
 
     return true;
 }
@@ -686,12 +778,16 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     }
 
     QString ext = "mpa";
-    if ( fcov->featureTypes() & itPOLYGON){
+    if ( hasType(fcov->featureTypes(), itPOLYGON)){
         ok = storeMetaPolygon(fcov, dataFile);
     }
-    if ( fcov->featureTypes() & itLINE){
+    if ( hasType(fcov->featureTypes(), itLINE)){
         ok = storeMetaLine(fcov, dataFile);
         ext = "mps";
+    }
+    if ( hasType(fcov->featureTypes(), itPOINT)){
+        ok = storeMetaPoint(fcov, dataFile);
+        ext = "mpp";
     }
 
     _odf->store(ext, containerConnector());

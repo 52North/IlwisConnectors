@@ -95,10 +95,10 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
     } else {
         attTable = extTable;
     }
-    if ( attTable->columnIndex(FEATUREIDCOLUMN) == iUNDEF) { // external tables might already have these
+    if ( attTable->columnIndex(COVERAGEKEYCOLUMN) == iUNDEF) { // external tables might already have these
         DataDefinition def = determineDataDefintion();
         attTable->addColumn(ColumnDefinition(COVERAGEKEYCOLUMN,def, attTable->columnCount()));
-        attTable->addColumn(FEATUREIDCOLUMN,covdom);
+        //attTable->addColumn(FEATUREIDCOLUMN,covdom);
     }
 
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
@@ -133,7 +133,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
             return false;
         }
     }
-    coverage->setCoordinateSystem(csy);
+    coverage->coordinateSystem(csy);
 
 
     QString attfile = _odf->value("BaseMap", "AttributeTable");
@@ -179,14 +179,14 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
     if (!csy.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
 
-    QString localName = Resource::toLocalFile(csy->source().url(),true);
-    if ( localName == sUNDEF) {
-        localName = CoordinateSystemConnector::createCsyFromCode(csy->code());
+    _csyName = Resource::toLocalFile(csy->source().url(),true);
+    if ( _csyName == sUNDEF) {
+        _csyName = CoordinateSystemConnector::createCsyFromCode(csy->code());
     }
-    if ( localName == sUNDEF) {
+    if ( _csyName == sUNDEF) {
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
     }
-    _odf->setKeyValue("BaseMap","CoordSystem", localName);
+    _odf->setKeyValue("BaseMap","CoordSystem", _csyName);
     Envelope bounds = coverage->envelope();
     if(!bounds.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Bounds", coverage->name());
@@ -204,17 +204,20 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
         quint16 digits = coverage->statistics().significantDigits();
         qint32 delta = coverage->statistics()[NumericStatistics::pDELTA];
+        _domainName = "value.dom";
         if ( delta >= 0 && delta < 256 && digits == 0){
             if ( delta >= 0 && delta < 256 && digits == 0){
                 if ( dom->code() == "boolean"){
-                    QString domInfo = QString("bool.dom;Byte;bool;0;;");
-                    _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
+                    _domainName = "bool";
+                    _domainInfo = QString("bool.dom;Byte;bool;0;;");
+                    _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
                     _odf->setKeyValue("BaseMap","Range","0:1:offset=-1");
                     _odf->setKeyValue("BaseMap","Domain","bool.dom");
                 }
                 else{
-                    QString domInfo = QString("Image.dom;Byte;image;0;;");
-                    _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
+                    _domainName = "image.dom";
+                    _domainInfo = QString("Image.dom;Byte;image;0;;");
+                    _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
                     _odf->setKeyValue("BaseMap","Range","0:255:offset=0");
                     _odf->setKeyValue("BaseMap","MinMax","0:255");
                     _odf->setKeyValue("BaseMap","Domain","Image.dom");
@@ -225,43 +228,45 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             const NumericStatistics& stats = coverage->statistics();
             int digits = stats.significantDigits();
             RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - digits));
-            QString rangeString = QString("%1:%2:%3:offset=%4").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]).arg(conv.scale()).arg(conv.offset());
-            _odf->setKeyValue("BaseMap","Range",rangeString);
+            _domainInfo = QString("%1:%2:%3:offset=%4").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]).arg(conv.scale()).arg(conv.offset());
+            _odf->setKeyValue("BaseMap","Range",_domainInfo);
             _odf->setKeyValue("BaseMap","Domain","value.dom");
 
             _odf->setKeyValue("BaseMap","MinMax",QString("%1:%2").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]));
-            QString domInfo = QString("value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0");
-            _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
+            QString _domainInfo = QString("value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0");
+            _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
         //QString source = Resource::toLocalFile(dom->source().url(), true);
         if ( dom->valueType() == itTHEMATICITEM && coverage->ilwisType() == itRASTER) {
-            QString domName =  Resource::toLocalFile(dom->source().url(), true);
+            _domainName =  Resource::toLocalFile(dom->source().url(), true);
             IThematicDomain themdom = dom.get<ThematicDomain>();
             if ( themdom.isValid()) {
-                QString domInfo = QString("%1;Byte;class;%2;;").arg(domName).arg(themdom->count());
-                _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
-                _odf->setKeyValue("BaseMap","Domain",domName);
+                _domainInfo = QString("%1;Byte;class;%2;;").arg(_domainName).arg(themdom->count());
+                _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
+                _odf->setKeyValue("BaseMap","Domain",_domainName);
             }
         } else if(dom->valueType() == itINDEXEDITEM) {
-            QString domName = QFileInfo(QUrl(_odf->file()).toLocalFile()).fileName();
-            QString domInfo = QString("%1;Long;UniqueID;0;;").arg(domName);
-            _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
-            _odf->setKeyValue("BaseMap","Domain",domName);
+            _domainName = QFileInfo(QUrl(_odf->file()).toLocalFile()).fileName();
+            _domainInfo = QString("%1;Long;UniqueID;0;;").arg(_domainName);
+            _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
+            _odf->setKeyValue("BaseMap","Domain",_domainName);
         } else if ( dom->valueType() == itNAMEDITEM) {
             INamedIdDomain iddom = dom.get<NamedIdDomain>();
-            QString domName = Resource::toLocalFile(dom->source().url(), true);
-            if ( domName == sUNDEF)
-                domName = QFileInfo(QUrl(_odf->file()).toLocalFile()).baseName() + ".dom";
-            QString domInfo = QString("%1;Int;id;%2;;").arg(domName).arg(iddom->count());
-            _odf->setKeyValue("BaseMap","DomainInfo",domInfo);
-            _odf->setKeyValue("BaseMap","Domain",domName);
-            QUrl url = makeUrl(_odf->file(),domName);
+            _domainName = Resource::toLocalFile(dom->source().url(), true);
+            if ( _domainName == sUNDEF)
+                _domainName = QFileInfo(QUrl(_odf->file()).toLocalFile()).baseName() + ".dom";
+            _domainInfo = QString("%1;Int;id;%2;;").arg(_domainName).arg(iddom->count());
+            _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
+            _odf->setKeyValue("BaseMap","Domain",_domainName);
+            QUrl url = makeUrl(_odf->file(),_domainName);
             if(!iddom->connectTo(url,"domain","ilwis3", IlwisObject::cmOUTPUT))
                 return false;
             iddom->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
         }
     }
+    QFileInfo inf(_domainName);
+    _domainName = inf.fileName();
 
     ITable attTable = coverage->attributeTable();
     if ( attTable.isValid() && attTable->columnCount() > 1) {
