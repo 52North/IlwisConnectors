@@ -100,7 +100,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data) {
 
     gcoverage->georeference(mp->georeference());
     gcoverage->size(sz);
-    gcoverage->setCoordinateSystem(mp->coordinateSystem());
+    gcoverage->coordinateSystem(mp->coordinateSystem());
     gcoverage->envelope(mp->envelope());
     _dataType = mp->datadef().range()->determineType();
 
