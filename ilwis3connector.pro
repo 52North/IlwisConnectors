@@ -74,6 +74,17 @@ INCLUDEPATH += $$PWD/../external/geos
 DEPENDPATH += $$PWD/../external/geos
 
 OTHER_FILES += \
-    ilwis3connector/ilwis3connector.json
+    ilwis3connector/ilwis3connector.json \
+    ilwis3connector/resources/projection_allias.csv \
+    ilwis3connector/resources/ellipsoid_allias.csv \
+    ilwis3connector/resources/datum_allias.csv \
+    ilwis3connector/resources/domain_allias.csv
 
+resources.files = ilwis3connector/ilwis3connector.json \
+    ilwis3connector/resources/projection_allias.csv \
+    ilwis3connector/resources/ellipsoid_allias.csv \
+    ilwis3connector/resources/datum_allias.csv \
+    ilwis3connector/resources/domain_allias.csv
+resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
+INSTALLS += resources

@@ -71,5 +71,10 @@ DEPENDPATH += $$PWD/../external/geos
 DEPENDPATH += $$PWD/core
 
 OTHER_FILES += \
-    gdalconnector/gdalconnector.json
+    gdalconnector/gdalconnector.json \
+    gdalconnector/resources/ogr_extensions.ini
 
+resources.files = gdalconnector/resources/ogr_extensions.ini
+resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
+
+INSTALLS += resources
