@@ -41,12 +41,14 @@ private:
 
     void writeCoords(std::ofstream &output_file, const std::vector<geos::geom::Coordinate>* coords, bool singleton=false);
     bool storeMetaPolygon(FeatureCoverage *fcov, const QString &dataFile);
+    bool storeMetaLine(FeatureCoverage *fcov, const QString &dataFile);
+    bool storeMetaPoint(FeatureCoverage *fcov, const QString &filepath);
     bool storeBinaryDataPolygon(Ilwis::FeatureCoverage *fcov, const QString &baseName);
+    bool storeBinaryDataPoints(FeatureCoverage *fcov, const QString &baseName);
     bool storeBinaryDataLine(FeatureCoverage *fcov, const QString &baseName);
     bool storeMetaData(Ilwis::FeatureCoverage *fcov, IlwisTypes type);
     bool storeBinaryData(Ilwis::FeatureCoverage *fcov, IlwisTypes type);
 
-    bool storeMetaLine(FeatureCoverage *fcov, const QString &dataFile);
     void storeColumn(const QString &colName, const QString &domName, const QString &domInfo, const QString &storeType);
     QString type2Prefix(IlwisTypes tp);
 
@@ -58,6 +60,7 @@ private:
     }
     void writeLine(const geos::geom::LineString *line, std::ofstream &output_file, double raw);
     void writePolygon(const geos::geom::Polygon *polygon, std::ofstream &output_file, double raw);
+    void writePoint(const geos::geom::Point *point, std::ofstream &output_file, long raw);
 };
 }
 }
