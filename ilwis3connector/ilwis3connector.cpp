@@ -168,7 +168,7 @@ QString Ilwis3Connector::name2Code(const QString& nameIn, const QString& type) {
         return sUNDEF;
     }
     if (!db.next()) {
-        kernel()->issues()->log(TR("Couldnt find %2 %1").arg(type).arg(name));
+        kernel()->issues()->log(TR("Couldn't find %2 %1").arg(type).arg(name));
         return sUNDEF;
     }
 

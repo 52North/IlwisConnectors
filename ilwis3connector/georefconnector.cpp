@@ -190,7 +190,7 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
     QUrl path = mastercatalog()->name2url(csyName, itCOORDSYSTEM);
     ICoordinateSystem csy;
     if(!csy.prepare(path.toLocalFile())) {
-        kernel()->issues()->log(TR("Couldnt find coordinate system %1, loading unknown").arg(csyName),IssueObject::itWarning);
+        kernel()->issues()->log(TR("Couldn't find coordinate system %1, loading unknown").arg(csyName),IssueObject::itWarning);
         QString resource = QString("ilwis://file/unknown.csy");
         if(!csy.prepare(resource)) {
             kernel()->issues()->log(TR("Cound find coordinate system unknown, corrupt system file"));
