@@ -53,6 +53,10 @@ void IlwisObject::name(std::string name){
     (*this->ptr())->setName(QString::fromStdString(name));
 }
 
+bool IlwisObject::isInternal() const{
+    return (*this->ptr())->isInternalObject();
+}
+
 std::string IlwisObject::type(){
     if (this->__bool__())
         return Ilwis::IlwisObject::type2Name((*this->ptr())->ilwisType()).toStdString();

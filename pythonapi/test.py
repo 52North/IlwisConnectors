@@ -692,7 +692,7 @@ try:
 
         def test_halloWorld(self):
             world = FeatureCoverage(workingDir + worldDir + "/countries.mpa")
-            if bool(world):
+            if bool(world) and not world.isInternal():
                 population = {}
                 self.assertEqual(286, world.featureCount())
                 for country in world:
