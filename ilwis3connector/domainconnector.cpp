@@ -201,7 +201,7 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
     _odf->setKeyValue("Domain", "Type", tp == itTHEMATICITEM ? "DomainSort" : "DomainIdentifier");
     _odf->setKeyValue( tp == itTHEMATICITEM ? "DomainClass" : "DomainIdentifier", "Nr", QString::number(iddomain->count()));
 
-    QFileInfo inf(dom->name());
+    QFileInfo inf=dom->source(IlwisObject::cmOUTPUT).url().toLocalFile();
     QString dataName  = inf.baseName() + ".dm#";
     _odf->setKeyValue("TableStore", "Data", dataName);
     _odf->setKeyValue("TableStore", "Col0", "Name");
@@ -223,7 +223,7 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
 
     BinaryIlwis3Table ilw3tbl;
     std::ofstream output_file;
-    if(!ilw3tbl.openOutput(dom->name()  + ".dm#", output_file))
+    if(!ilw3tbl.openOutput(dataName, output_file))
         return false;
     ITextDomain txtdom;
     txtdom.prepare();

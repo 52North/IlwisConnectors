@@ -91,6 +91,7 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
             for(int i=0; i < extTable->columnCount(); ++i) {
                 attTable->addColumn(extTable->columndefinition(i));
             }
+            attTable->recordCount(extTable->recordCount());
         }
     } else {
         attTable = extTable;
@@ -319,7 +320,8 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
             attDom += ".dom";
     }
     if ( attTable->columnCount() > 1) { // one column means only featurid which we dont save.
-        _odf->setKeyValue("BaseMap","AttributeTable",dataFile + ".tbt");
+        QFileInfo inf(dataFile);
+        _odf->setKeyValue("BaseMap","AttributeTable",inf.baseName() + ".tbt");
         attTable->setName(dataFile);
         QString filename = dataFile + ".tbt";
         TableConnector *conn = new TableConnector(Resource(QUrl::fromLocalFile(filename), itTABLE), false);
