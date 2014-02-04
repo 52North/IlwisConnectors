@@ -42,7 +42,7 @@ bool EllipsoidConnector::loadMetaData(IlwisObject *data)
 
     QString code = name2Code(ell, "ellipsoid");
     if ( code == sUNDEF){
-        kernel()->issues()->log(TR("Couldnt find a code for ellipsoid %1").arg(ell));
+        kernel()->issues()->log(TR("Couldn't find a code for ellipsoid %1").arg(ell));
         return false;
     }
     return createEllipsoidFromCode(code, data);

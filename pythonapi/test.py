@@ -255,11 +255,17 @@ try:
         def tearDown(self):
             del self.cs
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_Operations(self):
             e = Engine()
             ops = e.operations()
-            self.assertTupleEqual((), ops)
+            oper = ('acos', 'asin', 'atan', 'assignment', 'binarylogicalraster', 'binarymathraster',
+                    'binarymathfeatures', 'binarymathtable', 'ceil', 'coord2pixel', 'cos', 'cosh', 'floor',
+                    'coordinate', 'pixel', 'rastersize', 'iff', 'log10', 'mastergeoreference', 'ln', 'pixel2coord',
+                    'rastervalue', 'resample', 'selection', 'selection', 'selection', 'setvaluerange', 'sgn', 'sin',
+                    'sinh', 'sqrt', 'stringfind', 'stringsub', 'stringreplace', 'tan', 'text2output', 'gridding',
+                    'script', 'aggregateraster', 'areanumbering', 'cross', 'linearstretch', 'linearrasterfilter')
+            self.assertTupleEqual(oper, ops)
 
         def test_Gridding(self):
             polygongrid = Engine.do("gridding", self.cs, Coordinate(225358.6605, 3849480.5700), 1000.0, 1000.0, 12, 12)
@@ -360,11 +366,11 @@ try:
 
         def test_FromFile(self):
             csy = CoordinateSystem(workingDir+pytestDir+"/Cochabamba.csy")
-            self.assertEqual("Cochabamba.csy",csy.name())
+            self.assertEqual("Cochabamba.csy", csy.name())
             fc = FeatureCoverage("Rainfall.mpp")
             rainCsy = fc.coordinateSystem()
-            self.assertEqual(csy.ilwisID(),rainCsy.ilwisID())
-            self.assertEqual(str(csy.envelope()),str(rainCsy.envelope()))
+            self.assertEqual(csy.ilwisID(), rainCsy.ilwisID())
+            self.assertEqual(str(csy.envelope()), str(rainCsy.envelope()))
 
         def test_Proj4(self):
             cs1 = CoordinateSystem(
@@ -682,11 +688,11 @@ try:
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
             world.setConnection(workingDir + worldDir + "/countries", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
-            self.assertEqual(286, world.featureCount())
+            self.assertEqual(177, world.featureCount())
 
         def test_halloWorld(self):
             world = FeatureCoverage(workingDir + worldDir + "/countries.mpa")
-            if bool(world):
+            if bool(world) and not world.isInternal():
                 population = {}
                 self.assertEqual(286, world.featureCount())
                 for country in world:

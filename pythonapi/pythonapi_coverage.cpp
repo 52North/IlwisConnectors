@@ -53,6 +53,6 @@ CoordinateSystem Coverage::coordinateSystem(){
 }
 
 void Coverage::setCoordinateSystem(const CoordinateSystem &cs){
-    this->ptr()->get<Ilwis::Coverage>()->setCoordinateSystem(cs.ptr()->get<Ilwis::CoordinateSystem>());
+    this->ptr()->get<Ilwis::Coverage>()->coordinateSystem(cs.ptr()->get<Ilwis::CoordinateSystem>());
 }
 

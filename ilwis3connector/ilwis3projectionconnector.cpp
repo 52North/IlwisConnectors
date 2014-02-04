@@ -72,7 +72,7 @@ bool ProjectionConnector::loadMetaData(IlwisObject *data)
             return true;
 
         } else {
-            kernel()->issues()->log(TR("Couldnt find projection for code=%1").arg(code));
+            kernel()->issues()->log(TR("Couldn't find projection for code=%1").arg(code));
         }
     } else {
         kernel()->issues()->logSql(db.lastError());

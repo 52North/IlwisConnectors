@@ -30,10 +30,14 @@ private:
 
     QVariant fillEmptyColumn(OGRFeatureH, int);
     IlwisTypes translateOGRType(OGRwkbGeometryType type) const;
-    void fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry, std::vector<geos::geom::Geometry *> &outGeoms) const;
-    void fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry, std::vector<geos::geom::Geometry *> &outGeoms) const;
-    void fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry, std::vector<geos::geom::Geometry *> &outGeoms) const;
-    void fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry, OGRwkbGeometryType type, std::vector<geos::geom::Geometry*> &outGeoms) const;
+    geos::geom::Geometry* fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
+    geos::geom::Geometry* fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
+    geos::geom::Geometry* fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
+    geos::geom::Geometry* fillPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
+    geos::geom::Geometry* fillMultiPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
+    geos::geom::Geometry* fillMultiLine(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
+    geos::geom::Geometry* fillMultiPolygon(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
+    geos::geom::Geometry* fillGeometryCollection(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
     OGRDataSourceH createFileBasedDataSource(const QString &postfix, const QFileInfo &fileinfo) const;
     OGRLayerH createLayer(const QString &name, OGRwkbGeometryType type, OGRSpatialReferenceH srs, OGRDataSourceH source);
     bool oneLayerPerFeatureType(const IFeatureCoverage &features);

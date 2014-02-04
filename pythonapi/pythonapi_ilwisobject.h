@@ -36,6 +36,7 @@ namespace pythonapi {
         std::string __radd__(std::string value);
         std::string name();
         void name(std::string name);
+        bool isInternal() const;
         std::string type();
         quint64 ilwisID() const;
         IlwisTypes ilwisType();
