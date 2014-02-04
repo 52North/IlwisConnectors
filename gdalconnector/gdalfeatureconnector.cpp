@@ -121,7 +121,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
         int temp = gdal()->getFeatureCount(hLayer, FALSE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
         featureCount = fcoverage->featureCount(type);
         featureCount += (temp == -1) ? 0 : temp;
-        fcoverage->setFeatureCount(type, featureCount);
+        fcoverage->setFeatureCount(type, featureCount,0); // subgeometries are not known at this level
 
         //layer envelopes/extents
         OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
@@ -169,9 +169,9 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
             ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename.toString());
             return false;
         }
-        fcoverage->setFeatureCount(itPOLYGON, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
-        fcoverage->setFeatureCount(itLINE, 0);
-        fcoverage->setFeatureCount(itPOINT, 0);
+        fcoverage->setFeatureCount(itPOLYGON, 0, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+        fcoverage->setFeatureCount(itLINE, 0, 0);
+        fcoverage->setFeatureCount(itPOINT, 0, 0);
 
         //each LAYER
         int layer = 0;//only the first layer fits into one FeatureCoverage

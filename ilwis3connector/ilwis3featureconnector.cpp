@@ -206,7 +206,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     }
     QDataStream stream(&file);
     int nrPolygons = fcoverage->featureCount(itPOLYGON);
-    fcoverage->setFeatureCount(itPOLYGON, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itPOLYGON, 0,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
     for(int j=0; j < nrPolygons; ++j) {
@@ -277,7 +277,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     int colItemId = mpsTable.index("SegmentValue");
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     ITable tbl = fcoverage->attributeTable();
-    fcoverage->setFeatureCount(itLINE, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itLINE, 0,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
 
     double value;
     for(quint32 i= 0; i < mpsTable.rows(); ++i) {
@@ -319,7 +319,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
 
     ITable tbl = fcoverage->attributeTable();
     bool newCase =  coordColumnX == iUNDEF;
-    fcoverage->setFeatureCount(itPOINT, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itPOINT, 0,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
 
     for(quint32 i= 0; i < mppTable.rows(); ++i) {
         Coordinate c;
@@ -400,13 +400,13 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
 
     if (ok){
         fcoverage->featureTypes(coverageType);
-        fcoverage->setFeatureCount(coverageType, features);
+        fcoverage->setFeatureCount(coverageType, features,0);
     }
     else
        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",obj->name());
 
     ITable tbl = fcoverage->attributeTable();
-    tbl->recordCount(fcoverage->featureCount());
+    tbl->recordCount(fcoverage->featureCount(itFEATURE,true));
     return true;
 
 }
@@ -660,7 +660,7 @@ bool FeatureConnector::storeMetaLine(FeatureCoverage *fcov, const QString& filep
     _odf->setKeyValue("SegmentMapStore","DeletedPolygons",QString::number(0));
     _odf->setKeyValue("Ilwis","Class","ILWIS::Segment Map");
 
-    int noOfLines = fcov->featureCount(itLINE);
+    int noOfLines = fcov->featureCount(itLINE,true);
     _odf->setKeyValue("SegmentMapStore", "Segments", QString::number(noOfLines));
 
     _odf->setKeyValue("Table", "Domain", "None.dom");
@@ -695,7 +695,7 @@ bool FeatureConnector::storeMetaPoint(FeatureCoverage *fcov, const QString& file
     _odf->setKeyValue("PointMapStore","Format",QString::number(2));
     _odf->setKeyValue("Ilwis","Class","ILWIS::Point Map");
 
-    int noOfPoints = fcov->featureCount(itPOINT);
+    int noOfPoints = fcov->featureCount(itPOINT, true);
     _odf->setKeyValue("PointMap", "Points", QString::number(noOfPoints));
 
     _odf->setKeyValue("Table", "Domain", "None.dom");
@@ -728,7 +728,7 @@ bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& fi
 
     QString localFile = dataFile + ".mpz#";
     _odf->setKeyValue("PolygonMapStore","DataPol", localFile);
-    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(fcov->featureCount(itPOLYGON)));
+    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(fcov->featureCount(itPOLYGON, true)));
 
     return true;
 }
@@ -744,9 +744,6 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         datadef = coldef.datadef();
     } else {
         INamedIdDomain indexdom;
-        //QFileInfo inf(QUrl(_odf->file()).toLocalFile());
-        //QString filename = QString("%1/%2.dom").arg(inf.absolutePath()).arg(inf.baseName());
-        //indexdom.prepare(QUrl::fromLocalFile(filename).toString());
         indexdom.prepare();
         indexdom->setName(fcov->name());
         NamedIdentifierRange range;
@@ -774,7 +771,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         _odf->setKeyValue("DomainSort","Sorting","AlphaNumeric");
         _odf->setKeyValue("DomainSort","Prefix","feature");
         _odf->setKeyValue("DomainSort","Class","Domain UniqueID");
-        _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(type)));
+        _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(type,true)));
     }
 
     QString ext = "mpa";
