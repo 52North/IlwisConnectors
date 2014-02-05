@@ -208,7 +208,8 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     int nrPolygons = fcoverage->featureCount(itPOLYGON);
     fcoverage->setFeatureCount(itPOLYGON, 0,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-
+    long rec = 0;
+    double oldValue = rUNDEF;
     for(int j=0; j < nrPolygons; ++j) {
         geos::geom::CoordinateArraySequence *outer = readRing(stream);
         if ( !outer)
@@ -216,6 +217,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
 
         geos::geom::LinearRing *outerring = fcoverage->geomfactory()->createLinearRing(outer);
         double value;
+
         quint32 numberOfHoles;
         stream.readRawData((char *)&value, 8);
         stream.readRawData((char *)&numberOfHoles, 4);
@@ -229,9 +231,11 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
             tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(j));
             tbl->setCell(FEATUREVALUECOLUMN, j, QVariant(value));
         } else {
-            quint32 itemId = value;
             fcoverage->newFeature({pol},false);
-            tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(itemId - 1));
+            if (oldValue != value) {
+                tbl->setCell(COVERAGEKEYCOLUMN, rec++, QVariant(value - 1));
+                oldValue = value;
+            }
         }
 
     }
@@ -405,8 +409,8 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
     else
        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",obj->name());
 
-    ITable tbl = fcoverage->attributeTable();
-    tbl->recordCount(fcoverage->featureCount(itFEATURE,true));
+    //ITable tbl = fcoverage->attributeTable();
+    //tbl->recordCount(fcoverage->featureCount(itFEATURE,true));
     return true;
 
 }
@@ -740,7 +744,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
 
     ITable attTable = fcov->attributeTable();
     ColumnDefinition coldef = attTable->columndefinition(COVERAGEKEYCOLUMN);
-    if ( coldef.isValid()) {
+    if ( coldef.isValid() && coldef.datadef().domain()->ilwisType() == itITEMDOMAIN) {
         datadef = coldef.datadef();
     } else {
         INamedIdDomain indexdom;

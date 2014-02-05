@@ -67,27 +67,6 @@ IlwisTypes GdalFeatureConnector::translateOGRType(OGRwkbGeometryType type) const
     return ret;
 }
 
-ITable GdalFeatureConnector::prepareAttributeTable(OGRLayerH hLayer) const{
-
-    ITable attTable;
-    Resource resource(_filename, itFLATTABLE);
-    if(!attTable.prepare(resource)) {
-        ERROR1(ERR_NO_INITIALIZED_1,resource.name());
-        return ITable();
-    }
-    IDomain dmKey;
-    dmKey.prepare("count");
-    ColumnDefinition colKey(FEATUREIDCOLUMN, dmKey, 0);
-    attTable->addColumn(colKey);
-    ColumnDefinition colCovKey(COVERAGEKEYCOLUMN, dmKey, 1);
-    attTable->addColumn(colCovKey);
-
-//    GdalTableLoader loader;
-//    loader.loadMetaData(attTable.ptr(), hLayer);
-
-    return attTable;
-
-}
 bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
 
     if(!CoverageConnector::loadMetaData(data))
@@ -104,10 +83,15 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
     int layer = 0;//only first layer will be read/fit into single FeatureCoverage(*data)
     OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
     if ( hLayer) {
-        ITable attTable = prepareAttributeTable(hLayer);
-        if (!attTable.isValid())
+        //attribute table
+        ITable attTable;
+        Resource resource(_filename, itFLATTABLE);
+        if(!attTable.prepare(resource)) {//will load whole meta data of the table
+            ERROR1(ERR_NO_INITIALIZED_1,resource.name());
             return false;
-
+        }
+        attTable->addColumn(FEATUREIDCOLUMN,"count");
+        attTable->addColumn(COVERAGEKEYCOLUMN,"count");
         fcoverage->attributeTable(attTable);
 
         //feature types
@@ -142,7 +126,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
                 bbox.min_corner().y = envelope.MinY;
         }
     }
-    //    }
+    //envelope and feature types
     if (coverageType != itUNKNOWN && featureCount >= 0){
         fcoverage->featureTypes(coverageType);
         fcoverage->envelope(bbox);
@@ -151,8 +135,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",data->name());
     }
 
-    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
-    gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
+    gdal()->closeFile(containerConnector()->toLocalFile(_filename).absoluteFilePath(), data->id());
 
     return true;
 }

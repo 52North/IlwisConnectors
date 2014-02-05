@@ -136,3 +136,18 @@ PyObject* Engine::operations(const std::string& filter){
     }
     return list;
 }
+
+std::string Engine::operationMetaData(const std::string &name){
+    Ilwis::Catalog opCat;
+    opCat.prepare(QUrl(QString("ilwis://operations")), "type='OperationMetaData'");
+    std::list<Ilwis::Resource> ops = opCat.items();
+    QString ret;
+    for(auto it = ops.begin();it != ops.end(); it++){
+        if (QString::fromStdString(name).compare(it->name(),Qt::CaseInsensitive) == 0){
+            if(!ret.isEmpty())
+                ret.append("\n");
+            ret.append((*it)["syntax"].toString());
+        }
+    }
+    return ret.toStdString();
+}

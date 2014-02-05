@@ -266,6 +266,10 @@ try:
                     'sinh', 'sqrt', 'stringfind', 'stringsub', 'stringreplace', 'tan', 'text2output', 'gridding',
                     'script', 'aggregateraster', 'areanumbering', 'cross', 'linearstretch', 'linearrasterfilter')
             self.assertTupleEqual(oper, ops)
+            self.assertEqual("gridsize(rastercoverage,xsize|ysize|zsize)", e.operationMetaData("rastersize"))
+            self.assertEqual("gridding(coordinatesyste,top-coordinate,x-cell-size, y-cell-size, horizontal-cells, vertical-cells)",
+                             e.operationMetaData("gridding"))
+            self.assertEqual("iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaData("iff"))
 
         def test_Gridding(self):
             polygongrid = Engine.do("gridding", self.cs, Coordinate(225358.6605, 3849480.5700), 1000.0, 1000.0, 12, 12)

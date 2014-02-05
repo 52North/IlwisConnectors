@@ -58,7 +58,6 @@ private:
                                    const std::vector<OGRFieldDefnH> &fielddefs,
                                    std::vector<SourceHandles> &datasources,
                                    std::vector<bool> &validAttributes);
-    ITable prepareAttributeTable(OGRLayerH hLayer) const;
 };
 }
 }
