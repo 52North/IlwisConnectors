@@ -217,9 +217,16 @@ geos::geom::Geometry* GdalFeatureConnector::fillFeature(FeatureCoverage *fcovera
 }
 geos::geom::Geometry* GdalFeatureConnector::fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry ) const{
     double x,y,z;
-    gdal()->getPoints(geometry, 0,&x,&y,&z);
-    Coordinate coord(x,y,z);
-    return fcoverage->geomfactory()->createPoint(coord);
+    gdal()->getPoint(geometry, 0,&x,&y,&z);
+    if (gdal()->getCoordinateDimension(geometry) == 2){
+        Coordinate coord(x,y);
+        return fcoverage->geomfactory()->createPoint(coord);
+    }else if (gdal()->getCoordinateDimension(geometry) == 3){
+        Coordinate coord(x,y,z);
+        return fcoverage->geomfactory()->createPoint(coord);
+    }else{
+        return fcoverage->geomfactory()->createPoint();//POINT EMPTY
+    }
 }
 geos::geom::Geometry* GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry ) const{
     int count = gdal()->getPointCount(geometry);
@@ -229,7 +236,7 @@ geos::geom::Geometry* GdalFeatureConnector::fillLine(FeatureCoverage *fcoverage,
     geos::geom::CoordinateArraySequence *vertices = new geos::geom::CoordinateArraySequence(count);
     for(int i = 0; i < count; ++i){
         double x,y,z;
-        gdal()->getPoints(geometry, i,&x,&y,&z);
+        gdal()->getPoint(geometry, i,&x,&y,&z);
         vertices->setAt(geos::geom::Coordinate(x,y), i);
     }
     return fcoverage->geomfactory()->createLineString(vertices);
@@ -245,7 +252,7 @@ geos::geom::Geometry* GdalFeatureConnector::fillPolygon(FeatureCoverage *fcovera
         geos::geom::CoordinateArraySequence *outer = new geos::geom::CoordinateArraySequence(count);
         for(int i = 0; i < count; ++i) {
             double x,y,z;
-            gdal()->getPoints(hSubGeometry, i,&x,&y,&z);
+            gdal()->getPoint(hSubGeometry, i,&x,&y,&z);
             outer->setAt(geos::geom::Coordinate(x,y),i);
         }
         geos::geom::LinearRing *outerring = fcoverage->geomfactory()->createLinearRing(outer);
@@ -261,7 +268,7 @@ geos::geom::Geometry* GdalFeatureConnector::fillPolygon(FeatureCoverage *fcovera
                 geos::geom::CoordinateArraySequence* innerring = new geos::geom::CoordinateArraySequence(count);
                 for(int i = 0; i < count; ++i) {
                     double x,y,z;
-                    gdal()->getPoints(hSubGeometry, i,&x,&y,&z);
+                    gdal()->getPoint(hSubGeometry, i,&x,&y,&z);
                     innerring->setAt(geos::geom::Coordinate(x,y), i);
                 }
                 (*inners)[j-1] = fcoverage->geomfactory()->createLinearRing(innerring);
@@ -398,19 +405,27 @@ void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, UPFeatureI& featu
     for(int i=0; i < feature->attributeColumnCount(); ++i){
         if ( !validAttributes[i])
             continue;
-
-        if(hasType(columnDef[i].datadef().domain()->valueType(),itINTEGER)) {
-            qint32 val = feature->cell(columnDef[i].columnindex()).toInt();
-            gdal()->setIntegerAttribute(hfeature,index,val);
-        } else if (hasType(columnDef[i].datadef().domain()->valueType(),itDOUBLE | itFLOAT)) {
-            double val = feature->cell(columnDef[i].columnindex()).toDouble();
-            gdal()->setDoubleAttribute(hfeature,index,val);
-        } else if (hasType(columnDef[i].datadef().domain()->valueType(),itDOMAINITEM)) {
-            QVariant var = feature->cell(i);
-            QString val = columnDef[i].datadef().domain()->value(var);
-            gdal()->setStringAttribute(hfeature,index,val.toLocal8Bit());
+        IDomain dom = columnDef[i].datadef().domain();
+        if(hasType(dom->valueType(),itINTEGER)) {
+            gdal()->setIntegerAttribute(hfeature,index,feature->cell(i).toInt());
+        } else if (hasType(dom->valueType(),itDOUBLE | itFLOAT)) {
+            gdal()->setDoubleAttribute(hfeature,index,feature->cell(i).toDouble());
+        } else if (hasType(dom->valueType(),itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM)) {
+            gdal()->setStringAttribute(hfeature,index,dom->value(feature->cell(i)).toLocal8Bit());
+        } else if (hasType(dom->valueType(),itTIMEITEM)) {
+            //TODO itTIME itTIMEDOMAIN itTIMEITEM
+            Time time;// = dom->value(feature->cell(i));
+            gdal()->setDateTimeAttribute(hfeature,index,
+                                         time.get(Time::tpYEAR),
+                                         time.get(Time::tpMONTH),
+                                         time.get(Time::tpDAYOFMONTH),
+                                         time.get(Time::tpHOUR),
+                                         time.get(Time::tpMINUTE),
+                                         time.get(Time::tpSECOND),
+                                         0);//TODO TimeZone??
+        } else if (hasType(dom->valueType(),itSTRING)){
+            gdal()->setStringAttribute(hfeature,index,feature->cell(i).toString().toLocal8Bit());
         }
-        //TODO: coords, time ..
         ++index;
     }
 
@@ -465,7 +480,6 @@ bool GdalFeatureConnector::setDataSourceAndLayers(const IFeatureCoverage& featur
     if ( multipleoutputs){
         if ((features->featureTypes() & itPOINT) != 0) {
             ok = createDataSourceAndLayers(itPOINT, "point", features, srs,fielddefs,datasources,validAttributes);
-
         }
         if ((features->featureTypes() & itLINE) != 0) {
             ok = createDataSourceAndLayers(itLINE, "line", features, srs,fielddefs,datasources,validAttributes);
@@ -483,13 +497,6 @@ bool GdalFeatureConnector::setDataSourceAndLayers(const IFeatureCoverage& featur
     return ok;
 }
 
-OGRGeometryH GdalFeatureConnector::createPoint2D(const UPFeatureI& feature) {
-    OGRGeometryH hgeom = gdal()->createGeometry(wkbPoint);
-    const geos::geom::Coordinate *crd = feature->geometry()->getCoordinate();
-    gdal()->add2dPoint(hgeom,0, crd->x, crd->y);
-    return hgeom;
-}
-
 int GdalFeatureConnector::ilwisType2Index(IlwisTypes tp)
 {
     switch (tp){
@@ -503,91 +510,149 @@ int GdalFeatureConnector::ilwisType2Index(IlwisTypes tp)
     throw ErrorObject(TR("Illegal use of ilwisType2Index method"));
 }
 
-OGRGeometryH GdalFeatureConnector::createLine2D(const UPFeatureI& feature) {
-    OGRGeometryH hgeom = gdal()->createGeometry(wkbLineString);
-    std::unique_ptr<geos::geom::CoordinateSequence> coords(feature->geometry()->getCoordinates());
-    for(int i=0; i < coords->size(); ++i) {
-        geos::geom::Coordinate crd = coords->getAt(i);
-        gdal()->add2dPoint(hgeom,i, crd.x, crd.y);
+OGRGeometryH GdalFeatureConnector::createFeature(const geos::geom::Geometry* geom){
+    geos::geom::GeometryTypeId type = geom->getGeometryTypeId();
+    OGRGeometryH hgeom = 0;
+    switch (type){
+        case geos::geom::GEOS_POINT: hgeom = createPoint(geom); break;
+        case geos::geom::GEOS_LINESTRING: hgeom = createLine(geom); break;
+        case geos::geom::GEOS_POLYGON: hgeom = createPolygon(geom); break;
+        case geos::geom::GEOS_MULTIPOINT: hgeom = createMultiPoint(geom); break;
+        case geos::geom::GEOS_MULTILINESTRING: hgeom = createMultiLine(geom); break;
+        case geos::geom::GEOS_MULTIPOLYGON: hgeom = createMultiPolygon(geom); break;
+        default: hgeom = createGeometryCollection(geom);
     }
     return hgeom;
-
 }
 
-OGRGeometryH GdalFeatureConnector::createPolygon2D(const UPFeatureI& feature){
-    OGRGeometryH hgeom = gdal()->createGeometry(wkbPolygon);
-    geos::geom::Polygon *polygon = dynamic_cast<geos::geom::Polygon *>(feature->geometry().get());
-    OGRGeometryH hgeomring = gdal()->createGeometry(wkbLinearRing);
-    const geos::geom::CoordinateSequence *outer = polygon->getExteriorRing()->getCoordinatesRO();
-    for(int i=0; i < outer->size(); ++i) {
-        Coordinate crd = outer->getAt(i);
-        gdal()->add2dPoint(hgeomring,i, crd.x, crd.y);
+OGRGeometryH GdalFeatureConnector::createPoint(const geos::geom::Geometry* geom){
+    OGRGeometryH hpoint = 0;
+    if (geom->getCoordinateDimension() == 2)
+        hpoint = gdal()->createGeometry(wkbPoint);
+    else
+        hpoint = gdal()->createGeometry(wkbPoint25D);
+
+    const geos::geom::Coordinate* crd = geom->getCoordinate();
+    if (crd != NULL){
+        Coordinate coord(*crd);
+        if (coord.is3D())
+            gdal()->addPoint(hpoint, coord.x, coord.y, coord.z);
+        else
+            gdal()->addPoint2D(hpoint, coord.x, coord.y);
     }
-    gdal()->add2Geometry(hgeom, hgeomring);
-    gdal()->destroyGeometry(hgeomring);
-
-    for(int hole=0; hole < polygon->getNumInteriorRing(); ++hole){
-        const geos::geom::CoordinateSequence *inner = polygon->getInteriorRingN(hole)->getCoordinatesRO();
-        OGRGeometryH hinnerring = gdal()->createGeometry(wkbLinearRing);
-        for(int i=0; i < inner->size(); ++i) {
-            Coordinate crd = inner->getAt(i);
-            gdal()->add2dPoint(hinnerring,i, crd.x, crd.y);
-        }
-        gdal()->add2Geometry(hgeom, hinnerring);
-        gdal()->destroyGeometry(hinnerring);
-
-    }
-
-
-    return hgeom;
-
-
+    return hpoint;
 }
 
-bool GdalFeatureConnector::oneLayerPerFeatureType(const IFeatureCoverage& features) {
-
-
-    std::vector<SourceHandles> datasources(3);
-    std::vector<bool> validAttributes;
-    if(!setDataSourceAndLayers(features, datasources, validAttributes))
-        return false;
-
-    FeatureIterator fiter(features);
-    FeatureIterator endIter = end(features);
-    std::vector<ColumnDefinition> defs;
-    for(int i=0; i < features->attributeTable()->columnCount(); ++i){
-        defs.push_back(features->attributeTable()->columndefinition(i));
+OGRGeometryH GdalFeatureConnector::createLine(const geos::geom::Geometry* geom){
+    OGRGeometryH hline = 0;
+    if (geom->getCoordinateDimension() == 2){
+        hline = gdal()->createGeometry(wkbLineString);
+    }else{
+        hline = gdal()->createGeometry(wkbLineString25D);
     }
-    for(; fiter != endIter; ++fiter) {
-        UPFeatureI& feature = *fiter;
-        OGRLayerH lyr = datasources[ilwisType2Index(feature->geometryType())]._layers[0];
-        OGRFeatureH hfeature = gdal()->createFeature(gdal()->getLayerDef(lyr));
-        setAttributes(hfeature, feature, validAttributes, defs);
-        OGRGeometryH hgeom = 0;
-        if ( feature->geometry()->getGeometryTypeId() == geos::geom::GEOS_POINT) {
-            hgeom = createPoint2D(feature);
-        }
-        if ( feature->geometry()->getGeometryTypeId() == geos::geom::GEOS_LINESTRING) {
-            hgeom = createLine2D(feature);
-        }
-        if ( feature->geometry()->getGeometryTypeId() == geos::geom::GEOS_POLYGON) {
-            hgeom = createPolygon2D(feature);
-        }
-        gdal()->setGeometry(hfeature,hgeom);
-        gdal()->destroyGeometry(hgeom);
-
-        if ( hfeature) {
-            if (gdal()->addFeature2Layer(lyr, hfeature) != OGRERR_NONE) {
-                ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("feature"), features->name());
+    const geos::geom::LineString* line = dynamic_cast<const geos::geom::LineString*>(geom);
+    if(line){
+        const geos::geom::CoordinateSequence* coords = line->getCoordinatesRO();
+        if (coords != NULL){
+            const std::vector<geos::geom::Coordinate>* vec = coords->toVector();
+            for(auto it = vec->begin(); it != vec->end(); it++) {
+                Coordinate coord = (*it);
+                if (coord.is3D())
+                    gdal()->addPoint(hline, coord.x, coord.y, coord.z);
+                else
+                    gdal()->addPoint2D(hline, coord.x, coord.y);
             }
-            gdal()->destroyFeature(hfeature);
-        };
+        }
     }
-    for(auto& datasource : datasources){
-        if ( datasource._source != 0)
-            gdal()->destroyDataSource(datasource._source);
+    return hline;
+}
+
+OGRGeometryH GdalFeatureConnector::createPolygon(const geos::geom::Geometry* geom){
+    OGRGeometryH hpolygon = 0;
+    if (geom->getCoordinateDimension() == 2){
+        hpolygon = gdal()->createGeometry(wkbPolygon);
+    }else{
+        hpolygon = gdal()->createGeometry(wkbPolygon25D);
     }
-    return true;
+    const geos::geom::Polygon* polygon = dynamic_cast<const geos::geom::Polygon *>(geom);
+    if(polygon){
+        OGRGeometryH hring = gdal()->createGeometry(wkbLinearRing);
+        //ExteriorRing
+        const geos::geom::CoordinateSequence* coords = polygon->getExteriorRing()->getCoordinatesRO();
+        if (coords != NULL){
+            const std::vector<geos::geom::Coordinate>* vec = coords->toVector();
+            for(auto it = vec->begin(); it != vec->end(); it++) {
+                Coordinate coord = (*it);
+                if (coord.is3D())
+                    gdal()->addPoint(hring, coord.x, coord.y, coord.z);
+                else
+                    gdal()->addPoint2D(hring, coord.x, coord.y);
+            }
+        }
+        gdal()->addGeometryDirectly(hpolygon, hring);
+        //InteriorRings
+        for(int hole=0; hole < polygon->getNumInteriorRing(); ++hole){
+            hring = gdal()->createGeometry(wkbLinearRing);
+            const geos::geom::CoordinateSequence* coords = polygon->getInteriorRingN(hole)->getCoordinatesRO();
+            if (coords != NULL){
+                const std::vector<geos::geom::Coordinate>* vec = coords->toVector();
+                for(auto it = vec->begin(); it != vec->end(); it++) {
+                    Coordinate coord = (*it);
+                    if (coord.is3D())
+                        gdal()->addPoint(hring, coord.x, coord.y, coord.z);
+                    else
+                        gdal()->addPoint2D(hring, coord.x, coord.y);
+                }
+            }
+            gdal()->addGeometryDirectly(hpolygon, hring);
+        }
+    }
+    return hpolygon;
+}
+
+OGRGeometryH GdalFeatureConnector::createMultiPoint(const geos::geom::Geometry* geom){
+    OGRGeometryH hmulti = gdal()->createGeometry(wkbMultiPoint);
+    OGRErr err = OGRERR_NONE;
+    for(int i = 0; i < geom->getNumGeometries();i++){
+        err = gdal()->addGeometryDirectly(hmulti, createPoint(geom->getGeometryN(i)));
+        if(err != OGRERR_NONE)
+            ERROR1("not able to add point to non-container geometry in %1",_filename.toString());
+    }
+    return hmulti;
+}
+
+OGRGeometryH GdalFeatureConnector::createMultiLine(const geos::geom::Geometry* geom){
+    OGRGeometryH hmulti = gdal()->createGeometry(wkbMultiLineString);
+    OGRErr err = OGRERR_NONE;
+    for(int i = 0; i < geom->getNumGeometries();i++){
+        err = gdal()->addGeometryDirectly(hmulti, createLine(geom->getGeometryN(i)));
+        if(err != OGRERR_NONE)
+            ERROR1("not able to add line to non-container geometry in %1",_filename.toString());
+    }
+    return hmulti;
+
+}
+
+OGRGeometryH GdalFeatureConnector::createMultiPolygon(const geos::geom::Geometry* geom){
+    OGRGeometryH hmulti = gdal()->createGeometry(wkbMultiPolygon);
+    OGRErr err = OGRERR_NONE;
+    for(int i = 0; i < geom->getNumGeometries();i++){
+        err = gdal()->addGeometryDirectly(hmulti, createPolygon(geom->getGeometryN(i)));
+        if(err != OGRERR_NONE)
+            ERROR1("not able to add polygon to non-container geometry in %1",_filename.toString());
+    }
+    return hmulti;
+}
+
+OGRGeometryH GdalFeatureConnector::createGeometryCollection(const geos::geom::Geometry* geom){
+    OGRGeometryH hmulti = gdal()->createGeometry(wkbGeometryCollection);
+    OGRErr err = OGRERR_NONE;
+    for(int i = 0; i < geom->getNumGeometries();i++){
+        err = gdal()->addGeometryDirectly(hmulti, createPolygon(geom->getGeometryN(i)));
+        if(err != OGRERR_NONE)
+            ERROR1("not able to add geometry to non-container geometry in %1",_filename.toString());
+    }
+    return hmulti;
 }
 
 bool GdalFeatureConnector::loadDriver()
@@ -608,11 +673,40 @@ bool GdalFeatureConnector::store(IlwisObject *obj, int )
     if (!loadDriver())
         return false;
 
-    IFeatureCoverage features;
-    features.set(static_cast<FeatureCoverage *>(obj));
+    IFeatureCoverage coverage;
+    coverage.set(static_cast<FeatureCoverage *>(obj));
 
-    if(!oneLayerPerFeatureType(features))
+    std::vector<SourceHandles> datasources(3);
+    std::vector<bool> validAttributes;
+    if(!setDataSourceAndLayers(coverage, datasources, validAttributes))
         return false;
+
+    std::vector<ColumnDefinition> defs;
+    for(int i=0; i < coverage->attributeTable()->columnCount(); ++i){
+        defs.push_back(coverage->attributeTable()->columndefinition(i));
+    }
+
+    FeatureIterator fiter(coverage);
+    FeatureIterator endIter = end(coverage);
+    for(; fiter != endIter; ++fiter) {
+        UPFeatureI& feature = *fiter;
+        OGRLayerH lyr = datasources[ilwisType2Index(feature->geometryType())]._layers[0];
+        OGRFeatureH hfeature = gdal()->createFeature(gdal()->getLayerDef(lyr));
+        if (hfeature) {
+            setAttributes(hfeature, feature, validAttributes, defs);
+            const geos::geom::Geometry* geometry = feature->geometry().get();
+            if (gdal()->setGeometryDirectly(hfeature,createFeature(geometry)) != OGRERR_NONE)
+                ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("geometry"), _filename.toString());
+            if (gdal()->addFeature2Layer(lyr, hfeature) != OGRERR_NONE) {
+                ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("feature"), _filename.toString());
+            }
+            gdal()->destroyFeature(hfeature);
+        };
+    }
+    for(auto& datasource : datasources){
+        if ( datasource._source != 0)
+            gdal()->destroyDataSource(datasource._source);
+    }
 
     return true;
 
