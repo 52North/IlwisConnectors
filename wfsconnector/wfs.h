@@ -1,11 +1,11 @@
 #ifndef WFS_H
 #define WFS_H
 
+#include <QUrl>
+#include <QUrlQuery>
+
 #include "wfsconnector_global.h"
 #include "wfsresponse.h"
-
-class QNetworkAccessManager;
-class QUrl;
 
 namespace Ilwis {
 namespace  Wfs {
@@ -16,16 +16,26 @@ class WFSCONNECTORSHARED_EXPORT WebFeatureService
 public:
     WebFeatureService(QUrl wfsUrl);
 
-    QUrl url();
-    WfsResponse *getCapabilities(bool async=false);
-    WfsResponse *describeFeatureType(QUrlQuery query, bool async=false);
-    WfsResponse *getFeature(QUrlQuery query, bool async=false);
+    QUrl url() const;
+    WfsResponse *getCapabilities(bool async=false) const;
+    WfsResponse *describeFeatureType(QUrlQuery query, bool async=false) const;
+    WfsResponse *getFeature(QUrlQuery query, bool async=false) const;
 
 private:
     QUrl _resource;
 
-    WfsResponse *performSyncRequest(QUrl request);
-    WfsResponse *performAsyncRequest(QUrl request);
+    WfsResponse *performRequest(QUrlQuery query, QString wfsRequest, bool async=false) const;
+    WfsResponse *performSyncRequest(QUrl request) const;
+    WfsResponse *performAsyncRequest(QUrl request) const;
+
+    void lowerCaseKeys(QUrlQuery &query) const
+    {
+        for (QPair<QString,QString> kvm : query.queryItems()) {
+            query.removeQueryItem(kvm.first);
+            query.addQueryItem(kvm.first.toLower(), kvm.second);
+        }
+    }
+
 };
 
 }

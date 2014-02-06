@@ -22,41 +22,43 @@ WebFeatureService::WebFeatureService(QUrl baseUrl): _resource(baseUrl)
 {
 }
 
-QUrl WebFeatureService::url()
+QUrl WebFeatureService::url() const
 {
     return _resource;
 }
 
-WfsResponse *WebFeatureService::getCapabilities(bool async)
+WfsResponse *WebFeatureService::getCapabilities(bool async) const
 {
+    QUrlQuery query(_resource);
+    return performRequest(query, "GetCapabilities", async);
+}
+
+WfsResponse *WebFeatureService::describeFeatureType(QUrlQuery query, bool async) const
+{
+    return performRequest(query, "DescribeFeatureType", async);
+}
+
+WfsResponse *WebFeatureService::getFeature(QUrlQuery query, bool async) const
+{
+    return performRequest(query, "GetFeature", async);
+}
+
+WfsResponse *WebFeatureService::performRequest(QUrlQuery query, QString wfsRequest, bool async) const
+{
+    lowerCaseKeys(query);
+    query.removeQueryItem("request");
+    query.addQueryItem("request", wfsRequest);
+    QUrl wfsUrl = _resource;
+    wfsUrl.setQuery(query);
+
     if (!async) {
-        return performSyncRequest(_resource);
+        return performSyncRequest(wfsUrl);
     } else {
-        return performAsyncRequest(_resource);
+        return performAsyncRequest(wfsUrl);
     }
 }
 
-WfsResponse *WebFeatureService::describeFeatureType(QUrlQuery query, bool async)
-{
-    QUrl describeFeatureUrl = _resource;
-    describeFeatureUrl.setQuery(query);
-
-    // TODO: do an async request
-    //return performAsyncRequest(getCapabilitiesUrl);
-
-    return performSyncRequest(describeFeatureUrl);
-
-}
-
-WfsResponse *WebFeatureService::getFeature(QUrlQuery query, bool async)
-{
-    QUrl getCapabilitiesUrl = _resource;
-
-    // TODO: adjust to GetFeature
-    //WfsResponse *response = performAsyncRequest(getCapabilitiesUrl);
-}
-
-WfsResponse *WebFeatureService::performSyncRequest(QUrl requestUrl)
+WfsResponse *WebFeatureService::performSyncRequest(QUrl requestUrl) const
 {
     QNetworkRequest request(requestUrl);
     WfsResponse *response = new WfsResponse;
@@ -70,7 +72,7 @@ WfsResponse *WebFeatureService::performSyncRequest(QUrl requestUrl)
     return response;
 }
 
-WfsResponse *WebFeatureService::performAsyncRequest(QUrl requestUrl)
+WfsResponse *WebFeatureService::performAsyncRequest(QUrl requestUrl) const
 {
     QNetworkRequest request(requestUrl);
     WfsResponse *response = new WfsResponse;
