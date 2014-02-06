@@ -49,6 +49,8 @@
 #include "tableconnector.h"
 #include "ilwis3projectionconnector.h"
 #include "domainconnector.h"
+#include "ilwiscontext.h"
+#include "dataformat.h"
 #include "ilwis3featureconnector.h"
 
 using namespace Ilwis;
@@ -95,6 +97,10 @@ void Ilwis3Module::prepare()
         catfact->add(Ilwis3CatalogConnector::create);
 
     IlwisObject::addTypeFunction(Ilwis3Connector::ilwisType);
+
+    QFileInfo ilw = context()->ilwisFolder();
+    QString path = ilw.canonicalFilePath() + "/Extensions/ilwis3connector/resources";
+    DataFormat::setFormatInfo(path + "/ilwis3formats.config","ilwis3");
 
 
 }

@@ -4,6 +4,7 @@
 #include "connectorinterface.h"
 #include "containerconnector.h"
 #include "ilwisobjectconnector.h"
+#include "dataformat.h"
 #include "gdalconnector.h"
 
 using namespace Ilwis;
@@ -39,7 +40,7 @@ IlwisTypes GdalConnector::ilwisType(const QString &name)
     QString filter = "*." + ext;
     if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
         return itRASTER;
-    if ( gdal()->getFeatureExtensions().contains(filter,Qt::CaseInsensitive))
+    if ( DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal").contains(ext,Qt::CaseInsensitive))
         return itFEATURE;
     return itUNKNOWN; //TODO: add table formats here
 }

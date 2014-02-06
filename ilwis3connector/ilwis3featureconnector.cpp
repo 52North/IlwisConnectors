@@ -241,8 +241,9 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
 void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>& geometries,FeatureCoverage *fcoverage,ITable& tbl, IlwisTypes tp) {
     quint32 rec = 0;
     for(auto iter = geometries.begin() ; iter != geometries.end(); ++iter) {
-        if ( (*iter).second.size() == 1) {
-            fcoverage->newFeature({(*iter).second[0]},false);
+        vector<geos::geom::Geometry *>& geoms1 = (*iter).second;
+        if ( geoms1.size() == 1) {
+            fcoverage->newFeature({geoms1[0]},false);
         } else {
             std::vector<geos::geom::Geometry *> *geoms = new std::vector<geos::geom::Geometry *>((*iter).second);
             geos::geom::GeometryCollection *multigeom = 0;
