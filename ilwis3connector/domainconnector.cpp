@@ -223,7 +223,7 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
 
     BinaryIlwis3Table ilw3tbl;
     std::ofstream output_file;
-    if(!ilw3tbl.openOutput(dataName, output_file))
+    if(!ilw3tbl.openOutput(inf.absolutePath() + "/"+ dataName, output_file))
         return false;
     ITextDomain txtdom;
     txtdom.prepare();

@@ -40,15 +40,19 @@ private:
     geos::geom::Geometry* fillGeometryCollection(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
     OGRDataSourceH createFileBasedDataSource(const QString &postfix, const QFileInfo &fileinfo) const;
     OGRLayerH createLayer(const QString &name, OGRwkbGeometryType type, OGRSpatialReferenceH srs, OGRDataSourceH source);
-    bool oneLayerPerFeatureType(const IFeatureCoverage &features);
     bool createAttributes(const ITable &tbl, OGRLayerH layer, const std::vector<OGRFieldDefnH> &fielddefs,std::vector<bool>& validAttributes);
     bool loadDriver();
     OGRwkbGeometryType ilwisType2GdalFeatureType(IlwisTypes tp);
     void setAttributes(OGRFeatureH hfeature, Ilwis::UPFeatureI& feature, const std::vector<bool> &validAttributes, const std::vector<Ilwis::ColumnDefinition> &def);
     bool setDataSourceAndLayers(const IFeatureCoverage &features, std::vector<SourceHandles> &datasources,std::vector<bool>& validAttributes);
-    OGRGeometryH createLine2D(const Ilwis::UPFeatureI &feature);
-    OGRGeometryH createPoint2D(const Ilwis::UPFeatureI &feature);
-    OGRGeometryH createPolygon2D(const Ilwis::UPFeatureI &feature);
+    OGRGeometryH createFeature(const geos::geom::Geometry* geom);
+    OGRGeometryH createLine(const geos::geom::Geometry* geom);
+    OGRGeometryH createPoint(const geos::geom::Geometry* geom);
+    OGRGeometryH createPolygon(const geos::geom::Geometry* geom);
+    OGRGeometryH createMultiLine(const geos::geom::Geometry* geom);
+    OGRGeometryH createMultiPoint(const geos::geom::Geometry* geom);
+    OGRGeometryH createMultiPolygon(const geos::geom::Geometry* geom);
+    OGRGeometryH createGeometryCollection(const geos::geom::Geometry* geom);
 
     static int ilwisType2Index(IlwisTypes);
     bool createDataSourceAndLayers(IlwisTypes types,

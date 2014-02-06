@@ -18,6 +18,7 @@
 #include "catalog.h"
 #include "odfitem.h"
 #include "ilwiscontext.h"
+#include "dataformat.h"
 #include "filecatalogconnector.h"
 #include "ilwis3catalogconnector.h"
 
@@ -47,8 +48,9 @@ bool Ilwis3CatalogConnector::loadItems()
         return false;
 
 
-    QStringList filters;
-    filters << "*.mpr" << "*.mpa" << "*.mps" << "*.mpp" << "*.tbt" << "*.dom" << "*.csy" << "*.grf" << "*.mpl";
+    QStringList filters = DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itILWISOBJECT,"ilwis3");
+    for(QString& ext : filters)
+        ext = "*." + ext;
     std::vector<QUrl> files = containerConnector()->sources(filters
                                                       ,ContainerConnector::foFULLPATHS | ContainerConnector::foEXTENSIONFILTER);
 

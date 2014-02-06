@@ -56,14 +56,6 @@ Geometry::Geometry(Feature* feature, int index):
 Geometry::~Geometry(){
 }
 
-bool Geometry::within(const Geometry &geometry) const{
-    return this->ptr()->within(geometry.ptr().get());
-}
-
-bool Geometry::contains(const Geometry &geometry) const{
-    return geometry.within(*this);
-}
-
 bool Geometry::__bool__() const{
     if (this->_standalone){
         return this->_ilwisGeometry != nullptr && (bool)this->_ilwisGeometry && this->_ilwisGeometry->isValid();
@@ -132,6 +124,70 @@ Geometry* Geometry::transform(const CoordinateSystem &cs){
 
 Envelope Geometry::envelope(){
     return Envelope(this->ptr()->getEnvelopeInternal());
+}
+
+bool Geometry::isSimple() const{
+    return this->ptr()->isSimple();
+}
+
+bool Geometry::within(const Geometry &geometry) const{
+    return this->ptr()->within(geometry.ptr().get());
+}
+
+bool Geometry::contains(const Geometry &geometry) const{
+    return this->ptr()->contains(geometry.ptr().get());
+}
+
+bool Geometry::disjoint(const Geometry &geometry) const{
+    return this->ptr()->disjoint(geometry.ptr().get());
+}
+
+bool Geometry::touches(const Geometry &geometry) const{
+    return this->ptr()->touches(geometry.ptr().get());
+}
+
+bool Geometry::intersects(const Geometry &geometry) const{
+    return this->ptr()->intersects(geometry.ptr().get());
+}
+
+bool Geometry::crosses(const Geometry &geometry) const{
+    return this->ptr()->crosses(geometry.ptr().get());
+}
+
+bool Geometry::overlaps(const Geometry &geometry) const{
+    return this->ptr()->overlaps(geometry.ptr().get());
+}
+
+bool Geometry::equals(const Geometry &geometry) const{
+    return this->ptr()->equals(geometry.ptr().get());
+}
+
+bool Geometry::covers(const Geometry &geometry) const{
+    return this->ptr()->covers(geometry.ptr().get());
+}
+
+bool Geometry::coveredBy(const Geometry &geometry) const{
+    return this->ptr()->coveredBy(geometry.ptr().get());
+}
+
+bool Geometry::relate(const Geometry &geometry, const std::string& intersectionPattern) const{
+    return this->ptr()->relate(geometry.ptr().get(), intersectionPattern);
+}
+
+double Geometry::distance(const Geometry &geometry) const{
+    return this->ptr()->distance(geometry.ptr().get());
+}
+
+double Geometry::getArea() const{
+    return this->ptr()->getArea();
+}
+
+double Geometry::getLength() const{
+    return this->ptr()->getLength();
+}
+
+bool Geometry::isWithinDistance(const Geometry &geometry, double cDistance) const{
+    return this->ptr()->isWithinDistance(geometry.ptr().get(), cDistance);
 }
 
 const std::unique_ptr<geos::geom::Geometry>& Geometry::ptr() const{

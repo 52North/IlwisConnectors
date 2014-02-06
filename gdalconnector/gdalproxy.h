@@ -64,7 +64,7 @@ typedef OGRFieldType (*IGetFieldType )(OGRFieldDefnH 	hDefn ) ;
 typedef int (*IGetFieldAsInteger )(OGRFeatureH,int) ;
 typedef double (*IGetFieldAsDouble )(OGRFeatureH,int) ;
 typedef const char* (*IGetFieldAsString )(OGRFeatureH,int) ;
-typedef int (*IGetFieldAsDateTime) (OGRFeatureH, int, int *, int *, int *, int *, int *, int *, int *) ;
+typedef int (*IOGR_F_GetFieldAsDateTime) (OGRFeatureH, int, int *, int *, int *, int *, int *, int *, int *) ;
 typedef OGRGeometryH (*IGetGeometryRef )(OGRFeatureH ) ;
 typedef OGRwkbGeometryType (*IGetGeometryType )(OGRGeometryH) ;
 typedef void (*IDestroyFeature )(OGRFeatureH ) ;
@@ -94,16 +94,22 @@ typedef void (*IOGR_Fld_Destroy)(OGRFieldDefnH);
 typedef OGRFeatureH (*IOGR_F_Create)(OGRFeatureDefnH);
 typedef OGRFeatureDefnH  (*IOGR_L_GetLayerDefn)(OGRLayerH);
 typedef int (*IOGR_F_GetFieldIndex)(OGRFeatureH,const char *);
+typedef void (* IOGR_F_SetFieldDateTime)(OGRFeatureH, int, int, int, int, int, int, int, int);
 typedef void (* IOGR_F_SetFieldDouble)(OGRFeatureH,int, double);
 typedef void (* IOGR_F_SetFieldInteger)(OGRFeatureH,int, int);
 typedef void (* IOGR_F_SetFieldString)(OGRFeatureH,int, const char *);
 typedef OGRGeometryH (*IOGR_G_CreateGeometry)(OGRwkbGeometryType);
-typedef void (*IOGR_G_SetPoint_2D)(	OGRGeometryH ,int,double,double);
+typedef void (*IOGR_G_SetPoint)(	OGRGeometryH, int,double,double,double);
+typedef void (*IOGR_G_SetPoint_2D)(	OGRGeometryH, int,double,double);
+typedef void (*IOGR_G_AddPoint)(	OGRGeometryH, double,double,double);
+typedef void (*IOGR_G_AddPoint_2D)(	OGRGeometryH, double,double);
 typedef OGRErr (*IOGR_F_SetGeometry)(OGRFeatureH, OGRGeometryH)	;
+typedef OGRErr (*IOGR_F_SetGeometryDirectly)(OGRFeatureH, OGRGeometryH)	;
 typedef void (*IOGR_G_DestroyGeometry)(	OGRGeometryH);
 typedef OGRErr (*IOGR_L_CreateFeature)(OGRLayerH,OGRFeatureH);
 typedef OGRErr (*IOGR_G_AddGeometry)(OGRGeometryH,OGRGeometryH);
-
+typedef OGRErr (*IOGR_G_AddGeometryDirectly)(OGRGeometryH,OGRGeometryH);
+typedef int (*IOGR_G_GetCoordinateDimension)(OGRGeometryH);
 
 
 typedef FILE* (*IVSIFileFromMemBuffer)( const char *, GByte *, vsi_l_offset ,int  );
@@ -140,7 +146,7 @@ public:
 
     bool isValid() const;
     QStringList getRasterExtensions() const;
-    QStringList getFeatureExtensions() const;
+   // QStringList getFeatureExtensions() const;
     bool supports(const Resource& resource) const;
 
     template<class T> T  add(const QString& name) {
@@ -218,12 +224,12 @@ public:
     IGetFieldAsInteger getFieldAsInt;
     IGetFieldAsDouble getFieldAsDouble;
     IGetFieldAsString getFieldAsString;
-    IGetFieldAsDateTime getFieldAsDateTime;
+    IOGR_F_GetFieldAsDateTime getFieldAsDateTime;
     IGetGeometryRef getGeometryRef;
     IGetGeometryType getGeometryType;
     IDestroyFeature destroyFeature;
     IGetPointCount getPointCount;
-    IGetPoints getPoints;
+    IGetPoints getPoint;
     IGetSubGeometryCount getSubGeometryCount;
     IGetSubGeometryRef getSubGeometryRef;
     IGetSpatialRef getSpatialRef;
@@ -245,15 +251,22 @@ public:
     IOGR_F_Create createFeature;
     IOGR_L_GetLayerDefn getLayerSchema;
     IOGR_F_GetFieldIndex getFieldIndex;
+    IOGR_F_SetFieldDateTime setDateTimeAttribute;
     IOGR_F_SetFieldString setStringAttribute;
     IOGR_F_SetFieldInteger setIntegerAttribute;
     IOGR_F_SetFieldDouble setDoubleAttribute;
     IOGR_G_CreateGeometry createGeometry;
-    IOGR_G_SetPoint_2D add2dPoint;
+    IOGR_G_AddPoint addPoint;
+    IOGR_G_AddPoint_2D addPoint2D;
+    IOGR_G_SetPoint setPoint;
+    IOGR_G_SetPoint_2D setPoint2D;
     IOGR_F_SetGeometry setGeometry;
+    IOGR_F_SetGeometryDirectly setGeometryDirectly;
     IOGR_G_DestroyGeometry destroyGeometry;
     IOGR_L_CreateFeature addFeature2Layer;
-    IOGR_G_AddGeometry add2Geometry;
+    IOGR_G_AddGeometry addGeometry;
+    IOGR_G_AddGeometryDirectly addGeometryDirectly;
+    IOGR_G_GetCoordinateDimension getCoordinateDimension;
 
     IVSIFileFromMemBuffer vsiFileFromMem;
     IVSIFCloseL vsiClose;
@@ -261,11 +274,12 @@ public:
 
 private:
     bool prepare();
+    static QString translateOGRERR(char ogrErrCode);
 
-    QLibrary _libgdal, _libproj4;
+    QLibrary _libgdal, _libproj4, _libexpat;
     bool _isValid;
     static GDALProxy *_proxy;
-    QStringList _featureExtensions;
+    //QStringList _featureExtensions;
     QStringList _rasterExtensions;
     QHash<QString, GdalHandle*> _openedDatasets;
 };

@@ -5,11 +5,13 @@ from ilwisobjects import CoordinateSystem
 try:
     from ilwisobjects import *
 
-    workingDir = "file:///D:/Profiles/KiesslingHG/ILWIS/testdata"
-    pytestDir = "/pytest"
+    workingDir = "file:///D:/Profiles/KiesslingHG/ILWIS/testdata/pytest"
     babyDir = "/baby"
     exampleDir = "/example"
     worldDir = "/world"
+    tempDir = "/temp"
+    featureDir = "/feature"
+    rasterDir = "/raster"
 
     import unittest as ut
 
@@ -18,7 +20,7 @@ try:
         def setUp(self):
             try:
                 disconnectIssueLogger()
-                Engine.setWorkingCatalog(workingDir+pytestDir)
+                Engine.setWorkingCatalog(workingDir+featureDir)
                 connectIssueLogger()
             except IlwisException:
                 connectIssueLogger()
@@ -36,7 +38,7 @@ try:
             # TODO bug fix in GdalLoader
             # self.assertEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column("OCTOBER"))
 
-        def test_StandaloneTable(self):
+        def test_StandaloneIlwis3Table(self):
             t = Table("rainfall.tbt")
             self.assertEqual("rainfall.tbt", t.name())
             self.assertEqual(12, t.recordCount())
@@ -64,6 +66,17 @@ try:
             self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column("march"))
             self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
             self.assertEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
+
+        def testStandaloneGdalTable(self):
+            t = Table("rainfall.shp")
+            self.assertTrue(bool(t))
+            self.assertFalse(t.isInternal(), msg="created a new table object with that name!!")
+            self.assertRegex(t.name(), "rainfall.shp")
+            self.assertEqual(
+                ('RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
+                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT'),
+                t.columns()
+            )
 
     #@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
@@ -114,7 +127,7 @@ try:
                 self.assertFalse(g.fromWKT("fdsfsds"))
                 self.assertFalse(bool(g))
 
-        def test_Contains(self):
+        def test_SimpleFeatures(self):
             p = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
             self.assertEqual(str(p), "POLYGON ((1.0000000000000000 1.0000000000000000, 1.0000000000000000 10.0000000000000000, 10.0000000000000000 10.0000000000000000, 10.0000000000000000 1.0000000000000000, 1.0000000000000000 1.0000000000000000))")
             self.assertTrue(bool(p))
@@ -123,6 +136,24 @@ try:
             self.assertTrue(bool(pin))
             self.assertTrue(p.contains(pin))
             self.assertTrue(pin.within(p))
+            geom = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
+            self.assertTrue(p.isSimple())
+            self.assertTrue(p.within(geom))
+            self.assertTrue(p.contains(geom))
+            self.assertFalse(p.disjoint(geom))
+            self.assertFalse(p.touches(geom))
+            self.assertTrue(p.intersects(geom))
+            self.assertFalse(p.crosses(geom))
+            self.assertFalse(p.overlaps(geom))
+            self.assertTrue(p.equals(geom))
+            self.assertTrue(p.covers(geom))
+            self.assertTrue(p.coveredBy(geom))
+            self.assertFalse(p.relate(geom, "T*T***T**"))  # overlaps
+            self.assertTrue(p.relate(geom, "T*F**F***"))  # within
+            self.assertEqual(p.distance(geom), 0)
+            self.assertEqual(p.getArea(), 81)
+            self.assertEqual(p.getLength(), 36)
+            self.assertTrue(p.isWithinDistance(geom, 0))
 
     #@ut.skip("temporarily")
     class TestUtil(ut.TestCase):
@@ -199,7 +230,7 @@ try:
 
         def test_IssueLogger(self):
             disconnectIssueLogger()
-            fc = FeatureCoverage(workingDir+pytestDir+"/noneexistentDir/nonexistent.file")
+            fc = FeatureCoverage(workingDir+"/noneexistentDir/nonexistent.file")
             self.assertFalse(bool(fc))
             connectIssueLogger()
 
@@ -243,7 +274,7 @@ try:
         def setUp(self):
             try:
                 disconnectIssueLogger()
-                Engine.setWorkingCatalog(workingDir+pytestDir)
+                Engine.setWorkingCatalog(workingDir)
                 connectIssueLogger()
             except IlwisException:
                 connectIssueLogger()
@@ -284,7 +315,7 @@ try:
         def setUp(self):
             try:
                 disconnectIssueLogger()
-                Engine.setWorkingCatalog(workingDir+pytestDir)
+                Engine.setWorkingCatalog(workingDir+featureDir)
                 connectIssueLogger()
             except IlwisException:
                 connectIssueLogger()
@@ -356,20 +387,43 @@ try:
             f = next(it3)
             self.assertTrue(str(f), "Feature(1)")
 
+        def test_storeGDAL(self):
+            # polygons
+            world = FeatureCoverage("ne_110m_admin_0_countries.shp")
+            world.setConnection(workingDir+tempDir+"/countries.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.store()
+            # points
+            world = FeatureCoverage("rainfall.shp")
+            world.setConnection(workingDir+tempDir+"/rainfall.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.store()
+            # lines
+            world = FeatureCoverage("drainage.shp")
+            world.setConnection(workingDir+tempDir+"/drainage.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.store()
+
+        #@ut.skip("temporarily")
+        def test_prepareHelloWorld(self):
+            world = FeatureCoverage("ne_110m_admin_0_countries.shp")
+            self.assertTrue(bool(world))
+            self.assertEqual(177, world.featureCount())
+            world.setCoordinateSystem(CoordinateSystem("countries.csy"))
+            world.setConnection(workingDir+tempDir+"/countries", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.store()
+            self.assertEqual(177, world.featureCount())
 
     #@ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
             try:
                 disconnectIssueLogger()
-                Engine.setWorkingCatalog(workingDir+pytestDir)
+                Engine.setWorkingCatalog(workingDir+featureDir)
                 connectIssueLogger()
             except IlwisException:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
         def test_FromFile(self):
-            csy = CoordinateSystem(workingDir+pytestDir+"/Cochabamba.csy")
+            csy = CoordinateSystem(workingDir+featureDir+"/Cochabamba.csy")
             self.assertEqual("Cochabamba.csy", csy.name())
             fc = FeatureCoverage("Rainfall.mpp")
             rainCsy = fc.coordinateSystem()
@@ -381,7 +435,7 @@ try:
                 "code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
             cs1.name("myProj4CSY")
             self.assertTrue(bool(cs1), msg="invalid CoordinateSystem from Proj4")
-            fc = FeatureCoverage(workingDir+pytestDir+"/rainfall.shp")
+            fc = FeatureCoverage(workingDir+featureDir+"/rainfall.shp")
             fc.setCoordinateSystem(cs1)
             self.assertEqual(fc.coordinateSystem().name(), "myProj4CSY",
                              msg="could not alter FeatureCoverage's CoordinateSystem")
@@ -398,12 +452,12 @@ try:
             self.assertTrue(cs1 == cs2)
             self.assertFalse(cs1 != cs2)
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestRaster(ut.TestCase):
         def setUp(self):
             try:
                 disconnectIssueLogger()
-                Engine.setWorkingCatalog(workingDir+pytestDir)
+                Engine.setWorkingCatalog(workingDir+rasterDir)
                 connectIssueLogger()
                 self.small = [
                     3.0, 80.0, 80.0, 80.0, 3.0,
@@ -452,7 +506,7 @@ try:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_RasterCalculation(self):
             rc = RasterCoverage("n000302.mpr")
             rctif = RasterCoverage("n0.mpr")
@@ -493,7 +547,7 @@ try:
             aa12 = rc * 2
             self.assertEqual(aa12.pix2value(342, 342, 0), 29.0 * 2)
 
-            self.assertTrue(aa1.setConnection(workingDir + pytestDir + "/aa1", "GTiff", "gdal", IlwisObject.cmOUTPUT),
+            self.assertTrue(aa1.setConnection(workingDir + tempDir + "/aa1", "GTiff", "gdal", IlwisObject.cmOUTPUT),
                             msg="setConnection file failed!")
             aa1.store()
 
@@ -685,27 +739,55 @@ try:
                 self.skipTest("could not set working directory!")
 
         #@ut.skip("temporarily")
-        def test_prepareHelloWorld(self):
-            world = FeatureCoverage("ne_110m_admin_0_countries.shp")
-            self.assertTrue(bool(world))
-            self.assertEqual(177, world.featureCount())
-            world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setConnection(workingDir + worldDir + "/countries", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
-            world.store()
-            self.assertEqual(177, world.featureCount())
-
         def test_halloWorld(self):
-            world = FeatureCoverage(workingDir + worldDir + "/countries.mpa")
+            world = FeatureCoverage("countries.mpa")
             if bool(world) and not world.isInternal():
                 population = {}
                 self.assertEqual(286, world.featureCount())
                 for country in world:
                     name = str(country["iso_a2"])
                     if name not in population:
-                        population[name] = int(country["pop_est"])
+                        population[name] = float(country["pop_est"])
+                # print(sorted(population.items(), key=lambda x: x[1]))
+                self.assertEqual(
+                    {'OM': 3418085.0, 'HU': 9905596.0, 'HT': 9035536.0, 'HR': 4489409.0, 'ZW': 12619600.0,
+                     'HN': 7792854.0, 'RW': 10473282.0, 'CH': 7604467.0, 'JM': 2825928.0, 'RS': 7379339.0,
+                     'RO': 22215421.0, 'JP': 127078679.0, 'GY': 772298.0, 'GT': 13276517.0, 'CO': 45644023.0,
+                     'GQ': 650702.0, 'GR': 10737428.0, 'GL': 57600.0, 'GM': 1782893.0, 'GN': 10057975.0,
+                     'GH': 23832495.0, 'GE': 4615807.0, 'GA': 1514993.0, 'GB': 62262000.0, 'US': 313973000.0,
+                     'GW': 1533964.0, 'MN': 3041142.0, 'ML': 12666987.0, 'MM': 48137741.0, 'UZ': 27606007.0,
+                     'UY': 3494382.0, 'MG': 20653556.0, 'MD': 4320748.0, 'ME': 672180.0, 'MZ': 21669278.0,
+                     'MX': 111211789.0, 'UA': 45700395.0, 'VE': 26814843.0, 'MR': 3129486.0, 'MW': 14268711.0,
+                     'FR': 64057792.0, 'ZM': 11862740.0, 'FK': 3140.0, 'FJ': 944720.0, 'FI': 5250275.0,
+                     'LV': 2231503.0, 'LB': 4017095.0, 'PY': 6995655.0, '-99': 265100.0, 'PT': 10707924.0,
+                     'PS': 4119083.0, 'PR': 3971020.0, 'PL': 38482919.0, 'PH': 97976603.0, 'PK': 176242949.0,
+                     'PE': 29546963.0, 'PG': 6057263.0, 'PA': 3360474.0, 'EC': 14573101.0, 'EG': 83082869.0,
+                     'EE': 1299371.0, 'EH': -99.0, 'ER': 5647168.0, 'ES': 40525002.0, 'ZA': 49052489.0,
+                     'ET': 85237338.0, 'SY': 20178485.0, 'SZ': 1123913.0, 'MK': 2066718.0, 'SR': 481267.0,
+                     'SS': 10625176.0, 'SV': 7185218.0, 'SI': 2005692.0, 'SK': 5463046.0, 'SL': 6440053.0,
+                     'SN': 13711597.0, 'SO': 9832017.0, 'SA': 28686633.0, 'SB': 595613.0, 'SD': 25946220.0,
+                     'SE': 9059651.0, 'LR': 3441790.0, 'DE': 82329758.0, 'LU': 491775.0, 'DK': 5500510.0,
+                     'DJ': 516055.0, 'DO': 9650054.0, 'LT': 3555179.0, 'DZ': 34178188.0, 'NC': 227436.0,
+                     'NA': 2108665.0, 'MA': 34859364.0, 'NG': 149229090.0, 'NE': 15306252.0, 'VN': 86967524.0,
+                     'NI': 5891199.0, 'NO': 4676305.0, 'IT': 58126212.0, 'NL': 16715999.0, 'NP': 28563377.0,
+                     'NZ': 4213418.0, 'KP': 22665345.0, 'CI': 20617068.0, 'KR': 48508972.0, 'CL': 16601707.0,
+                     'CM': 18879301.0, 'CN': 1338612970.0, 'KW': 2691158.0, 'CA': 33487208.0, 'KZ': 15399437.0,
+                     'CD': 68692542.0, 'CF': 4511488.0, 'CG': 4012809.0, 'CY': 531640.0, 'CZ': 10211904.0,
+                     'MY': 25715819.0, 'KE': 39002772.0, 'KG': 5431747.0, 'KH': 14494293.0, 'CR': 4253877.0,
+                     'CU': 11451652.0, 'VU': 218519.0, 'UG': 32369558.0, 'JO': 6342948.0, 'RU': 140041247.0,
+                     'QA': 833285.0, 'BG': 7204687.0, 'BF': 15746232.0, 'BE': 10414336.0, 'BD': 156050883.0,
+                     'BA': 4613414.0, 'BO': 9775246.0, 'BN': 388190.0, 'BJ': 8791832.0, 'BI': 8988091.0,
+                     'BW': 1990876.0, 'BT': 691141.0, 'BS': 309156.0, 'BR': 198739269.0, 'BZ': 307899.0,
+                     'BY': 9648533.0, 'LK': 21324791.0, 'TR': 76805524.0, 'TT': 1310000.0, 'TW': 22974347.0,
+                     'LA': 6834942.0, 'TZ': 41048532.0, 'LY': 6310434.0, 'IL': 7233701.0, 'YE': 23822783.0,
+                     'TD': 10329208.0, 'TG': 6019877.0, 'TF': 140.0, 'TH': 65905410.0, 'LS': 2130819.0,
+                     'TJ': 7349145.0, 'TM': 4884887.0, 'TL': 1131612.0, 'TN': 10486339.0, 'AO': 12799293.0,
+                     'AL': 3639453.0, 'AM': 2967004.0, 'IR': 66429284.0, 'IS': 306694.0, 'IQ': 31129225.0,
+                     'AF': 28400000.0, 'AE': 4798491.0, 'ID': 240271522.0, 'IE': 4203200.0, 'AZ': 8238672.0,
+                     'IN': 1166079220.0, 'AT': 8210281.0, 'AU': 21262641.0, 'AR': 40913584.0,'AQ': 3802.0},
+                    population)
             else:
                 self.skipTest("countries.mpa is missing")
-            # print(sorted(population.items(), key=lambda x: x[1]))
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":

@@ -6,6 +6,7 @@
 #include "kernel.h"
 #include "errorobject.h"
 #include "ilwiscontext.h"
+#include "dataformat.h"
 #include "gdalproxy.h"
 
 
@@ -47,6 +48,9 @@ GDALProxy::GDALProxy(const QString& gdalLibrary, const QString& proj4jLibrary) {
     path = ilw.canonicalFilePath() + "/Extensions/gdalconnector/" + proj4jLibrary;
     _libproj4.setFileName(path);
     bool ok = _libproj4.load();
+    path = ilw.canonicalFilePath() + "/Extensions/gdalconnector/" + "expat.dll";
+    _libexpat.setFileName(path);
+    ok &= _libexpat.load();
     _isValid = _libgdal.load() && ok;
 }
 
@@ -63,6 +67,7 @@ GDALProxy::~GDALProxy(){
 }
 
 bool GDALProxy::prepare() {
+    //GDAL Raster
     close = add<IGDALClose>("GDALClose");
     registerAll = add<IGDALAllRegister>("GDALAllRegister");
     identifyDriver = add<IGDALIdentifyDriver>("GDALIdentifyDriver");
@@ -90,7 +95,7 @@ bool GDALProxy::prepare() {
     minValue = add<IGDALRasValue>("GDALGetRasterMinimum");
     maxValue = add<IGDALRasValue>("GDALGetRasterMaximum");
     colorInterpretation = add<IGDALGetRasterColorInterpretation>("GDALGetRasterColorInterpretation");
-
+    //Open Spatial Reference
     importFromEpsg = add<IOSRImportFromEPSG>("OSRImportFromEPSG");
     exportToPrettyWkt = add<IOSRExportToPrettyWkt>("OSRExportToPrettyWkt");
     getProjectionParm = add<IOSRGetProjParm>("OSRGetProjParm");
@@ -101,66 +106,79 @@ bool GDALProxy::prepare() {
     importFromWkt = add<IOSRImportFromWkt>("OSRImportFromWkt");
     exportToWkt = add<IExportToWkt>("OSRExportToWkt");
     importFromProj4 = add<IOSRImportFromProj4>("OSRImportFromProj4");
-
+    //OGR
     ogrOpen = add<IOGROpen>("OGROpen");
     releaseDataSource = add<IOGRReleaseDataSource>("OGRReleaseDataSource");
     ogrRegisterAll = add<IOGRRegisterAll>("OGRRegisterAll");
     ogrDriverCount =add<IOGRGetDriverCount>("OGRGetDriverCount");
     ogrGetDriver = add<IOGRGetDriver>("OGRGetDriver");
     getDriverByName = add<IOGRGetDriverByName>("OGRGetDriverByName");
+    //OGR Driver
     getOGRDriverName = add<IOGRGetDriverName>("OGR_Dr_GetName");
     testDriverCapability = add<IOGRTestDriverCapability>("OGR_Dr_TestCapability");
-
+    createDatasource = add<IOGR_Dr_CreateDataSource>("OGR_Dr_CreateDataSource");
+    //OGR DataSource
+    createOgrLayer = add<IOGR_DS_CreateLayer>("OGR_DS_CreateLayer");
     getLaterByName = add<IGetLayerByName>("OGR_DS_GetLayerByName");
     getLayerCount = add<IGetLayerCount>("OGR_DS_GetLayerCount");
     getLayer = add<IGetLayer>("OGR_DS_GetLayer");
+    destroyDataSource = add<IOGR_DS_Destroy>("OGR_DS_Destroy");
+    //OGR Layer
     getLayerName = add<IGetLayerName>("OGR_L_GetName");
     getLayerGeometry = add<IGetLayerGeometryType>("OGR_L_GetGeomType");
     resetReading = add<IResetReading>("OGR_L_ResetReading");
     getNextFeature = add<IGetNextFeature>("OGR_L_GetNextFeature");
     getLayerDef = add<IGetLayerDefn>("OGR_L_GetLayerDefn");
-    getFieldCount = add<IGetFieldCount>("OGR_FD_GetFieldCount");
-    getFieldDfn = add<IGetFieldDefn>("OGR_FD_GetFieldDefn");
-    getFieldType = add<IGetFieldType>("OGR_Fld_GetType");
-    getFieldAsString = add<IGetFieldAsString>("OGR_F_GetFieldAsString");
-    getFieldAsDouble = add<IGetFieldAsDouble>("OGR_F_GetFieldAsDouble");
-    getFieldAsInt = add<IGetFieldAsInteger>("OGR_F_GetFieldAsInteger");
-    getFieldAsDateTime = add<IGetFieldAsDateTime>("OGR_F_GetFieldAsDateTime");
-    getGeometryRef = add<IGetGeometryRef>("OGR_F_GetGeometryRef");
-    getGeometryType = add<IGetGeometryType>("OGR_G_GetGeometryType");
-    destroyFeature = add<IDestroyFeature>("OGR_F_Destroy");
-    getPointCount = add<IGetPointCount>("OGR_G_GetPointCount");
-    getPoints = add<IGetPoints>("OGR_G_GetPoint");
-    getSubGeometryCount = add<IGetSubGeometryCount>("OGR_G_GetGeometryCount");
-    getSubGeometryRef = add<IGetSubGeometryRef>("OGR_G_GetGeometryRef");
     getSpatialRef = add<IGetSpatialRef>("OGR_L_GetSpatialRef");
     getFeatureCount = add<IGetFeatureCount>("OGR_L_GetFeatureCount");
     getLayerExtent = add<IGetLayerExtent>("OGR_L_GetExtent");
-    getFieldName = add<IGetFieldName>("OGR_Fld_GetNameRef");
     getSpatialFilter = add<IOGRGetSpatialFilter>("OGR_L_GetSpatialFilter");
-    getEnvelope3D = add<IOGRGetEnvelope3D>("OGR_G_GetEnvelope3D");
-    destroyDataSource = add<IOGR_DS_Destroy>("OGR_DS_Destroy");
-    createDatasource = add<IOGR_Dr_CreateDataSource>("OGR_Dr_CreateDataSource");
-    createOgrLayer = add<IOGR_DS_CreateLayer>("OGR_DS_CreateLayer");
-    createAttributeDefintion = add<IOGR_Fld_Create>("OGR_Fld_Create");
     addAttribute = add<IOGR_L_CreateField>("OGR_L_CreateField");
-    destroyAttributeDefintion = add<IOGR_Fld_Destroy>("OGR_Fld_Destroy");
-    createFeature = add<IOGR_F_Create>("OGR_F_Create");
     getLayerSchema = add<IOGR_L_GetLayerDefn>("OGR_L_GetLayerDefn");
+    addFeature2Layer = add<IOGR_L_CreateFeature>("OGR_L_CreateFeature");
+    //OGR FielDefinition
+    getFieldCount = add<IGetFieldCount>("OGR_FD_GetFieldCount");
+    getFieldDfn = add<IGetFieldDefn>("OGR_FD_GetFieldDefn");
+    //OGR Field
+    getFieldType = add<IGetFieldType>("OGR_Fld_GetType");
+    getFieldName = add<IGetFieldName>("OGR_Fld_GetNameRef");
+    createAttributeDefintion = add<IOGR_Fld_Create>("OGR_Fld_Create");
+    destroyAttributeDefintion = add<IOGR_Fld_Destroy>("OGR_Fld_Destroy");
+    //OGR Feature
+    createFeature = add<IOGR_F_Create>("OGR_F_Create");
     getFieldIndex = add<IOGR_F_GetFieldIndex>("OGR_F_GetFieldIndex");
     setStringAttribute = add<IOGR_F_SetFieldString>("OGR_F_SetFieldString");
     setIntegerAttribute = add<IOGR_F_SetFieldInteger>("OGR_F_SetFieldInteger");
     setDoubleAttribute = add<IOGR_F_SetFieldDouble>("OGR_F_SetFieldDouble");
-    createGeometry = add<IOGR_G_CreateGeometry>("OGR_G_CreateGeometry");
-    add2dPoint = add<IOGR_G_SetPoint_2D>("OGR_G_SetPoint_2D");
+    setDateTimeAttribute = add<IOGR_F_SetFieldDateTime>("OGR_F_SetFieldDateTime");\
+    getFieldAsString = add<IGetFieldAsString>("OGR_F_GetFieldAsString");
+    getFieldAsDouble = add<IGetFieldAsDouble>("OGR_F_GetFieldAsDouble");
+    getFieldAsInt = add<IGetFieldAsInteger>("OGR_F_GetFieldAsInteger");
+    getFieldAsDateTime = add<IOGR_F_GetFieldAsDateTime>("OGR_F_GetFieldAsDateTime");\
+    getGeometryRef = add<IGetGeometryRef>("OGR_F_GetGeometryRef");
+    destroyFeature = add<IDestroyFeature>("OGR_F_Destroy");
     setGeometry = add<IOGR_F_SetGeometry>("OGR_F_SetGeometry");
+    setGeometryDirectly = add<IOGR_F_SetGeometryDirectly>("OGR_F_SetGeometryDirectly");
+    //OGR Geometry
+    getGeometryType = add<IGetGeometryType>("OGR_G_GetGeometryType");
+    getPointCount = add<IGetPointCount>("OGR_G_GetPointCount");
+    getPoint = add<IGetPoints>("OGR_G_GetPoint");
+    getSubGeometryCount = add<IGetSubGeometryCount>("OGR_G_GetGeometryCount");
+    getSubGeometryRef = add<IGetSubGeometryRef>("OGR_G_GetGeometryRef");
+    getEnvelope3D = add<IOGRGetEnvelope3D>("OGR_G_GetEnvelope3D");
+    createGeometry = add<IOGR_G_CreateGeometry>("OGR_G_CreateGeometry");
+    addPoint = add<IOGR_G_AddPoint>("OGR_G_AddPoint");
+    addPoint2D = add<IOGR_G_AddPoint_2D>("OGR_G_AddPoint_2D");
+    setPoint = add<IOGR_G_SetPoint>("OGR_G_SetPoint");
+    setPoint2D = add<IOGR_G_SetPoint_2D>("OGR_G_SetPoint_2D");
     destroyGeometry = add<IOGR_G_DestroyGeometry>("OGR_G_DestroyGeometry");
-    addFeature2Layer = add<IOGR_L_CreateFeature>("OGR_L_CreateFeature");
-    add2Geometry = add<IOGR_G_AddGeometry>("OGR_G_AddGeometry");
-
+    addGeometry = add<IOGR_G_AddGeometry>("OGR_G_AddGeometry");
+    addGeometryDirectly = add<IOGR_G_AddGeometryDirectly>("OGR_G_AddGeometryDirectly");
+    getCoordinateDimension = add<IOGR_G_GetCoordinateDimension>("OGR_G_GetCoordinateDimension");
+    //CPL
     pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
     getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");
-
+    //VSI
     vsiFileFromMem = add<IVSIFileFromMemBuffer>("VSIFileFromMemBuffer");
     vsiClose = add<IVSIFCloseL>("VSIFCloseL");
     free = add<IFree>("VSIFree");
@@ -187,26 +205,27 @@ bool GDALProxy::prepare() {
         pushFinderLocation(path.toLocal8Bit());
         //feature extensions
         ogrRegisterAll();
-        QSettings fileExtensions(path.append("/ogr_extensions.ini"), QSettings::IniFormat);
-        if (fileExtensions.childGroups().count() > 0){
-            fileExtensions.beginGroup(fileExtensions.childGroups().at(0));
-            for(QString key: fileExtensions.childKeys()){
-                OGRSFDriverH hDriver = getDriverByName(fileExtensions.value(key).toString().toLocal8Bit());
-                if (hDriver != nullptr){//ODrCDeleteDataSource is aso possible
-                    _featureExtensions.append(QString("*.").append(key));
-                    if (testDriverCapability(hDriver, ODrCCreateDataSource)){
-                        //TODO:: save a bool for this driver capability to expose it to the store-method
-                    }
-                }else{
-                    ERROR2(ERR_NO_INITIALIZED_2,QString("File format (%1) support").arg(key),"OGR-Library (gdall.dll)");
-                }
-            }
-        }else{
-            _featureExtensions.append(QString("*.shp"));
-        }
+
+        DataFormat::setFormatInfo(path + "/ogr_formats.config","gdal");
+
     }
 
     return _isValid;
+}
+
+QString GDALProxy::translateOGRERR(char ogrErrCode){
+    switch (ogrErrCode){
+        case OGRERR_NONE: return "none"; break;
+        case OGRERR_NOT_ENOUGH_DATA: return "not enough data"; break;
+        case OGRERR_NOT_ENOUGH_MEMORY: return "not enough memory"; break;
+        case OGRERR_UNSUPPORTED_GEOMETRY_TYPE: return "unsupported geometry type"; break;
+        case OGRERR_UNSUPPORTED_OPERATION: return "unsupported operation"; break;
+        case OGRERR_CORRUPT_DATA: return "corrupt data"; break;
+        case OGRERR_FAILURE: return "failure"; break;
+        case OGRERR_UNSUPPORTED_SRS: return "unsupported SRS"; break;
+        case OGRERR_INVALID_HANDLE: return "invalid handle"; break;
+        default: return "unknown OGR Error code!";
+    }
 }
 
 bool GDALProxy::isValid() const
@@ -219,18 +238,13 @@ QStringList GDALProxy::getRasterExtensions() const
     return _rasterExtensions;
 }
 
-QStringList GDALProxy::getFeatureExtensions() const
-{
-    return _featureExtensions;
-}
-
 bool GDALProxy::supports(const Resource &resource) const{
     QFileInfo inf(resource.toLocalFile());
     QString ext = inf.suffix();
     QString filter = "*." + ext;
     if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
         return true;
-    if ( gdal()->getFeatureExtensions().contains(filter,Qt::CaseInsensitive))
+    if ( DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal").contains(ext,Qt::CaseInsensitive))
         return true;
     return false;
 }
@@ -264,9 +278,9 @@ void GDALProxy::closeFile(const QString &filename, quint64 asker){
         if (handle->type() == GdalHandle::etGDALDatasetH){
             close(handle->handle());
         }else if(handle->etOGRDataSourceH){
-            if (OGRErr err = releaseDataSource((OGRDataSourceH)handle->handle()) != OGRERR_NONE){
+            if (/*OGRErr err = */releaseDataSource((OGRDataSourceH)handle->handle()) != OGRERR_NONE){
                 //TODO everything seems to work but, the error remains!
-                //ERROR1(QString("Couldn't release OGRDataSource (ERR %1: %2)").arg(err).arg(QString(getLastErrorMsg())), name);
+                //ERROR2("Couldn't release OGRDataSource (OGRERR %1) for %2", translateOGRERR(err) , name);
             }
         }else{
             ERROR2(ERR_INVALID_PROPERTY_FOR_2, "GDAL-OGR HandleType", name);

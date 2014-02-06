@@ -208,8 +208,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     int nrPolygons = fcoverage->featureCount(itPOLYGON);
     fcoverage->setFeatureCount(itPOLYGON, 0,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-    long rec = 0;
-    double oldValue = rUNDEF;
+    map<quint32,vector<geos::geom::Geometry *>> polygons;
     for(int j=0; j < nrPolygons; ++j) {
         geos::geom::CoordinateArraySequence *outer = readRing(stream);
         if ( !outer)
@@ -225,23 +224,43 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         for(quint32 i=0; i< numberOfHoles;++i)
             (*inners)[i] = fcoverage->geomfactory()->createLinearRing(readRing(stream));
         geos::geom::Polygon *pol = fcoverage->geomfactory()->createPolygon(outerring, inners);
+
+        //collect all polygons in a map; the key is either a unique number ( index j) or the raw value from the polygon
+        //in this way all polygons with the same raw value will become a multipolygon
+        polygons[isNumeric ? j + 1 : (quint32)value].push_back(pol);
         if ( isNumeric) {
-
-            fcoverage->newFeature({pol},false);
-            tbl->setCell(COVERAGEKEYCOLUMN, j, QVariant(j));
             tbl->setCell(FEATUREVALUECOLUMN, j, QVariant(value));
-        } else {
-            fcoverage->newFeature({pol},false);
-            if (oldValue != value) {
-                tbl->setCell(COVERAGEKEYCOLUMN, rec++, QVariant(value - 1));
-                oldValue = value;
-            }
         }
-
     }
+    addFeatures(polygons, fcoverage,tbl, itPOLYGON);
     file.close();
 
     return true;
+}
+
+void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>& geometries,FeatureCoverage *fcoverage,ITable& tbl, IlwisTypes tp) {
+    quint32 rec = 0;
+    for(auto iter = geometries.begin() ; iter != geometries.end(); ++iter) {
+        vector<geos::geom::Geometry *>& geoms1 = (*iter).second;
+        if ( geoms1.size() == 1) {
+            fcoverage->newFeature({geoms1[0]},false);
+        } else {
+            std::vector<geos::geom::Geometry *> *geoms = new std::vector<geos::geom::Geometry *>((*iter).second);
+            geos::geom::GeometryCollection *multigeom = 0;
+            switch(tp) {
+                case itPOLYGON:
+                    multigeom = fcoverage->geomfactory()->createMultiPolygon(geoms); break;
+                case itLINE:
+                    multigeom = fcoverage->geomfactory()->createMultiLineString(geoms); break;
+                case itPOINT:
+                    multigeom = fcoverage->geomfactory()->createMultiPoint(geoms); break;
+            }
+
+
+            fcoverage->newFeature({multigeom},false);
+        }
+        tbl->setCell(COVERAGEKEYCOLUMN, rec++, QVariant((*iter).first - 1));
+    }
 }
 
 geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& stream ) {
@@ -283,6 +302,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     ITable tbl = fcoverage->attributeTable();
     fcoverage->setFeatureCount(itLINE, 0,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
 
+    map<quint32,vector<geos::geom::Geometry *>> lines;
     double value;
     for(quint32 i= 0; i < mpsTable.rows(); ++i) {
         std::vector<Coordinate > coords;
@@ -292,19 +312,17 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
             vertices->setAt(geos::geom::Coordinate(coords[i].x, coords[i].y, coords[i].z), i);
         geos::geom::LineString *line = fcoverage->geomfactory()->createLineString(vertices);
         mpsTable.get(i, colItemId,value);
-        if ( isNumeric) {
-            fcoverage->newFeature({line},false);
-            tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
-            tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(value));
 
-        } else {
-            quint32 itemId = value;
-            tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
-            fcoverage->newFeature({line},false);
+        //collect all lines in a map; the key is either a unique number ( index j) or the raw value from the line
+        //in this way all lines with the same raw value will become a multilinestring
+        lines[isNumeric ? i + 1 : (quint32)value].push_back(line);
+        if ( isNumeric) {
+            tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(value));
         }
 
 
     }
+    addFeatures(lines, fcoverage,tbl, itLINE);
     return true;
 
 
@@ -320,14 +338,15 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
     int coordColumnY = mppTable.index("y");
     int coordColumn = mppTable.index("Coordinate");
     int colItemId = mppTable.index("Name");
+    bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
     ITable tbl = fcoverage->attributeTable();
     bool newCase =  coordColumnX == iUNDEF;
     fcoverage->setFeatureCount(itPOINT, 0,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
-
+    map<quint32,vector<geos::geom::Geometry *>> points;
     for(quint32 i= 0; i < mppTable.rows(); ++i) {
         Coordinate c;
-        double itemIdT;
+        double value;
         if ( newCase) {
             mppTable.get(i, coordColumn, c);
         } else {
@@ -336,13 +355,15 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
             mppTable.get(i, coordColumnY, y);
             c = Coordinate(x,y);
         }
-        mppTable.get(i, colItemId,itemIdT);
-        quint32 itemId = itemIdT;
+        mppTable.get(i, colItemId,value);
         geos::geom::Point *point = fcoverage->geomfactory()->createPoint(c);
-        fcoverage->newFeature(point, false);
-        tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
+        points[isNumeric ? i + 1 : (quint32)value].push_back(point);
+        if ( isNumeric) {
+            tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(value));
+        }
 
     }
+    addFeatures(points, fcoverage,tbl, itPOINT);
     return true;
 }
 
