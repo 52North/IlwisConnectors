@@ -13,6 +13,7 @@
 #include "gdalproxy.h"
 #include "gdalcatalogconnector.h"
 #include "gdalitem.h"
+#include "dataformat.h"
 #include "mastercatalog.h"
 
 using namespace Ilwis;
@@ -34,9 +35,11 @@ inline uint qHash(const QFileInfo& inf ){
 bool GdalCatalogConnector::loadItems()
 {
     QStringList filters = gdal()->getRasterExtensions();
-    filters.append(gdal()->getFeatureExtensions());
+    QStringList ogrExt = DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal");
+    for(QString& ext : ogrExt)
+        ext = "*." + ext;
+    filters.append(ogrExt);
     filters.removeOne("*.hdr");
-        //namefilter << gdal()->getFeatureExtensions();
 
     std::vector<QUrl> files = containerConnector()->sources(filters
                                                       ,ContainerConnector::foFULLPATHS | ContainerConnector::foEXTENSIONFILTER);
