@@ -6,8 +6,8 @@
 #include <QList>
 
 class QUrl;
-class QXmlStreamReader;
 class XPathParser;
+class QXmlItem;
 
 namespace Ilwis {
 namespace Wfs {
@@ -25,7 +25,7 @@ private:
     XPathParser *_parser;
 
     QUrl createGetFeatureUrl(QString featureType) const;
-    void parseFeature(WfsFeature *feature, QXmlStreamReader *reader) const;
+    void parseFeature(QXmlItem &item, WfsFeature *feature) const;
     Coordinate createCoordinateFromWgs84LatLon(QString latlon) const;
     QString normalizeEpsgCode(QString epsgCode) const ;
 
