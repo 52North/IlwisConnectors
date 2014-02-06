@@ -11,4 +11,3 @@
   
 *  let WfsFeature inherit from resource. objects are created from DescribeFeatureType and can be used by featureconnector and tableconnector
 
-  
