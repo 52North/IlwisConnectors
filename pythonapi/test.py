@@ -38,7 +38,7 @@ try:
             # TODO bug fix in GdalLoader
             # self.assertEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column("OCTOBER"))
 
-        def test_StandaloneTable(self):
+        def test_StandaloneIlwis3Table(self):
             t = Table("rainfall.tbt")
             self.assertEqual("rainfall.tbt", t.name())
             self.assertEqual(12, t.recordCount())
@@ -66,6 +66,17 @@ try:
             self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column("march"))
             self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
             self.assertEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
+
+        def testStandaloneGdalTable(self):
+            t = Table("rainfall.shp")
+            self.assertTrue(bool(t))
+            self.assertFalse(t.isInternal(), msg="created a new table object with that name!!")
+            self.assertRegex(t.name(), "rainfall.shp")
+            self.assertEqual(
+                ('RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
+                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT'),
+                t.columns()
+            )
 
     #@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
