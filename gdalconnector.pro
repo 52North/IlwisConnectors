@@ -72,9 +72,9 @@ DEPENDPATH += $$PWD/core
 
 OTHER_FILES += \
     gdalconnector/gdalconnector.json \
-    gdalconnector/resources/ogr_extensions.ini
+    gdalconnector/resources/ogr_formats.config
 
-resources.files = gdalconnector/resources/ogr_extensions.ini
+resources.files = gdalconnector/resources/ogr_formats.config
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
 INSTALLS += resources
