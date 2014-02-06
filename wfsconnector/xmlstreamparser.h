@@ -6,8 +6,11 @@
 class QXmlStreamReader;
 class QXmlStreamAttributes;
 
+namespace Ilwis {
+namespace Wfs {
 
 struct QName {
+    // TODO: extract qName parsing
     QName(QString qName) {
         int splitIndex = qName.indexOf(":");
         if (splitIndex > 0) {
@@ -46,14 +49,21 @@ public:
     QString readElementText() const;
 
     /**
-     * Moves to the element living on current level, named by qName, and steps in directly by default.
+     * Moves to the element living on current level, named by qName.
      *
      * @param qName the name of the element to move to.
-     * @param stepIn if to step in the element if found.
-     * @return true if element was found, false if element was not found.
+     * @return true if element was found, false otherwise.
      */
-    bool moveTo(QString qName, bool stepIn=true) const;
-    bool isAtBeginningOf(QString qName, bool stepIn=true) const;
+    bool currentLevelMoveTo(QString qName) const;
+
+    /**
+     * Moves to the element living on next level, named by qName.
+     *
+     * @param qName the name of the element to move to.
+     * @return true if element was found, false otherwise.
+     */
+    bool nextLevelMoveTo(QString qName) const;
+    bool isAtBeginningOf(QString qName) const;
     bool isAtEndOf(QString qName) const;
 
 
@@ -66,4 +76,6 @@ private:
     bool isAtElement(QString qName) const;
 };
 
+}
+}
 #endif // XMLPARSER_H

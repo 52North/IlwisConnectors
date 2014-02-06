@@ -5,6 +5,9 @@
 
 #include "xmlstreamparser.h"
 
+using namespace Ilwis;
+using namespace Wfs;
+
 XmlStreamParser::XmlStreamParser()
 {
 }
@@ -35,7 +38,11 @@ void XmlStreamParser::addNamespaceMapping(QString prefix, QString ns)
 
 bool XmlStreamParser::startParsing(QString qName) const
 {
-    return !atEnd() && _reader->readNextStartElement() && isAtBeginningOf(qName);
+    while ( !_reader->isStartDocument()) {
+        _reader->readNext();
+    }
+    _reader->readNextStartElement();
+    return !_reader->atEnd() && isAtBeginningOf(qName);
 }
 
 bool XmlStreamParser::hasError() const
@@ -48,22 +55,6 @@ QXmlStreamAttributes XmlStreamParser::attributes() const
     return _reader->attributes();
 }
 
-//QString XmlStreamParser::attribue(QString qName) const
-//{
-//    if (hasAttribute(qName)) {
-
-//    } else {
-//        return "";
-//    }
-//}
-
-//bool XmlStreamParser::hasAttribute(QString qName) const
-//{
-//    foreach (QXmlStreamAttribute attribute, attributes()) {
-
-//    }
-//}
-
 bool XmlStreamParser::atEnd() const
 {
     return _reader->atEnd();
@@ -74,35 +65,37 @@ QString XmlStreamParser::readElementText() const
     return _reader->readElementText();
 }
 
-
-bool XmlStreamParser::moveTo(QString qName, bool stepIn) const
+bool XmlStreamParser::currentLevelMoveTo(QString qName) const
 {
     bool found = false;
-    while ( !(_reader->atEnd() || isAtBeginningOf(qName, stepIn))) {
-        _reader->skipCurrentElement();
-        found  = _reader->readNextStartElement();
+    while ( !(found || _reader->atEnd())) {
+        if (_reader->isEndElement()) {
+            _reader->readNextStartElement();
+        } else {
+            found = isAtBeginningOf(qName);
+            if ( !found) {
+                _reader->skipCurrentElement();
+            }
+        }
     }
     return found;
 }
 
-
-bool XmlStreamParser::isAtBeginningOf(QString qName, bool stepIn) const
+bool XmlStreamParser::nextLevelMoveTo(QString qName) const
 {
+    if (_reader->atEnd()) {
+        return false;
+    }
+    _reader->readNextStartElement();
+    return currentLevelMoveTo(qName);
+}
 
+bool XmlStreamParser::isAtBeginningOf(QString qName) const
+{
     if (_reader->atEnd() || !_reader->isStartElement()) {
         return false;
     }
-
-    if (!isAtElement(qName)) {
-        return false;
-    }
-
-    if (stepIn) {
-        _reader->readNextStartElement();
-        return true;
-    } else {
-        return true;
-    }
+    return isAtElement(qName);
 }
 
 bool XmlStreamParser::isAtEndOf(QString qName) const
@@ -112,7 +105,6 @@ bool XmlStreamParser::isAtEndOf(QString qName) const
     }
     return isAtElement(qName);
 }
-
 
 bool XmlStreamParser::isAtElement(QString qName) const
 {
@@ -139,5 +131,4 @@ bool XmlStreamParser::isAtElement(QString qName) const
         }
     }
 }
-
 
