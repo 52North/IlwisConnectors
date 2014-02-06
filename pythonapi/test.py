@@ -127,7 +127,7 @@ try:
                 self.assertFalse(g.fromWKT("fdsfsds"))
                 self.assertFalse(bool(g))
 
-        def test_Contains(self):
+        def test_SimpleFeatures(self):
             p = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
             self.assertEqual(str(p), "POLYGON ((1.0000000000000000 1.0000000000000000, 1.0000000000000000 10.0000000000000000, 10.0000000000000000 10.0000000000000000, 10.0000000000000000 1.0000000000000000, 1.0000000000000000 1.0000000000000000))")
             self.assertTrue(bool(p))
@@ -136,6 +136,24 @@ try:
             self.assertTrue(bool(pin))
             self.assertTrue(p.contains(pin))
             self.assertTrue(pin.within(p))
+            geom = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
+            self.assertTrue(p.isSimple())
+            self.assertTrue(p.within(geom))
+            self.assertTrue(p.contains(geom))
+            self.assertFalse(p.disjoint(geom))
+            self.assertFalse(p.touches(geom))
+            self.assertTrue(p.intersects(geom))
+            self.assertFalse(p.crosses(geom))
+            self.assertFalse(p.overlaps(geom))
+            self.assertTrue(p.equals(geom))
+            self.assertTrue(p.covers(geom))
+            self.assertTrue(p.coveredBy(geom))
+            self.assertFalse(p.relate(geom, "T*T***T**"))  # overlaps
+            self.assertTrue(p.relate(geom, "T*F**F***"))  # within
+            self.assertEqual(p.distance(geom), 0)
+            self.assertEqual(p.getArea(), 81)
+            self.assertEqual(p.getLength(), 36)
+            self.assertTrue(p.isWithinDistance(geom, 0))
 
     #@ut.skip("temporarily")
     class TestUtil(ut.TestCase):

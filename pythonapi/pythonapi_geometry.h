@@ -24,8 +24,7 @@ namespace pythonapi {
         Geometry(Feature* feature, int index);
         Geometry(geos::geom::Geometry* geometry, const Ilwis::ICoordinateSystem& csy);
         ~Geometry();
-        bool within(const Geometry& geometry) const;
-        bool contains(const Geometry& geometry) const;
+
         bool __bool__() const ;
         std::string __str__();
         IlwisTypes ilwisType();
@@ -35,6 +34,26 @@ namespace pythonapi {
         void setCoordinateSystem(const CoordinateSystem& cs);
         Geometry* transform(const CoordinateSystem& cs);
         Envelope envelope();
+
+        bool isSimple() const;
+
+        bool within(const Geometry& geometry) const;
+        bool contains(const Geometry& geometry) const;
+        bool disjoint(const Geometry& geometry) const;
+        bool touches(const Geometry& geometry) const;
+        bool intersects(const Geometry& geometry) const;
+        bool crosses(const Geometry& geometry) const;
+        bool overlaps(const Geometry& geometry) const;
+        bool equals(const Geometry& geometry) const;
+        bool covers(const Geometry& geometry) const;
+        bool coveredBy(const Geometry& geometry) const;
+        bool relate(const Geometry& geometry, const std::string& intersectionPattern) const;
+
+        double distance(const Geometry& geometry) const;
+        double getArea() const;
+        double getLength() const;
+        bool isWithinDistance(const Geometry& geometry, double cDistance) const;
+
     private:
         const std::unique_ptr<geos::geom::Geometry>& ptr() const;
         bool _standalone;
