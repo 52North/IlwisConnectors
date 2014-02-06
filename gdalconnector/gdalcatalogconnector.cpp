@@ -35,10 +35,9 @@ inline uint qHash(const QFileInfo& inf ){
 bool GdalCatalogConnector::loadItems()
 {
     QStringList filters = gdal()->getRasterExtensions();
-    QStringList ogrExt = DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal");
-    for(QString& ext : ogrExt)
-        ext = "*." + ext;
-    filters.append(ogrExt);
+    QVariantList ogrExt = DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal");
+    for(QVariant& ext : ogrExt)
+        filters += "*." + ext.toString();
     filters.removeOne("*.hdr");
 
     std::vector<QUrl> files = containerConnector()->sources(filters
