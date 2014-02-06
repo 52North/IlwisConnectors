@@ -244,7 +244,7 @@ bool GDALProxy::supports(const Resource &resource) const{
     QString filter = "*." + ext;
     if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
         return true;
-    if ( DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal").contains(ext,Qt::CaseInsensitive))
+    if ( DataFormat::supports(DataFormat::fpEXTENSION, itFEATURE,ext, "gdal"))
         return true;
     return false;
 }
