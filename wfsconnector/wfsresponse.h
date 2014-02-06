@@ -5,6 +5,7 @@
 
 #include "wfsConnector_global.h"
 
+class QTimer;
 class QVariant;
 class QIODevice;
 class QNetworkReply;
@@ -17,7 +18,6 @@ namespace Wfs {
 
 class WFSCONNECTORSHARED_EXPORT WfsResponse: QObject
 {
-
     Q_OBJECT
 
 public:
@@ -48,8 +48,8 @@ public:
 
     /**
      * Starts performing request by means of the underlying network manager. The request
-     * can be triggered synchronously or asynchronously. After the response is finished
-     * and has been read it is being deleted.
+     * can be triggered synchronously or asynchronously. The request can timeout when no
+     * response could be received after some time. Then cancelRequest() is called.
      *
      * @brief performRequest starts async network communication.
      * @param request the actual request to perform.
@@ -58,11 +58,25 @@ public:
      */
     QNetworkReply *performRequest(QNetworkRequest &request, bool async=true);
 
+    /**
+     * @return the device which holds the content of the response.
+     */
     QIODevice *device() const;
 
+    /**
+     * Sets the device holding the content of the response.
+     *
+     * @param device the device holding the response.
+     */
     void setDevice(QIODevice *device);
 
 public slots:
+
+    /**
+     * Cancels the running request.
+     */
+    void cancelRequest();
+
     /**
      * Reads the network reply to string content. When done, state is set to finish and
      * the network reply pointer is deleted later on.
@@ -73,8 +87,10 @@ public slots:
     void readResponse(QNetworkReply *reply);
 
 private:
-    QNetworkAccessManager* _networkManager;
-    QIODevice* _iodevice;
+    QTimer *_connectionTimeout;
+    QNetworkAccessManager *_networkManager;
+    QNetworkReply *_reply ;
+    QIODevice *_iodevice;
     bool _finished = false;
 };
 }
