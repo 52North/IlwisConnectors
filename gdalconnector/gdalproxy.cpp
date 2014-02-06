@@ -223,6 +223,21 @@ bool GDALProxy::prepare() {
     return _isValid;
 }
 
+QString GDALProxy::translateOGRERR(char ogrErrCode){
+    switch (ogrErrCode){
+        case OGRERR_NONE: return "none"; break;
+        case OGRERR_NOT_ENOUGH_DATA: return "not enough data"; break;
+        case OGRERR_NOT_ENOUGH_MEMORY: return "not enough memory"; break;
+        case OGRERR_UNSUPPORTED_GEOMETRY_TYPE: return "unsupported geometry type"; break;
+        case OGRERR_UNSUPPORTED_OPERATION: return "unsupported operation"; break;
+        case OGRERR_CORRUPT_DATA: return "corrupt data"; break;
+        case OGRERR_FAILURE: return "failure"; break;
+        case OGRERR_UNSUPPORTED_SRS: return "unsupported SRS"; break;
+        case OGRERR_INVALID_HANDLE: return "invalid handle"; break;
+        default: return "unknown OGR Error code!";
+    }
+}
+
 bool GDALProxy::isValid() const
 {
     return _isValid;
@@ -278,9 +293,9 @@ void GDALProxy::closeFile(const QString &filename, quint64 asker){
         if (handle->type() == GdalHandle::etGDALDatasetH){
             close(handle->handle());
         }else if(handle->etOGRDataSourceH){
-            if (OGRErr err = releaseDataSource((OGRDataSourceH)handle->handle()) != OGRERR_NONE){
+            if (/*OGRErr err = */releaseDataSource((OGRDataSourceH)handle->handle()) != OGRERR_NONE){
                 //TODO everything seems to work but, the error remains!
-                //ERROR1(QString("Couldn't release OGRDataSource (ERR %1: %2)").arg(err).arg(QString(getLastErrorMsg())), name);
+                //ERROR2("Couldn't release OGRDataSource (OGRERR %1) for %2", translateOGRERR(err) , name);
             }
         }else{
             ERROR2(ERR_INVALID_PROPERTY_FOR_2, "GDAL-OGR HandleType", name);

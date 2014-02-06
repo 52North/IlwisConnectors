@@ -274,6 +274,7 @@ public:
 
 private:
     bool prepare();
+    static QString translateOGRERR(char ogrErrCode);
 
     QLibrary _libgdal, _libproj4;
     bool _isValid;
