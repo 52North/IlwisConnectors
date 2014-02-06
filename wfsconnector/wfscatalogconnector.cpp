@@ -82,8 +82,7 @@ QString WfsCatalogConnector::provider() const
 bool WfsCatalogConnector::isValidWfsUrl(QUrl url) const
 {
     QUrlQuery query(url);
-    QList<QPair<QString,QString>> queryItems = query.queryItems();
-    query.setQueryItems(lowerCaseKeys(queryItems));
+    lowerCaseKeys(query);
 
     bool isHttpRequest = url.scheme().startsWith("http");
     bool isWfsRequest = isExpectedValue(query.queryItemValue("service"), "wfs");
@@ -91,14 +90,12 @@ bool WfsCatalogConnector::isValidWfsUrl(QUrl url) const
     return isHttpRequest && isWfsRequest && isSupportedVersion;
 }
 
-QList<QPair<QString,QString>> WfsCatalogConnector::lowerCaseKeys(QList<QPair<QString,QString>> queryItems) const {
-    QList<QPair<QString,QString>> loweredKeysItems;
-    for(int i = 0; i < queryItems.length(); i++) {
-        QPair<QString,QString> item = queryItems[i];
-        item.first = item.first.toLower();
-        loweredKeysItems.append(item);
+void WfsCatalogConnector::lowerCaseKeys(QUrlQuery &query) const
+{
+    for (QPair<QString,QString> kvm : query.queryItems()) {
+        query.removeQueryItem(kvm.first);
+        query.addQueryItem(kvm.first.toLower(), kvm.second);
     }
-    return loweredKeysItems;
 }
 
 /**
@@ -112,7 +109,7 @@ bool WfsCatalogConnector::isExpectedValue(QString actual, QString expected) cons
     if (expected != "" && actual == "") {
         return false;
     }
-    return actual.compare(expected, Qt::CaseInsensitive);
+    return actual.compare(expected, Qt::CaseInsensitive) == 0;
 }
 
 

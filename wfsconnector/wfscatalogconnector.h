@@ -10,7 +10,7 @@ namespace Wfs {
 class WFSCONNECTORSHARED_EXPORT WfsCatalogConnector : public CatalogConnector
 {
 public:
-    WfsCatalogConnector(const Ilwis::Resource &resource);
+    WfsCatalogConnector(const Resource &resource);
     ~WfsCatalogConnector();
 
     virtual bool loadItems();
@@ -24,7 +24,7 @@ public:
 private:
     bool isValidWfsUrl(QUrl url) const;
     bool isExpectedValue(QString actual, QString value) const;
-    QList<QPair<QString,QString>> lowerCaseKeys(QList<QPair<QString,QString>> queryItems) const;
+    void lowerCaseKeys(QUrlQuery &query) const;
 };
 }
 }
