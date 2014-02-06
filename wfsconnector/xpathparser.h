@@ -30,13 +30,12 @@ public:
     }
 
 
-    QXmlQuery *parseAbsolute(QString query);
-    QXmlQuery *parseRelativeFrom(QXmlItem &item, QString query);
+    QXmlQuery *queryFromRoot(QString query);
+    QXmlQuery *queryRelativeFrom(QXmlItem &item, QString query);
     void addNamespaceMapping(QString prefix, QString ns);
 
 private:
     QXmlQuery *_query;
-    QXmlItem _currentItem;
     QIODevice *_iodevice;
     QMap<QString,QString> _namespaces;
 
