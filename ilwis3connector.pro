@@ -85,6 +85,8 @@ resources.files = ilwis3connector/ilwis3connector.json \
     ilwis3connector/resources/ellipsoid_allias.csv \
     ilwis3connector/resources/datum_allias.csv \
     ilwis3connector/resources/domain_allias.csv
+    ilwis3connector/resources/ilwis3formats.config
+
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
 INSTALLS += resources
