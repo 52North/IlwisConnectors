@@ -6,6 +6,7 @@
 #include "kernel.h"
 #include "errorobject.h"
 #include "ilwiscontext.h"
+#include "dataformat.h"
 #include "gdalproxy.h"
 
 
@@ -47,6 +48,9 @@ GDALProxy::GDALProxy(const QString& gdalLibrary, const QString& proj4jLibrary) {
     path = ilw.canonicalFilePath() + "/Extensions/gdalconnector/" + proj4jLibrary;
     _libproj4.setFileName(path);
     bool ok = _libproj4.load();
+    path = ilw.canonicalFilePath() + "/Extensions/gdalconnector/" + "expat.dll";
+    _libexpat.setFileName(path);
+    ok &= _libexpat.load();
     _isValid = _libgdal.load() && ok;
 }
 
@@ -201,27 +205,15 @@ bool GDALProxy::prepare() {
         pushFinderLocation(path.toLocal8Bit());
         //feature extensions
         ogrRegisterAll();
-        QSettings fileExtensions(path.append("/ogr_extensions.ini"), QSettings::IniFormat);
-        if (fileExtensions.childGroups().count() > 0){
-            fileExtensions.beginGroup(fileExtensions.childGroups().at(0));
-            for(QString key: fileExtensions.childKeys()){
-                OGRSFDriverH hDriver = getDriverByName(fileExtensions.value(key).toString().toLocal8Bit());
-                if (hDriver != nullptr){//ODrCDeleteDataSource is aso possible
-                    _featureExtensions.append(QString("*.").append(key));
-                    if (testDriverCapability(hDriver, ODrCCreateDataSource)){
-                        //TODO:: save a bool for this driver capability to expose it to the store-method
-                    }
-                }else{
-                    ERROR2(ERR_NO_INITIALIZED_2,QString("File format (%1) support").arg(key),"OGR-Library (gdall.dll)");
-                }
-            }
-        }else{
-            _featureExtensions.append(QString("*.shp"));
-        }
+
+        DataFormat::setFormatInfo(path + "/ogr_formats.config","gdal");
+
     }
 
     return _isValid;
 }
+
+
 
 bool GDALProxy::isValid() const
 {
@@ -233,18 +225,13 @@ QStringList GDALProxy::getRasterExtensions() const
     return _rasterExtensions;
 }
 
-QStringList GDALProxy::getFeatureExtensions() const
-{
-    return _featureExtensions;
-}
-
 bool GDALProxy::supports(const Resource &resource) const{
     QFileInfo inf(resource.toLocalFile());
     QString ext = inf.suffix();
     QString filter = "*." + ext;
     if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
         return true;
-    if ( gdal()->getFeatureExtensions().contains(filter,Qt::CaseInsensitive))
+    if ( DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal").contains(ext,Qt::CaseInsensitive))
         return true;
     return false;
 }

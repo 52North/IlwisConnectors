@@ -146,7 +146,7 @@ public:
 
     bool isValid() const;
     QStringList getRasterExtensions() const;
-    QStringList getFeatureExtensions() const;
+   // QStringList getFeatureExtensions() const;
     bool supports(const Resource& resource) const;
 
     template<class T> T  add(const QString& name) {
@@ -275,10 +275,10 @@ public:
 private:
     bool prepare();
 
-    QLibrary _libgdal, _libproj4;
+    QLibrary _libgdal, _libproj4, _libexpat;
     bool _isValid;
     static GDALProxy *_proxy;
-    QStringList _featureExtensions;
+    //QStringList _featureExtensions;
     QStringList _rasterExtensions;
     QHash<QString, GdalHandle*> _openedDatasets;
 };
