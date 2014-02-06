@@ -16,9 +16,9 @@ public:
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
     Ilwis::IlwisObject *create() const;
-protected:
 
 private:
+    void lowerCaseKeys(QUrlQuery &query) const;
 
 
 };

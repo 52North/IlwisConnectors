@@ -4,7 +4,6 @@
 #include <iterator>
 
 #include "kernel.h"
-#include "coverage.h"
 #include "module.h"
 #include "coverage.h"
 #include "ilwiscontext.h"
@@ -25,6 +24,8 @@
 #include "ilwisobjectconnector.h"
 #include "wfsconnector.h"
 #include "wfsfeatureconnector.h"
+#include "wfsfeatureparser.h"
+#include "wfsfeaturedescriptionparser.h"
 #include "wfs.h"
 #include "wfsresponse.h"
 
@@ -49,44 +50,42 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
     }
 
     QUrl featureUrl = source().url();
-    featureUrl.setQuery(source().urlQuery());
     WebFeatureService wfs(featureUrl);
 
-    // TODO: load Feature metadata and fill coverage
+    ITable featureTable;
+    QUrlQuery queryFeatureType(featureUrl);
+    WfsResponse *featureDescriptionResponse = wfs.describeFeatureType(queryFeatureType);
 
+
+    // TODO: will this type of resource table creation work? => name, url, query .... all meshed together here :(
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+    QUrl schemaResourceUrl(QString("ilwis://internalcatalog/%1_%2").arg(fcoverage->name()).arg(fcoverage->id()));
+    WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse, schemaResourceUrl);
+    schemaParser.parseSchemaDescription(featureTable);
+
+    QUrlQuery queryFeature(featureUrl);
+    WfsResponse *featureResponse = wfs.getFeature(queryFeature);
+    WfsFeatureParser featureParser(featureResponse, featureTable);
+
+    // TODO: parse Feature metadata and fill coverage
+
     IlwisTypes coverageType = itUNKNOWN;
     int featureCount = 0;
     BoundingBox bbox;
     bool initMinMax = 0;
 
-    ITable attTable;
-    Resource resource(QUrl(QString("ilwis://internalcatalog/%1_%2").arg(fcoverage->name()).arg(fcoverage->id())), itFLATTABLE);
-    if(!attTable.prepare(resource)) {//only internalTableconnector is used! own class not needed
-        ERROR1(ERR_NO_INITIALIZED_1,resource.name());
-        return false;
-    }
-    IDomain dmKey;
-    dmKey.prepare("count");
-    ColumnDefinition colKey(FEATUREIDCOLUMN, dmKey, 0);
-    attTable->addColumn(colKey);
-    ColumnDefinition colCovKey(COVERAGEKEYCOLUMN, dmKey, 1);
-    attTable->addColumn(colCovKey);
-
-    // TODO: Fill attribute/domains via DescribeFeatureType
 
     return false;
 }
 
-
-bool Ilwis::Wfs::WfsFeatureConnector::store(IlwisObject *obj, int)
+bool WfsFeatureConnector::store(IlwisObject *obj, int)
 {
     // transactional not supported by this module
     return false;
 }
 
 
-bool Ilwis::Wfs::WfsFeatureConnector::loadBinaryData(IlwisObject *data)
+bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
 {
 
     // TODO: request data and load it into *data
