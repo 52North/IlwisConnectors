@@ -48,10 +48,11 @@ bool Ilwis3CatalogConnector::loadItems()
         return false;
 
 
-    QStringList filters = DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itILWISOBJECT,"ilwis3");
-    for(QString& ext : filters)
-        ext = "*." + ext;
-    std::vector<QUrl> files = containerConnector()->sources(filters
+    QVariantList filters = DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itILWISOBJECT,"ilwis3");
+    QStringList sfilters;
+    for(QVariant& ext : filters)
+        sfilters += "*." + ext.toString();
+    std::vector<QUrl> files = containerConnector()->sources(sfilters
                                                       ,ContainerConnector::foFULLPATHS | ContainerConnector::foEXTENSIONFILTER);
 
     QList<ODFItem> odfitems;

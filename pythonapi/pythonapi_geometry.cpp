@@ -162,6 +162,10 @@ bool Geometry::equals(const Geometry &geometry) const{
     return this->ptr()->equals(geometry.ptr().get());
 }
 
+bool pythonapi::Geometry::equalsExact(const Geometry  &geometry, double tolerance) const{
+    return this->ptr()->equalsExact(geometry.ptr().get(), tolerance);
+}
+
 bool Geometry::covers(const Geometry &geometry) const{
     return this->ptr()->covers(geometry.ptr().get());
 }
@@ -170,8 +174,8 @@ bool Geometry::coveredBy(const Geometry &geometry) const{
     return this->ptr()->coveredBy(geometry.ptr().get());
 }
 
-bool Geometry::relate(const Geometry &geometry, const std::string& intersectionPattern) const{
-    return this->ptr()->relate(geometry.ptr().get(), intersectionPattern);
+bool Geometry::relate(const Geometry &geometry, const std::string& DE9IM_pattern) const{
+    return this->ptr()->relate(geometry.ptr().get(), DE9IM_pattern);
 }
 
 double Geometry::distance(const Geometry &geometry) const{
@@ -188,6 +192,30 @@ double Geometry::getLength() const{
 
 bool Geometry::isWithinDistance(const Geometry &geometry, double cDistance) const{
     return this->ptr()->isWithinDistance(geometry.ptr().get(), cDistance);
+}
+
+Geometry* Geometry::buffer(double distance) const{
+    return new Geometry(this->ptr()->clone()->buffer(distance), Ilwis::ICoordinateSystem(Ilwis::GeometryHelper::getCoordinateSystem(this->ptr().get())));
+}
+
+Geometry* Geometry::convexHull() const{
+    return new Geometry(this->ptr()->clone()->convexHull(), Ilwis::ICoordinateSystem(Ilwis::GeometryHelper::getCoordinateSystem(this->ptr().get())));
+}
+
+Geometry* Geometry::intersection(const Geometry &geometry) const{
+    return new Geometry(this->ptr()->clone()->intersection(geometry.ptr().get()), Ilwis::ICoordinateSystem(Ilwis::GeometryHelper::getCoordinateSystem(this->ptr().get())));
+}
+
+Geometry* Geometry::Union(const Geometry &geometry) const{
+    return new Geometry(this->ptr()->clone()->Union(geometry.ptr().get()), Ilwis::ICoordinateSystem(Ilwis::GeometryHelper::getCoordinateSystem(this->ptr().get())));
+}
+
+Geometry* Geometry::difference(const Geometry &geometry) const{
+    return new Geometry(this->ptr()->clone()->difference(geometry.ptr().get()), Ilwis::ICoordinateSystem(Ilwis::GeometryHelper::getCoordinateSystem(this->ptr().get())));
+}
+
+Geometry* Geometry::symDifference(const Geometry &geometry) const{
+    return new Geometry(this->ptr()->clone()->symDifference(geometry.ptr().get()), Ilwis::ICoordinateSystem(Ilwis::GeometryHelper::getCoordinateSystem(this->ptr().get())));
 }
 
 const std::unique_ptr<geos::geom::Geometry>& Geometry::ptr() const{

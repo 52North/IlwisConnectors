@@ -40,7 +40,8 @@ IlwisTypes GdalConnector::ilwisType(const QString &name)
     QString filter = "*." + ext;
     if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
         return itRASTER;
-    if ( DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal").contains(ext,Qt::CaseInsensitive))
+
+    if ( DataFormat::supports(DataFormat::fpEXTENSION, itFEATURE,ext, "gdal"))
         return itFEATURE;
     return itUNKNOWN; //TODO: add table formats here
 }
