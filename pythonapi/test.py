@@ -420,31 +420,74 @@ try:
             f = next(it3)
             self.assertTrue(str(f), "Feature(1)")
 
-        def test_storeGDAL(self):
+        def test_loadGDALstoreGDAL(self):
             disconnectIssueLogger()
             # polygons
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
+            self.assertTrue(bool(world))
+            self.assertFalse(world.isInternal())
             world.setConnection(workingDir+tempDir+"/countries.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
             # points
             world = FeatureCoverage("rainfall.shp")
+            self.assertTrue(bool(world))
+            self.assertFalse(world.isInternal())
             world.setConnection(workingDir+tempDir+"/rainfall.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
             # lines
             world = FeatureCoverage("drainage.shp")
+            self.assertTrue(bool(world))
+            self.assertFalse(world.isInternal())
             world.setConnection(workingDir+tempDir+"/drainage.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
             connectIssueLogger()
 
         #@ut.skip("temporarily")
-        def test_prepareHelloWorld(self):
+        def test_loadGDALstoreIlwis3(self):
+            # polygons
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             self.assertTrue(bool(world))
-            self.assertEqual(177, world.featureCount())
+            self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setConnection(workingDir+tempDir+"/countries", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/countries_fromshp", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
-            self.assertEqual(177, world.featureCount())
+            # points
+            world = FeatureCoverage("rainfall.shp")
+            self.assertTrue(bool(world))
+            self.assertFalse(world.isInternal())
+            world.setCoordinateSystem(CoordinateSystem("countries.csy"))
+            world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "pointmap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.store()
+            # lines
+            world = FeatureCoverage("drainage.shp")
+            self.assertTrue(bool(world))
+            self.assertFalse(world.isInternal())
+            world.setCoordinateSystem(CoordinateSystem("countries.csy"))
+            world.setConnection(workingDir+tempDir+"/drainage_fromshp", "segmentmap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.store()
+
+        # def test_loadIlwis3storeIlwis3(self):
+        #     # polygons
+        #     world = FeatureCoverage("ne_110m_admin_0_countries.shp")
+        #     self.assertTrue(bool(world))
+        #     self.assertFalse(world.isInternal())
+        #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
+        #     world.setConnection(workingDir+tempDir+"/countries_fromshp", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+        #     world.store()
+        #     # points
+        #     world = FeatureCoverage("rainfall.shp")
+        #     self.assertTrue(bool(world))
+        #     self.assertFalse(world.isInternal())
+        #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
+        #     world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "pointmap", "ilwis3", IlwisObject.cmOUTPUT)
+        #     world.store()
+        #     # lines
+        #     world = FeatureCoverage("drainage.shp")
+        #     self.assertTrue(bool(world))
+        #     self.assertFalse(world.isInternal())
+        #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
+        #     world.setConnection(workingDir+tempDir+"/drainage_fromshp", "segmentmap", "ilwis3", IlwisObject.cmOUTPUT)
+        #     world.store()
 
     #@ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
@@ -487,7 +530,7 @@ try:
             self.assertTrue(cs1 == cs2)
             self.assertFalse(cs1 != cs2)
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestRaster(ut.TestCase):
         def setUp(self):
             try:
@@ -582,8 +625,7 @@ try:
             aa12 = rc * 2
             self.assertEqual(aa12.pix2value(342, 342, 0), 29.0 * 2)
 
-            self.assertTrue(aa1.setConnection(workingDir + tempDir + "/aa1", "GTiff", "gdal", IlwisObject.cmOUTPUT),
-                            msg="setConnection file failed!")
+            aa1.setConnection(workingDir + tempDir + "/aa1", "GTiff", "gdal", IlwisObject.cmOUTPUT)
             aa1.store()
 
         def test_PixelIterator(self):
@@ -725,8 +767,7 @@ try:
                         maxval = max(int(polygon.attribute("maxY", 0)), int(point.attribute("freq_speciesY", 0)))
                         polygon.setAttribute("maxY", maxval)
 
-            self.assertTrue(polygongrid.setConnection(workingDir + exampleDir + "/polygongrid", "polygonmap", "ilwis3",
-                                                  IlwisObject.cmOUTPUT))
+            polygongrid.setConnection(workingDir + exampleDir + "/polygongrid", "polygonmap", "ilwis3",IlwisObject.cmOUTPUT)
             polygongrid.store()
 
     #@ut.skip("temporarily")
@@ -743,7 +784,7 @@ try:
         def test_helloRaster(self):
             rc = RasterCoverage("n000302.mpr")
             res = Engine.do("aggregateraster", rc, "Avg", 10, True)
-            self.assertTrue(res.setConnection(workingDir+babyDir+"/avg_n000302", "map", "ilwis3", IlwisObject.cmOUTPUT))
+            res.setConnection(workingDir+babyDir+"/avg_n000302", "map", "ilwis3", IlwisObject.cmOUTPUT)
             res.store()
 
         def test_helloFeature(self):

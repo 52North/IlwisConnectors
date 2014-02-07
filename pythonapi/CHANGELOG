@@ -4,8 +4,10 @@
 *small changes of WKT representation of Geometries due to switch from boost to geos geometries
 *no more extra Coordinate2D of Voxel - everything is handled by Coordinate or Pixel
 *several bugfixes for import/export with ILWIS3 and GDAL connectors
+*many more supportedformats
 *added linear raster filter to the set of operations
-*you can now query the possible operationsand their syntax
+*you can now query the possible operations and their syntax
+*added most of the simple features methods to Geometry class
 
 --20140124--
 *enabled direct access to RasterGrid for NumPy arrays via PyBuffer interface
