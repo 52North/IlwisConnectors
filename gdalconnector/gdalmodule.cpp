@@ -43,6 +43,7 @@
 #include "ilwisobjectfactory.h"
 #include "gdalobjectfactory.h"
 #include "gdalproxy.h"
+#include "dataformat.h"
 #include "gdalcontainerconnector.h"
 
 using namespace Ilwis;
@@ -96,6 +97,10 @@ void GdalModule::prepare()
             cfactory->addCreator(shortName,"gdal", RasterCoverageConnector::create);
         }
     }
+    QVariantList names = DataFormat::getFormatProperties(DataFormat::fpCODE,itFEATURE,"gdal");
+    for(const QVariant& name : names)
+        cfactory->addCreator(name.toString(),"gdal", GdalFeatureConnector::create);
+
     IlwisObject::addTypeFunction(GdalConnector::ilwisType);
 }
 
