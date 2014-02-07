@@ -46,8 +46,8 @@ try:
             t.addColumn("newColumn", "value")
             self.assertEqual(15, t.columnCount())
             self.assertEqual(
-                ('january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november',
-                 'december', 'newcol', 'ident', 'newColumn'),
+                ('january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
+                 'november', 'december', 'newcol', 'ident', 'newColumn'),
                 t.columns()
             )
             self.assertEqual((4, 5, 6), t.select("march < 100 AND march != 87"))
@@ -97,17 +97,21 @@ try:
             self.assertEqual(g.coordinateSystem().name(), "Sibun Gorge 1922")
 
         def test_Transform(self):
-            source = CoordinateSystem("code=epsg:3857")
-            g = Geometry("POINT(766489.647 6840642.671)", source)
-            self.assertEqual("POLYGON(766490 6.84064e+06,766490 6.84064e+06)",
-                             str(g.envelope()))
-            self.assertEqual("POINT (766489.6469999999972060 6840642.6710000000894070)", str(g), msg="weird toWKT from BOOST")
-            target = CoordinateSystem("code=epsg:3329")
-            g1 = g.transform(target)
+            pseudo_mercator = CoordinateSystem("code=epsg:3857")
+            g = Geometry("POINT(766489.647 6840642.671)", pseudo_mercator)
+            self.assertEqual("POLYGON(766490 6.84064e+06,766490 6.84064e+06)", str(g.envelope()))
+            self.assertEqual("POINT (766489.6469999999972060 6840642.6710000000894070)", str(g))
+            gk5 = CoordinateSystem("code=epsg:3329")
+            self.assertTrue(bool(gk5))
+            g1 = g.transform(gk5)
             self.assertEqual("POINT (4945949.0809892630204558 5819418.3890127958729863)", g1.toWKT())
-            #g = Geometry("POINT(6.5 52.1)", CoordinateSystem("code=proj4:+proj=longlat +ellps=WGS84 +datum=WGS84"))
-            #g1 = g.transform(CoordinateSystem("code=epsg:3329"))
-            #self.assertEqual("POINT(4.94595e+006 5.81942e+006)", g1.toWKT())
+
+            wgs = CoordinateSystem("code=epsg:4326")
+            self.assertTrue(bool(wgs))
+            g = Geometry("POINT(14 50)", wgs)
+            self.assertEqual("POINT (14.0000000000000000 50.0000000000000000)", g.toWKT())
+            # g1 = g.transform(gk5)
+            # self.assertEqual("POINT(4.94595e+006 5.81942e+006)", g1.toWKT())
 
         def test_Envelope(self):
             g = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
@@ -129,7 +133,9 @@ try:
 
         def test_SimpleFeatures(self):
             p = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
-            self.assertEqual(str(p), "POLYGON ((1.0000000000000000 1.0000000000000000, 1.0000000000000000 10.0000000000000000, 10.0000000000000000 10.0000000000000000, 10.0000000000000000 1.0000000000000000, 1.0000000000000000 1.0000000000000000))")
+            self.assertEqual(str(p), "POLYGON ((1.0000000000000000 1.0000000000000000, 1.0000000000000000 \
+10.0000000000000000, 10.0000000000000000 10.0000000000000000, 10.0000000000000000 1.0000000000000000, \
+1.0000000000000000 1.0000000000000000))")
             self.assertTrue(bool(p))
             pin = Geometry("POINT(5 5)",self.csy)
             self.assertEqual(str(pin), "POINT (5.0000000000000000 5.0000000000000000)")
@@ -146,6 +152,7 @@ try:
             self.assertFalse(p.crosses(geom))
             self.assertFalse(p.overlaps(geom))
             self.assertTrue(p.equals(geom))
+            self.assertTrue(p.equalsExact(geom, 0))
             self.assertTrue(p.covers(geom))
             self.assertTrue(p.coveredBy(geom))
             self.assertFalse(p.relate(geom, "T*T***T**"))  # overlaps
@@ -154,6 +161,32 @@ try:
             self.assertEqual(p.getArea(), 81)
             self.assertEqual(p.getLength(), 36)
             self.assertTrue(p.isWithinDistance(geom, 0))
+            self.assertEqual(
+                "POLYGON ((1.0000000000000000 0.0000000000000000, 0.8049096779838661 0.0192147195967707, \
+0.6173165676349055 0.0761204674887151, 0.4444297669803942 0.1685303876974572, 0.2928932188134502 0.2928932188134548, \
+0.1685303876974533 0.4444297669803999, 0.0761204674887127 0.6173165676349116, 0.0192147195967693 0.8049096779838725, \
+0.0000000000000000 1.0000000000000000, 0.0000000000000000 10.0000000000000000, 0.0192147195967696 10.1950903220161280, \
+0.0761204674887133 10.3826834323650896, 0.1685303876974547 10.5555702330196013, 0.2928932188134525 10.7071067811865479, \
+0.4444297669803980 10.8314696123025449, 0.6173165676349103 10.9238795325112861, 0.8049096779838718 10.9807852804032304, \
+1.0000000000000000 11.0000000000000000, 10.0000000000000000 11.0000000000000000, 10.1950903220161280 10.9807852804032304, \
+10.3826834323650896 10.9238795325112861, 10.5555702330196031 10.8314696123025449, 10.7071067811865479 10.7071067811865479, \
+10.8314696123025449 10.5555702330196013, 10.9238795325112861 10.3826834323650896, 10.9807852804032304 10.1950903220161280, \
+11.0000000000000000 10.0000000000000000, 11.0000000000000000 1.0000000000000000, 10.9807852804032304 0.8049096779838718, \
+10.9238795325112861 0.6173165676349102, 10.8314696123025449 0.4444297669803978, 10.7071067811865479 0.2928932188134525, \
+10.5555702330196031 0.1685303876974548, 10.3826834323650896 0.0761204674887133, 10.1950903220161280 0.0192147195967696, \
+10.0000000000000000 0.0000000000000000, 1.0000000000000000 0.0000000000000000))",
+                str(p.buffer(1)))
+            self.assertEqual("POLYGON ((1.0000000000000000 1.0000000000000000, 1.0000000000000000 \
+10.0000000000000000, 10.0000000000000000 10.0000000000000000, 10.0000000000000000 1.0000000000000000, \
+1.0000000000000000 1.0000000000000000))", str(p.convexHull()))
+            self.assertEqual("POLYGON ((1.0000000000000000 1.0000000000000000, 1.0000000000000000 \
+10.0000000000000000, 10.0000000000000000 10.0000000000000000, 10.0000000000000000 1.0000000000000000, \
+1.0000000000000000 1.0000000000000000))", str(p.intersection(geom)))
+            self.assertEqual("POLYGON ((1.0000000000000000 1.0000000000000000, 1.0000000000000000 \
+10.0000000000000000, 10.0000000000000000 10.0000000000000000, 10.0000000000000000 1.0000000000000000, \
+1.0000000000000000 1.0000000000000000))", str(p.Union(geom)))
+            self.assertEqual("GEOMETRYCOLLECTION EMPTY", str(p.difference(geom)))
+            self.assertEqual("GEOMETRYCOLLECTION EMPTY", str(p.symDifference(geom)))
 
     #@ut.skip("temporarily")
     class TestUtil(ut.TestCase):
@@ -388,6 +421,7 @@ try:
             self.assertTrue(str(f), "Feature(1)")
 
         def test_storeGDAL(self):
+            disconnectIssueLogger()
             # polygons
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             world.setConnection(workingDir+tempDir+"/countries.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
@@ -400,6 +434,7 @@ try:
             world = FeatureCoverage("drainage.shp")
             world.setConnection(workingDir+tempDir+"/drainage.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
+            connectIssueLogger()
 
         #@ut.skip("temporarily")
         def test_prepareHelloWorld(self):

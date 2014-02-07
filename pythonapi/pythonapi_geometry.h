@@ -45,14 +45,22 @@ namespace pythonapi {
         bool crosses(const Geometry& geometry) const;
         bool overlaps(const Geometry& geometry) const;
         bool equals(const Geometry& geometry) const;
+        bool equalsExact(const Geometry& geometry, double tolerance=0) const;
         bool covers(const Geometry& geometry) const;
         bool coveredBy(const Geometry& geometry) const;
-        bool relate(const Geometry& geometry, const std::string& intersectionPattern) const;
+        bool relate(const Geometry& geometry, const std::string& DE9IM_pattern) const;
 
         double distance(const Geometry& geometry) const;
         double getArea() const;
         double getLength() const;
         bool isWithinDistance(const Geometry& geometry, double cDistance) const;
+
+        Geometry* buffer(double distance) const;
+        Geometry* convexHull() const;
+        Geometry* intersection(const Geometry& geometry) const;
+        Geometry* Union(const Geometry& geometry) const;
+        Geometry* difference(const Geometry& geometry) const;
+        Geometry* symDifference(const Geometry& geometry) const;
 
     private:
         const std::unique_ptr<geos::geom::Geometry>& ptr() const;
