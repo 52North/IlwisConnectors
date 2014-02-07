@@ -516,11 +516,11 @@ void FeatureConnector::writeLine(const geos::geom::LineString* line,std::ofstrea
 bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString& baseName) {
     std::ofstream output_file;
     QFileInfo inf(baseName);
-    QString dir = context()->workingCatalog()->location().toLocalFile();
-    QString filename = dir + "/" + inf.baseName() + ".mps#";
-    output_file.open(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
+//    QString dir = context()->workingCatalog()->location().toLocalFile();
+//    QString filename = dir + "/" + inf.baseName() + ".mps#";
+    output_file.open(baseName.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
     if ( !output_file.is_open())
-        return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
+        return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,baseName);
     char header[128];
     memset(header, 0, 128);
     output_file.write(header,128);
@@ -570,11 +570,11 @@ void FeatureConnector::writePoint(const geos::geom::Point* point,std::ofstream& 
 bool FeatureConnector::storeBinaryDataPoints(FeatureCoverage *fcov, const QString& baseName) {
     std::ofstream output_file;
     QFileInfo inf(baseName);
-    QString dir = context()->workingCatalog()->location().toLocalFile();
-    QString filename = dir + "/" + inf.baseName() + ".pt#";
-    output_file.open(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
+//    QString dir = context()->workingCatalog()->location().toLocalFile();
+//    QString filename = dir + "/" + inf.baseName() + ".pt#";
+    output_file.open(baseName.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
     if ( !output_file.is_open())
-        return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
+        return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,baseName);
     char header[128];
     memset(header, 0, 128);
     output_file.write(header,128);

@@ -261,8 +261,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
             _odf->setKeyValue("BaseMap","Domain",_domainName);
             QUrl url = makeUrl(_odf->file(),_domainName);
-            if(!iddom->connectTo(url,"domain","ilwis3", IlwisObject::cmOUTPUT))
-                return false;
+            iddom->connectTo(url,"domain","ilwis3", IlwisObject::cmOUTPUT);
             iddom->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
         }
     }
