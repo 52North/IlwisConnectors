@@ -19,6 +19,18 @@ using namespace Wfs;
 
 WfsResponse::WfsResponse() // TODO: rename to wfsconnection?!
 {
+    initialize();
+    _finished = false;
+}
+
+WfsResponse::WfsResponse(QIODevice *device): _iodevice(device)
+{
+    initialize();
+    _finished = true;
+}
+
+void WfsResponse::initialize()
+{
     _connectionTimeout = new QTimer(this);
     _connectionTimeout->setSingleShot(true);
     connect(_connectionTimeout, SIGNAL(timeout()), this, SLOT(cancelRequest()));

@@ -49,23 +49,22 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
         return false;
     }
 
+
+    ITable featureTable;
+    QMap<QString,QString> namespaceMappings;
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     QUrl featureUrl = source().url();
     WebFeatureService wfs(featureUrl);
 
-    ITable featureTable;
     QUrlQuery queryFeatureType(featureUrl);
     WfsResponse *featureDescriptionResponse = wfs.describeFeatureType(queryFeatureType);
-
-
-    // TODO: will this type of resource table creation work? => name, url, query .... all meshed together here :(
-    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
-    QUrl schemaResourceUrl(QString("ilwis://internalcatalog/%1_%2").arg(fcoverage->name()).arg(fcoverage->id()));
-    WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse, schemaResourceUrl);
-    schemaParser.parseSchemaDescription(featureTable);
+    WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse, fcoverage);
+    schemaParser.parseSchemaDescription(featureTable, namespaceMappings);
 
     QUrlQuery queryFeature(featureUrl);
-    WfsResponse *featureResponse = wfs.getFeature(queryFeature);
-    WfsFeatureParser featureParser(featureResponse, featureTable);
+    WfsFeatureParser featureParser(wfs.getFeature(queryFeature));
+    featureParser.setNamespaceMappings(namespaceMappings);
+    featureParser.parseFeature(featureTable);
 
     // TODO: parse Feature metadata and fill coverage
 

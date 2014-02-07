@@ -5,9 +5,6 @@
 
 #include "xmlstreamparser.h"
 
-using namespace Ilwis;
-using namespace Wfs;
-
 XmlStreamParser::XmlStreamParser()
 {
 }
@@ -38,11 +35,11 @@ void XmlStreamParser::addNamespaceMapping(QString prefix, QString ns)
 
 bool XmlStreamParser::startParsing(QString qName) const
 {
-    while ( !_reader->isStartDocument()) {
-        _reader->readNext();
+    if ( !_reader->isStartDocument()) {
+      _reader->readNext();
     }
     _reader->readNextStartElement();
-    return !_reader->atEnd() && isAtBeginningOf(qName);
+    return isAtBeginningOf(qName);
 }
 
 bool XmlStreamParser::hasError() const
@@ -63,6 +60,14 @@ bool XmlStreamParser::atEnd() const
 QString XmlStreamParser::readElementText() const
 {
     return _reader->readElementText();
+}
+
+bool XmlStreamParser::readNextStartElement() const
+{
+    if (_reader->isEndElement()) {
+        _reader->readNext();
+    }
+    return _reader->readNextStartElement();
 }
 
 bool XmlStreamParser::currentLevelMoveTo(QString qName) const

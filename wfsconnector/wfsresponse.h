@@ -22,6 +22,7 @@ class WFSCONNECTORSHARED_EXPORT WfsResponse: QObject
 
 public:
     WfsResponse();
+    WfsResponse(QIODevice *device);
     ~WfsResponse();
 
     /**
@@ -92,6 +93,12 @@ private:
     QNetworkReply *_reply ;
     QIODevice *_iodevice;
     bool _finished = false;
+
+    /**
+     * To be called from the constructors to initialize instance.
+     */
+    void initialize();
+
 };
 }
 }

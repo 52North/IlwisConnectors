@@ -3,17 +3,22 @@
 
 #include "wfsconnector_global.h"
 
+class QString;
+class XmlStreamParser;
+
 namespace Ilwis {
 namespace Wfs {
 
 class WfsResponse;
-class XmlStreamParser;
 
 class WFSCONNECTORSHARED_EXPORT WfsFeatureParser
 {
 public:
-    WfsFeatureParser(WfsResponse *response, ITable &table);
+    WfsFeatureParser(WfsResponse *response);
     ~WfsFeatureParser();
+
+    void setNamespaceMappings(QMap<QString,QString> &mappings);
+    void parseFeature(ITable &table);
 
 private:
     XmlStreamParser *_parser;

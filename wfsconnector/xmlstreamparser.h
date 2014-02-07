@@ -6,9 +6,6 @@
 class QXmlStreamReader;
 class QXmlStreamAttributes;
 
-namespace Ilwis {
-namespace Wfs {
-
 struct QName {
     // TODO: extract qName parsing
     QName(QString qName) {
@@ -46,7 +43,10 @@ public:
     bool atEnd() const;
 
     QXmlStreamAttributes attributes() const;
+
     QString readElementText() const;
+
+    bool readNextStartElement() const;
 
     /**
      * Moves to the element living on current level, named by qName.
@@ -76,6 +76,4 @@ private:
     bool isAtElement(QString qName) const;
 };
 
-}
-}
 #endif // XMLPARSER_H

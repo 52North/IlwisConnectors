@@ -4,25 +4,29 @@
 #include "wfsconnector_global.h"
 
 class QUrl;
+class QString;
+class XmlStreamParser;
 
 namespace Ilwis {
 namespace Wfs {
 
 class WfsResponse;
-class XmlStreamParser;
 
 class WFSCONNECTORSHARED_EXPORT WfsFeatureDescriptionParser
 {
 public:
     WfsFeatureDescriptionParser();
-    WfsFeatureDescriptionParser(WfsResponse *response, QUrl &url);
+    WfsFeatureDescriptionParser(WfsResponse *response, FeatureCoverage *fcoverage);
     ~WfsFeatureDescriptionParser();
 
-    void parseSchemaDescription(ITable &table);
+    void parseSchemaDescription(ITable &table, QMap<QString,QString> &namespaceMappings) const;
 
 private:
-    QUrl _url;
+    FeatureCoverage *_fcoverage;
     XmlStreamParser *_parser;
+
+    void parseNamespaces(QMap<QString,QString> &namespaceMappings) const;
+    void parseFeatureProperties(ITable &table) const;
 };
 
 }
