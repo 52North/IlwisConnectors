@@ -178,12 +178,14 @@ bool GDALProxy::prepare() {
     //CPL
     pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
     getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");
+    setCPLErrorHandler = add<ICPLSetErrorHandler>("CPLSetErrorHandler");
     //VSI
     vsiFileFromMem = add<IVSIFileFromMemBuffer>("VSIFileFromMemBuffer");
     vsiClose = add<IVSIFCloseL>("VSIFCloseL");
     free = add<IFree>("VSIFree");
 
     if ( _isValid) {
+        setCPLErrorHandler(&cplErrorHandler);
         //raster extensions
         registerAll();
         int ndrivers = getDriverCount();
@@ -213,18 +215,45 @@ bool GDALProxy::prepare() {
     return _isValid;
 }
 
+void GDALProxy::cplErrorHandler(CPLErr eErrClass, int err_no, const char *msg){
+    switch(eErrClass){
+        case CE_None: MESSAGE2("%1: %2",translateCPLE(err_no),QString(msg));break;
+        case CE_Debug: DEBUG2("%1: %2",translateCPLE(err_no),QString(msg));break;
+        case CE_Warning: WARN2("%1: %2",translateCPLE(err_no),QString(msg));break;
+        case CE_Failure: ERROR2("CPL FAILURE(%1): %21",translateCPLE(err_no),QString(msg));break;
+        case CE_Fatal: CRITICAL2("CPL FATAL(%1): %2",translateCPLE(err_no),QString(msg));
+    }
+}
+
 QString GDALProxy::translateOGRERR(char ogrErrCode){
     switch (ogrErrCode){
-        case OGRERR_NONE: return "none"; break;
-        case OGRERR_NOT_ENOUGH_DATA: return "not enough data"; break;
-        case OGRERR_NOT_ENOUGH_MEMORY: return "not enough memory"; break;
-        case OGRERR_UNSUPPORTED_GEOMETRY_TYPE: return "unsupported geometry type"; break;
-        case OGRERR_UNSUPPORTED_OPERATION: return "unsupported operation"; break;
-        case OGRERR_CORRUPT_DATA: return "corrupt data"; break;
-        case OGRERR_FAILURE: return "failure"; break;
-        case OGRERR_UNSUPPORTED_SRS: return "unsupported SRS"; break;
-        case OGRERR_INVALID_HANDLE: return "invalid handle"; break;
+        case OGRERR_NONE: return "OGRERR_NONE"; break;
+        case OGRERR_NOT_ENOUGH_DATA: return "OGRERR_NOT_ENOUGH_DATA"; break;
+        case OGRERR_NOT_ENOUGH_MEMORY: return "OGRERR_NOT_ENOUGH_MEMORY"; break;
+        case OGRERR_UNSUPPORTED_GEOMETRY_TYPE: return "OGRERR_UNSUPPORTED_GEOMETRY_TYPE"; break;
+        case OGRERR_UNSUPPORTED_OPERATION: return "OGRERR_UNSUPPORTED_OPERATION"; break;
+        case OGRERR_CORRUPT_DATA: return "OGRERR_CORRUPT_DATA"; break;
+        case OGRERR_FAILURE: return "OGRERR_FAILURE"; break;
+        case OGRERR_UNSUPPORTED_SRS: return "OGRERR_UNSUPPORTED_SRS"; break;
+        case OGRERR_INVALID_HANDLE: return "OGRERR_INVALID_HANDLE"; break;
         default: return "unknown OGR Error code!";
+    }
+}
+
+QString GDALProxy::translateCPLE(int errCode){
+    switch (errCode){
+        case CPLE_None: return "CPLE_None"; break;
+        case CPLE_AppDefined: return "CPLE_AppDefined"; break;
+        case CPLE_OutOfMemory: return "CPLE_OutOfMemory"; break;
+        case CPLE_FileIO: return "CPLE_FileIO"; break;
+        case CPLE_OpenFailed: return "CPLE_OpenFailed"; break;
+        case CPLE_IllegalArg: return "CPLE_IllegalArg"; break;
+        case CPLE_NotSupported: return "CPLE_NotSupported"; break;
+        case CPLE_AssertionFailed: return "CPLE_AssertionFailed"; break;
+        case CPLE_NoWriteAccess: return "CPLE_NoWriteAccess"; break;
+        case CPLE_UserInterrupt: return "CPLE_UserInterrupt"; break;
+        case CPLE_ObjectNull: return "CPLE_ObjectNull"; break;
+        default: return "unknown CPL Error code!";
     }
 }
 
@@ -244,7 +273,7 @@ bool GDALProxy::supports(const Resource &resource) const{
     QString filter = "*." + ext;
     if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
         return true;
-    if ( DataFormat::supports(DataFormat::fpEXTENSION, itFEATURE,ext, "gdal"))
+    if ( DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal").contains(ext))
         return true;
     return false;
 }

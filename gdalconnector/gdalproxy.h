@@ -78,11 +78,14 @@ typedef OGRErr (*IOSRImportFromProj4)(OGRSpatialReferenceH, const char *);
 typedef int (*IGetFeatureCount )(OGRLayerH,int) ;
 typedef OGRErr 	(*IGetLayerExtent )(OGRLayerH, OGREnvelope *, int) ;
 typedef const char * (*IGetFieldName )(OGRFieldDefnH) ;
+
 typedef void (*ICPLPushFinderLocation )( const char * ) ;
+typedef const char* (*ICPLGetLastErrorMsg)();
+typedef CPLErrorHandler (*ICPLSetErrorHandler)(	CPLErrorHandler );
+
 typedef OGRErr (*IOGRReleaseDataSource) (OGRDataSourceH);
 typedef OGRGeometryH (*IOGRGetSpatialFilter)(OGRLayerH);
 typedef void (*IOGRGetEnvelope3D) (OGRGeometryH, OGREnvelope*);
-typedef const char* (*ICPLGetLastErrorMsg)();
 typedef void (*IFree)( void * );
 typedef int (*IOGRGetGeomFieldCoun) (OGRFeatureH);
 typedef void (*IOGR_DS_Destroy) (OGRDataSourceH);
@@ -237,8 +240,12 @@ public:
     IGetFeatureCount getFeatureCount;
     IGetLayerExtent getLayerExtent;
     IGetFieldName getFieldName;
+
     ICPLPushFinderLocation pushFinderLocation;
     ICPLGetLastErrorMsg getLastErrorMsg;
+    ICPLSetErrorHandler setCPLErrorHandler;
+
+
     IOGRReleaseDataSource releaseDataSource;
     IOGRGetSpatialFilter getSpatialFilter;
     IOGRGetEnvelope3D getEnvelope3D;
@@ -274,7 +281,10 @@ public:
 
 private:
     bool prepare();
+
     static QString translateOGRERR(char ogrErrCode);
+    static QString translateCPLE(int errCode);
+    static void cplErrorHandler(CPLErr eErrClass, int err_no, const char *msg);
 
     QLibrary _libgdal, _libproj4, _libexpat;
     bool _isValid;
