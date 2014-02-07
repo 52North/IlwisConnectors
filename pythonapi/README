@@ -27,7 +27,7 @@ The ilwiscore.dll depends on Qt-libraries!
 The installation includes a folder with the minimum number of Qt-DLLs needed, which can simply be copied
 to <yourPathToQt>. But inside <yourPathToQt> you need to keep the structure with bin and plugins folder.
 There are issues if you try to have both this copy of Qt and a properly installed within you PATH environment.
-If you have already installed Qt5.1.1 (for minGW gcc 32bit) you can use it. The standard path to the binaries is:
+If you have already installed Qt5.2.0 (for minGW gcc 32bit) you can use it. The standard path to the binaries is:
 
 C:\Qt\Qt5.1.1\5.1.1\mingw48_32\bin
 
@@ -73,7 +73,7 @@ TODO: The ilwisobjects.py or the _ilwisobjects.pyd where not found by your pytho
 
 FAIL 2: "ImportError: DLL load failed: the specific module could not be found."
 TODO: one or more of the statically linked DLLs (ilwiscore.dll, QtCore.dll) are not within a folder which
-is mentioned in the PATH environment
+is mentioned in the PATH environment or the DLL are of a wrong version (e.g. Qt5.1.1 instead of Qt5.2.0)
 
 FAIL 3: "QSqlDatabase: QSQLITE driver not loaded
 TODO: Qt dynamically loads plugins like the SQLite driver from the qt.conf file. You get tis error and followed up errors
