@@ -1,7 +1,5 @@
 #!/usr/bin python
 # -*- coding: utf-8 -*-
-from ilwisobjects import CoordinateSystem
-
 try:
     from ilwisobjects import *
 

@@ -1,5 +1,8 @@
 ==================CHANGELOG===================
 
+--20140210--
+*first release build
+
 --20140207--
 *small changes of WKT representation of Geometries due to switch from boost to geos geometries
 *no more extra Coordinate2D of Voxel - everything is handled by Coordinate or Pixel

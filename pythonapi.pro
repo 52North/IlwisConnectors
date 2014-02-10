@@ -65,13 +65,13 @@ OTHER_FILES += \
     pythonapi/UPDATE \
     pythonapi/CHANGELOG
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
+        -LC:\Python33\libs -lpython33
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
-
-LIBS += -LC:\Python33\libs -lpython33
+win32:CONFIG(release, debug|release): {
+    QMAKE_CXXFLAGS_RELEASE += -O2
+}
 
 INCLUDEPATH += $$PWD/../ilwiscore/core \
                $$PWD/../external/geos \

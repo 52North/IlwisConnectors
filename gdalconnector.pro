@@ -35,8 +35,9 @@ SOURCES += \
     gdalconnector/gdalcontainerconnector.cpp \
     gdalconnector/gdaltableloader.cpp
 
-HEADERS += gdalconnector/gdalconnector.h\
-        gdalconnector/gdalconnector_global.h \
+HEADERS += \
+    gdalconnector/gdalconnector.h\
+    gdalconnector/gdalconnector_global.h \
     gdalconnector/gdalmodule.h \
     gdalconnector/gdalproxy.h \
     gdalconnector/gdalcatalogconnector.h \
@@ -51,30 +52,24 @@ HEADERS += gdalconnector/gdalconnector.h\
     gdalconnector/gdalfeaturetableconnector.h \
     gdalconnector/gdalcontainerconnector.h \
     gdalconnector/gdaltableloader.h
-		
-win32:CONFIG(release, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
-    QMAKE_CXXFLAGS_RELEASE += -O2
-}
-else:win32:CONFIG(debug, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
-}
-
-INCLUDEPATH += $$PWD/../external/gdalheaders
-
-INCLUDEPATH += $$PWD/core \
-            $$PWD/../external/gdalheaders
-
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
-
-DEPENDPATH += $$PWD/core
 
 OTHER_FILES += \
     gdalconnector/gdalconnector.json \
     gdalconnector/resources/ogr_formats.config
+
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+		
+win32:CONFIG(release, debug|release): {
+    QMAKE_CXXFLAGS_RELEASE += -O2
+}
+
+INCLUDEPATH +=  $$PWD/core \
+                $$PWD/../external/gdalheaders \
+                $$PWD/../external/geos
+
+DEPENDPATH +=   $$PWD/core \
+                $$PWD/../external/geos \
 
 resources.files = gdalconnector/resources/ogr_formats.config
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
