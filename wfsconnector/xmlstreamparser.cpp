@@ -70,13 +70,12 @@ bool XmlStreamParser::readNextStartElement() const
     return _reader->readNextStartElement();
 }
 
-bool XmlStreamParser::currentLevelMoveTo(QString qName) const
+bool XmlStreamParser::currentLevelMoveToNext(QString qName) const
 {
     bool found = false;
-    while ( !(found || _reader->atEnd())) {
-        if (_reader->isEndElement()) {
-            _reader->readNextStartElement();
-        } else {
+    _reader->readNextStartElement();
+    while ( !(_reader->atEnd() || found)) {
+        if ( !_reader->isEndElement() || _reader->readNextStartElement()) {
             found = isAtBeginningOf(qName);
             if ( !found) {
                 _reader->skipCurrentElement();
@@ -86,13 +85,12 @@ bool XmlStreamParser::currentLevelMoveTo(QString qName) const
     return found;
 }
 
-bool XmlStreamParser::nextLevelMoveTo(QString qName) const
+bool XmlStreamParser::nextLevelMoveToNext(QString qName) const
 {
     if (_reader->atEnd()) {
         return false;
     }
-    _reader->readNextStartElement();
-    return currentLevelMoveTo(qName);
+    return currentLevelMoveToNext(qName);
 }
 
 bool XmlStreamParser::isAtBeginningOf(QString qName) const

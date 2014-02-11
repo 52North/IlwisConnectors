@@ -54,7 +54,7 @@ public:
      * @param qName the name of the element to move to.
      * @return true if element was found, false otherwise.
      */
-    bool currentLevelMoveTo(QString qName) const;
+    bool currentLevelMoveToNext(QString qName) const;
 
     /**
      * Moves to the element living on next level, named by qName.
@@ -62,7 +62,7 @@ public:
      * @param qName the name of the element to move to.
      * @return true if element was found, false otherwise.
      */
-    bool nextLevelMoveTo(QString qName) const;
+    bool nextLevelMoveToNext(QString qName) const;
     bool isAtBeginningOf(QString qName) const;
     bool isAtEndOf(QString qName) const;
 
