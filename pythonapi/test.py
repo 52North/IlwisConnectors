@@ -106,10 +106,12 @@ try:
 
             wgs = CoordinateSystem("code=epsg:4326")
             self.assertTrue(bool(wgs))
-            g = Geometry("POINT(14 50)", wgs)
-            self.assertEqual("POINT (14.0000000000000000 50.0000000000000000)", g.toWKT())
-            # g1 = g.transform(gk5)
-            # self.assertEqual("POINT(4.94595e+006 5.81942e+006)", g1.toWKT())
+            g = Geometry("POINT(52.223549 6.885479)", wgs)
+            self.assertEqual("POINT (52.2235489999999984 6.8854790000000001)", g.toWKT())
+            gk2 = CoordinateSystem("code=epsg:31466")
+            self.assertEqual("DHDN / 3-degree Gauss-Kruger zone 2", gk2.name())
+            g1 = g.transform(gk2)  # TODO WGS84 coordinates
+            self.assertEqual("POINT (5428303.6806848123669624 5541423.7797384615987539)", g1.toWKT())
 
         def test_Envelope(self):
             g = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
@@ -447,21 +449,21 @@ try:
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setConnection(workingDir+tempDir+"/countries_fromshp", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/countries_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
             # points
             world = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "pointmap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
             # lines
             world = FeatureCoverage("drainage.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setConnection(workingDir+tempDir+"/drainage_fromshp", "segmentmap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/drainage_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
 
         # def test_loadIlwis3storeIlwis3(self):
@@ -470,21 +472,21 @@ try:
         #     self.assertTrue(bool(world))
         #     self.assertFalse(world.isInternal())
         #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-        #     world.setConnection(workingDir+tempDir+"/countries_fromshp", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+        #     world.setConnection(workingDir+tempDir+"/countries_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
         #     world.store()
         #     # points
         #     world = FeatureCoverage("rainfall.shp")
         #     self.assertTrue(bool(world))
         #     self.assertFalse(world.isInternal())
         #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-        #     world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "pointmap", "ilwis3", IlwisObject.cmOUTPUT)
+        #     world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
         #     world.store()
         #     # lines
         #     world = FeatureCoverage("drainage.shp")
         #     self.assertTrue(bool(world))
         #     self.assertFalse(world.isInternal())
         #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-        #     world.setConnection(workingDir+tempDir+"/drainage_fromshp", "segmentmap", "ilwis3", IlwisObject.cmOUTPUT)
+        #     world.setConnection(workingDir+tempDir+"/drainage_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
         #     world.store()
 
     #@ut.skip("temporarily")
@@ -528,7 +530,7 @@ try:
             self.assertTrue(cs1 == cs2)
             self.assertFalse(cs1 != cs2)
 
-    #@ut.skip("temporarily")
+    @ut.skip("temporarily")
     class TestRaster(ut.TestCase):
         def setUp(self):
             try:
@@ -765,7 +767,7 @@ try:
                         maxval = max(int(polygon.attribute("maxY", 0)), int(point.attribute("freq_speciesY", 0)))
                         polygon.setAttribute("maxY", maxval)
 
-            polygongrid.setConnection(workingDir + exampleDir + "/polygongrid", "polygonmap", "ilwis3",IlwisObject.cmOUTPUT)
+            polygongrid.setConnection(workingDir + exampleDir + "/polygongrid", "vectormap", "ilwis3",IlwisObject.cmOUTPUT)
             polygongrid.store()
 
     #@ut.skip("temporarily")
@@ -799,7 +801,7 @@ try:
                 else:
                     feature["selected"] = False
             self.assertEqual(count, 3, msg="wrong count value!")
-            fc_soils.setConnection(workingDir + babyDir + "/soils_select", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+            fc_soils.setConnection(workingDir + babyDir + "/soils_select", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             fc_soils.store()
 
     ##@ut.skip("temporarily")
