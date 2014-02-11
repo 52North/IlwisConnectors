@@ -71,6 +71,8 @@ bool WfsCatalogConnector::canUse(const Resource &resource) const
         return false;
     if (!isValidWfsUrl(resource.url()))
         return false;
+    if (resource.url().toString().startsWith("wfs-test://"))
+        return true;
     return true;
 }
 
