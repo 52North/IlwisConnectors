@@ -66,6 +66,7 @@ quint64 GDALItems::addCsy(GdalHandle* handle, const QFileInfo &path, const QUrl&
     if ( srshandle == 0)
         return i64UNDEF;
     QString epsg(gdal()->getAttributeValue(srshandle,"AUTHORITY",0));
+    gdal()->releaseSrsHandle(handle, srshandle, path.absoluteFilePath());
     if ( epsg != sUNDEF) {
         Resource resource = mastercatalog()->name2Resource("code=epsg:" + epsg, itCONVENTIONALCOORDSYSTEM);
         if ( resource.isValid())

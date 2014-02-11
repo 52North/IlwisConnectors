@@ -113,6 +113,7 @@ typedef OGRErr (*IOGR_L_CreateFeature)(OGRLayerH,OGRFeatureH);
 typedef OGRErr (*IOGR_G_AddGeometry)(OGRGeometryH,OGRGeometryH);
 typedef OGRErr (*IOGR_G_AddGeometryDirectly)(OGRGeometryH,OGRGeometryH);
 typedef int (*IOGR_G_GetCoordinateDimension)(OGRGeometryH);
+typedef void (*IOSRRelease)( OGRSpatialReferenceH );
 
 
 typedef FILE* (*IVSIFileFromMemBuffer)( const char *, GByte *, vsi_l_offset ,int  );
@@ -167,6 +168,7 @@ public:
     GdalHandle* openFile(const QFileInfo &filename, quint64 asker, GDALAccess mode=GA_ReadOnly);
     void closeFile(const QString& filename, quint64 asker);
     OGRSpatialReferenceH srsHandle(GdalHandle* handle, const QString& source);
+    void releaseSrsHandle(GdalHandle* handle, OGRSpatialReferenceH srshandle, const QString& source);
 
     IGDALClose close;
     IGDALOpen open;
@@ -205,6 +207,7 @@ public:
     IOSRGetProjParm getProjectionParm;
     IOSRGetAuthorityCode authority;
     IOSRImportFromProj4 importFromProj4;
+    IOSRRelease releaseSRS;
 
     IOGROpen ogrOpen;
     IOGRRegisterAll ogrRegisterAll;
