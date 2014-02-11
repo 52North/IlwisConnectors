@@ -16,7 +16,7 @@ public:
     static IlwisTypes ilwisType(const QString &name);
     static QString name2Code(const QString &name, const QString &type);
     static QString code2name(const QString &code, const QString &type);
-    static QString outputNameFor(const IlwisObject *obj);
+    static QString outputNameFor(const IlwisObject *obj, bool isMulti, IlwisTypes type);
 
     QString provider() const;
     virtual bool storeBinaryData(IlwisObject* ) { return false; }
@@ -44,6 +44,7 @@ protected:
     mutable ODF _odf;
 
     QUrl makeUrl(const QString &path, const QString &name=sUNDEF);
+    static QString type2humanName(IlwisTypes tp);
 };
 }
 
