@@ -60,25 +60,24 @@ HEADERS += \
     ilwis3connector/ilwisrastercoverageconnector.h \
     ilwis3connector/ilwis3featureconnector.h
 
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-
-INCLUDEPATH += $$PWD/core
-DEPENDPATH += $$PWD/core
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
-
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
-
 OTHER_FILES += \
     ilwis3connector/ilwis3connector.json \
     ilwis3connector/resources/projection_allias.csv \
     ilwis3connector/resources/ellipsoid_allias.csv \
     ilwis3connector/resources/datum_allias.csv \
     ilwis3connector/resources/domain_allias.csv
+
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+
+win32:CONFIG(release, debug|release): {
+    QMAKE_CXXFLAGS_RELEASE += -O2
+}
+
+INCLUDEPATH +=  $$PWD/core \
+                $$PWD/../external/geos
+DEPENDPATH +=   $$PWD/core \
+                $$PWD/../external/geos
 
 resources.files = ilwis3connector/ilwis3connector.json \
     ilwis3connector/resources/projection_allias.csv \
