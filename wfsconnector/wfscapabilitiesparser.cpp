@@ -38,7 +38,7 @@ void WfsCapabilitiesParser::parseFeatures(QList<WfsFeature> &wfsFeatures)
         QXmlItem item(results.next());
         while (!item.isNull()) {
             WfsFeature feature;
-            parseFeature(item, &feature);
+            parseFeature(item, feature);
             wfsFeatures.push_back(feature);
             item = results.next();
         }
@@ -48,7 +48,7 @@ void WfsCapabilitiesParser::parseFeatures(QList<WfsFeature> &wfsFeatures)
     }
 }
 
-void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature *feature) const
+void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) const
 {
     QXmlQuery *query;
 
@@ -56,23 +56,24 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature *feature) co
     query = _parser->queryRelativeFrom(item, "./wfs:Name/string()");
     query->evaluateTo( &name);
     QString type = name.trimmed();
-    feature->setUrl(createGetFeatureUrl(type));
-    feature->setName(type);
+
+    feature = WfsFeature(createGetFeatureUrl(type));
+    feature.setName(type, false);
 
     QString title;
     query = _parser->queryRelativeFrom(item, "./wfs:Title/string()");
     query->evaluateTo( &title);
-    feature->setTitle(title.trimmed());
+    feature.setTitle(title.trimmed());
 
     QString abstract;
     query = _parser->queryRelativeFrom(item, "./wfs:Abstract/string()");
     query->evaluateTo( &abstract);
-    feature->setTitle(abstract.trimmed());
+    feature.setTitle(abstract.trimmed());
 
     QString srs;
     query = _parser->queryRelativeFrom(item, "./wfs:DefaultSRS/string()");
     query->evaluateTo( &srs);
-    feature->setTitle(normalizeEpsgCode(srs));
+    feature.setTitle(normalizeEpsgCode(srs));
 
     QString llText;
     query = _parser->queryRelativeFrom(item, "./ows:WGS84BoundingBox/ows:LowerCorner/string()");
@@ -85,7 +86,7 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature *feature) co
     Coordinate ll = createCoordinateFromWgs84LatLon(llText);
     Coordinate ur = createCoordinateFromWgs84LatLon(urText);
     Envelope envelope(ll, ur);
-    feature->setBBox(envelope);
+    feature.setBBox(envelope);
 }
 
 QUrl WfsCapabilitiesParser::createGetFeatureUrl(QString featureName) const

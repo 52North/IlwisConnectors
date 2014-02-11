@@ -25,7 +25,7 @@ private:
     XPathParser *_parser;
 
     QUrl createGetFeatureUrl(QString featureType) const;
-    void parseFeature(QXmlItem &item, WfsFeature *feature) const;
+    void parseFeature(QXmlItem &item, WfsFeature &feature) const;
     Coordinate createCoordinateFromWgs84LatLon(QString latlon) const;
     QString normalizeEpsgCode(QString epsgCode) const ;
 

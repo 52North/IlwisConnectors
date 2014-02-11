@@ -14,7 +14,6 @@ WfsFeature::WfsFeature()
 
 WfsFeature::WfsFeature(QUrl featureUrl): Resource(featureUrl, itFEATURE)
 {
-
 }
 
 WfsFeature::~WfsFeature()

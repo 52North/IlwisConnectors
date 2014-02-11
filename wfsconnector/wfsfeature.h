@@ -26,6 +26,7 @@ public:
 
     QString title() const;
     void setTitle(QString title="");
+
     QString abstract() const;
     void setAbstract(QString abstract="");
 
