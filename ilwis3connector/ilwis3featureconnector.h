@@ -47,10 +47,9 @@ private:
     bool storeBinaryDataPoints(FeatureCoverage *fcov, const QString &baseName);
     bool storeBinaryDataLine(FeatureCoverage *fcov, const QString &baseName);
     bool storeMetaData(Ilwis::FeatureCoverage *fcov, IlwisTypes type);
-    bool storeBinaryData(Ilwis::FeatureCoverage *fcov, IlwisTypes type);
+    bool storeBinaryData(Ilwis::FeatureCoverage *fcov, bool isMulti, IlwisTypes type);
 
     void storeColumn(const QString &colName, const QString &domName, const QString &domInfo, const QString &storeType);
-    QString type2Prefix(IlwisTypes tp);
 
     void writeCoord(std::ofstream& output_file, const geos::geom::Coordinate& crd) {
         double x = crd.x;
@@ -58,10 +57,11 @@ private:
         output_file.write((char *)&x, 8);
         output_file.write((char *)&y, 8);
     }
-    void writeLine(const geos::geom::LineString *line, std::ofstream &output_file, double raw);
-    void writePolygon(const geos::geom::Polygon *polygon, std::ofstream &output_file, double raw);
+    void writeLine(const geos::geom::LineString *line, std::ofstream &output_file, long raw);
+    void writePolygon(const geos::geom::Polygon *polygon, std::ofstream &output_file, long raw);
     void writePoint(const geos::geom::Point *point, std::ofstream &output_file, long raw);
     void addFeatures(map<quint32, vector<geos::geom::Geometry *> > &geometries, FeatureCoverage *fcoverage, ITable &tbl, IlwisTypes tp);
+    bool storeBinaryDataTable(IlwisObject *obj, IlwisTypes tp, const QString &baseName);
 };
 }
 }
