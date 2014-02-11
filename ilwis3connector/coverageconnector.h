@@ -17,9 +17,9 @@ protected:
     bool getRawInfo(const QString &range, double &vmin, double &vmax, double &scale, double &offset) const;
     virtual void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const = 0;
     bool loadMetaData(Ilwis::IlwisObject *data);
-    bool storeMetaData(IlwisObject *obj, IlwisTypes type, const Ilwis::IDomain &dom) ;
-    bool storeBinaryData(IlwisObject *obj, IlwisTypes tp);
-    TableConnector *createTableStoreConnector(ITable &attTable, Coverage *coverage, IlwisTypes tp);
+    bool storeMetaData(IlwisObject *obj, IlwisTypes type, const Ilwis::IDomain &dom, const QString &baseName=sUNDEF) ;
+   // bool storeBinaryData(IlwisObject *obj, IlwisTypes tp, const QString &baseName);
+    TableConnector *createTableStoreConnector(ITable &attTable, Coverage *coverage, IlwisTypes tp, const QString &baseName);
 
     RawConverter _converter;
     DataDefinition determineDataDefintion() const;

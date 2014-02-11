@@ -128,7 +128,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     ICoordinateSystem csy;
     if ( !csy.prepare(csyName, itCONVENTIONALCOORDSYSTEM)) {
         kernel()->issues()->log(csyName,TR("Coordinate system couldnt be initialized, defaulting to 'unknown'"),IssueObject::itWarning);
-        QString resource = QString("ilwis://file/unknown.csy");
+        QString resource = QString("code=unknown");
         if (!csy.prepare(resource)) {
             kernel()->issues()->log(TR("Fallback to 'unknown failed', corrupt system files defintion"));
             return false;
@@ -165,7 +165,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     return true;
 }
 
-bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const Ilwis::IDomain &dom)
+bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const Ilwis::IDomain &dom, const QString& baseName)
 {
     if (!dom.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Domain", obj->name());
@@ -201,6 +201,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
 
     calcStatics(obj,NumericStatistics::pBASIC);
+    int itemCount = 0;
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
 
         quint16 digits = coverage->statistics().significantDigits();
@@ -238,15 +239,18 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
-        //QString source = Resource::toLocalFile(dom->source().url(), true);
-        if ( dom->valueType() == itTHEMATICITEM && coverage->ilwisType() == itRASTER) {
+         if ( dom->valueType() == itTHEMATICITEM && coverage->ilwisType() == itRASTER) {
             _domainName =  Resource::toLocalFile(dom->source().url(), true);
+            if ( _domainName == sUNDEF){
+                _domainName = QFileInfo(baseName).baseName() + ".dom";
+            }
             IThematicDomain themdom = dom.get<ThematicDomain>();
             if ( themdom.isValid()) {
                 _domainInfo = QString("%1;Byte;class;%2;;").arg(_domainName).arg(themdom->count());
                 _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
                 _odf->setKeyValue("BaseMap","Domain",_domainName);
             }
+            itemCount = themdom->count();
         } else if(dom->valueType() == itINDEXEDITEM) {
             _domainName = QFileInfo(QUrl(_odf->file()).toLocalFile()).fileName();
             _domainInfo = QString("%1;Long;UniqueID;0;;").arg(_domainName);
@@ -255,14 +259,16 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
         } else if ( dom->valueType() == itNAMEDITEM) {
             INamedIdDomain iddom = dom.get<NamedIdDomain>();
             _domainName = Resource::toLocalFile(dom->source().url(), true);
-            if ( _domainName == sUNDEF)
-                _domainName = QFileInfo(QUrl(_odf->file()).toLocalFile()).baseName() + ".dom";
+            if ( _domainName == sUNDEF){
+                _domainName = QFileInfo(baseName).baseName() + ".dom";
+            }
             _domainInfo = QString("%1;Int;id;%2;;").arg(_domainName).arg(iddom->count());
             _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
             _odf->setKeyValue("BaseMap","Domain",_domainName);
             QUrl url = makeUrl(_odf->file(),_domainName);
             iddom->connectTo(url,"domain","ilwis3", IlwisObject::cmOUTPUT);
             iddom->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
+            itemCount = iddom->count();
         }
     }
     QFileInfo inf(_domainName);
@@ -270,34 +276,18 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
     ITable attTable = coverage->attributeTable();
     if ( attTable.isValid() && attTable->columnCount() > 1) {
-        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, coverage, type));
+        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, coverage, type,baseName));
+        std::vector<quint32> recs(itemCount);
+        conn->selectedRecords(recs);
         conn->storeMetaData(attTable.ptr());
     }
     return true;
 }
 
-bool CoverageConnector::storeBinaryData(IlwisObject *obj, IlwisTypes tp)
-{
-    Coverage *coverage = static_cast<Coverage *>(obj);
-    ITable attTable = coverage->attributeTable();
-    if ( attTable.isValid() && attTable->columnCount() > 1) {
-        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, coverage, tp));
-        return conn->storeBinaryData(attTable.ptr());
 
-    }
 
-    return true; // no store needed
-}
-
-TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, Coverage *coverage, IlwisTypes tp) {
-    QString dataFile;
-    QUrl url = coverage->source(IlwisObject::cmOUTPUT).url();
-    if ( url.scheme() == "file"){
-        QFileInfo inf(url.toLocalFile());
-        dataFile = inf.absolutePath() + "/" + inf.baseName();
-    }else{
-       dataFile = context()->workingCatalog()->location().toLocalFile() + "/"+ coverage->name();
-    }
+TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, Coverage *coverage, IlwisTypes tp, const QString& baseName) {
+    QString dataFile = baseName;
     QString attDom = dataFile;
     if ( hasType(tp,itRASTER)) {
         RasterCoverage *raster = static_cast<RasterCoverage *>(coverage);
@@ -320,9 +310,9 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     }
     if ( attTable->columnCount() > 1) { // one column means only featurid which we dont save.
         QFileInfo inf(dataFile);
-        _odf->setKeyValue("BaseMap","AttributeTable",inf.baseName() + ".tbt");
-        attTable->setName(dataFile);
         QString filename = dataFile + ".tbt";
+        _odf->setKeyValue("BaseMap","AttributeTable",filename);
+        attTable->setName(inf.baseName());
         TableConnector *conn = new TableConnector(Resource(QUrl::fromLocalFile(filename), itTABLE), false);
         conn->attributeDomain(attDom);
 
