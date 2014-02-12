@@ -78,28 +78,24 @@ IlwisTypes Geometry::ilwisType(){
     return Ilwis::GeometryHelper::geometryType(this->ptr().get());
 }
 
-bool Geometry::fromWKT(const std::string& wkt){
+void Geometry::fromWKT(const std::string& wkt){
     if (!this->__bool__()){
         if (this->_standalone){
             this->_standalone = true;
             this->_feature = nullptr;
             this->_index = -1;
             this->_ilwisGeometry.reset(Ilwis::GeometryHelper::fromWKT(wkt));
-            return this->_ilwisGeometry->isValid();
         }else{
             if (this->_feature != nullptr && (bool)this->_feature && this->_feature->__bool__()){
                 this->_feature->ptr()->set(Ilwis::GeometryHelper::fromWKT(wkt), this->_index);
-                return this->_feature->ptr()->geometry(this->_index)->isValid();
             }else
                 throw InvalidObject("invalid referenc to hosting feature of non-standalone geometry!");
         }
     }else{
         if (_standalone){
             this->_ilwisGeometry.reset(Ilwis::GeometryHelper::fromWKT(wkt));
-            return this->_ilwisGeometry->isValid();
         }else{
             this->_feature->ptr()->set(Ilwis::GeometryHelper::fromWKT(wkt), this->_index);
-            return this->_feature->ptr()->geometry(this->_index)->isValid();
         }
     }
 }

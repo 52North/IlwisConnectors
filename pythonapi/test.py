@@ -93,25 +93,31 @@ try:
             self.assertTrue(bool(g))
             self.assertEqual(g.ilwisType(), 1)
             self.assertEqual(g.coordinateSystem().name(), "Sibun Gorge 1922")
+            self.assertEqual(g.coordinateSystem(), self.csy)
 
         def test_Transform(self):
-            pseudo_mercator = CoordinateSystem("code=epsg:3857")
-            g = Geometry("POINT(766489.647 6840642.671)", pseudo_mercator)
-            self.assertEqual("POLYGON(766490 6.84064e+06,766490 6.84064e+06)", str(g.envelope()))
-            self.assertEqual("POINT (766489.6469999999972060 6840642.6710000000894070)", str(g))
-            gk5 = CoordinateSystem("code=epsg:3329")
-            self.assertTrue(bool(gk5))
-            g1 = g.transform(gk5)
-            self.assertEqual("POINT (4945949.0809892630204558 5819418.3890127958729863)", g1.toWKT())
-
+            pm = CoordinateSystem("code=epsg:3857")
+            self.assertEqual("WGS 84 / Pseudo-Mercator", pm.name())
             wgs = CoordinateSystem("code=epsg:4326")
-            self.assertTrue(bool(wgs))
-            g = Geometry("POINT(52.223549 6.885479)", wgs)
-            self.assertEqual("POINT (52.2235489999999984 6.8854790000000001)", g.toWKT())
+            self.assertEqual("WGS 84", wgs.name())
             gk2 = CoordinateSystem("code=epsg:31466")
             self.assertEqual("DHDN / 3-degree Gauss-Kruger zone 2", gk2.name())
-            g1 = g.transform(gk2)  # TODO WGS84 coordinates
-            self.assertEqual("POINT (5428303.6806848123669624 5541423.7797384615987539)", g1.toWKT())
+            gk5 = CoordinateSystem("code=epsg:3329")
+            self.assertEqual("Pulkovo 1942(58) / 3-degree Gauss-Kruger zone 5", gk5.name())
+            etrs_laea = CoordinateSystem("code=epsg:3035")
+            self.assertEqual("ETRS89 / LAEA Europe", etrs_laea.name())
+
+            g = Geometry("POINT(766489.647 6840642.671)", pm)
+            g1 = g.transform(gk5)
+            self.assertEqual("POINT (4945949.0809892630204558 5819418.3890127958729863)", g1.toWKT())
+            g2 = g1.transform(wgs)
+            self.assertEqual("POINT (6.8854937241464658 52.2235232302096932)", g2.toWKT())
+            g1 = g2.transform(gk5)
+            self.assertEqual("POINT (4945949.0857109790667892 5819418.3856139155104756)", g1.toWKT())
+            g1 = g2.transform(gk2)
+            self.assertEqual("POINT (2560502.5977886635810137 5787988.6849722778424621)", g1.toWKT())
+            g1 = g2.transform(etrs_laea)
+            self.assertEqual("POINT (4108242.5654639988206327 3239420.9621137753129005)", g1.toWKT())
 
         def test_Envelope(self):
             g = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
@@ -121,15 +127,21 @@ try:
             e = g.envelope()
             self.assertEqual("POLYGON(1 1,1 1)", str(e),
                              msg="z's are always 0, since boost can only manage 2D geometries until now")
+            g = Geometry("POINT(766489.647 6840642.671)", self.csy)
+            self.assertEqual("POLYGON(766490 6.84064e+06,766490 6.84064e+06)", str(g.envelope()))
+            self.assertEqual("POINT (766489.6469999999972060 6840642.6710000000894070)", str(g))
 
         def test_BadWKT(self):
+            g = True
             with self.assertRaises(SyntaxError):
                 g = Geometry("Pihkdjfhskdf", self.csy)
-                self.assertFalse(bool(g))
-                self.assertTrue(g.fromWKT("POINT(5 5)"))
-                self.assertTrue(bool(g))
-                self.assertFalse(g.fromWKT("fdsfsds"))
-                self.assertFalse(bool(g))
+            self.assertTrue(bool(g))
+            g = Geometry("POINT EMPTY", self.csy)
+            self.assertTrue(bool(g))
+            g.fromWKT("POINT(5 5)")
+            self.assertTrue(bool(g))
+            with self.assertRaises(SyntaxError):
+                g.fromWKT("fdsfsds")
 
         def test_SimpleFeatures(self):
             p = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
@@ -385,7 +397,7 @@ try:
         def test_Feature(self):
             it = iter(self.fc)
             f = next(it)
-            self.assertTrue(f.geometry().fromWKT("POINT(5.4 6 9.0)"), msg="set non-standalone Geometry fromWKT")
+            f.geometry().fromWKT("POINT(5.4 6 9.0)")
             self.assertEqual(f.geometry().toWKT(), "POINT (5.4000000000000004 6.0000000000000000)", msg="unsuccessfully altered geometry")
             with self.assertRaises(IndexError, msg="no IndexError on call of wrong attribute"):
                 v = f["RAINFAL"]
@@ -426,19 +438,19 @@ try:
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setConnection(workingDir+tempDir+"/countries.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/countries_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
             # points
             world = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setConnection(workingDir+tempDir+"/rainfall.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/rainfall_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
             # lines
             world = FeatureCoverage("drainage.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setConnection(workingDir+tempDir+"/drainage.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/drainage_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
             connectIssueLogger()
 
@@ -530,7 +542,7 @@ try:
             self.assertTrue(cs1 == cs2)
             self.assertFalse(cs1 != cs2)
 
-    @ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestRaster(ut.TestCase):
         def setUp(self):
             try:
@@ -625,7 +637,7 @@ try:
             aa12 = rc * 2
             self.assertEqual(aa12.pix2value(342, 342, 0), 29.0 * 2)
 
-            aa1.setConnection(workingDir + tempDir + "/aa1", "GTiff", "gdal", IlwisObject.cmOUTPUT)
+            aa1.setConnection(workingDir + tempDir + "/n000302_frommpr", "GTiff", "gdal", IlwisObject.cmOUTPUT)
             aa1.store()
 
         def test_PixelIterator(self):
