@@ -438,13 +438,13 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
 
 }
 
-void FeatureConnector::writePolygon(const geos::geom::Polygon* polygon, std::ofstream& output_file, long raw){
+void FeatureConnector::writePolygon(const geos::geom::Polygon* polygon, std::ofstream& output_file, double raw){
     if (!polygon)
         return;
 
     const std::vector<geos::geom::Coordinate>* coords = polygon->getExteriorRing()->getCoordinates()->toVector();
     writeCoords(output_file, coords);
-    output_file.write((char *)&raw,4);
+    output_file.write((char *)&raw,8);
     quint32 holeCount = polygon->getNumInteriorRing();
     output_file.write((char *)&holeCount,4);
     for(int i=0; i < holeCount; ++i ) {
