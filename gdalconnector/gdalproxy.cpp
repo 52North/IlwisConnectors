@@ -100,7 +100,8 @@ bool GDALProxy::prepare() {
     getProjectionParm = add<IOSRGetProjParm>("OSRGetProjParm");
     setWellKnownGeogCs = add<IOSRSetWellKnownGeogCS>("OSRSetWellKnownGeogCS");
     isProjected = add<IOSRIsProjectedFunc>("OSRIsProjected");
-    authority = add<IOSRGetAuthorityCode>("OSRGetAuthorityCode");
+    getAuthorityCode = add<IOSRGetAuthorityCode>("OSRGetAuthorityCode");
+    getAuthorityName = add<IOSRGetAuthorityName>("OSRGetAuthorityName");
     newSpatialRef = add<IOSRNewSpatialReference>("OSRNewSpatialReference");
     importFromWkt = add<IOSRImportFromWkt>("OSRImportFromWkt");
     exportToWkt = add<IExportToWkt>("OSRExportToWkt");
@@ -119,7 +120,7 @@ bool GDALProxy::prepare() {
     createDatasource = add<IOGR_Dr_CreateDataSource>("OGR_Dr_CreateDataSource");
     //OGR DataSource
     createOgrLayer = add<IOGR_DS_CreateLayer>("OGR_DS_CreateLayer");
-    getLaterByName = add<IGetLayerByName>("OGR_DS_GetLayerByName");
+    getLaterByName = add<IOGR_DS_GetLayerByName>("OGR_DS_GetLayerByName");
     getLayerCount = add<IGetLayerCount>("OGR_DS_GetLayerCount");
     getLayer = add<IGetLayer>("OGR_DS_GetLayer");
     destroyDataSource = add<IOGR_DS_Destroy>("OGR_DS_Destroy");

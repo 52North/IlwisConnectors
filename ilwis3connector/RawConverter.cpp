@@ -17,7 +17,7 @@ IlwisTypes RawConverter::minNeededStoreType(double low, double high, double step
     double maxDivStep;
     intRange(low, high, step, minDivStep, maxDivStep );
 
-    quint64 delta = abs(maxDivStep - minDivStep);
+    quint64 delta = abs(maxDivStep - minDivStep);//TODO change from quint32 to quint64 might change behaviour??
     if ( step != 0) {
         if ( delta <= 255)
             return itUINT8;

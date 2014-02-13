@@ -39,9 +39,10 @@ typedef OGRErr (*IOSRSetWellKnownGeogCS )(OGRSpatialReferenceH, char *) ;
 typedef int (*IOSRIsProjectedFunc )(OGRSpatialReferenceH) ;
 typedef const char* (*IOSRGetAttrValue )(OGRSpatialReferenceH, const char *, int) ;
 typedef OGRErr (*IOSRImportFromEPSG )(OGRSpatialReferenceH, int) ;
-typedef OGRErr (*IOSRExportToPrettyWkt )(OGRSpatialReferenceH ,char **,int) ;
-typedef double (*IOSRGetProjParm )(OGRSpatialReferenceH,const char *,double ,OGRErr *) ;
+typedef OGRErr (*IOSRExportToPrettyWkt )(OGRSpatialReferenceH, char **,int) ;
+typedef double (*IOSRGetProjParm )(OGRSpatialReferenceH, const char *,double ,OGRErr *) ;
 typedef const char* (*IOSRGetAuthorityCode)( OGRSpatialReferenceH, const char *);
+typedef const char* (*IOSRGetAuthorityName)( OGRSpatialReferenceH, const char*);
 
 typedef OGRDataSourceH (*IOGROpen )(const char *, int, OGRSFDriverH *) ;
 typedef void (*IOGRRegisterAll )() ;
@@ -50,7 +51,7 @@ typedef OGRSFDriverH (*IOGRGetDriver )(int) ;
 typedef const char * (*IOGRGetDriverName )(OGRSFDriverH) ;
 typedef OGRSFDriverH  (*IOGRGetDriverByName )(const char *) ;
 typedef int (*IOGRTestDriverCapability)(OGRSFDriverH ,const char *);
-typedef OGRLayerH (*IGetLayerByName )(OGRDataSourceH, const char *) ;
+typedef OGRLayerH (*IOGR_DS_GetLayerByName )(OGRDataSourceH, const char *) ;
 typedef int (*IGetLayerCount )(OGRDataSourceH) ;
 typedef OGRLayerH (*IGetLayer )(OGRDataSourceH, int) ;
 typedef const char * (*IGetLayerName )(OGRLayerH) ;
@@ -196,7 +197,7 @@ public:
     IGDALGetDriverName getShortName;
     IGDALGetMetadataItem getMetaDataItem;
     IGDALGetRasterColorInterpretation colorInterpretation;
-
+    //Open Spatial Reference
     IOSRNewSpatialReference newSpatialRef;
     IOSRImportFromWkt importFromWkt;
     IOSRSetWellKnownGeogCS setWellKnownGeogCs;
@@ -205,18 +206,22 @@ public:
     IOSRImportFromEPSG importFromEpsg;
     IOSRExportToPrettyWkt exportToPrettyWkt;
     IOSRGetProjParm getProjectionParm;
-    IOSRGetAuthorityCode authority;
+    IOSRGetAuthorityCode getAuthorityCode;
+    IOSRGetAuthorityName getAuthorityName;
     IOSRImportFromProj4 importFromProj4;
     IOSRRelease releaseSRS;
-
+    //OGR
     IOGROpen ogrOpen;
     IOGRRegisterAll ogrRegisterAll;
     IOGRGetDriverCount ogrDriverCount;
     IOGRGetDriver ogrGetDriver;
-    IOGRGetDriverName getOGRDriverName;
     IOGRGetDriverByName getDriverByName;
+    //OGR Driver
+    IOGRGetDriverName getOGRDriverName;
     IOGRTestDriverCapability testDriverCapability;
-    IGetLayerByName getLaterByName;
+    IOGR_Dr_CreateDataSource createDatasource;
+
+    IOGR_DS_GetLayerByName getLaterByName;
     IGetLayerCount getLayerCount;
     IGetLayer getLayer;
     IGetLayerName getLayerName;
@@ -253,7 +258,7 @@ public:
     IOGRGetSpatialFilter getSpatialFilter;
     IOGRGetEnvelope3D getEnvelope3D;
     IOGR_DS_Destroy destroyDataSource;
-    IOGR_Dr_CreateDataSource createDatasource;
+    //OGR DataSource
     IOGR_DS_CreateLayer createOgrLayer;
     IOGR_Fld_Create createAttributeDefintion;
     IOGR_L_CreateField addAttribute;
