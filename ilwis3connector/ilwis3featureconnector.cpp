@@ -487,7 +487,7 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
                 ++raw;
             }
         }
-
+        return true;
     });
 
     output_file.close();
@@ -554,7 +554,7 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
                 ++raw;
             }
         }
-
+        return true;
     });
 
     output_file.close();
@@ -606,7 +606,7 @@ bool FeatureConnector::storeBinaryDataPoints(FeatureCoverage *fcov, const QStrin
                 ++raw;
             }
         }
-
+        return true;
     });
 
     output_file.close();
@@ -634,11 +634,10 @@ bool FeatureConnector::storeBinaryData(FeatureCoverage *fcov, bool isMulti,Ilwis
 }
 
 bool FeatureConnector::storeBinaryData(IlwisObject *obj) {
-
     FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
     IlwisTypes featureTypes = fcov->featureTypes();
     bool ok = true;
-    bool isMulti = ((featureTypes & (featureTypes) - 1)) != 0 ; //(n & (n - 1)) == 0
+    bool isMulti = (featureTypes & (featureTypes - 1)) != 0 ; //(n & (n - 1)) != 0
 
     ok &= storeBinaryData(fcov, isMulti, featureTypes & itPOLYGON);
     ok &= storeBinaryData(fcov, isMulti, featureTypes & itLINE);
