@@ -29,8 +29,8 @@ try:
             t = fc.attributeTable()
             self.assertRegex(t.name(), "rainfall.shp")
             self.assertEqual(
-                ('RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
-                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id', 'coverage_key'),
+                ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
+                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
                 t.columns()
             )
             # TODO bug fix in GdalLoader
@@ -71,7 +71,7 @@ try:
             self.assertFalse(t.isInternal(), msg="created a new table object with that name!!")
             self.assertRegex(t.name(), "rainfall.shp")
             self.assertEqual(
-                ('RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
+                ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
                  'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT'),
                 t.columns()
             )
@@ -380,10 +380,10 @@ try:
             self.assertTrue(self.fc.addAttribute("sum", "value"), msg="FeatureCoverage.addAttribute failed!")
             att = self.fc.attributes()
             self.assertTupleEqual(att, (
-                'RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY',
-                'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'coverage_key', 'sum'
+                'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY',
+                'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum'
             ), msg="wrong list of attributes!")
-            self.assertEqual(len(att), 18, msg="wrong number of attributes")
+            self.assertEqual(len(att), 16, msg="wrong number of attributes")
             g = Geometry("POINT(5.4 6 9.0)", self.fc.coordinateSystem())
             newfeature = self.fc.newFeature(g)
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
@@ -419,7 +419,7 @@ try:
             del summ
             it = iter(self.fc)
             self.assertTrue(bool(it))
-            self.assertEqual(str(it),"FeatureIterator for rainfall.shp")
+            self.assertEqual(str(it), "FeatureIterator for rainfall.shp")
             it2 = it + 2
             self.assertTrue(it != it2)
             self.assertFalse(it == it2)
@@ -433,7 +433,6 @@ try:
             self.assertTrue(str(f), "Feature(1)")
 
         def test_loadGDALstoreGDAL(self):
-            disconnectIssueLogger()
             # polygons
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             self.assertTrue(bool(world))
@@ -452,7 +451,6 @@ try:
             self.assertFalse(world.isInternal())
             world.setConnection(workingDir+tempDir+"/drainage_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
-            connectIssueLogger()
 
         #@ut.skip("temporarily")
         def test_loadGDALstoreIlwis3(self):
@@ -460,7 +458,7 @@ try:
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setCoordinateSystem(CoordinateSystem("countries.csy"))
+            world.setCoordinateSystem(CoordinateSystem("countries.csy"))  # TODO use/copy shp files coordinate system instead
             world.setConnection(workingDir+tempDir+"/countries_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
             # points
@@ -830,12 +828,12 @@ try:
         def test_halloWorld(self):
             world = FeatureCoverage("countries.mpa")
             if bool(world) and not world.isInternal():
-                population = {}
+                population_ranking = {}
                 self.assertEqual(286, world.featureCount())
                 for country in world:
                     name = str(country["iso_a2"])
-                    if name not in population:
-                        population[name] = float(country["pop_est"])
+                    if name not in population_ranking:
+                        population_ranking[name] = float(country["pop_est"])
                 # print(sorted(population.items(), key=lambda x: x[1]))
                 self.assertEqual(
                     {'OM': 3418085.0, 'HU': 9905596.0, 'HT': 9035536.0, 'HR': 4489409.0, 'ZW': 12619600.0,
@@ -873,7 +871,7 @@ try:
                      'AL': 3639453.0, 'AM': 2967004.0, 'IR': 66429284.0, 'IS': 306694.0, 'IQ': 31129225.0,
                      'AF': 28400000.0, 'AE': 4798491.0, 'ID': 240271522.0, 'IE': 4203200.0, 'AZ': 8238672.0,
                      'IN': 1166079220.0, 'AT': 8210281.0, 'AU': 21262641.0, 'AR': 40913584.0,'AQ': 3802.0},
-                    population)
+                    population_ranking)
             else:
                 self.skipTest("countries.mpa is missing")
 
