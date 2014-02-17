@@ -5,10 +5,12 @@
 
 XPathParser::XPathParser()
 {
+    _query = new QXmlQuery;
 }
 
 XPathParser::XPathParser(QIODevice *device): _iodevice(device)
 {
+    _query = new QXmlQuery;
 }
 
 XPathParser::~XPathParser()
@@ -18,7 +20,6 @@ XPathParser::~XPathParser()
 
 QXmlQuery *XPathParser::queryFromRoot(QString query)
 {
-    _query = new QXmlQuery;
     QString xPath(createXPathNamespaceDeclarations(_namespaces));
     xPath.append("doc($xml)").append(query);
     _query->bindVariable("xml", _iodevice);
