@@ -50,7 +50,8 @@ HEADERS += \
     wfsconnector/xmlstreamparser.h \
     wfsconnector/xpathparser.h \
     wfsconnector/wfsfeatureparser.h \
-    wfsconnector/wfsfeaturedescriptionparser.h
+    wfsconnector/wfsfeaturedescriptionparser.h \
+    wfsconnector/wfsutils.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
