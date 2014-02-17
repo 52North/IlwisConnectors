@@ -70,7 +70,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
         if(!grf.prepare(_resource.url().toLocalFile()))
             return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
 
-        Size sz(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
+        Size<> sz(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
         grf->size(sz);
         gcoverage->georeference(grf);
 
@@ -145,7 +145,7 @@ Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
     Grid *grid = 0;
     if ( grid == 0) {
 
-        Size sz = raster->size();
+        Size<> sz = raster->size();
         grid =new Grid(sz);
     }
     grid->prepare();
@@ -243,7 +243,7 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
         return ERROR1(ERR_NO_INITIALIZED_1,obj->name());
     }
     raster->datadef().domain(dom);
-    Size sz = raster->size();
+    Size<> sz = raster->size();
     GDALDataType gdalType = ilwisType2GdalType(raster->datadef().range()->determineType());
     QString filename = constructOutputName(_driver);
 

@@ -54,7 +54,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data) {
 
     bool ok;
     qint32 z = _odf->value("MapList","Maps").toInt(&ok);
-    Size sz = mp->size();
+    Size<> sz = mp->size();
     sz.zsize(z);
 
     if (!ok || z < 0)
@@ -277,7 +277,7 @@ Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
     Grid *grid = 0;
     if ( grid == 0) {
-        Size sz = raster->size();
+        Size<> sz = raster->size();
         grid =new Grid(sz);
     }
     grid->prepare();
@@ -344,7 +344,7 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
     QFileInfo inf(obj->source(IlwisObject::cmOUTPUT).toLocalFile());
     //QString dir = context()->workingCatalog()->location().toLocalFile();
     QString filename = inf.absolutePath() + "/" + inf.baseName() + ".mp#";
-    Size sz = raster->size();
+    Size<> sz = raster->size();
     bool ok = false;
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
         calcStatics(obj, NumericStatistics::pBASIC);
@@ -413,7 +413,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         return false;
     _odf->setKeyValue("Ilwis","Type","MapList");
     _odf->setKeyValue("MapList","GeoRef",localName);
-    Size sz = raster->size();
+    Size<> sz = raster->size();
     _odf->setKeyValue("MapList","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
     _odf->setKeyValue("MapList","Maps",QString::number(sz.zsize()));
 
@@ -423,7 +423,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
 
         Resource resource(itRASTER);
         resource.setName(mapName);
-        resource.addProperty("size", IVARIANT(Size(sz.xsize(), sz.ysize())));
+        resource.addProperty("size", IVARIANT(Size<>(sz.xsize(), sz.ysize(),1)));
         resource.addProperty("bounds", IVARIANT(raster->envelope()));
         resource.addProperty("georeference", raster->georeference()->id());
         resource.addProperty("coordinatesystem", raster->coordinateSystem()->id());
@@ -506,7 +506,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
         return false;
 
     _odf->setKeyValue("Map","GeoRef",localName);
-    Size sz = raster->size();
+    Size<> sz = raster->size();
     _odf->setKeyValue("Map","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
     _odf->setKeyValue("Map","Type","MapStore");
 
