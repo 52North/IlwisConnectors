@@ -22,6 +22,7 @@
 #include "catalog.h"
 #include "ilwiscontext.h"
 #include "wfscatalogconnector.h"
+#include "wfsutils.h"
 #include "wfs.h"
 #include "wfsresponse.h"
 #include "wfsfeature.h"
@@ -69,49 +70,21 @@ bool WfsCatalogConnector::canUse(const Resource &resource) const
 {
     if ( resource.ilwisType() != itCATALOG)
         return false;
-    if (!isValidWfsUrl(resource.url()))
+    if (!WfsUtils::isValidWfsUrl(resource.url()))
         return false;
+
+    // TODO: does a wfs:// protocol make sense for testing?
+    //       local response files has to be explicitly set
+    //       in the tests anyway
     if (resource.url().toString().startsWith("wfs-test://"))
         return true;
+
     return true;
 }
 
 QString WfsCatalogConnector::provider() const
 {
     return "wfs";
-}
-
-bool WfsCatalogConnector::isValidWfsUrl(QUrl url) const
-{
-    QUrlQuery query(url);
-    lowerCaseKeys(query);
-
-    bool isHttpRequest = url.scheme().startsWith("http");
-    bool isWfsRequest = isExpectedValue(query.queryItemValue("service"), "wfs");
-    bool isSupportedVersion = isExpectedValue(query.queryItemValue("acceptversions"), "1.1.0");
-    return isHttpRequest && isWfsRequest && isSupportedVersion;
-}
-
-void WfsCatalogConnector::lowerCaseKeys(QUrlQuery &query) const
-{
-    for (QPair<QString,QString> kvm : query.queryItems()) {
-        query.removeQueryItem(kvm.first);
-        query.addQueryItem(kvm.first.toLower(), kvm.second);
-    }
-}
-
-/**
- * @brief WfsCatalogConnector::hasParameterValue checks if a certain parameter value is present.
- * @param actual the actual value to check.
- * @param expected the expected value.
- * @return true if the actual parameter is equal (incasesensitive) to the expected value.
- */
-bool WfsCatalogConnector::isExpectedValue(QString actual, QString expected) const
-{
-    if (expected != "" && actual == "") {
-        return false;
-    }
-    return actual.compare(expected, Qt::CaseInsensitive) == 0;
 }
 
 

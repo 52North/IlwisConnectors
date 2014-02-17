@@ -21,10 +21,6 @@ public:
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool);
 
-private:
-    bool isValidWfsUrl(QUrl url) const;
-    bool isExpectedValue(QString actual, QString value) const;
-    void lowerCaseKeys(QUrlQuery &query) const;
 };
 }
 }
