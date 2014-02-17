@@ -60,7 +60,6 @@ bool WfsResponse::isException() const
     parser.addNamespaceMapping("ows", "http://www.opengis.net/ows");
 
     return parser.startParsing("ows:ExceptionReport");
-
 }
 
 QString WfsResponse::parseException() const
@@ -72,7 +71,7 @@ QString WfsResponse::parseException() const
     QXmlStreamReader *reader = parser.reader();
     if (parser.startParsing("ows:ExceptionReport")) {
         QString current = reader->name().toString();
-        if (parser.nextLevelMoveToNext("ows:Exception")) {
+        if (parser.moveToNext("ows:Exception")) {
             current = reader->name().toString();
 
             QString serverMsg;
@@ -81,7 +80,7 @@ QString WfsResponse::parseException() const
             serverMsg.append("locator '").append(attributes.value("locator")).append("' ");
 
             QString details("(");
-            while (parser.nextLevelMoveToNext("ows:ExceptionText"))
+            while (parser.moveToNext("ows:ExceptionText"))
             {
                 current = reader->name().toString();
                 details.append(parser.readElementText());
