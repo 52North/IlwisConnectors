@@ -37,17 +37,41 @@ WfsFeatureParser::~WfsFeatureParser()
     delete _parser;
 }
 
-void WfsFeatureParser::setNamespaceMappings(QMap<QString, QString> &mappings)
+void WfsFeatureParser::parseFeature(ITable &table, QMap<QString, QString> &mappings) const
 {
-    QMapIterator<QString,QString> iterator(mappings);
-    while(iterator.hasNext()) {
-        iterator.next();
-        _parser->addNamespaceMapping(iterator.key(), iterator.value());
+    QString featureType = table->name();
+    QString targetNamespace = mappings[""];
+    _parser->addNamespaceMapping("target", targetNamespace);
+    featureType = "target:" + featureType;
+
+
+    quint64 featureCount = 0;
+    if (_parser->moveToNext("wfs:FeatureCollection")) {
+        if (_parser->moveToNext("gml:featureMembers")) {
+            while (_parser->moveToNext(featureType)) {
+                quint64 cIdx = 0;
+                std::vector<QVariant> records(table->columnCount());
+                while (_parser->readNextStartElement()) {
+                    QString attribute = _parser->name();
+                    ColumnDefinition definition = table->columndefinition(attribute);
+                    DataDefinition dataDef = definition.datadef();
+                    IDomain domain = dataDef.domain();
+                }
+                table->record(featureCount++, records);
+            }
+        }
+        while (_parser->moveToNext("wfs:featureMember")) {
+
+        }
     }
+
+    // TODO: parser feature item and add property to named table column
+
+    table->column("ogi:quad100_id");
 }
 
-void WfsFeatureParser::parseFeature(ITable &table)
+void WfsFeatureParser::parseFeatureAttribute(quint64 id, QString attribute) const
 {
-    // TODO: parser feature item and add property to named table column
-    //table->column("ogi:quad100_id")
+//    std::vector<QVariant> record(table->columnCount());
+
 }

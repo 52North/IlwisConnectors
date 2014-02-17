@@ -17,11 +17,12 @@ public:
     WfsFeatureParser(WfsResponse *response);
     ~WfsFeatureParser();
 
-    void setNamespaceMappings(QMap<QString,QString> &mappings);
-    void parseFeature(ITable &table);
+    void parseFeature(ITable &table, QMap<QString,QString> &mappings) const;
 
 private:
     XmlStreamParser *_parser;
+
+    void parseFeatureAttribute(quint64 id, QString attribute) const;
 };
 
 }
