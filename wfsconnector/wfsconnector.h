@@ -25,11 +25,12 @@ class WFSCONNECTORSHARED_EXPORT WfsConnector : public QObject, public Ilwis::Ilw
 
 public:
     WfsConnector(const Ilwis::Resource &resource, bool load=true);
+
     static IlwisTypes ilwisType(const QString &name);
     QString provider() const;
 
 protected:
-    bool loadMetaData(IlwisObject* data);
+    bool loadMetaData(IlwisObject* data) { return false; }
     bool loadBinaryData(IlwisObject* ) { return false; }
 
 };

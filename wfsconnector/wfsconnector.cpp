@@ -29,6 +29,7 @@
 #include "ilwisobjectconnector.h"
 #include "wfsconnector.h"
 #include "wfs.h"
+#include "wfsutils.h"
 
 
 using namespace Ilwis;
@@ -45,46 +46,28 @@ QString WfsConnector::provider() const
     return QString("wfs");
 }
 
-bool WfsConnector::loadMetaData(IlwisObject *data)
+IlwisTypes WfsConnector::ilwisType(const QString &resourceUrl)
 {
-    // TODO: load WFS feature metadata
+    QUrl url(resourceUrl);
+    if (WfsUtils::isValidWfsUrl(url)) {
+        return itUNKNOWN;
+    }
 
-    return true;
-}
+    QUrlQuery query(url);
+    WfsUtils::lowerCaseKeys(query);
+    QString request = query.queryItemValue("request");
 
-IlwisTypes WfsConnector::ilwisType(const QString &name) {
-//    QString filename = name;
-//    if (name.contains("?") == 0) {
-//        filename = name.split("?").front();
-//    }
-//    QFileInfo inf(filename);
-//    bool isCatalog =  inf.isDir();
-//    if ( isCatalog)
-//        return itCATALOG;
+    if (request == "GetCapabilities") {
+        return itCONTAINER;
+    }
+    if (request == "DescribeFeature") {
+        return itTABLE;
+    }
+    if (request == "GetFeature") {
+        return itFEATURE;
+    }
 
-//    QString ext = inf.suffix();
-//    if ( ext == "mpr")
-//        return itRASTER;
-//    if ( ext == "mpa")
-//        return itPOLYGON;
-//    if ( ext == "mps")
-//        return itLINE;
-//    if ( ext == "mpp")
-//        return itPOINT;
-//    if ( ext == "dom")
-//        return itDOMAIN;
-//    if ( ext == "csy")
-//        return itCOORDSYSTEM;
-//    if ( ext == "grf")
-//        return itGEOREF;
-//    if ( ext == "tbt")
-//        return itTABLE;
-//    if ( ext == "mpl")
-//        return itRASTER;
-//    if ( ext == "ioc")
-//        return itOBJECTCOLLECTION;
-
-    return itFEATURE;
+    return itUNKNOWN;
 }
 
 
