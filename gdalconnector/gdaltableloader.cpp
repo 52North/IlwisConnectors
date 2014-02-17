@@ -19,6 +19,8 @@
 #include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
 #include "juliantime.h"
+#include "domainhelper.h"
+
 #include "gdaltableloader.h"
 
 using namespace Ilwis;
@@ -68,10 +70,7 @@ void GdalTableLoader::loadMetaData(Table *attTable, OGRLayerH hLayer) {
         case OFTDate:  // Date
         case OFTTime:  // itTime - itTIMEDOMAIN
         case OFTDateTime:{  // Date and Time
-            INumericDomain ndomain;
-            ndomain.prepare("value");
-            ndomain->range(new TimeInterval());//TODO:: ilwisType of Domain should change to itTIMEDOMAIN
-            domain = ndomain;  break;
+            domain = DomainHelper::create(new TimeInterval());  break;
         }
         }
         ColumnDefinition colDef(name, domain,i+1);
