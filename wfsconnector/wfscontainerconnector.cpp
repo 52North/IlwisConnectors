@@ -29,7 +29,7 @@ WfsContainerConnector::WfsContainerConnector(const Resource &resource):Container
 
 ConnectorInterface *WfsContainerConnector::create(const Resource &res, bool)
 {
-    new WfsContainerConnector(res);
+    return new WfsContainerConnector(res);
 }
 
 bool WfsContainerConnector::prepare()
