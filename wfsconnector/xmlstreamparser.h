@@ -32,6 +32,8 @@ public:
     void setXmlReader(QXmlStreamReader *reader);
     void addNamespaceMapping(QString prefix, QString ns);
 
+    QString getPrefixForNamespaceUri(QString namespaceUri) const;
+
     /**
      * Starts parsing the underlying xml by reading the next/first start element.
      *
@@ -46,15 +48,21 @@ public:
 
     QString readElementText() const;
 
-    bool readNextStartElement() const;
+    QString name() const;
+
+    QString namespaceUri() const;
+
+    QString qname() const;
 
     /**
-     * Moves to the element living on current level, named by qName.
+     * Moves to next element named by qName.
      *
      * @param qName the name of the element to move to.
      * @return true if element was found, false otherwise.
      */
-    bool currentLevelMoveToNext(QString qName) const;
+    bool moveToNext(QString qName) const;
+
+    bool readNextStartElement() const;
 
     /**
      * Moves to the element living on next level, named by qName.

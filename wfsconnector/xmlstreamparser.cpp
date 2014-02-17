@@ -33,6 +33,11 @@ void XmlStreamParser::addNamespaceMapping(QString prefix, QString ns)
     _namespaces[prefix] = ns;
 }
 
+QString XmlStreamParser::getPrefixForNamespaceUri(QString namespaceUri) const
+{
+    _namespaces.key(namespaceUri);
+}
+
 bool XmlStreamParser::startParsing(QString qName) const
 {
     if ( !_reader->isStartDocument()) {
@@ -62,6 +67,21 @@ QString XmlStreamParser::readElementText() const
     return _reader->readElementText();
 }
 
+QString XmlStreamParser::name() const
+{
+    return _reader->name().toString();
+}
+
+QString XmlStreamParser::namespaceUri() const
+{
+    return _reader->namespaceUri().toString();
+}
+
+QString XmlStreamParser::qname() const
+{
+    return _reader->qualifiedName().toString();
+}
+
 bool XmlStreamParser::readNextStartElement() const
 {
     if (_reader->isEndElement()) {
@@ -70,27 +90,28 @@ bool XmlStreamParser::readNextStartElement() const
     return _reader->readNextStartElement();
 }
 
-bool XmlStreamParser::currentLevelMoveToNext(QString qName) const
-{
-    bool found = false;
-    _reader->readNextStartElement();
-    while ( !(_reader->atEnd() || found)) {
-        if ( !_reader->isEndElement() || _reader->readNextStartElement()) {
-            found = isAtBeginningOf(qName);
-            if ( !found) {
-                _reader->skipCurrentElement();
-            }
-        }
-    }
-    return found;
-}
-
-bool XmlStreamParser::nextLevelMoveToNext(QString qName) const
+bool XmlStreamParser::moveToNext(QString qName) const
 {
     if (_reader->atEnd()) {
         return false;
     }
-    return currentLevelMoveToNext(qName);
+
+    bool found = false;
+    _reader->readNextStartElement();
+    while ( !(_reader->atEnd() || found)) {
+        if (_reader->isStartElement()) {
+            found = isAtBeginningOf(qName);
+            if ( !found) {
+                _reader->skipCurrentElement();
+                _reader->readNext();
+            }
+        } else {
+            if ( !_reader->readNextStartElement()) {
+                break;
+            }
+        }
+    }
+    return found;
 }
 
 bool XmlStreamParser::isAtBeginningOf(QString qName) const
