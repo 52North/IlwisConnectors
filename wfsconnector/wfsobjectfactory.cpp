@@ -17,6 +17,7 @@
 #include "ilwisobjectconnector.h"
 #include "wfsobjectfactory.h"
 #include "wfsconnector.h"
+#include "wfsutils.h"
 
 using namespace Ilwis;
 using namespace Wfs;
@@ -49,15 +50,13 @@ bool WfsObjectFactory::canUse(const Resource &resource) const
     if ( resource.url().scheme() == "ilwis")
         return false; // can't use anything marked as internal
 
-    if ( resource.url().scheme() != "http" || resource.url().scheme() != "https")
-        return false; // can't read non http based data
-
-    QString filename = resource.url().toLocalFile();
-    if ( filename == "")
+    if (!WfsUtils::isValidWfsUrl(resource.url()))
         return false;
 
     IlwisTypes type = resource.ilwisType() ;
     if ( type & itFEATURE)
+        return true;
+    else if ( type & itTABLE)
         return true;
 
     return false;
@@ -68,5 +67,5 @@ bool WfsObjectFactory::prepare()
 
     // TODO
 
-    return false;
+    return true;
 }
