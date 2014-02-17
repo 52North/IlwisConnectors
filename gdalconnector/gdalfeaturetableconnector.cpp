@@ -65,6 +65,7 @@ bool GdalFeatureTableConnector::loadBinaryData(IlwisObject * data){
         try {
             while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
                 loader.loadRecord(attTable, hFeature, record);
+                attTable->record(attTable->recordCount(), record);
                 gdal()->destroyFeature( hFeature );
             }
              _binaryIsLoaded = true;
