@@ -105,6 +105,13 @@ Object *Engine::_do(std::string output_name, std::string operation, std::string 
                     (*obj)->setName(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
                 return new CoordinateSystem(obj);
             }
+        }else if (result._type == itGEOREF){
+            if (result._var.canConvert<Ilwis::IGeoReference>()){
+                Ilwis::IGeoReference* obj = new Ilwis::IGeoReference(result._var.value<Ilwis::IGeoReference>());
+                if (rename)
+                    (*obj)->setName(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                return new GeoReference(obj);
+            }
         }
         return new PyVariant(new QVariant(result._var));
     }else{

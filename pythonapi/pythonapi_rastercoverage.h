@@ -4,6 +4,7 @@
 #include "pythonapi_coverage.h"
 #include "pythonapi_geometry.h"
 #include "pythonapi_pixeliterator.h"
+#include "pythonapi_georeference.h"
 
 namespace Ilwis {
     class RasterCoverage;
@@ -39,6 +40,9 @@ namespace pythonapi {
         Size size();
         void setSize(const Size& sz);
         void unloadBinary();
+
+        GeoReference geoReference();
+        void setGeoReference(const GeoReference& gr);
 
         static RasterCoverage* toRasterCoverage(Object *obj);
     };

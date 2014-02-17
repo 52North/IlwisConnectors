@@ -60,7 +60,7 @@ namespace pythonapi {
     }
 
     std::string Coordinate::__str__(){
-        if (this->data().z == Ilwis::rUNDEF) //TODO geos::geom::DoubleNotANumber might as well occur??
+        if (this->data().z == Ilwis::rUNDEF)
             return QString("coordinate(%1,%2)").arg(this->data().x,0,'f',6).arg(this->data().y,0,'f',6).toStdString();
         else
             return QString("coordinate(%1,%2,%3)").arg(this->data().x,0,'f',6).arg(this->data().y,0,'f',6).arg(this->data().z,0,'f',6).toStdString();
@@ -68,69 +68,91 @@ namespace pythonapi {
 
     //=============Pixel=============================
 
-    Pixel::Pixel(const Ilwis::Location<qint32, false>& pixel): _data(new Ilwis::Location<qint32, false>(pixel)){
+    template<class CrdType> PixelTemplate<CrdType>::PixelTemplate(const Ilwis::Location<CrdType, false>& pixel):
+        _data(new Ilwis::Location<CrdType, false>(pixel)){
     }
 
-    Pixel::Pixel(Ilwis::Location<qint32, false>* pixel): _data(pixel){
+    template<class CrdType> PixelTemplate<CrdType>::PixelTemplate(const PixelTemplate<qint32>& pixel):
+        _data(new Ilwis::Location<CrdType, false>(pixel.data())){
     }
 
-    Pixel::Pixel(qint32 x, qint32 y): _data(new Ilwis::Location<qint32, false>(x,y)){
+    template<class CrdType> PixelTemplate<CrdType>::PixelTemplate(const PixelTemplate<double>& pixel):
+        _data(new Ilwis::Location<CrdType, false>(pixel.data())){
     }
 
-    Pixel::Pixel(qint32 x, qint32 y, qint32 z): _data(new Ilwis::Location<qint32, false>(x,y,z)){
+    template<class CrdType> PixelTemplate<CrdType>::PixelTemplate(Ilwis::Location<CrdType, false>* pixel):
+        _data(pixel){
     }
 
-    Ilwis::Location<qint32, false>& Pixel::data() const{
+    template<class CrdType> PixelTemplate<CrdType>::PixelTemplate(CrdType x, CrdType y):
+        _data(new Ilwis::Location<CrdType, false>(x,y)){
+    }
+
+    template<class CrdType> PixelTemplate<CrdType>::PixelTemplate(CrdType x, CrdType y, CrdType z):
+        _data(new Ilwis::Location<CrdType, false>(x,y,z)){
+    }
+
+    template<class CrdType> Ilwis::Location<CrdType, false>& PixelTemplate<CrdType>::data() const{
         return *this->_data;
     }
 
-    qint32 Pixel::x() const{
+    template<class CrdType> CrdType PixelTemplate<CrdType>::x() const{
         return this->data().x;
     }
 
-    qint32 Pixel::y() const{
+    template<class CrdType> CrdType PixelTemplate<CrdType>::y() const{
         return this->data().y;
     }
 
-    qint32 Pixel::z() const{
+    template<class CrdType> CrdType PixelTemplate<CrdType>::z() const{
         return this->data().z;
     }
 
-    void Pixel::setX(qint32 v){
+    template<class CrdType> void PixelTemplate<CrdType>::setX(CrdType v){
         this->data().x = v;
     }
 
-    void Pixel::setY(qint32 v){
+    template<class CrdType> void PixelTemplate<CrdType>::setY(CrdType v){
         this->data().y = v;
     }
 
-    void Pixel::setZ(qint32 v){
+    template<class CrdType> void PixelTemplate<CrdType>::setZ(CrdType v){
         this->data().z = v;
     }
 
-    std::string Pixel::__str__(){
+    template<class CrdType> bool PixelTemplate<CrdType>::is3D() const{
+        return this->data().is3D();
+    }
+
+    template<class CrdType> std::string PixelTemplate<CrdType>::__str__(){
         if (this->data().is3D())
             return QString("pixel(%1,%2,%3)").arg(this->data().x).arg(this->data().y).arg(this->data().z).toStdString();
         else
             return QString("pixel(%1,%2)").arg(this->data().x).arg(this->data().y).toStdString();
     }
 
-
+    template class PixelTemplate<qint32>;
+    template class PixelTemplate<double>;
     //=============BOX=============================
 
-    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate():_data(new Ilwis::Box<IlwisType>()){
+    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate():
+        _data(new Ilwis::Box<IlwisType>()){
     }
 
-    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const Ilwis::Box<IlwisType> &box): _data(new Ilwis::Box<IlwisType>(box)){
+    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const Ilwis::Box<IlwisType> &box):
+        _data(new Ilwis::Box<IlwisType>(box)){
     }
 
-    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const std::string& envelope): _data(new Ilwis::Box<IlwisType>(QString::fromStdString(envelope))){
+    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const std::string& envelope):
+        _data(new Ilwis::Box<IlwisType>(QString::fromStdString(envelope))){
     }
 
-    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const PyType &min, const PyType &max): _data(new Ilwis::Box<IlwisType>(min.data(), max.data())){
+    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const PyType &min, const PyType &max):
+        _data(new Ilwis::Box<IlwisType>(min.data(), max.data())){
     }
 
-    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const Size &size): _data(new Ilwis::Box<IlwisType>(size.data())){
+    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const Size &size):
+        _data(new Ilwis::Box<IlwisType>(size.data())){
     }
 
     template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const geos::geom::Envelope *envelope){
@@ -220,8 +242,8 @@ namespace pythonapi {
         return this->data().totalSize();
     }
 
-    bool Size::__contains__(const Pixel &vox) const{
-        return this->data().contains(vox.x(),vox.y(),vox.z());
+    bool Size::__contains__(const Pixel& pix) const{
+        return this->data().contains(pix.x(),pix.y(),pix.z());
     }
 
     std::string Size::__str__(){

@@ -19,25 +19,31 @@ namespace Ilwis{
 
 namespace pythonapi {
 
-    class Pixel{
+    template<class CrdType> class PixelTemplate{
         public:
-            Pixel(const Ilwis::Location<qint32, false>& pixel);
-            Pixel(qint32 x, qint32 y);
-            Pixel(qint32 x, qint32 y, qint32 z);
-            qint32 x() const;
-            qint32 y() const;
-            qint32 z() const;
-            void setX(qint32 v);
-            void setY(qint32 v);
-            void setZ(qint32 v);
+            PixelTemplate(const Ilwis::Location<CrdType, false>& pixel);
+            PixelTemplate(const PixelTemplate<qint32>& pixel);
+            PixelTemplate(const PixelTemplate<double>& pixel);
+            PixelTemplate(CrdType x, CrdType y);
+            PixelTemplate(CrdType x, CrdType y, CrdType z);
+            CrdType x() const;
+            CrdType y() const;
+            CrdType z() const;
+            void setX(CrdType v);
+            void setY(CrdType v);
+            void setZ(CrdType v);
+            bool is3D() const;
 
-           Ilwis::Location<qint32, false>& data() const;
+           Ilwis::Location<CrdType, false>& data() const;
 
             std::string __str__();
         protected:
-            Pixel(Ilwis::Location<qint32, false>* pixel);
-            std::shared_ptr<Ilwis::Location<qint32, false> > _data;
+            PixelTemplate(Ilwis::Location<CrdType, false>* pixel);
+            std::shared_ptr<Ilwis::Location<CrdType, false> > _data;
     };
+
+    typedef PixelTemplate<qint32> Pixel;
+    typedef PixelTemplate<double> PixelD;
 
     class Coordinate{
         public:
@@ -76,7 +82,7 @@ namespace pythonapi {
             void setZsize(qint32 z);
             quint64 linearSize() const;
 
-            bool __contains__(const Pixel& vox) const;
+            bool __contains__(const Pixel& pix) const;
             std::string __str__();
             Ilwis::Size& data() const;
         private:
@@ -107,7 +113,7 @@ namespace pythonapi {
             std::shared_ptr<Ilwis::Box<IlwisType> > _data;
     };
     typedef BoxTemplate<Ilwis::Coordinate, Coordinate> Envelope;
-    typedef BoxTemplate<Ilwis::Location<qint32, false>, Pixel> Box;
+    typedef BoxTemplate<Ilwis::Location<qint32, false>, Pixel > Box;
 
 } // namespace pythonapi
 

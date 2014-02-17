@@ -24,6 +24,7 @@
 #include "pythonapi_featureiterator.h"
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_pixeliterator.h"
+#include "pythonapi_georeference.h"
 #include "pythonapi_rastercoverage.h"
 %}
 
@@ -103,13 +104,18 @@ namespace pythonapi {
             obj = Engine__do(str(out),str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7))
         else:
             raise IlwisException("no operation given!")
-        if obj.ilwisType() == 8:
+        type = obj.ilwisType()
+        if type == 8:
             return RasterCoverage.toRasterCoverage(obj)
-        elif (obj.ilwisType() <= 7) and (obj.ilwisType() >= 1):
+        elif 1 <= type <= 7:
             return FeatureCoverage.toFeatureCoverage(obj)
-        elif obj.ilwisType() <= 0xFFFFFFFFFFFFFFFF:
+        elif type == 524288:
+            return GeoReference.toGeoReference(obj)
+        elif (type == 4096) or (type == 8192):
+            return CoordinateSystem.toCoordinateSystem(obj)
+        elif type <= 0xFFFFFFFFFFFFFFFF:
             return PyVariant.toPyVariant(obj)
-        elif obj.ilwisType() == 0:
+        elif type == 0:
             raise TypeError("unknown IlwisType")
         else:
             return obj
@@ -130,10 +136,11 @@ namespace pythonapi {
 
 %include "pythonapi_util.h"
 
-namespace pythonapi {
-%template(Envelope) BoxTemplate<Ilwis::Coordinate, pythonapi::Coordinate>;
-%template(Box) BoxTemplate<Ilwis::Location<qint32, false>, pythonapi::Pixel>;
-}
+%template(PixelD) pythonapi::PixelTemplate<double>;
+%template(Pixel) pythonapi::PixelTemplate<qint32>;
+%template(Envelope) pythonapi::BoxTemplate<Ilwis::Coordinate, pythonapi::Coordinate>;
+%template(Box) pythonapi::BoxTemplate<Ilwis::Location<qint32, false>, pythonapi::PixelTemplate<qint32> >;
+
 %extend pythonapi::Size {
 %insert("python") %{
     __swig_getmethods__["xsize"] = xsize
@@ -148,7 +155,21 @@ namespace pythonapi {
         zsize = property(zsize,setZsize)
 %}
 }
-%extend pythonapi::Pixel {
+%extend pythonapi::PixelTemplate<qint32> {//Pixel
+%insert("python") %{
+    __swig_getmethods__["x"] = x
+    __swig_getmethods__["y"] = y
+    __swig_getmethods__["z"] = z
+    __swig_setmethods__["x"] = setX
+    __swig_setmethods__["y"] = setY
+    __swig_setmethods__["z"] = setZ
+    if _newclass:
+        x = property(x,setX)
+        y = property(y,setY)
+        z = property(z,setZ)
+%}
+}
+%extend pythonapi::PixelTemplate<double> {//PixelD
 %insert("python") %{
     __swig_getmethods__["x"] = x
     __swig_getmethods__["y"] = y
@@ -190,6 +211,8 @@ namespace pythonapi {
 }
 
 %include "pythonapi_pixeliterator.h"
+
+%include "pythonapi_georeference.h"
 
 %include "pythonapi_rastercoverage.h"
 

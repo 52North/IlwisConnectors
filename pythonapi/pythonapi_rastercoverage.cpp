@@ -116,3 +116,12 @@ RasterCoverage* RasterCoverage::toRasterCoverage(Object* obj){
         throw InvalidObject("cast to RasterCoverage not possible");
     return ptr;
 }
+
+
+GeoReference RasterCoverage::geoReference(){
+    return GeoReference(new Ilwis::IGeoReference(this->ptr()->get<Ilwis::RasterCoverage>()->georeference()));
+}
+
+void RasterCoverage::setGeoReference(const GeoReference& gr){
+    this->ptr()->get<Ilwis::RasterCoverage>()->georeference(gr.ptr()->get<Ilwis::GeoReference>());
+}

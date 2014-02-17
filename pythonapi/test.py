@@ -224,7 +224,7 @@ try:
             self.assertEqual(str(b.maxCorner()), "pixel(4,5,6)")
             self.assertEqual(str(b.size()), "Size(2, 2, 2)")
             self.assertTrue(b.size() == Size(2, 2, 2))
-            self.assertEqual(b.size().linearSize(),2*2*2)
+            self.assertEqual(b.size().linearSize(), 2*2*2)
             b = Envelope(Coordinate(3.6111119, 4.7, 5.9), Coordinate(4.7, 5.8, 6.9))
             self.assertEqual(str(b), "POLYGON(3.61111 4.7 5.9,4.7 5.8 6.9)")
             self.assertEqual(str(b.size()), "Size(2, 2, 2)")
@@ -458,7 +458,7 @@ try:
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setCoordinateSystem(CoordinateSystem("countries.csy"))  # TODO use/copy shp files coordinate system instead
+#            world.setCoordinateSystem(CoordinateSystem("countries.csy"))  # TODO use/copy shp files coordinate system instead
             world.setConnection(workingDir+tempDir+"/countries_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
             # points
@@ -533,12 +533,59 @@ try:
             self.assertTrue(bool(cs2))
             self.assertEqual(cs2.name(), r"ED50 / UTM zone 35N")
 
-        def test_IsEqual(self):
+        def test_isEqual(self):
             cs1 = CoordinateSystem(
                 "code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
             cs2 = CoordinateSystem("code=epsg:23035")
             self.assertTrue(cs1 == cs2)
             self.assertFalse(cs1 != cs2)
+
+    class TestGeoReference(ut.TestCase):
+        def setUp(self):
+            try:
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir+rasterDir)
+                connectIssueLogger()
+            except IlwisException:
+                connectIssueLogger()
+                self.skipTest("could not set working directory!")
+
+        #@ut.skip("temporarily")
+        def test_standaloneFile(self):
+            gr = GeoReference("n000302.grf")
+            self.assertTrue(bool(gr))
+            self.assertFalse(gr.isInternal())
+            self.assertTrue(gr.centerOfPixel())
+
+        def test_fromRaster(self):
+            r = RasterCoverage("n000302.mpr")
+            gr = r.geoReference()
+            self.assertTrue(bool(gr))
+            self.assertFalse(gr.isInternal())
+            self.assertTrue(r.coordinateSystem() == gr.coordinateSystem())
+            self.assertTrue(r.size() == gr.size())
+            box = Box(r.size())
+            env = gr.box2Envelope(box)
+            self.assertEqual("POLYGON(0 0 0,1151 1151 0)", str(box))
+            self.assertEqual("POLYGON(-4.60799e+06 -4.59997e+06,4.60001e+06 4.60803e+06)", str(env))
+            subenv = Envelope(Coordinate(-1e+06, -1e+06), Coordinate(1e+06, 1e+06))
+            subbox = gr.envelope2Box(subenv)
+            self.assertEqual("POLYGON(-1e+06 -1e+06,1e+06 1e+06)", str(subenv))
+            self.assertEqual("POLYGON(451 451,701 701)", str(subbox))
+            self.assertEqual("pixel(536.599,478.436)", str(gr.coord2Pixel(Coordinate(-319195.47, 784540.64))))
+            self.assertEqual("coordinate(-315198.248000,780544.506500)", str(gr.pixel2Coord(PixelD(536.599, 478.436))))
+            self.assertEqual("coordinate(-319990.248000,784032.506500)", str(gr.pixel2Coord(Pixel(536, 478))))
+            # self.assertEqual(0, gr.pixelSize())  # TODO possible bug in GeoRefImplementaion  - nan is not a goo pixelSize!!
+            self.assertTrue(gr.centerOfPixel())
+            self.assertEqual("POLYGON(536 478,536 478)", str(
+                gr.envelope2Box(Envelope(Coordinate(-319195.47, 784540.64), Coordinate(-319990.248000, 784032.506500)))
+            ))
+            gr.centerOfPixel(False)
+            self.assertFalse(gr.centerOfPixel())
+            self.assertEqual("POLYGON(536 478,536 478)", str(
+                gr.envelope2Box(Envelope(Coordinate(-319195.47, 784540.64), Coordinate(-319990.248000, 784032.506500)))
+            ))
+
 
     #@ut.skip("temporarily")
     class TestRaster(ut.TestCase):
@@ -594,7 +641,7 @@ try:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_RasterCalculation(self):
             rc = RasterCoverage("n000302.mpr")
             rctif = RasterCoverage("n0.mpr")

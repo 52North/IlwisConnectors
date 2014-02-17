@@ -16,6 +16,7 @@ namespace pythonapi {
         friend class Engine;
         friend class Geometry;
         friend class FeatureCoverage;
+        friend class GeoReference;
     protected:
         CoordinateSystem(Ilwis::ICoordinateSystem* cs);
     public:

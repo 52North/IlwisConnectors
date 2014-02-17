@@ -62,7 +62,7 @@ class PixelIterator{
         bool operator> (const PixelIterator& other);
 
         Py_buffer* asBuffer();
-private:
+protected:
         Ilwis::PixelIterator& ptr() const;
         RasterCoverage* _coverage;
         std::shared_ptr<Ilwis::PixelIterator> _ilwisPixelIterator;
