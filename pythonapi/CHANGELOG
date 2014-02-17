@@ -1,4 +1,6 @@
 ==================CHANGELOG===================
+--20140214--
+*fixed issue on +datum=... param in proj definition
 
 --20140210--
 *first release build

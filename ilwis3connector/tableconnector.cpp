@@ -1,5 +1,6 @@
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QDir>
 
 #include "kernel.h"
 #include "angle.h"
@@ -194,7 +195,8 @@ bool TableConnector::storeBinaryData(IlwisObject *obj)
     int skip = iUNDEF;
     BinaryIlwis3Table ilw3tbl;
     std::ofstream output_file;
-    if(!ilw3tbl.openOutput(obj->name()  + ".tb#", output_file))
+    QFileInfo inf(_resource.toLocalFile());
+    if(!ilw3tbl.openOutput(inf.absolutePath() + "/" + inf.baseName()  + ".tb#", output_file))
         return false;
 
     for(int i=0; i < tbl->columnCount(); ++i) {
@@ -203,8 +205,16 @@ bool TableConnector::storeBinaryData(IlwisObject *obj)
             skip = i;
         ilw3tbl.addStoreDefinition(def.datadef());
     }
-    for(int y=0; y < tbl->recordCount(); ++y) {
-        std::vector<QVariant> rec = tbl->record(y);
+    quint32 reccount = _selected.size() > 0 ? _selected.size() :  tbl->recordCount();
+    for(int y=0; y < reccount; ++y) {
+        std::vector<QVariant> rec;
+        if ( _selected.size() > 0 ){
+            rec = tbl->record(_selected[y]);
+        }
+        else{
+            rec = tbl->record(y);
+        }
+
         ilw3tbl.storeRecord(output_file, rec, skip);
 
     }
@@ -233,14 +243,14 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         return false;
 
     int reduceColumns = 1; // the featured_id column will not be go the ilwis3, useless info at that level
-
+    quint32 reccount = _selected.size() > 0 ? _selected.size() :  tbl->recordCount();
     QFileInfo inf(_attributeDomain);
     _odf->setKeyValue("Ilwis", "Type", "Table");
     _odf->setKeyValue("Ilwis", "Class", "Table");
     _odf->setKeyValue("Table", "Domain", inf.fileName());
     _odf->setKeyValue("Table", "DomainInfo", QString("%1;Long;UniqueID;0;;").arg(inf.fileName()));
     _odf->setKeyValue("Table", "Columns", QString::number(tbl->columnCount() - reduceColumns));
-    _odf->setKeyValue("Table", "Records", QString::number(tbl->recordCount()));
+    _odf->setKeyValue("Table", "Records", QString::number(reccount));
     _odf->setKeyValue("Table", "Type", "TableStore");
     _odf->setKeyValue("TableStore", "Type", "TableBinary");
     _odf->setKeyValue("TableStore", "UseAs", "No");
@@ -343,7 +353,9 @@ QString TableConnector::valueType2DataType(IlwisTypes ty) {
     }
     return vType;
 }
-
+void TableConnector::selectedRecords(const std::vector<quint32> &recs) {
+    _selected = recs;
+}
 
 void TableConnector::attributeDomain(const QString &attdom)
 {

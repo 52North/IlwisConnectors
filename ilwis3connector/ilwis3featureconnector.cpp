@@ -37,7 +37,9 @@
 #include "binaryilwis3table.h"
 #include "coordinatedomain.h"
 #include "coverageconnector.h"
+#include "tableconnector.h"
 #include "ilwis3featureconnector.h"
+
 
 using namespace Ilwis;
 using namespace Ilwis3;
@@ -485,7 +487,7 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
                 ++raw;
             }
         }
-
+        return true;
     });
 
     output_file.close();
@@ -494,7 +496,7 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
 }
 
 
-void FeatureConnector::writeLine(const geos::geom::LineString* line,std::ofstream& output_file,double raw ) {
+void FeatureConnector::writeLine(const geos::geom::LineString* line,std::ofstream& output_file,long raw ) {
     if (!line)
         return;
     const geos::geom::Envelope *env = line->getEnvelopeInternal();
@@ -510,15 +512,13 @@ void FeatureConnector::writeLine(const geos::geom::LineString* line,std::ofstrea
     }
     long deleted=1;
     output_file.write((char *)&deleted, 4);
-    output_file.write((char *)&raw, 8);
+    output_file.write((char *)&raw, 4);
 }
 
 bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString& baseName) {
     std::ofstream output_file;
-    QFileInfo inf(baseName);
-//    QString dir = context()->workingCatalog()->location().toLocalFile();
-//    QString filename = dir + "/" + inf.baseName() + ".mps#";
-    output_file.open(baseName.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
+    QString filename = baseName + ".mps#";
+    output_file.open(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
     if ( !output_file.is_open())
         return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,baseName);
     char header[128];
@@ -554,7 +554,7 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
                 ++raw;
             }
         }
-
+        return true;
     });
 
     output_file.close();
@@ -569,10 +569,8 @@ void FeatureConnector::writePoint(const geos::geom::Point* point,std::ofstream& 
 
 bool FeatureConnector::storeBinaryDataPoints(FeatureCoverage *fcov, const QString& baseName) {
     std::ofstream output_file;
-    QFileInfo inf(baseName);
-//    QString dir = context()->workingCatalog()->location().toLocalFile();
-//    QString filename = dir + "/" + inf.baseName() + ".pt#";
-    output_file.open(baseName.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
+    QString filename = baseName + ".pt#";
+    output_file.open(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
     if ( !output_file.is_open())
         return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,baseName);
     char header[128];
@@ -608,7 +606,7 @@ bool FeatureConnector::storeBinaryDataPoints(FeatureCoverage *fcov, const QStrin
                 ++raw;
             }
         }
-
+        return true;
     });
 
     output_file.close();
@@ -616,12 +614,14 @@ bool FeatureConnector::storeBinaryDataPoints(FeatureCoverage *fcov, const QStrin
     return true;
 }
 
-bool FeatureConnector::storeBinaryData(FeatureCoverage *fcov, IlwisTypes type) {
+bool FeatureConnector::storeBinaryData(FeatureCoverage *fcov, bool isMulti,IlwisTypes type) {
     if ( type == 0)
         return true;
-    if (!CoverageConnector::storeBinaryData(fcov, type)) // attribute tables
+
+    QString baseName = Ilwis3Connector::outputNameFor(fcov, isMulti, type);
+    if (!storeBinaryDataTable(fcov, type, baseName)) // attribute tables
         return false;
-    QString baseName = Ilwis3Connector::outputNameFor(fcov);
+
     bool ok = true;
     if ( hasType(type, itPOLYGON)) {
         ok &= storeBinaryDataPolygon(fcov, baseName);
@@ -634,14 +634,14 @@ bool FeatureConnector::storeBinaryData(FeatureCoverage *fcov, IlwisTypes type) {
 }
 
 bool FeatureConnector::storeBinaryData(IlwisObject *obj) {
-
     FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
     IlwisTypes featureTypes = fcov->featureTypes();
     bool ok = true;
+    bool isMulti = (featureTypes & (featureTypes - 1)) != 0 ; //(n & (n - 1)) != 0
 
-    ok &= storeBinaryData(fcov, featureTypes & itPOLYGON);
-    ok &= storeBinaryData(fcov, featureTypes & itLINE);
-    ok &= storeBinaryData(fcov, featureTypes & itPOINT);
+    ok &= storeBinaryData(fcov, isMulti, featureTypes & itPOLYGON);
+    ok &= storeBinaryData(fcov, isMulti, featureTypes & itLINE);
+    ok &= storeBinaryData(fcov, isMulti, featureTypes & itPOINT);
 
     return ok;
 }
@@ -780,16 +780,18 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         indexdom->setRange(range);
         datadef.domain(indexdom);
     }
+    bool isMulti = (fcov->featureTypes() & (fcov->featureTypes() - 1)) != 0;
+    QString baseName = Ilwis3Connector::outputNameFor(fcov, isMulti, type);
+    int index = baseName.lastIndexOf(".");
+    if ( index != -1) {
+        baseName = baseName.left(index);
+    }
 
-    bool ok = CoverageConnector::storeMetaData(fcov, type, datadef.domain());
+    bool ok = CoverageConnector::storeMetaData(fcov, type, datadef.domain(), baseName);
     if ( !ok)
         return false;
 
-    QString dataFile = Ilwis3Connector::outputNameFor(fcov);
-    int index = dataFile.lastIndexOf(".");
-    if ( index != -1) {
-        dataFile = dataFile.left(index);
-    }
+
 
     if ( datadef.domain()->valueType() == itINDEXEDITEM) {
         _odf->setKeyValue("Domain","Type","DomainUniqueID");
@@ -800,15 +802,15 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     }
 
     QString ext = "mpa";
-    if ( hasType(fcov->featureTypes(), itPOLYGON)){
-        ok = storeMetaPolygon(fcov, dataFile);
+    if ( hasType(type, itPOLYGON)){
+        ok = storeMetaPolygon(fcov, baseName);
     }
-    if ( hasType(fcov->featureTypes(), itLINE)){
-        ok = storeMetaLine(fcov, dataFile);
+    if ( hasType(type, itLINE)){
+        ok = storeMetaLine(fcov, baseName);
         ext = "mps";
     }
-    if ( hasType(fcov->featureTypes(), itPOINT)){
-        ok = storeMetaPoint(fcov, dataFile);
+    if ( hasType(type, itPOINT)){
+        ok = storeMetaPoint(fcov, baseName);
         ext = "mpp";
     }
 
@@ -830,13 +832,25 @@ bool FeatureConnector::storeMetaData(IlwisObject *obj)
 
 }
 
-QString FeatureConnector::type2Prefix(IlwisTypes tp) {
-    if ( tp == itPOINT)
-        return "point";
-    if (tp == itLINE)
-        return "seg";
-    if ( tp == itPOLYGON)
-        return "pol";
+bool FeatureConnector::storeBinaryDataTable(IlwisObject *obj, IlwisTypes tp, const QString& baseName)
+{
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
+    ITable attTable = fcoverage->attributeTable();
+    if ( attTable.isValid() && attTable->columnCount() > 1) {
+        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, fcoverage, tp, baseName));
+        IFeatureCoverage cov(fcoverage);
+        FeatureIterator iter(cov);
+        quint32 i = 0;
+        std::vector<quint32> recordnr(fcoverage->featureCount(tp));
+        for(quint32 rec=0; rec < fcoverage->featureCount(); ++rec){
+            if ( hasType((*iter)->geometryType(), tp))
+                recordnr[i++] = rec;
+            ++iter;
+        };
+        conn->selectedRecords(recordnr);
+        return conn->storeBinaryData(attTable.ptr());
 
-    return "feature";
+    }
+
+    return true; // no store needed
 }

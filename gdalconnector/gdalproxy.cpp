@@ -31,7 +31,6 @@ GdalHandle::GdalHandle(void* h, GdalHandleType t, quint64 o): _handle(h),_type(t
 
 GdalHandle::~GdalHandle()
 {
-
 }
 
 GdalHandle::GdalHandleType GdalHandle::type(){
@@ -101,11 +100,13 @@ bool GDALProxy::prepare() {
     getProjectionParm = add<IOSRGetProjParm>("OSRGetProjParm");
     setWellKnownGeogCs = add<IOSRSetWellKnownGeogCS>("OSRSetWellKnownGeogCS");
     isProjected = add<IOSRIsProjectedFunc>("OSRIsProjected");
-    authority = add<IOSRGetAuthorityCode>("OSRGetAuthorityCode");
+    getAuthorityCode = add<IOSRGetAuthorityCode>("OSRGetAuthorityCode");
+    getAuthorityName = add<IOSRGetAuthorityName>("OSRGetAuthorityName");
     newSpatialRef = add<IOSRNewSpatialReference>("OSRNewSpatialReference");
     importFromWkt = add<IOSRImportFromWkt>("OSRImportFromWkt");
     exportToWkt = add<IExportToWkt>("OSRExportToWkt");
     importFromProj4 = add<IOSRImportFromProj4>("OSRImportFromProj4");
+    releaseSRS = add<IOSRRelease>("OSRRelease");
     //OGR
     ogrOpen = add<IOGROpen>("OGROpen");
     releaseDataSource = add<IOGRReleaseDataSource>("OGRReleaseDataSource");
@@ -119,7 +120,7 @@ bool GDALProxy::prepare() {
     createDatasource = add<IOGR_Dr_CreateDataSource>("OGR_Dr_CreateDataSource");
     //OGR DataSource
     createOgrLayer = add<IOGR_DS_CreateLayer>("OGR_DS_CreateLayer");
-    getLaterByName = add<IGetLayerByName>("OGR_DS_GetLayerByName");
+    getLaterByName = add<IOGR_DS_GetLayerByName>("OGR_DS_GetLayerByName");
     getLayerCount = add<IGetLayerCount>("OGR_DS_GetLayerCount");
     getLayer = add<IGetLayer>("OGR_DS_GetLayer");
     destroyDataSource = add<IOGR_DS_Destroy>("OGR_DS_Destroy");
@@ -323,25 +324,18 @@ OGRSpatialReferenceH GDALProxy::srsHandle(GdalHandle* handle, const QString& sou
         OGRSpatialReferenceH srshandle = nullptr;
         if (handle->_type == GdalHandle::etGDALDatasetH){
             srshandle = newSpatialRef(NULL);
-            const char *cwkt = getProjectionRef(handle->handle());
-            if (!cwkt) {
+            char *wkt = const_cast<char*>(getProjectionRef(handle->handle()));
+            if (wkt) {
+                if ( importFromWkt(srshandle, &wkt) == OGRERR_NONE ){
+                    return srshandle;
+                }else{
+                    kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
+                    return NULL;
+                }
+            }else{
                 kernel()->issues()->log(TR("Invalid or empty WKT for %1 %2").arg("CoordinateSystem", source), IssueObject::itWarning);
                 return NULL;
             }
-            char wkt[5000];
-            char *wkt2 = (char *)wkt;
-            strcpy(wkt, cwkt);
-
-            OGRErr err = importFromWkt(srshandle, &wkt2);
-            char *pwkt;//TODO: only for debug?
-            exportToPrettyWkt(srshandle, &pwkt,0);
-            free(pwkt);
-
-            if ( err != OGRERR_NONE ){
-                kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
-                return NULL;
-            }
-            return srshandle;
         }else if(handle->_type == GdalHandle::etOGRDataSourceH){
             OGRLayerH hLayer = getLayer(handle->handle(), 0);//take the first layer
             if (hLayer){
@@ -362,5 +356,13 @@ OGRSpatialReferenceH GDALProxy::srsHandle(GdalHandle* handle, const QString& sou
         }
     }else{
         return NULL;
+    }
+}
+
+void GDALProxy::releaseSrsHandle(GdalHandle *handle, OGRSpatialReferenceH srshandle, const QString &source){
+    if (handle->_type == GdalHandle::etGDALDatasetH){
+        releaseSRS(srshandle);
+    }else if(handle->_type == GdalHandle::etOGRDataSourceH){
+        //nothing by now
     }
 }

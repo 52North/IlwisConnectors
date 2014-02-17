@@ -88,6 +88,7 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data){
     }else{
         ret = ERROR2(ERR_INVALID_PROPERTY_FOR_2,"OGRSpatialReference",data->name());
     }
+    gdal()->releaseSrsHandle(_handle, srshandle, data->name());
     QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
     gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
     return ret;

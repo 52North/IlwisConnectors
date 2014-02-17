@@ -91,7 +91,6 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
             return false;
         }
         attTable->addColumn(FEATUREIDCOLUMN,"count");
-        attTable->addColumn(COVERAGEKEYCOLUMN,"count");
         fcoverage->attributeTable(attTable);
 
         //feature types
@@ -167,14 +166,11 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
             OGRFeatureH hFeature = 0;
             gdal()->resetReading(hLayer);
             //each FEATURE
-            quint32 keyindex = attTable->columnIndex(COVERAGEKEYCOLUMN);
             try {
-                quint32 count = 0;
                 while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
                     loader.loadRecord(attTable.ptr(), hFeature, record);
                     geos::geom::Geometry * geometry = fillFeature(fcoverage, gdal()->getGeometryRef(hFeature));
                     if (geometry){
-                        record[keyindex] = count++;
                         attTable->record(attTable->recordCount(), record);
                         fcoverage->newFeature(geometry, false);
                     }else{

@@ -28,7 +28,7 @@ namespace pythonapi {
         bool __bool__() const ;
         std::string __str__();
         IlwisTypes ilwisType();
-        bool fromWKT(const std::string& wkt);
+        void fromWKT(const std::string& wkt);
         std::string toWKT();
         CoordinateSystem coordinateSystem();
         void setCoordinateSystem(const CoordinateSystem& cs);

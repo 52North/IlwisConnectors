@@ -29,8 +29,8 @@ try:
             t = fc.attributeTable()
             self.assertRegex(t.name(), "rainfall.shp")
             self.assertEqual(
-                ('RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
-                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id', 'coverage_key'),
+                ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
+                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
                 t.columns()
             )
             # TODO bug fix in GdalLoader
@@ -71,7 +71,7 @@ try:
             self.assertFalse(t.isInternal(), msg="created a new table object with that name!!")
             self.assertRegex(t.name(), "rainfall.shp")
             self.assertEqual(
-                ('RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
+                ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
                  'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT'),
                 t.columns()
             )
@@ -93,23 +93,31 @@ try:
             self.assertTrue(bool(g))
             self.assertEqual(g.ilwisType(), 1)
             self.assertEqual(g.coordinateSystem().name(), "Sibun Gorge 1922")
+            self.assertEqual(g.coordinateSystem(), self.csy)
 
         def test_Transform(self):
-            pseudo_mercator = CoordinateSystem("code=epsg:3857")
-            g = Geometry("POINT(766489.647 6840642.671)", pseudo_mercator)
-            self.assertEqual("POLYGON(766490 6.84064e+06,766490 6.84064e+06)", str(g.envelope()))
-            self.assertEqual("POINT (766489.6469999999972060 6840642.6710000000894070)", str(g))
+            pm = CoordinateSystem("code=epsg:3857")
+            self.assertEqual("WGS 84 / Pseudo-Mercator", pm.name())
+            wgs = CoordinateSystem("code=epsg:4326")
+            self.assertEqual("WGS 84", wgs.name())
+            gk2 = CoordinateSystem("code=epsg:31466")
+            self.assertEqual("DHDN / 3-degree Gauss-Kruger zone 2", gk2.name())
             gk5 = CoordinateSystem("code=epsg:3329")
-            self.assertTrue(bool(gk5))
+            self.assertEqual("Pulkovo 1942(58) / 3-degree Gauss-Kruger zone 5", gk5.name())
+            etrs_laea = CoordinateSystem("code=epsg:3035")
+            self.assertEqual("ETRS89 / LAEA Europe", etrs_laea.name())
+
+            g = Geometry("POINT(766489.647 6840642.671)", pm)
             g1 = g.transform(gk5)
             self.assertEqual("POINT (4945949.0809892630204558 5819418.3890127958729863)", g1.toWKT())
-
-            wgs = CoordinateSystem("code=epsg:4326")
-            self.assertTrue(bool(wgs))
-            g = Geometry("POINT(14 50)", wgs)
-            self.assertEqual("POINT (14.0000000000000000 50.0000000000000000)", g.toWKT())
-            # g1 = g.transform(gk5)
-            # self.assertEqual("POINT(4.94595e+006 5.81942e+006)", g1.toWKT())
+            g2 = g1.transform(wgs)
+            self.assertEqual("POINT (6.8854937241464658 52.2235232302096932)", g2.toWKT())
+            g1 = g2.transform(gk5)
+            self.assertEqual("POINT (4945949.0857109790667892 5819418.3856139155104756)", g1.toWKT())
+            g1 = g2.transform(gk2)
+            self.assertEqual("POINT (2560502.5977886635810137 5787988.6849722778424621)", g1.toWKT())
+            g1 = g2.transform(etrs_laea)
+            self.assertEqual("POINT (4108242.5654639988206327 3239420.9621137753129005)", g1.toWKT())
 
         def test_Envelope(self):
             g = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
@@ -119,15 +127,21 @@ try:
             e = g.envelope()
             self.assertEqual("POLYGON(1 1,1 1)", str(e),
                              msg="z's are always 0, since boost can only manage 2D geometries until now")
+            g = Geometry("POINT(766489.647 6840642.671)", self.csy)
+            self.assertEqual("POLYGON(766490 6.84064e+06,766490 6.84064e+06)", str(g.envelope()))
+            self.assertEqual("POINT (766489.6469999999972060 6840642.6710000000894070)", str(g))
 
         def test_BadWKT(self):
+            g = True
             with self.assertRaises(SyntaxError):
                 g = Geometry("Pihkdjfhskdf", self.csy)
-                self.assertFalse(bool(g))
-                self.assertTrue(g.fromWKT("POINT(5 5)"))
-                self.assertTrue(bool(g))
-                self.assertFalse(g.fromWKT("fdsfsds"))
-                self.assertFalse(bool(g))
+            self.assertTrue(bool(g))
+            g = Geometry("POINT EMPTY", self.csy)
+            self.assertTrue(bool(g))
+            g.fromWKT("POINT(5 5)")
+            self.assertTrue(bool(g))
+            with self.assertRaises(SyntaxError):
+                g.fromWKT("fdsfsds")
 
         def test_SimpleFeatures(self):
             p = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
@@ -366,10 +380,10 @@ try:
             self.assertTrue(self.fc.addAttribute("sum", "value"), msg="FeatureCoverage.addAttribute failed!")
             att = self.fc.attributes()
             self.assertTupleEqual(att, (
-                'RAINFALLMPP', 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY',
-                'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'coverage_key', 'sum'
+                'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY',
+                'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum'
             ), msg="wrong list of attributes!")
-            self.assertEqual(len(att), 18, msg="wrong number of attributes")
+            self.assertEqual(len(att), 16, msg="wrong number of attributes")
             g = Geometry("POINT(5.4 6 9.0)", self.fc.coordinateSystem())
             newfeature = self.fc.newFeature(g)
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
@@ -383,7 +397,7 @@ try:
         def test_Feature(self):
             it = iter(self.fc)
             f = next(it)
-            self.assertTrue(f.geometry().fromWKT("POINT(5.4 6 9.0)"), msg="set non-standalone Geometry fromWKT")
+            f.geometry().fromWKT("POINT(5.4 6 9.0)")
             self.assertEqual(f.geometry().toWKT(), "POINT (5.4000000000000004 6.0000000000000000)", msg="unsuccessfully altered geometry")
             with self.assertRaises(IndexError, msg="no IndexError on call of wrong attribute"):
                 v = f["RAINFAL"]
@@ -405,7 +419,7 @@ try:
             del summ
             it = iter(self.fc)
             self.assertTrue(bool(it))
-            self.assertEqual(str(it),"FeatureIterator for rainfall.shp")
+            self.assertEqual(str(it), "FeatureIterator for rainfall.shp")
             it2 = it + 2
             self.assertTrue(it != it2)
             self.assertFalse(it == it2)
@@ -419,26 +433,24 @@ try:
             self.assertTrue(str(f), "Feature(1)")
 
         def test_loadGDALstoreGDAL(self):
-            disconnectIssueLogger()
             # polygons
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setConnection(workingDir+tempDir+"/countries.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/countries_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
             # points
             world = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setConnection(workingDir+tempDir+"/rainfall.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/rainfall_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
             # lines
             world = FeatureCoverage("drainage.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setConnection(workingDir+tempDir+"/drainage.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/drainage_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
-            connectIssueLogger()
 
         #@ut.skip("temporarily")
         def test_loadGDALstoreIlwis3(self):
@@ -446,22 +458,22 @@ try:
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setConnection(workingDir+tempDir+"/countries_fromshp", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.setCoordinateSystem(CoordinateSystem("countries.csy"))  # TODO use/copy shp files coordinate system instead
+            world.setConnection(workingDir+tempDir+"/countries_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
             # points
             world = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "pointmap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
             # lines
             world = FeatureCoverage("drainage.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setConnection(workingDir+tempDir+"/drainage_fromshp", "segmentmap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.setConnection(workingDir+tempDir+"/drainage_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
 
         # def test_loadIlwis3storeIlwis3(self):
@@ -470,21 +482,21 @@ try:
         #     self.assertTrue(bool(world))
         #     self.assertFalse(world.isInternal())
         #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-        #     world.setConnection(workingDir+tempDir+"/countries_fromshp", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+        #     world.setConnection(workingDir+tempDir+"/countries_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
         #     world.store()
         #     # points
         #     world = FeatureCoverage("rainfall.shp")
         #     self.assertTrue(bool(world))
         #     self.assertFalse(world.isInternal())
         #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-        #     world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "pointmap", "ilwis3", IlwisObject.cmOUTPUT)
+        #     world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
         #     world.store()
         #     # lines
         #     world = FeatureCoverage("drainage.shp")
         #     self.assertTrue(bool(world))
         #     self.assertFalse(world.isInternal())
         #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-        #     world.setConnection(workingDir+tempDir+"/drainage_fromshp", "segmentmap", "ilwis3", IlwisObject.cmOUTPUT)
+        #     world.setConnection(workingDir+tempDir+"/drainage_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
         #     world.store()
 
     #@ut.skip("temporarily")
@@ -623,7 +635,7 @@ try:
             aa12 = rc * 2
             self.assertEqual(aa12.pix2value(342, 342, 0), 29.0 * 2)
 
-            aa1.setConnection(workingDir + tempDir + "/aa1", "GTiff", "gdal", IlwisObject.cmOUTPUT)
+            aa1.setConnection(workingDir + tempDir + "/n000302_frommpr", "GTiff", "gdal", IlwisObject.cmOUTPUT)
             aa1.store()
 
         def test_PixelIterator(self):
@@ -765,7 +777,7 @@ try:
                         maxval = max(int(polygon.attribute("maxY", 0)), int(point.attribute("freq_speciesY", 0)))
                         polygon.setAttribute("maxY", maxval)
 
-            polygongrid.setConnection(workingDir + exampleDir + "/polygongrid", "polygonmap", "ilwis3",IlwisObject.cmOUTPUT)
+            polygongrid.setConnection(workingDir + exampleDir + "/polygongrid", "vectormap", "ilwis3",IlwisObject.cmOUTPUT)
             polygongrid.store()
 
     #@ut.skip("temporarily")
@@ -799,7 +811,7 @@ try:
                 else:
                     feature["selected"] = False
             self.assertEqual(count, 3, msg="wrong count value!")
-            fc_soils.setConnection(workingDir + babyDir + "/soils_select", "polygonmap", "ilwis3", IlwisObject.cmOUTPUT)
+            fc_soils.setConnection(workingDir + babyDir + "/soils_select", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             fc_soils.store()
 
     ##@ut.skip("temporarily")
@@ -816,12 +828,12 @@ try:
         def test_halloWorld(self):
             world = FeatureCoverage("countries.mpa")
             if bool(world) and not world.isInternal():
-                population = {}
+                population_ranking = {}
                 self.assertEqual(286, world.featureCount())
                 for country in world:
                     name = str(country["iso_a2"])
-                    if name not in population:
-                        population[name] = float(country["pop_est"])
+                    if name not in population_ranking:
+                        population_ranking[name] = float(country["pop_est"])
                 # print(sorted(population.items(), key=lambda x: x[1]))
                 self.assertEqual(
                     {'OM': 3418085.0, 'HU': 9905596.0, 'HT': 9035536.0, 'HR': 4489409.0, 'ZW': 12619600.0,
@@ -859,7 +871,7 @@ try:
                      'AL': 3639453.0, 'AM': 2967004.0, 'IR': 66429284.0, 'IS': 306694.0, 'IQ': 31129225.0,
                      'AF': 28400000.0, 'AE': 4798491.0, 'ID': 240271522.0, 'IE': 4203200.0, 'AZ': 8238672.0,
                      'IN': 1166079220.0, 'AT': 8210281.0, 'AU': 21262641.0, 'AR': 40913584.0,'AQ': 3802.0},
-                    population)
+                    population_ranking)
             else:
                 self.skipTest("countries.mpa is missing")
 

@@ -20,6 +20,7 @@ public:
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load);
     static bool storeTable(const ITable& tbl);
     void attributeDomain(const QString& attdom);
+    void selectedRecords(const std::vector<quint32> &recs);
 private:
     ColumnDefinition getKeyColumn();
     ColumnDefinition makeColumn(const QString &colName, quint64 index);
@@ -28,6 +29,7 @@ private:
 
     QHash<QString, RawConverter> _converters;
     QString _attributeDomain;
+    std::vector<quint32> _selected;
 };
 }
 }

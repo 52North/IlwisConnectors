@@ -378,16 +378,30 @@ QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name) {
     return QUrl::fromLocalFile(filename);
 }
 
-QString Ilwis3Connector::outputNameFor(const IlwisObject *obj) {
+QString Ilwis3Connector::outputNameFor(const IlwisObject *obj, bool isMulti, IlwisTypes type) {
     QUrl url = obj->source(IlwisObject::cmOUTPUT).url();
+    QString outputName = sUNDEF;
     if ( url.isValid() && url.scheme() == "file") {
         QFileInfo inf(url.toLocalFile());
-        return inf.absolutePath() + "/"+ inf.baseName();
+        outputName = inf.absolutePath() + "/"+ inf.baseName();
     } else {
         QString dir = context()->workingCatalog()->location().toLocalFile();
-        return dir + "/" + obj->name();
+        outputName =  dir + "/" + obj->name();
     }
-    return sUNDEF;
+    if ( isMulti)
+        outputName += "_" + Ilwis3Connector::type2humanName(type) ;
+    return outputName;
+}
+
+QString Ilwis3Connector::type2humanName(IlwisTypes tp) {
+    if ( tp == itPOINT)
+        return "point";
+    if (tp == itLINE)
+        return "seg";
+    if ( tp == itPOLYGON)
+        return "pol";
+
+    return "feature";
 }
 
 
