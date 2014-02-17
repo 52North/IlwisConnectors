@@ -63,10 +63,10 @@ void WfsModule::prepare()
 {
     WfsObjectFactory *factory = new WfsObjectFactory();
     factory->prepare();
-    kernel()->addFactory(factory );
+    kernel()->addFactory(factory);
 
     CatalogConnectorFactory *catfact = kernel()->factory<CatalogConnectorFactory>("ilwis::catalogconnectorfactory");
-    if ( catfact) {
+    if (catfact) {
         catfact->add(WfsCatalogConnector::create);
     }
 
