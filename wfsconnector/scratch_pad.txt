@@ -1,13 +1,12 @@
 
-* using networkReply->readAll() to feed xml network response to qtxmlstreamreader: http://qt-project.org/doc/qt-5.0/qtcore/qxmlstreamreader.html
+* how to distinguish plain table loading (itTABLE) from whole feature loading (itFEATURE)
 
-* IlwisObjectConnector constructor has unused bool 'load'
+* unclear/confusing coding:
+  - resources in signatures are sometimes QString &name, QUrl &url, QUrl &resource
+  - which metadata, when, how? softtyping ...
 
 * Make CatalogConnector standalone so that ContainerConnectors can be created by a CatalogConnector instance only if needed
 
-* Prepare WFS:
-  - Change wfs.h signatures to consume Resource instead of QUrl => possible for just calling GC?
-  - Actual QUrl has to be constructed depending on the base URL and its query
-  
-*  let WfsFeature inherit from resource. objects are created from DescribeFeatureType and can be used by featureconnector and tableconnector
+* IlwisObjectConnector constructor has unused bool 'load'
 
+* which return value when store() is called? GDAL returns true ...
