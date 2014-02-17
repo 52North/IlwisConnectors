@@ -16,17 +16,17 @@ class WFSCONNECTORSHARED_EXPORT WfsFeatureDescriptionParser
 {
 public:
     WfsFeatureDescriptionParser();
-    WfsFeatureDescriptionParser(WfsResponse *response, FeatureCoverage *fcoverage);
+    WfsFeatureDescriptionParser(WfsResponse *response);
     ~WfsFeatureDescriptionParser();
 
     void parseSchemaDescription(ITable &table, QMap<QString,QString> &namespaceMappings) const;
 
 private:
-    FeatureCoverage *_fcoverage;
     XmlStreamParser *_parser;
 
     void parseNamespaces(QMap<QString,QString> &namespaceMappings) const;
     void parseFeatureProperties(ITable &table) const;
+    void setDomainViaType(QString &type, IDomain &domain) const;
 };
 
 }

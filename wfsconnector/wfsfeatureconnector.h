@@ -3,23 +3,25 @@
 
 #include "wfsconnector_global.h"
 
-namespace Ilwis{
+namespace Ilwis {
 namespace Wfs {
 
-class WFSCONNECTORSHARED_EXPORT WfsFeatureConnector : public WfsConnector{
+class WFSCONNECTORSHARED_EXPORT WfsFeatureConnector : public WfsConnector
+{
 public:
-    WfsFeatureConnector(const Ilwis::Resource &resource, bool load=true);
+    WfsFeatureConnector(const Resource &resource, bool load=true);
+
+    IlwisObject *create() const;
+    static ConnectorInterface *create(const Resource &resource, bool load=true);
 
     bool loadMetaData(IlwisObject* data);
     bool loadBinaryData(IlwisObject* data);
-    bool store(IlwisObject *obj, int);
 
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
-    Ilwis::IlwisObject *create() const;
 
 private:
-    void lowerCaseKeys(QUrlQuery &query) const;
+    QMap<QString,QString> _namespaceMappings;
 
+    void initFeatureTable(ITable &table) const;
 
 };
 }

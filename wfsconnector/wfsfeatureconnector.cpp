@@ -49,43 +49,51 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
         return false;
     }
 
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+
+    QString name(fcoverage->name());
+    quint64 id = fcoverage->id();
+    QUrl schemaResourceUrl(QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id));
 
     ITable featureTable;
-    QMap<QString,QString> namespaceMappings;
-    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+    Resource resource(schemaResourceUrl, itFLATTABLE);
+    if(!featureTable.prepare(resource)) {
+        ERROR1(ERR_NO_INITIALIZED_1, resource.name());
+        return false;
+    }
+
     QUrl featureUrl = source().url();
     WebFeatureService wfs(featureUrl);
-
     QUrlQuery queryFeatureType(featureUrl);
     WfsResponse *featureDescriptionResponse = wfs.describeFeatureType(queryFeatureType);
-    WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse, fcoverage);
-    schemaParser.parseSchemaDescription(featureTable, namespaceMappings);
-
-    QUrlQuery queryFeature(featureUrl);
-    WfsFeatureParser featureParser(wfs.getFeature(queryFeature));
-    featureParser.setNamespaceMappings(namespaceMappings);
-    featureParser.parseFeature(featureTable);
-
-    // TODO: parse Feature metadata and fill coverage
-
-    IlwisTypes coverageType = itUNKNOWN;
-    int featureCount = 0;
-    BoundingBox bbox;
-    bool initMinMax = 0;
-
-
-    return false;
+    WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse);
+    schemaParser.parseSchemaDescription(featureTable, _namespaceMappings);
+    fcoverage->attributeTable(featureTable);
+    return true;
 }
 
-bool WfsFeatureConnector::store(IlwisObject *obj, int)
+void WfsFeatureConnector::initFeatureTable(ITable &table) const
 {
-    // transactional not supported by this module
-    return false;
+
 }
 
 
 bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
 {
+    // check how to avoid double loading metadata
+    //if(!loadMetaData(data))
+    //    return false;
+
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+    QUrl featureUrl = source().url();
+    WebFeatureService wfs(featureUrl);
+    ITable featureTable = fcoverage->attributeTable();
+
+    QUrlQuery queryFeature(featureUrl);
+    WfsFeatureParser featureParser(wfs.getFeature(queryFeature));
+    featureParser.parseFeature(featureTable, _namespaceMappings);
+
+    // TODO: parse Feature metadata and fill coverage
 
     // TODO: request data and load it into *data
 

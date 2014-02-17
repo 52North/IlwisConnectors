@@ -33,7 +33,7 @@ WfsFeatureDescriptionParser::WfsFeatureDescriptionParser()
 }
 
 
-WfsFeatureDescriptionParser::WfsFeatureDescriptionParser(WfsResponse *response, FeatureCoverage *fcoverage): _fcoverage(fcoverage)
+WfsFeatureDescriptionParser::WfsFeatureDescriptionParser(WfsResponse *response)
 {
     _parser = new XmlStreamParser(response->device());
     _parser->addNamespaceMapping("xsd", "http://www.w3.org/2001/XMLSchema");
@@ -45,13 +45,8 @@ WfsFeatureDescriptionParser::~WfsFeatureDescriptionParser()
 
 void WfsFeatureDescriptionParser::parseSchemaDescription(ITable &table, QMap<QString,QString> &namespaceMappings) const
 {
-    QString name(_fcoverage->name());
-    quint64 id = _fcoverage->id();
-    QUrl schemaResourceUrl(QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id));
-
-    Resource resource(schemaResourceUrl, itFLATTABLE);
-    if(!table.prepare(resource)) {
-        ERROR1(ERR_NO_INITIALIZED_1, resource.name());
+    if ( !table.isValid()) {
+        ERROR0(TR("Invalid table (uninitialized?) while parsing WFS feature description."));
         return;
     }
 
@@ -77,33 +72,69 @@ void WfsFeatureDescriptionParser::parseNamespaces(QMap<QString,QString> &namespa
         QString value = attribute.value().toString();
         if (name == "targetNamespace") {
             namespaceMappings[""] = value;
-            break; // TODO: consider further namespaces parsing
-        }
+            break; // TODO: consider how parse further namespaces
+        } /*else {
+            QString prefix = attribute.prefix().toString();
+            QString parsedPrefix = name.left(name.indexOf(":"));
+            namespaceMappings[prefix] = value;
+        }*/
     }
 }
 
 void WfsFeatureDescriptionParser::parseFeatureProperties(ITable &table) const
 {
-    if (_parser->nextLevelMoveTo("xsd:complexContent")) {
-        if (_parser->nextLevelMoveTo("xsd:extension")) {
-            if (_parser->nextLevelMoveTo("xsd:sequence")) {
-                if (_parser->nextLevelMoveTo("xsd:element")) {
+    if (_parser->moveToNext("xsd:complexContent")) {
+        if (_parser->moveToNext("xsd:extension")) {
+            if (_parser->moveToNext("xsd:sequence")) {
+                if (_parser->moveToNext("xsd:element")) {
+
+                    // TODO: parse schema elements to table colummns to obtain feature
+                    //       specific knowledge, e.g. namespaces
+
+                    table->addColumn(FEATUREIDCOLUMN, "count");
+                    table->addColumn(COVERAGEKEYCOLUMN, "count");
+
                     do {
+                        QXmlStreamAttributes attributes = _parser->attributes();
+                        QString name = attributes.value("name").toString();
+                        QString type = attributes.value("type").toString();
 
-                        // TODO: parse schema elements to table colummns to obtain feature
-                        //       specific knowledge, e.g. namespaces
-
-                        dmKey.prepare("count");
-                        ColumnDefinition colKey(FEATUREIDCOLUMN, dmKey, 0);
-                        table->addColumn(colKey);
-                        ColumnDefinition colCovKey(COVERAGEKEYCOLUMN, dmKey, 1);
-                        table->addColumn(colCovKey);
-
-
-                    } while (_parser->currentLevelMoveTo("xsd:element"));
+                        IDomain domain;
+                        setDomainViaType(type, domain);
+                        table->addColumn(name, domain);
+                    } while (_parser->moveToNext("xsd:element"));
                 }
             }
         }
     }
 
+}
+
+void WfsFeatureDescriptionParser::setDomainViaType(QString &type, IDomain &domain) const
+{
+    if (type == "xsd:double") {
+        INumericDomain ndomain;
+        ndomain.prepare("value");
+        domain = ndomain;
+    } else if (type == "xsd:integer") {
+        INumericDomain ndomain;
+        ndomain.prepare("integer");
+        domain = ndomain;
+    } else if (type == "xsd:long") {
+        INumericDomain ndomain;
+        ndomain.prepare("integer");
+        domain = ndomain;
+    } else if (type == "xsd:string") {
+        domain.prepare("code=domain:text", itTEXTDOMAIN);
+    } else if (type.startsWith("gml")) {
+
+        // TODO: check for gml spatial types
+
+    }
+
+    // TODO: add more types here
+
+    else {
+        ERROR1(TR("Could not create domain for schema type: %1"), type);
+    }
 }
