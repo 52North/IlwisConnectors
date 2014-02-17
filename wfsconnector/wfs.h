@@ -28,13 +28,6 @@ private:
     WfsResponse *performSyncRequest(QUrl request) const;
     WfsResponse *performAsyncRequest(QUrl request) const;
 
-    void lowerCaseKeys(QUrlQuery &query) const
-    {
-        for (QPair<QString,QString> kvm : query.queryItems()) {
-            query.removeQueryItem(kvm.first);
-            query.addQueryItem(kvm.first.toLower(), kvm.second);
-        }
-    }
 
 };
 

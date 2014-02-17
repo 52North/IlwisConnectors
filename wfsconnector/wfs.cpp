@@ -13,6 +13,7 @@
 #include "featurecoverage.h"
 #include "wfsconnector.h"
 #include "wfsresponse.h"
+#include "wfsutils.h"
 #include "wfs.h"
 
 using namespace Ilwis;
@@ -45,9 +46,16 @@ WfsResponse *WebFeatureService::getFeature(QUrlQuery query, bool async) const
 
 WfsResponse *WebFeatureService::performRequest(QUrlQuery query, QString wfsRequest, bool async) const
 {
-    lowerCaseKeys(query);
+    WfsUtils::lowerCaseKeys(query);
     query.removeQueryItem("request");
     query.addQueryItem("request", wfsRequest);
+    if (wfsRequest == "GetCapabilities") {
+        query.removeQueryItem("acceptversions");
+        query.addQueryItem("acceptversions", "1.1.0");
+    } else {
+        query.removeQueryItem("version");
+        query.addQueryItem("version", "1.1.0");
+    }
     QUrl wfsUrl = _resource;
     wfsUrl.setQuery(query);
 
