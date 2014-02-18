@@ -57,7 +57,7 @@ bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
     }
 
     GeoReference *grf = static_cast<GeoReference *>(data);
-    grf->size(Size(columns, lines,1));
+    grf->size(Size<>(columns, lines,1));
     if ( type == "GeoRefCorners") {
         return loadGeorefCorners(odf, data);
     } else if ( type == "GeoRefSubMap") {
@@ -68,7 +68,7 @@ bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
         bool ok = loadGeoref(odf,data);
         if (!ok)
             return false;
-        grf->size(Size(columns, lines)); // we dont want the size of the parent georef
+        grf->size(Size<>(columns, lines,1)); // we dont want the size of the parent georef
         return true;
     } else if ( type == "GeoRefCTP"){
         return loadGeorefTiepoints(odf, grf);
@@ -150,7 +150,7 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
     Ilwis3Connector::storeMetaData(obj, itGEOREF);
     GeoReference *grf = static_cast<GeoReference *>(obj);
     _odf->setKeyValue("GeoRef","CoordSystem",Resource::toLocalFile(grf->coordinateSystem()->source().url(),true));
-    Size sz = grf->size();
+    Size<> sz = grf->size();
     _odf->setKeyValue("GeoRef","Lines", QString::number(sz.ysize()));
     _odf->setKeyValue("GeoRef","Columns", QString::number(sz.xsize()));
     //CornersGeoReference *cgrf = dynamic_cast<CornersGeoReference *>(grf);
