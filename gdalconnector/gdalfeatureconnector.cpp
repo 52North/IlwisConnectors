@@ -406,11 +406,10 @@ void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, UPFeatureI& featu
             gdal()->setIntegerAttribute(hfeature,index,feature->cell(i).toInt());
         } else if (hasType(dom->valueType(),itDOUBLE | itFLOAT)) {
             gdal()->setDoubleAttribute(hfeature,index,feature->cell(i).toDouble());
-        } else if (hasType(dom->valueType(),itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM)) {
+        } else if (hasType(dom->valueType(),itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM | itTIMEITEM)) {
             gdal()->setStringAttribute(hfeature,index,dom->impliedValue(feature->cell(i)).toString().toLocal8Bit());
-        } else if (hasType(dom->valueType(),itTIMEITEM)) {
-            //TODO itTIME itTIMEDOMAIN itTIMEITEM
-            Time time;// = dom->value(feature->cell(i));
+        } else if (hasType(dom->valueType(), itTIME)) {
+            Time time(feature->cell(i).toDouble());
             gdal()->setDateTimeAttribute(hfeature,index,
                                          time.get(Time::tpYEAR),
                                          time.get(Time::tpMONTH),
