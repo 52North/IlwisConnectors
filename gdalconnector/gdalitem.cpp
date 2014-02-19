@@ -15,7 +15,7 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-GDALItems::GDALItems(const QUrl &url, const UPContainerConnector &containerc)
+GDALItems::GDALItems(const QUrl &url, const UPContainerConnector &containerc, IlwisTypes extTypes)
 {
     if ( !containerc || !containerc->isValid())
         return ;
@@ -40,14 +40,14 @@ GDALItems::GDALItems(const QUrl &url, const UPContainerConnector &containerc)
             insert(resGrf);
             addItem(url, csyId, resGrf.id());
         } else
-            addItem(url, csyId, iUNDEF, itFEATURE);
+            addItem(url, csyId, iUNDEF, itFEATURE, extTypes);
 
 
         gdal()->closeFile(file.absoluteFilePath(), i64UNDEF);
     }
 }
 
-void GDALItems::addItem(const QUrl& url, quint64 csyid, quint64 grfId, IlwisTypes tp) {
+void GDALItems::addItem(const QUrl& url, quint64 csyid, quint64 grfId, IlwisTypes tp, IlwisTypes extTypes) {
     Resource gdalItem(url, tp);
     gdalItem.addProperty("coordinatesystem", csyid);
     if ( tp == itRASTER){
@@ -56,7 +56,7 @@ void GDALItems::addItem(const QUrl& url, quint64 csyid, quint64 grfId, IlwisType
         gdalItem.addProperty("georeference", grfId);
         gdalItem.setExtendedType(itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM);
     }else
-       gdalItem.setExtendedType(itCONVENTIONALCOORDSYSTEM);
+       gdalItem.setExtendedType(itCONVENTIONALCOORDSYSTEM | extTypes);
 
     insert(gdalItem);
 }
