@@ -409,7 +409,12 @@ void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, UPFeatureI& featu
         } else if (hasType(dom->valueType(),itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM | itTIMEITEM)) {
             gdal()->setStringAttribute(hfeature,index,dom->impliedValue(feature->cell(i)).toString().toLocal8Bit());
         } else if (hasType(dom->valueType(), itTIME)) {
-            Time time(feature->cell(i).toDouble());
+            QVariant v = feature->cell(i);
+            if ( v.typeName() != "Ilwis::Time"){
+                ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "time");
+                gdal()->setDateTimeAttribute(hfeature,index,0,0,0,0,0,0,0);
+            }
+            Time time = v.value<Ilwis::Time>();
             gdal()->setDateTimeAttribute(hfeature,index,
                                          time.get(Time::tpYEAR),
                                          time.get(Time::tpMONTH),

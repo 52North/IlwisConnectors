@@ -158,11 +158,10 @@ QVariant GdalTableLoader::fillDoubleColumn(OGRFeatureH featureH, int colIntex){
 }
 
 QVariant GdalTableLoader::fillDateTimeColumn(OGRFeatureH featureH, int colIntex){
-    Time time;
     int year,month,day,hour,minute,second,TZFlag;
     if (gdal()->getFieldAsDateTime(featureH,colIntex,&year,&month,&day,&hour,&minute,&second,&TZFlag)){
-        time = Time(year, month, day, hour, minute, second);
-    }
-    return QVariant((double)time);
+        return IVARIANT(Time(year, month, day, hour, minute, second));
+    }else
+        return QVariant();
 }
 
