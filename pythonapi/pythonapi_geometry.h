@@ -22,7 +22,6 @@ namespace pythonapi {
     public:
         Geometry(std::string wkt, const CoordinateSystem &csy);
         Geometry(Feature* feature, int index);
-        Geometry(geos::geom::Geometry* geometry, const Ilwis::ICoordinateSystem& csy);
         ~Geometry();
 
         bool __bool__() const ;
@@ -63,6 +62,7 @@ namespace pythonapi {
         Geometry* symDifference(const Geometry& geometry) const;
 
     private:
+        Geometry(geos::geom::Geometry* geometry, const Ilwis::ICoordinateSystem& csy);
         const std::unique_ptr<geos::geom::Geometry>& ptr() const;
         bool _standalone;
 

@@ -15,7 +15,7 @@ namespace pythonapi {
     class GeoReference : public IlwisObject{
         friend class Engine;
         friend class RasterCoverage;
-        protected:
+        private:
             GeoReference(Ilwis::IGeoReference* gr);
         public:
             GeoReference(const std::string &resource);

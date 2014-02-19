@@ -18,7 +18,7 @@ namespace pythonapi {
     class FeatureCoverage : public Coverage{
         friend class FeatureIterator;
         friend class Engine;
-    protected:
+    private:
         FeatureCoverage(Ilwis::IFeatureCoverage* coverage);
     public:
         FeatureCoverage();

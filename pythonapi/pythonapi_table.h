@@ -13,9 +13,9 @@ namespace pythonapi {
     class PyVariant;
 
     class Table : public IlwisObject{
+        friend class Coverage;
         public:
             Table();
-            Table(Ilwis::ITable* table);
             Table(std::string resource);
 
             quint32 columnCount() const;
@@ -39,6 +39,8 @@ namespace pythonapi {
             void setCell(quint32 colIndex, quint32 rec, std::string value);
             void setCell(const std::string &name, quint32 rec, double value);
             void setCell(quint32 colIndex, quint32 rec, double value);
+        private:
+            Table(Ilwis::ITable* table);
     };
 
 } // namespace pythonapi
