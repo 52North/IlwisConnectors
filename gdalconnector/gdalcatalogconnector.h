@@ -16,6 +16,8 @@ public:
 protected:
     IlwisTypes _type;
 
+private:
+    IlwisTypes extendedType(const std::multimap<QString, DataFormat> &formats, const QString &ext) const;
 };
 }
 }
