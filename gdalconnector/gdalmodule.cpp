@@ -39,6 +39,7 @@
 #include "OperationExpression.h"
 #include "gdalmodule.h"
 #include "catalogconnector.h"
+#include "dataformat.h"
 #include "gdalcatalogconnector.h"
 #include "ilwisobjectfactory.h"
 #include "gdalobjectfactory.h"
