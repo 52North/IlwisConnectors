@@ -252,6 +252,10 @@ namespace pythonapi {
         return this->data().linearSize();
     }
 
+    template<typename T> bool SizeTemplate<T>::__contains__(const Coordinate& pix) const{
+        return this->data().contains(pix.x(),pix.y(),pix.z());
+    }
+
     template<typename T> bool SizeTemplate<T>::__contains__(const PixelTemplate<qint32>& pix) const{
         return this->data().contains(pix.x(),pix.y(),pix.z());
     }
@@ -308,21 +312,6 @@ namespace pythonapi {
                         IlwisType(envelope->getMinX(),envelope->getMinY()),
                         IlwisType(envelope->getMaxX(),envelope->getMaxY())
                     ));
-    }
-
-    template<class IlwisType, class PyType, typename SizeType>
-    SizeType BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate::xlenght() const{
-        return this->data().xlength();
-    }
-
-    template<class IlwisType, class PyType, typename SizeType>
-    SizeType BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate::ylenght() const{
-        return this->data().ylength();
-    }
-
-    template<class IlwisType, class PyType, typename SizeType>
-    SizeType BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate::zlenght() const{
-        return this->data().zlength();
     }
 
     template<class IlwisType, class PyType, typename SizeType>

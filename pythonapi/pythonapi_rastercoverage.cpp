@@ -86,7 +86,7 @@ RasterCoverage *RasterCoverage::__rtruediv__(double value){
     return (RasterCoverage*)Engine::_do(QString("div_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%2 / %1").arg((*this->ptr())->name()).arg(value).toStdString());
 }
 
-double RasterCoverage::coord2value(pythonapi::Coordinate &c){
+double RasterCoverage::coord2value(const Coordinate& c){
     return this->ptr()->get<Ilwis::RasterCoverage>()->coord2value(c.data());
 }
 
@@ -94,8 +94,12 @@ PixelIterator RasterCoverage::__iter__(){
     return PixelIterator(this);
 }
 
-double RasterCoverage::pix2value(double x, double y, double z){
-    return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(Ilwis::Pixeld(x,y,z));
+double RasterCoverage::pix2value(const PixelD &pix){
+    return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(pix.data());
+}
+
+double RasterCoverage::pix2value(const Pixel &pix){
+    return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(pix.data());
 }
 
 Size RasterCoverage::size(){

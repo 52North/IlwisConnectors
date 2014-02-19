@@ -29,6 +29,7 @@ namespace pythonapi {
         template<typename T> friend class SizeTemplate;
         friend class PixelIterator;
         friend class GeoReference;
+        friend class RasterCoverage;
         public:
             PixelTemplate(const PixelTemplate<qint32>& pixel);
             PixelTemplate(const PixelTemplate<double>& pixel);
@@ -113,6 +114,7 @@ namespace pythonapi {
             bool operator==(const SizeTemplate<T>& sz);
             bool operator!=(const SizeTemplate<T>& sz);
 
+            bool __contains__(const Coordinate& pix) const;
             bool __contains__(const PixelTemplate<qint32>& pix) const;
             bool __contains__(const PixelTemplate<double>& pix) const;
 
@@ -137,9 +139,6 @@ namespace pythonapi {
             BoxTemplate(const PyType& min,const PyType& max);
             BoxTemplate(const SizeTemplate<SizeType>& size);
 
-            SizeType xlenght()const;
-            SizeType ylenght()const;
-            SizeType zlenght()const;
             PyType minCorner();
             PyType maxCorner();
             SizeTemplate<SizeType> size();

@@ -34,8 +34,9 @@ namespace pythonapi {
         RasterCoverage* __truediv__ (double value);
         RasterCoverage* __rtruediv__(double value);
         PixelIterator __iter__();
-        double coord2value(pythonapi::Coordinate &c);
-        double pix2value(double x, double y, double z);
+        double coord2value(const Coordinate& c);
+        double pix2value(const Pixel& pix);
+        double pix2value(const PixelD& pix);
 
         Size size();
         void setSize(const Size& sz);

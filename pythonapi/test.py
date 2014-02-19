@@ -268,6 +268,7 @@ try:
                 sz == Size(3, 11, 10)
             self.assertTrue(Pixel(2, 10, 9) in sz)
             self.assertTrue(PixelD(2., 10., 9.) in sz)
+            self.assertTrue(Coordinate(2., 10., 9.) in sz)
             self.assertEqual(str(sz), "Size(3, 11, 10)")
             sz -= SizeD(100., 100.)  # == SizeD(100., 100., 1.)
             self.assertEqual(str(sz), "Size(0, 0, 9)")
@@ -718,39 +719,41 @@ try:
             self.assertTrue(rc and rctif, msg="couldn't load RasterCoverages")
             self.assertEqual(rc.name(), "n000302.mpr")
             self.assertEqual(rctif.name(), "n0.mpr")
-            self.assertEqual(rc.pix2value(342, 342, 0), 29.0)
-            self.assertEqual(rc.coord2value(Coordinate(-1871900.47, 1874237.55,0)), 29.0)
-            self.assertEqual(rctif.pix2value(342, 342, 0), 29.0)
+            pix = Pixel(342, 342, 0)
+            self.assertTrue(pix in rc.size())
+            self.assertEqual(rc.pix2value(pix), 29.0)
+            self.assertEqual(rc.coord2value(Coordinate(-1871900.47, 1874237.55, 0)), 29.0)
+            self.assertEqual(rctif.pix2value(pix), 29.0)
 
             aa7 = Engine.do("sin", rc)
-            self.assertAlmostEqual(aa7.pix2value(342, 342, 0), -0.663, 3)
+            self.assertAlmostEqual(aa7.pix2value(pix), -0.663, 3)
 
             aa1 = rc + rctif
-            self.assertEqual(aa1.pix2value(342, 342, 0), 29.0 + 29.0)
+            self.assertEqual(aa1.pix2value(pix), 29.0 + 29.0)
             aa2 = rc + 2
-            self.assertEqual(aa2.pix2value(342, 342, 0), 29.0 + 2)
+            self.assertEqual(aa2.pix2value(pix), 29.0 + 2)
             aa3 = 2 + rc
-            self.assertEqual(aa3.pix2value(342, 342, 0), 2 + 29.0)
+            self.assertEqual(aa3.pix2value(pix), 2 + 29.0)
             aa4 = rc - rctif
-            self.assertEqual(aa4.pix2value(342, 342, 0), 29.0 - 29.0)
+            self.assertEqual(aa4.pix2value(pix), 29.0 - 29.0)
             #TODO fix parsing of numeric - raster (don't switch arguments)
             aa5 = 2 - rc  # until now this is parsed as "rc - 2" :(
-            #self.assertEqual(aa5.pix2value(342, 342, 0),2-29.0)
+            #self.assertEqual(aa5.pix2value(pix),2-29.0)
             aa6 = rc - 2
-            self.assertEqual(aa6.pix2value(342, 342, 0), 29.0 - 2)
+            self.assertEqual(aa6.pix2value(pix), 29.0 - 2)
             aa7 = rc / rctif
-            self.assertEqual(aa7.pix2value(342, 342, 0), 29.0 / 29.0)
+            self.assertEqual(aa7.pix2value(pix), 29.0 / 29.0)
             #TODO fix parsing of numeric / raster (don't switch arguments)
             aa8 = 2 / rc  # until now this is parsed as "rc / 2" :(
-            #self.assertEqual(aa8.pix2value(342, 342, 0),2/29.0)
+            #self.assertEqual(aa8.pix2value(pix),2/29.0)
             aa9 = rc / 2
-            self.assertAlmostEqual(aa9.pix2value(342, 342, 0), 29.0 / 2, 1)
+            self.assertAlmostEqual(aa9.pix2value(pix), 29.0 / 2, 1)
             aa10 = rc * rctif
-            self.assertEqual(aa10.pix2value(342, 342, 0), 29.0 * 29.0)
+            self.assertEqual(aa10.pix2value(pix), 29.0 * 29.0)
             aa11 = 2 * rc
-            self.assertEqual(aa11.pix2value(342, 342, 0), 2 * 29.0)
+            self.assertEqual(aa11.pix2value(pix), 2 * 29.0)
             aa12 = rc * 2
-            self.assertEqual(aa12.pix2value(342, 342, 0), 29.0 * 2)
+            self.assertEqual(aa12.pix2value(pix), 29.0 * 2)
 
             aa1.setConnection(workingDir + tempDir + "/n000302_frommpr", "GTiff", "gdal", IlwisObject.cmOUTPUT)
             aa1.store()
