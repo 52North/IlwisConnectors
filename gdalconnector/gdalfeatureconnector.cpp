@@ -407,7 +407,7 @@ void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, UPFeatureI& featu
         } else if (hasType(dom->valueType(),itDOUBLE | itFLOAT)) {
             gdal()->setDoubleAttribute(hfeature,index,feature->cell(i).toDouble());
         } else if (hasType(dom->valueType(),itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM)) {
-            gdal()->setStringAttribute(hfeature,index,dom->value(feature->cell(i)).toLocal8Bit());
+            gdal()->setStringAttribute(hfeature,index,dom->impliedValue(feature->cell(i)).toString().toLocal8Bit());
         } else if (hasType(dom->valueType(),itTIMEITEM)) {
             //TODO itTIME itTIMEDOMAIN itTIMEITEM
             Time time;// = dom->value(feature->cell(i));
