@@ -1,5 +1,7 @@
 #!/usr/bin python
 # -*- coding: utf-8 -*-
+from unittest.case import skip
+
 try:
     from ilwisobjects import *
 
@@ -27,7 +29,7 @@ try:
         def test_AttributeTable(self):
             fc = FeatureCoverage("rainfall.shp")
             t = fc.attributeTable()
-            self.assertRegex(t.name(), "rainfall.shp")
+            self.assertEqual(t.name(), "rainfall.shp")
             self.assertEqual(
                 ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
                  'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
@@ -66,10 +68,10 @@ try:
             self.assertEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
 
         def testStandaloneGdalTable(self):
-            t = Table("rainfall.shp")
+            t = Table("rainfall.shp")  # TODO not yet working if rainfall.shp was not loaded before
             self.assertTrue(bool(t))
             self.assertFalse(t.isInternal(), msg="created a new table object with that name!!")
-            self.assertRegex(t.name(), "rainfall.shp")
+            self.assertEqual(t.name(), "rainfall.shp")
             self.assertEqual(
                 ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
                  'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT'),
@@ -202,49 +204,20 @@ try:
 
     #@ut.skip("temporarily")
     class TestUtil(ut.TestCase):
-        #@ut.skip("temporarily")
-        def test_Size(self):
-            sz = Size(2, 4, 5)
-            self.assertEqual(str(sz), "Size(2, 4, 5)")
-            self.assertEqual(sz.linearSize(), 2*4*5)
-            sz *= 2
-            self.assertEqual(str(sz), "Size(4, 8, 10)")
-            sz.xsize = 3
-            self.assertEqual(sz.xsize, 3)
-            self.assertTrue(Pixel(1, 1, 1) in sz)
-            self.assertFalse(Pixel(5, 5, 5) in sz)
-
-        ##@ut.skip("temporarily")
-        def test_BoxEnvelope(self):
-            b = Box(Pixel(3, 4, 5), Pixel(4, 5, 6,))
-            self.assertEqual(str(b), "POLYGON(3 4 5,4 5 6)")
-            self.assertEqual(str(b.minCorner()), "pixel(3,4,5)")
-            b.minCorner().x = 39
-            self.assertEqual(str(b.minCorner()), "pixel(3,4,5)")
-            self.assertEqual(str(b.maxCorner()), "pixel(4,5,6)")
-            self.assertEqual(str(b.size()), "Size(2, 2, 2)")
-            self.assertTrue(b.size() == Size(2, 2, 2))
-            self.assertEqual(b.size().linearSize(), 2*2*2)
-            b = Envelope(Coordinate(3.6111119, 4.7, 5.9), Coordinate(4.7, 5.8, 6.9))
-            self.assertEqual(str(b), "POLYGON(3.61111 4.7 5.9,4.7 5.8 6.9)")
-            self.assertEqual(str(b.size()), "Size(2, 2, 2)")
-            b = Envelope("POLYGON(3.6111119 4.7 5.9,4.7 5.8 6.9)")
-            self.assertEqual(str(b), "POLYGON(3.61111 4.7 5.9,4.7 5.8 6.9)")
-            self.assertEqual(str(b.size()), "Size(2, 2, 2)")
-            b = Box(Pixel(3, 4, 5), Pixel(4, 5, 6,))
-            self.assertEqual(str(b), "POLYGON(3 4 5,4 5 6)")
-            b = Envelope(Coordinate(3, 4, 5), Coordinate(4, 5, 6,))
-            self.assertEqual(str(b), "POLYGON(3 4 5,4 5 6)")
-            e = Envelope(b.size())
-            self.assertEqual(str(e), "POLYGON(0 0 0,1 1 1)")
-            self.assertTrue(e.contains(Coordinate(.5, .5, .5)))
-            self.assertTrue(e.contains(e))
-
         def test_PixelCoordinate(self):
             p = Pixel(4, 5)
+            self.assertTrue(bool(p))
             self.assertEqual(str(p), "pixel(4,5)")
+            p *= 3
+            self.assertTrue(p == Pixel(12, 15))
+            self.assertEqual(str(p), "pixel(12,15)")
+            p /= 4
+            self.assertEqual(str(p), "pixel(3,3)")
+            self.assertTrue(p != Pixel(3, 4))
+            self.assertFalse(p.is3D())
             v = Pixel(4, 5, 6)
             self.assertEqual(str(v), "pixel(4,5,6)")
+            self.assertTrue(v.is3D())
             self.assertEqual(v.x, 4)
             v.x = 32
             self.assertEqual(v.x, 32)
@@ -252,14 +225,100 @@ try:
             self.assertEqual(v.y, 32)
             v.z = 32
             self.assertEqual(v.z, 32)
+            self.assertEqual(str(v), "pixel(32,32,32)")
+
             c = Coordinate(-1871900.47, 1874237.55)
+            self.assertTrue(bool(c))
+            self.assertFalse(c.is3D())
             self.assertEqual(str(c), "coordinate(-1871900.470000,1874237.550000)")
+            c *= 6
+            self.assertTrue(c == Coordinate(-11231402.820000, 11245425.300000))
+            self.assertEqual(str(c), "coordinate(-11231402.820000,11245425.300000)")
+            c /= 6
+            self.assertEqual(str(c), "coordinate(-1871900.470000,1874237.550000)")
+            self.assertFalse(c.is3D())
             c = Coordinate(-1871900.47, 1874237.55, 2)
+            self.assertTrue(c.is3D())
             self.assertEqual(str(c), "coordinate(-1871900.470000,1874237.550000,2.000000)")
             self.assertEqual(c.x, -1871900.47)
             c.x = 4.323
             self.assertEqual(c.x, 4.323)
 
+
+        #@ut.skip("temporarily")
+        def test_SizeSizeD(self):
+            sz = Size(2, 4, 5)
+            self.assertTrue(bool(sz))
+            self.assertEqual(str(sz), "Size(2, 4, 5)")
+            self.assertEqual(sz.linearSize(), 2*4*5)
+            sz *= 2
+            self.assertEqual(str(sz), "Size(4, 8, 10)")
+            sz += Size(4, 4, 0)
+            self.assertTrue(sz == Size(8, 12, 10))
+            sz -= Size(1, 1, 0)
+            self.assertTrue(sz == Size(7, 11, 10))
+            sz.xsize = 3
+            self.assertEqual(sz.xsize, 3)
+            self.assertTrue(Pixel(1, 1, 1) in sz)
+            self.assertFalse(Pixel(5, 5, 5) in sz)
+            sz = SizeD(sz)
+            self.assertEqual(str(sz), "Size(3, 11, 10)")
+            self.assertTrue(sz == SizeD(3., 11., 10.))
+            with self.assertRaises(TypeError, msg="Size and SizeD should be incomparable!"):
+                sz == Size(3, 11, 10)
+            self.assertTrue(Pixel(2, 10, 9) in sz)
+            self.assertTrue(PixelD(2., 10., 9.) in sz)
+            self.assertEqual(str(sz), "Size(3, 11, 10)")
+            sz -= SizeD(100., 100.)  # == SizeD(100., 100., 1.)
+            self.assertEqual(str(sz), "Size(0, 0, 9)")
+            self.assertFalse(bool(sz))
+            self.assertFalse(bool(SizeD(10, 10, 0)))
+            sz -= SizeD(10, 10, 0)  # calculation with invalid sz == Size(0, 0, 9) results in Size(0, 0, 0)
+            self.assertEqual(str(sz), "Size(0, 0, 0)")
+            sz = SizeD(2.5, 4.4, 5.1)
+            self.assertTrue(sz == SizeD(2.5, 4.4, 5.1))
+            self.assertEqual(str(sz), "Size(2.5, 4.4, 5.1)")
+            self.assertEqual(sz.linearSize(), int(2.5)*int(4.4)*int(5.1))
+            sz *= 2
+            self.assertEqual(str(sz), "Size(5, 8.8, 10.2)")
+            sz = Size(32, 43)
+            self.assertEqual(str(sz), "Size(32, 43, 1)")
+
+        ##@ut.skip("temporarily")
+        def test_BoxEnvelope(self):
+            b = Box(Pixel(3, 4, 5), Pixel(4, 5, 6,))
+            self.assertTrue(bool(b))
+            self.assertTrue(b.is3D())
+            self.assertEqual(str(b), "POLYGON(3 4 5,4 5 6)")
+            self.assertTrue(b == Box("POLYGON(3 4 5,4 5 6)"))
+            self.assertEqual(str(b.minCorner()), "pixel(3,4,5)")
+            b.minCorner().x = 39
+            self.assertEqual(str(b.minCorner()), "pixel(3,4,5)")
+            self.assertTrue(b.minCorner() == Pixel(3, 4, 5))
+            self.assertEqual(str(b.maxCorner()), "pixel(4,5,6)")
+            self.assertEqual(str(b.size()), "Size(2, 2, 2)")
+            self.assertTrue(b.size() == Size(2, 2, 2))
+            self.assertEqual(b.size().linearSize(), 2*2*2)
+            b = Box(Pixel(2, 3), Pixel(4, 5))
+            self.assertEqual(str(b), "POLYGON(2 3,4 5)")
+            self.assertFalse(b.is3D())
+            self.assertTrue(bool(b))
+
+            env = Envelope(Coordinate(3.6111119, 4.7, 5.9), Coordinate(4.7, 5.8, 6.9))
+            self.assertEqual(str(env), "POLYGON(3.61111 4.7 5.9,4.7 5.8 6.9)")
+            self.assertEqual(str(env.size()), "Size(2.08889, 2.1, 2)")
+            env = Envelope("POLYGON(3.6111119 4.7 5.9,4.7 5.8 6.9)")
+            self.assertEqual(str(env), "POLYGON(3.61111 4.7 5.9,4.7 5.8 6.9)")
+            self.assertEqual(str(env.size()), "Size(2.08889, 2.1, 2)")
+            self.assertFalse(env.size() == SizeD(2.08889, 2.1, 2.))  # bug on Python float precision
+            env = Envelope(env.size())
+            self.assertEqual("POLYGON(0 0 0,1.08889 1.1 1)", str(env))
+            env = Envelope(Coordinate(3, 4, 5), Coordinate(4, 5, 6,))
+            self.assertEqual(str(env), "POLYGON(3 4 5,4 5 6)")
+            env = Envelope(env.size())
+            self.assertEqual(str(env), "POLYGON(0 0 0,1 1 1)")
+            self.assertTrue(Coordinate(.5, .5, .5) in env)
+            self.assertTrue(env in env)
 
     #@ut.skip("temporarily")
     class TestModule(ut.TestCase):
@@ -280,7 +339,7 @@ try:
             connectIssueLogger()
 
     #@ut.skip("temporarily")
-    class TestData(ut.TestCase):
+    class TestPyVariant(ut.TestCase):
         def test_UNDEF(self):
             with self.assertRaises(AttributeError, msg="property is not read only!"):
                 Const.sUNDEF = "test"
@@ -340,7 +399,7 @@ try:
                     'coordinate', 'pixel', 'rastersize', 'iff', 'log10', 'mastergeoreference', 'ln', 'pixel2coord',
                     'rastervalue', 'resample', 'selection', 'selection', 'selection', 'setvaluerange', 'sgn', 'sin',
                     'sinh', 'sqrt', 'stringfind', 'stringsub', 'stringreplace', 'tan', 'text2output', 'gridding',
-                    'script', 'aggregateraster', 'areanumbering', 'cross', 'linearstretch', 'linearrasterfilter')
+                    'script', 'aggregateraster', 'areanumbering', 'cross', 'linearstretch', 'linearrasterfilter', 'rankorderrasterfilter')
             self.assertTupleEqual(oper, ops)
             self.assertEqual("gridsize(rastercoverage,xsize|ysize|zsize)", e.operationMetaData("rastersize"))
             self.assertEqual("gridding(coordinatesyste,top-coordinate,x-cell-size, y-cell-size, horizontal-cells, vertical-cells)",
@@ -366,14 +425,10 @@ try:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
-            self.fc = FeatureCoverage("rainfall.shp")
-            self.assertTrue(self.fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
-
-        def tearDown(self):
-            del self.fc
-
         ##@ut.skip("temporarily")
         def test_FeatureCoverage(self):
+            self.fc = FeatureCoverage("rainfall.shp")
+            self.assertTrue(self.fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
             self.assertEqual(self.fc.name(), "rainfall.shp", msg="internal FeatureCoverage name wrong!")
             self.assertEqual(self.fc.featureCount(), 13, msg="feature count wrong")
 
@@ -395,7 +450,9 @@ try:
 
         ##@ut.skip("temporarily")
         def test_Feature(self):
-            it = iter(self.fc)
+            fc = FeatureCoverage("rainfall.shp")
+            self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
+            it = iter(fc)
             f = next(it)
             f.geometry().fromWKT("POINT(5.4 6 9.0)")
             self.assertEqual(f.geometry().toWKT(), "POINT (5.4000000000000004 6.0000000000000000)", msg="unsuccessfully altered geometry")
@@ -407,17 +464,22 @@ try:
                 print(int(v))
 
         def test_FeatureIterator(self):
+            fc = FeatureCoverage("rainfall.shp")
+            self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
             summ = 0
-            for f in self.fc:
+            for f in fc:
                 summ += float(f.attribute("MAY", 0))
                 f["sum"] = summ
                 self.assertRegex(str(f), r"Feature\([0-9]*\)", msg="wrong feature representation")
                 self.assertRegex(str(f.geometry()),
                                  r"POINT\s\(([0-9\.\-]+|\-1e\+308|5\.4)\s([0-9\.\-]+|\-1e\+308|[0-9]+\.[0-9]+e\+[0-9]+)\)",
                                  msg="wrong geometry representation")
-            self.assertEqual(summ, 286.0, msg="wrong sum over rainfall in MAY!")
+            if fc.featureCount() == 14:
+                self.assertEqual(summ, 298.0, msg="wrong sum over rainfall in MAY!")
+            else:
+                self.assertEqual(summ, 286.0, msg="wrong sum over rainfall in MAY!")
             del summ
-            it = iter(self.fc)
+            it = iter(fc)
             self.assertTrue(bool(it))
             self.assertEqual(str(it), "FeatureIterator for rainfall.shp")
             it2 = it + 2
@@ -431,6 +493,14 @@ try:
             self.assertTrue(str(f), "Feature(0)")
             f = next(it3)
             self.assertTrue(str(f), "Feature(1)")
+
+        @ut.skip("not yet supported")
+        def test_DateTimeAttribute(self):
+            fc = FeatureCoverage("drainage.shp")
+            it = iter(fc)
+            f = next(it)
+            v = f["date"]
+            self.assertEqual("", str(v))
 
         def test_loadGDALstoreGDAL(self):
             # polygons
@@ -921,6 +991,12 @@ try:
                     population_ranking)
             else:
                 self.skipTest("countries.mpa is missing")
+
+        def test_AttributeTable(self):
+            t = Table("countries.tbt")
+            self.assertTrue(bool(t))
+            self.assertFalse(t.isInternal())
+
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":

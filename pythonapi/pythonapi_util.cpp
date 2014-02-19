@@ -17,55 +17,6 @@
 
 namespace pythonapi {
 
-    //=============Coordinate=============================
-
-    Coordinate::Coordinate(const Ilwis::Coordinate& coordinate): _data(new Ilwis::Coordinate(coordinate)){
-    }
-
-    Coordinate::Coordinate(Ilwis::Coordinate* coordinate): _data(coordinate){
-    }
-
-    Coordinate::Coordinate(double x, double y): _data(new Ilwis::Coordinate(x,y)){
-    }
-
-    Coordinate::Coordinate(double x, double y, double z): _data(new Ilwis::Coordinate(x,y,z)){
-    }
-
-    Ilwis::Coordinate& Coordinate::data() const{
-        return *this->_data;
-    }
-
-    double Coordinate::x() const{
-        return this->data().x;
-    }
-
-    double Coordinate::y() const{
-        return this->data().y;
-    }
-
-    double Coordinate::z() const{
-        return this->data().z;
-    }
-
-    void Coordinate::setX(double v){
-        this->data().x = v;
-    }
-
-    void Coordinate::setY(double v){
-        this->data().y = v;
-    }
-
-    void Coordinate::setZ(double v){
-        this->data().z = v;
-    }
-
-    std::string Coordinate::__str__(){
-        if (this->data().z == Ilwis::rUNDEF)
-            return QString("coordinate(%1,%2)").arg(this->data().x,0,'f',6).arg(this->data().y,0,'f',6).toStdString();
-        else
-            return QString("coordinate(%1,%2,%3)").arg(this->data().x,0,'f',6).arg(this->data().y,0,'f',6).arg(this->data().z,0,'f',6).toStdString();
-    }
-
     //=============Pixel=============================
 
     template<class CrdType> PixelTemplate<CrdType>::PixelTemplate(const Ilwis::Location<CrdType, false>& pixel):
@@ -73,11 +24,11 @@ namespace pythonapi {
     }
 
     template<class CrdType> PixelTemplate<CrdType>::PixelTemplate(const PixelTemplate<qint32>& pixel):
-        _data(new Ilwis::Location<CrdType, false>(pixel.data())){
+        _data(pixel.is3D() ? new Ilwis::Location<CrdType, false>(pixel.x(), pixel.y(), pixel.z()) :  new Ilwis::Location<CrdType, false>(pixel.x(), pixel.y())){
     }
 
     template<class CrdType> PixelTemplate<CrdType>::PixelTemplate(const PixelTemplate<double>& pixel):
-        _data(new Ilwis::Location<CrdType, false>(pixel.data())){
+        _data(pixel.is3D() ? new Ilwis::Location<CrdType, false>(pixel.x(), pixel.y(), pixel.z()) :  new Ilwis::Location<CrdType, false>(pixel.x(), pixel.y())){
     }
 
     template<class CrdType> PixelTemplate<CrdType>::PixelTemplate(Ilwis::Location<CrdType, false>* pixel):
@@ -124,6 +75,22 @@ namespace pythonapi {
         return this->data().is3D();
     }
 
+    template<class CrdType> PixelTemplate<CrdType>* PixelTemplate<CrdType>::operator *=(CrdType n){
+        return new PixelTemplate<CrdType>(this->data() *= n);
+    }
+
+    template<class CrdType> PixelTemplate<CrdType>* PixelTemplate<CrdType>::__itruediv__(CrdType n){
+    return new PixelTemplate<CrdType>(this->data() /= n);
+    }
+
+    template<class CrdType> bool PixelTemplate<CrdType>::operator==(const PixelTemplate<CrdType> &other){
+        return this->data() == other.data();
+    }
+
+    template<class CrdType> bool PixelTemplate<CrdType>::operator!=(const PixelTemplate<CrdType> &other){
+        return this->data() != other.data();
+    }
+
     template<class CrdType> std::string PixelTemplate<CrdType>::__str__(){
         if (this->data().is3D())
             return QString("pixel(%1,%2,%3)").arg(this->data().x).arg(this->data().y).arg(this->data().z).toStdString();
@@ -131,127 +98,289 @@ namespace pythonapi {
             return QString("pixel(%1,%2)").arg(this->data().x).arg(this->data().y).toStdString();
     }
 
+    template<class CrdType> bool PixelTemplate<CrdType>::__bool__() const{
+        return this->data().isValid();
+    }
+
     template class PixelTemplate<qint32>;
     template class PixelTemplate<double>;
-    //=============BOX=============================
 
-    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate():
-        _data(new Ilwis::Box<IlwisType>()){
+    //=============Coordinate=============================
+
+    Coordinate::Coordinate(const Ilwis::Coordinate& coordinate):
+        _data(new Ilwis::Coordinate(coordinate)){
     }
 
-    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const Ilwis::Box<IlwisType> &box):
-        _data(new Ilwis::Box<IlwisType>(box)){
+    Coordinate::Coordinate(const Coordinate& crd):
+        _data(crd.is3D() ? new Ilwis::Coordinate(crd.x(), crd.y(), crd.z()) : new Ilwis::Coordinate(crd.x(), crd.y())){
     }
 
-    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const std::string& envelope):
-        _data(new Ilwis::Box<IlwisType>(QString::fromStdString(envelope))){
+    Coordinate::Coordinate(Ilwis::Coordinate* coordinate):
+        _data(coordinate){
     }
 
-    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const PyType &min, const PyType &max):
-        _data(new Ilwis::Box<IlwisType>(min.data(), max.data())){
+    Coordinate::Coordinate(double x, double y):
+        _data(new Ilwis::Coordinate(x,y)){
     }
 
-    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const Size &size):
-        _data(new Ilwis::Box<IlwisType>(size.data())){
+    Coordinate::Coordinate(double x, double y, double z):
+        _data(new Ilwis::Coordinate(x,y,z)){
     }
 
-    template<class IlwisType, class PyType> BoxTemplate<IlwisType, PyType>::BoxTemplate(const geos::geom::Envelope *envelope){
-        _data.reset(new Ilwis::Box<IlwisType>(IlwisType(envelope->getMinX(),envelope->getMinY()),IlwisType(envelope->getMaxX(),envelope->getMaxY())));
+    Ilwis::Coordinate& Coordinate::data() const{
+        return *this->_data;
     }
 
-    template<class IlwisType, class PyType> std::string BoxTemplate<IlwisType, PyType>::__str__(){
-        return this->data().toString().toStdString();
+    double Coordinate::x() const{
+        return this->data().x;
     }
 
-    template<class IlwisType, class PyType> Size BoxTemplate<IlwisType, PyType>::size(){
-    return Size(this->data().size());
+    double Coordinate::y() const{
+        return this->data().y;
     }
 
-    template<class IlwisType, class PyType> PyType BoxTemplate<IlwisType, PyType>::minCorner(){
-        return PyType(this->data().min_corner());
+    double Coordinate::z() const{
+        return this->data().z;
     }
 
-    template<class IlwisType, class PyType> PyType BoxTemplate<IlwisType, PyType>::maxCorner(){
-        return PyType(this->data().max_corner());
+    void Coordinate::setX(double v){
+        this->data().x = v;
     }
 
-    template<class IlwisType, class PyType> bool BoxTemplate<IlwisType, PyType>::contains(const PyType &point){
-        return this->data().contains(point.data());
+    void Coordinate::setY(double v){
+        this->data().y = v;
     }
 
-    template<class IlwisType, class PyType> bool BoxTemplate<IlwisType, PyType>::contains(const BoxTemplate<IlwisType, PyType>& box){
-        return this->data().contains(box.data());
+    void Coordinate::setZ(double v){
+        this->data().z = v;
     }
 
-    template<class IlwisType, class PyType> Ilwis::Box<IlwisType>& BoxTemplate<IlwisType, PyType>::data() const{
-        return (*this->_data);
+    bool Coordinate::is3D() const{
+        return this->data().is3D();
     }
 
-    template class BoxTemplate<Ilwis::Coordinate, Coordinate>;
-    template class BoxTemplate<Ilwis::Location<qint32, false>, Pixel>;
-
-    //=============SIZE=============================
-
-    Size::Size(qint32 xsize, qint32 ysize, qint32 zsize):_data(new Ilwis::Size(xsize,ysize,zsize)){
+    Coordinate *Coordinate::operator*=(double n){
+        return new Coordinate(this->data() *= n);
     }
 
-    Size::Size(const Ilwis::Size &size):_data(new Ilwis::Size(size)){
+    Coordinate *Coordinate::__itruediv__(double n){
+        return new Coordinate(this->data() /= n);
     }
 
-    Size* Size::operator+=(const Size &sz){
-        return new Size(this->data() += sz.data());
+    bool Coordinate::operator==(const Coordinate &other){
+        return this->data() == other.data();
     }
 
-    Size* Size::operator-=(const Size &sz){
-        return new Size(this->data() -= sz.data());
+    bool Coordinate::operator!=(const Coordinate &other){
+        return this->data() != other.data();
     }
 
-    Size* Size::operator*=(double f){
-        return new Size(this->data() *= f);
+    std::string Coordinate::__str__(){
+        if (this->data().z == Ilwis::rUNDEF)
+            return QString("coordinate(%1,%2)").arg(this->data().x,0,'f',6).arg(this->data().y,0,'f',6).toStdString();
+        else
+            return QString("coordinate(%1,%2,%3)").arg(this->data().x,0,'f',6).arg(this->data().y,0,'f',6).arg(this->data().z,0,'f',6).toStdString();
     }
 
-    bool Size::operator==(const Size &sz){
-        return xsize() == sz.xsize() && ysize() == sz.ysize() && zsize() == sz.zsize();
+    bool Coordinate::__bool__() const{
+        return this->data().isValid();
     }
 
-    qint32 Size::xsize() const{
+    //=========================SIZE=============================
+
+    template<typename T> SizeTemplate<T>::SizeTemplate(T xsize, T ysize, T zsize):
+        _data(new Ilwis::Size<T>(xsize,ysize,zsize)){
+    }
+
+    template<typename T> SizeTemplate<T>::SizeTemplate(const Ilwis::Size<T>& size):
+        _data(new Ilwis::Size<T>(size)){
+    }
+
+    template<typename T> SizeTemplate<T>::SizeTemplate(const SizeTemplate<quint32> &size):
+        _data(new Ilwis::Size<T>(size.xsize(),size.ysize(),size.zsize())){
+    }
+
+    template<typename T> SizeTemplate<T>::SizeTemplate(const SizeTemplate<double> &size):
+        _data(new Ilwis::Size<T>(size.xsize(),size.ysize(),size.zsize())){
+    }
+
+    template<typename T> SizeTemplate<T>* SizeTemplate<T>::operator+=(const SizeTemplate<T>& sz){
+        return new SizeTemplate(this->data() += sz.data());
+    }
+
+    template<typename T> SizeTemplate<T>* SizeTemplate<T>::operator-=(const SizeTemplate<T>& sz){
+        return new SizeTemplate(this->data() -= sz.data());
+    }
+
+    template<typename T> SizeTemplate<T>* SizeTemplate<T>::operator*=(double f){
+        return new SizeTemplate<T>(this->data() *= f);
+    }
+
+    template<typename T> bool SizeTemplate<T>::operator==(const SizeTemplate<T>& sz){
+        return (xsize() == sz.xsize()) && (ysize() == sz.ysize()) && (zsize() == sz.zsize());
+    }
+
+    template<typename T> bool SizeTemplate<T>::operator!=(const SizeTemplate<T>& sz){
+        return !((*this) == sz);
+    }
+
+    template<typename T> T SizeTemplate<T>::xsize() const{
         return this->data().xsize();
     }
 
-    qint32 Size::ysize() const{
+    template<typename T> T SizeTemplate<T>::ysize() const{
         return this->data().ysize();
     }
 
-    qint32 Size::zsize() const{
+    template<typename T> T SizeTemplate<T>::zsize() const{
         return this->data().zsize();
     }
 
-    void Size::setXsize(qint32 x){
+    template<typename T> void SizeTemplate<T>::setXsize(T x){
         this->data().xsize(x);
     }
 
-    void Size::setYsize(qint32 y){
+    template<typename T> void SizeTemplate<T>::setYsize(T y){
         this->data().ysize(y);
     }
 
-    void Size::setZsize(qint32 z){
+    template<typename T> void SizeTemplate<T>::setZsize(T z){
         this->data().zsize(z);
     }
 
-    quint64 Size::linearSize() const{
-        return this->data().totalSize();
+    template<typename T> quint64 SizeTemplate<T>::linearSize() const{
+        return this->data().linearSize();
     }
 
-    bool Size::__contains__(const Pixel& pix) const{
+    template<typename T> bool SizeTemplate<T>::__contains__(const PixelTemplate<qint32>& pix) const{
         return this->data().contains(pix.x(),pix.y(),pix.z());
     }
 
-    std::string Size::__str__(){
+    template<typename T> bool SizeTemplate<T>::__contains__(const PixelTemplate<double>& pix) const{
+        return this->data().contains(pix.x(),pix.y(),pix.z());
+    }
+
+    template<typename T> std::string SizeTemplate<T>::__str__(){
         return QString("Size(%1, %2, %3)").arg(this->data().xsize()).arg(this->data().ysize()).arg(this->data().zsize()).toStdString();
     }
 
-    Ilwis::Size &Size::data() const{
+    template<typename T> bool SizeTemplate<T>::__bool__() const{
+        return this->data().isValid();
+    }
+
+    template<typename T> Ilwis::Size<T>& SizeTemplate<T>::data() const{
         return (*this->_data);
     }
+
+    template class SizeTemplate<quint32>;
+    template class SizeTemplate<double>;
+
+    //=============BOX=============================
+
+    template<class IlwisType, class PyType, typename SizeType>
+    BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate():
+        _data(new Ilwis::Box<IlwisType>()){
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate(const Ilwis::Box<IlwisType> &box):
+        _data(new Ilwis::Box<IlwisType>(box)){
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate(const std::string& envelope):
+        _data(new Ilwis::Box<IlwisType>(QString::fromStdString(envelope))){
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate(const PyType &min, const PyType &max):
+        _data(new Ilwis::Box<IlwisType>(min.data(), max.data())){
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate(const SizeTemplate<SizeType>& size):
+        _data(new Ilwis::Box<IlwisType>(size.data())){
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate(const geos::geom::Envelope *envelope){
+        _data.reset(new Ilwis::Box<IlwisType>(
+                        IlwisType(envelope->getMinX(),envelope->getMinY()),
+                        IlwisType(envelope->getMaxX(),envelope->getMaxY())
+                    ));
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    SizeType BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate::xlenght() const{
+        return this->data().xlength();
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    SizeType BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate::ylenght() const{
+        return this->data().ylength();
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    SizeType BoxTemplate<IlwisType, PyType, SizeType>::BoxTemplate::zlenght() const{
+        return this->data().zlength();
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    std::string BoxTemplate<IlwisType, PyType, SizeType>::__str__(){
+        return this->data().toString().toStdString();
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    bool BoxTemplate<IlwisType, PyType, SizeType>::__bool__() const{
+        return this->data().isValid();
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    SizeTemplate<SizeType> BoxTemplate<IlwisType, PyType, SizeType>::size(){
+        return SizeTemplate<SizeType>(this->data().template size<SizeType>());
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    bool BoxTemplate<IlwisType, PyType, SizeType>::is3D() const{
+        return this->data().is3D();
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    PyType BoxTemplate<IlwisType, PyType, SizeType>::minCorner(){
+        return PyType(this->data().min_corner());
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    PyType BoxTemplate<IlwisType, PyType, SizeType>::maxCorner(){
+        return PyType(this->data().max_corner());
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    bool BoxTemplate<IlwisType, PyType, SizeType>::__contains__(const PyType &point) const{
+        return this->data().contains(point.data());
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    bool BoxTemplate<IlwisType, PyType, SizeType>::__contains__(const BoxTemplate<IlwisType, PyType, SizeType>& box) const{
+        return this->data().contains(box.data());
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    bool BoxTemplate<IlwisType, PyType, SizeType>::operator==(const BoxTemplate<IlwisType, PyType, SizeType> &other){
+        return (this->data() == other.data());
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    bool BoxTemplate<IlwisType, PyType, SizeType>::operator!=(const BoxTemplate<IlwisType, PyType, SizeType> &other){
+        return (this->data() != other.data());
+    }
+
+    template<class IlwisType, class PyType, typename SizeType>
+    Ilwis::Box<IlwisType>& BoxTemplate<IlwisType, PyType, SizeType>::data() const{
+        return (*this->_data);
+    }
+
+    template class BoxTemplate<Ilwis::Coordinate, Coordinate, double>;
+    template class BoxTemplate<Ilwis::Location<qint32, false>, Pixel, quint32>;
 
 } // namespace pythonapi

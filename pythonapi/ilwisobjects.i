@@ -136,12 +136,28 @@ namespace pythonapi {
 
 %include "pythonapi_util.h"
 
-%template(PixelD) pythonapi::PixelTemplate<double>;
 %template(Pixel) pythonapi::PixelTemplate<qint32>;
-%template(Envelope) pythonapi::BoxTemplate<Ilwis::Coordinate, pythonapi::Coordinate>;
-%template(Box) pythonapi::BoxTemplate<Ilwis::Location<qint32, false>, pythonapi::PixelTemplate<qint32> >;
+%template(PixelD) pythonapi::PixelTemplate<double>;
+%template(Size) pythonapi::SizeTemplate<quint32>;
+%template(SizeD) pythonapi::SizeTemplate<double>;
+%template(Box) pythonapi::BoxTemplate<Ilwis::Location<qint32, false>, pythonapi::PixelTemplate<qint32>, quint32>;
+%template(Envelope) pythonapi::BoxTemplate<Ilwis::Coordinate, pythonapi::Coordinate, double>;
 
-%extend pythonapi::Size {
+%extend pythonapi::SizeTemplate<quint32> {
+%insert("python") %{
+    __swig_getmethods__["xsize"] = xsize
+    __swig_getmethods__["ysize"] = ysize
+    __swig_getmethods__["zsize"] = zsize
+    __swig_setmethods__["xsize"] = setXsize
+    __swig_setmethods__["ysize"] = setYsize
+    __swig_setmethods__["zsize"] = setZsize
+    if _newclass:
+        xsize = property(xsize,setXsize)
+        ysize = property(ysize,setYsize)
+        zsize = property(zsize,setZsize)
+%}
+}
+%extend pythonapi::SizeTemplate<double> {
 %insert("python") %{
     __swig_getmethods__["xsize"] = xsize
     __swig_getmethods__["ysize"] = ysize

@@ -140,7 +140,7 @@ bool PixelIterator::operator> (const PixelIterator &other){
 }
 
 Py_buffer* PixelIterator::asBuffer(){
-    return newPyBuffer(this->ptr().operator->(),sizeof(double)*this->ptr().box().size().totalSize(), false);
+    return newPyBuffer(this->ptr().operator->(),sizeof(double)*this->ptr().box().size().linearSize(), false);
 }
 
 Ilwis::PixelIterator& PixelIterator::ptr() const{

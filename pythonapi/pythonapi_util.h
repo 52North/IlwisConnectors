@@ -14,14 +14,22 @@ namespace Ilwis{
     template<class CrdType, bool useDouble> class Location;
     class Coordinate;
     template<class CrdType> class Box;
-    class Size;
+    template<typename T> class Size;
 }
 
 namespace pythonapi {
+/**
+ * since the implementation of this template classes are not included in the header file,
+ * only the previously instanciated types (currently only Pixel, PixelD, Envelope, Box, Size and SizeD) can be used.
+ */
+    class Coordinate;
 
     template<class CrdType> class PixelTemplate{
+        template<class IlwisType, class PyType, typename T> friend class BoxTemplate;
+        template<typename T> friend class SizeTemplate;
+        friend class PixelIterator;
+        friend class GeoReference;
         public:
-            PixelTemplate(const Ilwis::Location<CrdType, false>& pixel);
             PixelTemplate(const PixelTemplate<qint32>& pixel);
             PixelTemplate(const PixelTemplate<double>& pixel);
             PixelTemplate(CrdType x, CrdType y);
@@ -34,11 +42,17 @@ namespace pythonapi {
             void setZ(CrdType v);
             bool is3D() const;
 
-           Ilwis::Location<CrdType, false>& data() const;
+            PixelTemplate<CrdType>* operator *=(CrdType n);
+            PixelTemplate<CrdType>* __itruediv__(CrdType n);
+            bool operator==(const PixelTemplate<CrdType>& other);
+            bool operator!=(const PixelTemplate<CrdType>& other);
 
             std::string __str__();
-        protected:
+            bool __bool__() const;
+        private:
+            PixelTemplate(const Ilwis::Location<CrdType, false>& pixel);
             PixelTemplate(Ilwis::Location<CrdType, false>* pixel);
+            Ilwis::Location<CrdType, false>& data() const;
             std::shared_ptr<Ilwis::Location<CrdType, false> > _data;
     };
 
@@ -46,74 +60,106 @@ namespace pythonapi {
     typedef PixelTemplate<double> PixelD;
 
     class Coordinate{
+        template<class IlwisType, class PyType, typename T> friend class BoxTemplate;
+        template<typename T> friend class SizeTemplate;
+        friend class RasterCoverage;
+        friend class GeoReference;
         public:
-            Coordinate(const Ilwis::Coordinate& coordinate);
             Coordinate(double x, double y);
             Coordinate(double x, double y, double z);
+            Coordinate(const Coordinate& crd);
             double x() const;
             double y() const;
             double z() const;
             void setX(double v);
             void setY(double v);
             void setZ(double v);
+            bool is3D() const;
 
-           Ilwis::Coordinate& data() const;
+            Coordinate* operator*=(double n);
+            Coordinate* __itruediv__(double n);
+            bool operator==(const Coordinate& other);
+            bool operator!=(const Coordinate& other);
 
             std::string __str__();
-        protected:
+            bool __bool__() const;
+        private:
+            Coordinate(const Ilwis::Coordinate& coordinate);
             Coordinate(Ilwis::Coordinate* coordinate);
+            Ilwis::Coordinate& data() const;
             std::shared_ptr<Ilwis::Coordinate> _data;
     };
 
-    class Size{
+    template<typename T> class SizeTemplate{
+        template<class IlwisType, class PyType, typename U> friend class BoxTemplate;
+        friend class RasterCoverage;
+        friend class GeoReference;
         public:
-            Size(qint32 xsize, qint32 ysize, qint32 zsize=1);
-            Size(const Ilwis::Size& size);
+            SizeTemplate(T xsize, T ysize, T zsize=1);
+            SizeTemplate(const SizeTemplate<quint32>& size);
+            SizeTemplate(const SizeTemplate<double>& size);
 
-            Size* operator+=(const Size& sz);
-            Size* operator-=(const Size& sz);
-            Size* operator*=(double f);
-            bool operator==(const Size& sz);
-            qint32 xsize() const;
-            qint32 ysize() const;
-            qint32 zsize() const;
-            void setXsize(qint32 x);
-            void setYsize(qint32 y);
-            void setZsize(qint32 z);
+            T xsize() const;
+            T ysize() const;
+            T zsize() const;
+            void setXsize(T x);
+            void setYsize(T y);
+            void setZsize(T z);
             quint64 linearSize() const;
 
-            bool __contains__(const Pixel& pix) const;
-            std::string __str__();
-            Ilwis::Size& data() const;
-        private:
-            std::shared_ptr<Ilwis::Size > _data;
-        };
+            SizeTemplate<T>* operator+=(const SizeTemplate<T>& sz);
+            SizeTemplate<T>* operator-=(const SizeTemplate<T>& sz);
+            SizeTemplate<T>* operator*=(double f);
+            bool operator==(const SizeTemplate<T>& sz);
+            bool operator!=(const SizeTemplate<T>& sz);
 
-    /**
-     * since the implementation of this template class is not included in the header file,
-     * only the previously instanciated types (currently only Envelope and Box) can be used.
-     */
-    template<class IlwisType, class PyType> class BoxTemplate{
+            bool __contains__(const PixelTemplate<qint32>& pix) const;
+            bool __contains__(const PixelTemplate<double>& pix) const;
+
+            std::string __str__();
+            bool __bool__() const;
+        private:
+            SizeTemplate(const Ilwis::Size<T>& size);
+            Ilwis::Size<T>& data() const;
+            std::shared_ptr<Ilwis::Size<T> > _data;
+    };
+    typedef SizeTemplate<quint32> Size;
+    typedef SizeTemplate<double> SizeD;
+
+    template<class IlwisType, class PyType, typename SizeType> class BoxTemplate{
+        friend class PixelIterator;
+        friend class GeoReference;
+        friend class CoordinateSystem;
+        friend class Geometry;
         public:
             BoxTemplate();
-            BoxTemplate(const Ilwis::Box<IlwisType>& box);
             BoxTemplate(const std::string &envelope);
             BoxTemplate(const PyType& min,const PyType& max);
-            BoxTemplate(const Size& size);
-            BoxTemplate(const geos::geom::Envelope* envelope);
-            std::string __str__();
-            Size size();
+            BoxTemplate(const SizeTemplate<SizeType>& size);
+
+            SizeType xlenght()const;
+            SizeType ylenght()const;
+            SizeType zlenght()const;
             PyType minCorner();
             PyType maxCorner();
-            bool contains(const PyType& point);
-            bool contains(const BoxTemplate<IlwisType, PyType>& box);
+            SizeTemplate<SizeType> size();
 
+            bool is3D() const;
+            bool __contains__(const PyType& point) const;
+            bool __contains__(const BoxTemplate<IlwisType, PyType, SizeType>& box) const;
+            bool operator==(const BoxTemplate<IlwisType, PyType, SizeType>& other);
+            bool operator!=(const BoxTemplate<IlwisType, PyType, SizeType>& other);
+
+            std::string __str__();
+            bool __bool__() const;
+        private:
+            BoxTemplate(const Ilwis::Box<IlwisType>& box);
+            BoxTemplate(const geos::geom::Envelope* envelope);
             Ilwis::Box<IlwisType>& data() const;
-    private:
             std::shared_ptr<Ilwis::Box<IlwisType> > _data;
     };
-    typedef BoxTemplate<Ilwis::Coordinate, Coordinate> Envelope;
-    typedef BoxTemplate<Ilwis::Location<qint32, false>, Pixel > Box;
+    typedef BoxTemplate<Ilwis::Coordinate, Coordinate, double> Envelope;
+    typedef BoxTemplate<Ilwis::Location<qint32, false>, Pixel, quint32 > Box;
 
 } // namespace pythonapi
 
