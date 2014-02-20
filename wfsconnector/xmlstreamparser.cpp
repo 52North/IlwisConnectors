@@ -2,6 +2,7 @@
 #include <QMap>
 #include <QString>
 #include <QXmlStreamReader>
+#include <initializer_list>
 
 #include "xmlstreamparser.h"
 
@@ -104,6 +105,35 @@ bool XmlStreamParser::moveToNext(QString qName) const
             if ( !found) {
                 _reader->skipCurrentElement();
                 _reader->readNext();
+            }
+        } else {
+            if ( !_reader->readNextStartElement()) {
+                break;
+            }
+        }
+    }
+    return found;
+}
+
+bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList) const
+{
+    if (_reader->atEnd()) {
+        return false;
+    }
+
+    bool found = false;
+    _reader->readNextStartElement();
+    while ( !(_reader->atEnd() || found)) {
+        if (_reader->isStartElement()) {
+            for (QString qName : elementList) {
+                found = isAtBeginningOf(qName);
+                if (found) {
+                    break;
+                } else {
+                    if ( !_reader->readNextStartElement()) {
+                        break;
+                    }
+                }
             }
         } else {
             if ( !_reader->readNextStartElement()) {

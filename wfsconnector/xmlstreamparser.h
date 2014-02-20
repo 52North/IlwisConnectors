@@ -62,6 +62,8 @@ public:
      */
     bool moveToNext(QString qName) const;
 
+    bool findNextOf(std::initializer_list<QString> elementList) const;
+
     bool readNextStartElement() const;
 
     /**
