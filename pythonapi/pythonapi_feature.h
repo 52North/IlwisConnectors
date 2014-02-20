@@ -16,8 +16,9 @@ namespace pythonapi{
 
     class Feature: public Object{
         friend class Geometry;
+        friend class FeatureCoverage;
+        friend class FeatureIterator;
     public:
-        Feature(std::unique_ptr<Ilwis::FeatureInterface>& ilwisFeature, FeatureCoverage* fc);
         bool __bool__() const;
         std::string __str__();
         quint64 id();
@@ -40,6 +41,7 @@ namespace pythonapi{
         void setGeometry(Geometry &geometry, int index = -1);
 
     private:
+        Feature(std::unique_ptr<Ilwis::FeatureInterface>& ilwisFeature, FeatureCoverage* fc);
         std::unique_ptr<Ilwis::FeatureInterface>& ptr() const;
         std::unique_ptr<Ilwis::FeatureInterface>& _ilwisSPFeatureI;
         FeatureCoverage* _coverage;

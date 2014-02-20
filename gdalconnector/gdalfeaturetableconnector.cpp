@@ -11,11 +11,11 @@
 #include "columndefinition.h"
 #include "basetable.h"
 #include "flattable.h"
-#include "coverage.h"
-#include "attributerecord.h"
-#include "feature.h"
-#include "featurecoverage.h"
-#include "featureiterator.h"
+//#include "coverage.h"
+//#include "attributerecord.h"
+//#include "feature.h"
+//#include "featurecoverage.h"
+//#include "featureiterator.h"
 #include "gdaltableloader.h"
 
 using namespace Ilwis;
@@ -63,9 +63,12 @@ bool GdalFeatureTableConnector::loadBinaryData(IlwisObject * data){
         gdal()->resetReading(hLayer);
         //each FEATURE
         try {
+            quint32 index = 0;
             while( (hFeature = gdal()->getNextFeature(hLayer)) != NULL){
                 loader.loadRecord(attTable, hFeature, record);
+                attTable->record(attTable->recordCount(), record);
                 gdal()->destroyFeature( hFeature );
+                attTable->record(index++, record);
             }
              _binaryIsLoaded = true;
             return true;

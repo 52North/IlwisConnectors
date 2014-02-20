@@ -1,6 +1,7 @@
 ==================CHANGELOG===================
 --20140214--
 *fixed issue on +datum=... param in proj definition
+*added the IlwisObject GeoReference to the Python API (inkluding new PixelD class for sub-pixel accuracy)
 
 --20140210--
 *first release build

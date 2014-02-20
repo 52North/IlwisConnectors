@@ -9,11 +9,11 @@
 #include "connectorinterface.h"
 #include "catalogconnector.h"
 #include "catalog.h"
+#include "dataformat.h"
 #include "gdalmodule.h"
 #include "gdalproxy.h"
 #include "gdalcatalogconnector.h"
 #include "gdalitem.h"
-#include "dataformat.h"
 #include "mastercatalog.h"
 
 using namespace Ilwis;
@@ -35,10 +35,11 @@ inline uint qHash(const QFileInfo& inf ){
 bool GdalCatalogConnector::loadItems()
 {
     QStringList filters = gdal()->getRasterExtensions();
-    QVariantList ogrExt = DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal");
-    for(QVariant& ext : ogrExt)
-        filters += "*." + ext.toString();
+    std::multimap<QString, DataFormat>  formats = DataFormat::getSelectedBy(DataFormat::fpEXTENSION, "connector='gdal'");
+    for(const auto& element : formats)
+        filters += "*." + element.second.property(DataFormat::fpEXTENSION).toString();
     filters.removeOne("*.hdr");
+    filters.removeDuplicates();
 
     std::vector<QUrl> files = containerConnector()->sources(filters
                                                       ,ContainerConnector::foFULLPATHS | ContainerConnector::foEXTENSIONFILTER);
@@ -52,23 +53,11 @@ bool GdalCatalogConnector::loadItems()
         if ( mastercatalog()->url2id(url, itRASTER) == i64UNDEF && mastercatalog()->url2id(url, itFEATURE) == i64UNDEF) {
             QFileInfo file = containerConnector()->toLocalFile(url);
             if ( !file.isDir() ) {
-                GDALItems items(url, containerConnector());
+                IlwisTypes extendedTypes = extendedType(formats, file.suffix());
+                GDALItems items(url, containerConnector(), extendedTypes);
                 gdalitems += items;
             } else {
                 Resource resource(url, itCATALOG);
-//                QUrl container;
-                //drives have the format file:///c:/ while folders have file:///c:/myfolder; note the slash
-                //drives must be recognized as container and formatted as such
-//                QString name = url.toString();
-//                int index = name.lastIndexOf(QRegExp("\\\\|/"));
-//                if ( index != -1 && name[index - 1] == ':') { // is it a drive? (windows)
-//                    if ( index == name.size() - 1)
-//                        container = QUrl("file://");
-//                    else
-//                        container = QUrl(name.left(index));
-//                }
-//                resource.addContainer(container);
-                //QFileInfo inf(resource.toLocalFile());
                 QString filename = file.isRoot() ? file.absoluteFilePath() : file.fileName();
                 resource.setName(filename);
 
@@ -81,6 +70,15 @@ bool GdalCatalogConnector::loadItems()
     mastercatalog()->addItems(folders);
 
     return true;
+}
+
+IlwisTypes GdalCatalogConnector::extendedType(const std::multimap<QString, DataFormat>& formats, const QString& ext) const{
+    IlwisTypes types= itUNKNOWN;
+    auto collection = formats.equal_range(ext);
+    for(auto iter = collection.first; iter != collection.second; ++iter){
+        types |= (*iter).second.property(DataFormat::fpEXTENDEDTYPE).toULongLong();
+    }
+    return types;
 }
 
 bool GdalCatalogConnector::canUse(const Resource &resource) const

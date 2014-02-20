@@ -19,6 +19,8 @@
 #include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
 #include "juliantime.h"
+#include "domainhelper.h"
+
 #include "gdaltableloader.h"
 
 using namespace Ilwis;
@@ -68,10 +70,10 @@ void GdalTableLoader::loadMetaData(Table *attTable, OGRLayerH hLayer) {
         case OFTDate:  // Date
         case OFTTime:  // itTime - itTIMEDOMAIN
         case OFTDateTime:{  // Date and Time
-            INumericDomain ndomain;
-            ndomain.prepare("value");
-            ndomain->range(new TimeInterval());//TODO:: ilwisType of Domain should change to itTIMEDOMAIN
-            domain = ndomain;  break;
+            ITimeDomain tdomain;
+            tdomain.prepare();
+            tdomain->range(new TimeInterval());
+            domain = tdomain; break;
         }
         }
         ColumnDefinition colDef(name, domain,i+1);
@@ -149,25 +151,17 @@ QVariant GdalTableLoader::fillIntegerColumn(OGRFeatureH featureH, int colIntex){
     int v = gdal()->getFieldAsInt(featureH, colIntex);
     return QVariant(v);
 }
-//TODO:: not yet tested
+
 QVariant GdalTableLoader::fillDoubleColumn(OGRFeatureH featureH, int colIntex){
     double v = gdal()->getFieldAsDouble(featureH, colIntex);
     return QVariant(v);
 }
-//TODO:: not yet tested
+
 QVariant GdalTableLoader::fillDateTimeColumn(OGRFeatureH featureH, int colIntex){
-    Time time;
-    double v = rUNDEF;
     int year,month,day,hour,minute,second,TZFlag;
     if (gdal()->getFieldAsDateTime(featureH,colIntex,&year,&month,&day,&hour,&minute,&second,&TZFlag)){
-        time.setDay(day);
-        time.setHour(hour);
-        time.setMinute(minute);
-        time.setMonth(month);
-        time.setSecond(second);
-        time.setYear(year);
-        v = time;
-    }
-    return QVariant(v);
+        return IVARIANT(Time(year, month, day, hour, minute, second));
+    }else
+        return QVariant();
 }
 

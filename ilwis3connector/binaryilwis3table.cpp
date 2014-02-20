@@ -29,6 +29,9 @@ BinaryIlwis3Table::BinaryIlwis3Table() : _rows(0), _columns(0),_recordSize(0),_r
 }
 
 BinaryIlwis3Table::~BinaryIlwis3Table(){
+    if ( _columnInfo.size() != _columns) // may happen when invalid files are refused; destructor will try to clean up
+        return;
+
     for(quint32 r = 0; r < _rows; ++r) {
         for(quint32 c = 0; c < _columns; ++c) {
             const ColumnInfo& info = _columnInfo.at(c);

@@ -406,19 +406,24 @@ void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, UPFeatureI& featu
             gdal()->setIntegerAttribute(hfeature,index,feature->cell(i).toInt());
         } else if (hasType(dom->valueType(),itDOUBLE | itFLOAT)) {
             gdal()->setDoubleAttribute(hfeature,index,feature->cell(i).toDouble());
-        } else if (hasType(dom->valueType(),itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM)) {
-            gdal()->setStringAttribute(hfeature,index,dom->value(feature->cell(i)).toLocal8Bit());
-        } else if (hasType(dom->valueType(),itTIMEITEM)) {
-            //TODO itTIME itTIMEDOMAIN itTIMEITEM
-            Time time;// = dom->value(feature->cell(i));
-            gdal()->setDateTimeAttribute(hfeature,index,
-                                         time.get(Time::tpYEAR),
-                                         time.get(Time::tpMONTH),
-                                         time.get(Time::tpDAYOFMONTH),
-                                         time.get(Time::tpHOUR),
-                                         time.get(Time::tpMINUTE),
-                                         time.get(Time::tpSECOND),
-                                         0);//TODO TimeZone??
+        } else if (hasType(dom->valueType(),itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM | itTIMEITEM)) {
+            gdal()->setStringAttribute(hfeature,index,dom->impliedValue(feature->cell(i)).toString().toLocal8Bit());
+        } else if (hasType(dom->valueType(), itTIME)) {
+            QVariant v = feature->cell(i);
+            if ( QString(v.typeName()).compare("Ilwis::Time") != 0){
+                ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "time");
+                gdal()->setDateTimeAttribute(hfeature,index,0,0,0,0,0,0,0);
+            }else{
+                Time time = v.value<Ilwis::Time>();
+                gdal()->setDateTimeAttribute(hfeature,index,
+                                             time.get(Time::tpYEAR),
+                                             time.get(Time::tpMONTH),
+                                             time.get(Time::tpDAYOFMONTH),
+                                             time.get(Time::tpHOUR),
+                                             time.get(Time::tpMINUTE),
+                                             time.get(Time::tpSECOND),
+                                             0);//TODO TimeZone??
+            }
         } else if (hasType(dom->valueType(),itSTRING)){
             gdal()->setStringAttribute(hfeature,index,feature->cell(i).toString().toLocal8Bit());
         }
