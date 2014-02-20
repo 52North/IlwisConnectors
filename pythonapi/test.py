@@ -428,26 +428,26 @@ try:
 
         ##@ut.skip("temporarily")
         def test_FeatureCoverage(self):
-            self.fc = FeatureCoverage("rainfall.shp")
-            self.assertTrue(self.fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
-            self.assertEqual(self.fc.name(), "rainfall.shp", msg="internal FeatureCoverage name wrong!")
-            self.assertEqual(self.fc.featureCount(), 13, msg="feature count wrong")
+            fc = FeatureCoverage("rainfall.shp")
+            self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
+            self.assertEqual(fc.name(), "rainfall.shp", msg="internal FeatureCoverage name wrong!")
+            self.assertEqual(fc.featureCount(), 13, msg="feature count wrong")
 
-            self.assertTrue(self.fc.addAttribute("sum", "value"), msg="FeatureCoverage.addAttribute failed!")
-            att = self.fc.attributes()
+            self.assertTrue(fc.addAttribute("sum", "value"), msg="FeatureCoverage.addAttribute failed!")
+            att = fc.attributes()
             self.assertTupleEqual(att, (
                 'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY',
                 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum'
             ), msg="wrong list of attributes!")
             self.assertEqual(len(att), 16, msg="wrong number of attributes")
-            g = Geometry("POINT(5.4 6 9.0)", self.fc.coordinateSystem())
-            newfeature = self.fc.newFeature(g)
+            g = Geometry("POINT(5.4 6 9.0)", fc.coordinateSystem())
+            newfeature = fc.newFeature(g)
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
-            for c in self.fc.attributes():
+            for c in fc.attributes():
                 newfeature[c] = 12.0
                 self.assertEqual(float(newfeature[c]), 12.0, msg="new value of feature attribute not correct!")
 
-            self.assertEqual(self.fc.featureCount(), 14, msg="new feature count wrong")
+            self.assertEqual(fc.featureCount(), 14, msg="new feature count wrong")
 
         ##@ut.skip("temporarily")
         def test_Feature(self):
@@ -523,7 +523,7 @@ try:
             world.setConnection(workingDir+tempDir+"/drainage_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_loadGDALstoreIlwis3(self):
             # polygons
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
