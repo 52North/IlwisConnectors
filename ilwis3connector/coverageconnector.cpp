@@ -312,7 +312,7 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
         QFileInfo inf(dataFile);
         QString filename = dataFile + ".tbt";
         _odf->setKeyValue("BaseMap","AttributeTable",filename);
-        attTable->setName(inf.baseName());
+//        attTable->setName(inf.baseName()); // why should we chance the name of the table to a local filename here ?
         TableConnector *conn = new TableConnector(Resource(QUrl::fromLocalFile(filename), itTABLE), false);
         conn->attributeDomain(attDom);
 
