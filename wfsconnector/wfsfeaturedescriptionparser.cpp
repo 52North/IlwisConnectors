@@ -1,5 +1,6 @@
 #include <QUrl>
 #include <QXmlStreamAttributes>
+#include <initializer_list>
 
 #include "kernel.h"
 #include "coverage.h"
@@ -28,12 +29,12 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-WfsFeatureDescriptionParser::WfsFeatureDescriptionParser()
+WfsFeatureDescriptionParser::WfsFeatureDescriptionParser(): _coverageType(itUNKNOWN)
 {
 }
 
 
-WfsFeatureDescriptionParser::WfsFeatureDescriptionParser(WfsResponse *response)
+WfsFeatureDescriptionParser::WfsFeatureDescriptionParser(WfsResponse *response): _coverageType(itUNKNOWN)
 {
     _parser = new XmlStreamParser(response->device());
     _parser->addNamespaceMapping("xsd", "http://www.w3.org/2001/XMLSchema");
@@ -43,11 +44,22 @@ WfsFeatureDescriptionParser::~WfsFeatureDescriptionParser()
 {
 }
 
-void WfsFeatureDescriptionParser::parseSchemaDescription(ITable &table, QMap<QString,QString> &namespaceMappings) const
+bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcoverage, QMap<QString,QString> &namespaceMappings)
 {
-    if ( !table.isValid()) {
+    QString name(fcoverage->name());
+    quint64 id = fcoverage->id();
+    QUrl schemaResourceUrl(QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id));
+
+    ITable featureTable;
+    Resource resource(schemaResourceUrl, itFLATTABLE);
+    if(!featureTable.prepare(resource)) {
+        ERROR1(ERR_NO_INITIALIZED_1, resource.name());
+        return false;
+    }
+
+    if ( !featureTable.isValid()) {
         ERROR0(TR("Invalid table (uninitialized?) while parsing WFS feature description."));
-        return;
+        return false;
     }
 
     if (_parser->startParsing("xsd:schema")) {
@@ -55,17 +67,21 @@ void WfsFeatureDescriptionParser::parseSchemaDescription(ITable &table, QMap<QSt
         while ( !_parser->atEnd()) {
             if (_parser->readNextStartElement()) {
                 if (_parser->isAtBeginningOf("xsd:complexType")) {
-                    parseFeatureProperties(table);
+                    parseFeatureProperties(featureTable);
                 } else if (_parser->isAtBeginningOf("xsd:element")) {
                     QStringRef typeName = _parser->attributes().value("name");
-                    table->setName(typeName.toString());
+                    featureTable->setName(typeName.toString());
                 }
             }
         }
     }
+
+    fcoverage->setFeatureCount(_coverageType,0,0);
+    fcoverage->attributeTable(featureTable);
+    return true;
 }
 
-void WfsFeatureDescriptionParser::parseNamespaces(QMap<QString,QString> &namespaceMappings) const
+void WfsFeatureDescriptionParser::parseNamespaces(QMap<QString,QString> &namespaceMappings)
 {
     for (QXmlStreamAttribute attribute : _parser->attributes()) {
         QString name = attribute.name().toString();
@@ -76,12 +92,12 @@ void WfsFeatureDescriptionParser::parseNamespaces(QMap<QString,QString> &namespa
         } /*else {
             QString prefix = attribute.prefix().toString();
             QString parsedPrefix = name.left(name.indexOf(":"));
-            namespaceMappings[prefix] = value;
+            namespaceMappings[prefix] = value; // does not work
         }*/
     }
 }
 
-void WfsFeatureDescriptionParser::parseFeatureProperties(ITable &table) const
+void WfsFeatureDescriptionParser::parseFeatureProperties(ITable &table)
 {
     if (_parser->moveToNext("xsd:complexContent")) {
         if (_parser->moveToNext("xsd:extension")) {
@@ -100,8 +116,9 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(ITable &table) const
                         QString type = attributes.value("type").toString();
 
                         IDomain domain;
-                        setDomainViaType(type, domain);
-                        table->addColumn(name, domain);
+                        if (initDomainViaType(type, domain)) {
+                            table->addColumn(name, domain);
+                        }
                     } while (_parser->moveToNext("xsd:element"));
                 }
             }
@@ -110,31 +127,84 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(ITable &table) const
 
 }
 
-void WfsFeatureDescriptionParser::setDomainViaType(QString &type, IDomain &domain) const
+bool WfsFeatureDescriptionParser::initDomainViaType(QString &type, IDomain &domain)
 {
     if (type == "xsd:double") {
         INumericDomain ndomain;
         ndomain.prepare("value");
         domain = ndomain;
-    } else if (type == "xsd:integer") {
+        return true;
+    }
+    if (type == "xsd:integer") {
         INumericDomain ndomain;
         ndomain.prepare("integer");
         domain = ndomain;
-    } else if (type == "xsd:long") {
+        return true;
+    }
+    if (type == "xsd:long") {
         INumericDomain ndomain;
         ndomain.prepare("integer");
         domain = ndomain;
-    } else if (type == "xsd:string") {
+        return true;
+    }
+    if (type == "xsd:string") {
         domain.prepare("code=domain:text", itTEXTDOMAIN);
-    } else if (type.startsWith("gml")) {
-
-        // TODO: check for gml spatial types
-
+        return true;
     }
 
-    // TODO: add more types here
+    // TODO: add more types here?!
 
-    else {
-        ERROR1(TR("Could not create domain for schema type: %1"), type);
+    if (type.startsWith("gml")) {
+
+        if (type.contains("Point")) {
+            _coverageType |= itPOINT;
+        } else if (type.contains("Polygon") || type.contains("Surface") || type.contains("Ring")) {
+            _coverageType |= itPOLYGON;
+        } else if (type.contains("Line") || type.contains("Curve")) {
+            _coverageType |= itLINE;
+        }
+
+        // we have to react on types present on the xml stream
+//        if (_parser->findNextOf({ "gml:GeometryPropertyType",
+//                                "gml:MultiSurfaceType",
+//                                "gml:MultiCurveType",
+//                                "gml:MultiPointType",
+//                                "gml:PolygonType",
+//                                "gml:CurveType",
+//                                "gml:LineStringType",
+//                                "gml:PointType",
+//                                "gml:RingType",
+//                                "gml:LinearRingType"} )) {
+
+//            if (isPolygonType()) {
+//                _coverageType |= itPOLYGON;
+//            } else if (isLineType()) {
+//                _coverageType |= itLINE;
+//            } else if (isPointType()) {
+//                _coverageType |= itPOINT;
+//            }
+
+//        }
+
+        return false; // we don't want to create a column+domain
     }
+
+    ERROR1(TR("Could not create domain for schema type: %1"), type);
+    return false;
+}
+
+bool WfsFeatureDescriptionParser::isPolygonType() const
+{
+    QString currentElement = _parser->name();
+
+}
+
+bool WfsFeatureDescriptionParser::isLineType() const
+{
+
+}
+
+bool WfsFeatureDescriptionParser::isPointType() const
+{
+
 }

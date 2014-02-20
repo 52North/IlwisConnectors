@@ -49,27 +49,14 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
         return false;
     }
 
-    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
-
-    QString name(fcoverage->name());
-    quint64 id = fcoverage->id();
-    QUrl schemaResourceUrl(QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id));
-
-    ITable featureTable;
-    Resource resource(schemaResourceUrl, itFLATTABLE);
-    if(!featureTable.prepare(resource)) {
-        ERROR1(ERR_NO_INITIALIZED_1, resource.name());
-        return false;
-    }
-
     QUrl featureUrl = source().url();
     WebFeatureService wfs(featureUrl);
     QUrlQuery queryFeatureType(featureUrl);
     WfsResponse *featureDescriptionResponse = wfs.describeFeatureType(queryFeatureType);
     WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse);
-    schemaParser.parseSchemaDescription(featureTable, _namespaceMappings);
-    fcoverage->attributeTable(featureTable);
-    return true;
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+
+    return schemaParser.parseSchemaDescription(fcoverage, _namespaceMappings);
 }
 
 void WfsFeatureConnector::initFeatureTable(ITable &table) const
@@ -91,6 +78,7 @@ bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
 
     QUrlQuery queryFeature(featureUrl);
     WfsFeatureParser featureParser(wfs.getFeature(queryFeature));
+    featureParser.setColumnCallbacks(featureTable);
     featureParser.parseFeature(featureTable, _namespaceMappings);
 
     // TODO: parse Feature metadata and fill coverage
