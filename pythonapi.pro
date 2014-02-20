@@ -30,7 +30,8 @@ HEADERS += \
     pythonapi/pythonapi_util.h \
     pythonapi/pythonapi_pycontainer.h \
     pythonapi/pythonapi_table.h \
-    pythonapi/pythonapi_georeference.h
+    pythonapi/pythonapi_georeference.h \
+    pythonapi/pythonapi_pydatetime.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
@@ -51,7 +52,8 @@ SOURCES += \
     pythonapi/pythonapi_pixeliterator.cpp \
     pythonapi/pythonapi_util.cpp \
     pythonapi/pythonapi_table.cpp \
-    pythonapi/pythonapi_georeference.cpp
+    pythonapi/pythonapi_georeference.cpp \
+    pythonapi/pythonapi_pydatetime.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \

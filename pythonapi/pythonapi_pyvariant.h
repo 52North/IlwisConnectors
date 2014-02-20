@@ -33,6 +33,8 @@ namespace pythonapi{
         qlonglong __int__();
         double __float__();
         bool __bool__() const;
+        PyObject *toDateTime() const;
+
         IlwisTypes ilwisType();
 
         /**
