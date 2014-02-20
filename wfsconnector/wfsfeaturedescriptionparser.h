@@ -19,14 +19,27 @@ public:
     WfsFeatureDescriptionParser(WfsResponse *response);
     ~WfsFeatureDescriptionParser();
 
-    void parseSchemaDescription(ITable &table, QMap<QString,QString> &namespaceMappings) const;
+    bool parseSchemaDescription(FeatureCoverage *fcoverage, QMap<QString,QString> &namespaceMappings);
 
 private:
     XmlStreamParser *_parser;
+    IlwisTypes _coverageType;
 
-    void parseNamespaces(QMap<QString,QString> &namespaceMappings) const;
-    void parseFeatureProperties(ITable &table) const;
-    void setDomainViaType(QString &type, IDomain &domain) const;
+    void parseNamespaces(QMap<QString,QString> &namespaceMappings);
+    void parseFeatureProperties(ITable &table);
+
+    /**
+     * Initiates the domain according to the given xml schema type.
+     *
+     * @param type the schema type.
+     * @param domain the (empty) domain to initiate.
+     * @return true if domain could be initiated, false otherwise.
+     */
+    bool initDomainViaType(QString &type, IDomain &domain);
+
+    bool isPolygonType() const;
+    bool isLineType() const;
+    bool isPointType() const;
 };
 
 }
