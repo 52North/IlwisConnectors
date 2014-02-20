@@ -60,7 +60,7 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM
                                               -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
 INCLUDEPATH += $$PWD/core \
-            $$PWD/../external/
+            $$PWD/../external/geos
 DEPENDPATH += $$PWD/core
 
 OTHER_FILES += \
