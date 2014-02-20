@@ -29,7 +29,7 @@ try:
         def test_AttributeTable(self):
             fc = FeatureCoverage("rainfall.shp")
             t = fc.attributeTable()
-            self.assertEqual(t.name(), "rainfall.shp")
+            self.assertEqual(t.name(), "rainfall.shp")  # TODO
             self.assertEqual(
                 ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
                  'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
@@ -74,7 +74,7 @@ try:
             self.assertEqual(t.name(), "rainfall.shp")
             self.assertEqual(
                 ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
-                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT'),
+                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
                 t.columns()
             )
 
@@ -523,7 +523,7 @@ try:
             world.setConnection(workingDir+tempDir+"/drainage_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
             world.store()
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_loadGDALstoreIlwis3(self):
             # polygons
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
@@ -539,6 +539,7 @@ try:
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
             world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             world.store()
+            self.assertEqual("rainfall.shp", world.attributeTable().name())
             # lines
             world = FeatureCoverage("drainage.shp")
             self.assertTrue(bool(world))
