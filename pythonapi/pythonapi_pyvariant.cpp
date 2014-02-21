@@ -4,6 +4,12 @@
 #include "../../IlwisCore/core/ilwis.h"
 #include "../../IlwisCore/core/errorobject.h"
 
+#include "pythonapi_pydatetime.h"
+#include <time.h>
+#include "../../IlwisCore/core/kernel.h"
+#include "../../IlwisCore/core/util/range.h"
+#include "../../IlwisCore/core/util/numericrange.h"
+#include "../../IlwisCore/core/util/juliantime.h"
 using namespace pythonapi;
 
 PyVariant::PyVariant(): _data(std::unique_ptr<QVariant>(new QVariant())){
@@ -68,6 +74,23 @@ bool PyVariant::__bool__() const{
         throw std::domain_error(QString("PyVariant cannot convert '%1' to bool").arg(this->_data->toString()).toStdString());
     else{
         return this->_data->toBool();
+    }
+}
+
+PyObject* PyVariant::toDateTime() const{
+    if ( QString(this->_data->typeName()).compare("Ilwis::Time") != 0){
+        throw std::domain_error(QString("PyVariant cannot convert '%1' to datetime").arg(this->_data->toString()).toStdString());
+    }else{
+        Ilwis::Time time = this->_data->value<Ilwis::Time>();
+        return PyDateTimeFromDateAndTime(
+                    time.get(Ilwis::Time::tpYEAR),
+                    time.get(Ilwis::Time::tpMONTH),
+                    time.get(Ilwis::Time::tpDAYOFMONTH),
+                    time.get(Ilwis::Time::tpHOUR),
+                    time.get(Ilwis::Time::tpMINUTE),
+                    time.get(Ilwis::Time::tpSECOND),
+                    0 //milliseconds
+                );
     }
 }
 

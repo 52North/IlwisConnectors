@@ -499,8 +499,8 @@ try:
             fc = FeatureCoverage("drainage.shp")
             it = iter(fc)
             f = next(it)
-            v = f["date"]
-            self.assertEqual("2014-02-16T23:00:00", str(v))
+            v = f["date"].toDateTime()
+            self.assertEqual("2014-02-17 00:00:00", str(v))
 
 
         def test_loadGDALstoreGDAL(self):

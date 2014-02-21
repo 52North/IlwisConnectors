@@ -8,6 +8,7 @@
 %include "std_string.i"
 
 %{
+#include "datetime.h"
 #include "pythonapi_qtGNUTypedefs.h"
 #include "pythonapi_ilwis.h"
 #include "pythonapi_object.h"
@@ -50,6 +51,9 @@
         PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
         return NULL;
     }
+
+    //import datetime module
+    PyDateTime_IMPORT;
 %}
 //adds the export flag to pyd library for the IlwisException
 %pythoncode %{
