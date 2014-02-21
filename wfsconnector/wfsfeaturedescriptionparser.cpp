@@ -25,6 +25,7 @@
 #include "wfsresponse.h"
 #include "xmlstreamparser.h"
 #include "wfsfeaturedescriptionparser.h"
+#include "wfsutils.h"
 
 using namespace Ilwis;
 using namespace Wfs;
@@ -67,7 +68,7 @@ bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcover
         while ( !_parser->atEnd()) {
             if (_parser->readNextStartElement()) {
                 if (_parser->isAtBeginningOf("xsd:complexType")) {
-                    parseFeatureProperties(featureTable);
+                    parseFeatureProperties(fcoverage, featureTable);
                 } else if (_parser->isAtBeginningOf("xsd:element")) {
                     QStringRef typeName = _parser->attributes().value("name");
                     featureTable->setName(typeName.toString());
@@ -97,7 +98,7 @@ void WfsFeatureDescriptionParser::parseNamespaces(QMap<QString,QString> &namespa
     }
 }
 
-void WfsFeatureDescriptionParser::parseFeatureProperties(ITable &table)
+void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcoverage, ITable &table)
 {
     if (_parser->moveToNext("xsd:complexContent")) {
         if (_parser->moveToNext("xsd:extension")) {
@@ -115,9 +116,22 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(ITable &table)
                         QString name = attributes.value("name").toString();
                         QString type = attributes.value("type").toString();
 
-                        IDomain domain;
-                        if (initDomainViaType(type, domain)) {
-                            table->addColumn(name, domain);
+                        if (type.startsWith("gml")) {
+                            if (type.contains("Point")) {
+                                _coverageType |= itPOINT;
+                            } else if (type.contains("Polygon") || type.contains("Surface") || type.contains("Ring")) {
+                                _coverageType |= itPOLYGON;
+                            } else if (type.contains("Line") || type.contains("Curve")) {
+                                _coverageType |= itLINE;
+                            }
+
+                            fcoverage->setProperty(GEOM_ATTRIBUTE_NAME, name);
+
+                        } else {
+                            IDomain domain;
+                            if (initDomainViaType(type, domain)) {
+                                table->addColumn(name, domain);
+                            }
                         }
                     } while (_parser->moveToNext("xsd:element"));
                 }
@@ -153,41 +167,6 @@ bool WfsFeatureDescriptionParser::initDomainViaType(QString &type, IDomain &doma
     }
 
     // TODO: add more types here?!
-
-    if (type.startsWith("gml")) {
-
-        if (type.contains("Point")) {
-            _coverageType |= itPOINT;
-        } else if (type.contains("Polygon") || type.contains("Surface") || type.contains("Ring")) {
-            _coverageType |= itPOLYGON;
-        } else if (type.contains("Line") || type.contains("Curve")) {
-            _coverageType |= itLINE;
-        }
-
-        // we have to react on types present on the xml stream
-//        if (_parser->findNextOf({ "gml:GeometryPropertyType",
-//                                "gml:MultiSurfaceType",
-//                                "gml:MultiCurveType",
-//                                "gml:MultiPointType",
-//                                "gml:PolygonType",
-//                                "gml:CurveType",
-//                                "gml:LineStringType",
-//                                "gml:PointType",
-//                                "gml:RingType",
-//                                "gml:LinearRingType"} )) {
-
-//            if (isPolygonType()) {
-//                _coverageType |= itPOLYGON;
-//            } else if (isLineType()) {
-//                _coverageType |= itLINE;
-//            } else if (isPointType()) {
-//                _coverageType |= itPOINT;
-//            }
-
-//        }
-
-        return false; // we don't want to create a column+domain
-    }
 
     ERROR1(TR("Could not create domain for schema type: %1"), type);
     return false;

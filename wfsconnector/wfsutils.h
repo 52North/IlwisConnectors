@@ -6,6 +6,8 @@
 namespace Ilwis {
 namespace Wfs {
 
+// indicates which xml element holds gml
+#define GEOM_ATTRIBUTE_NAME "geom_attr"
 
 class WfsUtils
 {
@@ -28,6 +30,16 @@ public:
             query.removeQueryItem(kvm.first);
             query.addQueryItem(kvm.first.toLower(), kvm.second);
         }
+    }
+
+    static QString normalizeEpsgCode(QString epsgCode) {
+        QString normalizedCode("epsg:");
+        int splitIndex = epsgCode.lastIndexOf(":");
+        if (splitIndex == -1) {
+            splitIndex = epsgCode.lastIndexOf("/");
+        }
+        QString code = epsgCode.mid(splitIndex + 1);
+        return normalizedCode.append(code.trimmed());
     }
 
 private:

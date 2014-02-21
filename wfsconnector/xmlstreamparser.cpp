@@ -91,6 +91,16 @@ bool XmlStreamParser::readNextStartElement() const
     return _reader->readNextStartElement();
 }
 
+void XmlStreamParser::skipCurrentElement() const
+{
+    _reader->skipCurrentElement();
+}
+
+void XmlStreamParser::readNext() const
+{
+    _reader->readNext();
+}
+
 bool XmlStreamParser::moveToNext(QString qName) const
 {
     if (_reader->atEnd()) {
