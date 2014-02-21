@@ -2,9 +2,6 @@
 #include <sstream>
 #include <QString>
 
-#include "pugixml/pugixml_global.h"
-#include "pugixml/pugixml.hpp"
-
 #include "wfsConnector_global.h"
 
 #include "kernel.h"
