@@ -71,19 +71,18 @@ bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
     //if(!loadMetaData(data))
     //    return false;
 
+    // TODO: request data and load it into *data
+
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     QUrl featureUrl = source().url();
     WebFeatureService wfs(featureUrl);
-    ITable featureTable = fcoverage->attributeTable();
-
-    QUrlQuery queryFeature(featureUrl);
-    WfsFeatureParser featureParser(wfs.getFeature(queryFeature));
-    featureParser.setColumnCallbacks(featureTable);
-    featureParser.parseFeature(featureTable, _namespaceMappings);
 
     // TODO: parse Feature metadata and fill coverage
 
-    // TODO: request data and load it into *data
+    QUrlQuery queryFeature(featureUrl);
+    WfsResponse *response = wfs.getFeature(queryFeature);
+    WfsFeatureParser featureParser(response, fcoverage);
+    featureParser.parseFeatureMembers(_namespaceMappings);
 
     return false;
 }

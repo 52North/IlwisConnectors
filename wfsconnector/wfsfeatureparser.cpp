@@ -1,7 +1,9 @@
 #include <QMap>
 #include <QString>
+#include <QXmlStreamAttributes>
 
 #include "kernel.h"
+#include "coverage.h"
 #include "ilwis.h"
 #include "ilwisdata.h"
 #include "domain.h"
@@ -16,15 +18,18 @@
 #include "identifieritem.h"
 #include "identifierrange.h"
 #include "attributerecord.h"
+#include "feature.h"
+#include "featurecoverage.h"
 
 #include "wfsresponse.h"
 #include "xmlstreamparser.h"
 #include "wfsfeatureparser.h"
+#include "wfsutils.h"
 
 using namespace Ilwis;
 using namespace Wfs;
 
-WfsFeatureParser::WfsFeatureParser(WfsResponse *response)
+WfsFeatureParser::WfsFeatureParser(WfsResponse *response, FeatureCoverage *fcoverage): _fcoverage(fcoverage)
 {
     _parser = new XmlStreamParser(response->device());
     _parser->addNamespaceMapping("wfs", "http://www.opengis.net/wfs");
@@ -41,31 +46,21 @@ WfsFeatureParser::~WfsFeatureParser()
         delete def;
 }
 
-void WfsFeatureParser::parseFeature(ITable &table, QMap<QString, QString> &mappings)
+void WfsFeatureParser::parseFeatureMembers(QMap<QString, QString> &mappings)
 {
+    ITable table = _fcoverage->attributeTable();
     QString featureType = table->name();
     QString targetNamespace = mappings[""];
     _parser->addNamespaceMapping("target", targetNamespace);
     featureType = "target:" + featureType;
 
-
     quint64 featureCount = 0;
     if (_parser->moveToNext("wfs:FeatureCollection")) {
         if (_parser->moveToNext("gml:featureMembers")) {
+            setColumnCallbacks(table);
             while (_parser->moveToNext(featureType)) {
-                quint64 cIdx = 0;
                 std::vector<QVariant> record(table->columnCount());
-
-                setColumnCallbacks(table);
                 loadRecord(table, record);
-
-                while (_parser->readNextStartElement()) {
-                    QString attribute = _parser->name();
-                    ColumnDefinition definition = table->columndefinition(attribute);
-                    DataDefinition dataDef = definition.datadef();
-                    IDomain domain = dataDef.domain();
-
-                }
                 table->record(featureCount++, record);
             }
         }
@@ -76,12 +71,12 @@ void WfsFeatureParser::parseFeature(ITable &table, QMap<QString, QString> &mappi
 
     // TODO: parser feature item and add property to named table column
 
-    table->column("ogi:quad100_id");
 }
 
 
 void WfsFeatureParser::setColumnCallbacks(ITable &table)
 {
+
     _columnFillers.resize(table->columnCount(),0);
     for (int i = 0; i < table->columnCount(); i++){
         ColumnDefinition& coldef = table->columndefinition(i);
@@ -90,10 +85,13 @@ void WfsFeatureParser::setColumnCallbacks(ITable &table)
         }
 
         DataDefinition& datadef = coldef.datadef();
-        if( !datadef.domain().isValid()){
+        if( !datadef.domain().isValid()) {
             WARN2(ERR_NO_INITIALIZED_2, "domain", coldef.name());
             continue;
         }
+
+        // TODO: add boundedBy fill function
+
 
         IlwisTypes tp = datadef.domain()->valueType();
         if (tp & itSTRING){
@@ -124,16 +122,34 @@ void WfsFeatureParser::setColumnCallbacks(ITable &table)
             _columnFillers[i] = new FillerColumnDef(&WfsFeatureParser::fillDateTimeColumn);
         }
     }
+
+    /*
+     * Geometry can be defined anywhere in the xml sequence. We add the geometry
+     * parsing function at the end, so we have a well defined index for it.
+     */
+    FillerColumnDef *geometryFiller = new FillerColumnDef(&WfsFeatureParser::parseFeatureGeometry);
+    _columnFillers[_columnFillers.size()] = geometryFiller;
 }
 
 void WfsFeatureParser::loadRecord(ITable &table, std::vector<QVariant>& record )
 {
     if (_columnFillers.size() > 0) {
-        for (int i = 0; i < table->columnCount();i++){
-            if (_columnFillers[i]){
-                record[i] = (this->*_columnFillers[i]->fillFunc)();
-            }else{
-                record[i] = QVariant();
+        for (int i = 0; i < table->columnCount();i++) {
+            if (_parser->readNextStartElement()) {
+                QString name = _parser->name();
+                if (name == GEOM_ATTRIBUTE_NAME) {
+                    // geometry parsing function has well defined index
+                    size_t geomParserFuncIdx = _columnFillers.size() - 1;
+                    (this->*_columnFillers[geomParserFuncIdx]->fillFunc)();
+                    i--; // keep iteration index
+                    continue;
+                }
+
+                if (_columnFillers[i]){
+                    record[i] = (this->*_columnFillers[i]->fillFunc)();
+                } else{
+                    record[i] = QVariant();
+                }
             }
         }
     }
@@ -141,32 +157,76 @@ void WfsFeatureParser::loadRecord(ITable &table, std::vector<QVariant>& record )
 
 QVariant WfsFeatureParser::fillStringColumn()
 {
-    QVariant v = QVariant(_parser->readElementText());
-    _parser->readNextStartElement();
-    return v;
+    return QVariant(_parser->readElementText());
 }
 
 QVariant WfsFeatureParser::fillIntegerColumn()
 {
-    QVariant v = QVariant(_parser->readElementText().toInt());
-    _parser->readNextStartElement();
-    return v;
+    return QVariant(_parser->readElementText().toInt());
 }
 
 QVariant WfsFeatureParser::fillDoubleColumn()
 {
-    QVariant v = QVariant(_parser->readElementText().toDouble());
-    _parser->readNextStartElement();
-    return v;
+    return QVariant(_parser->readElementText().toDouble());
 }
 
 QVariant WfsFeatureParser::fillDateTimeColumn()
 {
+    QVariant v = QVariant(_parser->readElementText());
+
     Time time;
 
     // TODO: parse xsd:time
 
-    QVariant v = QVariant(_parser->readElementText());
-    _parser->readNextStartElement();
     return v;
+}
+
+QVariant WfsFeatureParser::parseFeatureGeometry()
+{
+    QString srsName;
+    _parser->readNextStartElement();
+    IlwisTypes types = _fcoverage->ilwisType();
+    if (types & itPOLYGON) {
+        while (_parser->moveToNext("gml:exterior")) {
+
+            QXmlStreamAttributes attributes = _parser->attributes();
+            QString srs = attributes.value("gml:srsName").toString();
+            srsName = srs.isEmpty() ? "" : srs;
+
+        }
+
+
+        //CoordinateSystem cs = new CoordinateSystem();
+
+    } else if (types & itLINE) {
+
+    } else if (types & itPOINT) {
+
+    } else {
+        // TODO: unknown geometry type
+
+        // we have to react on types present on the xml stream
+//        if (_parser->findNextOf({ "gml:GeometryPropertyType",
+//                                "gml:MultiSurfaceType",
+//                                "gml:MultiCurveType",
+//                                "gml:MultiPointType",
+//                                "gml:PolygonType",
+//                                "gml:CurveType",
+//                                "gml:LineStringType",
+//                                "gml:PointType",
+//                                "gml:RingType",
+//                                "gml:LinearRingType"} )) {
+
+//            if (isPolygonType()) {
+//                _coverageType |= itPOLYGON;
+//            } else if (isLineType()) {
+//                _coverageType |= itLINE;
+//            } else if (isPointType()) {
+//                _coverageType |= itPOINT;
+//            }
+
+//        }
+    }
+
+    //_fcoverage->newFeature(geos:Geom);
 }

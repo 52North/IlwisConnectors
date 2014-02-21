@@ -17,7 +17,6 @@ DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 TEMPLATE = lib
 
 DEFINES += WFSCONNECTOR_LIBRARY
-DEFINES +=TEST_WFS
 
 SOURCES += \
     wfsconnector/wfsobjectfactory.cpp \

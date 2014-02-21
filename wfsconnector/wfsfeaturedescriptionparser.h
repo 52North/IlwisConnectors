@@ -26,7 +26,7 @@ private:
     IlwisTypes _coverageType;
 
     void parseNamespaces(QMap<QString,QString> &namespaceMappings);
-    void parseFeatureProperties(ITable &table);
+    void parseFeatureProperties(FeatureCoverage *fcoverage, ITable &table);
 
     /**
      * Initiates the domain according to the given xml schema type.

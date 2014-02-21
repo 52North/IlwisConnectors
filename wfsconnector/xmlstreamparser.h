@@ -66,6 +66,10 @@ public:
 
     bool readNextStartElement() const;
 
+    void skipCurrentElement() const;
+
+    void readNext() const;
+
     /**
      * Moves to the element living on next level, named by qName.
      *

@@ -12,6 +12,7 @@
 #include "wfsfeature.h"
 #include "wfscapabilitiesparser.h"
 #include "xpathparser.h"
+#include "wfsutils.h"
 
 using namespace Ilwis;
 using namespace Wfs;
@@ -73,7 +74,7 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) co
     QString srs;
     query = _parser->queryRelativeFrom(item, "./wfs:DefaultSRS/string()");
     query->evaluateTo( &srs);
-    feature.setTitle(normalizeEpsgCode(srs));
+    feature.setTitle(WfsUtils::normalizeEpsgCode(srs));
 
     QString llText;
     query = _parser->queryRelativeFrom(item, "./ows:WGS84BoundingBox/ows:LowerCorner/string()");
@@ -110,14 +111,4 @@ Coordinate WfsCapabilitiesParser::createCoordinateFromWgs84LatLon(QString latlon
     return coords;
 }
 
-QString WfsCapabilitiesParser::normalizeEpsgCode(QString epsgCode) const
-{
-    QString normalizedCode("EPSG:");
-    int splitIndex = epsgCode.lastIndexOf(":");
-    if (splitIndex == -1) {
-        splitIndex = epsgCode.lastIndexOf("/");
-    }
-    QString code = epsgCode.mid(splitIndex + 1);
-    return normalizedCode.append(code.trimmed());
-}
 

@@ -15,11 +15,11 @@ class FillerColumnDef;
 class WFSCONNECTORSHARED_EXPORT WfsFeatureParser
 {
 public:
-    WfsFeatureParser(WfsResponse *response);
+    WfsFeatureParser(WfsResponse *response, FeatureCoverage *fcoverage);
     ~WfsFeatureParser();
 
     /**
-     * Parses feature instances to the given attribute table.<br/>
+     * Parses feature instances and add them to the feature coverage.<br/>
      * <br/>
      * Note that a WFS feature attribute table has to be constructed first to give
      * valuable results. This can be done by means of a WfsFeatureDescriptionParser
@@ -32,10 +32,9 @@ public:
      *
      * TODO: for now only the target namespace is being used ... propably this is enough
      *
-     * @param table the feature's attribute table.
      * @param mappings the xml schema namespace mappings.
      */
-    void parseFeature(ITable &table, QMap<QString,QString> &mappings);
+    void parseFeatureMembers(QMap<QString,QString> &mappings);
 
     /**
      * Sets individual column handlers according to the domain associated with the given
@@ -52,6 +51,7 @@ public:
 
 private:
     XmlStreamParser *_parser;
+    FeatureCoverage *_fcoverage;
     std::vector<FillerColumnDef*> _columnFillers;
 
     void loadRecord(ITable &table, std::vector<QVariant> &record);
@@ -60,12 +60,13 @@ private:
     QVariant fillDoubleColumn();
     QVariant fillDateTimeColumn();
     QVariant fillIntegerColumn();
+    QVariant parseFeatureGeometry();
 
 };
 
 struct FillerColumnDef {
-    FillerColumnDef(QVariant(WfsFeatureParser::* func)()): fillFunc(func){}
     QVariant (WfsFeatureParser::* fillFunc)();
+    FillerColumnDef(QVariant(WfsFeatureParser::* func)()): fillFunc(func) {}
 };
 
 }
