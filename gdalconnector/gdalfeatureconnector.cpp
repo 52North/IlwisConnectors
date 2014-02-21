@@ -408,7 +408,7 @@ void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, UPFeatureI& featu
             gdal()->setDoubleAttribute(hfeature,index,feature->cell(i).toDouble());
         } else if (hasType(dom->valueType(),itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM | itTIMEITEM)) {
             gdal()->setStringAttribute(hfeature,index,dom->impliedValue(feature->cell(i)).toString().toLocal8Bit());
-        } else if (hasType(dom->valueType(), itTIME)) {
+        } else if (hasType(dom->valueType(), itDATETIME)) {
             QVariant v = feature->cell(i);
             if ( QString(v.typeName()).compare("Ilwis::Time") != 0){
                 ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "time");

@@ -8,7 +8,7 @@
 #include <time.h>
 #include "../../IlwisCore/core/kernel.h"
 #include "../../IlwisCore/core/util/range.h"
-#include "../../IlwisCore/core/util/numericrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/numericrange.h"
 #include "../../IlwisCore/core/util/juliantime.h"
 using namespace pythonapi;
 

@@ -4,7 +4,7 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
-#include "../../IlwisCore/core/util/numericrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/numericrange.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/numericdomain.h"
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
