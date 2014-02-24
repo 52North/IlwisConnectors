@@ -108,9 +108,13 @@ GDALDataType GdalConnector::ilwisType2GdalType(IlwisTypes tp) {
 OGRFieldType GdalConnector::ilwisType2GdalFieldType(IlwisTypes tp) {
     if ( hasType(tp, itINTEGER))
         return OFTInteger;
-    if ( hasType(tp, (itFLOAT | itDOUBLE)))
+    else if ( hasType(tp, (itFLOAT | itDOUBLE)))
         return OFTReal;
-    if ( hasType(tp, itTIME))
+    else if ( hasType(tp, itTIME))
+        return OFTTime;
+    else if ( hasType(tp, itDATE))
+        return OFTDate;
+    else if ( hasType(tp, itDATETIME))
         return OFTDateTime;
     return OFTString;
 }

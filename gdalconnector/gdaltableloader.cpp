@@ -67,12 +67,22 @@ void GdalTableLoader::loadMetaData(Table *attTable, OGRLayerH hLayer) {
         case OFTWideStringList:// deprecated
         case OFTBinary: break; // Raw Binary data
 
-        case OFTDate:  // Date
-        case OFTTime:  // itTime - itTIMEDOMAIN
+        case OFTDate:{
+            ITimeDomain tdomain;
+            tdomain.prepare();
+            tdomain->range(new TimeInterval(itDATE));
+            domain = tdomain; break;
+        }
+        case OFTTime:{
+            ITimeDomain tdomain;
+            tdomain.prepare();
+            tdomain->range(new TimeInterval(itTIME));
+            domain = tdomain; break;
+        }
         case OFTDateTime:{  // Date and Time
             ITimeDomain tdomain;
             tdomain.prepare();
-            tdomain->range(new TimeInterval());
+            tdomain->range(new TimeInterval(itDATETIME));
             domain = tdomain; break;
         }
         }
@@ -125,7 +135,7 @@ void GdalTableLoader::setColumnCallbacks(Table * attTable, OGRLayerH hLayer){
                             r->max(min);
                             datadef.range(r);
                             _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDoubleColumn, j);
-                        }else if (tp & itTIME){
+                        }else if (tp & itDATETIME){
                             //creating the actual range as invalid to be adjusted in the fillers
                             NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
                             double min = r->min();

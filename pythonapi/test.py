@@ -426,6 +426,10 @@ try:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
+        def test_GPXFromFile(self):
+            fc = FeatureCoverage("test.gpx")
+            self.assertFalse(fc.isInternal())
+
         ##@ut.skip("temporarily")
         def test_FeatureCoverage(self):
             fc = FeatureCoverage("rainfall.shp")
