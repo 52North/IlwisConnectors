@@ -285,8 +285,6 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
         return itTABLE;
     if ( ext == "mpl")
         return itRASTER;
-    if ( ext == "ioc")
-        return itOBJECTCOLLECTION;
 
     return itUNKNOWN;
 }
