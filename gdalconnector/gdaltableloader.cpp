@@ -36,6 +36,11 @@ GdalTableLoader::~GdalTableLoader()
 }
 
 void GdalTableLoader::loadMetaData(Table *attTable, OGRLayerH hLayer) {
+    int temp = gdal()->getFeatureCount(hLayer, TRUE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
+    int recordCount = attTable->recordCount();
+    recordCount += (temp == -1) ? 0 : temp;
+    attTable->recordCount(recordCount);
+
     OGRFeatureDefnH hLayerDef = gdal()->getLayerDef(hLayer);
     int fieldCount = gdal()->getFieldCount(hLayerDef);
     for (int i = 0; i < fieldCount; i++){
