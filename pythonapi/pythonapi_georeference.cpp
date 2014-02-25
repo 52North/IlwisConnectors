@@ -14,8 +14,7 @@ namespace pythonapi {
     }
 
     GeoReference::GeoReference(const std::string& resource){
-        Ilwis::IGeoReference gr;
-        gr.prepare(QString::fromStdString(resource));
+        Ilwis::IGeoReference gr(QString::fromStdString(resource), itGEOREF);
         if (gr.isValid())
             this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(gr));
     }

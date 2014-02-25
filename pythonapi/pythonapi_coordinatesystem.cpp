@@ -20,8 +20,7 @@ CoordinateSystem::CoordinateSystem(Ilwis::ICoordinateSystem *cs): IlwisObject(ne
 }
 
 CoordinateSystem::CoordinateSystem(const std::string& resource){
-    Ilwis::ICoordinateSystem cs;
-    cs.prepare(QString::fromStdString(resource));
+    Ilwis::ICoordinateSystem cs(QString::fromStdString(resource), itCOORDSYSTEM);
     if (cs.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(cs));
 }

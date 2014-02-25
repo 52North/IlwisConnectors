@@ -35,8 +35,7 @@ FeatureCoverage::FeatureCoverage(){
 }
 
 FeatureCoverage::FeatureCoverage(std::string resource){
-    Ilwis::IFeatureCoverage fc;
-    fc.prepare(QString::fromStdString(resource));
+    Ilwis::IFeatureCoverage fc(QString::fromStdString(resource), itFEATURE);
     if (fc.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
 }
