@@ -80,7 +80,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
 
 
 
-    int layer = 0;//only first layer will be read/fit into single FeatureCoverage(*data)
+    int layer = 0;// TODO: only first layer will be read/fit into single FeatureCoverage(*data)
     OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
     if ( hLayer) {
         //attribute table
