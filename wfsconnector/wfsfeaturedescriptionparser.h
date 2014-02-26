@@ -19,14 +19,14 @@ public:
     WfsFeatureDescriptionParser(WfsResponse *response);
     ~WfsFeatureDescriptionParser();
 
-    bool parseSchemaDescription(FeatureCoverage *fcoverage, QMap<QString,QString> &namespaceMappings);
+    bool parseSchemaDescription(FeatureCoverage *fcoverage, WfsSchemaInfo &wfsSchemaInfo);
 
 private:
     XmlStreamParser *_parser;
     IlwisTypes _coverageType;
 
-    void parseNamespaces(QMap<QString,QString> &namespaceMappings);
-    void parseFeatureProperties(FeatureCoverage *fcoverage, ITable &table);
+    void parseNamespaces(WfsSchemaInfo &wfsSchemaInfo);
+    void parseFeatureProperties(FeatureCoverage *fcoverage, WfsSchemaInfo &wfsSchemaInfo);
 
     /**
      * Initiates the domain according to the given xml schema type.

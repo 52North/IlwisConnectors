@@ -24,6 +24,7 @@
 
 #include "wfsresponse.h"
 #include "xmlstreamparser.h"
+#include "wfsschemainfo.h"
 #include "wfsfeaturedescriptionparser.h"
 #include "wfsutils.h"
 
@@ -45,7 +46,7 @@ WfsFeatureDescriptionParser::~WfsFeatureDescriptionParser()
 {
 }
 
-bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcoverage, QMap<QString,QString> &namespaceMappings)
+bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcoverage, WfsSchemaInfo &wfsSchemaInfo)
 {
     QString name(fcoverage->name());
     quint64 id = fcoverage->id();
@@ -63,12 +64,13 @@ bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcover
         return false;
     }
 
+    fcoverage->attributeTable(featureTable);
     if (_parser->startParsing("xsd:schema")) {
-        parseNamespaces(namespaceMappings);
+        parseNamespaces(wfsSchemaInfo);
         while ( !_parser->atEnd()) {
             if (_parser->readNextStartElement()) {
                 if (_parser->isAtBeginningOf("xsd:complexType")) {
-                    parseFeatureProperties(fcoverage, featureTable);
+                    parseFeatureProperties(fcoverage, wfsSchemaInfo);
                 } else if (_parser->isAtBeginningOf("xsd:element")) {
                     QStringRef typeName = _parser->attributes().value("name");
                     featureTable->setName(typeName.toString());
@@ -78,38 +80,39 @@ bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcover
     }
 
     fcoverage->setFeatureCount(_coverageType,0,0);
-    fcoverage->attributeTable(featureTable);
     return true;
 }
 
-void WfsFeatureDescriptionParser::parseNamespaces(QMap<QString,QString> &namespaceMappings)
+void WfsFeatureDescriptionParser::parseNamespaces(WfsSchemaInfo &wfsSchemaInfo)
 {
     for (QXmlStreamAttribute attribute : _parser->attributes()) {
         QString name = attribute.name().toString();
         QString value = attribute.value().toString();
         if (name == "targetNamespace") {
-            namespaceMappings[""] = value;
+            wfsSchemaInfo.addNamespaceMapping("", value);
             break; // TODO: consider how parse further namespaces
         } /*else {
             QString prefix = attribute.prefix().toString();
             QString parsedPrefix = name.left(name.indexOf(":"));
-            namespaceMappings[prefix] = value; // does not work
+            wfsSchemaInfo.addNamespaceMapping(prefix, value); // does not work
         }*/
     }
 }
 
-void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcoverage, ITable &table)
+void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcoverage, WfsSchemaInfo &wfsSchemaInfo)
 {
+    ITable table = fcoverage->attributeTable();
     if (_parser->moveToNext("xsd:complexContent")) {
         if (_parser->moveToNext("xsd:extension")) {
             if (_parser->moveToNext("xsd:sequence")) {
                 if (_parser->moveToNext("xsd:element")) {
 
-                    // TODO: parse schema elements to table colummns to obtain feature
-                    //       specific knowledge, e.g. namespaces
+                    /*
+                     * Parse schema elements to table colummns to obtain feature
+                     * specific knowledge, e.g. namespaces
+                     */
 
                     table->addColumn(FEATUREIDCOLUMN, "count");
-                    table->addColumn(COVERAGEKEYCOLUMN, "count");
 
                     do {
                         QXmlStreamAttributes attributes = _parser->attributes();
@@ -124,9 +127,7 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcover
                             } else if (type.contains("Line") || type.contains("Curve")) {
                                 _coverageType |= itLINE;
                             }
-
-                            fcoverage->setProperty(GEOM_ATTRIBUTE_NAME, name);
-
+                            wfsSchemaInfo.setGeometryAtttributeName(name);
                         } else {
                             IDomain domain;
                             if (initDomainViaType(type, domain)) {
@@ -138,7 +139,6 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcover
             }
         }
     }
-
 }
 
 bool WfsFeatureDescriptionParser::initDomainViaType(QString &type, IDomain &domain)

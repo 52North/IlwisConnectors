@@ -6,9 +6,6 @@
 namespace Ilwis {
 namespace Wfs {
 
-// indicates which xml element holds gml
-#define GEOM_ATTRIBUTE_NAME "geom_attr"
-
 class WfsUtils
 {
 

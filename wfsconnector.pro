@@ -32,7 +32,8 @@ SOURCES += \
     wfsconnector/xmlstreamparser.cpp \
     wfsconnector/xpathparser.cpp \
     wfsconnector/wfsfeatureparser.cpp \
-    wfsconnector/wfsfeaturedescriptionparser.cpp
+    wfsconnector/wfsfeaturedescriptionparser.cpp \
+    wfsconnector/wfsschemainfo.cpp
 
 HEADERS += \
     wfsconnector/wfsobjectfactory.h \
@@ -50,7 +51,8 @@ HEADERS += \
     wfsconnector/xpathparser.h \
     wfsconnector/wfsfeatureparser.h \
     wfsconnector/wfsfeaturedescriptionparser.h \
-    wfsconnector/wfsutils.h
+    wfsconnector/wfsutils.h \
+    wfsconnector/wfsschemainfo.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \

@@ -2,6 +2,11 @@
 #include <QString>
 #include <QXmlStreamAttributes>
 
+#include "geos/io/ParseException.h"
+#include "geos/geom/GeometryFactory.h"
+#include "geos/geom/LinearRing.h"
+#include "geos/geom/Polygon.h"
+
 #include "kernel.h"
 #include "coverage.h"
 #include "ilwis.h"
@@ -20,9 +25,11 @@
 #include "attributerecord.h"
 #include "feature.h"
 #include "featurecoverage.h"
+#include "geometryhelper.h"
 
 #include "wfsresponse.h"
 #include "xmlstreamparser.h"
+#include "wfsschemainfo.h"
 #include "wfsfeatureparser.h"
 #include "wfsutils.h"
 
@@ -35,50 +42,42 @@ WfsFeatureParser::WfsFeatureParser(WfsResponse *response, FeatureCoverage *fcove
     _parser->addNamespaceMapping("wfs", "http://www.opengis.net/wfs");
     _parser->addNamespaceMapping("ows", "http://www.opengis.net/ows");
     _parser->addNamespaceMapping("gml", "http://www.opengis.net/gml");
-
-    _columnFillers.resize(0);
 }
 
 WfsFeatureParser::~WfsFeatureParser()
 {
     delete _parser;
-    for(FillerColumnDef *def : _columnFillers)
-        delete def;
 }
 
-void WfsFeatureParser::parseFeatureMembers(QMap<QString, QString> &mappings)
+void WfsFeatureParser::parseFeatureMembers(WfsSchemaInfo &wfsSchemaInfo)
 {
+    QString targetNamespace =  wfsSchemaInfo.namespaceMappings()[""];
+    _parser->addNamespaceMapping("target", targetNamespace);
     ITable table = _fcoverage->attributeTable();
     QString featureType = table->name();
-    QString targetNamespace = mappings[""];
-    _parser->addNamespaceMapping("target", targetNamespace);
     featureType = "target:" + featureType;
 
     quint64 featureCount = 0;
     if (_parser->moveToNext("wfs:FeatureCollection")) {
         if (_parser->moveToNext("gml:featureMembers")) {
-            setColumnCallbacks(table);
             while (_parser->moveToNext(featureType)) {
                 std::vector<QVariant> record(table->columnCount());
-                loadRecord(table, record);
-                table->record(featureCount++, record);
+                parseFeature(record, wfsSchemaInfo.geometryAtttributeName());
+                table->record(featureCount++, record); // load content
             }
         }
         while (_parser->moveToNext("wfs:featureMember")) {
 
         }
     }
-
-    // TODO: parser feature item and add property to named table column
-
 }
 
-
-void WfsFeatureParser::setColumnCallbacks(ITable &table)
+void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, QString geomAttributeName)
 {
+    bool continueReadingStream = true;
+    ITable table = _fcoverage->attributeTable();
+    for (int i = 0; i < table->columnCount(); i++) {
 
-    _columnFillers.resize(table->columnCount(),0);
-    for (int i = 0; i < table->columnCount(); i++){
         ColumnDefinition& coldef = table->columndefinition(i);
         if ( coldef.name() == QString(FEATUREIDCOLUMN) ) {
             continue; // auto filled column
@@ -87,15 +86,48 @@ void WfsFeatureParser::setColumnCallbacks(ITable &table)
         DataDefinition& datadef = coldef.datadef();
         if( !datadef.domain().isValid()) {
             WARN2(ERR_NO_INITIALIZED_2, "domain", coldef.name());
+            record[i] = QVariant(); // empty
             continue;
         }
 
-        // TODO: add boundedBy fill function
+        if (continueReadingStream) {
+            if ( !_parser->readNextStartElement()) {
+                break; // end of feature record
+            }
+        } else {
+            // continue next time
+            continueReadingStream = true;
+        }
 
+        QString currentElementName = _parser->name();
+        if (_parser->isAtBeginningOf("gml:boundedBy")) {
+
+            // TODO: add boundedBy fill function
+
+            _parser->skipCurrentElement(); // ignore for now
+
+            i--; // not written to table
+            continue;
+        }
+
+        // if geometry is in beteen
+        if (currentElementName == geomAttributeName) {
+            parseFeatureGeometry();
+            i--; // not written to table
+            continue;
+        }
+
+        // check for missing (optional) elements
+        if (coldef.name() != currentElementName) {
+            record[i] = QVariant(); // empty
+            continueReadingStream = false;
+            continue; // pause stream
+        }
 
         IlwisTypes tp = datadef.domain()->valueType();
+
         if (tp & itSTRING){
-            _columnFillers[i] = new FillerColumnDef(&WfsFeatureParser::fillStringColumn);
+            record[i] = fillStringColumn();
         } else if (tp & itINTEGER){
             NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
             //creating the actual range as invalid to be adjusted in the fillers
@@ -103,7 +135,7 @@ void WfsFeatureParser::setColumnCallbacks(ITable &table)
             r->min(r->max());
             r->max(min);
             datadef.range(r);
-            _columnFillers[i] = new FillerColumnDef(&WfsFeatureParser::fillIntegerColumn);
+            record[i] = fillIntegerColumn();
         } else if (tp & itDOUBLE){
             //creating the actual range as invalid to be adjusted in the fillers
             NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
@@ -111,7 +143,7 @@ void WfsFeatureParser::setColumnCallbacks(ITable &table)
             r->min(r->max());
             r->max(min);
             datadef.range(r);
-            _columnFillers[i] = new FillerColumnDef(&WfsFeatureParser::fillDoubleColumn);
+            record[i] = fillDoubleColumn();
         } else if (tp & itTIME){
             //creating the actual range as invalid to be adjusted in the fillers
             NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
@@ -119,41 +151,21 @@ void WfsFeatureParser::setColumnCallbacks(ITable &table)
             r->min(r->max());
             r->max(min);
             datadef.range(r);
-            _columnFillers[i] = new FillerColumnDef(&WfsFeatureParser::fillDateTimeColumn);
+            record[i] = fillDateTimeColumn();
+        } else {
+            record[i] = QVariant();
         }
     }
 
-    /*
-     * Geometry can be defined anywhere in the xml sequence. We add the geometry
-     * parsing function at the end, so we have a well defined index for it.
-     */
-    FillerColumnDef *geometryFiller = new FillerColumnDef(&WfsFeatureParser::parseFeatureGeometry);
-    _columnFillers[_columnFillers.size()] = geometryFiller;
-}
-
-void WfsFeatureParser::loadRecord(ITable &table, std::vector<QVariant>& record )
-{
-    if (_columnFillers.size() > 0) {
-        for (int i = 0; i < table->columnCount();i++) {
-            if (_parser->readNextStartElement()) {
-                QString name = _parser->name();
-                if (name == GEOM_ATTRIBUTE_NAME) {
-                    // geometry parsing function has well defined index
-                    size_t geomParserFuncIdx = _columnFillers.size() - 1;
-                    (this->*_columnFillers[geomParserFuncIdx]->fillFunc)();
-                    i--; // keep iteration index
-                    continue;
-                }
-
-                if (_columnFillers[i]){
-                    record[i] = (this->*_columnFillers[i]->fillFunc)();
-                } else{
-                    record[i] = QVariant();
-                }
-            }
+    if (_parser->readNextStartElement()) {
+        if (_parser->name() == geomAttributeName) {
+            parseFeatureGeometry();
         }
     }
+
 }
+
+
 
 QVariant WfsFeatureParser::fillStringColumn()
 {
@@ -184,17 +196,34 @@ QVariant WfsFeatureParser::fillDateTimeColumn()
 QVariant WfsFeatureParser::parseFeatureGeometry()
 {
     QString srsName;
+    QString srsDimension;
     _parser->readNextStartElement();
+    updateSrsInfo(srsName,srsDimension);
     IlwisTypes types = _fcoverage->ilwisType();
-    if (types & itPOLYGON) {
-        while (_parser->moveToNext("gml:exterior")) {
 
-            QXmlStreamAttributes attributes = _parser->attributes();
-            QString srs = attributes.value("gml:srsName").toString();
-            srsName = srs.isEmpty() ? "" : srs;
+    bool isMultiGeometry = _parser->name().contains("Multi");
+    if (types & itPOLYGON) {
+
+        if (isMultiGeometry) {
+
+            std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
+            if (updateSrsInfoUntil("gml:surfaceMember", srsName, srsDimension)) {
+                do {
+
+
+                    // use a context object for parsing
+                    updateSrsInfo(srsName, srsDimension);
+
+
+
+                    multi->push_back(parsePolygon());
+                } while (_parser->moveToNext("gml:surfaceMember"));
+            }
+        } else {
+
+            // TODO: parse single surface
 
         }
-
 
         //CoordinateSystem cs = new CoordinateSystem();
 
@@ -229,4 +258,58 @@ QVariant WfsFeatureParser::parseFeatureGeometry()
     }
 
     //_fcoverage->newFeature(geos:Geom);
+}
+
+void WfsFeatureParser::updateSrsInfo(QString &srsName, QString &srsDimension)
+{
+    QXmlStreamAttributes attributes = _parser->attributes();
+    QString srs = attributes.value("srsName").toString();
+    QString dimension = attributes.value("srsDimension").toString();
+    srsDimension = dimension.isEmpty() ? srsDimension : dimension;
+    srsName = srs.isEmpty() ? srsName : srs;
+}
+
+bool WfsFeatureParser::updateSrsInfoUntil(QString qname, QString &srsName, QString srsDimension)
+{
+    while (!_parser->isAtBeginningOf(qname)) {
+        if (_parser->readNextStartElement()) {
+            updateSrsInfo(srsName, srsDimension);
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+geos::geom::Geometry *WfsFeatureParser::parsePolygon()
+{
+    geos::geom::LinearRing *outer = parseExteriorRing();
+    std::vector<geos::geom::Geometry *> *inners = parseInteriorRings();
+    return _fcoverage->geomfactory()->createPolygon(outer, inners);
+}
+
+geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing()
+{
+    if (_parser->moveToNext("gml:exterior")) {
+        if (_parser->moveToNext("gml:posList")) {
+            std::string wkt = _parser->readElementText().toStdString();
+            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt);
+            return _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
+        }
+    }
+}
+
+
+std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings()
+{
+   std::vector<geos::geom::Geometry *>* innerRings = new std::vector<geos::geom::Geometry *>();
+    while (_parser->moveToNext("gml:interior")) {
+        if (_parser->moveToNext("gml:posList")) {
+            std::string wkt = _parser->readElementText().toStdString();
+            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt);
+            geos::geom::LinearRing *ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
+            innerRings->push_back(ring);
+        }
+    }
+    return innerRings;
 }

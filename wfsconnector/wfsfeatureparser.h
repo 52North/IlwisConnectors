@@ -21,7 +21,7 @@ public:
     /**
      * Parses feature instances and add them to the feature coverage.<br/>
      * <br/>
-     * Note that a WFS feature attribute table has to be constructed first to give
+     * Note that the feature's attribute table has to be constructed first to give
      * valuable results. This can be done by means of a WfsFeatureDescriptionParser
      * which uses the feature's schema description served by the WFS to create appropriate
      * Domain columns for each feature attribute.<br/>
@@ -32,29 +32,15 @@ public:
      *
      * TODO: for now only the target namespace is being used ... propably this is enough
      *
-     * @param mappings the xml schema namespace mappings.
+     * @param wfsSchemaInfo meta info about the parsed WFS schema.
      */
-    void parseFeatureMembers(QMap<QString,QString> &mappings);
-
-    /**
-     * Sets individual column handlers according to the domain associated with the given
-     * table.<br/>
-     * <br/>
-     * Note that a WFS feature attribute table has to be constructed first to give
-     * valuable results. This can be done by means of a WfsFeatureDescriptionParser
-     * which uses the feature's schema description served by the WFS to create appropriate
-     * Domain columns for each feature attribute.<br/>
-     *
-     * @param table the table having domain descriptions for each column.
-     */
-    void setColumnCallbacks(ITable &table);
+    void parseFeatureMembers(WfsSchemaInfo &wfsSchemaInfo);
 
 private:
     XmlStreamParser *_parser;
     FeatureCoverage *_fcoverage;
-    std::vector<FillerColumnDef*> _columnFillers;
 
-    void loadRecord(ITable &table, std::vector<QVariant> &record);
+    void parseFeature(std::vector<QVariant> &record, QString geomAttributeName);
 
     QVariant fillStringColumn();
     QVariant fillDoubleColumn();
@@ -62,11 +48,12 @@ private:
     QVariant fillIntegerColumn();
     QVariant parseFeatureGeometry();
 
-};
+    void updateSrsInfo(QString &srsName, QString &srsDimension);
+    bool updateSrsInfoUntil(QString qname, QString &srsName, QString srsDimension);
+    geos::geom::Geometry *parsePolygon();
+    geos::geom::LinearRing *parseExteriorRing();
+    std::vector<geos::geom::Geometry *> *parseInteriorRings();
 
-struct FillerColumnDef {
-    QVariant (WfsFeatureParser::* fillFunc)();
-    FillerColumnDef(QVariant(WfsFeatureParser::* func)()): fillFunc(func) {}
 };
 
 }

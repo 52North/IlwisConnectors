@@ -19,7 +19,7 @@ public:
 
 
 private:
-    QMap<QString,QString> _namespaceMappings;
+    WfsSchemaInfo _wfsSchemaInfo;
 
     void initFeatureTable(ITable &table) const;
 

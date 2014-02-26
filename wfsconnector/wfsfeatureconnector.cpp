@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iterator>
 
+#include "geos/geom/LinearRing.h"
+
 #include "kernel.h"
 #include "module.h"
 #include "coverage.h"
@@ -23,6 +25,7 @@
 #include "featureiterator.h"
 #include "ilwisobjectconnector.h"
 #include "wfsconnector.h"
+#include "wfsschemainfo.h"
 #include "wfsfeatureconnector.h"
 #include "wfsfeatureparser.h"
 #include "wfsfeaturedescriptionparser.h"
@@ -56,7 +59,7 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
     WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse);
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
-    return schemaParser.parseSchemaDescription(fcoverage, _namespaceMappings);
+    return schemaParser.parseSchemaDescription(fcoverage, _wfsSchemaInfo);
 }
 
 void WfsFeatureConnector::initFeatureTable(ITable &table) const
@@ -82,7 +85,7 @@ bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
     QUrlQuery queryFeature(featureUrl);
     WfsResponse *response = wfs.getFeature(queryFeature);
     WfsFeatureParser featureParser(response, fcoverage);
-    featureParser.parseFeatureMembers(_namespaceMappings);
+    featureParser.parseFeatureMembers(_wfsSchemaInfo);
 
     return false;
 }
