@@ -101,16 +101,18 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
         coverageType |= type;
 
         //feature counts
-        int temp = gdal()->getFeatureCount(hLayer, TRUE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
+        int temp = gdal()->getFeatureCount(hLayer, FALSE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
         featureCount = fcoverage->featureCount(type);
         featureCount += (temp == -1) ? 0 : temp;
         fcoverage->setFeatureCount(type, featureCount,0); // subgeometries are not known at this level
 
         //layer envelopes/extents
         OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
-        OGRErr err = gdal()->getLayerExtent(hLayer, &envelope , TRUE);//TRUE to FORCE
+        OGRErr err = gdal()->getLayerExtent(hLayer, &envelope , FALSE);//TRUE to FORCE
         if (err != OGRERR_NONE){
-            ERROR2(ERR_COULD_NOT_LOAD_2,QString("(TRY FORCE) extent of a layer from: %2").arg(_filename.toString()),QString(":%1").arg(gdal()->translateOGRERR(err)));
+            if (!(err == OGRERR_FAILURE && (temp == 0 || temp == -1) )){//on an empty layer or if simply too expensive(FORECE+FALSE) OGR_L_GetExtent may return OGRERR_FAILURE
+                ERROR2(ERR_COULD_NOT_LOAD_2,QString("extent of a layer from: %2").arg(_filename.toString()),QString(":%1").arg(gdal()->translateOGRERR(err)));
+            }
         }
         if(!initMinMax){
             bbox=Envelope(Coordinate(envelope.MinX,envelope.MinY),Coordinate(envelope.MaxX,envelope.MaxY));

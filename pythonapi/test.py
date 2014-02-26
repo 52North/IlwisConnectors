@@ -75,7 +75,15 @@ try:
             expected = ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
                  'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT')
             actual = t.columns()
-            self.assertTrue(all(expected[i] == actual[i] for i in range(len(expected))))
+            self.assertTrue(all(expected[i] == actual[i] for i in range(len(expected))))  # if rainfall.shp was loaded before "feature_id" might be the last field
+            fc = FeatureCoverage("rainfall.shp")
+            self.assertTrue(bool(fc))
+            self.assertFalse(fc.isInternal(), msg="created a new table object with that name!!")
+            self.assertEqual(
+                ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
+                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
+                fc.attributeTable().columns()
+            )
 
     #@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
