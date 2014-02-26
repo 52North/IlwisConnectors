@@ -80,7 +80,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
 
 
 
-    int layer = 0;//only first layer will be read/fit into single FeatureCoverage(*data)
+    int layer = 0;// TODO: only first layer will be read/fit into single FeatureCoverage(*data)
     OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
     if ( hLayer) {
         //attribute table
@@ -101,7 +101,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
         coverageType |= type;
 
         //feature counts
-        int temp = gdal()->getFeatureCount(hLayer, FALSE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
+        int temp = gdal()->getFeatureCount(hLayer, TRUE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
         featureCount = fcoverage->featureCount(type);
         featureCount += (temp == -1) ? 0 : temp;
         fcoverage->setFeatureCount(type, featureCount,0); // subgeometries are not known at this level

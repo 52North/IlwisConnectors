@@ -29,7 +29,7 @@ try:
         def test_AttributeTable(self):
             fc = FeatureCoverage("rainfall.shp")
             t = fc.attributeTable()
-            self.assertEqual(t.name(), "rainfall.shp")  # TODO
+            self.assertEqual(t.name(), "rainfall.shp")
             self.assertEqual(
                 ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
                  'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
@@ -427,8 +427,10 @@ try:
                 self.skipTest("could not set working directory!")
 
         def test_GPXFromFile(self):
+            # fc = FeatureCoverage("favourites.gpx")
             fc = FeatureCoverage("test.gpx")
             self.assertFalse(fc.isInternal())
+            self.assertEqual(fc.featureCount(), 23)
 
         ##@ut.skip("temporarily")
         def test_FeatureCoverage(self):

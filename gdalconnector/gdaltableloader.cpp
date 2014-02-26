@@ -36,6 +36,11 @@ GdalTableLoader::~GdalTableLoader()
 }
 
 void GdalTableLoader::loadMetaData(Table *attTable, OGRLayerH hLayer) {
+    int temp = gdal()->getFeatureCount(hLayer, TRUE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
+    int recordCount = attTable->recordCount();
+    recordCount += (temp == -1) ? 0 : temp;
+    attTable->recordCount(recordCount);
+
     OGRFeatureDefnH hLayerDef = gdal()->getLayerDef(hLayer);
     int fieldCount = gdal()->getFieldCount(hLayerDef);
     for (int i = 0; i < fieldCount; i++){
@@ -137,11 +142,11 @@ void GdalTableLoader::setColumnCallbacks(Table * attTable, OGRLayerH hLayer){
                             _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDoubleColumn, j);
                         }else if (tp & itDATETIME){
                             //creating the actual range as invalid to be adjusted in the fillers
-                            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
-                            double min = r->min();
-                            r->min(r->max());
-                            r->max(min);
-                            datadef.range(r);
+//                            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
+//                            double min = r->min();
+//                            r->min(r->max());
+//                            r->max(min);
+//                            datadef.range(r);
                             _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDateTimeColumn, j);
                         }
                     }

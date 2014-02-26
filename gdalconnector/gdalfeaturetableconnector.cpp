@@ -11,11 +11,6 @@
 #include "columndefinition.h"
 #include "basetable.h"
 #include "flattable.h"
-//#include "coverage.h"
-//#include "attributerecord.h"
-//#include "feature.h"
-//#include "featurecoverage.h"
-//#include "featureiterator.h"
 #include "gdaltableloader.h"
 
 using namespace Ilwis;

@@ -36,8 +36,11 @@ bool GdalCatalogConnector::loadItems()
 {
     QStringList filters = gdal()->getRasterExtensions();
     std::multimap<QString, DataFormat>  formats = DataFormat::getSelectedBy(DataFormat::fpEXTENSION, "connector='gdal'");
-    for(const auto& element : formats)
-        filters += "*." + element.second.property(DataFormat::fpEXTENSION).toString();
+    for(const auto& element : formats){
+        for(const auto& ext : element.second.property(DataFormat::fpEXTENSION).toString().split(",",QString::SkipEmptyParts)){
+                filters += "*." + ext;
+        }
+    }
     filters.removeOne("*.hdr");
     filters.removeDuplicates();
 
