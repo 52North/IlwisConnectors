@@ -142,164 +142,162 @@ class GdalHandle {
 class GDALProxy {
     friend GDALProxy* gdal();
 
-public:
+    public:
+        GDALProxy(const QString& gdalLibrary, const QString& proj4jLibrary);
+        ~GDALProxy();
 
+        bool isValid() const;
+        QStringList getRasterExtensions() const;
+       // QStringList getFeatureExtensions() const;
+        bool supports(const Resource& resource) const;
 
-public:
-    GDALProxy(const QString& gdalLibrary, const QString& proj4jLibrary);
-    ~GDALProxy();
+        template<class T> T  add(const QString& name) {
+            if (!_isValid)
+                return 0;
 
-    bool isValid() const;
-    QStringList getRasterExtensions() const;
-   // QStringList getFeatureExtensions() const;
-    bool supports(const Resource& resource) const;
-
-    template<class T> T  add(const QString& name) {
-        if (!_isValid)
-            return 0;
-
-        T fp =  (T )(_libgdal.resolve(name.toLocal8Bit()));
-        if ( fp == 0) {
-            kernel()->issues()->log(TR("GDAL-proxy not properly initialized; can't find %1").arg(name));
-            _isValid = false;
+            T fp =  (T )(_libgdal.resolve(name.toLocal8Bit()));
+            if ( fp == 0) {
+                kernel()->issues()->log(TR("GDAL-proxy not properly initialized; can't find %1").arg(name));
+                _isValid = false;
+            }
+            return fp;
         }
-        return fp;
-    }
 
-    GdalHandle* openFile(const QFileInfo &filename, quint64 asker, GDALAccess mode=GA_ReadOnly);
-    void closeFile(const QString& filename, quint64 asker);
-    OGRSpatialReferenceH srsHandle(GdalHandle* handle, const QString& source);
-    void releaseSrsHandle(GdalHandle* handle, OGRSpatialReferenceH srshandle, const QString& source);
+        GdalHandle* openFile(const QFileInfo &filename, quint64 asker, GDALAccess mode=GA_ReadOnly);
+        void closeFile(const QString& filename, quint64 asker);
+        OGRSpatialReferenceH srsHandle(GdalHandle* handle, const QString& source);
+        void releaseSrsHandle(GdalHandle* handle, OGRSpatialReferenceH srshandle, const QString& source);
 
-    IGDALClose close;
-    IGDALOpen open;
-    IGDALAllRegister registerAll;
-    IGDALIdentifyDriver identifyDriver;
-    IGDALGetSize xsize;
-    IGDALGetSize ysize;
-    IGDALGetSize layerCount;
-    IGDALRasValue minValue;
-    IGDALRasValue maxValue;
-    IGDALGetRasterBand getRasterBand;
-    IGDALCreate create;
-    IGDALGetRasterDataType rasterDataType;
-    IGDALGetProjectionRef getProjectionRef;
-    IGDALSetProjection setProjection;
-    IGDALGetGeoTransform getGeotransform;
-    IGDALSetGeoTransform setGeoTransform;
-    IGDALRasterIO rasterIO;
-    IGDALGetDataTypeSize getDataTypeSize;
-    IGDALGetAccess getAccess;
-    IGDALGetDriver getDriver;
-    IGDALGetDriverByName getGDALDriverByName;
-    IGDALGetDriverCount getDriverCount;
-    IGDALGetDriverName getLongName;
-    IGDALGetDriverName getShortName;
-    IGDALGetMetadataItem getMetaDataItem;
-    IGDALGetRasterColorInterpretation colorInterpretation;
-    //Open Spatial Reference
-    IOSRNewSpatialReference newSpatialRef;
-    IOSRImportFromWkt importFromWkt;
-    IOSRSetWellKnownGeogCS setWellKnownGeogCs;
-    IOSRIsProjectedFunc isProjected;
-    IOSRGetAttrValue getAttributeValue;
-    IOSRImportFromEPSG importFromEpsg;
-    IOSRExportToPrettyWkt exportToPrettyWkt;
-    IOSRGetProjParm getProjectionParm;
-    IOSRGetAuthorityCode getAuthorityCode;
-    IOSRGetAuthorityName getAuthorityName;
-    IOSRImportFromProj4 importFromProj4;
-    IOSRRelease releaseSRS;
-    //OGR
-    IOGROpen ogrOpen;
-    IOGRRegisterAll ogrRegisterAll;
-    IOGRGetDriverCount ogrDriverCount;
-    IOGRGetDriver ogrGetDriver;
-    IOGRGetDriverByName getDriverByName;
-    //OGR Driver
-    IOGRGetDriverName getOGRDriverName;
-    IOGRTestDriverCapability testDriverCapability;
-    IOGR_Dr_CreateDataSource createDatasource;
+        static QString translateOGRERR(char ogrErrCode);
 
-    IOGR_DS_GetLayerByName getLaterByName;
-    IGetLayerCount getLayerCount;
-    IGetLayer getLayer;
-    IGetLayerName getLayerName;
-    IGetLayerGeometryType getLayerGeometry;
-    IResetReading resetReading;
-    IGetNextFeature getNextFeature;
-    IGetLayerDefn getLayerDef;
-    IGetFieldCount getFieldCount;
-    IGetFieldDefn getFieldDfn;
-    IGetFieldType getFieldType;
-    IGetFieldAsInteger getFieldAsInt;
-    IGetFieldAsDouble getFieldAsDouble;
-    IGetFieldAsString getFieldAsString;
-    IOGR_F_GetFieldAsDateTime getFieldAsDateTime;
-    IGetGeometryRef getGeometryRef;
-    IGetGeometryType getGeometryType;
-    IDestroyFeature destroyFeature;
-    IGetPointCount getPointCount;
-    IGetPoints getPoint;
-    IGetSubGeometryCount getSubGeometryCount;
-    IGetSubGeometryRef getSubGeometryRef;
-    IGetSpatialRef getSpatialRef;
-    IExportToWkt exportToWkt;
-    IGetFeatureCount getFeatureCount;
-    IGetLayerExtent getLayerExtent;
-    IGetFieldName getFieldName;
+    private:
+        bool prepare();
 
-    ICPLPushFinderLocation pushFinderLocation;
-    ICPLGetLastErrorMsg getLastErrorMsg;
-    ICPLSetErrorHandler setCPLErrorHandler;
+        static QString translateCPLE(int errCode);
+        static void cplErrorHandler(CPLErr eErrClass, int err_no, const char *msg);
+
+        QLibrary _libgdal, _libproj4, _libexpat;
+        bool _isValid;
+        static GDALProxy *_proxy;
+        QStringList _rasterExtensions;
+        QHash<QString, GdalHandle*> _openedDatasets;
+
+    public:
+        IGDALClose close;
+        IGDALOpen open;
+        IGDALAllRegister registerAll;
+        IGDALIdentifyDriver identifyDriver;
+        IGDALGetSize xsize;
+        IGDALGetSize ysize;
+        IGDALGetSize layerCount;
+        IGDALRasValue minValue;
+        IGDALRasValue maxValue;
+        IGDALGetRasterBand getRasterBand;
+        IGDALCreate create;
+        IGDALGetRasterDataType rasterDataType;
+        IGDALGetProjectionRef getProjectionRef;
+        IGDALSetProjection setProjection;
+        IGDALGetGeoTransform getGeotransform;
+        IGDALSetGeoTransform setGeoTransform;
+        IGDALRasterIO rasterIO;
+        IGDALGetDataTypeSize getDataTypeSize;
+        IGDALGetAccess getAccess;
+        IGDALGetDriver getDriver;
+        IGDALGetDriverByName getGDALDriverByName;
+        IGDALGetDriverCount getDriverCount;
+        IGDALGetDriverName getLongName;
+        IGDALGetDriverName getShortName;
+        IGDALGetMetadataItem getMetaDataItem;
+        IGDALGetRasterColorInterpretation colorInterpretation;
+        //Open Spatial Reference
+        IOSRNewSpatialReference newSpatialRef;
+        IOSRImportFromWkt importFromWkt;
+        IOSRSetWellKnownGeogCS setWellKnownGeogCs;
+        IOSRIsProjectedFunc isProjected;
+        IOSRGetAttrValue getAttributeValue;
+        IOSRImportFromEPSG importFromEpsg;
+        IOSRExportToPrettyWkt exportToPrettyWkt;
+        IOSRGetProjParm getProjectionParm;
+        IOSRGetAuthorityCode getAuthorityCode;
+        IOSRGetAuthorityName getAuthorityName;
+        IOSRImportFromProj4 importFromProj4;
+        IOSRRelease releaseSRS;
+        //OGR
+        IOGROpen ogrOpen;
+        IOGRRegisterAll ogrRegisterAll;
+        IOGRGetDriverCount ogrDriverCount;
+        IOGRGetDriver ogrGetDriver;
+        IOGRGetDriverByName getDriverByName;
+        //OGR Driver
+        IOGRGetDriverName getOGRDriverName;
+        IOGRTestDriverCapability testDriverCapability;
+        IOGR_Dr_CreateDataSource createDatasource;
+
+        IOGR_DS_GetLayerByName getLaterByName;
+        IGetLayerCount getLayerCount;
+        IGetLayer getLayer;
+        IGetLayerName getLayerName;
+        IGetLayerGeometryType getLayerGeometry;
+        IResetReading resetReading;
+        IGetNextFeature getNextFeature;
+        IGetLayerDefn getLayerDef;
+        IGetFieldCount getFieldCount;
+        IGetFieldDefn getFieldDfn;
+        IGetFieldType getFieldType;
+        IGetFieldAsInteger getFieldAsInt;
+        IGetFieldAsDouble getFieldAsDouble;
+        IGetFieldAsString getFieldAsString;
+        IOGR_F_GetFieldAsDateTime getFieldAsDateTime;
+        IGetGeometryRef getGeometryRef;
+        IGetGeometryType getGeometryType;
+        IDestroyFeature destroyFeature;
+        IGetPointCount getPointCount;
+        IGetPoints getPoint;
+        IGetSubGeometryCount getSubGeometryCount;
+        IGetSubGeometryRef getSubGeometryRef;
+        IGetSpatialRef getSpatialRef;
+        IExportToWkt exportToWkt;
+        IGetFeatureCount getFeatureCount;
+        IGetLayerExtent getLayerExtent;
+        IGetFieldName getFieldName;
+
+        ICPLPushFinderLocation pushFinderLocation;
+        ICPLGetLastErrorMsg getLastErrorMsg;
+        ICPLSetErrorHandler setCPLErrorHandler;
 
 
-    IOGRReleaseDataSource releaseDataSource;
-    IOGRGetSpatialFilter getSpatialFilter;
-    IOGRGetEnvelope3D getEnvelope3D;
-    IOGR_DS_Destroy destroyDataSource;
-    //OGR DataSource
-    IOGR_DS_CreateLayer createOgrLayer;
-    IOGR_Fld_Create createAttributeDefintion;
-    IOGR_L_CreateField addAttribute;
-    IOGR_Fld_Destroy destroyAttributeDefintion;
-    IOGR_F_Create createFeature;
-    IOGR_L_GetLayerDefn getLayerSchema;
-    IOGR_F_GetFieldIndex getFieldIndex;
-    IOGR_F_SetFieldDateTime setDateTimeAttribute;
-    IOGR_F_SetFieldString setStringAttribute;
-    IOGR_F_SetFieldInteger setIntegerAttribute;
-    IOGR_F_SetFieldDouble setDoubleAttribute;
-    IOGR_G_CreateGeometry createGeometry;
-    IOGR_G_AddPoint addPoint;
-    IOGR_G_AddPoint_2D addPoint2D;
-    IOGR_G_SetPoint setPoint;
-    IOGR_G_SetPoint_2D setPoint2D;
-    IOGR_F_SetGeometry setGeometry;
-    IOGR_F_SetGeometryDirectly setGeometryDirectly;
-    IOGR_G_DestroyGeometry destroyGeometry;
-    IOGR_L_CreateFeature addFeature2Layer;
-    IOGR_G_AddGeometry addGeometry;
-    IOGR_G_AddGeometryDirectly addGeometryDirectly;
-    IOGR_G_GetCoordinateDimension getCoordinateDimension;
+        IOGRReleaseDataSource releaseDataSource;
+        IOGRGetSpatialFilter getSpatialFilter;
+        IOGRGetEnvelope3D getEnvelope3D;
+        IOGR_DS_Destroy destroyDataSource;
+        //OGR DataSource
+        IOGR_DS_CreateLayer createOgrLayer;
+        IOGR_Fld_Create createAttributeDefintion;
+        IOGR_L_CreateField addAttribute;
+        IOGR_Fld_Destroy destroyAttributeDefintion;
+        IOGR_F_Create createFeature;
+        IOGR_L_GetLayerDefn getLayerSchema;
+        IOGR_F_GetFieldIndex getFieldIndex;
+        IOGR_F_SetFieldDateTime setDateTimeAttribute;
+        IOGR_F_SetFieldString setStringAttribute;
+        IOGR_F_SetFieldInteger setIntegerAttribute;
+        IOGR_F_SetFieldDouble setDoubleAttribute;
+        IOGR_G_CreateGeometry createGeometry;
+        IOGR_G_AddPoint addPoint;
+        IOGR_G_AddPoint_2D addPoint2D;
+        IOGR_G_SetPoint setPoint;
+        IOGR_G_SetPoint_2D setPoint2D;
+        IOGR_F_SetGeometry setGeometry;
+        IOGR_F_SetGeometryDirectly setGeometryDirectly;
+        IOGR_G_DestroyGeometry destroyGeometry;
+        IOGR_L_CreateFeature addFeature2Layer;
+        IOGR_G_AddGeometry addGeometry;
+        IOGR_G_AddGeometryDirectly addGeometryDirectly;
+        IOGR_G_GetCoordinateDimension getCoordinateDimension;
 
-    IVSIFileFromMemBuffer vsiFileFromMem;
-    IVSIFCloseL vsiClose;
-    IFree free;
-
-private:
-    bool prepare();
-
-    static QString translateOGRERR(char ogrErrCode);
-    static QString translateCPLE(int errCode);
-    static void cplErrorHandler(CPLErr eErrClass, int err_no, const char *msg);
-
-    QLibrary _libgdal, _libproj4, _libexpat;
-    bool _isValid;
-    static GDALProxy *_proxy;
-    //QStringList _featureExtensions;
-    QStringList _rasterExtensions;
-    QHash<QString, GdalHandle*> _openedDatasets;
+        IVSIFileFromMemBuffer vsiFileFromMem;
+        IVSIFCloseL vsiClose;
+        IFree free;
 };
 
 GDALProxy *gdal();

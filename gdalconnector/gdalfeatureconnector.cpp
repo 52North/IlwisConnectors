@@ -108,9 +108,9 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
 
         //layer envelopes/extents
         OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
-        OGRErr er = gdal()->getLayerExtent(hLayer, &envelope , FALSE);//TRUE to FORCE
-        if (er ==  OGRERR_FAILURE){
-            ERROR2(ERR_COULD_NOT_LOAD_2,QString("(TRY FORCE) extent of a layer from: %2").arg(_filename.toString()),QString(":%1").arg(gdal()->getLastErrorMsg()));
+        OGRErr err = gdal()->getLayerExtent(hLayer, &envelope , TRUE);//TRUE to FORCE
+        if (err != OGRERR_NONE){
+            ERROR2(ERR_COULD_NOT_LOAD_2,QString("(TRY FORCE) extent of a layer from: %2").arg(_filename.toString()),QString(":%1").arg(gdal()->translateOGRERR(err)));
         }
         if(!initMinMax){
             bbox=Envelope(Coordinate(envelope.MinX,envelope.MinY),Coordinate(envelope.MaxX,envelope.MaxY));
