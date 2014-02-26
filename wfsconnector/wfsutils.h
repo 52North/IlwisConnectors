@@ -20,7 +20,7 @@ public:
 
         bool isHttpRequest = url.scheme().startsWith("http");
         bool isWfsRequest = isExpectedValue(query.queryItemValue("service"), "wfs");
-        checkVersionCompatibility(query.queryItemValue("acceptversions"));
+        if(isHttpRequest && isWfsRequest) checkVersionCompatibility(query.queryItemValue("acceptversions"));
         return isHttpRequest && isWfsRequest;
     }
 
