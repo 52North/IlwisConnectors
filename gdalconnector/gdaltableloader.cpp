@@ -142,11 +142,11 @@ void GdalTableLoader::setColumnCallbacks(Table * attTable, OGRLayerH hLayer){
                             _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDoubleColumn, j);
                         }else if (tp & itDATETIME){
                             //creating the actual range as invalid to be adjusted in the fillers
-                            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
-                            double min = r->min();
-                            r->min(r->max());
-                            r->max(min);
-                            datadef.range(r);
+//                            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
+//                            double min = r->min();
+//                            r->min(r->max());
+//                            r->max(min);
+//                            datadef.range(r);
                             _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDateTimeColumn, j);
                         }
                     }

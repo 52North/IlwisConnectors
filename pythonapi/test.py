@@ -427,8 +427,8 @@ try:
                 self.skipTest("could not set working directory!")
 
         def test_GPXFromFile(self):
-            fc = FeatureCoverage("favourites.gpx")
-            # fc = FeatureCoverage("test.gpx")
+            # fc = FeatureCoverage("favourites.gpx")
+            fc = FeatureCoverage("test.gpx")
             self.assertFalse(fc.isInternal())
             self.assertEqual(fc.featureCount(), 23)
 
