@@ -117,8 +117,6 @@ namespace pythonapi {
             return GeoReference.toGeoReference(obj)
         elif (type == 4096) or (type == 8192):
             return CoordinateSystem.toCoordinateSystem(obj)
-        elif type <= 0xFFFFFFFFFFFFFFFF:
-            return PyVariant.toPyVariant(obj)
         elif type == 0:
             raise TypeError("unknown IlwisType")
         else:

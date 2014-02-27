@@ -1,6 +1,7 @@
 #ifndef PYTHONAPI_PYDATETIME_H
 #define PYTHONAPI_PYDATETIME_H
 
+//from Python.h
 typedef struct _object PyObject;
 
 namespace pythonapi {
@@ -16,6 +17,22 @@ namespace pythonapi {
 
     PyObject* PyDeltaFromDSU(int days, int seconds, int useconds);
     //    Return a datetime.timedelta object representing the given number of days, seconds and microseconds. Normalization is performed so that the resulting number of microseconds and seconds lie in the ranges documented for datetime.timedelta objects.
+
+    int PyDateCheckExact(const PyObject* ob);
+    int PyDateTimeCheckExact(const PyObject* ob);
+    int PyTimeCheckExact(const PyObject* ob);
+    int PyDateTimeGET_YEAR(void *o);
+    int PyDateTimeGET_MONTH(void *o);
+    int PyDateTimeGET_DAY(void *o);
+    int PyDateTimeDATE_GET_HOUR(void *o);
+    int PyDateTimeDATE_GET_MINUTE(void *o);
+    int PyDateTimeDATE_GET_SECOND(void *o);
+    int PyDateTimeDATE_GET_MICROSECOND(void *o);
+    int PyDateTimeTIME_GET_HOUR(void *o);
+    int PyDateTimeTIME_GET_MINUTE(void *o);
+    int PyDateTimeTIME_GET_SECOND(void *o);
+    int PyDateTimeTIME_GET_MICROSECOND(void *o);
+
 
 } // namespace pythonapi
 

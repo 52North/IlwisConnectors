@@ -7,6 +7,7 @@
 //Qt typedefs
 typedef unsigned int uint;
 typedef qint64 qlonglong;
+typedef quint64 qulonglong;
 
 class QVariant;
 
@@ -42,8 +43,8 @@ namespace pythonapi{
         * \param obj takes the return value of Engine::_do() which is of the general type pythonapi::Object
         * \return castet pointer to the same object as PyVariant*
         */
-        static PyVariant* toPyVariant(Object* obj);
-
+        static QVariant* toQVariant(const PyObject* obj);
+        static PyObject* toPyObject(const QVariant& var);
 
     private:
         PyVariant(QVariant* data);//takes ownership of this QVariant instance

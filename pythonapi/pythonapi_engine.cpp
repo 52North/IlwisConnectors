@@ -113,7 +113,7 @@ Object *Engine::_do(std::string output_name, std::string operation, std::string 
                 return new GeoReference(obj);
             }
         }
-        return new PyVariant(new QVariant(result._var));
+        throw Ilwis::ErrorObject(QString("couln't handle return type of do(%1)").arg(command));
     }else{
         throw Ilwis::ErrorObject(QString("couln't do(%1)").arg(command));
     }

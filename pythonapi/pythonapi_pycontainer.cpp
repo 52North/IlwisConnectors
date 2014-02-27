@@ -61,4 +61,28 @@ Py_buffer* newPyBuffer(void* buf, int len, int readOnly){
     return ret;
 }
 
+PyObject* PyFloatFromDouble(double v){
+    return PyFloat_FromDouble(v);
+}
+
+PyObject* PyLongFromLong(long v){
+    return PyLong_FromLong(v);
+}
+
+PyObject* PyLongFromUnsignedLong(long v){
+    return PyLong_FromUnsignedLong(v);
+}
+
+PyObject* PyUnicodeFromString(const char *u){
+    return PyUnicode_FromString(u);
+}
+
+PyObject* PyBoolFromLong(long v){
+    return PyBool_FromLong(v);
+}
+
+const char* typeName(const PyObject* obj){
+    return obj->ob_type->tp_name;
+}
+
 } // namespace pythonapi

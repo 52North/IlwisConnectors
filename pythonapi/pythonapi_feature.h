@@ -22,14 +22,13 @@ namespace pythonapi{
         bool __bool__() const;
         std::string __str__();
         quint64 id();
-        PyVariant* __getitem__(std::string name);
-        PyVariant* __getitem__(quint32 colIndex);
-        PyVariant* attribute(std::string name, PyVariant &defaultValue, int index = -1);
-        PyVariant* attribute(std::string name, qlonglong defaultValue, int index = -1);
-        PyVariant* attribute(std::string name, double defaultValue, int index = -1);
-        PyVariant* attribute(std::string name, std::string defaultValue, int index = -1);
-        void __setitem__(std::string name, PyVariant &value);
-        void setAttribute(std::string name, PyVariant &value, int index = -1);
+        PyObject* __getitem__(std::string name);
+        PyObject* __getitem__(quint32 colIndex);
+        PyObject* attribute(std::string name, qlonglong defaultValue, int index = -1);
+        PyObject* attribute(std::string name, double defaultValue, int index = -1);
+        PyObject* attribute(std::string name, std::string defaultValue, int index = -1);
+        void __setitem__(std::string name, const PyObject* value);
+        void setAttribute(std::string name, const PyObject* value, int index = -1);
         void __setitem__(std::string name, qlonglong value);
         void setAttribute(std::string name, qlonglong value, int index = -1);
         void __setitem__(std::string name, double value);
@@ -41,6 +40,7 @@ namespace pythonapi{
         void setGeometry(Geometry &geometry, int index = -1);
 
     private:
+        PyObject* attribute(std::string name, const QVariant &defaultValue, int index = -1);
         Feature(std::unique_ptr<Ilwis::FeatureInterface>& ilwisFeature, FeatureCoverage* fc);
         std::unique_ptr<Ilwis::FeatureInterface>& ptr() const;
         std::unique_ptr<Ilwis::FeatureInterface>& _ilwisSPFeatureI;

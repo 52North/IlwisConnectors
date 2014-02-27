@@ -18,6 +18,14 @@ namespace pythonapi {
 
     Py_buffer* newPyBuffer(void* buf, int len, int readOnly);
 
+    PyObject* PyFloatFromDouble(double v);
+    PyObject* PyLongFromLong(long v);
+    PyObject* PyLongFromUnsignedLong(long v);
+    PyObject* PyUnicodeFromString(const char *u);
+    PyObject* PyBoolFromLong(long v);
+
+    const char* typeName(const PyObject* obj);
+
 } // namespace pythonapi
 
 #endif // PYTHONAPI_VECTOR_H

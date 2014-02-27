@@ -63,22 +63,18 @@ namespace pythonapi {
         return this->ptr()->get<Ilwis::Table>()->columnIndex(QString::fromStdString(name));
     }
 
-    PyVariant* Table::cell(const std::string& name, quint32 rec){
-        PyVariant* ret = new PyVariant(new QVariant(
-            this->ptr()->get<Ilwis::Table>()->cell(QString::fromStdString(name), rec,false)
-                                                    ));
-        if (!ret->isValid())
-            throw std::out_of_range(QString("No attribute '%1' found").arg(name.c_str()).toStdString());
-        return ret;
+    PyObject* Table::cell(const std::string& name, quint32 rec){
+        QVariant ret = this->ptr()->get<Ilwis::Table>()->cell(QString::fromStdString(name), rec,false);
+        if (!ret.isValid())
+            throw std::out_of_range(QString("No attribute '%1' found or record %2 out of bound").arg(name.c_str()).arg(rec).toStdString());
+        return PyVariant::toPyObject(ret);
     }
 
-    PyVariant* Table::cell(quint32 colIndex, quint32 rec){
-        PyVariant* ret = new PyVariant(new QVariant(
-            this->ptr()->get<Ilwis::Table>()->cell(colIndex, rec,false)
-                                                    ));
-        if (!ret->isValid())
-            throw std::out_of_range(QString("No attribute in '%1.' column found").arg(colIndex).toStdString());
-        return ret;
+    PyObject* Table::cell(quint32 colIndex, quint32 rec){
+        QVariant ret = this->ptr()->get<Ilwis::Table>()->cell(colIndex, rec,false);
+        if (!ret.isValid())
+            throw std::out_of_range(QString("No attribute in '%1.' column found or record %2 out of bound").arg(colIndex).arg(rec).toStdString());
+        return PyVariant::toPyObject(ret);
     }
 
     void Table::setCell(const std::string& name, quint32 rec, PyVariant& value){
@@ -129,7 +125,7 @@ namespace pythonapi {
         return list;
     }
 
-    PyObject *Table::column(quint32 columnIndex) const{
+    PyObject* Table::column(quint32 columnIndex) const{
         std::vector<QVariant> col = this->ptr()->get<Ilwis::Table>()->column(columnIndex);
         PyObject* list = newPyTuple(col.size());
         int i = 0;

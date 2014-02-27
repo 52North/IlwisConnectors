@@ -53,22 +53,22 @@ try:
             self.assertEqual((4, 5, 6), t.select("march < 100 AND march != 87"))
             self.assertEqual((9, 10, 11), t.select("march == "+str(Const.rUNDEF) ))
             self.assertEqual(13, t.columnIndex("ident"))
-            self.assertEqual(81, int(t.cell("march", 4)))
+            self.assertEqual(81, t.cell("march", 4))
             self.assertEqual(2, t.columnIndex("march"))
-            self.assertEqual([81, 76, 79], [int(t.cell(2, rec)) for rec in t.select("march < 100 AND march != 87")])
-            self.assertEqual(Const.rUNDEF, float(t.cell("newColumn", 0)))
+            self.assertEqual([81, 76, 79], [t.cell(2, rec) for rec in t.select("march < 100 AND march != 87")])
+            self.assertEqual(Const.rUNDEF, t.cell("newColumn", 0))
             t.setCell("newColumn", 0, 32)
-            self.assertEqual(32, int(t.cell("newColumn", 0)))
+            self.assertEqual(32, t.cell("newColumn", 0))
             disconnectIssueLogger()
             t.setCell("newColumn", 0, "text")
             connectIssueLogger()
-            self.assertEqual(Const.rUNDEF, float(t.cell("newColumn", 0)))
+            self.assertEqual(Const.rUNDEF, t.cell("newColumn", 0))
             self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column("march"))
             self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
             self.assertEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
 
         def testStandaloneGdalTable(self):
-            t = Table("rainfall.shp")  # TODO not yet working if rainfall.shp was not loaded before
+            t = Table("rainfall.shp")
             self.assertTrue(bool(t))
             self.assertFalse(t.isInternal(), msg="created a new table object with that name!!")
             self.assertEqual(t.name(), "rainfall.shp")
@@ -368,7 +368,7 @@ try:
             pv = PyVariant(9223372036854775808)
             self.assertEqual(int(pv), -1)  # overflow(MAX+1)
             pv = PyVariant("9223372036854775808")
-            with self.assertRaises(TypeError, msg="did not overflow unsigned long long int"):
+            with self.assertRaises(ValueError, msg="did not overflow unsigned long long int"):
                 int(pv)
 
         def test_floatValues(self):
@@ -438,9 +438,11 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
 
         def test_GPXFromFile(self):
             # fc = FeatureCoverage("favourites.gpx")
-            fc = FeatureCoverage(workingDir+featureDir+"/test.gpx")
+            fc = FeatureCoverage("test.gpx")
             self.assertFalse(fc.isInternal())
             self.assertEqual(fc.featureCount(), 0)
+            for f in fc:
+                print(f.geometry())
 
         ##@ut.skip("temporarily")
         def test_FeatureCoverage(self):
@@ -459,9 +461,9 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             g = Geometry("POINT(5.4 6 9.0)", fc.coordinateSystem())
             newfeature = fc.newFeature(g)
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
-            for c in fc.attributes():
-                newfeature[c] = 12.0
-                self.assertEqual(float(newfeature[c]), 12.0, msg="new value of feature attribute not correct!")
+            for c in att:
+                newfeature[c] = 12
+                self.assertEqual(int(newfeature[c]), 12, msg="new value of feature attribute not correct!")
 
             self.assertEqual(fc.featureCount(), 14, msg="new feature count wrong")
 
@@ -477,15 +479,17 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 v = f["RAINFAL"]
             v = f["RAINFALL"]
             self.assertEqual(str(v), "UMSS", msg="wrong attribute value")
-            with self.assertRaises(TypeError, msg="no TypeError on attempt to convert non-numerical string to int"):
-                print(int(v))
+            with self.assertRaises(ValueError, msg="no TypeError on attempt to convert non-numerical string to int"):
+                self.assertEqual("it wont be a number", int(v))
+            f["RAINFALL"] = 12
+            self.assertEqual(12, int(f["RAINFALL"]), msg="no real type check here since it could be converted back and forth")
 
         def test_FeatureIterator(self):
             fc = FeatureCoverage("rainfall.shp")
             self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
             summ = 0
             for f in fc:
-                summ += float(f.attribute("MAY", 0))
+                summ += f.attribute("MAY", 0)
                 f["sum"] = summ
                 self.assertRegex(str(f), r"Feature\([0-9]*\)", msg="wrong feature representation")
                 self.assertRegex(str(f.geometry()),
@@ -515,8 +519,13 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             fc = FeatureCoverage("drainage.shp")
             it = iter(fc)
             f = next(it)
-            v = f["date"].toDateTime()
+            v = f["date"]
             self.assertEqual("2014-02-17 00:00:00", str(v))
+            import datetime
+            type(v) is datetime.datetime
+            self.assertEqual(v, datetime.datetime(2014, 2, 17))
+            f["date"] = datetime.datetime(2014, 2, 27)
+            self.assertEqual("2014-02-17 00:00:00", str(f["date"]))
 
 
         def test_loadGDALstoreGDAL(self):
@@ -911,7 +920,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             #        polygon.setAttribute("maxY", 0)
                 for point in distribution:
                     if polygon.geometry().contains(point.geometry()):
-                        maxval = max(int(polygon.attribute("maxY", 0)), int(point.attribute("freq_speciesY", 0)))
+                        maxval = max(polygon.attribute("maxY", 0), point.attribute("freq_speciesY", 0))
                         polygon.setAttribute("maxY", maxval)
 
             polygongrid.setConnection(workingDir + exampleDir + "/polygongrid", "vectormap", "ilwis3",IlwisObject.cmOUTPUT)
@@ -940,7 +949,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             count = 0
             fc_soils.addAttribute("selected", "boolean")
             for feature in fc_soils:
-                if float(feature["AREA"]) == 0.123:
+                if feature["AREA"] == 0.123:
                     count += 1
                     self.assertRegex(str(feature.geometry()), r"POLYGON\s\(\([\s\.\-\,0-9]*\)\)",
                                      msg="wrong WKT representation of geometry!")
@@ -968,9 +977,9 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 population_ranking = {}
                 self.assertEqual(286, world.featureCount())
                 for country in world:
-                    name = str(country["iso_a2"])
+                    name = country["iso_a2"]
                     if name not in population_ranking:
-                        population_ranking[name] = float(country["pop_est"])
+                        population_ranking[name] = country["pop_est"]
                 # print(sorted(population.items(), key=lambda x: x[1]))
                 self.assertEqual(
                     {'OM': 3418085.0, 'HU': 9905596.0, 'HT': 9035536.0, 'HR': 4489409.0, 'ZW': 12619600.0,

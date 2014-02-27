@@ -29,8 +29,8 @@ namespace pythonapi {
             PyObject* select(const std::string& conditions) const;
             PyObject* record(quint32 rec) const;
 
-            PyVariant* cell(const std::string& name, quint32 rec);
-            PyVariant* cell(quint32 colIndex, quint32 rec);
+            PyObject* cell(const std::string& name, quint32 rec);
+            PyObject* cell(quint32 colIndex, quint32 rec);
             void setCell(const std::string &name, quint32 rec, PyVariant &value);
             void setCell(quint32 colIndex, quint32 rec, PyVariant &value);
             void setCell(const std::string &name, quint32 rec, qint64 value);
