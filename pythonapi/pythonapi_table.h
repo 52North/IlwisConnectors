@@ -9,9 +9,6 @@ namespace Ilwis {
 }
 
 namespace pythonapi {
-
-    class PyVariant;
-
     class Table : public IlwisObject{
         friend class Coverage;
         public:
@@ -31,8 +28,8 @@ namespace pythonapi {
 
             PyObject* cell(const std::string& name, quint32 rec);
             PyObject* cell(quint32 colIndex, quint32 rec);
-            void setCell(const std::string &name, quint32 rec, PyVariant &value);
-            void setCell(quint32 colIndex, quint32 rec, PyVariant &value);
+            void setCell(const std::string &name, quint32 rec, const PyObject* value);
+            void setCell(quint32 colIndex, quint32 rec, const PyObject* value);
             void setCell(const std::string &name, quint32 rec, qint64 value);
             void setCell(quint32 colIndex, quint32 rec, qint64 value);
             void setCell(const std::string &name, quint32 rec, std::string value);

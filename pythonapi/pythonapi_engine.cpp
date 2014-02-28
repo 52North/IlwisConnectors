@@ -31,7 +31,6 @@
 
 #include "pythonapi_object.h"
 #include "pythonapi_engine.h"
-#include "pythonapi_pyvariant.h"
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_pycontainer.h"

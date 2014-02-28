@@ -11,6 +11,7 @@
 
 #include "pythonapi_pycontainer.h"
 #include "pythonapi_feature.h"
+#include "pythonapi_pyvariant.h"
 
 namespace pythonapi {
 
@@ -67,22 +68,26 @@ namespace pythonapi {
         QVariant ret = this->ptr()->get<Ilwis::Table>()->cell(QString::fromStdString(name), rec,false);
         if (!ret.isValid())
             throw std::out_of_range(QString("No attribute '%1' found or record %2 out of bound").arg(name.c_str()).arg(rec).toStdString());
-        return PyVariant::toPyObject(ret);
+        return QVariant2PyObject(ret);
     }
 
     PyObject* Table::cell(quint32 colIndex, quint32 rec){
         QVariant ret = this->ptr()->get<Ilwis::Table>()->cell(colIndex, rec,false);
         if (!ret.isValid())
             throw std::out_of_range(QString("No attribute in '%1.' column found or record %2 out of bound").arg(colIndex).arg(rec).toStdString());
-        return PyVariant::toPyObject(ret);
+        return QVariant2PyObject(ret);
     }
 
-    void Table::setCell(const std::string& name, quint32 rec, PyVariant& value){
-        this->ptr()->get<Ilwis::Table>()->setCell(QString::fromStdString(name), rec, value.data());
+    void Table::setCell(const std::string& name, quint32 rec, const PyObject* value){
+        QVariant* v = PyObject2QVariant(value);
+        this->ptr()->get<Ilwis::Table>()->setCell(QString::fromStdString(name), rec, *v);
+        delete v;
     }
 
-    void Table::setCell(quint32 colIndex, quint32 rec, PyVariant& value){
-        this->ptr()->get<Ilwis::Table>()->setCell(colIndex, rec, value.data());
+    void Table::setCell(quint32 colIndex, quint32 rec, const PyObject* value){
+        QVariant* v = PyObject2QVariant(value);
+        this->ptr()->get<Ilwis::Table>()->setCell(colIndex, rec, *v);
+        delete v;
     }
 
     void Table::setCell(const std::string& name, quint32 rec, qint64 value){

@@ -1,5 +1,6 @@
 #!/usr/bin python
 # -*- coding: utf-8 -*-
+from concurrent.futures.process import _WorkItem
 from unittest.case import skip
 
 try:
@@ -347,7 +348,7 @@ try:
             connectIssueLogger()
 
     #@ut.skip("temporarily")
-    class TestPyVariant(ut.TestCase):
+    class TestConst(ut.TestCase):
         def test_UNDEF(self):
             with self.assertRaises(AttributeError, msg="property is not read only!"):
                 Const.sUNDEF = "test"
@@ -357,29 +358,6 @@ try:
             self.assertEqual(Const.flUNDEF, -1e38)
             self.assertEqual(Const.rUNDEF, -1e308)
             self.assertEqual(Const.i64UNDEF, -9223372036854775808)
-
-        def test_integerValues(self):
-            pv = PyVariant(-9223372036854775808)
-            self.assertEqual(int(pv), -9223372036854775808)  # MIN(qlonglong)
-            pv = PyVariant(-9223372036854775809)
-            self.assertEqual(int(pv), -1)  # overflow(MIN-1)
-            pv = PyVariant(9223372036854775807)
-            self.assertEqual(int(pv), 9223372036854775807)  # MAX(qlonglong)
-            pv = PyVariant(9223372036854775808)
-            self.assertEqual(int(pv), -1)  # overflow(MAX+1)
-            pv = PyVariant("9223372036854775808")
-            with self.assertRaises(ValueError, msg="did not overflow unsigned long long int"):
-                int(pv)
-
-        def test_floatValues(self):
-            pv = PyVariant("9223372036854775808")
-            self.assertEqual(float(pv), 9223372036854775808)
-            pv = PyVariant(9223372036854775808.)
-            self.assertEqual(float(pv), 9223372036854775808)
-            pv = PyVariant(0.432)
-            self.assertEqual(float(pv), 0.432)
-            pv = PyVariant(23.4e-32)
-            self.assertEqual(float(pv), 23.4e-32)
 
     #@ut.skip("temporarily")
     class TestEngine(ut.TestCase):
@@ -410,7 +388,7 @@ try:
                     'aggregateraster', 'areanumbering', 'cross', 'linearstretch', 'linearrasterfilter',
                     'rankorderrasterfilter'
                     )
-            self.assertTupleEqual(oper, ops)
+            self.assertTrue(all((op in ops) for op in oper))
             self.assertEqual("gridsize(rastercoverage,xsize|ysize|zsize)", e.operationMetaData("rastersize"))
             self.assertEqual("gridding(coordinatesyste,top-coordinate,x-cell-size, y-cell-size, horizontal-cells, vertical-cells)",
                              e.operationMetaData("gridding"))
@@ -515,21 +493,55 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             f = next(it3)
             self.assertTrue(str(f), "Feature(1)")
 
-        def test_DateTimeAttribute(self):
+        def test_integerAttribute(self):pass  # TODO test integer Attributes
+            # fc = FeatureCoverage("itc.osm")
+            # it = iter(fc)
+            # f = next(it)
+            # self.assertEqual((), fc.attributes())
+            # pv = PyVariant(-9223372036854775808)
+            # self.assertEqual(int(pv), -9223372036854775808)  # MIN(qlonglong)
+            # pv = PyVariant(-9223372036854775809)
+            # self.assertEqual(int(pv), -1)  # overflow(MIN-1)
+            # pv = PyVariant(9223372036854775807)
+            # self.assertEqual(int(pv), 9223372036854775807)  # MAX(qlonglong)
+            # pv = PyVariant(9223372036854775808)
+            # self.assertEqual(int(pv), -1)  # overflow(MAX+1)
+            # pv = PyVariant("9223372036854775808")
+            # with self.assertRaises(ValueError, msg="did not overflow unsigned long long int"):
+            #     int(pv)
+
+        def test_floatAttribute(self): pass  # TODO test float Attributes
+            # pv = PyVariant("9223372036854775808")
+            # self.assertEqual(float(pv), 9223372036854775808)
+            # pv = PyVariant(9223372036854775808.)
+            # self.assertEqual(float(pv), 9223372036854775808)
+            # pv = PyVariant(0.432)
+            # self.assertEqual(float(pv), 0.432)
+            # pv = PyVariant(23.4e-32)
+            # self.assertEqual(float(pv), 23.4e-32)
+
+        def test_DateTimeAttribute(self):  # TODO test datetime and time Attributes
             fc = FeatureCoverage("drainage.shp")
             it = iter(fc)
             f = next(it)
             v = f["date"]
-            self.assertEqual("2014-02-17 00:00:00", str(v))
-            import datetime
-            type(v) is datetime.datetime
-            self.assertEqual(v, datetime.datetime(2014, 2, 17))
-            f["date"] = datetime.datetime(2014, 2, 27)
-            self.assertEqual("2014-02-27 00:00:00", str(f["date"]))
-            class NotSupportedObject: pass
-            with self.assertRaises(ValueError, msg="cannot convert instance NotSupportedObject() to Ilwis::Class"):
-                f["date"] = NotSupportedObject()
-            self.assertEqual(f["date"], datetime.datetime(2014, 2, 27))
+            self.assertEqual("2014-02-17", str(v))
+            try:
+                import datetime
+                self.assertTrue(type(v) is datetime.date)
+                self.assertEqual(v, datetime.date(2014, 2, 17))
+                f["date"] = datetime.datetime(2014, 2, 27)
+
+                class NotSupportedObject:
+                    pass
+                with self.assertRaises(ValueError, msg="cannot convert instance NotSupportedObject() to Ilwis class"):
+                    f["date"] = NotSupportedObject()
+                self.assertEqual(f["date"], datetime.datetime(2014, 2, 27))
+                with self.assertRaises(TypeError, msg="cannot convert None to Ilwis class"):
+                    f["date"] = None
+                self.assertEqual(f["date"], datetime.datetime(2014, 2, 27))
+            except ImportError as exc:
+                self.fail(msg=str(exc))
 
         def test_loadGDALstoreGDAL(self):
             # polygons
@@ -901,7 +913,6 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertEqual(1152*1152, it2.box().size().linearSize())
             bu = np.frombuffer(it2.asBuffer(), np.float, 500*1152, 0)  # numpy-array only from first block (500 lines)
             self.assertTrue(all(0 <= v <= 255 for v in bu))
-
 
     #@ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation

@@ -22,6 +22,7 @@
 #include "pythonapi_feature.h"
 #include "pythonapi_featurecoverage.h"
 
+#include "pythonapi_pyvariant.h"
 #include <QVariant>
 
 using namespace pythonapi;
@@ -48,14 +49,14 @@ PyObject* Feature::__getitem__(std::string name){
     QVariant ret = this->ptr()->cell(QString::fromStdString(name),-1,false);
     if (!ret.isValid())
         throw std::out_of_range(QString("No attribute '%1' found").arg(name.c_str()).toStdString());
-    return PyVariant::toPyObject(ret);
+    return QVariant2PyObject(ret);
 }
 
 PyObject* Feature::__getitem__(quint32 colIndex){
     QVariant ret = this->ptr()->cell(colIndex,-1,false);
     if (!ret.isValid())
         throw std::out_of_range(QString("No attribute in '%1.' column found").arg(colIndex).toStdString());
-    return PyVariant::toPyObject(ret);
+    return QVariant2PyObject(ret);
 }
 
 PyObject* Feature::attribute(std::string name,const QVariant& defaultValue, int index){
@@ -63,7 +64,7 @@ PyObject* Feature::attribute(std::string name,const QVariant& defaultValue, int 
         QVariant ret =  this->ptr()->cell(QString::fromStdString(name),index,false);
         if (!ret.isValid())
             throw std::out_of_range(QString("No attribute '%1' at index '%2' found").arg(name.c_str()).arg(index).toStdString());
-        return PyVariant::toPyObject(ret);
+        return QVariant2PyObject(ret);
     }else{
         QVariant var = this->ptr()->cell(QString::fromStdString(name),index,false);
         Ilwis::ColumnDefinition coldef = this->ptr()->columndefinition(QString::fromStdString(name));
@@ -72,17 +73,17 @@ PyObject* Feature::attribute(std::string name,const QVariant& defaultValue, int 
             if( (type & itNUMBER) || (type & itDATETIME)){
                 if(var.canConvert(QVariant::Double)){
                     if(var.toDouble() == Ilwis::rUNDEF){
-                        return PyVariant::toPyObject(defaultValue);
+                        return QVariant2PyObject(defaultValue);
                     }else{
-                        return PyVariant::toPyObject(var);
+                        return QVariant2PyObject(var);
                     }
                 }
             }else if((type & itSTRING) || (type & itDOMAINITEM)){
                 if(var.canConvert(QVariant::String)){
                     if(var.toString().compare(sUNDEF) == 0){
-                        return PyVariant::toPyObject(defaultValue);
+                        return QVariant2PyObject(defaultValue);
                     }else{
-                        return PyVariant::toPyObject(var);
+                        return QVariant2PyObject(var);
                     }
                 }
             }
@@ -91,7 +92,7 @@ PyObject* Feature::attribute(std::string name,const QVariant& defaultValue, int 
     }
 }
 
-PyObject* Feature::attribute(std::string name, qlonglong defaultValue, int index){
+PyObject* Feature::attribute(std::string name, qint64 defaultValue, int index){
     return this->attribute(name,QVariant(defaultValue),index);
 }
 
@@ -108,16 +109,16 @@ void Feature::__setitem__(std::string name, const PyObject* value){
 }
 
 void Feature::setAttribute(std::string name, const PyObject* value, int index){
-    QVariant* v = PyVariant::toQVariant(value);
+    QVariant* v = PyObject2QVariant(value);
     this->ptr()->setCell(QString::fromStdString(name), *v , index);
     delete v;
 }
 
-void Feature::__setitem__(std::string name,qlonglong value){
+void Feature::__setitem__(std::string name, qint64 value){
     this->setAttribute(name,value);
 }
 
-void Feature::setAttribute(std::string name, qlonglong value, int index){
+void Feature::setAttribute(std::string name, qint64 value, int index){
     this->ptr()->setCell(QString::fromStdString(name), QVariant(value), index);
 }
 

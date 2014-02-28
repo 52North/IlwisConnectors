@@ -17,7 +17,6 @@
 #include "pythonapi_coordinatesystem.h"
 #include "pythonapi_table.h"
 #include "pythonapi_coverage.h"
-#include "pythonapi_pyvariant.h"
 #include "pythonapi_object.h"
 #include "pythonapi_util.h"
 #include "pythonapi_geometry.h"
@@ -131,8 +130,6 @@ namespace pythonapi {
 %include "pythonapi_table.h"
 
 %include "pythonapi_coverage.h"
-
-%include "pythonapi_pyvariant.h"
 
 %include "pythonapi_object.h"
 
