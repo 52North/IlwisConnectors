@@ -140,13 +140,11 @@ void GdalTableLoader::setColumnCallbacks(Table * attTable, OGRLayerH hLayer){
                             r->max(min);
                             datadef.range(r);
                             _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDoubleColumn, j);
-                        }else if (tp & itDATETIME){
-                            //creating the actual range as invalid to be adjusted in the fillers
-//                            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
-//                            double min = r->min();
-//                            r->min(r->max());
-//                            r->max(min);
-//                            datadef.range(r);
+                        }else if (tp == itDATE){
+                            _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDateColumn, j);
+                        }else if (tp == itTIME){
+                            _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillTimeColumn, j);
+                        }else if (tp == itDATETIME){
                             _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDateTimeColumn, j);
                         }
                     }
@@ -172,10 +170,26 @@ QVariant GdalTableLoader::fillDoubleColumn(OGRFeatureH featureH, int colIntex){
     return QVariant(v);
 }
 
+QVariant GdalTableLoader::fillDateColumn(OGRFeatureH featureH, int colIntex){
+    int year,month,day,hour,minute,second,TZFlag;
+    if (gdal()->getFieldAsDateTime(featureH,colIntex,&year,&month,&day,&hour,&minute,&second,&TZFlag)){
+        return IVARIANT(Time(year, month, day));
+    }else
+        return QVariant();
+}
+
+QVariant GdalTableLoader::fillTimeColumn(OGRFeatureH featureH, int colIntex){
+    int year,month,day,hour,minute,second,TZFlag;
+    if (gdal()->getFieldAsDateTime(featureH,colIntex,&year,&month,&day,&hour,&minute,&second,&TZFlag)){
+        return IVARIANT(Time(hour, minute, (double)second));
+    }else
+        return QVariant();
+}
+
 QVariant GdalTableLoader::fillDateTimeColumn(OGRFeatureH featureH, int colIntex){
     int year,month,day,hour,minute,second,TZFlag;
     if (gdal()->getFieldAsDateTime(featureH,colIntex,&year,&month,&day,&hour,&minute,&second,&TZFlag)){
-        return IVARIANT(Time(year, month, day, hour, minute, second));
+        return IVARIANT(Time(year, month, day, hour, minute, (double)second));
     }else
         return QVariant();
 }

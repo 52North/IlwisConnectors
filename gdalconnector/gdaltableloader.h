@@ -18,8 +18,10 @@ class GdalTableLoader{
 
         QVariant fillStringColumn(OGRFeatureH featureH, int colIntex);
         QVariant fillDoubleColumn(OGRFeatureH featureH, int colIntex);
-        QVariant fillDateTimeColumn(OGRFeatureH featureH, int colIntex);
         QVariant fillIntegerColumn(OGRFeatureH featureH, int colIntex);
+        QVariant fillDateColumn(OGRFeatureH featureH, int colIntex);
+        QVariant fillTimeColumn(OGRFeatureH featureH, int colIntex);
+        QVariant fillDateTimeColumn(OGRFeatureH featureH, int colIntex);
 };
 
 struct FillerColumnDef{
