@@ -107,18 +107,33 @@ QVariant& PyVariant::data(){
 QVariant* PyVariant::toQVariant(const PyObject* obj){
     if (obj){
         if(PyDateCheckExact(obj)){
-            Ilwis::Time time;
+            Ilwis::Time time(
+                        PyDateTimeGET_YEAR(obj),
+                        PyDateTimeGET_MONTH(obj),
+                        PyDateTimeGET_DAY(obj)
+                        );
             return new QVariant(IVARIANT(time));
         }else if(PyTimeCheckExact(obj)){
-            Ilwis::Time time;
+            Ilwis::Time time(
+                        PyDateTimeTIME_GET_HOUR(obj),
+                        PyDateTimeTIME_GET_MINUTE(obj),
+                        PyDateTimeTIME_GET_SECOND(obj)
+                        );
             return new QVariant(IVARIANT(time));
         }else if(PyDateTimeCheckExact(obj)){
-            Ilwis::Time time;
+            Ilwis::Time time(
+                        PyDateTimeGET_YEAR(obj),
+                        PyDateTimeGET_MONTH(obj),
+                        PyDateTimeGET_DAY(obj),
+                        PyDateTimeDATE_GET_HOUR(obj),
+                        PyDateTimeDATE_GET_MINUTE(obj),
+                        PyDateTimeDATE_GET_SECOND(obj)
+                        );
             return new QVariant(IVARIANT(time));
         }
         throw std::domain_error(QString("Cannot convert PyObject of type %1").arg(typeName(obj)).toStdString());
     }
-    return new QVariant();
+    throw std::domain_error(QString("Cannot convert NULL pointer").toStdString());
 }
 
 PyObject* pythonapi::PyVariant::toPyObject(const QVariant& var){

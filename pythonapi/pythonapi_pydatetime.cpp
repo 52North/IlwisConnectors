@@ -37,48 +37,48 @@ namespace pythonapi {
         return PyTime_CheckExact(const_cast<PyObject*>(ob));
     }
 
-    int PyDateTimeGET_YEAR(void *o){
-        return PyDateTime_GET_YEAR(reinterpret_cast<PyDateTime_Date*>(o));
+    int PyDateTimeGET_YEAR(const void* o){
+        return PyDateTime_GET_YEAR(reinterpret_cast<PyDateTime_Date*>(const_cast<void*>(o)));
     }
 
-    int PyDateTimeGET_MONTH(void *o){
-        return PyDateTime_GET_MONTH(reinterpret_cast<PyDateTime_Date*>(o));
+    int PyDateTimeGET_MONTH(const void* o){
+        return PyDateTime_GET_MONTH(reinterpret_cast<PyDateTime_Date*>(const_cast<void*>(o)));
     }
 
-    int PyDateTimeGET_DAY(void *o){
-        return PyDateTime_GET_DAY(reinterpret_cast<PyDateTime_Date*>(o));
+    int PyDateTimeGET_DAY(const void* o){
+        return PyDateTime_GET_DAY(reinterpret_cast<PyDateTime_Date*>(const_cast<void*>(o)));
     }
 
-    int PyDateTimeDATE_GET_HOUR(void *o){
-        return PyDateTime_DATE_GET_HOUR(reinterpret_cast<PyDateTime_DateTime*>(o));
+    int PyDateTimeDATE_GET_HOUR(const void* o){
+        return PyDateTime_DATE_GET_HOUR(reinterpret_cast<PyDateTime_DateTime*>(const_cast<void*>(o)));
     }
 
-    int PyDateTimeDATE_GET_MINUTE(void *o){
-        return PyDateTime_DATE_GET_MINUTE(reinterpret_cast<PyDateTime_DateTime*>(o));
+    int PyDateTimeDATE_GET_MINUTE(const void* o){
+        return PyDateTime_DATE_GET_MINUTE(reinterpret_cast<PyDateTime_DateTime*>(const_cast<void*>(o)));
     }
 
-    int PyDateTimeDATE_GET_SECOND(void *o){
-        return PyDateTime_DATE_GET_SECOND(reinterpret_cast<PyDateTime_DateTime*>(o));
+    int PyDateTimeDATE_GET_SECOND(const void* o){
+        return PyDateTime_DATE_GET_SECOND(reinterpret_cast<PyDateTime_DateTime*>(const_cast<void*>(o)));
     }
 
-    int PyDateTimeDATE_GET_MICROSECOND(void *o){
-        return PyDateTime_DATE_GET_MICROSECOND(reinterpret_cast<PyDateTime_DateTime*>(o));
+    int PyDateTimeDATE_GET_MICROSECOND(const void* o){
+        return PyDateTime_DATE_GET_MICROSECOND(reinterpret_cast<PyDateTime_DateTime*>(const_cast<void*>(o)));
     }
 
-    int PyDateTimeTIME_GET_HOUR(void *o){
-        return PyDateTime_TIME_GET_HOUR(reinterpret_cast<PyDateTime_Time*>(o));
+    int PyDateTimeTIME_GET_HOUR(const void* o){
+        return PyDateTime_TIME_GET_HOUR(reinterpret_cast<PyDateTime_Time*>(const_cast<void*>(o)));
     }
 
-    int PyDateTimeTIME_GET_MINUTE(void *o){
-        return PyDateTime_TIME_GET_MINUTE(reinterpret_cast<PyDateTime_Time*>(o));
+    int PyDateTimeTIME_GET_MINUTE(const void* o){
+        return PyDateTime_TIME_GET_MINUTE(reinterpret_cast<PyDateTime_Time*>(const_cast<void*>(o)));
     }
 
-    int PyDateTimeTIME_GET_SECOND(void *o){
-        return PyDateTime_TIME_GET_SECOND(reinterpret_cast<PyDateTime_Time*>(o));
+    int PyDateTimeTIME_GET_SECOND(const void* o){
+        return PyDateTime_TIME_GET_SECOND(reinterpret_cast<PyDateTime_Time*>(const_cast<void*>(o)));
     }
 
-    int PyDateTimeTIME_GET_MICROSECOND(void *o){
-        return PyDateTime_TIME_GET_MICROSECOND(reinterpret_cast<PyDateTime_Time*>(o));
+    int PyDateTimeTIME_GET_MICROSECOND(const void* o){
+        return PyDateTime_TIME_GET_MICROSECOND(reinterpret_cast<PyDateTime_Time*>(const_cast<void*>(o)));
     }
 
 

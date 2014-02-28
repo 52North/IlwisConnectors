@@ -525,8 +525,11 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             type(v) is datetime.datetime
             self.assertEqual(v, datetime.datetime(2014, 2, 17))
             f["date"] = datetime.datetime(2014, 2, 27)
-            self.assertEqual("2014-02-17 00:00:00", str(f["date"]))
-
+            self.assertEqual("2014-02-27 00:00:00", str(f["date"]))
+            class NotSupportedObject: pass
+            with self.assertRaises(ValueError, msg="cannot convert instance NotSupportedObject() to Ilwis::Class"):
+                f["date"] = NotSupportedObject()
+            self.assertEqual(f["date"], datetime.datetime(2014, 2, 27))
 
         def test_loadGDALstoreGDAL(self):
             # polygons
