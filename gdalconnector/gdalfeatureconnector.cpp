@@ -73,12 +73,6 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
         return false;
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
-    IlwisTypes coverageType = itUNKNOWN;
-    int featureCount = 0;
-    Envelope bbox;
-    bool initMinMax = 0;
-
-
 
     int layer = 0;// TODO: only first layer will be read/fit into single FeatureCoverage(*data)
     OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
@@ -96,44 +90,36 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
         //feature types
         IlwisTypes type = translateOGRType(gdal()->getLayerGeometry(hLayer));
         if (type == itUNKNOWN){
-            ERROR2(ERR_COULD_NOT_LOAD_2,QString("layer from: %1").arg(_filename.toString()),QString(":%1").arg(gdal()->getLastErrorMsg()));
+            WARN(QString("Unknown feature type of layer %1 from: %2").arg(layer).arg(_filename.toString()));
+        }else{
+            fcoverage->featureTypes(type);
         }
-        coverageType |= type;
 
         //feature counts
         int temp = gdal()->getFeatureCount(hLayer, FALSE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
-        featureCount = fcoverage->featureCount(type);
-        featureCount += (temp == -1) ? 0 : temp;
-        fcoverage->setFeatureCount(type, featureCount,0); // subgeometries are not known at this level
+        if (temp == -1){
+            WARN(QString("Couldn't determine feature count of layer %1 from meta data of %2").arg(layer).arg(_filename.toString()));
+        }else{
+            int featureCount = fcoverage->featureCount(type);
+            featureCount += temp;
+            fcoverage->setFeatureCount(type, featureCount,0); // subgeometries are not known at this level
+        }
 
         //layer envelopes/extents
+        Envelope bbox;
         OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
         OGRErr err = gdal()->getLayerExtent(hLayer, &envelope , FALSE);//TRUE to FORCE
         if (err != OGRERR_NONE){
-            if (!(err == OGRERR_FAILURE && (temp == 0 || temp == -1) )){//on an empty layer or if simply too expensive(FORECE+FALSE) OGR_L_GetExtent may return OGRERR_FAILURE
-                ERROR2(ERR_COULD_NOT_LOAD_2,QString("extent of a layer from: %2").arg(_filename.toString()),QString(":%1").arg(gdal()->translateOGRERR(err)));
+            if (err == OGRERR_FAILURE){//on an empty layer or if simply too expensive(FORECE=FALSE) OGR_L_GetExtent may return OGRERR_FAILURE
+                WARN(QString("Couldn't determine the extent of layer %1 from meta data of %2").arg(layer).arg(_filename.toString()));
+            }else{
+                ERROR0(QString("Couldn't load extent of layer %1 from %2: %3").arg(layer).arg(_filename.toString()).arg(gdal()->translateOGRERR(err)));
             }
-        }
-        if(!initMinMax){
-            bbox=Envelope(Coordinate(envelope.MinX,envelope.MinY),Coordinate(envelope.MaxX,envelope.MaxY));
         }else{
-            if(bbox.max_corner().x < envelope.MaxX)
-                bbox.max_corner().x = envelope.MaxX;
-            if(bbox.max_corner().y < envelope.MaxY)
-                bbox.max_corner().y = envelope.MaxY;
-            if(bbox.min_corner().x > envelope.MinX)
-                bbox.min_corner().x = envelope.MinX;
-            if(bbox.min_corner().y > envelope.MinY)
-                bbox.min_corner().y = envelope.MinY;
+            bbox = Envelope(Coordinate(envelope.MinX,envelope.MinY),Coordinate(envelope.MaxX,envelope.MaxY));
         }
-    }
-    //envelope and feature types
-    if (coverageType != itUNKNOWN && featureCount >= 0){
-        fcoverage->featureTypes(coverageType);
         fcoverage->envelope(bbox);
-        fcoverage->coordinateSystem()->envelope(bbox);
-    }else{
-        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",data->name());
+//        fcoverage->coordinateSystem()->envelope(bbox);
     }
 
     gdal()->closeFile(containerConnector()->toLocalFile(_filename).absoluteFilePath(), data->id());
@@ -185,6 +171,16 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                 return false;
             }
         }
+        //layer envelopes/extents
+        Envelope bbox;
+        OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
+        OGRErr err = gdal()->getLayerExtent(hLayer, &envelope , TRUE);//TRUE to FORCE
+        if (err != OGRERR_NONE && fcoverage->featureCount() != 0){
+            ERROR0(QString("Couldn't load extent of a layer from %1 after binary was loaded: %2").arg(_filename.toString()).arg(gdal()->translateOGRERR(err)));
+        }else{
+            bbox = Envelope(Coordinate(envelope.MinX,envelope.MinY),Coordinate(envelope.MaxX,envelope.MaxY));
+        }
+        fcoverage->envelope(bbox);
     }
     QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
     gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
