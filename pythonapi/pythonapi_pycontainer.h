@@ -19,8 +19,8 @@ namespace pythonapi {
     Py_buffer* newPyBuffer(void* buf, int len, int readOnly);
 
     PyObject* PyFloatFromDouble(double v);
-    PyObject* PyLongFromLong(long v);
-    PyObject* PyLongFromUnsignedLong(long v);
+    PyObject* PyLongFromLongLong(long long v);
+    PyObject* PyLongFromUnsignedLongLong(unsigned long long v);
     PyObject* PyUnicodeFromString(const char *u);
     PyObject* PyBoolFromLong(long v);
 

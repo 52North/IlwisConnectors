@@ -14,6 +14,7 @@
 #include "../../IlwisCore/core/ilwisobjects/domain/numericrange.h"
 #include "../../IlwisCore/core/util/juliantime.h"
 
+#include <math.h>
 namespace pythonapi{
 
     QVariant* PyObject2QVariant(const PyObject* obj){
@@ -29,7 +30,7 @@ namespace pythonapi{
                 Ilwis::Time time(
                             PyDateTimeTIME_GET_HOUR(obj),
                             PyDateTimeTIME_GET_MINUTE(obj),
-                            PyDateTimeTIME_GET_SECOND(obj)+(int)((double)PyDateTimeTIME_GET_MICROSECOND(obj)/10000)
+                            (double)PyDateTimeTIME_GET_SECOND(obj)+(round(((double)PyDateTimeTIME_GET_MICROSECOND(obj)/10000)) / 100)
                             );
                 return new QVariant(IVARIANT(time));
             }else if(PyDateTimeCheckExact(obj)){
@@ -39,7 +40,7 @@ namespace pythonapi{
                             PyDateTimeGET_DAY(obj),
                             PyDateTimeDATE_GET_HOUR(obj),
                             PyDateTimeDATE_GET_MINUTE(obj),
-                            PyDateTimeDATE_GET_SECOND(obj)+(int)((double)PyDateTimeDATE_GET_MICROSECOND(obj)/10000)
+                            (double)PyDateTimeDATE_GET_SECOND(obj)+(round(((double)PyDateTimeDATE_GET_MICROSECOND(obj)/10000)) / 100)
                             );
                 return new QVariant(IVARIANT(time));
             }
@@ -64,23 +65,29 @@ namespace pythonapi{
             qlonglong ret = var.toLongLong(&ok);
             if (!ok)
                 throw std::domain_error(QString("Cannot convert '%1' to int(qlonglong)").arg(var.toString()).toStdString());
-            return PyLongFromLong(ret);
+            return PyLongFromLongLong(ret);
         }else if(t == QMetaType::ULongLong){
             qulonglong ret = var.toULongLong(&ok);
             if (!ok)
                 throw std::domain_error(QString("Cannot convert '%1' to int(qulonglong)").arg(var.toString()).toStdString());
-            return PyLongFromUnsignedLong(ret);
+            return PyLongFromUnsignedLongLong(ret);
         }else if(QString(var.typeName()).compare("Ilwis::Time") == 0){
             if (var.canConvert<Ilwis::Time>()){
                 Ilwis::Time time = var.value<Ilwis::Time>();
                 switch(time.valueType()){
                     case itTIME: {
                         double sec = time.get(Ilwis::Time::tpSECOND);
+                        int second = (int)sec;
+                        int micro = (int)round(((sec-(int)sec)*100));
+                        if (micro == 100){
+                            second++;
+                            micro = 0;
+                        }
                         return PyTimeFromTime(
                                 time.get(Ilwis::Time::tpHOUR),
                                 time.get(Ilwis::Time::tpMINUTE),
-                                (int)sec,
-                                (int)((sec-(int)sec)*10000)
+                                second,
+                                micro*10000
                         );
                     }
                     case itDATE: return PyDateFromDate(
@@ -90,14 +97,20 @@ namespace pythonapi{
                             );
                     case itDATETIME:{
                         double sec = time.get(Ilwis::Time::tpSECOND);
+                        int second = (int)sec;
+                        int micro = (int)round(((sec-(int)sec)*100));
+                        if (micro == 100){
+                            second++;
+                            micro = 0;
+                        }
                         return PyDateTimeFromDateAndTime(
                                     time.get(Ilwis::Time::tpYEAR),
                                     time.get(Ilwis::Time::tpMONTH),
                                     time.get(Ilwis::Time::tpDAYOFMONTH),
                                     time.get(Ilwis::Time::tpHOUR),
                                     time.get(Ilwis::Time::tpMINUTE),
-                                    (int)sec,
-                                    (int)((sec-(int)sec)*10000)
+                                    second,
+                                    micro*10000
                                 );
                     }
                     default: throw std::domain_error(QString("Cannot convert Ilwis::Time object to datetime").toStdString());

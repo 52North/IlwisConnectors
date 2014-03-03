@@ -420,7 +420,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertFalse(fc.isInternal())
             self.assertEqual(fc.featureCount(), 0)
             for f in fc:
-                print(f.geometry())
+                self.assertEqual("", str(f.geometry()))
 
         ##@ut.skip("temporarily")
         def test_FeatureCoverage(self):
@@ -428,7 +428,6 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
             self.assertEqual(fc.name(), "rainfall.shp", msg="internal FeatureCoverage name wrong!")
             self.assertEqual(fc.featureCount(), 13, msg="feature count wrong")
-
             self.assertTrue(fc.addAttribute("sum", "value"), msg="FeatureCoverage.addAttribute failed!")
             att = fc.attributes()
             self.assertTupleEqual(att, (
@@ -442,25 +441,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             for c in att:
                 newfeature[c] = 12
                 self.assertEqual(int(newfeature[c]), 12, msg="new value of feature attribute not correct!")
-
             self.assertEqual(fc.featureCount(), 14, msg="new feature count wrong")
-
-        ##@ut.skip("temporarily")
-        def test_Feature(self):
-            fc = FeatureCoverage("rainfall.shp")
-            self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
-            it = iter(fc)
-            f = next(it)
-            f.geometry().fromWKT("POINT(5.4 6 9.0)")
-            self.assertEqual(f.geometry().toWKT(), "POINT (5.4000000000000004 6.0000000000000000)", msg="unsuccessfully altered geometry")
-            with self.assertRaises(IndexError, msg="no IndexError on call of wrong attribute"):
-                v = f["RAINFAL"]
-            v = f["RAINFALL"]
-            self.assertEqual(str(v), "UMSS", msg="wrong attribute value")
-            with self.assertRaises(ValueError, msg="no TypeError on attempt to convert non-numerical string to int"):
-                self.assertEqual("it wont be a number", int(v))
-            f["RAINFALL"] = 12
-            self.assertEqual(12, int(f["RAINFALL"]), msg="no real type check here since it could be converted back and forth")
 
         def test_FeatureIterator(self):
             fc = FeatureCoverage("rainfall.shp")
@@ -493,55 +474,85 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             f = next(it3)
             self.assertTrue(str(f), "Feature(1)")
 
-        def test_integerAttribute(self):pass  # TODO test integer Attributes
-            # fc = FeatureCoverage("itc.osm")
-            # it = iter(fc)
-            # f = next(it)
-            # self.assertEqual((), fc.attributes())
-            # pv = PyVariant(-9223372036854775808)
-            # self.assertEqual(int(pv), -9223372036854775808)  # MIN(qlonglong)
-            # pv = PyVariant(-9223372036854775809)
-            # self.assertEqual(int(pv), -1)  # overflow(MIN-1)
-            # pv = PyVariant(9223372036854775807)
-            # self.assertEqual(int(pv), 9223372036854775807)  # MAX(qlonglong)
-            # pv = PyVariant(9223372036854775808)
-            # self.assertEqual(int(pv), -1)  # overflow(MAX+1)
-            # pv = PyVariant("9223372036854775808")
-            # with self.assertRaises(ValueError, msg="did not overflow unsigned long long int"):
-            #     int(pv)
-
-        def test_floatAttribute(self): pass  # TODO test float Attributes
-            # pv = PyVariant("9223372036854775808")
-            # self.assertEqual(float(pv), 9223372036854775808)
-            # pv = PyVariant(9223372036854775808.)
-            # self.assertEqual(float(pv), 9223372036854775808)
-            # pv = PyVariant(0.432)
-            # self.assertEqual(float(pv), 0.432)
-            # pv = PyVariant(23.4e-32)
-            # self.assertEqual(float(pv), 23.4e-32)
-
-        def test_DateTimeAttribute(self):  # TODO test datetime and time Attributes
-            fc = FeatureCoverage("drainage.shp")
+        def test_FeatureAttributes(self):
+            fc = FeatureCoverage("GDAL_OGR_feature.vrt")
+            self.assertEqual(('String', 'Date', 'Time', 'DateTime', 'Integer', 'Float'), fc.attributes())
+            self.assertEqual(100, fc.featureCount(), msg="meta data contains wrong featureCount")
             it = iter(fc)
             f = next(it)
-            v = f["date"]
-            self.assertEqual("2014-02-17", str(v))
+            self.assertEqual(3, fc.featureCount(), msg="after loading binary data featureCount is correct")
+
+            self.assertEqual(f.geometry().toWKT(), "LINESTRING (1.0000000000000000 1.0000000000000000, \
+2.0000000000000000 2.0000000000000000)", msg="unsuccessfully altered geometry")
+            f.geometry().fromWKT("POINT(5.4 6 9.0)")
+            self.assertEqual(f.geometry().toWKT(), "POINT (5.4000000000000004 6.0000000000000000)", msg="not typecheck! butunsuccessfully altered geometry")
+
+            with self.assertRaises(IndexError, msg="no IndexError on call of wrong attribute"):
+                v = f["wrongColum"]
+            v = f["String"]
+            self.assertTrue(type(v) is str)
+            self.assertEqual(str(v), "LINESTRING(1 1, 2 2)", msg="wrong attribute value")
+            f["String"] = 12
+            self.assertEqual(12, int(f["String"]), msg="no real type check here since it could be converted back and forth")
+
+            self.assertEqual(f["Integer"], 4123045)
+            f["Integer"] = -1e+15  # -9223372036854775808
+            self.assertEqual(-1e+15, f["Integer"])  # MIN(qlonglong)
+            f["Integer"] = -1e+15 - 1
+            self.assertEqual(Const.rUNDEF, f["Integer"])  # MIN(qlonglong)
+            f["Integer"] = -9223372036854775809
+            self.assertEqual(-1, f["Integer"])  # overflow(MIN-1)
+            f["Integer"] = 1e+15  # 9223372036854775807
+            self.assertEqual(1e+15, f["Integer"])  # MAX(qlonglong)
+            f["Integer"] = 1e+15 + 1
+            self.assertEqual(Const.rUNDEF, f["Integer"])  # overflow(MAX+1)
+            f["Integer"] = 9223372036854775808
+            self.assertEqual(-1, f["Integer"])  # overflow(MAX+1)
+            f["Integer"] = "9223372036854775808"
+            self.assertEqual(Const.rUNDEF, f["Integer"])  # overflow(MAX+1)
+
+            f["Float"] = "9223372036854775808"
+            self.assertEqual(9223372036854775808, f["Float"])
+            f["Float"] = 9223372036854775808.
+            self.assertEqual(9223372036854775808, f["Float"])
+            f["Float"] = 0.432
+            self.assertEqual(0.432, f["Float"])
+            f["Float"] = 23.4e-32
+            self.assertEqual(23.4e-32, f["Float"])
+
             try:
                 import datetime
-                self.assertTrue(type(v) is datetime.date)
-                self.assertEqual(v, datetime.date(2014, 2, 17))
-                f["date"] = datetime.datetime(2014, 2, 27)
-
-                class NotSupportedObject:
-                    pass
-                with self.assertRaises(ValueError, msg="cannot convert instance NotSupportedObject() to Ilwis class"):
-                    f["date"] = NotSupportedObject()
-                self.assertEqual(f["date"], datetime.datetime(2014, 2, 27))
-                with self.assertRaises(TypeError, msg="cannot convert None to Ilwis class"):
-                    f["date"] = None
-                self.assertEqual(f["date"], datetime.datetime(2014, 2, 27))
             except ImportError as exc:
                 self.fail(msg=str(exc))
+
+            v = f["Date"]
+            self.assertEqual("2014-02-17", str(v))
+            self.assertTrue(type(v) is datetime.date)
+            self.assertEqual(v, datetime.date(2014, 2, 17))
+            f["Date"] = datetime.datetime(2014, 2, 27)
+            self.assertEqual(f["Date"], datetime.datetime(2014, 2, 27), msg="no type check here!")
+
+            class NotSupportedObject:
+                pass
+            with self.assertRaises(ValueError, msg="cannot convert instance NotSupportedObject() to Ilwis class"):
+                f["Date"] = NotSupportedObject()
+            self.assertEqual(f["Date"], datetime.datetime(2014, 2, 27))
+            with self.assertRaises(TypeError, msg="cannot convert None to Ilwis class"):
+                f["Date"] = None
+            self.assertEqual(f["Date"], datetime.datetime(2014, 2, 27))
+
+            v = f["Time"]
+            self.assertEqual("12:42:33", str(v))
+            self.assertTrue(type(v) is datetime.time)
+            self.assertEqual(v, datetime.time(12, 42, 33))
+            f["Time"] = datetime.time(12, 42, 33, 120000)
+            self.assertEqual(f["Time"], datetime.time(12, 42, 33, 120000))
+            v = f["DateTime"]
+            self.assertEqual("2014-02-17 12:42:33", str(v))
+            self.assertTrue(type(v) is datetime.datetime)
+            self.assertEqual(v, datetime.datetime(2014, 2, 17, 12, 42, 33))
+            f["DateTime"] = datetime.datetime(2014, 2, 27)
+            self.assertEqual(f["DateTime"], datetime.datetime(2014, 2, 27))
 
         def test_loadGDALstoreGDAL(self):
             # polygons

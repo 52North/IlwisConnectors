@@ -65,12 +65,12 @@ PyObject* PyFloatFromDouble(double v){
     return PyFloat_FromDouble(v);
 }
 
-PyObject* PyLongFromLong(long v){
-    return PyLong_FromLong(v);
+PyObject* PyLongFromLongLong(long long v){
+    return PyLong_FromLongLong(v);
 }
 
-PyObject* PyLongFromUnsignedLong(long v){
-    return PyLong_FromUnsignedLong(v);
+PyObject* PyLongFromUnsignedLongLong(unsigned long long v){
+    return PyLong_FromUnsignedLongLong(v);
 }
 
 PyObject* PyUnicodeFromString(const char *u){
