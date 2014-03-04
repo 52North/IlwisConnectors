@@ -24,7 +24,7 @@
 
 #include "wfsresponse.h"
 #include "xmlstreamparser.h"
-#include "wfsschemainfo.h"
+#include "wfsparsingcontext.h"
 #include "wfsfeaturedescriptionparser.h"
 #include "wfsutils.h"
 
@@ -46,7 +46,7 @@ WfsFeatureDescriptionParser::~WfsFeatureDescriptionParser()
 {
 }
 
-bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcoverage, WfsSchemaInfo &wfsSchemaInfo)
+bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcoverage, WfsParsingContext &context)
 {
     QString name(fcoverage->name());
     quint64 id = fcoverage->id();
@@ -66,11 +66,11 @@ bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcover
 
     fcoverage->attributeTable(featureTable);
     if (_parser->startParsing("xsd:schema")) {
-        parseNamespaces(wfsSchemaInfo);
+        parseNamespaces(context);
         while ( !_parser->atEnd()) {
             if (_parser->readNextStartElement()) {
                 if (_parser->isAtBeginningOf("xsd:complexType")) {
-                    parseFeatureProperties(fcoverage, wfsSchemaInfo);
+                    parseFeatureProperties(fcoverage, context);
                 } else if (_parser->isAtBeginningOf("xsd:element")) {
                     QStringRef typeName = _parser->attributes().value("name");
                     featureTable->setName(typeName.toString());
@@ -83,13 +83,13 @@ bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcover
     return true;
 }
 
-void WfsFeatureDescriptionParser::parseNamespaces(WfsSchemaInfo &wfsSchemaInfo)
+void WfsFeatureDescriptionParser::parseNamespaces(WfsParsingContext &context)
 {
     for (QXmlStreamAttribute attribute : _parser->attributes()) {
         QString name = attribute.name().toString();
         QString value = attribute.value().toString();
         if (name == "targetNamespace") {
-            wfsSchemaInfo.addNamespaceMapping("", value);
+            context.addNamespaceMapping("", value);
             break; // TODO: consider how parse further namespaces
         } /*else {
             QString prefix = attribute.prefix().toString();
@@ -99,7 +99,7 @@ void WfsFeatureDescriptionParser::parseNamespaces(WfsSchemaInfo &wfsSchemaInfo)
     }
 }
 
-void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcoverage, WfsSchemaInfo &wfsSchemaInfo)
+void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcoverage, WfsParsingContext &context)
 {
     ITable table = fcoverage->attributeTable();
     if (_parser->moveToNext("xsd:complexContent")) {
@@ -127,7 +127,7 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcover
                             } else if (type.contains("Line") || type.contains("Curve")) {
                                 _coverageType |= itLINE;
                             }
-                            wfsSchemaInfo.setGeometryAtttributeName(name);
+                            context.setGeometryAtttributeName(name);
                         } else {
                             IDomain domain;
                             if (initDomainViaType(type, domain)) {

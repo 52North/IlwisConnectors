@@ -25,7 +25,7 @@
 #include "featureiterator.h"
 #include "ilwisobjectconnector.h"
 #include "wfsconnector.h"
-#include "wfsschemainfo.h"
+#include "wfsparsingcontext.h"
 #include "wfsfeatureconnector.h"
 #include "wfsfeatureparser.h"
 #include "wfsfeaturedescriptionparser.h"
@@ -59,7 +59,7 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
     WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse);
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
-    return schemaParser.parseSchemaDescription(fcoverage, _wfsSchemaInfo);
+    return schemaParser.parseSchemaDescription(fcoverage, _context);
 }
 
 void WfsFeatureConnector::initFeatureTable(ITable &table) const
@@ -85,7 +85,7 @@ bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
     QUrlQuery queryFeature(featureUrl);
     WfsResponse *response = wfs.getFeature(queryFeature);
     WfsFeatureParser featureParser(response, fcoverage);
-    featureParser.parseFeatureMembers(_wfsSchemaInfo);
+    featureParser.parseFeatureMembers(_context);
 
     return false;
 }

@@ -30,7 +30,7 @@
 #include "symboltable.h"
 #include "wfsmodule.h"
 #include "wfsconnector.h"
-#include "wfsschemainfo.h"
+#include "wfsparsingcontext.h"
 #include "wfsfeatureconnector.h"
 #include "catalogconnector.h"
 #include "wfscatalogconnector.h"

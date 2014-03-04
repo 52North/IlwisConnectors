@@ -19,7 +19,7 @@ public:
 
 
 private:
-    WfsSchemaInfo _wfsSchemaInfo;
+    WfsParsingContext _context;
 
     void initFeatureTable(ITable &table) const;
 

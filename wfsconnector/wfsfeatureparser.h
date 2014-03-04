@@ -32,27 +32,43 @@ public:
      *
      * TODO: for now only the target namespace is being used ... propably this is enough
      *
-     * @param wfsSchemaInfo meta info about the parsed WFS schema.
+     * @param context context info about the parsed WFS.
      */
-    void parseFeatureMembers(WfsSchemaInfo &wfsSchemaInfo);
+    void parseFeatureMembers(WfsParsingContext &context);
 
 private:
     XmlStreamParser *_parser;
     FeatureCoverage *_fcoverage;
 
-    void parseFeature(std::vector<QVariant> &record, QString geomAttributeName);
+    void parseFeature(std::vector<QVariant> &record, WfsParsingContext &context);
 
     QVariant fillStringColumn();
     QVariant fillDoubleColumn();
     QVariant fillDateTimeColumn();
     QVariant fillIntegerColumn();
-    QVariant parseFeatureGeometry();
+    /**
+     * Parses the feature's geometry from GML. <br/>
+     * <br/>
+     * Note that parsing GML has its limitations, so don't expect a full GML parsing engine
+     * here, e.g. attributes are only read until a certain depth.
+     *
+     * @param context parsing context.
+     */
+    void parseFeatureGeometry(WfsParsingContext &context);
 
-    void updateSrsInfo(QString &srsName, QString &srsDimension);
-    bool updateSrsInfoUntil(QString qname, QString &srsName, QString srsDimension);
-    geos::geom::Geometry *parsePolygon();
-    geos::geom::LinearRing *parseExteriorRing();
-    std::vector<geos::geom::Geometry *> *parseInteriorRings();
+    void updateSrsInfo(WfsParsingContext &context);
+    bool updateSrsInfoUntil(QString qname, WfsParsingContext &context);
+
+    bool parseLineString(geos::geom::Geometry *geometry, WfsParsingContext &context);
+    bool parsePolygon(geos::geom::Geometry *geometry, WfsParsingContext &context);
+    geos::geom::LinearRing *parseExteriorRing(WfsParsingContext &context);
+    std::vector<geos::geom::Geometry *> *parseInteriorRings(WfsParsingContext &context);
+
+
+    QString gmlPosListToWktCoords(QString gmlPosList, WfsParsingContext &context);
+    QString gmlPosListToWktPolygon(QString gmlPosList, WfsParsingContext &context);
+    QString gmlPosListToWktLineString(QString gmlPosList, WfsParsingContext &context);
+    QString gmlPosListToWktPoint(QString gmlPosList, WfsParsingContext &context);
 
 };
 
