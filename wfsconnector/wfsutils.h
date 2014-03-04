@@ -17,7 +17,7 @@ public:
 
         bool isHttpRequest = url.scheme().startsWith("http");
         bool isWfsRequest = isExpectedValue(query.queryItemValue("service"), "wfs");
-        checkVersionCompatibility(query.queryItemValue("acceptversions"));
+        if(isHttpRequest && isWfsRequest) checkVersionCompatibility(query.queryItemValue("acceptversions"));
         return isHttpRequest && isWfsRequest;
     }
 
@@ -42,7 +42,7 @@ public:
 private:
     static void checkVersionCompatibility(QString kvpValueVersions) {
         QStringList versions = kvpValueVersions.split(",",QString::SkipEmptyParts);
-        if (versions.isEmpty() || !versions.contains("1.1.0")) {
+        if (versions.isEmpty() || !versions.contains("1.1")) {
             WARN("Module supports WFS 1.1.0 only and will set version parameter explicitly on each request!");
         }
     }

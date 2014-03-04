@@ -31,7 +31,6 @@
 
 #include "pythonapi_object.h"
 #include "pythonapi_engine.h"
-#include "pythonapi_pyvariant.h"
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_pycontainer.h"
@@ -113,7 +112,7 @@ Object *Engine::_do(std::string output_name, std::string operation, std::string 
                 return new GeoReference(obj);
             }
         }
-        return new PyVariant(new QVariant(result._var));
+        throw Ilwis::ErrorObject(QString("couln't handle return type of do(%1)").arg(command));
     }else{
         throw Ilwis::ErrorObject(QString("couln't do(%1)").arg(command));
     }

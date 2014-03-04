@@ -17,7 +17,6 @@
 #include "pythonapi_coordinatesystem.h"
 #include "pythonapi_table.h"
 #include "pythonapi_coverage.h"
-#include "pythonapi_pyvariant.h"
 #include "pythonapi_object.h"
 #include "pythonapi_util.h"
 #include "pythonapi_geometry.h"
@@ -117,8 +116,6 @@ namespace pythonapi {
             return GeoReference.toGeoReference(obj)
         elif (type == 4096) or (type == 8192):
             return CoordinateSystem.toCoordinateSystem(obj)
-        elif type <= 0xFFFFFFFFFFFFFFFF:
-            return PyVariant.toPyVariant(obj)
         elif type == 0:
             raise TypeError("unknown IlwisType")
         else:
@@ -133,8 +130,6 @@ namespace pythonapi {
 %include "pythonapi_table.h"
 
 %include "pythonapi_coverage.h"
-
-%include "pythonapi_pyvariant.h"
 
 %include "pythonapi_object.h"
 

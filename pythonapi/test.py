@@ -1,5 +1,6 @@
 #!/usr/bin python
 # -*- coding: utf-8 -*-
+from concurrent.futures.process import _WorkItem
 from unittest.case import skip
 
 try:
@@ -53,29 +54,36 @@ try:
             self.assertEqual((4, 5, 6), t.select("march < 100 AND march != 87"))
             self.assertEqual((9, 10, 11), t.select("march == "+str(Const.rUNDEF) ))
             self.assertEqual(13, t.columnIndex("ident"))
-            self.assertEqual(81, int(t.cell("march", 4)))
+            self.assertEqual(81, t.cell("march", 4))
             self.assertEqual(2, t.columnIndex("march"))
-            self.assertEqual([81, 76, 79], [int(t.cell(2, rec)) for rec in t.select("march < 100 AND march != 87")])
-            self.assertEqual(Const.rUNDEF, float(t.cell("newColumn", 0)))
+            self.assertEqual([81, 76, 79], [t.cell(2, rec) for rec in t.select("march < 100 AND march != 87")])
+            self.assertEqual(Const.rUNDEF, t.cell("newColumn", 0))
             t.setCell("newColumn", 0, 32)
-            self.assertEqual(32, int(t.cell("newColumn", 0)))
+            self.assertEqual(32, t.cell("newColumn", 0))
             disconnectIssueLogger()
             t.setCell("newColumn", 0, "text")
             connectIssueLogger()
-            self.assertEqual(Const.rUNDEF, float(t.cell("newColumn", 0)))
+            self.assertEqual(Const.rUNDEF, t.cell("newColumn", 0))
             self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column("march"))
             self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
             self.assertEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
 
         def testStandaloneGdalTable(self):
-            t = Table("rainfall.shp")  # TODO not yet working if rainfall.shp was not loaded before
+            t = Table("rainfall.shp")
             self.assertTrue(bool(t))
             self.assertFalse(t.isInternal(), msg="created a new table object with that name!!")
             self.assertEqual(t.name(), "rainfall.shp")
+            expected = ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
+                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT')
+            actual = t.columns()
+            self.assertTrue(all(expected[i] == actual[i] for i in range(len(expected))))  # if rainfall.shp was loaded before "feature_id" might be the last field
+            fc = FeatureCoverage("rainfall.shp")
+            self.assertTrue(bool(fc))
+            self.assertFalse(fc.isInternal(), msg="created a new table object with that name!!")
             self.assertEqual(
                 ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
                  'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
-                t.columns()
+                fc.attributeTable().columns()
             )
 
     #@ut.skip("temporarily")
@@ -340,7 +348,7 @@ try:
             connectIssueLogger()
 
     #@ut.skip("temporarily")
-    class TestPyVariant(ut.TestCase):
+    class TestConst(ut.TestCase):
         def test_UNDEF(self):
             with self.assertRaises(AttributeError, msg="property is not read only!"):
                 Const.sUNDEF = "test"
@@ -350,29 +358,6 @@ try:
             self.assertEqual(Const.flUNDEF, -1e38)
             self.assertEqual(Const.rUNDEF, -1e308)
             self.assertEqual(Const.i64UNDEF, -9223372036854775808)
-
-        def test_integerValues(self):
-            pv = PyVariant(-9223372036854775808)
-            self.assertEqual(int(pv), -9223372036854775808)  # MIN(qlonglong)
-            pv = PyVariant(-9223372036854775809)
-            self.assertEqual(int(pv), -1)  # overflow(MIN-1)
-            pv = PyVariant(9223372036854775807)
-            self.assertEqual(int(pv), 9223372036854775807)  # MAX(qlonglong)
-            pv = PyVariant(9223372036854775808)
-            self.assertEqual(int(pv), -1)  # overflow(MAX+1)
-            pv = PyVariant("9223372036854775808")
-            with self.assertRaises(TypeError, msg="did not overflow unsigned long long int"):
-                int(pv)
-
-        def test_floatValues(self):
-            pv = PyVariant("9223372036854775808")
-            self.assertEqual(float(pv), 9223372036854775808)
-            pv = PyVariant(9223372036854775808.)
-            self.assertEqual(float(pv), 9223372036854775808)
-            pv = PyVariant(0.432)
-            self.assertEqual(float(pv), 0.432)
-            pv = PyVariant(23.4e-32)
-            self.assertEqual(float(pv), 23.4e-32)
 
     #@ut.skip("temporarily")
     class TestEngine(ut.TestCase):
@@ -395,17 +380,20 @@ try:
         def test_Operations(self):
             e = Engine()
             ops = e.operations()
-            oper = ('acos', 'asin', 'atan', 'assignment', 'binarylogicalraster', 'binarymathraster',
-                    'binarymathfeatures', 'binarymathtable', 'ceil', 'coord2pixel', 'cos', 'cosh', 'floor',
-                    'coordinate', 'pixel', 'rastersize', 'iff', 'log10', 'mastergeoreference', 'ln', 'pixel2coord',
-                    'rastervalue', 'resample', 'selection', 'selection', 'selection', 'setvaluerange', 'sgn', 'sin',
-                    'sinh', 'sqrt', 'stringfind', 'stringsub', 'stringreplace', 'tan', 'text2output', 'gridding',
-                    'script', 'aggregateraster', 'areanumbering', 'cross', 'linearstretch', 'linearrasterfilter', 'rankorderrasterfilter')
-            self.assertTupleEqual(oper, ops)
+            oper = ('setvaluerange', 'binarymathtable', 'selection', 'mastergeoreference', 'binarymathfeatures',
+                    'binarymathraster', 'selection', 'iff', 'stringfind', 'stringsub', 'stringreplace', 'rastersize',
+                    'text2output', 'coord2pixel', 'coordinate', 'pixel', 'pixel2coord', 'selection', 'assignment',
+                    'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'log10', 'ln', 'abs', 'sqrt', 'ceil', 'floor', 'sgn',
+                    'cosh', 'sinh', 'binarylogicalraster', 'iff', 'rastervalue', 'resample', 'gridding', 'script',
+                    'aggregateraster', 'areanumbering', 'cross', 'linearstretch', 'linearrasterfilter',
+                    'rankorderrasterfilter'
+                    )
+            self.assertTrue(all((op in ops) for op in oper))
             self.assertEqual("gridsize(rastercoverage,xsize|ysize|zsize)", e.operationMetaData("rastersize"))
             self.assertEqual("gridding(coordinatesyste,top-coordinate,x-cell-size, y-cell-size, horizontal-cells, vertical-cells)",
                              e.operationMetaData("gridding"))
-            self.assertEqual("iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaData("iff"))
+            self.assertEqual("iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)\n\
+iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaData("iff"))
 
         def test_Gridding(self):
             polygongrid = Engine.do("gridding", self.cs, Coordinate(225358.6605, 3849480.5700), 1000.0, 1000.0, 12, 12)
@@ -430,7 +418,9 @@ try:
             # fc = FeatureCoverage("favourites.gpx")
             fc = FeatureCoverage("test.gpx")
             self.assertFalse(fc.isInternal())
-            self.assertEqual(fc.featureCount(), 23)
+            self.assertEqual(fc.featureCount(), 0)
+            for f in fc:
+                self.assertEqual("", str(f.geometry()))
 
         ##@ut.skip("temporarily")
         def test_FeatureCoverage(self):
@@ -438,7 +428,6 @@ try:
             self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
             self.assertEqual(fc.name(), "rainfall.shp", msg="internal FeatureCoverage name wrong!")
             self.assertEqual(fc.featureCount(), 13, msg="feature count wrong")
-
             self.assertTrue(fc.addAttribute("sum", "value"), msg="FeatureCoverage.addAttribute failed!")
             att = fc.attributes()
             self.assertTupleEqual(att, (
@@ -449,33 +438,17 @@ try:
             g = Geometry("POINT(5.4 6 9.0)", fc.coordinateSystem())
             newfeature = fc.newFeature(g)
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
-            for c in fc.attributes():
-                newfeature[c] = 12.0
-                self.assertEqual(float(newfeature[c]), 12.0, msg="new value of feature attribute not correct!")
-
+            for c in att:
+                newfeature[c] = 12
+                self.assertEqual(int(newfeature[c]), 12, msg="new value of feature attribute not correct!")
             self.assertEqual(fc.featureCount(), 14, msg="new feature count wrong")
-
-        ##@ut.skip("temporarily")
-        def test_Feature(self):
-            fc = FeatureCoverage("rainfall.shp")
-            self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
-            it = iter(fc)
-            f = next(it)
-            f.geometry().fromWKT("POINT(5.4 6 9.0)")
-            self.assertEqual(f.geometry().toWKT(), "POINT (5.4000000000000004 6.0000000000000000)", msg="unsuccessfully altered geometry")
-            with self.assertRaises(IndexError, msg="no IndexError on call of wrong attribute"):
-                v = f["RAINFAL"]
-            v = f["RAINFALL"]
-            self.assertEqual(str(v), "UMSS", msg="wrong attribute value")
-            with self.assertRaises(TypeError, msg="no TypeError on attempt to convert non-numerical string to int"):
-                print(int(v))
 
         def test_FeatureIterator(self):
             fc = FeatureCoverage("rainfall.shp")
             self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
             summ = 0
             for f in fc:
-                summ += float(f.attribute("MAY", 0))
+                summ += f.attribute("MAY", 0)
                 f["sum"] = summ
                 self.assertRegex(str(f), r"Feature\([0-9]*\)", msg="wrong feature representation")
                 self.assertRegex(str(f.geometry()),
@@ -501,13 +474,85 @@ try:
             f = next(it3)
             self.assertTrue(str(f), "Feature(1)")
 
-        def test_DateTimeAttribute(self):
-            fc = FeatureCoverage("drainage.shp")
+        def test_FeatureAttributes(self):
+            fc = FeatureCoverage("GDAL_OGR_feature.vrt")
+            self.assertEqual(('String', 'Date', 'Time', 'DateTime', 'Integer', 'Float'), fc.attributes())
+            self.assertEqual(100, fc.featureCount(), msg="meta data contains wrong featureCount")
             it = iter(fc)
             f = next(it)
-            v = f["date"].toDateTime()
-            self.assertEqual("2014-02-17 00:00:00", str(v))
+            self.assertEqual(3, fc.featureCount(), msg="after loading binary data featureCount is correct")
 
+            self.assertEqual(f.geometry().toWKT(), "LINESTRING (1.0000000000000000 1.0000000000000000, \
+2.0000000000000000 2.0000000000000000)", msg="unsuccessfully altered geometry")
+            f.geometry().fromWKT("POINT(5.4 6 9.0)")
+            self.assertEqual(f.geometry().toWKT(), "POINT (5.4000000000000004 6.0000000000000000)", msg="not typecheck! butunsuccessfully altered geometry")
+
+            with self.assertRaises(IndexError, msg="no IndexError on call of wrong attribute"):
+                v = f["wrongColum"]
+            v = f["String"]
+            self.assertTrue(type(v) is str)
+            self.assertEqual(str(v), "LINESTRING(1 1, 2 2)", msg="wrong attribute value")
+            f["String"] = 12
+            self.assertEqual(12, int(f["String"]), msg="no real type check here since it could be converted back and forth")
+
+            self.assertEqual(f["Integer"], 4123045)
+            f["Integer"] = -1e+15  # -9223372036854775808
+            self.assertEqual(-1e+15, f["Integer"])  # MIN(qlonglong)
+            f["Integer"] = -1e+15 - 1
+            self.assertEqual(Const.rUNDEF, f["Integer"])  # MIN(qlonglong)
+            f["Integer"] = -9223372036854775809
+            self.assertEqual(-1, f["Integer"])  # overflow(MIN-1)
+            f["Integer"] = 1e+15  # 9223372036854775807
+            self.assertEqual(1e+15, f["Integer"])  # MAX(qlonglong)
+            f["Integer"] = 1e+15 + 1
+            self.assertEqual(Const.rUNDEF, f["Integer"])  # overflow(MAX+1)
+            f["Integer"] = 9223372036854775808
+            self.assertEqual(-1, f["Integer"])  # overflow(MAX+1)
+            f["Integer"] = "9223372036854775808"
+            self.assertEqual(Const.rUNDEF, f["Integer"])  # overflow(MAX+1)
+
+            f["Float"] = "9223372036854775808"
+            self.assertEqual(9223372036854775808, f["Float"])
+            f["Float"] = 9223372036854775808.
+            self.assertEqual(9223372036854775808, f["Float"])
+            f["Float"] = 0.432
+            self.assertEqual(0.432, f["Float"])
+            f["Float"] = 23.4e-32
+            self.assertEqual(23.4e-32, f["Float"])
+
+            try:
+                import datetime
+            except ImportError as exc:
+                self.fail(msg=str(exc))
+
+            v = f["Date"]
+            self.assertEqual("2014-02-17", str(v))
+            self.assertTrue(type(v) is datetime.date)
+            self.assertEqual(v, datetime.date(2014, 2, 17))
+            f["Date"] = datetime.datetime(2014, 2, 27)
+            self.assertEqual(f["Date"], datetime.datetime(2014, 2, 27), msg="no type check here!")
+
+            class NotSupportedObject:
+                pass
+            with self.assertRaises(ValueError, msg="cannot convert instance NotSupportedObject() to Ilwis class"):
+                f["Date"] = NotSupportedObject()
+            self.assertEqual(f["Date"], datetime.datetime(2014, 2, 27))
+            with self.assertRaises(TypeError, msg="cannot convert None to Ilwis class"):
+                f["Date"] = None
+            self.assertEqual(f["Date"], datetime.datetime(2014, 2, 27))
+
+            v = f["Time"]
+            self.assertEqual("12:42:33", str(v))
+            self.assertTrue(type(v) is datetime.time)
+            self.assertEqual(v, datetime.time(12, 42, 33))
+            f["Time"] = datetime.time(12, 42, 33, 120000)
+            self.assertEqual(f["Time"], datetime.time(12, 42, 33, 120000))
+            v = f["DateTime"]
+            self.assertEqual("2014-02-17 12:42:33", str(v))
+            self.assertTrue(type(v) is datetime.datetime)
+            self.assertEqual(v, datetime.datetime(2014, 2, 17, 12, 42, 33))
+            f["DateTime"] = datetime.datetime(2014, 2, 27)
+            self.assertEqual(f["DateTime"], datetime.datetime(2014, 2, 27))
 
         def test_loadGDALstoreGDAL(self):
             # polygons
@@ -880,7 +925,6 @@ try:
             bu = np.frombuffer(it2.asBuffer(), np.float, 500*1152, 0)  # numpy-array only from first block (500 lines)
             self.assertTrue(all(0 <= v <= 255 for v in bu))
 
-
     #@ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
         def setUp(self):
@@ -901,7 +945,7 @@ try:
             #        polygon.setAttribute("maxY", 0)
                 for point in distribution:
                     if polygon.geometry().contains(point.geometry()):
-                        maxval = max(int(polygon.attribute("maxY", 0)), int(point.attribute("freq_speciesY", 0)))
+                        maxval = max(polygon.attribute("maxY", 0), point.attribute("freq_speciesY", 0))
                         polygon.setAttribute("maxY", maxval)
 
             polygongrid.setConnection(workingDir + exampleDir + "/polygongrid", "vectormap", "ilwis3",IlwisObject.cmOUTPUT)
@@ -930,7 +974,7 @@ try:
             count = 0
             fc_soils.addAttribute("selected", "boolean")
             for feature in fc_soils:
-                if float(feature["AREA"]) == 0.123:
+                if feature["AREA"] == 0.123:
                     count += 1
                     self.assertRegex(str(feature.geometry()), r"POLYGON\s\(\([\s\.\-\,0-9]*\)\)",
                                      msg="wrong WKT representation of geometry!")
@@ -958,9 +1002,9 @@ try:
                 population_ranking = {}
                 self.assertEqual(286, world.featureCount())
                 for country in world:
-                    name = str(country["iso_a2"])
+                    name = country["iso_a2"]
                     if name not in population_ranking:
-                        population_ranking[name] = float(country["pop_est"])
+                        population_ranking[name] = country["pop_est"]
                 # print(sorted(population.items(), key=lambda x: x[1]))
                 self.assertEqual(
                     {'OM': 3418085.0, 'HU': 9905596.0, 'HT': 9035536.0, 'HR': 4489409.0, 'ZW': 12619600.0,

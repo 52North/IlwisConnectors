@@ -1,6 +1,8 @@
 ==================CHANGELOG===================
 --20140228--
 *added DateTime support
+*removed all occurences of PyVariant, so no explicit type conversion is necessary anymore
+*instead of TypeError is a faile value conversion now returns ValueError just as Python
 
 --20140214--
 *fixed issue on +datum=... param in proj definition
