@@ -22,6 +22,7 @@ PyObject* pythonapi::translate_Exception_type(std::exception& e){
         return PyExc_MemoryError;
     }else if (typeid(e) == typeid(std::bad_cast)){
         return invalidObjectException;
+    //TODO detect FeatureCreationError and raise translated Python FeatureCreationError
     }else if(typeid(e).hash_code() == ilwisErrorObject_type_info()){
         return ilwisException;
     }else if (typeid(e) == typeid(InvalidObject)){

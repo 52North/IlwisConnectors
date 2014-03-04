@@ -18,7 +18,7 @@ namespace pythonapi {
             quint32 columnCount() const;
             PyObject* columns() const;
             bool addColumn(const std::string& name, const std::string &domain);
-            quint32 columnIndex(const std::string& name) const;
+            qint32 columnIndex(const std::string& name) const;
             PyObject* column(const std::string& name) const;
             PyObject* column(quint32 columnIndex) const;
 

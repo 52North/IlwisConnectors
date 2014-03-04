@@ -60,8 +60,12 @@ namespace pythonapi {
         return list;
     }
 
-    quint32 Table::columnIndex(const std::string& name) const{
-        return this->ptr()->get<Ilwis::Table>()->columnIndex(QString::fromStdString(name));
+    qint32 Table::columnIndex(const std::string& name) const{
+        quint32 idx = this->ptr()->get<Ilwis::Table>()->columnIndex(QString::fromStdString(name));
+        if (idx == Ilwis::iUNDEF)
+            return Ilwis::iUNDEF;
+        else
+            return idx;
     }
 
     PyObject* Table::cell(const std::string& name, quint32 rec){
