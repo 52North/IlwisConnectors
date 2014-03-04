@@ -1080,9 +1080,11 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             fc.name("newName")
             self.assertEqual("newName", fc.name())
             self.assertTrue(fc.isInternal())
-            fc.setConnection("countries.mpa", "vectormap", "ilwis3", IlwisObject.cmINPUT)
+            fc.setConnection(workingDir + worldDir+"/countries.mpa", "vectormap", "ilwis3", IlwisObject.cmINPUT)
             self.assertFalse(fc.isInternal())
-            self.assertEqual("countries.mpa", fc.name())
+            self.assertEqual("newName", fc.name())
+            fc.setConnection(workingDir + worldDir+"/countries.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            fc.store()
 
         def test_AttributeTable(self):
             table = Table("countries.tbt")

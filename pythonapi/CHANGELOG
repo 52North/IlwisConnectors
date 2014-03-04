@@ -1,4 +1,11 @@
 ==================CHANGELOG===================
+--20140307--
+*fixed datetime integration for Table's .column(..) and .record(..) methods
+*fixed setConnection for connector mode cmINPUT
+*fixed some issues on iUNDEF values in (meta) data
+*added GDAL vrt driver (virtual format - xml based GDAL data description) for use of geodata in csv files
+*fixed crashes in GDALConnector when using attributTables
+
 --20140228--
 *added DateTime support
 *removed all occurences of PyVariant, so no explicit type conversion is necessary anymore
