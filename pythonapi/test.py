@@ -40,7 +40,10 @@ try:
             self.assertEqual(10, t.columnIndex("OCTOBER"))
             self.assertTupleEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column("OCTOBER"))
             self.assertTupleEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column(10))
-            self.assertTupleEqual(('Laguna_Santa_Rosa', 175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, 3857), t.record(2))
+            tup = ('Laguna_Santa_Rosa', 175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2)
+            rec = t.record(2)
+            self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
+            self.assertEqual(len(rec), len(t.columns()))
 
         def test_StandaloneIlwis3Table(self):
             t = Table("rainfall.tbt")
@@ -564,7 +567,20 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             f["DateTime"] = datetime.datetime(2014, 2, 27)
             self.assertEqual(f["DateTime"], datetime.datetime(2014, 2, 27))
 
-            self.assertTupleEqual((), fc.attributeTable().record(0))
+            tup = (12, datetime.datetime(2014, 2, 27, 0, 0), datetime.time(12, 42, 33, 120000),
+                    datetime.datetime(2014, 2, 27, 0, 0), 9.223372036854776e+18, 2.34e-31)
+            rec = fc.attributeTable().record(0)
+            self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
+            self.assertEqual(len(rec), len(fc.attributeTable().columns()))
+            tup = ('LINESTRING(1 1, 2 2, 3 3)', datetime.date(2014, 3, 4), datetime.time(12, 42, 33),
+                    datetime.datetime(2014, 3, 4, 12, 42, 33), 4123045, 2342451235.5434)
+            rec = fc.attributeTable().record(2)
+            self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
+            self.assertEqual(len(rec), len(fc.attributeTable().columns()))
+            self.assertTupleEqual(
+                (12, 'LINESTRING(1 1, 3 3)', 'LINESTRING(1 1, 2 2, 3 3)'),
+                fc.attributeTable().column(0)
+            )
 
         def test_loadGDALstoreGDAL(self):
             # polygons
@@ -1057,6 +1073,16 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                     population_ranking)
             else:
                 self.skipTest("countries.mpa is missing")
+
+        def test_IlwisObject(self):
+            fc = FeatureCoverage("newFC")
+            self.assertEqual("newFC", fc.name())
+            fc.name("newName")
+            self.assertEqual("newName", fc.name())
+            self.assertTrue(fc.isInternal())
+            fc.setConnection("countries.mpa", "vectormap", "ilwis3", IlwisObject.cmINPUT)
+            self.assertFalse(fc.isInternal())
+            self.assertEqual("countries.mpa", fc.name())
 
         def test_AttributeTable(self):
             table = Table("countries.tbt")
