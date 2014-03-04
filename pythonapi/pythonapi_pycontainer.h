@@ -11,10 +11,7 @@ typedef struct bufferinfo Py_buffer;
 namespace pythonapi {
 
     PyObject* newPyTuple(int size);
-    bool setTupleItem(PyObject* tuple, int i, const char* value);
-    bool setTupleItem(PyObject* tuple, int i, const quint32& value);
-    bool setTupleItem(PyObject *tuple, int i, const quint64& value);
-    bool setTupleItem(PyObject *tuple, int i, const double& value);
+    bool setTupleItem(PyObject *tuple, int i, PyObject* v);
 
     Py_buffer* newPyBuffer(void* buf, int len, int readOnly);
 
@@ -23,6 +20,7 @@ namespace pythonapi {
     PyObject* PyLongFromUnsignedLongLong(unsigned long long v);
     PyObject* PyUnicodeFromString(const char *u);
     PyObject* PyBoolFromLong(long v);
+    PyObject* PyLongFromSize_t(quint32 v);
 
     const char* typeName(const PyObject* obj);
 

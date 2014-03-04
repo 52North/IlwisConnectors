@@ -36,8 +36,11 @@ try:
                  'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
                 t.columns()
             )
-            # TODO bug fix in GdalLoader
-            # self.assertEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column("OCTOBER"))
+            self.assertEqual(Const.iUNDEF, t.columnIndex("unknownColumn"))
+            self.assertEqual(10, t.columnIndex("OCTOBER"))
+            self.assertTupleEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column("OCTOBER"))
+            self.assertTupleEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column(10))
+            self.assertTupleEqual(('Laguna_Santa_Rosa', 175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, 3857), t.record(2))
 
         def test_StandaloneIlwis3Table(self):
             t = Table("rainfall.tbt")
@@ -64,9 +67,9 @@ try:
             t.setCell("newColumn", 0, "text")
             connectIssueLogger()
             self.assertEqual(Const.rUNDEF, t.cell("newColumn", 0))
-            self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column("march"))
-            self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
-            self.assertEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
+            self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column("march"))
+            self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
+            self.assertTupleEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
 
         def testStandaloneGdalTable(self):
             t = Table("rainfall.shp")
@@ -443,6 +446,13 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 self.assertEqual(int(newfeature[c]), 12, msg="new value of feature attribute not correct!")
             self.assertEqual(fc.featureCount(), 14, msg="new feature count wrong")
 
+            fc_invalid = FeatureCoverage("newFC")
+            self.assertTrue(fc_invalid.isInternal())
+            g = Geometry("POINT(5.4 6 9.0)", CoordinateSystem("code=epsg:23035"))
+            with self.assertRaises(Exception, msg="should raise FeatureCreationError"):  # TODO to be translated into Python FeatureCreationError
+                newfeature = fc_invalid.newFeature(g)
+
+
         def test_FeatureIterator(self):
             fc = FeatureCoverage("rainfall.shp")
             self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
@@ -553,6 +563,8 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertEqual(v, datetime.datetime(2014, 2, 17, 12, 42, 33))
             f["DateTime"] = datetime.datetime(2014, 2, 27)
             self.assertEqual(f["DateTime"], datetime.datetime(2014, 2, 27))
+
+            self.assertTupleEqual((), fc.attributeTable().record(0))
 
         def test_loadGDALstoreGDAL(self):
             # polygons
@@ -698,7 +710,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertEqual("pixel(536.599,478.436)", str(gr.coord2Pixel(Coordinate(-319195.47, 784540.64))))
             self.assertEqual("coordinate(-315198.248000,780544.506500)", str(gr.pixel2Coord(PixelD(536.599, 478.436))))
             self.assertEqual("coordinate(-319990.248000,784032.506500)", str(gr.pixel2Coord(Pixel(536, 478))))
-            # self.assertEqual(0, gr.pixelSize())  # TODO possible bug in GeoRefImplementaion  - nan is not a goo pixelSize!!
+            # self.assertEqual(0, gr.pixelSize())  # TODO possible bug in GeoRefImplementaion  - nan is not a good pixelSize!!
             self.assertTrue(gr.centerOfPixel())
             self.assertEqual("POLYGON(536 478,536 478)", str(
                 gr.envelope2Box(Envelope(Coordinate(-319195.47, 784540.64), Coordinate(-319990.248000, 784032.506500)))
@@ -1047,10 +1059,28 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 self.skipTest("countries.mpa is missing")
 
         def test_AttributeTable(self):
-            t = Table("countries.tbt")
-            self.assertTrue(bool(t))
-            self.assertFalse(t.isInternal())
-
+            table = Table("countries.tbt")
+            self.assertTrue(bool(table))
+            self.assertFalse(table.isInternal())
+            value = str(table.cell("iso_a2", 4))
+            self.assertEqual("AR", value)
+            table.setCell("iso_a2", 4, value.upper())
+            recCount = table.recordCount()
+            self.assertEqual(177, recCount)
+            colCount = table.columnCount()
+            self.assertEqual(63, colCount)
+            columns = table.columns()  # ('column1','column2',...)
+            self.assertEqual(63, len(columns))
+            self.assertEqual(42, table.columnIndex("iso_a2"))
+            self.assertEqual(Const.iUNDEF, table.columnIndex("ihfg"))
+            column = table.column(42)
+            self.assertEqual(177, len(column))
+            column1 = table.column("iso_a2")
+            self.assertEqual(column, column1)
+            record = table.record(4)
+            self.assertEqual(63, len(record))
+            table.addColumn("newCol", "value")
+            self.assertEqual(64, table.columnCount())
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":

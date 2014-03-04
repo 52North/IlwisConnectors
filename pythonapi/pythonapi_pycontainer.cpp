@@ -8,48 +8,15 @@ PyObject* newPyTuple(int size){
     return PyTuple_New(size);
 }
 
-bool setTupleItem(PyObject *tuple, int i, const char* value){
-    PyObject *v = PyUnicode_FromString(value);
-    if (!v) {
+bool setTupleItem(PyObject *tuple, int i, PyObject* v){
+    if (v) {
+        PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen
+        return true;
+    }else{
         Py_DECREF(tuple);
         tuple = NULL;
         return false;
     }
-    PyTuple_SET_ITEM(tuple, i, v);   // reference to str stolen
-    return true;
-}
-
-bool setTupleItem(PyObject *tuple, int i, const quint32& value){
-    PyObject *v = PyLong_FromSize_t(value);
-    if (!v) {
-        Py_DECREF(tuple);
-        tuple = NULL;
-        return false;
-    }
-    PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen
-    return true;
-}
-
-bool setTupleItem(PyObject *tuple, int i, const qint64& value){
-    PyObject *v = PyLong_FromLong(value);
-    if (!v) {
-        Py_DECREF(tuple);
-        tuple = NULL;
-        return false;
-    }
-    PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen
-    return true;
-}
-
-bool setTupleItem(PyObject *tuple, int i, const double& value){
-    PyObject *v = PyFloat_FromDouble(value);
-    if (!v) {
-        Py_DECREF(tuple);
-        tuple = NULL;
-        return false;
-    }
-    PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen
-    return true;
 }
 
 
@@ -79,6 +46,10 @@ PyObject* PyUnicodeFromString(const char *u){
 
 PyObject* PyBoolFromLong(long v){
     return PyBool_FromLong(v);
+}
+
+PyObject* PyLongFromSize_t(quint32 v){
+    return PyLong_FromSize_t(v);
 }
 
 const char* typeName(const PyObject* obj){

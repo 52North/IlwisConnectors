@@ -136,7 +136,7 @@ PyObject* Engine::operations(const std::string& filter){
     PyObject* list = newPyTuple(ops.size());
     int i = 0;
     for(auto it = ops.begin(); it != ops.end(); it++){
-        if (!setTupleItem(list, i++, it->name().toStdString().data())){
+        if (!setTupleItem(list, i++, PyUnicodeFromString(it->name().toStdString().data()))){
             throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of attributes").arg( it->name()));
         }
     }

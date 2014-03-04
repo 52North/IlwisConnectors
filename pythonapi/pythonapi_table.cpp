@@ -43,7 +43,7 @@ namespace pythonapi {
         Ilwis::ITable tbl = this->ptr()->get<Ilwis::Table>();
         PyObject* list = newPyTuple(tbl->columnCount());
         for(int i = 0; i < tbl->columnCount(); i++){
-            if (!setTupleItem(list, i,tbl->columndefinition(i).name().toStdString().data()))
+            if (!setTupleItem(list, i, PyUnicodeFromString(tbl->columndefinition(i).name().toStdString().data())))
                 throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of columns").arg(tbl->columndefinition(i).name()));
         }
         return list;
@@ -54,7 +54,7 @@ namespace pythonapi {
         PyObject* list = newPyTuple(lst.size());
         int i = 0;
         for(auto it = lst.begin(); it != lst.end(); it++){
-            if (!setTupleItem(list, i++, *it))
+            if (!setTupleItem(list, i++, PyLongFromSize_t(*it)))
                 throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of columns").arg(*it));
         }
         return list;
@@ -115,51 +115,15 @@ namespace pythonapi {
     }
 
     PyObject* Table::column(const std::string& name) const{
-        std::vector<QVariant> col = this->ptr()->get<Ilwis::Table>()->column(QString::fromStdString(name));
-        PyObject* list = newPyTuple(col.size());
-        int i = 0;
-        for(auto it = col.begin(); it != col.end(); it++){
-            bool ok = false;
-            double value = (*it).toDouble(&ok);
-            if (ok){
-                setTupleItem(list, i++, value);
-            }else{
-                setTupleItem(list, i++, (*it).toString().toStdString().data());
-            }
-        }
-        return list;
+        return StdVectorOfQVariant2PyTuple(this->ptr()->get<Ilwis::Table>()->column(QString::fromStdString(name)));
     }
 
     PyObject* Table::column(quint32 columnIndex) const{
-        std::vector<QVariant> col = this->ptr()->get<Ilwis::Table>()->column(columnIndex);
-        PyObject* list = newPyTuple(col.size());
-        int i = 0;
-        for(auto it = col.begin(); it != col.end(); it++){
-            bool ok = false;
-            double value = (*it).toDouble(&ok);
-            if (ok){
-                setTupleItem(list, i++, value);
-            }else{
-                setTupleItem(list, i++, (*it).toString().toStdString().data());
-            }
-        }
-        return list;
-    }
+        return StdVectorOfQVariant2PyTuple(this->ptr()->get<Ilwis::Table>()->column(columnIndex));
+   }
 
     PyObject* Table::record(quint32 rec) const{
-        std::vector<QVariant> col = this->ptr()->get<Ilwis::Table>()->record(rec);
-        PyObject* list = newPyTuple(col.size());
-        int i = 0;
-        for(auto it = col.begin(); it != col.end(); it++){
-            bool ok = false;
-            double value = (*it).toDouble(&ok);
-            if (ok){
-                setTupleItem(list, i++, value);
-            }else{
-                setTupleItem(list, i++, (*it).toString().toStdString().data());
-            }
-        }
-        return list;
+        return StdVectorOfQVariant2PyTuple(this->ptr()->get<Ilwis::Table>()->record(rec));
     }
 
 

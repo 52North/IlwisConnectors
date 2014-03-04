@@ -15,7 +15,7 @@ namespace pythonapi{
 
     QVariant* PyObject2QVariant(const PyObject* obj);
     PyObject* QVariant2PyObject(const QVariant& var);
-
+    PyObject* StdVectorOfQVariant2PyTuple(const std::vector<QVariant>& vec);
 }
 
 #endif // PYTHONAPI_PYVARIANT_H
