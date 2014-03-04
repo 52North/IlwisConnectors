@@ -132,6 +132,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
     if(!GdalConnector::loadMetaData(data))
         return false;
 
+    bool ok = true;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     if ( fcoverage->isValid() ) {
         ITable attTable = fcoverage->attributeTable();
@@ -168,7 +169,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
                 }
             } catch (FeatureCreationError& ) {
                 gdal()->destroyFeature( hFeature );
-                return false;
+                ok = false;
             }
         }
         //layer envelopes/extents
@@ -182,10 +183,9 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
         }
         fcoverage->envelope(bbox);
     }
-    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
-    gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
-    _binaryIsLoaded = true;
-    return true;
+    gdal()->closeFile(containerConnector()->toLocalFile(_filename).absoluteFilePath(), data->id());
+    _binaryIsLoaded = ok;
+    return ok;
 }
 
 geos::geom::Geometry* GdalFeatureConnector::fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry ) const{

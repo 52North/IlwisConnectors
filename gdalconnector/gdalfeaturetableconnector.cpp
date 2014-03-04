@@ -46,8 +46,12 @@ bool GdalFeatureTableConnector::storeMetaData(Ilwis::IlwisObject *obj){
 }
 
 bool GdalFeatureTableConnector::loadBinaryData(IlwisObject * data){
+    if(!GdalConnector::loadMetaData(data))
+        return false;
+
     Table *attTable = static_cast<Table *>(data);
 
+    bool ok = true;
     OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), 0);
     if ( hLayer) {
         std::vector<QVariant> record(attTable->columnCount());
@@ -69,11 +73,11 @@ bool GdalFeatureTableConnector::loadBinaryData(IlwisObject * data){
             return true;
         } catch (FeatureCreationError& ) {
             gdal()->destroyFeature( hFeature );
-            return false;
+            ok = false;
         }
     }
-    return false;
-
+    gdal()->closeFile(containerConnector()->toLocalFile(_filename).absoluteFilePath(), data->id());
+    return ok;
 }
 
 
