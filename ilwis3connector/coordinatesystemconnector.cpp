@@ -7,10 +7,11 @@
 #include "kernel.h"
 #include "geometries.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "inifile.h"
 #include "ilwisdata.h"
-#include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
@@ -96,7 +97,7 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject* data)
     return true;
 }
 
-bool CoordinateSystemConnector::canUse(const Resource& resource,const UPContainerConnector &container) // static
+bool CoordinateSystemConnector::canUse(const Resource& resource,const UPCatalogConnector &container) // static
 {
     IlwisTypes requiredType = resource.ilwisType();
     if ( (requiredType & itCOORDSYSTEM)!= 0)
@@ -143,6 +144,49 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
     ellipsoid.prepare(resource);
 
     return ellipsoid;
+}
+
+QString CoordinateSystemConnector::prjParam2IlwisName(Projection::ProjectionParamValue parm)
+{
+    switch(parm){
+        case Projection::pvAZIMCLINE:
+        return "Azim of Central Line of True Scale";
+    case Projection::pvAZIMYAXIS:
+        return "Azim of Projection Y-Axis";
+    case Projection::pvHEIGHT:
+        return "Height Persp. Center";
+    case Projection::pvK0:
+        return "Scale Factor";
+    case Projection::pvLAT0:
+        return "Central Parallel";
+    case Projection::pvLAT1:
+        return "Standard Parallel 1";
+    case Projection::pvLAT2:
+        return "Standard Parallel 2";
+    case Projection::pvLATTS:
+        return "Latitude of True Scale";
+    case Projection::pvLON0:
+        return "Central Meridian";
+    case Projection::pvNORIENTED:
+        return "North Oriented XY Coord System";
+    case Projection::pvNORTH:
+        return "Northern Hemisphere";
+    case Projection::pvPOLE:
+        return "Pole of Oblique Cylinder";
+    case Projection::pvTILTED:
+        return "Tilted/Rotated Projection Plane";
+    case Projection::pvTILT:
+        return "Tilt of Projection Plane";
+    case Projection::pvX0:
+        return "False Easting";
+    case Projection::pvY0:
+        return "False Northing";
+    case Projection::pvZONE:
+        return "Zone";
+    default:
+        return sUNDEF;
+    }
+    return sUNDEF;
 }
 
 GeodeticDatum *CoordinateSystemConnector::getDatum(QString& ellipsoid) {
@@ -247,11 +291,67 @@ IProjection CoordinateSystemConnector::getProjection(ConventionalCoordinateSyste
     return proj;
 }
 
-QString CoordinateSystemConnector::createCsyFromCode(const QString& code) {
-    if ( code == "epsg:4326")
-        return  "LatlonWGS84.csy";
-    //TODO:, create csy based on proj4 data, epsg->proj4 can be done through the database
-    return sUNDEF;
+bool CoordinateSystemConnector::storeMetaData(IlwisObject *data) {
+    bool ok = true;
+    if ((ok = Ilwis3Connector::storeMetaData(data, itCOORDSYSTEM)) == false){
+        return false;
+    }
+    ICoordinateSystem csy(static_cast<CoordinateSystem *>(data));
+    if (!csy.isValid() || !csy->isValid()){
+        return ERROR1(ERR_NO_INITIALIZED_1, "CoordinateSystem");
+    }
+    Envelope bounds = csy->envelope();
+    if(!bounds.isValid()){
+        ERROR2(ERR_NO_INITIALIZED_2, "Bounds", csy->name());
+        return sUNDEF;
+    }
+
+    _odf->setKeyValue("CoordSystem","CoordBounds",QString("%1 %2 %3 %4").
+                      arg(bounds.min_corner().x,10,'f').
+                      arg(bounds.min_corner().y,10,'f').
+                      arg(bounds.max_corner().x,10,'f').
+                      arg(bounds.max_corner().y,10,'f'));
+
+    if ( csy->isLatLon()) {
+        _odf->setKeyValue("CoordSystem", "Datum", "WGS 1984");
+        _odf->setKeyValue("CoordSystem","Type","LatLon");
+    }else{
+        IConventionalCoordinateSystem projectedCsy = csy.get<ConventionalCoordinateSystem>();
+        if( !projectedCsy->ellipsoid().isValid() || !projectedCsy->projection().isValid()){
+                ERROR2(ERR_NO_INITIALIZED_2, "Ellipsoid/Projection", csy->name());
+                return sUNDEF;
+        }
+        QString projectionName = Ilwis3Connector::code2name(projectedCsy->projection()->name(), "projection");
+        _odf->setKeyValue("CoordSystem","Type","Projection");
+        _odf->setKeyValue("CoordSystem","Projection",projectionName);
+        QString ellipsoidName = projectedCsy->ellipsoid()->name();
+        //ellipsoidName = Ilwis3Connector::name2Code(ellipsoidName, "ellipsoid");
+        if ( ellipsoidName == sUNDEF){
+            ellipsoidName = "User Defined";
+            _odf->setKeyValue("Ellipsoid","a",projectedCsy->ellipsoid()->majorAxis() );
+            _odf->setKeyValue("Ellipsoid","1/f",projectedCsy->ellipsoid()->flattening() );
+
+        }
+        _odf->setKeyValue("CoordSystem","Ellipsoid",ellipsoidName);
+        IProjection projection = projectedCsy->projection();
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvAZIMCLINE),projection->parameter(Projection::pvAZIMCLINE).toDouble());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvAZIMYAXIS),projection->parameter(Projection::pvAZIMYAXIS).toDouble());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvHEIGHT),projection->parameter(Projection::pvHEIGHT).toDouble());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvK0),projection->parameter(Projection::pvK0).toDouble());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT0),projection->parameter(Projection::pvLAT0).toDouble());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT1),projection->parameter(Projection::pvLAT1).toDouble());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT2),projection->parameter(Projection::pvLAT2).toDouble());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLATTS),projection->parameter(Projection::pvLATTS).toDouble());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLON0),projection->parameter(Projection::pvLON0).toDouble());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORIENTED),projection->parameter(Projection::pvNORIENTED).toString());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORTH),projection->parameter(Projection::pvNORTH).toString());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvX0),projection->parameter(Projection::pvX0).toDouble());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvY0),projection->parameter(Projection::pvY0).toDouble());
+        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvZONE),projection->parameter(Projection::pvZONE).toInt());
+
+    }
+    _odf->store("csy", containerConnector());
+    return true;
 
 
 }
