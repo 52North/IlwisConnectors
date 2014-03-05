@@ -3,6 +3,8 @@
 
 #include "wfsconnector_global.h"
 
+#include "geos/geom/Polygon.h"
+
 class QString;
 class XmlStreamParser;
 
@@ -59,8 +61,8 @@ private:
     void updateSrsInfo(WfsParsingContext &context);
     bool updateSrsInfoUntil(QString qname, WfsParsingContext &context);
 
-    bool parseLineString(geos::geom::Geometry *geometry, WfsParsingContext &context);
-    bool parsePolygon(geos::geom::Geometry *geometry, WfsParsingContext &context);
+    geos::geom::LineString *parseLineString(WfsParsingContext &context, bool &ok);
+    geos::geom::Polygon *parsePolygon(WfsParsingContext &context, bool &ok);
     geos::geom::LinearRing *parseExteriorRing(WfsParsingContext &context);
     std::vector<geos::geom::Geometry *> *parseInteriorRings(WfsParsingContext &context);
 

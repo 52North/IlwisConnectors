@@ -205,56 +205,84 @@ void WfsFeatureParser::parseFeatureGeometry(WfsParsingContext &context)
             std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
             if (updateSrsInfoUntil("gml:surfaceMember", context)) {
                 do {
+                    bool ok = false;
                     updateSrsInfo(context);
-                    geos::geom::Polygon *polygon;
-                    if ( !parsePolygon(polygon, context)) {
+                    geos::geom::Geometry *geometry = parsePolygon(context, ok);
+                    if ( !ok) {
                         ERROR0("Could not parse GML MultiSurface member.");
-                        break;
-                    } else {
-                        multi->push_back(polygon);
+                        return;
                     }
+                    multi->push_back(geometry);
                 } while (_parser->moveToNext("gml:surfaceMember"));
-                _fcoverage->newFeature(_fcoverage->geomfactory()->createMultiPolygon(multi),false);
+
+                ICoordinateSystem crs;
+                QString res = QString("code=").append(context.srsName());
+                if (crs.prepare(res, itCONVENTIONALCOORDSYSTEM)) {
+                    _fcoverage->coordinateSystem(crs);
+                    _fcoverage->newFeature(_fcoverage->geomfactory()->createMultiPolygon(multi),false);
+                } else {
+                    ERROR1("Could not prepare crs with code=%1.",context.srsName());
+                }
             }
         } else {
+            bool ok = false;
             updateSrsInfo(context);
-            geos::geom::Polygon *polygon;
-            if ( !parsePolygon(polygon, context)) {
+            geos::geom::Geometry *geometry = parsePolygon(context, ok);
+            if ( !ok) {
                 ERROR0("Could not parse GML Surface.");
+                return;
+            }
+
+            ICoordinateSystem crs;
+            QString res = QString("code=").append(context.srsName());
+            if (crs.prepare(res)) {
+                _fcoverage->coordinateSystem(crs);
+                _fcoverage->newFeature(geometry,false);
             } else {
-                _fcoverage->newFeature(polygon,false);
+                ERROR1("Could not prepare crs with code=%1.",context.srsName());
             }
         }
-
-        // TODO create crs?
-        // CoordinateSystem cs = new CoordinateSystem();
 
     } else if (types & itLINE) {
         if (isMultiGeometry) {
             std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
             if (updateSrsInfoUntil("gml:curveMember", context)) {
                 do {
+                    bool ok = false;
                     updateSrsInfo(context);
-                    geos::geom::Geometry *geometry;
-                    if ( !parseLineString(geometry, context)) {
+                    geos::geom::Geometry *geometry = parseLineString(context, ok);
+                    if ( !ok) {
                         ERROR0("Could not parse GML MultiCurve member.");
-                        break;
-                    } else {
-                        multi->push_back(geometry);
+                        return;
                     }
+                    multi->push_back(geometry);
                 } while (_parser->moveToNext("gml:curveMember"));
-                _fcoverage->newFeature(_fcoverage->geomfactory()->createMultiLineString(multi),false);
+
+                ICoordinateSystem crs;
+                QString res = QString("code=").append(context.srsName());
+                if (crs.prepare(res)) {
+                    _fcoverage->coordinateSystem(crs);
+                    _fcoverage->newFeature(_fcoverage->geomfactory()->createMultiLineString(multi),false);
+                } else {
+                    ERROR1("Could not prepare crs with code=%1.",context.srsName());
+                }
             }
         } else {
-            geos::geom::LineString *lineString;
-            if ( !parseLineString(lineString, context)) {
+            bool ok = false;
+            geos::geom::Geometry *geometry = parseLineString(context, ok);
+            if ( !ok) {
                 ERROR0("Could not parse GML Curve.");
+                return;
             }
-            _fcoverage->newFeature(_fcoverage->geomfactory()->createLineString(lineString->getCoordinates()),false);
+            ICoordinateSystem crs;
+            QString res = QString("code=").append(context.srsName());
+            if (crs.prepare(res)) {
+                _fcoverage->coordinateSystem(crs);
+                _fcoverage->newFeature(_fcoverage->geomfactory()->createLineString(geometry->getCoordinates()),false);
+            } else {
+                ERROR1("Could not prepare crs with code=%1.",context.srsName());
+            }
         }
-
-        // TODO create crs?
-        // CoordinateSystem cs = new CoordinateSystem();
 
     } else if (types & itPOINT) {
 
@@ -293,7 +321,7 @@ void WfsFeatureParser::updateSrsInfo(WfsParsingContext &context)
     QString srs = attributes.value("srsName").toString();
     QString dimension = attributes.value("srsDimension").toString();
     if (!dimension.isEmpty()) context.setSrsDimension(dimension.toInt());
-    if (!srs.isEmpty()) context.setSrsName(srs);
+    if (!srs.isEmpty()) context.setSrsName(WfsUtils::normalizeEpsgCode(srs));
 }
 
 bool WfsFeatureParser::updateSrsInfoUntil(QString qname, WfsParsingContext &context)
@@ -308,36 +336,39 @@ bool WfsFeatureParser::updateSrsInfoUntil(QString qname, WfsParsingContext &cont
     return true;
 }
 
-bool WfsFeatureParser::parseLineString(geos::geom::Geometry *lineString, WfsParsingContext &context)
+geos::geom::LineString *WfsFeatureParser::parseLineString(WfsParsingContext &context, bool &ok)
 {
     try {
         // move to actual curve member
         _parser->readNextStartElement();
         if (_parser->findNextOf( {"gml:posList, gml:pos"} )) {
+            ok = true;
             QString wkt = gmlPosListToWktLineString(_parser->readElementText(), context);
             geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
-            lineString = _fcoverage->geomfactory()->createLineString(geometry->getCoordinates());
-            return true;
+            return _fcoverage->geomfactory()->createLineString(geometry->getCoordinates());
         }
-        // we only parse gml:posList and gml:pos
-        return false;
+        ERROR0("Could not neither gml:posList nor gml:pos");
     } catch(std::exception &e) {
         ERROR1("Could not parse WKT LineString %1", e.what());
-        return false;
     }
+
+    ok = false; // return empty polygon
+    return _fcoverage->geomfactory()->createLineString();
 }
 
-bool WfsFeatureParser::parsePolygon(geos::geom::Geometry *polygon, WfsParsingContext &context)
+geos::geom::Polygon * WfsFeatureParser::parsePolygon(WfsParsingContext &context, bool &ok)
 {
     try {
+        ok = true;
         geos::geom::LinearRing *outer = parseExteriorRing(context);
         std::vector<geos::geom::Geometry *> *inners = parseInteriorRings(context);
-        polygon = _fcoverage->geomfactory()->createPolygon(outer, inners);
-        return true;
+        return _fcoverage->geomfactory()->createPolygon(outer, inners);
     } catch(std::exception &e) {
         ERROR1("Could not parse WKT Polygon %1", e.what());
-        return false;
     }
+
+    ok = false; // return empty polygon
+    return _fcoverage->geomfactory()->createPolygon();
 }
 
 geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing(WfsParsingContext &context)
