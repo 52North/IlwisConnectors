@@ -10,7 +10,7 @@ namespace Wfs {
 class WFSCONNECTORSHARED_EXPORT WfsCatalogConnector : public CatalogConnector
 {
 public:
-    WfsCatalogConnector(const Resource &resource);
+    WfsCatalogConnector(const Resource &resource,bool load=true);
     ~WfsCatalogConnector();
 
     virtual bool loadItems();
@@ -19,7 +19,18 @@ public:
 
     QString provider() const;
 
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
+
+
+
+
+    /*
+     * following two methods has to be implemented as defined pure
+     *
+     * However, they do not have any purpose in the WFS catalog connector
+     */
+    std::vector<QUrl> sources(const QStringList& filter, int options=foFULLPATHS) const;
+    QFileInfo toLocalFile(const QUrl &datasource) const;
 
 };
 }

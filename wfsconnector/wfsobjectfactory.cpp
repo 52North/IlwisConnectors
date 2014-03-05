@@ -9,7 +9,6 @@
 #include "ilwiscontext.h"
 #include "ilwisdata.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "ilwisobjectfactory.h"

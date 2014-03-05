@@ -6,7 +6,6 @@
 #include "wfsconnector_global.h"
 #include "kernel.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
 #include "catalog.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"

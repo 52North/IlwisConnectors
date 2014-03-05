@@ -14,7 +14,6 @@
 #include "featurecoverage.h"
 #include "connectorinterface.h"
 #include "identity.h"
-#include "containerconnector.h"
 #include "resource.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
@@ -31,12 +30,12 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-ConnectorInterface *WfsCatalogConnector::create(const Resource &resource, bool)
+ConnectorInterface *WfsCatalogConnector::create(const Resource &resource, bool load)
 {
-    return new WfsCatalogConnector(resource);
+    return new WfsCatalogConnector(resource,load);
 }
 
-WfsCatalogConnector::WfsCatalogConnector(const Resource &resource) : CatalogConnector(resource)
+WfsCatalogConnector::WfsCatalogConnector(const Resource &resource, bool load) : CatalogConnector(resource,load)
 {
 }
 
@@ -89,4 +88,21 @@ QString WfsCatalogConnector::provider() const
 
 
 
+
+
+
+
+
+
+std::vector<QUrl> WfsCatalogConnector::sources(const QStringList &filter, int options) const
+{
+    std::vector<QUrl> emptyList;
+    return emptyList;
+}
+
+QFileInfo WfsCatalogConnector::toLocalFile(const QUrl &datasource) const
+{
+    QFileInfo fileInfo;
+    return fileInfo;
+}
 

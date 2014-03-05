@@ -172,18 +172,3 @@ bool WfsFeatureDescriptionParser::initDomainViaType(QString &type, IDomain &doma
     return false;
 }
 
-bool WfsFeatureDescriptionParser::isPolygonType() const
-{
-    QString currentElement = _parser->name();
-
-}
-
-bool WfsFeatureDescriptionParser::isLineType() const
-{
-
-}
-
-bool WfsFeatureDescriptionParser::isPointType() const
-{
-
-}

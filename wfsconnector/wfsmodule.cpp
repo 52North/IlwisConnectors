@@ -16,8 +16,6 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "catalog.h"
-#include "containerconnector.h"
-#include "ilwisobjectconnector.h"
 #include "attributerecord.h"
 #include "feature.h"
 #include "coverage.h"
@@ -27,6 +25,7 @@
 #include "abstractfactory.h"
 #include "connectorfactory.h"
 #include "catalogconnectorfactory.h"
+#include "ilwisobjectconnector.h"
 #include "symboltable.h"
 #include "wfsmodule.h"
 #include "wfsconnector.h"
@@ -34,7 +33,6 @@
 #include "wfsfeatureconnector.h"
 #include "catalogconnector.h"
 #include "wfscatalogconnector.h"
-#include "wfscontainerconnector.h"
 #include "ilwisobjectfactory.h"
 #include "wfsobjectfactory.h"
 #include "wfsresponse.h"
@@ -65,15 +63,14 @@ void WfsModule::prepare()
     factory->prepare();
     kernel()->addFactory(factory);
 
-    CatalogConnectorFactory *catfact = kernel()->factory<CatalogConnectorFactory>("ilwis::catalogconnectorfactory");
-    if (catfact) {
-        catfact->add(WfsCatalogConnector::create);
-    }
+//    CatalogConnectorFactory *catfact = kernel()->factory<CatalogConnectorFactory>("ilwis::catalogconnectorfactory");
+//    if (catfact) {
+//        catfact->add(WfsCatalogConnector::create);
+//    }
 
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (cfactory) {
         cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
-        cfactory->addCreator(itCONTAINER,"wfs", WfsContainerConnector::create);
     }
 
 

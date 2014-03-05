@@ -25,7 +25,6 @@
 #include "coverage.h"
 #include "featurecoverage.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "wfsconnector.h"
 #include "wfs.h"
@@ -57,9 +56,6 @@ IlwisTypes WfsConnector::ilwisType(const QString &resourceUrl)
     WfsUtils::lowerCaseKeys(query);
     QString request = query.queryItemValue("request");
 
-    if (request == "GetCapabilities") {
-        return itCONTAINER;
-    }
     if (request == "DescribeFeature") {
         return itTABLE;
     }

@@ -27,7 +27,6 @@ SOURCES += \
     wfsconnector/wfs.cpp \
     wfsconnector/wfsresponse.cpp \
     wfsconnector/wfsfeature.cpp \
-    wfsconnector/wfscontainerconnector.cpp \
     wfsconnector/wfscapabilitiesparser.cpp \
     wfsconnector/xmlstreamparser.cpp \
     wfsconnector/xpathparser.cpp \
@@ -45,7 +44,6 @@ HEADERS += \
     wfsconnector/wfsconnector_global.h \
     wfsconnector/wfsresponse.h \
     wfsconnector/wfsfeature.h \
-    wfsconnector/wfscontainerconnector.h \
     wfsconnector/wfscapabilitiesparser.h \
     wfsconnector/xmlstreamparser.h \
     wfsconnector/xpathparser.h \

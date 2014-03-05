@@ -37,9 +37,6 @@ private:
      */
     bool initDomainViaType(QString &type, IDomain &domain);
 
-    bool isPolygonType() const;
-    bool isLineType() const;
-    bool isPointType() const;
 };
 
 }

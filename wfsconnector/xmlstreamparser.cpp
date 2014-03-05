@@ -36,7 +36,7 @@ void XmlStreamParser::addNamespaceMapping(QString prefix, QString ns)
 
 QString XmlStreamParser::getPrefixForNamespaceUri(QString namespaceUri) const
 {
-    _namespaces.key(namespaceUri);
+    return _namespaces.key(namespaceUri);
 }
 
 bool XmlStreamParser::startParsing(QString qName) const
