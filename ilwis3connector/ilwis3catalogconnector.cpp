@@ -8,7 +8,9 @@
 #include "identity.h"
 #include "kernel.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "inifile.h"
 #include "resource.h"
 #include "mastercatalog.h"
@@ -26,21 +28,20 @@ using namespace Ilwis;
 using namespace Ilwis3;
 
 ConnectorInterface *Ilwis3CatalogConnector::create(const Resource &resource, bool) {
-    return new Ilwis3CatalogConnector(resource);
+    if ( resource.ilwisType() == itCATALOG ){
+        return new Ilwis3CatalogConnector(resource);
+    }
+    return nullptr;
 
 }
 
-Ilwis3CatalogConnector::Ilwis3CatalogConnector(const Resource &resource) : CatalogConnector(resource)
+Ilwis3CatalogConnector::Ilwis3CatalogConnector(const Resource &resource) : FileCatalogConnector(resource)
 {
 }
 
 inline uint qHash(const QFileInfo& inf ){
     return ::qHash(inf.canonicalFilePath());
 }
-
-//bool operator==(const QFileInfo& inf1, const QFileInfo& inf2 ){
-//    return inf1.canonicalFilePath() == inf2.canonicalFilePath();
-//}
 
 bool Ilwis3CatalogConnector::loadItems()
 {
@@ -52,8 +53,7 @@ bool Ilwis3CatalogConnector::loadItems()
     QStringList sfilters;
     for(QVariant& ext : filters)
         sfilters += "*." + ext.toString();
-    std::vector<QUrl> files = containerConnector()->sources(sfilters
-                                                      ,ContainerConnector::foFULLPATHS | ContainerConnector::foEXTENSIONFILTER);
+    std::vector<QUrl> files = sources(sfilters,CatalogConnector::foFULLPATHS | CatalogConnector::foEXTENSIONFILTER);
 
     QList<ODFItem> odfitems;
     QList<Resource> folders;
@@ -106,6 +106,8 @@ QString Ilwis3CatalogConnector::provider() const
 {
     return "ilwis3";
 }
+
+
 
 
 

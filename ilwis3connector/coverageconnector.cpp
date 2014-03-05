@@ -6,7 +6,9 @@
 #include "raster.h"
 #include "module.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "inifile.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
@@ -20,7 +22,6 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "rawconverter.h"
-#include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
@@ -182,9 +183,17 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
     _csyName = Resource::toLocalFile(csy->source().url(),true);
     if ( _csyName == sUNDEF) {
-        _csyName = CoordinateSystemConnector::createCsyFromCode(csy->code());
+        QUrl url = makeUrl(_odf->file(),sUNDEF, itCOORDSYSTEM);
+        csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
+        if(!csy->store(Ilwis::IlwisObject::smMETADATA)){
+            _csyName = "Unknown.csy";
+            WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
+        } else {
+            QFileInfo inf(url.toLocalFile());
+            _csyName = inf.fileName();
+        }
     }
-    if ( _csyName == sUNDEF) {
+    if ( _csyName == sUNDEF || _csyName == "") {
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
     }
     _odf->setKeyValue("BaseMap","CoordSystem", _csyName);

@@ -6,7 +6,7 @@ namespace Gdal {
 class GDALItems : public QSet<Resource>
 {
 public:
-    GDALItems(const QUrl& path, const UPContainerConnector &containerc, IlwisTypes extTypes);
+    GDALItems(const QUrl& path, const UPCatalogConnector &containerc, IlwisTypes extTypes);
 
 private:
     void addItem(const QUrl &url, quint64 csyid, quint64 grfId, IlwisTypes tp =itRASTER, IlwisTypes extTypes=itUNKNOWN);

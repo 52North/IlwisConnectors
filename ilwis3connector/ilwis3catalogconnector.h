@@ -5,7 +5,7 @@ namespace Ilwis {
 
 namespace Ilwis3 {
 
-class Ilwis3CatalogConnector : public CatalogConnector
+class Ilwis3CatalogConnector : public FileCatalogConnector
 {
 public:
     Ilwis3CatalogConnector(const Ilwis::Resource &resource);

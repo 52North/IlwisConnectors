@@ -2,8 +2,9 @@
 #include "ilwisdata.h"
 #include "gdalproxy.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "dataformat.h"
 #include "gdalconnector.h"
 

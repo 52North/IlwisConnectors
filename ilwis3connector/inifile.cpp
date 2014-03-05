@@ -1,15 +1,13 @@
 #include  <stdio.h>
 #include  <stdlib.h>
-#include <QFile>
 #include <QTextStream>
-#include <QStringList>
 #include <QRegExp>
-#include <QDir>
-#include "ilwis.h"
 #include "catalog.h"
 #include "kernel.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "ilwiscontext.h"
 #include "inifile.h"
 
@@ -23,7 +21,7 @@ IniFile::~IniFile()
 {
 }
 
-bool IniFile::setIniFile(const QUrl& fn, const UPContainerConnector &container, bool loadfile) {
+bool IniFile::setIniFile(const QUrl& fn, const UPCatalogConnector &container, bool loadfile) {
     if ( !container || !container->isValid())
         return false;
 
@@ -38,8 +36,7 @@ bool IniFile::setIniFile(const QUrl& fn, const UPContainerConnector &container, 
 
 }
 
-void IniFile::setKeyValue(const QString& section, const QString& key, const QString& value)
-{
+void IniFile::setValue(const QString& section, const QString& key, const QString& value){
     Sections::iterator iterSect = _sections.find(section);
     if (iterSect == _sections.end())
     {
@@ -54,6 +51,21 @@ void IniFile::setKeyValue(const QString& section, const QString& key, const QStr
         SectionEntries& entries = iterSect.value();
         entries[key.toLower()] = value;
     }
+}
+
+void IniFile::setKeyValue(const QString& section, const QString& key, const QString& value)
+{
+    setValue(section, key, value);
+}
+
+void IniFile::setKeyValue(const QString& section, const QString& key, double value)
+{
+    setValue(section, key, QString::number(value)) ;
+}
+
+void IniFile::setKeyValue(const QString& section, const QString& key, int value)
+{
+    setValue(section, key, QString::number(value)) ;
 }
 
 QString IniFile::value(const QString& section, const QString& key) const
@@ -113,7 +125,7 @@ QStringList IniFile::childKeys(const QString &section) const
     return keys;
 }
 
-bool IniFile::load(const UPContainerConnector& container)
+bool IniFile::load(const UPCatalogConnector &container)
 {
     enum ParseState { FindSection, FindKey, ReadFindKey, StoreKey, None } state;
     QFileInfo fileinfo = container->toLocalFile(_filename);
@@ -184,7 +196,7 @@ bool IniFile::load(const UPContainerConnector& container)
      return true;
 }
 
-void IniFile::store(const QString& ext, const UPContainerConnector &container )
+void IniFile::store(const QString& ext, const UPCatalogConnector &container )
 {
     if (!container || !container->isValid())
         return;
@@ -197,7 +209,7 @@ void IniFile::store(const QString& ext, const UPContainerConnector &container )
     }
     QFile fileIni(path);
 
-    if (!fileIni.open(QIODevice::ReadWrite | QIODevice::Text))
+    if (!fileIni.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate))
         return;
 
     QTextStream text(&fileIni);

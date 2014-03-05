@@ -7,7 +7,10 @@
 #include "kernel.h"
 #include "resource.h"
 #include "connectorinterface.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
 #include "catalogconnector.h"
+#include "filecatalogconnector.h"
 #include "catalog.h"
 #include "dataformat.h"
 #include "gdalmodule.h"
@@ -19,13 +22,18 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *GdalCatalogConnector::create(const Resource &resource,bool) {
-    return new GdalCatalogConnector(resource);
+ConnectorInterface *GdalCatalogConnector::create(const Resource &resource,bool load) {
+    return new GdalCatalogConnector(resource, load);
 
 }
 
-GdalCatalogConnector::GdalCatalogConnector(const Ilwis::Resource &resource) : CatalogConnector(resource), _type(resource.ilwisType())
+GdalCatalogConnector::GdalCatalogConnector(const Ilwis::Resource &resource, bool load) : CatalogConnector(resource,load), _type(resource.ilwisType())
 {
+}
+
+bool GdalCatalogConnector::prepare()
+{
+    return CatalogConnector::prepare();
 }
 
 inline uint qHash(const QFileInfo& inf ){
@@ -44,8 +52,7 @@ bool GdalCatalogConnector::loadItems()
     filters.removeOne("*.hdr");
     filters.removeDuplicates();
 
-    std::vector<QUrl> files = containerConnector()->sources(filters
-                                                      ,ContainerConnector::foFULLPATHS | ContainerConnector::foEXTENSIONFILTER);
+    std::vector<QUrl> files = sources(filters ,CatalogConnector::foFULLPATHS | CatalogConnector::foEXTENSIONFILTER);
 
     QSet<Resource> gdalitems;
     QList<Resource> folders;
@@ -97,3 +104,16 @@ QString GdalCatalogConnector::provider() const
 {
     return "gdal";
 }
+
+std::vector<QUrl> GdalCatalogConnector::sources(const QStringList &filter, int options) const
+{
+    //TODO for non-file based systems
+    return FileCatalogConnector::loadFolders(source(), filter, options);
+}
+
+QFileInfo GdalCatalogConnector::toLocalFile(const QUrl &datasource) const{
+    //TODO for non-file based systems
+    return QFileInfo(datasource.toLocalFile());
+}
+
+

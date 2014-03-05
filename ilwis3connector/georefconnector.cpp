@@ -7,10 +7,10 @@
 #include "ilwisdata.h"
 #include "geometries.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
-#include "inifile.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
+#include "inifile.h"
 #include "ilwis3connector.h"
 #include "RawConverter.h"
 #include "coordinatesystem.h"
@@ -191,7 +191,7 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
     ICoordinateSystem csy;
     if(!csy.prepare(path.toLocalFile())) {
         kernel()->issues()->log(TR("Couldn't find coordinate system %1, loading unknown").arg(csyName),IssueObject::itWarning);
-        QString resource = QString("ilwis://file/unknown.csy");
+        QString resource = QString("code=unknown");
         if(!csy.prepare(resource)) {
             kernel()->issues()->log(TR("Cound find coordinate system unknown, corrupt system file"));
             return false;

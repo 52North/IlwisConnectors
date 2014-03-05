@@ -8,18 +8,18 @@
 #include "domain.h"
 #include "numericdomain.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
-#include "inifile.h"
 #include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
+#include "inifile.h"
 #include "ilwis3connector.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
 #include "juliantime.h"
+#include "dataformat.h"
 
 
 using namespace Ilwis;
 using namespace Ilwis3;
-
 
 Ilwis3Connector::Ilwis3Connector(const Resource &resource, bool load) : IlwisObjectConnector(resource, load)
 {
@@ -67,14 +67,7 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
         return false;
     }
 
-    QString name = _resource.url().toLocalFile();
-    QString ext = suffix(type);
-    if ( name.indexOf("." + ext) == -1)
-        name += "." + ext;
-    QFileInfo inf(name);
-    IniFile *ini = new IniFile();
-    ini->setIniFile(QUrl::fromLocalFile(inf.absoluteFilePath()), containerConnector(), false);
-    _odf.reset(ini);
+    _odf.reset(makeIni(_resource, containerConnector(),type));
 
     _odf->setKeyValue("Ilwis","Description", obj->description());
     _odf->setKeyValue("Ilwis","Time", obj->createTime().toString());
@@ -215,7 +208,7 @@ bool Ilwis3Connector::store(IlwisObject *obj, int storemode)
     bool ok = true;
     if ( storemode & IlwisObject::smMETADATA)
         ok &= storeMetaData(obj);
-    if ( storemode & IlwisObject::smBINARYDATA)
+    if ( ok && storemode & IlwisObject::smBINARYDATA)
         ok &= storeBinaryData(obj);
 
     return ok;
@@ -262,9 +255,9 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
         filename = QUrl(filename).toLocalFile();
     }
     QFileInfo inf(filename);
-    bool isCatalog =  inf.isDir();
-    if ( isCatalog)
-        return itCATALOG;
+//    bool isCatalog =  inf.isDir();
+//    if ( isCatalog)
+//        return itCATALOG;
 
     QString ext = inf.suffix();
     if ( ext == "mpr")
@@ -289,7 +282,7 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
     return itUNKNOWN;
 }
 
-QString Ilwis3Connector::suffix(IlwisTypes type) const {
+QString Ilwis3Connector::suffix(IlwisTypes type) {
     if ( type == itRASTER)
         return "mpr";
     if ( type == itPOLYGON)
@@ -365,7 +358,23 @@ QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& 
     return sUNDEF;
 }
 
-QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name) {
+IniFile *Ilwis3Connector::makeIni(const Resource &resource, const UPCatalogConnector &container, IlwisTypes type)
+{
+    QString name = resource.url().toLocalFile();
+    QString ext = suffix(type);
+    int index = name.lastIndexOf(".");
+    if ( index != -1){
+        name = name.left(index);
+    }
+    name += "." + ext;
+    QFileInfo inf(name);
+    IniFile *ini = new IniFile();
+    ini->setIniFile(QUrl::fromLocalFile(inf.absoluteFilePath()), container, false);
+
+    return ini;
+}
+
+QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name, IlwisTypes type) {
     QString fileurl = path;
     if ( fileurl == "")
         fileurl = _resource.url().toString();
@@ -373,6 +382,9 @@ QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name) {
     QFileInfo inf = containerConnector()->toLocalFile(fileurl);
     QString localpath = inf.absolutePath();
     QString filename =  localpath + "/" + (name != sUNDEF ? name : inf.baseName());
+    if ( type != itUNKNOWN){
+        filename += "."+ suffix(type);
+    }
     return QUrl::fromLocalFile(filename);
 }
 
@@ -383,7 +395,7 @@ QString Ilwis3Connector::outputNameFor(const IlwisObject *obj, bool isMulti, Ilw
         QFileInfo inf(url.toLocalFile());
         outputName = inf.absolutePath() + "/"+ inf.baseName();
     } else {
-        QString dir = context()->workingCatalog()->location().toLocalFile();
+        QString dir = context()->workingCatalog()->source().toLocalFile();
         outputName =  dir + "/" + obj->name();
     }
     if ( isMulti)
