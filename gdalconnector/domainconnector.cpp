@@ -1,7 +1,9 @@
 
 #include "kernel.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "domainitem.h"
 #include "ilwisdata.h"
 #include "domain.h"
@@ -12,7 +14,6 @@
 #include "range.h"
 #include "itemrange.h"
 #include "identifierrange.h"
-#include "ilwisobjectconnector.h"
 #include "gdalproxy.h"
 #include "gdalconnector.h"
 #include "numericdomain.h"

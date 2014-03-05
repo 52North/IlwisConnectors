@@ -32,7 +32,6 @@ SOURCES += \
     gdalconnector/georefconnector.cpp \
     gdalconnector/gdalfeatureconnector.cpp \
     gdalconnector/gdalfeaturetableconnector.cpp \
-    gdalconnector/gdalcontainerconnector.cpp \
     gdalconnector/gdaltableloader.cpp
 
 HEADERS += \
@@ -50,7 +49,6 @@ HEADERS += \
     gdalconnector/georefconnector.h \
     gdalconnector/gdalfeatureconnector.h \
     gdalconnector/gdalfeaturetableconnector.h \
-    gdalconnector/gdalcontainerconnector.h \
     gdalconnector/gdaltableloader.h
 
 OTHER_FILES += \

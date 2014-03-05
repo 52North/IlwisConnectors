@@ -6,7 +6,9 @@
 #include "kernel.h"
 #include "identity.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "resource.h"
 #include "gdalproxy.h"
 #include "gdalitem.h"
@@ -15,7 +17,7 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-GDALItems::GDALItems(const QUrl &url, const UPContainerConnector &containerc, IlwisTypes extTypes)
+GDALItems::GDALItems(const QUrl &url, const UPCatalogConnector &containerc, IlwisTypes extTypes)
 {
     if ( !containerc || !containerc->isValid())
         return ;

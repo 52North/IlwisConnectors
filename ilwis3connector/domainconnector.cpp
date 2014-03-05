@@ -1,7 +1,9 @@
 #include "kernel.h"
 #include "geos/geom/Coordinate.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "inifile.h"
 #include "ilwisdata.h"
 #include "domainitem.h"
@@ -13,7 +15,6 @@
 #include "itemrange.h"
 #include "identifierrange.h"
 #include "rawconverter.h"
-#include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "numericdomain.h"
 #include "datadefinition.h"
@@ -317,6 +318,7 @@ IlwisObject *DomainConnector::create() const
 {
     //TODO: other domain types time, coordinatesystem
     QString subtype = sUNDEF;
+    IlwisTypes tp = Ilwis3Connector::ilwisType(_resource.name());
     if ( type() & itCOVERAGE) {
         subtype = parseDomainInfo( _odf->value("BaseMap","DomainInfo"));
 

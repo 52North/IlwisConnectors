@@ -10,10 +10,10 @@
 #include "abstractfactory.h"
 #include "ilwisobjectfactory.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "connectorfactory.h"
 #include "gdalproxy.h"
-#include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
 #include "gdalobjectfactory.h"
 

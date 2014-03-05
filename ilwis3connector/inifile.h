@@ -13,14 +13,20 @@ namespace Ilwis {
 typedef QHash<QString, QString> SectionEntries;
 typedef QHash<QString, SectionEntries> Sections;
 
+class CatalogConnector;
+typedef std::unique_ptr<Ilwis::CatalogConnector> UPCatalogConnector;
+
 class IniFile
 {
 public:
     IniFile();
-    bool setIniFile(const QUrl& fn, const UPContainerConnector& container, bool loadfile=true);
+    bool setIniFile(const QUrl& fn, const UPCatalogConnector &container, bool loadfile=true);
     virtual ~IniFile();
 
     void setKeyValue(const QString& section, const QString& key, const QString& value);
+    void setKeyValue(const QString &section, const QString &key, double value);
+    void setKeyValue(const QString &section, const QString &key, int value);
+
     QString value(const QString& section, const QString& key) const;
 
     void removeKeyValue(const QString& section, const QString& key);
@@ -28,14 +34,15 @@ public:
     QString file()const;
     QStringList childKeys(const QString& section) const;
 
-    void store(const QString &ext, const UPContainerConnector &container);
+    void store(const QString &ext, const UPCatalogConnector &container);
 
 private:
     QUrl _filename;
     Sections _sections;
 
-    bool load(const UPContainerConnector &container);
+    bool load(const UPCatalogConnector &container);
 
+    void setValue(const QString &section, const QString &key, const QString &value);
 };
 
 typedef QScopedPointer<IniFile> ODF;
