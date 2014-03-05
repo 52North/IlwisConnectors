@@ -5,15 +5,15 @@
 #include <QDir>
 #include "kernel.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "inifile.h"
 #include "identity.h"
 #include "resource.h"
 #include "catalog.h"
-#include "mastercatalog.h"
 #include "ilwiscontext.h"
 #include "odfitem.h"
-#include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 
 const QString Ilwis::Ilwis3::ODFItem::systemObjectNames="value;image;image;min1to1;nilto1;count;distance;ndvi;percentage;none;latlonwgs84;latlon;bool;byte \
@@ -24,7 +24,7 @@ using namespace Ilwis3;
 
 #include <typeinfo>
 
-ODFItem::ODFItem(const QUrl &file, const UPContainerConnector& container) : Resource(file,itANY), _projectionName(sUNDEF)
+ODFItem::ODFItem(const QUrl &file, const UPCatalogConnector& container) : Resource(file,itANY), _projectionName(sUNDEF)
 {
     _odf.setIniFile(file, container);
     _file = container->toLocalFile(file);
@@ -157,7 +157,7 @@ QString ODFItem::findDatumName() const {
     return sUNDEF;
 }
 
-QString ODFItem::findDomainName(const UPContainerConnector& containerc) const
+QString ODFItem::findDomainName(const UPCatalogConnector& containerc) const
 {
     quint64 validTypes = itTABLE | itCOVERAGE | itDOMAIN;
     if ( (_ilwtype & validTypes) == 0)
@@ -188,7 +188,7 @@ QString ODFItem::findDomainName(const UPContainerConnector& containerc) const
     return cleanName(name);
 }
 
-IlwisTypes ODFItem::findDomainType(const UPContainerConnector& containerc) const
+IlwisTypes ODFItem::findDomainType(const UPCatalogConnector& containerc) const
 {
     quint64 validTypes = itTABLE | itCOVERAGE | itDOMAIN;
     if ( (_ilwtype & validTypes) == 0)
@@ -230,7 +230,7 @@ IlwisTypes ODFItem::findDomainType(const UPContainerConnector& containerc) const
 
 }
 
-QString ODFItem::findCsyName(const UPContainerConnector& containerc) const
+QString ODFItem::findCsyName(const UPCatalogConnector& containerc) const
 {
     quint64 validTypes = itGEOREF | itCOORDSYSTEM | itCOVERAGE;
     if ( (_ilwtype & validTypes) == 0 )
@@ -262,7 +262,7 @@ QString ODFItem::findCsyName(const UPContainerConnector& containerc) const
     return cleanName(name);
 }
 
-IlwisTypes ODFItem::findCsyType(const UPContainerConnector& containerc) const
+IlwisTypes ODFItem::findCsyType(const UPCatalogConnector& containerc) const
 {
     quint64 validTypes = itGEOREF | itCOORDSYSTEM | itCOVERAGE;
     if ( (_ilwtype & validTypes) == 0)
@@ -364,7 +364,7 @@ QString ODFItem::findGrfName() const{
 //    return itUNKNOWN;
 //}
 
-quint64 ODFItem::findSize(const UPContainerConnector& container) const
+quint64 ODFItem::findSize(const UPCatalogConnector& container) const
 {
     return objectSize(container);
 //    if ( sz == 0)
@@ -381,7 +381,7 @@ quint64 ODFItem::findSize(const UPContainerConnector& container) const
 
 }
 
-quint64 ODFItem::partSize(const QUrl& file, const QString& section, const QString& key,const UPContainerConnector& containerc)  const{
+quint64 ODFItem::partSize(const QUrl& file, const QString& section, const QString& key,const UPCatalogConnector& containerc)  const{
     QFileInfo part = containerc->toLocalFile(file);
     if ( section != "") {
         IniFile odf;
@@ -399,7 +399,7 @@ quint64 ODFItem::partSize(const QUrl& file, const QString& section, const QStrin
 
 }
 
-quint64 ODFItem::objectSize(const UPContainerConnector& container) const {
+quint64 ODFItem::objectSize(const UPCatalogConnector& container) const {
 
     qint64 sz = partSize(_odf.file(),"","", container);
     bool versionOk;
