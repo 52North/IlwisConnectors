@@ -7,7 +7,9 @@
 #include "kernel.h"
 #include "geometries.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "ilwisdata.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
@@ -16,7 +18,6 @@
 #include "coordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
 #include "gdalproxy.h"
-#include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
 #include "coordinatesystemconnector.h"
 
