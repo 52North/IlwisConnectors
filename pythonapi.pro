@@ -84,6 +84,7 @@ DEPENDPATH += $$PWD/../ilwiscore/core \
               $$PWD/../external/geos
 
 mytarget.files = pythonapi/ilwisobjects.py \
+                 pythonapi/test.py \
                  pythonapi/README \
                  pythonapi/UPDATE \
                  pythonapi/CHANGELOG
