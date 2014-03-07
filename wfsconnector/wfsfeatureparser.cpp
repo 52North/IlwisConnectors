@@ -110,9 +110,9 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, WfsParsingCon
             continue;
         }
 
-        // if geometry is in beteen
-        if (currentElementName == context.geometryAtttributeName()) {
-            parseFeatureGeometry(context);
+        // if geometry is in between attributes
+        if (currentElementName == _context.geometryAtttributeName()) {
+            createNewFeature();
             i--; // not written to table
             continue;
         }
@@ -158,14 +158,13 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, WfsParsingCon
     }
 
     if (_parser->readNextStartElement()) {
-        if (_parser->name() == context.geometryAtttributeName()) {
-            parseFeatureGeometry(context);
+        // geometry is at the end of the attribute list
+        if (_parser->name() == _context.geometryAtttributeName()) {
+            createNewFeature();
         }
     }
 
 }
-
-
 
 QVariant WfsFeatureParser::fillStringColumn()
 {
@@ -193,142 +192,126 @@ QVariant WfsFeatureParser::fillDateTimeColumn()
     return v;
 }
 
-void WfsFeatureParser::parseFeatureGeometry(WfsParsingContext &context)
+void WfsFeatureParser::createNewFeature()
 {
-    _parser->readNextStartElement();
-    IlwisTypes types = _fcoverage->ilwisType();
-
-    updateSrsInfo(context);
-    bool isMultiGeometry = _parser->name().contains("Multi");
-    if (types & itPOLYGON) {
-        if (isMultiGeometry) {
-            std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
-            if (updateSrsInfoUntil("gml:surfaceMember", context)) {
-                do {
-                    bool ok = false;
-                    updateSrsInfo(context);
-                    geos::geom::Geometry *geometry = parsePolygon(context, ok);
-                    if ( !ok) {
-                        ERROR0("Could not parse GML MultiSurface member.");
-                        return;
-                    }
-                    multi->push_back(geometry);
-                } while (_parser->moveToNext("gml:surfaceMember"));
-
-                ICoordinateSystem crs;
-                QString res = QString("code=").append(context.srsName());
-                if (crs.prepare(res, itCONVENTIONALCOORDSYSTEM)) {
-                    _fcoverage->coordinateSystem(crs);
-                    _fcoverage->newFeature(_fcoverage->geomfactory()->createMultiPolygon(multi),false);
-                } else {
-                    ERROR1("Could not prepare crs with code=%1.",context.srsName());
-                }
-            }
-        } else {
-            bool ok = false;
-            updateSrsInfo(context);
-            geos::geom::Geometry *geometry = parsePolygon(context, ok);
-            if ( !ok) {
-                ERROR0("Could not parse GML Surface.");
-                return;
-            }
-
-            ICoordinateSystem crs;
-            QString res = QString("code=").append(context.srsName());
-            if (crs.prepare(res)) {
-                _fcoverage->coordinateSystem(crs);
-                _fcoverage->newFeature(geometry,false);
-            } else {
-                ERROR1("Could not prepare crs with code=%1.",context.srsName());
-            }
-        }
-
-    } else if (types & itLINE) {
-        if (isMultiGeometry) {
-            std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
-            if (updateSrsInfoUntil("gml:curveMember", context)) {
-                do {
-                    bool ok = false;
-                    updateSrsInfo(context);
-                    geos::geom::Geometry *geometry = parseLineString(context, ok);
-                    if ( !ok) {
-                        ERROR0("Could not parse GML MultiCurve member.");
-                        return;
-                    }
-                    multi->push_back(geometry);
-                } while (_parser->moveToNext("gml:curveMember"));
-
-                ICoordinateSystem crs;
-                QString res = QString("code=").append(context.srsName());
-                if (crs.prepare(res)) {
-                    _fcoverage->coordinateSystem(crs);
-                    _fcoverage->newFeature(_fcoverage->geomfactory()->createMultiLineString(multi),false);
-                } else {
-                    ERROR1("Could not prepare crs with code=%1.",context.srsName());
-                }
-            }
-        } else {
-            bool ok = false;
-            geos::geom::Geometry *geometry = parseLineString(context, ok);
-            if ( !ok) {
-                ERROR0("Could not parse GML Curve.");
-                return;
-            }
-            ICoordinateSystem crs;
-            QString res = QString("code=").append(context.srsName());
-            if (crs.prepare(res)) {
-                _fcoverage->coordinateSystem(crs);
-                _fcoverage->newFeature(_fcoverage->geomfactory()->createLineString(geometry->getCoordinates()),false);
-            } else {
-                ERROR1("Could not prepare crs with code=%1.",context.srsName());
-            }
-        }
-
-    } else if (types & itPOINT) {
-
+    ICoordinateSystem crs;
+    geos::geom::Geometry *geometry = parseFeatureGeometry();
+    QString res = QString("code=").append(_context.srsName());
+    if (crs.prepare(res, itCONVENTIONALCOORDSYSTEM)) {
+        _fcoverage->coordinateSystem(crs);
+        _fcoverage->newFeature(geometry,false);
     } else {
-        // TODO: unknown geometry type
-
-        // we have to react on types present on the xml stream
-//        if (_parser->findNextOf({ "gml:GeometryPropertyType",
-//                                "gml:MultiSurfaceType",
-//                                "gml:MultiCurveType",
-//                                "gml:MultiPointType",
-//                                "gml:PolygonType",
-//                                "gml:CurveType",
-//                                "gml:LineStringType",
-//                                "gml:PointType",
-//                                "gml:RingType",
-//                                "gml:LinearRingType"} )) {
-
-//            if (isPolygonType()) {
-//                _coverageType |= itPOLYGON;
-//            } else if (isLineType()) {
-//                _coverageType |= itLINE;
-//            } else if (isPointType()) {
-//                _coverageType |= itPOINT;
-//            }
-
-//        }
+        ERROR1("Could not prepare crs with code=%1.",_context.srsName());
     }
-
-    //_fcoverage->newFeature(geos:Geom);
 }
 
-void WfsFeatureParser::updateSrsInfo(WfsParsingContext &context)
+
+
+geos::geom::Geometry *WfsFeatureParser::parseFeatureGeometry()
+{
+    // move on element
+    _parser->readNextStartElement();
+
+    updateSrsInfo();
+    bool isMultiGeometry = _parser->name().contains("Multi");
+    if (isPolygonType()) {
+        return createPolygon(isMultiGeometry);
+    } else if (isLineStringType()) {
+        return createLineString(isMultiGeometry);
+    } else if (isPointType()) {
+
+    }
+}
+
+bool WfsFeatureParser::isPolygonType()
+{
+    QString elementName = _parser->name();
+    bool isPolygon = false;
+    isPolygon = isPolygon || elementName.contains("Polygon");
+    isPolygon = isPolygon || elementName.contains("Surface");
+    isPolygon = isPolygon || elementName.contains("Ring");
+    return isPolygon;
+}
+
+bool WfsFeatureParser::isLineStringType()
+{
+    QString elementName = _parser->name();
+    return elementName.contains("Line")
+            || elementName.contains("Curve");
+}
+
+bool WfsFeatureParser::isPointType()
+{
+    QString elementName = _parser->name();
+    return elementName.contains("Point");
+}
+
+geos::geom::Geometry *WfsFeatureParser::createPolygon(bool isMultiGeometry)
+{
+    if (isMultiGeometry) {
+        std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
+        if (updateSrsInfoUntil("gml:surfaceMember")) {
+            do {
+                bool ok = false;
+                geos::geom::Geometry *geometry = parsePolygon(ok);
+                if ( !ok) {
+                    ERROR0("Could not parse GML MultiSurface member.");
+                    return _fcoverage->geomfactory()->createMultiPolygon();
+                }
+                multi->push_back(geometry);
+            } while (_parser->moveToNext("gml:surfaceMember"));
+            return _fcoverage->geomfactory()->createMultiPolygon(multi);
+        }
+    } else {
+        bool ok = false;
+        geos::geom::Geometry *geometry = parsePolygon(ok);
+        if ( !ok) {
+            ERROR0("Could not parse GML Surface.");
+        }
+        return geometry;
+    }
+}
+
+geos::geom::Geometry *WfsFeatureParser::createLineString(bool isMultiGeometry)
+{
+    if (isMultiGeometry) {
+        std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
+        if (updateSrsInfoUntil("gml:curveMember")) {
+            do {
+                bool ok = false;
+                geos::geom::Geometry *geometry = parseLineString(ok);
+                if ( !ok) {
+                    ERROR0("Could not parse GML MultiCurve member.");
+                    return _fcoverage->geomfactory()->createMultiLineString();
+                }
+                multi->push_back(geometry);
+            } while (_parser->moveToNext("gml:curveMember"));
+            return _fcoverage->geomfactory()->createMultiLineString(multi);
+        }
+    } else {
+        bool ok = false;
+        geos::geom::Geometry *geometry = parseLineString(ok);
+        if ( !ok) {
+            ERROR0("Could not parse GML Curve.");
+        }
+        return geometry;
+    }
+}
+
+void WfsFeatureParser::updateSrsInfo()
 {
     QXmlStreamAttributes attributes = _parser->attributes();
     QString srs = attributes.value("srsName").toString();
     QString dimension = attributes.value("srsDimension").toString();
-    if (!dimension.isEmpty()) context.setSrsDimension(dimension.toInt());
-    if (!srs.isEmpty()) context.setSrsName(WfsUtils::normalizeEpsgCode(srs));
+    if (!dimension.isEmpty()) _context.setSrsDimension(dimension.toInt());
+    if (!srs.isEmpty()) _context.setSrsName(WfsUtils::normalizeEpsgCode(srs));
 }
 
-bool WfsFeatureParser::updateSrsInfoUntil(QString qname, WfsParsingContext &context)
+bool WfsFeatureParser::updateSrsInfoUntil(QString qname)
 {
     while (!_parser->isAtBeginningOf(qname)) {
         if (_parser->readNextStartElement()) {
-            updateSrsInfo(context);
+            updateSrsInfo();
         } else {
             return false;
         }

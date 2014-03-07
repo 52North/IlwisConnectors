@@ -23,7 +23,6 @@ public:
 
 private:
     XmlStreamParser *_parser;
-    IlwisTypes _coverageType;
 
     void parseNamespaces(WfsParsingContext &context);
     void parseFeatureProperties(FeatureCoverage *fcoverage, WfsParsingContext &context);

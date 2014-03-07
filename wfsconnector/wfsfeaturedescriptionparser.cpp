@@ -31,12 +31,12 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-WfsFeatureDescriptionParser::WfsFeatureDescriptionParser(): _coverageType(itUNKNOWN)
+WfsFeatureDescriptionParser::WfsFeatureDescriptionParser()
 {
 }
 
 
-WfsFeatureDescriptionParser::WfsFeatureDescriptionParser(WfsResponse *response): _coverageType(itUNKNOWN)
+WfsFeatureDescriptionParser::WfsFeatureDescriptionParser(WfsResponse *response)
 {
     _parser = new XmlStreamParser(response->device());
     _parser->addNamespaceMapping("xsd", "http://www.w3.org/2001/XMLSchema");
@@ -78,8 +78,6 @@ bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcover
             }
         }
     }
-
-    fcoverage->setFeatureCount(_coverageType,0,0);
     return true;
 }
 
@@ -120,13 +118,6 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcover
                         QString type = attributes.value("type").toString();
 
                         if (type.startsWith("gml")) {
-                            if (type.contains("Point")) {
-                                _coverageType |= itPOINT;
-                            } else if (type.contains("Polygon") || type.contains("Surface") || type.contains("Ring")) {
-                                _coverageType |= itPOLYGON;
-                            } else if (type.contains("Line") || type.contains("Curve")) {
-                                _coverageType |= itLINE;
-                            }
                             context.setGeometryAtttributeName(name);
                         } else {
                             IDomain domain;
@@ -143,25 +134,26 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcover
 
 bool WfsFeatureDescriptionParser::initDomainViaType(QString &type, IDomain &domain)
 {
-    if (type == "xsd:double") {
+    type = type.mid(type.indexOf(":") + 1);
+    if (type == "double") {
         INumericDomain ndomain;
         ndomain.prepare("value");
         domain = ndomain;
         return true;
     }
-    if (type == "xsd:integer") {
+    if (type == "integer") {
         INumericDomain ndomain;
         ndomain.prepare("integer");
         domain = ndomain;
         return true;
     }
-    if (type == "xsd:long") {
+    if (type == "long") {
         INumericDomain ndomain;
         ndomain.prepare("integer");
         domain = ndomain;
         return true;
     }
-    if (type == "xsd:string") {
+    if (type == "string") {
         domain.prepare("code=domain:text", itTEXTDOMAIN);
         return true;
     }
