@@ -20,6 +20,7 @@
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "textdomain.h"
+#include "juliantime.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
 #include "attributerecord.h"
@@ -75,7 +76,11 @@ void WfsFeatureParser::parseFeatureMembers()
 
                 parseFeature(record);
                 table->record(featureCount++, record); // load content
-                _parser->readNextStartElement();
+                _parser->readNextStartElement(); // next collection item
+                if ( !_parser->isAtEndOf("gml:featureMember")) {
+                    // to next separately wrapped member
+                    _parser->readNextStartElement();
+                }
             }
         }
     }
@@ -85,6 +90,7 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record)
 {
     bool continueReadingStream = true;
     ITable table = _fcoverage->attributeTable();
+    QString geometryAttributeName = _context.geometryAtttributeName();
     for (int i = 0; i < table->columnCount(); i++) {
 
         ColumnDefinition& coldef = table->columndefinition(i);
@@ -110,19 +116,22 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record)
 
         QString currentElementName = _parser->name();
         if (_parser->isAtBeginningOf("gml:boundedBy")) {
+            i--; // not written to table
 
             // TODO: add boundedBy fill function
-
             _parser->skipCurrentElement(); // ignore for now
 
-            i--; // not written to table
             continue;
         }
 
         // if geometry is in between attributes
-        if (currentElementName == _context.geometryAtttributeName()) {
-            createNewFeature();
+        if (currentElementName == geometryAttributeName) {
             i--; // not written to table
+            createNewFeature();
+            while (_parser->name() != geometryAttributeName) {
+                // leave the geometry element
+                _parser->readNextStartElement();
+            }
             continue;
         }
 
@@ -137,6 +146,10 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record)
 
         if (tp & itSTRING){
             record[i] = fillStringColumn();
+        } else if (tp & itBOOL){
+            record[i] = fillBoolColumn();
+        } else if (tp & itDATETIME || tp & itDATE){
+            record[i] = fillDateTimeColumn();
         } else if (tp & itINTEGER){
             NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
             //creating the actual range as invalid to be adjusted in the fillers
@@ -153,14 +166,8 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record)
             r->max(min);
             datadef.range(r);
             record[i] = fillDoubleColumn();
-        } else if (tp & itTIME){
-            //creating the actual range as invalid to be adjusted in the fillers
-            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
-            double min = r->min();
-            r->min(r->max());
-            r->max(min);
-            datadef.range(r);
-            record[i] = fillDateTimeColumn();
+        } else if (tp & itBOOL){
+            record[i] = fillBoolColumn();
         } else {
             record[i] = QVariant();
         }
@@ -168,7 +175,7 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record)
 
     if (_parser->readNextStartElement()) {
         // geometry is at the end of the attribute list
-        if (_parser->name() == _context.geometryAtttributeName()) {
+        if (_parser->name() == geometryAttributeName) {
             createNewFeature();
         }
     }
@@ -190,15 +197,18 @@ QVariant WfsFeatureParser::fillDoubleColumn()
     return QVariant(_parser->readElementText().toDouble());
 }
 
+QVariant WfsFeatureParser::fillBoolColumn()
+{
+    QString v = _parser->readElementText();
+    return v == "true" || v.toInt() != 0
+            ? QVariant(true)
+            : QVariant(false);
+}
+
 QVariant WfsFeatureParser::fillDateTimeColumn()
 {
-    QVariant v = QVariant(_parser->readElementText());
-
-    Time time;
-
-    // TODO: parse xsd:time
-
-    return v;
+    Time time(_parser->readElementText());
+    return IVARIANT(time);
 }
 
 void WfsFeatureParser::createNewFeature()
@@ -299,6 +309,7 @@ geos::geom::Geometry *WfsFeatureParser::createLineString(bool isMultiGeometry)
         }
     } else {
         bool ok = false;
+        updateSrsInfo();
         geos::geom::Geometry *geometry = parseLineString(ok);
         if ( !ok) {
             ERROR0("Could not parse GML Curve.");
@@ -382,15 +393,16 @@ std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings()
 {
    std::vector<geos::geom::Geometry *>* innerRings = new std::vector<geos::geom::Geometry *>();
 
-  _parser->readNextStartElement();
-    while (_parser->moveToNext("gml:interior")) {
+    _parser->readNextStartElement();
+    do {
         if (_parser->findNextOf( { "gml:posList" })) {
             QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
             geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
             geos::geom::LinearRing *ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
             innerRings->push_back(ring);
+            _parser->readNextStartElement();
         }
-    }
+    } while (_parser->moveToNext("gml:interior"));
     return innerRings;
 }
 

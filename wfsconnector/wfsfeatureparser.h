@@ -49,8 +49,10 @@ private:
 
     QVariant fillStringColumn();
     QVariant fillDoubleColumn();
+    QVariant fillBoolColumn();
     QVariant fillDateTimeColumn();
     QVariant fillIntegerColumn();
+
     /**
      * Parses the feature's geometry from GML. <br/>
      * <br/>

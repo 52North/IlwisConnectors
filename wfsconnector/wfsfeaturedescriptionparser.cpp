@@ -135,30 +135,79 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcover
 bool WfsFeatureDescriptionParser::initDomainViaType(QString &type, IDomain &domain)
 {
     type = type.mid(type.indexOf(":") + 1);
-    if (type == "double") {
+    if (type == "double" || type == "float" || type == "decimal") {
         INumericDomain ndomain;
         ndomain.prepare("value");
         domain = ndomain;
         return true;
     }
-    if (type == "integer") {
+    if (type == "int" || type == "unsignedInt" || type.contains("Integer") || type == "unsignedShort") {
         INumericDomain ndomain;
         ndomain.prepare("integer");
         domain = ndomain;
-        return true;
+        return domain.isValid();
     }
-    if (type == "long") {
+    if (type == "long" || type == "unsignedLong") {
         INumericDomain ndomain;
         ndomain.prepare("integer");
         domain = ndomain;
-        return true;
+        return domain.isValid();
     }
-    if (type == "string") {
+    if (type == "string" || type == "token" || type == "normalizedString") {
         domain.prepare("code=domain:text", itTEXTDOMAIN);
-        return true;
+        return domain.isValid();
+    }
+    if (type == "boolean") {
+        domain.prepare("boolean", itBOOL);
+        return domain.isValid();
+    }
+    if (type == "date") {
+        ITimeDomain tdomain;
+        tdomain.prepare();
+        tdomain->range(new TimeInterval(itDATE));
+        domain = tdomain;
+        return domain.isValid();
+    }
+    if (type == "dateTime") {
+        ITimeDomain tdomain;
+        tdomain.prepare();
+        tdomain->range(new TimeInterval(itDATETIME));
+        domain = tdomain;
+        return domain.isValid();
     }
 
-    // TODO: add more types here?!
+    // -------------------------------------------------
+
+    /*
+     * TODO: there are some more xsd:* types possible.
+     * Some make sense, some not ...
+     *
+     * see:
+     * http://infohost.nmt.edu/tcc/help/pubs/rnc/xsd.html
+     *
+     * Types which makes sense to be addded here
+     */
+
+    // anyURI
+    // base64Binary => decode to itBINARY
+    // duration => decode to timeinterval with valid bounds
+    // gDay, gMonth, gMonthDay, gYear, gYearMonth
+    // ID
+    // hexBinary
+
+
+    /*
+     * types which makes less sense to be addded here
+     */
+
+    // byte
+    // IDREF, IDREFS
+    // Name, NCName
+    // NMTOKEN, NMTOKENS
+    // QName
+    // unsignedByte
+
+    // -------------------------------------------------
 
     ERROR1(TR("Could not create domain for schema type: %1"), type);
     return false;
