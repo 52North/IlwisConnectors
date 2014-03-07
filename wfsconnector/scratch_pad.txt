@@ -1,8 +1,4 @@
 
-* do geometry parsing so that at least feature coverage domain type is present before parsing actual feature instance
-
-* handle 'null' pointers in FeatureParser (geometries)
-
 * test if feature collection is parsed correctly when geometry type is in between attribute sequence
 
 * how to distinguish plain table loading (itTABLE) from whole feature loading (itFEATURE)
@@ -18,3 +14,5 @@
 * IlwisObjectConnector constructor has unused bool 'load'
 
 * which return value when store() is called? GDAL returns true ...
+
+* do features within a coverage have the same table as different objects?
