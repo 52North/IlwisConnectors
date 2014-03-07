@@ -49,9 +49,19 @@ WfsFeatureParser::~WfsFeatureParser()
     delete _parser;
 }
 
-void WfsFeatureParser::parseFeatureMembers(WfsParsingContext &context)
+void WfsFeatureParser::context(const WfsParsingContext &context)
 {
-    QString targetNamespace =  context.namespaceMappings()[""];
+    _context = context;
+}
+
+WfsParsingContext WfsFeatureParser::context() const
+{
+    return _context;
+}
+
+void WfsFeatureParser::parseFeatureMembers()
+{
+    QString targetNamespace =  _context.namespaceMappings()[""];
     _parser->addNamespaceMapping("target", targetNamespace);
     ITable table = _fcoverage->attributeTable();
     QString featureType = table->name();
@@ -59,20 +69,19 @@ void WfsFeatureParser::parseFeatureMembers(WfsParsingContext &context)
 
     quint64 featureCount = 0;
     if (_parser->moveToNext("wfs:FeatureCollection")) {
-        if (_parser->moveToNext("gml:featureMembers")) {
+        if (_parser->findNextOf( {"gml:featureMembers", "gml:featureMember"} )) {
             while (_parser->moveToNext(featureType)) {
                 std::vector<QVariant> record(table->columnCount());
-                parseFeature(record, context);
-                table->record(featureCount++, record); // load content
-            }
-        }
-        while (_parser->moveToNext("wfs:featureMember")) {
 
+                parseFeature(record);
+                table->record(featureCount++, record); // load content
+                _parser->readNextStartElement();
+            }
         }
     }
 }
 
-void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, WfsParsingContext &context)
+void WfsFeatureParser::parseFeature(std::vector<QVariant> &record)
 {
     bool continueReadingStream = true;
     ITable table = _fcoverage->attributeTable();
@@ -319,32 +328,31 @@ bool WfsFeatureParser::updateSrsInfoUntil(QString qname)
     return true;
 }
 
-geos::geom::LineString *WfsFeatureParser::parseLineString(WfsParsingContext &context, bool &ok)
+geos::geom::LineString *WfsFeatureParser::parseLineString(bool &ok)
 {
     try {
-        // move to actual curve member
-        _parser->readNextStartElement();
-        if (_parser->findNextOf( {"gml:posList, gml:pos"} )) {
+        if (_parser->findNextOf( {"gml:posList", "gml:pos"} )) {
             ok = true;
-            QString wkt = gmlPosListToWktLineString(_parser->readElementText(), context);
+            updateSrsInfo();
+            QString wkt = gmlPosListToWktLineString(_parser->readElementText());
             geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
             return _fcoverage->geomfactory()->createLineString(geometry->getCoordinates());
         }
-        ERROR0("Could not neither gml:posList nor gml:pos");
+        ERROR0("Could not neither find gml:posList nor gml:pos");
     } catch(std::exception &e) {
         ERROR1("Could not parse WKT LineString %1", e.what());
     }
 
-    ok = false; // return empty polygon
+    ok = false; // return empty line string
     return _fcoverage->geomfactory()->createLineString();
 }
 
-geos::geom::Polygon * WfsFeatureParser::parsePolygon(WfsParsingContext &context, bool &ok)
+geos::geom::Polygon * WfsFeatureParser::parsePolygon(bool &ok)
 {
     try {
         ok = true;
-        geos::geom::LinearRing *outer = parseExteriorRing(context);
-        std::vector<geos::geom::Geometry *> *inners = parseInteriorRings(context);
+        geos::geom::LinearRing *outer = parseExteriorRing();
+        std::vector<geos::geom::Geometry *> *inners = parseInteriorRings();
         return _fcoverage->geomfactory()->createPolygon(outer, inners);
     } catch(std::exception &e) {
         ERROR1("Could not parse WKT Polygon %1", e.what());
@@ -354,15 +362,14 @@ geos::geom::Polygon * WfsFeatureParser::parsePolygon(WfsParsingContext &context,
     return _fcoverage->geomfactory()->createPolygon();
 }
 
-geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing(WfsParsingContext &context)
+geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing()
 {
     geos::geom::LinearRing *ring;
 
-     // move to actual surface member
     _parser->readNextStartElement();
     if (_parser->moveToNext("gml:exterior")) {
         if (_parser->findNextOf( {"gml:posList"} )) {
-            QString wkt = gmlPosListToWktPolygon(_parser->readElementText(), context);
+            QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
             geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
             ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
         }
@@ -371,15 +378,14 @@ geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing(WfsParsingContext &c
 }
 
 
-std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings(WfsParsingContext &context)
+std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings()
 {
    std::vector<geos::geom::Geometry *>* innerRings = new std::vector<geos::geom::Geometry *>();
 
-   // move to actual surface member
   _parser->readNextStartElement();
     while (_parser->moveToNext("gml:interior")) {
-        if (_parser->findNextOf( {"gml:posList" })) {
-            QString wkt = gmlPosListToWktPolygon(_parser->readElementText(), context);
+        if (_parser->findNextOf( { "gml:posList" })) {
+            QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
             geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
             geos::geom::LinearRing *ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
             innerRings->push_back(ring);
@@ -388,15 +394,15 @@ std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings(WfsPar
     return innerRings;
 }
 
-QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList, WfsParsingContext &context)
+QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList)
 {
     QString wktCoords;
     QStringList coords = gmlPosList.split(" ");
-    if (context.srsDimension() == 2) {
+    if (_context.srsDimension() == 2) {
         for (int i = 0; i < coords.size(); i++) {
             wktCoords.append(coords.at(i++)).append(" ");
             wktCoords.append(coords.at(i)).append(" ");
-            if (context.srsDimension() == 3) {
+            if (_context.srsDimension() == 3) {
                 wktCoords.append(coords.at(++i));
             }
             wktCoords.append(", ");
@@ -405,24 +411,24 @@ QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList, WfsParsingCo
     return wktCoords.left(wktCoords.lastIndexOf(","));
 }
 
-QString WfsFeatureParser::gmlPosListToWktPolygon(QString gmlPosList, WfsParsingContext &context)
+QString WfsFeatureParser::gmlPosListToWktPolygon(QString gmlPosList)
 {
     QString wkt("POLYGON((");
-    wkt.append(gmlPosListToWktCoords(gmlPosList, context));
+    wkt.append(gmlPosListToWktCoords(gmlPosList));
     return wkt.append("))");
 }
 
-QString WfsFeatureParser::gmlPosListToWktLineString(QString gmlPosList, WfsParsingContext &context)
+QString WfsFeatureParser::gmlPosListToWktLineString(QString gmlPosList)
 {
     QString wkt("LINESTRING(");
-    wkt.append(gmlPosListToWktCoords(gmlPosList, context));
+    wkt.append(gmlPosListToWktCoords(gmlPosList));
     return wkt.append(")");
 }
 
-QString WfsFeatureParser::gmlPosListToWktPoint(QString gmlPosList, WfsParsingContext &context)
+QString WfsFeatureParser::gmlPosListToWktPoint(QString gmlPosList)
 {
     QString wkt("POINT(");
-    wkt.append(gmlPosListToWktCoords(gmlPosList, context));
+    wkt.append(gmlPosListToWktCoords(gmlPosList));
     return wkt.append(")");
 }
 

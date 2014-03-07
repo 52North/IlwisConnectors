@@ -20,6 +20,10 @@ public:
     WfsFeatureParser(WfsResponse *response, FeatureCoverage *fcoverage);
     ~WfsFeatureParser();
 
+    void context(const WfsParsingContext &context);
+
+    WfsParsingContext context() const;
+
     /**
      * Parses feature instances and add them to the feature coverage.<br/>
      * <br/>
@@ -33,16 +37,15 @@ public:
      * gives access to those used in the schema document.
      *
      * TODO: for now only the target namespace is being used ... propably this is enough
-     *
-     * @param context context info about the parsed WFS.
      */
-    void parseFeatureMembers(WfsParsingContext &context);
+    void parseFeatureMembers();
 
 private:
     XmlStreamParser *_parser;
     FeatureCoverage *_fcoverage;
+    WfsParsingContext _context;
 
-    void parseFeature(std::vector<QVariant> &record, WfsParsingContext &context);
+    void parseFeature(std::vector<QVariant> &record);
 
     QVariant fillStringColumn();
     QVariant fillDoubleColumn();
@@ -54,23 +57,31 @@ private:
      * Note that parsing GML has its limitations, so don't expect a full GML parsing engine
      * here, e.g. attributes are only read until a certain depth.
      *
-     * @param context parsing context.
+     * @return the parsed geometry.
      */
-    void parseFeatureGeometry(WfsParsingContext &context);
+    geos::geom::Geometry *parseFeatureGeometry();
+    void createNewFeature();
 
-    void updateSrsInfo(WfsParsingContext &context);
-    bool updateSrsInfoUntil(QString qname, WfsParsingContext &context);
+    geos::geom::Geometry *createPolygon(bool isMultiGeometry);
+    geos::geom::Geometry *createLineString(bool isMultiGeometry);
 
-    geos::geom::LineString *parseLineString(WfsParsingContext &context, bool &ok);
-    geos::geom::Polygon *parsePolygon(WfsParsingContext &context, bool &ok);
-    geos::geom::LinearRing *parseExteriorRing(WfsParsingContext &context);
-    std::vector<geos::geom::Geometry *> *parseInteriorRings(WfsParsingContext &context);
+    bool isPolygonType();
+    bool isLineStringType();
+    bool isPointType();
+
+    void updateSrsInfo();
+    bool updateSrsInfoUntil(QString qname);
+
+    geos::geom::LineString *parseLineString(bool &ok);
+    geos::geom::Polygon *parsePolygon(bool &ok);
+    geos::geom::LinearRing *parseExteriorRing();
+    std::vector<geos::geom::Geometry *> *parseInteriorRings();
 
 
-    QString gmlPosListToWktCoords(QString gmlPosList, WfsParsingContext &context);
-    QString gmlPosListToWktPolygon(QString gmlPosList, WfsParsingContext &context);
-    QString gmlPosListToWktLineString(QString gmlPosList, WfsParsingContext &context);
-    QString gmlPosListToWktPoint(QString gmlPosList, WfsParsingContext &context);
+    QString gmlPosListToWktCoords(QString gmlPosList);
+    QString gmlPosListToWktPolygon(QString gmlPosList);
+    QString gmlPosListToWktLineString(QString gmlPosList);
+    QString gmlPosListToWktPoint(QString gmlPosList);
 
 };
 

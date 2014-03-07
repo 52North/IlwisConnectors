@@ -85,7 +85,9 @@ bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
     QUrlQuery queryFeature(featureUrl);
     WfsResponse *response = wfs.getFeature(queryFeature);
     WfsFeatureParser featureParser(response, fcoverage);
-    featureParser.parseFeatureMembers(_context);
+
+    featureParser.context(_context);
+    featureParser.parseFeatureMembers();
 
     return false;
 }

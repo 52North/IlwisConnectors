@@ -6,6 +6,21 @@
 
 #include "xmlstreamparser.h"
 
+
+
+/*
+ *
+ * Open:
+ * The function pointer takes only free function pointers, i.e. member
+ * free functions (doNothing is static).
+ *
+ * see:
+ * http://stackoverflow.com/questions/2374847/passing-member-function-pointer-to-member-object-in-c
+ *
+ */
+
+
+
 XmlStreamParser::XmlStreamParser()
 {
 }
@@ -101,7 +116,7 @@ void XmlStreamParser::readNext() const
     _reader->readNext();
 }
 
-bool XmlStreamParser::moveToNext(QString qName) const
+bool XmlStreamParser::moveToNext(QString qName, void (*callback)())
 {
     if (_reader->atEnd()) {
         return false;
@@ -109,6 +124,8 @@ bool XmlStreamParser::moveToNext(QString qName) const
 
     bool found = false;
     _reader->readNextStartElement();
+    nextElementDo(callback);
+
     while ( !(_reader->atEnd() || found)) {
         if (_reader->isStartElement()) {
             found = isAtBeginningOf(qName);
@@ -120,34 +137,49 @@ bool XmlStreamParser::moveToNext(QString qName) const
             if ( !_reader->readNextStartElement()) {
                 break;
             }
+            nextElementDo(callback);
         }
     }
     return found;
 }
 
-bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList) const
+bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, void (*callback)())
 {
     if (_reader->atEnd()) {
         return false;
     }
 
     bool found = false;
+    QString startElement = name();
     _reader->readNextStartElement();
+    nextElementDo(callback);
+
     while ( !(_reader->atEnd() || found)) {
         if (_reader->isStartElement()) {
             for (QString qName : elementList) {
                 found = isAtBeginningOf(qName);
                 if (found) {
                     break;
-                } else {
-                    if ( !_reader->readNextStartElement()) {
-                        break;
+                }
+            }
+            if ( !found) {
+                bool hasNextNestedElement = _reader->readNextStartElement();
+                bool atEndOfStartElement = name() == startElement;
+                if ( !hasNextNestedElement) {
+                    if (atEndOfStartElement) {
+                        break; // not found;
                     }
+                    nextElementDo(callback);
                 }
             }
         } else {
-            if ( !_reader->readNextStartElement()) {
-                break;
+            bool hasNextNestedElement = _reader->readNextStartElement();
+            bool atEndOfStartElement = name() == startElement;
+            if ( !hasNextNestedElement) {
+                if (atEndOfStartElement) {
+                    break; // not found;
+                }
+                nextElementDo(callback);
             }
         }
     }
@@ -195,4 +227,3 @@ bool XmlStreamParser::isAtElement(QString qName) const
         }
     }
 }
-
