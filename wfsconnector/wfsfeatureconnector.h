@@ -12,6 +12,7 @@ public:
     WfsFeatureConnector(const Resource &resource, bool load=true);
 
     IlwisObject *create() const;
+    static IlwisTypes ilwisType(const QString &name);
     static ConnectorInterface *create(const Resource &resource, bool load=true);
 
     bool loadMetaData(IlwisObject* data);
