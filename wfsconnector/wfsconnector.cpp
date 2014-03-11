@@ -46,30 +46,6 @@ QString WfsConnector::provider() const
     return QString("wfs");
 }
 
-IlwisTypes WfsConnector::ilwisType(const QString &resourceUrl)
-{
-    QUrl url(resourceUrl);
-    if (WfsUtils::isValidWfsUrl(url)) {
-        return itUNKNOWN;
-    }
-
-    QUrlQuery query(url);
-    WfsUtils::lowerCaseKeys(query);
-    QString request = query.queryItemValue("request");
-
-    if (request == "GetCapabilities") {
-        return itCONTAINER;
-    }
-    if (request == "DescribeFeature") {
-        return itTABLE;
-    }
-    if (request == "GetFeature") {
-        return itFEATURE;
-    }
-
-    return itUNKNOWN;
-}
-
 
 
 

@@ -72,12 +72,14 @@ void WfsModule::prepare()
 
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (cfactory) {
+        IlwisObject::addTypeFunction(WfsFeatureConnector::ilwisType);
         cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
+
+
         cfactory->addCreator(itCONTAINER,"wfs", WfsContainerConnector::create);
     }
 
 
-    IlwisObject::addTypeFunction(WfsConnector::ilwisType);
 }
 
 QString WfsModule::getName() const

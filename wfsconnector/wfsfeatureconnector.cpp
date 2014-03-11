@@ -31,6 +31,7 @@
 #include "wfsfeaturedescriptionparser.h"
 #include "wfs.h"
 #include "wfsresponse.h"
+#include "wfsutils.h"
 
 using namespace Ilwis;
 using namespace Wfs;
@@ -74,13 +75,9 @@ bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
     //if(!loadMetaData(data))
     //    return false;
 
-    // TODO: request data and load it into *data
-
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     QUrl featureUrl = source().url();
     WebFeatureService wfs(featureUrl);
-
-    // TODO: parse Feature metadata and fill coverage
 
     QUrlQuery queryFeature(featureUrl);
     WfsResponse *response = wfs.getFeature(queryFeature);
@@ -89,5 +86,28 @@ bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
     featureParser.context(_context);
     featureParser.parseFeatureMembers();
 
-    return false;
+    return true;
+}
+
+IlwisTypes WfsFeatureConnector::ilwisType(const QString &resourceUrl)
+{
+    QUrl url(resourceUrl);
+    if (WfsUtils::isValidWfsUrl(url)) {
+        return itUNKNOWN;
+    }
+
+    QUrlQuery query(url);
+    WfsUtils::lowerCaseKeys(query);
+    QString request = query.queryItemValue("request");
+
+    // TODO when stand-alone table connector is present!
+    //if (request == "DescribeFeature") {
+    //    return itTABLE;
+    //}
+
+    if (request == "GetFeature" || request == "DescribeFeature") {
+        return itFEATURE;
+    }
+
+    return itUNKNOWN;
 }
