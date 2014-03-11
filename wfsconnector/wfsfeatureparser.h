@@ -36,7 +36,7 @@ public:
      * feature collection. To keep track of the elements the WfsFeatureDescriptionParser
      * gives access to those used in the schema document.
      *
-     * TODO: for now only the target namespace is being used ... propably this is enough
+     * NOTE: for now only the target namespace is being used ... propably this is enough
      */
     void parseFeatureMembers();
 

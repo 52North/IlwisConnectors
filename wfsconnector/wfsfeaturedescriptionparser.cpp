@@ -179,7 +179,7 @@ bool WfsFeatureDescriptionParser::initDomainViaType(QString &type, IDomain &doma
     // -------------------------------------------------
 
     /*
-     * TODO: there are some more xsd:* types possible.
+     * NOTE: there are some more xsd:* types possible.
      * Some make sense, some not ...
      *
      * see:

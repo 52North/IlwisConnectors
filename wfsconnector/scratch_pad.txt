@@ -1,18 +1,29 @@
 
+WFS TASKS
+=========
 * test if feature collection is parsed correctly when geometry type is in between attribute sequence
 
-* how to distinguish plain table loading (itTABLE) from whole feature loading (itFEATURE)
+* will distinguishing plain table loading (itTABLE) from whole feature loading (itFEATURE) make sense?
+
+DESGIN, CODE ISSUES/QUESTIONS
+=============================
+* IlwisObjectConnector constructor has unused bool 'load'
+
+* why IlwisObject::addTypeFunction is separated from the actual interface of IlwisObjectConnector?
+
+* Make CatalogConnector standalone so that ContainerConnectors can be created by a CatalogConnector instance only if needed
 
 * no GdalTableLoader.loadMetadata() call in GdalFeatureConnector
+
+* which return value when store() is called? GDAL returns true ...
 
 * unclear/confusing coding:
   - resources in signatures are sometimes QString &name, QUrl &url, QUrl &resource
   - which metadata, when, how? softtyping ...
 
-* Make CatalogConnector standalone so that ContainerConnectors can be created by a CatalogConnector instance only if needed
+MOTIVATE
+========
+* Clean coding: http://www.clean-code-developer.de/ (don't know an equivalent english page yet)
 
-* IlwisObjectConnector constructor has unused bool 'load'
+* Coding style rules: http://www.javaworld.com/article/2081135/core-java/object-calisthenics-change-the-way-you-code.html
 
-* which return value when store() is called? GDAL returns true ...
-
-* do features within a coverage have the same table as different objects?
