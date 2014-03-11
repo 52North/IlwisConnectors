@@ -6,20 +6,6 @@
 class QXmlStreamReader;
 class QXmlStreamAttributes;
 
-struct QName {
-    // TODO: extract qName parsing
-    QName(QString qName) {
-        int splitIndex = qName.indexOf(":");
-        if (splitIndex > 0) {
-            prefix = qName.left(splitIndex);
-        }
-        name = qName.mid(splitIndex + 1);
-    }
-
-    QString prefix;
-    QString name;
-};
-
 class WFSCONNECTORSHARED_EXPORT XmlStreamParser
 {
 public:
