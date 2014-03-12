@@ -13,6 +13,7 @@ try:
     tempDir = "/temp"
     featureDir = "/feature"
     rasterDir = "/raster"
+    integrationDir = "/integration"
 
     import unittest as ut
 
@@ -1074,6 +1075,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             else:
                 self.skipTest("countries.mpa is missing")
 
+        @ut.skip("temporarily")
         def test_IlwisObject(self):
             fc = FeatureCoverage("newFC")
             self.assertEqual("newFC", fc.name())
@@ -1109,6 +1111,55 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertEqual(63, len(record))
             table.addColumn("newCol", "value")
             self.assertEqual(64, table.columnCount())
+
+    class TestIntegration(ut.TestCase):
+        def setUp(self):
+            try:
+                # disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir + integrationDir)
+                # connectIssueLogger()
+            except IlwisException:
+                self.skipTest("could not set working directory!")
+
+        def test_numpy(self):
+            try:
+                import numpy as np
+                import matplotlib.pyplot as plt
+            except ImportError:
+                self.skipTest("numpy not available")
+
+            raster = RasterCoverage("n0.mpr")
+            self.assertFalse(raster.isInternal())
+            it = iter(raster)
+            npRaster = np.fromiter(it, np.float, it.box().size().linearSize())
+            # (num, bins) = np.histogram(npRaster, bins=10, range=(0, 255))
+            # nu = [143870, 130523,  56858,  32878,  36515,  45334,  55831,  21598, 1657, 802040]
+            # self.assertTrue(all(nu[i] == num[i] for i in range(len(nu))))
+            # bi = [0., 25.5, 51., 76.5, 102., 127.5, 153., 178.5, 204., 229.5, 255.]
+            # self.assertTrue(all(bi[i] == bins[i] for i in range(len(bi))))
+
+            plt.figure()
+            plt.hist(npRaster, 255, (0, 253))
+            plt.show()
+
+            # n = 5
+            # menMeans = (20, 35, 30, 35, 27)
+            # menStd =   (2, 3, 4, 1, 2)
+            #
+            # ind = np.arange(n)  # the x locations for the groups
+            # width = 0.35       # the width of the bars
+            #
+            # fig, ax = plt.subplots()
+            # rects = ax.bar(ind, menMeans, width, color='r', yerr=menStd)
+            #
+            # # add some
+            # # ax.set_ylabel('')
+            # # ax.set_title('')
+            # ax.set_xticks(ind+width)
+            # ax.set_xticklabels( ('G1', 'G2', 'G3', 'G4', 'G5') )
+            #
+            # plt.show()
+
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
