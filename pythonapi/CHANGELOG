@@ -1,4 +1,11 @@
 ==================CHANGELOG===================
+--alpha2--
+*solved weak naming issue in nested raster calculations (caused by empty Symbol tables)
+
+--alpha1--
+*introduced Windows installer for ILWIS Objects and ILWIS Python API
+*minor fixes in ilwis3 connector
+
 --20140307--
 *fixed datetime integration for Table's .column(..) and .record(..) methods
 *fixed setConnection for connector mode cmINPUT

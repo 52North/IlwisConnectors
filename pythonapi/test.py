@@ -793,7 +793,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_RasterCalculation(self):
             rc = RasterCoverage("n000302.mpr")
             rctif = RasterCoverage("n0.mpr")
