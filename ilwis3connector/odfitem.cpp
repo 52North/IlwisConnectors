@@ -299,9 +299,13 @@ IlwisTypes ODFItem::findCsyType(const UPContainerConnector& containerc) const
         }
     } else {
         QString path = _csyname;
-        QFile file(path);
+        QFile file(_csyname);
         if ( !file.exists())
             path = container().toString() + "/" + path;
+        else{
+            QFileInfo inf (_csyname);
+            path = QUrl::fromLocalFile(inf.absoluteFilePath()).toString();
+        }
 
         if(!csy.setIniFile(path, containerc)){
             return itUNKNOWN;
