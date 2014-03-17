@@ -6,6 +6,7 @@
 #include "catalogconnectorfactory.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "postgresqlobjectfactory.h"
 #include "postgresqlconnector.h"
