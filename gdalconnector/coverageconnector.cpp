@@ -19,6 +19,7 @@
 #include "conventionalcoordinatesystem.h"
 #include "table.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "gdalproxy.h"
 #include "gdalconnector.h"
@@ -29,7 +30,7 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-CoverageConnector::CoverageConnector(const Resource& resource,bool load) : GdalConnector(resource,load)
+CoverageConnector::CoverageConnector(const Resource& resource, bool load, const PrepareOptions &options) : GdalConnector(resource,load, options)
 {
 }
 
@@ -42,7 +43,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data){
     if ( coverage == nullptr)
         return false;
 
-    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
+    QFileInfo fileinf = containerConnector()->toLocalFile(source());
     ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", fileinf.absoluteFilePath());
     if(!csy.isValid()) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "coordinatesystem", coverage->name());

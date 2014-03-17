@@ -10,12 +10,12 @@ namespace Ilwis3{
 class DomainConnector : public Ilwis3Connector
 {
 public:
-    DomainConnector(const Resource& resource, bool load=true);
+    DomainConnector(const Resource& resource, bool load=true,const PrepareOptions& options=PrepareOptions());
     bool loadMetaData(Ilwis::IlwisObject *data);
     bool storeMetaData(Ilwis::IlwisObject *data);
     IlwisObject *create() const;
 
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 private:
     bool handleValueDomains(IlwisObject *data);
     /*!
@@ -35,6 +35,7 @@ private:
     bool minMax2minMax(const QString &minmax, double &vmin, double &vmax) const;
     QString parseDomainInfo(const QString &inf) const;
     bool storeMetaDataSortDomain(Ilwis::Domain *dom, IlwisTypes tp) ;
+    IlwisObject *fromValueRange() const;
 };
 }
 
