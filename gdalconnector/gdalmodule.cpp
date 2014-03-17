@@ -39,9 +39,9 @@
 #include "symboltable.h"
 #include "OperationExpression.h"
 #include "gdalmodule.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "dataformat.h"
-#include "gdalcatalogconnector.h"
 #include "ilwisobjectfactory.h"
 #include "gdalobjectfactory.h"
 #include "gdalproxy.h"
@@ -84,7 +84,7 @@ void GdalModule::prepare()
     cfactory->addCreator(itCOORDSYSTEM,"gdal", CoordinateSystemConnector::create);
     cfactory->addCreator(itFEATURE,"gdal", GdalFeatureConnector::create);
     cfactory->addCreator(itTABLE,"gdal", GdalFeatureTableConnector::create);
-    cfactory->addCreator(itCATALOG,"gdal", GdalCatalogConnector::create);
+    cfactory->addCreator(itCATALOG,"gdal", CatalogConnector::create);
 
 
     for(int i=0; i < gdal()->getDriverCount(); ++i) {
