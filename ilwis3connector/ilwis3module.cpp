@@ -33,9 +33,10 @@
 #include "ilwisobjectfactory.h"
 #include "ilwis3objectfactory.h"
 #include "catalog.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
-#include "filecatalogconnector.h"
-#include "ilwis3catalogconnector.h"
+#include "foldercatalogexplorer.h"
+#include "ilwis3catalogexplorer.h"
 #include "rawconverter.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
@@ -84,7 +85,7 @@ void Ilwis3Module::prepare()
     factory->addCreator(itELLIPSOID,"ilwis3",Ilwis3::EllipsoidConnector::create);
     factory->addCreator(itCOORDSYSTEM,"ilwis3",Ilwis3::CoordinateSystemConnector::create);
     factory->addCreator(itFEATURE,"ilwis3",Ilwis3::FeatureConnector::create);
-    factory->addCreator(itCATALOG,"ilwis3",Ilwis3::Ilwis3CatalogConnector::create);
+    //factory->addCreator(itCATALOG,"ilwis3",Ilwis::CatalogConnector::create);
 
     factory->addCreator("map","ilwis3",Ilwis3::RasterCoverageConnector::create);
     factory->addCreator("georef","ilwis3",Ilwis3::GeorefConnector::create);
