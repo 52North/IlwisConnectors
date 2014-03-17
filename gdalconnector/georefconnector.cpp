@@ -9,6 +9,7 @@
 #include "domain.h"
 #include "connectorinterface.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "gdalproxy.h"
 #include "gdalconnector.h"
@@ -23,11 +24,11 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *GeorefConnector::create(const Ilwis::Resource &resource,bool load) {
-    return new GeorefConnector(resource,load);
+ConnectorInterface *GeorefConnector::create(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) {
+    return new GeorefConnector(resource,load, options);
 }
 
-GeorefConnector::GeorefConnector(const Ilwis::Resource &resource, bool load) : GdalConnector(resource, load)
+GeorefConnector::GeorefConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : GdalConnector(resource, load, options)
 {
 }
 
@@ -72,7 +73,7 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
 
 IlwisObject *GeorefConnector::create() const{
     //TODO: tiepoints georef
-    return GeoReference::create("corners", Resource());
+    return GeoReference::create("corners", _resource);
 
 
 
