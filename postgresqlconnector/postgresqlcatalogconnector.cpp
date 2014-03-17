@@ -3,6 +3,7 @@
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "catalog.h"
 #include "postgresqlcatalogconnector.h"
