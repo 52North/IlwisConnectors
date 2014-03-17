@@ -12,6 +12,7 @@
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "connectorfactory.h"
 #include "postgresqlconnector.h"
@@ -43,12 +44,13 @@ bool PostgresqlObjectFactory::canUse(const Resource &resource) const
         return true;
     else if ( type & itTABLE)
         return true;
+    return false;
 }
 
-IlwisObject *PostgresqlObjectFactory::create(const Resource &resource) const
+IlwisObject *PostgresqlObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    PostgresqlConnector *connector = factory->createFromResource<PostgresqlConnector>(resource, "postgresql");
+    PostgresqlConnector *connector = factory->createFromResource<PostgresqlConnector>(resource, "postgresql", options);
 
    if(!connector) {
        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
