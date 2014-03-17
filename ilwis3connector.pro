@@ -33,11 +33,11 @@ SOURCES += \
     ilwis3connector/binaryilwis3table.cpp \
     ilwis3connector/ilwis3range.cpp \
     ilwis3connector/odfitem.cpp \
-    ilwis3connector/ilwis3catalogconnector.cpp \
     ilwis3connector/ilwis3projectionconnector.cpp \
     ilwis3connector/RawConverter.cpp \
     ilwis3connector/ilwisrastercoverageconnector.cpp \
-    ilwis3connector/ilwis3featureconnector.cpp
+    ilwis3connector/ilwis3featureconnector.cpp \
+    ilwis3connector/ilwis3catalogexplorer.cpp
 
 HEADERS += \
     ilwis3connector/ilwis3connector_global.h \
@@ -55,10 +55,10 @@ HEADERS += \
     ilwis3connector/binaryilwis3table.h \
     ilwis3connector/ilwis3range.h \
     ilwis3connector/odfitem.h \
-    ilwis3connector/ilwis3catalogconnector.h \
     ilwis3connector/ilwis3projectionconnector.h \
     ilwis3connector/ilwisrastercoverageconnector.h \
-    ilwis3connector/ilwis3featureconnector.h
+    ilwis3connector/ilwis3featureconnector.h \
+    ilwis3connector/ilwis3catalogexplorer.h
 
 OTHER_FILES += \
     ilwis3connector/ilwis3connector.json \
