@@ -13,13 +13,13 @@ typedef std::vector<SourceHandles> FeatureSetHandles;
 
 class GdalFeatureConnector : public CoverageConnector{
 public:
-    GdalFeatureConnector(const Ilwis::Resource &resource, bool load=true);
+    GdalFeatureConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 
     bool loadMetaData(IlwisObject* data);
-    bool loadBinaryData(IlwisObject* data);
+    bool loadData(IlwisObject* data);
     bool store(IlwisObject *obj, int);
 
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
     Ilwis::IlwisObject *create() const;
 protected:
 
