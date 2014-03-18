@@ -38,51 +38,123 @@ RasterCoverage::RasterCoverage(std::string resource){
 }
 
 RasterCoverage* RasterCoverage::operator+(RasterCoverage &rc){
-    return (RasterCoverage*)Engine::_do(QString("add_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),QString("%1 + %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toStdString());
+    return (RasterCoverage*)Engine::_do(
+                QString("add_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+                "binarymathraster",
+                this->__str__(),
+                rc.__str__(),
+                "add"
+            );
 }
 
 RasterCoverage *RasterCoverage::operator+ (double value){
-    return (RasterCoverage*)Engine::_do(QString("add_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%1 + %2").arg((*this->ptr())->name()).arg(value).toStdString());
+    return (RasterCoverage*)Engine::_do(
+                QString("add_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                "binarymathraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "add"
+            );
 }
 
 RasterCoverage *RasterCoverage::__radd__(double value){
-    return (RasterCoverage*)Engine::_do(QString("add_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%2 + %1").arg((*this->ptr())->name()).arg(value).toStdString());
+    return (RasterCoverage*)Engine::_do(
+                QString("add_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),
+                "binarymathraster",
+                QString("%1").arg(value).toStdString(),
+                this->__str__(),
+                "add"
+            );
 }
 
 RasterCoverage *RasterCoverage::operator-(RasterCoverage &rc){
-    return (RasterCoverage*)Engine::_do(QString("sub_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),QString("%1 - %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toStdString());
+    return (RasterCoverage*)Engine::_do(
+        QString("sub_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+        "binarymathraster",
+        this->__str__(),
+        rc.__str__(),
+        "substract"
+    );
 }
 
 RasterCoverage *RasterCoverage::operator-(double value){
-    return (RasterCoverage*)Engine::_do(QString("sub_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%1 - %2").arg((*this->ptr())->name()).arg(value).toStdString());
+    return (RasterCoverage*)Engine::_do(
+                QString("sub_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                "binarymathraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "substract"
+            );
 }
 
 RasterCoverage *RasterCoverage::__rsub__(double value){
-    return (RasterCoverage*)Engine::_do(QString("sub_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%2 - %1").arg((*this->ptr())->name()).arg(value).toStdString());
+    return (RasterCoverage*)Engine::_do(
+                QString("sub_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),
+                "binarymathraster",
+                QString("%1").arg(value).toStdString(),
+                this->__str__(),
+                "substract"
+            );
 }
 
 RasterCoverage *RasterCoverage::operator*(RasterCoverage &rc){
-    return (RasterCoverage*)Engine::_do(QString("mul_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),QString("%1 * %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toStdString());
+    return (RasterCoverage*)Engine::_do(
+        QString("mul_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+        "binarymathraster",
+        this->__str__(),
+        rc.__str__(),
+        "times"
+    );
 }
 
 RasterCoverage *RasterCoverage::operator*(double value){
-    return (RasterCoverage*)Engine::_do(QString("mul_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%1 * %2").arg((*this->ptr())->name()).arg(value).toStdString());
+    return (RasterCoverage*)Engine::_do(
+                QString("mul_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                "binarymathraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "times"
+            );
 }
 
 RasterCoverage *RasterCoverage::__rmul__(double value){
-    return (RasterCoverage*)Engine::_do(QString("mul_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%2 * %1").arg((*this->ptr())->name()).arg(value).toStdString());
+    return (RasterCoverage*)Engine::_do(
+                QString("mul_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),
+                "binarymathraster",
+                QString("%1").arg(value).toStdString(),
+                this->__str__(),
+                "times"
+            );
 }
 
 RasterCoverage *RasterCoverage::__truediv__(RasterCoverage &rc){
-    return (RasterCoverage*)Engine::_do(QString("div_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),QString("%1 / %2").arg((*this->ptr())->name(), (*rc.ptr())->name()).toStdString());
+    return (RasterCoverage*)Engine::_do(
+        QString("div_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+        "binarymathraster",
+        this->__str__(),
+        rc.__str__(),
+        "divide"
+    );
 }
 
 RasterCoverage *RasterCoverage::__truediv__(double value){
-    return (RasterCoverage*)Engine::_do(QString("div_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%1 / %2").arg((*this->ptr())->name()).arg(value).toStdString());
+    return (RasterCoverage*)Engine::_do(
+                QString("div_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                "binarymathraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "divide"
+            );
 }
 
 RasterCoverage *RasterCoverage::__rtruediv__(double value){
-    return (RasterCoverage*)Engine::_do(QString("div_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),QString("%2 / %1").arg((*this->ptr())->name()).arg(value).toStdString());
+    return (RasterCoverage*)Engine::_do(
+                QString("div_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),
+                "binarymathraster",
+                QString("%1").arg(value).toStdString(),
+                this->__str__(),
+                "divide"
+            );
 }
 
 double RasterCoverage::coord2value(const Coordinate& c){

@@ -122,4 +122,14 @@ namespace pythonapi{
         throw std::domain_error(QString("Cannot convert: %1 of type %2").arg(var.toString()).arg(QMetaType::typeName(t)).toStdString());
     }
 
+
+    PyObject* StdVectorOfQVariant2PyTuple(const std::vector<QVariant>& vec){
+        PyObject* list = newPyTuple(vec.size());
+        int i = 0;
+        for(auto it = vec.begin(); it != vec.end(); it++){
+            setTupleItem(list, i++, QVariant2PyObject(*it));
+        }
+        return list;
+    }
+
 }//namespace pythonapi

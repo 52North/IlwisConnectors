@@ -35,7 +35,7 @@ PyObject* Coverage::attributes(){
     for(int i = 0; i < tbl->columnCount(); i++){
         QString name = tbl->columndefinition(i).name();
         if (name != QString(FEATUREIDCOLUMN)){
-            if (!setTupleItem(list, i-offset, name.toStdString().data()))
+            if (!setTupleItem(list, i-offset, PyUnicodeFromString(name.toStdString().data())))
                 throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of attributes").arg(tbl->columndefinition(i).name()));
         }else{
             offset++;

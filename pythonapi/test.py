@@ -13,6 +13,7 @@ try:
     tempDir = "/temp"
     featureDir = "/feature"
     rasterDir = "/raster"
+    integrationDir = "/integration"
 
     import unittest as ut
 
@@ -36,8 +37,14 @@ try:
                  'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
                 t.columns()
             )
-            # TODO bug fix in GdalLoader
-            # self.assertEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column("OCTOBER"))
+            self.assertEqual(Const.iUNDEF, t.columnIndex("unknownColumn"))
+            self.assertEqual(10, t.columnIndex("OCTOBER"))
+            self.assertTupleEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column("OCTOBER"))
+            self.assertTupleEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column(10))
+            tup = ('Laguna_Santa_Rosa', 175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2)
+            rec = t.record(2)
+            self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
+            self.assertEqual(len(rec), len(t.columns()))
 
         def test_StandaloneIlwis3Table(self):
             t = Table("rainfall.tbt")
@@ -64,9 +71,9 @@ try:
             t.setCell("newColumn", 0, "text")
             connectIssueLogger()
             self.assertEqual(Const.rUNDEF, t.cell("newColumn", 0))
-            self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column("march"))
-            self.assertEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
-            self.assertEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
+            self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column("march"))
+            self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
+            self.assertTupleEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
 
         def testStandaloneGdalTable(self):
             t = Table("rainfall.shp")
@@ -443,6 +450,13 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 self.assertEqual(int(newfeature[c]), 12, msg="new value of feature attribute not correct!")
             self.assertEqual(fc.featureCount(), 14, msg="new feature count wrong")
 
+            fc_invalid = FeatureCoverage("newFC")
+            self.assertTrue(fc_invalid.isInternal())
+            g = Geometry("POINT(5.4 6 9.0)", CoordinateSystem("code=epsg:23035"))
+            with self.assertRaises(Exception, msg="should raise FeatureCreationError"):  # TODO to be translated into Python FeatureCreationError
+                newfeature = fc_invalid.newFeature(g)
+
+
         def test_FeatureIterator(self):
             fc = FeatureCoverage("rainfall.shp")
             self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
@@ -553,6 +567,21 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertEqual(v, datetime.datetime(2014, 2, 17, 12, 42, 33))
             f["DateTime"] = datetime.datetime(2014, 2, 27)
             self.assertEqual(f["DateTime"], datetime.datetime(2014, 2, 27))
+
+            tup = (12, datetime.datetime(2014, 2, 27, 0, 0), datetime.time(12, 42, 33, 120000),
+                    datetime.datetime(2014, 2, 27, 0, 0), 9.223372036854776e+18, 2.34e-31)
+            rec = fc.attributeTable().record(0)
+            self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
+            self.assertEqual(len(rec), len(fc.attributeTable().columns()))
+            tup = ('LINESTRING(1 1, 2 2, 3 3)', datetime.date(2014, 3, 4), datetime.time(12, 42, 33),
+                    datetime.datetime(2014, 3, 4, 12, 42, 33), 4123045, 2342451235.5434)
+            rec = fc.attributeTable().record(2)
+            self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
+            self.assertEqual(len(rec), len(fc.attributeTable().columns()))
+            self.assertTupleEqual(
+                (12, 'LINESTRING(1 1, 3 3)', 'LINESTRING(1 1, 2 2, 3 3)'),
+                fc.attributeTable().column(0)
+            )
 
         def test_loadGDALstoreGDAL(self):
             # polygons
@@ -698,7 +727,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertEqual("pixel(536.599,478.436)", str(gr.coord2Pixel(Coordinate(-319195.47, 784540.64))))
             self.assertEqual("coordinate(-315198.248000,780544.506500)", str(gr.pixel2Coord(PixelD(536.599, 478.436))))
             self.assertEqual("coordinate(-319990.248000,784032.506500)", str(gr.pixel2Coord(Pixel(536, 478))))
-            # self.assertEqual(0, gr.pixelSize())  # TODO possible bug in GeoRefImplementaion  - nan is not a goo pixelSize!!
+            # self.assertEqual(0, gr.pixelSize())  # TODO possible bug in GeoRefImplementaion  - nan is not a good pixelSize!!
             self.assertTrue(gr.centerOfPixel())
             self.assertEqual("POLYGON(536 478,536 478)", str(
                 gr.envelope2Box(Envelope(Coordinate(-319195.47, 784540.64), Coordinate(-319990.248000, 784032.506500)))
@@ -764,7 +793,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_RasterCalculation(self):
             rc = RasterCoverage("n000302.mpr")
             rctif = RasterCoverage("n0.mpr")
@@ -1046,10 +1075,90 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             else:
                 self.skipTest("countries.mpa is missing")
 
+        @ut.skip("temporarily")
+        def test_IlwisObject(self):
+            fc = FeatureCoverage("newFC")
+            self.assertEqual("newFC", fc.name())
+            fc.name("newName")
+            self.assertEqual("newName", fc.name())
+            self.assertTrue(fc.isInternal())
+            fc.setConnection(workingDir + worldDir+"/countries.mpa", "vectormap", "ilwis3", IlwisObject.cmINPUT)
+            self.assertFalse(fc.isInternal())
+            self.assertEqual("newName", fc.name())
+            fc.setConnection(workingDir + worldDir+"/countries.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            fc.store()
+
         def test_AttributeTable(self):
-            t = Table("countries.tbt")
-            self.assertTrue(bool(t))
-            self.assertFalse(t.isInternal())
+            table = Table("countries.tbt")
+            self.assertTrue(bool(table))
+            self.assertFalse(table.isInternal())
+            value = str(table.cell("iso_a2", 4))
+            self.assertEqual("AR", value)
+            table.setCell("iso_a2", 4, value.upper())
+            recCount = table.recordCount()
+            self.assertEqual(177, recCount)
+            colCount = table.columnCount()
+            self.assertEqual(63, colCount)
+            columns = table.columns()  # ('column1','column2',...)
+            self.assertEqual(63, len(columns))
+            self.assertEqual(42, table.columnIndex("iso_a2"))
+            self.assertEqual(Const.iUNDEF, table.columnIndex("ihfg"))
+            column = table.column(42)
+            self.assertEqual(177, len(column))
+            column1 = table.column("iso_a2")
+            self.assertEqual(column, column1)
+            record = table.record(4)
+            self.assertEqual(63, len(record))
+            table.addColumn("newCol", "value")
+            self.assertEqual(64, table.columnCount())
+
+    class TestIntegration(ut.TestCase):
+        def setUp(self):
+            try:
+                # disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir + integrationDir)
+                # connectIssueLogger()
+            except IlwisException:
+                self.skipTest("could not set working directory!")
+
+        def test_numpy(self):
+            try:
+                import numpy as np
+                import matplotlib.pyplot as plt
+            except ImportError:
+                self.skipTest("numpy not available")
+
+            raster = RasterCoverage("n0.mpr")
+            self.assertFalse(raster.isInternal())
+            it = iter(raster)
+            npRaster = np.fromiter(it, np.float, it.box().size().linearSize())
+            # (num, bins) = np.histogram(npRaster, bins=10, range=(0, 255))
+            # nu = [143870, 130523,  56858,  32878,  36515,  45334,  55831,  21598, 1657, 802040]
+            # self.assertTrue(all(nu[i] == num[i] for i in range(len(nu))))
+            # bi = [0., 25.5, 51., 76.5, 102., 127.5, 153., 178.5, 204., 229.5, 255.]
+            # self.assertTrue(all(bi[i] == bins[i] for i in range(len(bi))))
+
+            plt.figure()
+            plt.hist(npRaster, 255, (0, 253))
+            plt.show()
+
+            # n = 5
+            # menMeans = (20, 35, 30, 35, 27)
+            # menStd =   (2, 3, 4, 1, 2)
+            #
+            # ind = np.arange(n)  # the x locations for the groups
+            # width = 0.35       # the width of the bars
+            #
+            # fig, ax = plt.subplots()
+            # rects = ax.bar(ind, menMeans, width, color='r', yerr=menStd)
+            #
+            # # add some
+            # # ax.set_ylabel('')
+            # # ax.set_title('')
+            # ax.set_xticks(ind+width)
+            # ax.set_xticklabels( ('G1', 'G2', 'G3', 'G4', 'G5') )
+            #
+            # plt.show()
 
 
     #here you can chose which test case will be executed
