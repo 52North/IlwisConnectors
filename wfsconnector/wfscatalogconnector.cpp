@@ -71,13 +71,6 @@ bool WfsCatalogConnector::canUse(const Resource &resource) const
         return false;
     if (!WfsUtils::isValidWfsUrl(resource.url()))
         return false;
-
-    // TODO: does a wfs:// protocol make sense for testing?
-    //       local response files has to be explicitly set
-    //       in the tests anyway
-    if (resource.url().toString().startsWith("wfs-test://"))
-        return true;
-
     return true;
 }
 

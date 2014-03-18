@@ -6,20 +6,6 @@
 class QXmlStreamReader;
 class QXmlStreamAttributes;
 
-struct QName {
-    // TODO: extract qName parsing
-    QName(QString qName) {
-        int splitIndex = qName.indexOf(":");
-        if (splitIndex > 0) {
-            prefix = qName.left(splitIndex);
-        }
-        name = qName.mid(splitIndex + 1);
-    }
-
-    QString prefix;
-    QString name;
-};
-
 class WFSCONNECTORSHARED_EXPORT XmlStreamParser
 {
 public:
@@ -55,14 +41,23 @@ public:
     QString qname() const;
 
     /**
-     * Moves to next element named by qName.
+     * Moves to inner next element named by qName. Optionally a callback can be passed in
+     * which will be called on each element node the reader passes.
      *
      * @param qName the name of the element to move to.
      * @return true if element was found, false otherwise.
      */
-    bool moveToNext(QString qName) const;
+//    bool moveToNext(QString qName, void (*callback)()=doNothing);
 
-    bool findNextOf(std::initializer_list<QString> elementList) const;
+    /**
+     * Finds the next inner element named by one of the qNames in the elementList. Optionally
+     * a callback can be passed in which will be called on each element node the reader
+     * passes.
+     *
+     * @param elementList a list of element names to find. First qNames have precendence.
+     * @return true if an element was found, false otherwise.
+     */
+    bool findNextOf(std::initializer_list<QString> elementList, void (*callback)()=doNothing);
 
     bool readNextStartElement() const;
 
@@ -70,13 +65,6 @@ public:
 
     void readNext() const;
 
-    /**
-     * Moves to the element living on next level, named by qName.
-     *
-     * @param qName the name of the element to move to.
-     * @return true if element was found, false otherwise.
-     */
-    bool nextLevelMoveToNext(QString qName) const;
     bool isAtBeginningOf(QString qName) const;
     bool isAtEndOf(QString qName) const;
 
@@ -88,6 +76,14 @@ private:
     QMap<QString,QString> _namespaces;
 
     bool isAtElement(QString qName) const;
+
+    static void doNothing() {}
+
+    template<typename F>
+    void nextElementDo(F f)
+    {
+        f();
+    }
 };
 
 #endif // XMLPARSER_H

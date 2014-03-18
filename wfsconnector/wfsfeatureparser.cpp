@@ -6,6 +6,7 @@
 #include "geos/geom/GeometryFactory.h"
 #include "geos/geom/LinearRing.h"
 #include "geos/geom/Polygon.h"
+#include "geos/geom/Point.h"
 
 #include "kernel.h"
 #include "coverage.h"
@@ -20,6 +21,7 @@
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "textdomain.h"
+#include "juliantime.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
 #include "attributerecord.h"
@@ -49,33 +51,53 @@ WfsFeatureParser::~WfsFeatureParser()
     delete _parser;
 }
 
-void WfsFeatureParser::parseFeatureMembers(WfsParsingContext &context)
+void WfsFeatureParser::context(const WfsParsingContext &context)
 {
-    QString targetNamespace =  context.namespaceMappings()[""];
+    _context = context;
+}
+
+WfsParsingContext WfsFeatureParser::context() const
+{
+    return _context;
+}
+
+void WfsFeatureParser::parseFeatureMembers()
+{
+    QString targetNamespace =  _context.namespaceMappings()[""];
     _parser->addNamespaceMapping("target", targetNamespace);
     ITable table = _fcoverage->attributeTable();
-    QString featureType = table->name();
-    featureType = "target:" + featureType;
+    _featureType = table->name();
+    _featureType = "target:" + _featureType;
 
     quint64 featureCount = 0;
-    if (_parser->moveToNext("wfs:FeatureCollection")) {
-        if (_parser->moveToNext("gml:featureMembers")) {
-            while (_parser->moveToNext(featureType)) {
+    if (_parser->findNextOf( {"wfs:FeatureCollection"} )) {
+        if (_parser->findNextOf( {"gml:featureMembers", "gml:featureMember"} )) {
+            QString collectiontype = _parser->name();
+            qint32 colonIdx = collectiontype.indexOf(":");
+            collectiontype = collectiontype.mid(colonIdx + 1);
+            while (_parser->findNextOf( {_featureType} )) {
                 std::vector<QVariant> record(table->columnCount());
-                parseFeature(record, context);
-                table->record(featureCount++, record); // load content
-            }
-        }
-        while (_parser->moveToNext("wfs:featureMember")) {
 
+                parseFeature(record);
+                table->record(featureCount++, record); // load content
+                while ( !_parser->isAtEndOf(_featureType)) {
+                    // leave parsed feature type element
+                    _parser->readNext();
+                }
+                if (collectiontype == "gml:featureMember" || collectiontype == "featureMember") {
+                    // enter next collection member
+                    _parser->readNextStartElement();
+                }
+            }
         }
     }
 }
 
-void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, WfsParsingContext &context)
+void WfsFeatureParser::parseFeature(std::vector<QVariant> &record)
 {
     bool continueReadingStream = true;
     ITable table = _fcoverage->attributeTable();
+    QString geometryAttributeName = _context.geometryAtttributeName();
     for (int i = 0; i < table->columnCount(); i++) {
 
         ColumnDefinition& coldef = table->columndefinition(i);
@@ -101,19 +123,22 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, WfsParsingCon
 
         QString currentElementName = _parser->name();
         if (_parser->isAtBeginningOf("gml:boundedBy")) {
+            i--; // not written to table
 
             // TODO: add boundedBy fill function
-
             _parser->skipCurrentElement(); // ignore for now
 
-            i--; // not written to table
             continue;
         }
 
-        // if geometry is in beteen
-        if (currentElementName == context.geometryAtttributeName()) {
-            parseFeatureGeometry(context);
+        // if geometry is in between attributes
+        if (currentElementName == geometryAttributeName) {
             i--; // not written to table
+            createNewFeature();
+            while (_parser->name() != geometryAttributeName) {
+                // leave the geometry element
+                _parser->readNextStartElement();
+            }
             continue;
         }
 
@@ -128,6 +153,10 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, WfsParsingCon
 
         if (tp & itSTRING){
             record[i] = fillStringColumn();
+        } else if (tp & itBOOL){
+            record[i] = fillBoolColumn();
+        } else if (tp & itDATETIME || tp & itDATE){
+            record[i] = fillDateTimeColumn();
         } else if (tp & itINTEGER){
             NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
             //creating the actual range as invalid to be adjusted in the fillers
@@ -144,28 +173,21 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, WfsParsingCon
             r->max(min);
             datadef.range(r);
             record[i] = fillDoubleColumn();
-        } else if (tp & itTIME){
-            //creating the actual range as invalid to be adjusted in the fillers
-            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
-            double min = r->min();
-            r->min(r->max());
-            r->max(min);
-            datadef.range(r);
-            record[i] = fillDateTimeColumn();
+        } else if (tp & itBOOL){
+            record[i] = fillBoolColumn();
         } else {
             record[i] = QVariant();
         }
     }
 
     if (_parser->readNextStartElement()) {
-        if (_parser->name() == context.geometryAtttributeName()) {
-            parseFeatureGeometry(context);
+        // geometry is at the end of the attribute list
+        if (_parser->name() == geometryAttributeName) {
+            createNewFeature();
         }
     }
 
 }
-
-
 
 QVariant WfsFeatureParser::fillStringColumn()
 {
@@ -182,153 +204,166 @@ QVariant WfsFeatureParser::fillDoubleColumn()
     return QVariant(_parser->readElementText().toDouble());
 }
 
+QVariant WfsFeatureParser::fillBoolColumn()
+{
+    QString v = _parser->readElementText();
+    return v == "true" || v.toInt() != 0
+            ? QVariant(true)
+            : QVariant(false);
+}
+
 QVariant WfsFeatureParser::fillDateTimeColumn()
 {
-    QVariant v = QVariant(_parser->readElementText());
-
-    Time time;
-
-    // TODO: parse xsd:time
-
-    return v;
+    Time time(_parser->readElementText());
+    return IVARIANT(time);
 }
 
-void WfsFeatureParser::parseFeatureGeometry(WfsParsingContext &context)
+void WfsFeatureParser::createNewFeature()
 {
-    _parser->readNextStartElement();
-    IlwisTypes types = _fcoverage->ilwisType();
-
-    updateSrsInfo(context);
-    bool isMultiGeometry = _parser->name().contains("Multi");
-    if (types & itPOLYGON) {
-        if (isMultiGeometry) {
-            std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
-            if (updateSrsInfoUntil("gml:surfaceMember", context)) {
-                do {
-                    bool ok = false;
-                    updateSrsInfo(context);
-                    geos::geom::Geometry *geometry = parsePolygon(context, ok);
-                    if ( !ok) {
-                        ERROR0("Could not parse GML MultiSurface member.");
-                        return;
-                    }
-                    multi->push_back(geometry);
-                } while (_parser->moveToNext("gml:surfaceMember"));
-
-                ICoordinateSystem crs;
-                QString res = QString("code=").append(context.srsName());
-                if (crs.prepare(res, itCONVENTIONALCOORDSYSTEM)) {
-                    _fcoverage->coordinateSystem(crs);
-                    _fcoverage->newFeature(_fcoverage->geomfactory()->createMultiPolygon(multi),false);
-                } else {
-                    ERROR1("Could not prepare crs with code=%1.",context.srsName());
-                }
-            }
-        } else {
-            bool ok = false;
-            updateSrsInfo(context);
-            geos::geom::Geometry *geometry = parsePolygon(context, ok);
-            if ( !ok) {
-                ERROR0("Could not parse GML Surface.");
-                return;
-            }
-
-            ICoordinateSystem crs;
-            QString res = QString("code=").append(context.srsName());
-            if (crs.prepare(res)) {
-                _fcoverage->coordinateSystem(crs);
-                _fcoverage->newFeature(geometry,false);
-            } else {
-                ERROR1("Could not prepare crs with code=%1.",context.srsName());
-            }
-        }
-
-    } else if (types & itLINE) {
-        if (isMultiGeometry) {
-            std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
-            if (updateSrsInfoUntil("gml:curveMember", context)) {
-                do {
-                    bool ok = false;
-                    updateSrsInfo(context);
-                    geos::geom::Geometry *geometry = parseLineString(context, ok);
-                    if ( !ok) {
-                        ERROR0("Could not parse GML MultiCurve member.");
-                        return;
-                    }
-                    multi->push_back(geometry);
-                } while (_parser->moveToNext("gml:curveMember"));
-
-                ICoordinateSystem crs;
-                QString res = QString("code=").append(context.srsName());
-                if (crs.prepare(res)) {
-                    _fcoverage->coordinateSystem(crs);
-                    _fcoverage->newFeature(_fcoverage->geomfactory()->createMultiLineString(multi),false);
-                } else {
-                    ERROR1("Could not prepare crs with code=%1.",context.srsName());
-                }
-            }
-        } else {
-            bool ok = false;
-            geos::geom::Geometry *geometry = parseLineString(context, ok);
-            if ( !ok) {
-                ERROR0("Could not parse GML Curve.");
-                return;
-            }
-            ICoordinateSystem crs;
-            QString res = QString("code=").append(context.srsName());
-            if (crs.prepare(res)) {
-                _fcoverage->coordinateSystem(crs);
-                _fcoverage->newFeature(_fcoverage->geomfactory()->createLineString(geometry->getCoordinates()),false);
-            } else {
-                ERROR1("Could not prepare crs with code=%1.",context.srsName());
-            }
-        }
-
-    } else if (types & itPOINT) {
-
+    ICoordinateSystem crs;
+    geos::geom::Geometry *geometry = parseFeatureGeometry();
+    QString res = QString("code=").append(_context.srsName());
+    if (crs.prepare(res, itCONVENTIONALCOORDSYSTEM)) {
+        _fcoverage->coordinateSystem(crs);
+        _fcoverage->newFeature(geometry,false);
     } else {
-        // TODO: unknown geometry type
-
-        // we have to react on types present on the xml stream
-//        if (_parser->findNextOf({ "gml:GeometryPropertyType",
-//                                "gml:MultiSurfaceType",
-//                                "gml:MultiCurveType",
-//                                "gml:MultiPointType",
-//                                "gml:PolygonType",
-//                                "gml:CurveType",
-//                                "gml:LineStringType",
-//                                "gml:PointType",
-//                                "gml:RingType",
-//                                "gml:LinearRingType"} )) {
-
-//            if (isPolygonType()) {
-//                _coverageType |= itPOLYGON;
-//            } else if (isLineType()) {
-//                _coverageType |= itLINE;
-//            } else if (isPointType()) {
-//                _coverageType |= itPOINT;
-//            }
-
-//        }
+        ERROR1("Could not prepare crs with code=%1.",_context.srsName());
     }
-
-    //_fcoverage->newFeature(geos:Geom);
 }
 
-void WfsFeatureParser::updateSrsInfo(WfsParsingContext &context)
+geos::geom::Geometry *WfsFeatureParser::parseFeatureGeometry()
+{
+    // move on element
+    _parser->readNextStartElement();
+
+    updateSrsInfo();
+    bool isMultiGeometry = _parser->name().contains("Multi");
+    if (isPolygonType()) {
+        return createPolygon(isMultiGeometry);
+    } else if (isLineStringType()) {
+        return createLineString(isMultiGeometry);
+    } else if (isPointType()) {
+        return createPoint(isMultiGeometry);
+    }
+}
+
+bool WfsFeatureParser::isPolygonType()
+{
+    QString elementName = _parser->name();
+    bool isPolygon = false;
+    isPolygon = isPolygon || elementName.contains("Polygon");
+    isPolygon = isPolygon || elementName.contains("Surface");
+    isPolygon = isPolygon || elementName.contains("Ring");
+    return isPolygon;
+}
+
+bool WfsFeatureParser::isLineStringType()
+{
+    QString elementName = _parser->name();
+    return elementName.contains("Line")
+            || elementName.contains("Curve");
+}
+
+bool WfsFeatureParser::isPointType()
+{
+    QString elementName = _parser->name();
+    return elementName.contains("Point");
+}
+
+geos::geom::Geometry *WfsFeatureParser::createPolygon(bool isMultiGeometry)
+{
+    if (isMultiGeometry) {
+        std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
+        if (updateSrsInfoUntil("gml:surfaceMember")) {
+            do {
+                bool ok = false;
+                geos::geom::Geometry *geometry = parsePolygon(ok);
+                if ( !ok) {
+                    ERROR0("Could not parse GML MultiSurface member.");
+                    return _fcoverage->geomfactory()->createMultiPolygon();
+                }
+                multi->push_back(geometry);
+            } while (_parser->findNextOf( {"gml:surfaceMember"} ));
+            return _fcoverage->geomfactory()->createMultiPolygon(multi);
+        }
+    } else {
+        bool ok = false;
+        geos::geom::Geometry *geometry = parsePolygon(ok);
+        if ( !ok) {
+            ERROR0("Could not parse GML Surface.");
+        }
+        return geometry;
+    }
+}
+
+geos::geom::Geometry *WfsFeatureParser::createLineString(bool isMultiGeometry)
+{
+    if (isMultiGeometry) {
+        std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
+        if (updateSrsInfoUntil("gml:curveMember")) {
+            do {
+                bool ok = false;
+                geos::geom::Geometry *geometry = parseLineString(ok);
+                if ( !ok) {
+                    ERROR0("Could not parse GML MultiCurve member.");
+                    return _fcoverage->geomfactory()->createMultiLineString();
+                }
+                multi->push_back(geometry);
+            } while (_parser->findNextOf( { "gml:curveMember" } ));
+            return _fcoverage->geomfactory()->createMultiLineString(multi);
+        }
+    } else {
+        bool ok = false;
+        updateSrsInfo();
+        geos::geom::Geometry *geometry = parseLineString(ok);
+        if ( !ok) {
+            ERROR0("Could not parse GML Curve.");
+        }
+        return geometry;
+    }
+}
+
+geos::geom::Geometry *WfsFeatureParser::createPoint(bool isMultiGeometry)
+{
+    if (isMultiGeometry) {
+        std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
+        if (updateSrsInfoUntil("gml:pointMember")) {
+            do {
+                bool ok = false;
+                geos::geom::Geometry *geometry = parsePoint(ok);
+                if ( !ok) {
+                    ERROR0("Could not parse GML MultiPoint member.");
+                    return _fcoverage->geomfactory()->createMultiPoint();
+                }
+                multi->push_back(geometry);
+            } while (_parser->findNextOf( {"gml:pointMember"} ));
+            return _fcoverage->geomfactory()->createMultiPoint(multi);
+        }
+    } else {
+        bool ok = false;
+        updateSrsInfo();
+        geos::geom::Geometry *geometry = parsePoint(ok);
+        if ( !ok) {
+            ERROR0("Could not parse GML Point.");
+        }
+        return geometry;
+    }
+}
+
+void WfsFeatureParser::updateSrsInfo()
 {
     QXmlStreamAttributes attributes = _parser->attributes();
     QString srs = attributes.value("srsName").toString();
     QString dimension = attributes.value("srsDimension").toString();
-    if (!dimension.isEmpty()) context.setSrsDimension(dimension.toInt());
-    if (!srs.isEmpty()) context.setSrsName(WfsUtils::normalizeEpsgCode(srs));
+    if (!dimension.isEmpty()) _context.setSrsDimension(dimension.toInt());
+    if (!srs.isEmpty()) _context.setSrsName(WfsUtils::normalizeEpsgCode(srs));
 }
 
-bool WfsFeatureParser::updateSrsInfoUntil(QString qname, WfsParsingContext &context)
+bool WfsFeatureParser::updateSrsInfoUntil(QString qname)
 {
     while (!_parser->isAtBeginningOf(qname)) {
         if (_parser->readNextStartElement()) {
-            updateSrsInfo(context);
+            updateSrsInfo();
         } else {
             return false;
         }
@@ -336,32 +371,50 @@ bool WfsFeatureParser::updateSrsInfoUntil(QString qname, WfsParsingContext &cont
     return true;
 }
 
-geos::geom::LineString *WfsFeatureParser::parseLineString(WfsParsingContext &context, bool &ok)
+geos::geom::Point *WfsFeatureParser::parsePoint(bool &ok)
 {
     try {
-        // move to actual curve member
-        _parser->readNextStartElement();
-        if (_parser->findNextOf( {"gml:posList, gml:pos"} )) {
+        if (_parser->findNextOf( { "gml:pos"} )) {
             ok = true;
-            QString wkt = gmlPosListToWktLineString(_parser->readElementText(), context);
+            updateSrsInfo();
+            QString wkt = gmlPosListToWktLineString(_parser->readElementText());
+            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
+            return _fcoverage->geomfactory()->createPoint(geometry->getCoordinates());
+        }
+        ERROR0("Could not find gml:pos");
+    } catch(std::exception &e) {
+        ERROR1("Could not parse WKT Point %1", e.what());
+    }
+
+    ok = false; // return empty point
+    return _fcoverage->geomfactory()->createPoint();
+}
+
+geos::geom::LineString *WfsFeatureParser::parseLineString(bool &ok)
+{
+    try {
+        if (_parser->findNextOf( {"gml:posList", "gml:pos"} )) {
+            ok = true;
+            updateSrsInfo();
+            QString wkt = gmlPosListToWktLineString(_parser->readElementText());
             geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
             return _fcoverage->geomfactory()->createLineString(geometry->getCoordinates());
         }
-        ERROR0("Could not neither gml:posList nor gml:pos");
+        ERROR0("Could not neither find gml:posList nor gml:pos");
     } catch(std::exception &e) {
         ERROR1("Could not parse WKT LineString %1", e.what());
     }
 
-    ok = false; // return empty polygon
+    ok = false; // return empty line string
     return _fcoverage->geomfactory()->createLineString();
 }
 
-geos::geom::Polygon * WfsFeatureParser::parsePolygon(WfsParsingContext &context, bool &ok)
+geos::geom::Polygon * WfsFeatureParser::parsePolygon(bool &ok)
 {
     try {
         ok = true;
-        geos::geom::LinearRing *outer = parseExteriorRing(context);
-        std::vector<geos::geom::Geometry *> *inners = parseInteriorRings(context);
+        geos::geom::LinearRing *outer = parseExteriorRing();
+        std::vector<geos::geom::Geometry *> *inners = parseInteriorRings();
         return _fcoverage->geomfactory()->createPolygon(outer, inners);
     } catch(std::exception &e) {
         ERROR1("Could not parse WKT Polygon %1", e.what());
@@ -371,15 +424,14 @@ geos::geom::Polygon * WfsFeatureParser::parsePolygon(WfsParsingContext &context,
     return _fcoverage->geomfactory()->createPolygon();
 }
 
-geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing(WfsParsingContext &context)
+geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing()
 {
     geos::geom::LinearRing *ring;
 
-     // move to actual surface member
     _parser->readNextStartElement();
-    if (_parser->moveToNext("gml:exterior")) {
+    if (_parser->findNextOf( {"gml:exterior"} )) {
         if (_parser->findNextOf( {"gml:posList"} )) {
-            QString wkt = gmlPosListToWktPolygon(_parser->readElementText(), context);
+            QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
             geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
             ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
         }
@@ -388,32 +440,32 @@ geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing(WfsParsingContext &c
 }
 
 
-std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings(WfsParsingContext &context)
+std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings()
 {
    std::vector<geos::geom::Geometry *>* innerRings = new std::vector<geos::geom::Geometry *>();
 
-   // move to actual surface member
-  _parser->readNextStartElement();
-    while (_parser->moveToNext("gml:interior")) {
-        if (_parser->findNextOf( {"gml:posList" })) {
-            QString wkt = gmlPosListToWktPolygon(_parser->readElementText(), context);
+    do {
+        if (_parser->findNextOf( { "gml:posList" })) {
+            QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
             geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
-            geos::geom::LinearRing *ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
-            innerRings->push_back(ring);
+
+            geos::geom::LinearRing *ring;
+            ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
+            innerRings->push_back(ring->clone());
         }
-    }
+    } while (_parser->findNextOf( {"gml:interior"} ));
     return innerRings;
 }
 
-QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList, WfsParsingContext &context)
+QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList)
 {
     QString wktCoords;
     QStringList coords = gmlPosList.split(" ");
-    if (context.srsDimension() == 2) {
+    if (_context.srsDimension() == 2) {
         for (int i = 0; i < coords.size(); i++) {
             wktCoords.append(coords.at(i++)).append(" ");
             wktCoords.append(coords.at(i)).append(" ");
-            if (context.srsDimension() == 3) {
+            if (_context.srsDimension() == 3) {
                 wktCoords.append(coords.at(++i));
             }
             wktCoords.append(", ");
@@ -422,24 +474,24 @@ QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList, WfsParsingCo
     return wktCoords.left(wktCoords.lastIndexOf(","));
 }
 
-QString WfsFeatureParser::gmlPosListToWktPolygon(QString gmlPosList, WfsParsingContext &context)
+QString WfsFeatureParser::gmlPosListToWktPolygon(QString gmlPosList)
 {
     QString wkt("POLYGON((");
-    wkt.append(gmlPosListToWktCoords(gmlPosList, context));
+    wkt.append(gmlPosListToWktCoords(gmlPosList));
     return wkt.append("))");
 }
 
-QString WfsFeatureParser::gmlPosListToWktLineString(QString gmlPosList, WfsParsingContext &context)
+QString WfsFeatureParser::gmlPosListToWktLineString(QString gmlPosList)
 {
     QString wkt("LINESTRING(");
-    wkt.append(gmlPosListToWktCoords(gmlPosList, context));
+    wkt.append(gmlPosListToWktCoords(gmlPosList));
     return wkt.append(")");
 }
 
-QString WfsFeatureParser::gmlPosListToWktPoint(QString gmlPosList, WfsParsingContext &context)
+QString WfsFeatureParser::gmlPosListToWktPoint(QString gmlPosList)
 {
     QString wkt("POINT(");
-    wkt.append(gmlPosListToWktCoords(gmlPosList, context));
+    wkt.append(gmlPosListToWktCoords(gmlPosList));
     return wkt.append(")");
 }
 

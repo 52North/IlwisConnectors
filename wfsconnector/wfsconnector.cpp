@@ -25,6 +25,7 @@
 #include "coverage.h"
 #include "featurecoverage.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "wfsconnector.h"
 #include "wfs.h"
@@ -43,27 +44,6 @@ WfsConnector::WfsConnector(const Resource &resource, bool load) : IlwisObjectCon
 QString WfsConnector::provider() const
 {
     return QString("wfs");
-}
-
-IlwisTypes WfsConnector::ilwisType(const QString &resourceUrl)
-{
-    QUrl url(resourceUrl);
-    if (WfsUtils::isValidWfsUrl(url)) {
-        return itUNKNOWN;
-    }
-
-    QUrlQuery query(url);
-    WfsUtils::lowerCaseKeys(query);
-    QString request = query.queryItemValue("request");
-
-    if (request == "DescribeFeature") {
-        return itTABLE;
-    }
-    if (request == "GetFeature") {
-        return itFEATURE;
-    }
-
-    return itUNKNOWN;
 }
 
 

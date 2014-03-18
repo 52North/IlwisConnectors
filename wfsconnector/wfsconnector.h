@@ -25,7 +25,6 @@ class WFSCONNECTORSHARED_EXPORT WfsConnector : public QObject, public Ilwis::Ilw
 public:
     WfsConnector(const Ilwis::Resource &resource, bool load=true);
 
-    static IlwisTypes ilwisType(const QString &name);
     QString provider() const;
 
 protected:
