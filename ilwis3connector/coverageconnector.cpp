@@ -8,6 +8,7 @@
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "inifile.h"
 #include "catalog.h"
@@ -33,7 +34,7 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-CoverageConnector::CoverageConnector(const Resource &resource, bool load) : Ilwis3Connector(resource, load)
+CoverageConnector::CoverageConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
 {
 }
 
@@ -181,22 +182,26 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
     if (!csy.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
 
-    _csyName = Resource::toLocalFile(csy->source().url(),true);
-    if ( _csyName == sUNDEF) {
-        QUrl url = makeUrl(_odf->file(),sUNDEF, itCOORDSYSTEM);
-        csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
-        if(!csy->store(Ilwis::IlwisObject::smMETADATA)){
-            _csyName = "Unknown.csy";
-            WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
-        } else {
-            QFileInfo inf(url.toLocalFile());
-            _csyName = inf.fileName();
-        }
-    }
+    // create a suitable filepath
+    _csyName = Resource::toLocalFile(csy->source().url(),true, "csy");
     if ( _csyName == sUNDEF || _csyName == "") {
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
     }
-    _odf->setKeyValue("BaseMap","CoordSystem", _csyName);
+
+    QFileInfo csyinf(_csyName);
+    if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
+        QUrl url = QUrl::fromLocalFile(_csyName); // new attempt to create a suitable path;
+        csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
+        if(!csy->store(Ilwis::IlwisObject::smMETADATA)){ // fail, we default to unknown
+            _csyName = "Unknown.csy";
+            WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
+        } else {
+            _csyName = url.toLocalFile();
+        }
+    }
+
+
+    _odf->setKeyValue("BaseMap","CoordSystem", QFileInfo(_csyName).fileName());
     Envelope bounds = coverage->envelope();
     if(!bounds.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Bounds", coverage->name());

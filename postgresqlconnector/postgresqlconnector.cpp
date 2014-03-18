@@ -3,6 +3,7 @@
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "postgresqlconnector.h"
 #include "postgresql/libpq-fe.h"
@@ -10,7 +11,7 @@
 using namespace Ilwis;
 using namespace Postgresql;
 
-PostgresqlConnector::PostgresqlConnector(const Ilwis::Resource &resource, bool load) : IlwisObjectConnector(resource,load)
+PostgresqlConnector::PostgresqlConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource,load,options)
 {
     QString url = resource.url().toString();
     QStringList parts = url.split("/");

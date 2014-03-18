@@ -140,6 +140,7 @@ class GdalHandle {
 };
 
 class GDALProxy {
+
     friend GDALProxy* gdal();
 
     public:
@@ -147,8 +148,7 @@ class GDALProxy {
         ~GDALProxy();
 
         bool isValid() const;
-        QStringList getRasterExtensions() const;
-       // QStringList getFeatureExtensions() const;
+        QStringList getExtensions(IlwisTypes tp) const;
         bool supports(const Resource& resource) const;
 
         template<class T> T  add(const QString& name) {
@@ -163,9 +163,9 @@ class GDALProxy {
             return fp;
         }
 
-        GdalHandle* openFile(const QFileInfo &filename, quint64 asker, GDALAccess mode=GA_ReadOnly);
+        GdalHandle* openFile(const QFileInfo &filename, quint64 asker, GDALAccess mode=GA_ReadOnly, bool message=true);
         void closeFile(const QString& filename, quint64 asker);
-        OGRSpatialReferenceH srsHandle(GdalHandle* handle, const QString& source);
+        OGRSpatialReferenceH srsHandle(GdalHandle* handle, const QString& source, bool message=true);
         void releaseSrsHandle(GdalHandle* handle, OGRSpatialReferenceH srshandle, const QString& source);
 
         static QString translateOGRERR(char ogrErrCode);
@@ -175,14 +175,19 @@ class GDALProxy {
 
         static QString translateCPLE(int errCode);
         static void cplErrorHandler(CPLErr eErrClass, int err_no, const char *msg);
+        static void cplDummyHandler(CPLErr, int, const char *);
 
         QLibrary _libgdal, _libproj4, _libexpat;
         bool _isValid;
         static GDALProxy *_proxy;
+        //next members are stored for efficiency
         QStringList _rasterExtensions;
+        QStringList _featureExtensions;
+        QStringList _allExtensions;
+
         QHash<QString, GdalHandle*> _openedDatasets;
 
-    public:
+public:
         IGDALClose close;
         IGDALOpen open;
         IGDALAllRegister registerAll;
@@ -233,7 +238,7 @@ class GDALProxy {
         IOGRTestDriverCapability testDriverCapability;
         IOGR_Dr_CreateDataSource createDatasource;
 
-        IOGR_DS_GetLayerByName getLaterByName;
+        IOGR_DS_GetLayerByName getLayerByName;
         IGetLayerCount getLayerCount;
         IGetLayer getLayer;
         IGetLayerName getLayerName;

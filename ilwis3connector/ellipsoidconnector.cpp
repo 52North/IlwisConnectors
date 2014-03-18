@@ -9,6 +9,7 @@
 #include "mastercatalog.h"
 #include "connectorinterface.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "inifile.h"
 #include "ilwisdata.h"
@@ -19,12 +20,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *EllipsoidConnector::create(const Resource &resource, bool load) {
-    return new EllipsoidConnector(resource, load);
+ConnectorInterface *EllipsoidConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+    return new EllipsoidConnector(resource, load, options);
 
 }
 
-EllipsoidConnector::EllipsoidConnector(const Resource &resource, bool load) : Ilwis3Connector(resource, load)
+EllipsoidConnector::EllipsoidConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
 {
 }
 

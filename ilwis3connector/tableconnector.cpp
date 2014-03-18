@@ -8,6 +8,7 @@
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "inifile.h"
 #include "errorobject.h"
@@ -38,12 +39,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *TableConnector::create(const Resource &resource, bool load) {
-    return new TableConnector(resource, load);
+ConnectorInterface *TableConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+    return new TableConnector(resource, load, options);
 
 }
 
-TableConnector::TableConnector(const Resource &resource, bool load) : Ilwis3Connector(resource, load)
+TableConnector::TableConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
 {
    // _type = itTABLE;
 }
@@ -140,7 +141,7 @@ ColumnDefinition TableConnector::getKeyColumn() {
 
 }
 
-bool TableConnector::loadBinaryData(IlwisObject* data ) {
+bool TableConnector::loadData(IlwisObject* data ) {
     Locker lock(_mutex);
 
     Ilwis3::BinaryIlwis3Table tbl ;
@@ -335,7 +336,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
 
     }
     _odf->setKeyValue("TableStore", "StoreTime", Time::now().toString());
-    _odf->store("tbt", containerConnector());
+    _odf->store("tbt", containerConnector()->toLocalFile(source()));
     return true;
 }
 

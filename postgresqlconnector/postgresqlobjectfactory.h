@@ -10,7 +10,7 @@ public:
     PostgresqlObjectFactory();
 
     bool canUse(const Resource &resource) const;
-    IlwisObject *create(const Resource &resource) const;
+    IlwisObject *create(const Resource &resource,const PrepareOptions& options=PrepareOptions()) const;
 };
 }
 }

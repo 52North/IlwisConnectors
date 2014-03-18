@@ -5,6 +5,7 @@
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "domain.h"
 #include "datadefinition.h"
@@ -17,7 +18,7 @@
 using namespace Ilwis;
 using namespace Postgresql;
 
-PostgresqlTableConnector::PostgresqlTableConnector(const Ilwis::Resource &resource, bool load) : PostgresqlConnector(resource, load)
+PostgresqlTableConnector::PostgresqlTableConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : PostgresqlConnector(resource, load,options)
 {
 }
 
@@ -26,9 +27,9 @@ IlwisObject *PostgresqlTableConnector::create() const
     return new DatabaseTable(_resource);
 }
 
-ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &resource, bool load)
+ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options)
 {
-    return new PostgresqlTableConnector(resource, load);
+    return new PostgresqlTableConnector(resource, load,options);
 }
 
 bool PostgresqlTableConnector::loadMetaData(IlwisObject *data)

@@ -9,7 +9,7 @@ class TableConnector;
 class CoverageConnector : public Ilwis3Connector
 {
 public:
-    CoverageConnector(const Resource& resource, bool load=true);
+    CoverageConnector(const Resource& resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 
 
 

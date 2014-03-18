@@ -1,0 +1,88 @@
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QString>
+#include <QUrl>
+#include <QFileInfo>
+#include <QDir>
+#include <QVector>
+#include "identity.h"
+#include "kernel.h"
+#include "resource.h"
+#include "mastercatalog.h"
+#include "connectorinterface.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
+#include "catalogexplorer.h"
+#include "connectorinterface.h"
+#include "abstractfactory.h"
+#include "connectorfactory.h"
+#include "catalog.h"
+#include "dataformat.h"
+#include "gdalmodule.h"
+#include "gdalproxy.h"
+#include "gdalitem.h"
+#include "mastercatalog.h"
+#include "gdalcatalogfileexplorer.h"
+
+using namespace Ilwis;
+using namespace Gdal;
+
+REGISTER_CATALOGEXPLORER(GdalCatalogFileExplorer)
+
+Ilwis::CatalogExplorer *GdalCatalogFileExplorer::create(const Resource &resource, const PrepareOptions &options)
+{
+    return new GdalCatalogFileExplorer(resource, options);
+}
+
+GdalCatalogFileExplorer::GdalCatalogFileExplorer(const Ilwis::Resource &resource, const PrepareOptions &options) : CatalogExplorer(resource, options)
+{
+}
+std::vector<Ilwis::Resource> GdalCatalogFileExplorer::loadItems()
+{
+    QFileInfo containerInf = source().toLocalFile();
+    if ( containerInf.isDir()){
+        ERROR2(ERR_COULD_NOT_CONVERT_2,"container", "file" );
+        return std::vector<Ilwis::Resource>();
+    }
+    std::vector<Ilwis::Resource> result;
+    QString query = QString("Select itemid from mastercatalog where container='%1'").arg(source().url().toString());
+    QSqlQuery db(kernel()->database());
+    if (db.exec(query)) {
+        while ( db.next()){
+            quint64 id = db.value(0).toULongLong();
+            Resource resource = mastercatalog()->id2Resource(id);
+            if ( resource.isValid())
+                result.push_back(resource);
+
+        }
+    }
+    return result;
+}
+
+bool GdalCatalogFileExplorer::canUse(const Resource &resource) const
+{
+    if ( resource.ilwisType() != itCATALOG)
+        return false;
+    if (resource.url().scheme() == "ilwis")
+        return false;
+    QFileInfo fileInfo(resource.url().toLocalFile());
+    if ( fileInfo.isFile()) { // must be a file and extension must be supported by gdal
+        QStringList lst = gdal()->getExtensions(itFEATURE | itRASTER);
+        QString ext = "*." + fileInfo.suffix();
+        bool ok = lst.indexOf(ext) != -1;
+        return ok;
+    }
+    return false;
+}
+
+QString GdalCatalogFileExplorer::provider() const
+{
+    return "gdal";
+}
+
+QFileInfo GdalCatalogFileExplorer::toLocalFile(const QUrl &datasource) const
+{
+    return QFileInfo(datasource.toLocalFile());
+}
+
+

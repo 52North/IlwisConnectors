@@ -3,6 +3,7 @@
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "domainitem.h"
 #include "ilwisdata.h"
@@ -23,12 +24,12 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *DomainConnector::create(const Resource& resource, bool load) {
-    return new DomainConnector(resource);
+ConnectorInterface *DomainConnector::create(const Resource& resource, bool load, const PrepareOptions &options) {
+    return new DomainConnector(resource, load, options);
 
 }
 
-DomainConnector::DomainConnector(const Resource& resource, bool load) : GdalConnector(resource,load)
+DomainConnector::DomainConnector(const Resource& resource, bool load, const PrepareOptions &options) : GdalConnector(resource,load, options)
 {
 }
 
@@ -49,7 +50,7 @@ bool DomainConnector::loadMetaData(IlwisObject *data){
             ret = handleThematicDomains(data);
         }
     }
-    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
+    QFileInfo fileinf = containerConnector()->toLocalFile(source());
     gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
     return ret;
 

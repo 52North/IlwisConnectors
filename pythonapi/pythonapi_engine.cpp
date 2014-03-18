@@ -1,6 +1,7 @@
 #include "../../IlwisCore/core/kernel.h"
 #include "../../IlwisCore/core/ilwiscontext.h"
 #include "../../IlwisCore/core/catalog/catalog.h"
+#include "../../IlwisCore/core/catalog/catalogview.h"
 
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/ilwisobjects/operation/operationmetadata.h"
@@ -119,8 +120,8 @@ Object *Engine::_do(std::string output_name, std::string operation, std::string 
 }
 
 bool Engine::setWorkingCatalog(const std::string& location){
-    Ilwis::Catalog cat;
-    cat.prepare(QString::fromStdString(location), QString("container='%1'").arg(location.c_str()));
+    Ilwis::ICatalog cat;
+    cat.prepare(QString::fromStdString(location));
     if(cat.isValid()){
         Ilwis::context()->setWorkingCatalog(cat);
         return true;
@@ -130,9 +131,9 @@ bool Engine::setWorkingCatalog(const std::string& location){
 
 
 PyObject* Engine::operations(const std::string& filter){
-    Ilwis::Catalog opCat;
+    Ilwis::CatalogView opCat;
     opCat.prepare(QUrl(QString("ilwis://operations")), "type='OperationMetaData'");
-    std::list<Ilwis::Resource> ops = opCat.items();
+    std::vector<Ilwis::Resource> ops = opCat.items();
     PyObject* list = newPyTuple(ops.size());
     int i = 0;
     for(auto it = ops.begin(); it != ops.end(); it++){
@@ -144,9 +145,9 @@ PyObject* Engine::operations(const std::string& filter){
 }
 
 std::string Engine::operationMetaData(const std::string &name){
-    Ilwis::Catalog opCat;
+    Ilwis::CatalogView opCat;
     opCat.prepare(QUrl(QString("ilwis://operations")), "type='OperationMetaData'");
-    std::list<Ilwis::Resource> ops = opCat.items();
+    std::vector<Ilwis::Resource> ops = opCat.items();
     QString ret;
     for(auto it = ops.begin();it != ops.end(); it++){
         if (QString::fromStdString(name).compare(it->name(),Qt::CaseInsensitive) == 0){

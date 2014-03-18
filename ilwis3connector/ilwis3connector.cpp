@@ -9,6 +9,7 @@
 #include "numericdomain.h"
 #include "connectorinterface.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "inifile.h"
 #include "ilwis3connector.h"
@@ -21,11 +22,11 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-Ilwis3Connector::Ilwis3Connector(const Resource &resource, bool load) : IlwisObjectConnector(resource, load)
+Ilwis3Connector::Ilwis3Connector(const Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource, load, options)
 {
     QUrl fullname = resolve(resource);
     IniFile *odf = new IniFile();
-    odf->setIniFile(fullname, containerConnector(load ? IlwisObject::cmINPUT : IlwisObject::cmOUTPUT), load);
+    odf->setIniFile(fullname.toLocalFile(),load);
     _odf.reset(odf);
     _resource = Resource(fullname, resource.ilwisType());
     if (!load && resource.id() != i64UNDEF)
@@ -37,7 +38,7 @@ bool Ilwis3Connector::loadMetaData(IlwisObject *data)
     QFileInfo inf = _resource.url().toLocalFile();
     if ( inf.exists()) {
         IniFile *ini = new IniFile();
-        ini->setIniFile(_resource.url(),containerConnector());
+        ini->setIniFile(inf);
         _odf.reset(ini);
         data->setName(inf.fileName());
         data->setDescription(_odf->value("Ilwis","Description"));
@@ -350,8 +351,9 @@ QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& 
                 QString loc = "file:///" + owner.container().toLocalFile() + "/" + localName;
                 return loc;
             }
-            QUrl loc = context()->workingCatalog()->filesystemLocation();
-            return loc.toString() + "/" + localName;
+            int index = _odf->file().lastIndexOf("/");
+            QUrl loc = _odf->file().left(index) + "/" + localName;
+            return loc.toString();
 
         }
     }
@@ -369,7 +371,7 @@ IniFile *Ilwis3Connector::makeIni(const Resource &resource, const UPCatalogConne
     name += "." + ext;
     QFileInfo inf(name);
     IniFile *ini = new IniFile();
-    ini->setIniFile(QUrl::fromLocalFile(inf.absoluteFilePath()), container, false);
+    ini->setIniFile(inf, false);
 
     return ini;
 }
@@ -383,6 +385,9 @@ QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name, IlwisTyp
     QString localpath = inf.absolutePath();
     QString filename =  localpath + "/" + (name != sUNDEF ? name : inf.baseName());
     if ( type != itUNKNOWN){
+        int index = filename.lastIndexOf(".");
+        if ( index != -1)
+            filename = filename.left(index)    ;
         filename += "."+ suffix(type);
     }
     return QUrl::fromLocalFile(filename);

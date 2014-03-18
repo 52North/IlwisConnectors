@@ -9,7 +9,7 @@ namespace Gdal {
 class GDALCONNECTORSHARED_EXPORT GdalConnector : public IlwisObjectConnector
 {
 public:
-    GdalConnector(const Ilwis::Resource &resource, bool load=true);
+    GdalConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
     virtual ~GdalConnector();
     static IlwisTypes ilwisType(const QString &name);
 
@@ -18,6 +18,7 @@ public:
     QString provider() const;
     void format(const QString&);
     QString format() const;
+    OGRLayerH getLayerHandle() const;
 protected:
     static GDALDataType ilwisType2GdalType(IlwisTypes tp) ;
     static OGRFieldType ilwisType2GdalFieldType(IlwisTypes tp);

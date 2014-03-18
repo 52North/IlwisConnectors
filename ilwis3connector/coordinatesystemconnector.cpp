@@ -9,6 +9,7 @@
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "inifile.h"
 #include "ilwisdata.h"
@@ -23,12 +24,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *CoordinateSystemConnector::create(const Resource &resource,bool load) {
-    return new CoordinateSystemConnector(resource, load);
+ConnectorInterface *CoordinateSystemConnector::create(const Resource &resource,bool load,const PrepareOptions& options) {
+    return new CoordinateSystemConnector(resource, load, options);
 
 }
 
-CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, bool load) : Ilwis3Connector(resource, load)
+CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
 {
     QString type = _odf->value("CoordSystem","Type");
 }
@@ -106,7 +107,7 @@ bool CoordinateSystemConnector::canUse(const Resource& resource,const UPCatalogC
     QFileInfo inf(file);
     if ( inf.exists()) {
         IniFile odf;
-        odf.setIniFile(resource.url(), container);
+        odf.setIniFile(inf);
         QString t = odf.value("CoordSystem","Type");
         if ( t == sUNDEF ) {
             if ( odf.value("CoordSystem","Projection") != "") // necessary due to incompleteness of ilwis odf's
@@ -350,7 +351,7 @@ bool CoordinateSystemConnector::storeMetaData(IlwisObject *data) {
         _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvZONE),projection->parameter(Projection::pvZONE).toInt());
 
     }
-    _odf->store("csy", containerConnector());
+    _odf->store("csy", containerConnector()->toLocalFile(source()));
     return true;
 
 
