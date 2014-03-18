@@ -36,12 +36,13 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-WfsFeatureConnector::WfsFeatureConnector(const Resource &resource, bool load) : WfsConnector(resource,load) {
-}
-
-ConnectorInterface* WfsFeatureConnector::create(const Resource &resource, bool load) {
+ConnectorInterface* WfsFeatureConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
     return new WfsFeatureConnector(resource, load);
 }
+
+WfsFeatureConnector::WfsFeatureConnector(const Resource &resource, bool load, const Ilwis::PrepareOptions &options) : WfsConnector(resource,load) {
+}
+
 
 Ilwis::IlwisObject* WfsFeatureConnector::create() const {
     return new FeatureCoverage(this->_resource);

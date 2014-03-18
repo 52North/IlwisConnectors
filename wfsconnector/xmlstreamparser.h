@@ -41,13 +41,13 @@ public:
     QString qname() const;
 
     /**
-     * Moves to inner next element named by qName. Optionally a callback can be passed in
-     * which will be called on each element node the reader passes.
+     * Moves to next element named by qName which resides one level deeper. Optionally a callback
+     * can be passed in which will be called on each element node the reader passes.
      *
      * @param qName the name of the element to move to.
      * @return true if element was found, false otherwise.
      */
-//    bool moveToNext(QString qName, void (*callback)()=doNothing);
+    bool moveToNext(QString qName, void (*callback)()=doNothing);
 
     /**
      * Finds the next inner element named by one of the qNames in the elementList. Optionally

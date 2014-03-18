@@ -32,7 +32,8 @@
 #include "wfsparsingcontext.h"
 #include "wfsfeatureconnector.h"
 #include "catalogconnector.h"
-#include "wfscatalogconnector.h"
+#include "catalogexplorer.h"
+#include "wfscatalogexplorer.h"
 #include "ilwisobjectfactory.h"
 #include "wfsobjectfactory.h"
 #include "wfsresponse.h"
@@ -63,18 +64,12 @@ void WfsModule::prepare()
     factory->prepare();
     kernel()->addFactory(factory);
 
-//    CatalogConnectorFactory *catfact = kernel()->factory<CatalogConnectorFactory>("ilwis::catalogconnectorfactory");
-//    if (catfact) {
-//        catfact->add(WfsCatalogConnector::create);
-//    }
-
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (cfactory) {
         cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
+        IlwisObject::addTypeFunction(WfsFeatureConnector::ilwisType);
     }
 
-
-    IlwisObject::addTypeFunction(WfsConnector::ilwisType);
 }
 
 QString WfsModule::getName() const

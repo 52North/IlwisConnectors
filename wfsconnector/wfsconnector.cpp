@@ -25,7 +25,6 @@
 #include "coverage.h"
 #include "featurecoverage.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "wfsconnector.h"
 #include "wfs.h"
@@ -45,11 +44,4 @@ QString WfsConnector::provider() const
 {
     return QString("wfs");
 }
-
-
-
-
-
-
-
 

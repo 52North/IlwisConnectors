@@ -17,10 +17,12 @@
 #include "resource.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
-#include "catalogconnector.h"
+#include "abstractfactory.h"
+#include "connectorfactory.h"
+#include "catalogexplorer.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
-#include "wfscatalogconnector.h"
+#include "wfscatalogexplorer.h"
 #include "wfsutils.h"
 #include "wfs.h"
 #include "wfsresponse.h"
@@ -30,42 +32,35 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-ConnectorInterface *WfsCatalogConnector::create(const Resource &resource, bool load)
+REGISTER_CATALOGEXPLORER(WfsCatalogExplorer)
+
+CatalogExplorer *WfsCatalogExplorer::create(const Resource &resource, const PrepareOptions &options)
 {
-    return new WfsCatalogConnector(resource,load);
+    return new WfsCatalogExplorer(resource, options);
 }
 
-WfsCatalogConnector::WfsCatalogConnector(const Resource &resource, bool load) : CatalogConnector(resource,load)
+WfsCatalogExplorer::WfsCatalogExplorer(const Resource &resource, const PrepareOptions &options) : CatalogExplorer(resource,options)
 {
 }
 
-WfsCatalogConnector::~WfsCatalogConnector()
+WfsCatalogExplorer::~WfsCatalogExplorer()
 {
 }
 
-bool WfsCatalogConnector::loadItems()
+std::vector<Resource> WfsCatalogExplorer::loadItems()
 {
-    if (!isValid())
-        return false;
-
     QUrl serviceUrl = source().url();
     WebFeatureService wfs(serviceUrl);
     WfsResponse *response = wfs.getCapabilities();
     WfsCapabilitiesParser parser(response, serviceUrl);
 
-    QList<WfsFeature> wfsFeatures;
+    std::vector<Resource> wfsFeatures;
     parser.parseFeatures(wfsFeatures);
-
-    QList<Resource> wfsResources;
-    std::for_each(wfsFeatures.begin(), wfsFeatures.end(), [&](WfsFeature &feature) {
-        wfsResources.push_back(feature);
-    });
-
-    mastercatalog()->addItems(wfsResources);
-    return true;
+    mastercatalog()->addItems(wfsFeatures);
+    return wfsFeatures;
 }
 
-bool WfsCatalogConnector::canUse(const Resource &resource) const
+bool WfsCatalogExplorer::canUse(const Resource &resource) const
 {
     if ( resource.ilwisType() != itCATALOG)
         return false;
@@ -74,7 +69,7 @@ bool WfsCatalogConnector::canUse(const Resource &resource) const
     return true;
 }
 
-QString WfsCatalogConnector::provider() const
+QString WfsCatalogExplorer::provider() const
 {
     return "wfs";
 }
@@ -87,13 +82,8 @@ QString WfsCatalogConnector::provider() const
 
 
 
-std::vector<QUrl> WfsCatalogConnector::sources(const QStringList &filter, int options) const
-{
-    std::vector<QUrl> emptyList;
-    return emptyList;
-}
 
-QFileInfo WfsCatalogConnector::toLocalFile(const QUrl &datasource) const
+QFileInfo WfsCatalogExplorer::toLocalFile(const QUrl &datasource) const
 {
     QFileInfo fileInfo;
     return fileInfo;

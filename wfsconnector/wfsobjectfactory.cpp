@@ -25,7 +25,7 @@ WfsObjectFactory::WfsObjectFactory() : IlwisObjectFactory("IlwisObjectFactory","
 {
 }
 
-IlwisObject *WfsObjectFactory::create(const Resource &resource) const
+IlwisObject *WfsObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
 {
      const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
 
@@ -36,7 +36,7 @@ IlwisObject *WfsObjectFactory::create(const Resource &resource) const
         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
         return 0;
     }
-    IlwisObject *object = createObject(connector);
+    IlwisObject *object = createObject(connector,options);
     if ( object)
         return object;
 
@@ -61,10 +61,3 @@ bool WfsObjectFactory::canUse(const Resource &resource) const
     return false;
 }
 
-bool WfsObjectFactory::prepare()
-{
-
-    // TODO
-
-    return true;
-}

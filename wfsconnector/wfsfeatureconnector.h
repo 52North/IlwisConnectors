@@ -9,11 +9,11 @@ namespace Wfs {
 class WFSCONNECTORSHARED_EXPORT WfsFeatureConnector : public WfsConnector
 {
 public:
-    WfsFeatureConnector(const Resource &resource, bool load=true);
+    static ConnectorInterface *create(const Resource &resource, bool load=true, const PrepareOptions &options=PrepareOptions());
+    WfsFeatureConnector(const Resource &resource, bool load=true, const PrepareOptions &options=PrepareOptions());
 
     IlwisObject *create() const;
     static IlwisTypes ilwisType(const QString &name);
-    static ConnectorInterface *create(const Resource &resource, bool load=true);
 
     bool loadMetaData(IlwisObject* data);
     bool loadBinaryData(IlwisObject* data);

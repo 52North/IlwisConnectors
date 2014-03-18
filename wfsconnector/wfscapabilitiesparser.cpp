@@ -29,7 +29,7 @@ WfsCapabilitiesParser::~WfsCapabilitiesParser()
     delete _parser;
 }
 
-void WfsCapabilitiesParser::parseFeatures(QList<WfsFeature> &wfsFeatures)
+void WfsCapabilitiesParser::parseFeatures(std::vector<Resource> &wfsFeatures)
 {
     QXmlResultItems results;
     QXmlQuery *query = _parser->queryFromRoot("//wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType");
