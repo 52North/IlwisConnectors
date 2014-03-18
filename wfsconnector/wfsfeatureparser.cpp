@@ -451,7 +451,9 @@ std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings()
 
             geos::geom::LinearRing *ring;
             ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
-            innerRings->push_back(ring->clone());
+            innerRings->push_back(ring);
+
+            _parser->moveToEndOf("gml:interior");
         }
     } while (_parser->findNextOf( {"gml:interior"} ));
     return innerRings;
