@@ -116,6 +116,25 @@ void XmlStreamParser::readNext() const
     _reader->readNext();
 }
 
+bool XmlStreamParser::moveToEndOf(QString qName)
+{
+    bool found = false;
+    while ( !(_reader->atEnd() || found)) {
+        if (_reader->isEndElement()) {
+            found = isAtEndOf(qName);
+            if ( !found) {
+                _reader->readNext();
+            }
+        } else {
+            if (_reader->isStartElement()) {
+                _reader->skipCurrentElement();
+            }
+            _reader->readNext();
+        }
+    }
+    return found;
+}
+
 bool XmlStreamParser::moveToNext(QString qName, void (*callback)())
 {
     if (_reader->atEnd()) {

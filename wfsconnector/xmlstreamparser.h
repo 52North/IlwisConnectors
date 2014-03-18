@@ -41,6 +41,14 @@ public:
     QString qname() const;
 
     /**
+     * Moves to next end element named by qName.
+     *
+     * @param qName the name of the end element to move to.
+     * @return true if element was found, false otherwise.
+     */
+    bool moveToEndOf(QString qName);
+
+    /**
      * Moves to next element named by qName which resides one level deeper. Optionally a callback
      * can be passed in which will be called on each element node the reader passes.
      *
