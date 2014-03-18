@@ -1,7 +1,7 @@
 
 WFS TASKS
 =========
-* test if feature collection is parsed correctly when geometry type is in between attribute sequence
+* test geos polygon createion with holes (http://svn.osgeo.org/geos/trunk/doc/example.cpp)
 
 * will distinguishing plain table loading (itTABLE) from whole feature loading (itFEATURE) make sense?
 
