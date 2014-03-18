@@ -120,7 +120,7 @@ bool GDALProxy::prepare() {
     createDatasource = add<IOGR_Dr_CreateDataSource>("OGR_Dr_CreateDataSource");
     //OGR DataSource
     createOgrLayer = add<IOGR_DS_CreateLayer>("OGR_DS_CreateLayer");
-    getLaterByName = add<IOGR_DS_GetLayerByName>("OGR_DS_GetLayerByName");
+    getLayerByName = add<IOGR_DS_GetLayerByName>("OGR_DS_GetLayerByName");
     getLayerCount = add<IGetLayerCount>("OGR_DS_GetLayerCount");
     getLayer = add<IGetLayer>("OGR_DS_GetLayer");
     destroyDataSource = add<IOGR_DS_Destroy>("OGR_DS_Destroy");
@@ -190,19 +190,20 @@ bool GDALProxy::prepare() {
         //raster extensions
         registerAll();
         int ndrivers = getDriverCount();
-        QSet<QString> extensions;
         for(int index = 0; index < ndrivers; ++index) {
             GDALDriverH driverH = getDriver(index);
             if ( driverH) {
-                const char *cext = getMetaDataItem(driverH,GDAL_DMD_EXTENSION,NULL);//raster extensions only
-                if ( cext){
-                    QString ext(cext);
-                    if ( ext != "" && ext != "mpr/mpl")
-                        extensions.insert(QString("*.%1").arg(cext));
-                }
+                QString cext = getMetaDataItem(driverH,GDAL_DMD_EXTENSION,NULL);//raster extensions only
+                if ( cext == "mpr/mpl") // ilwsi3 formats have their own handling
+                    continue;
+                QString create1 = getMetaDataItem(driverH,GDAL_DCAP_CREATE,NULL);//raster extensions only
+                QString create2 = getMetaDataItem(driverH,GDAL_DCAP_CREATECOPY,NULL);//raster extensions only
+                QString access = create1.size() == 0 && create2.size() == 0 ? "r" : "rc";
+                DataFormat frm("gdal", getShortName(driverH), getLongName(driverH), cext, access, itRASTER);
+                frm.store();
             }
         }
-        _rasterExtensions = extensions.toList();
+
         QFileInfo ilw = context()->ilwisFolder();
         QString path = ilw.canonicalFilePath() + "/Extensions/gdalconnector/resources";
         pushFinderLocation(path.toLocal8Bit());
@@ -210,6 +211,19 @@ bool GDALProxy::prepare() {
         ogrRegisterAll();
 
         DataFormat::setFormatInfo(path + "/ogr_formats.config","gdal");
+
+        QVariantList extensions = DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal");
+        for(auto ext : extensions){
+            _featureExtensions += "*." + ext.toString().toLower();
+
+        }
+        _featureExtensions.removeDuplicates();
+        extensions = DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itRASTER,"gdal");
+        for(auto ext : extensions)
+            _rasterExtensions += "*." + ext.toString().toLower();
+        _rasterExtensions.removeDuplicates();
+        _allExtensions += _rasterExtensions;
+        _allExtensions += _featureExtensions;
 
     }
 
@@ -224,6 +238,9 @@ void GDALProxy::cplErrorHandler(CPLErr eErrClass, int err_no, const char *msg){
         case CE_Failure: ERROR2("CPL FAILURE(%1): %21",translateCPLE(err_no),QString(msg));break;
         case CE_Fatal: CRITICAL2("CPL FATAL(%1): %2",translateCPLE(err_no),QString(msg));
     }
+}
+
+void GDALProxy::cplDummyHandler(CPLErr , int , const char *){
 }
 
 QString GDALProxy::translateOGRERR(char ogrErrCode){
@@ -263,25 +280,49 @@ bool GDALProxy::isValid() const
     return _isValid;
 }
 
-QStringList GDALProxy::getRasterExtensions() const
+QStringList GDALProxy::getExtensions(IlwisTypes tp) const
 {
-    return _rasterExtensions;
+    if ( tp == itRASTER)
+        return _rasterExtensions;
+    else if ( tp == itFEATURE)
+        return _featureExtensions;
+    else if ( tp == (itFEATURE | itRASTER))
+        return _allExtensions;
+    return QStringList();
 }
+
 
 bool GDALProxy::supports(const Resource &resource) const{
-    QFileInfo inf(resource.toLocalFile());
-    QString ext = inf.suffix();
-    QString filter = "*." + ext;
-    if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
+    if ( hasType(resource.ilwisType(), itCATALOG))
         return true;
-    if ( DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itFEATURE,"gdal").contains(ext))
-        return true;
-    return false;
+
+    auto testFunc = [&](const QFileInfo& inf) -> bool {
+        QString ext = inf.suffix();
+        QString filter = "*." + ext;
+        if ( gdal()->getExtensions(itRASTER).contains(filter,Qt::CaseInsensitive))
+            return true;
+        if ( gdal()->getExtensions(itFEATURE).contains(filter,Qt::CaseInsensitive))
+            return true;
+        return false;
+    };
+
+    if (! testFunc(resource.toLocalFile()))   {
+        QFileInfo info(resource.container().toLocalFile()); // possible case that the container is a gdal catalog
+        return info.isFile() && testFunc(info); // for the moment a gdal catalog has to be another file
+    }
+
+    return true;
+
 }
 
-GdalHandle* GDALProxy::openFile(const QFileInfo& filename, quint64 asker, GDALAccess mode){
+GdalHandle* GDALProxy::openFile(const QFileInfo& filename, quint64 asker, GDALAccess mode, bool message){
     void* handle = nullptr;
     auto name = filename.absoluteFilePath();
+    if (message){
+        setCPLErrorHandler(GDALProxy::cplErrorHandler);
+    }else
+        setCPLErrorHandler(GDALProxy::cplDummyHandler);
+
     if (_openedDatasets.contains(name)){
         return _openedDatasets[name];
     } else {
@@ -293,8 +334,9 @@ GdalHandle* GDALProxy::openFile(const QFileInfo& filename, quint64 asker, GDALAc
             if (handle){
                 return _openedDatasets[name] = new GdalHandle(handle, GdalHandle::etGDALDatasetH, asker);
             }else{
-               ERROR1(ERR_COULD_NOT_OPEN_READING_1,name);
-               return NULL;
+                if ( message)
+                    ERROR1(ERR_COULD_NOT_OPEN_READING_1,name);
+                return NULL;
             }
         }
     }
@@ -319,7 +361,7 @@ void GDALProxy::closeFile(const QString &filename, quint64 asker){
     }
 }
 
-OGRSpatialReferenceH GDALProxy::srsHandle(GdalHandle* handle, const QString& source) {
+OGRSpatialReferenceH GDALProxy::srsHandle(GdalHandle* handle, const QString& source, bool message) {
     if (handle != nullptr){
         OGRSpatialReferenceH srshandle = nullptr;
         if (handle->_type == GdalHandle::etGDALDatasetH){
@@ -329,11 +371,13 @@ OGRSpatialReferenceH GDALProxy::srsHandle(GdalHandle* handle, const QString& sou
                 if ( importFromWkt(srshandle, &wkt) == OGRERR_NONE ){
                     return srshandle;
                 }else{
-                    kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
+                    if ( message)
+                        kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
                     return NULL;
                 }
             }else{
-                kernel()->issues()->log(TR("Invalid or empty WKT for %1 %2").arg("CoordinateSystem", source), IssueObject::itWarning);
+                if ( message)
+                    kernel()->issues()->log(TR("Invalid or empty WKT for %1 %2").arg("CoordinateSystem", source), IssueObject::itWarning);
                 return NULL;
             }
         }else if(handle->_type == GdalHandle::etOGRDataSourceH){
@@ -343,15 +387,18 @@ OGRSpatialReferenceH GDALProxy::srsHandle(GdalHandle* handle, const QString& sou
                 if ( srshandle ){
                     return srshandle;
                 }else{
-                    kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
+                    if (message)
+                        kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
                     return NULL;
                 }
             }else{
-                kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
+                if ( message)
+                    kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", source), IssueObject::itWarning);
                 return NULL;
             }
         }else{
-            kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", QString("%1 : nullptr").arg(source)), IssueObject::itWarning);
+            if ( message)
+                kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("CoordinateSystem", QString("%1 : nullptr").arg(source)), IssueObject::itWarning);
             return NULL;
         }
     }else{

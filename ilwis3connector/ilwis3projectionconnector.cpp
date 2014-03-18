@@ -11,13 +11,15 @@
 #include "location.h"
 #include "coordinate.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "inifile.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "ilwisobjectfactory.h"
 #include "ilwisdata.h"
-#include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
@@ -27,12 +29,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *ProjectionConnector::create(const Resource &resource, bool load) {
-    return new ProjectionConnector(resource, load);
+ConnectorInterface *ProjectionConnector::create(const Resource &resource, bool load,const PrepareOptions& options) {
+    return new ProjectionConnector(resource, load, options);
 
 }
 
-ProjectionConnector::ProjectionConnector(const Resource &resource, bool load) : Ilwis3Connector(resource)
+ProjectionConnector::ProjectionConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
 {
     QString prj = _odf->value("CoordSystem", "Projection");
     if (prj != sUNDEF)  {

@@ -2,8 +2,9 @@
 #include "ilwisdata.h"
 #include "gdalproxy.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "gdalconnector.h"
 #include "gdalfeaturetableconnector.h"
 #include "domain.h"
@@ -16,10 +17,10 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-GdalFeatureTableConnector::GdalFeatureTableConnector(const Ilwis::Resource &resource, bool load) : GdalConnector(resource, load){}
+GdalFeatureTableConnector::GdalFeatureTableConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : GdalConnector(resource, load, options){}
 
-ConnectorInterface *GdalFeatureTableConnector::create(const Resource &resource, bool load) {
-    return new GdalFeatureTableConnector(resource, load);
+ConnectorInterface *GdalFeatureTableConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+    return new GdalFeatureTableConnector(resource, load, options);
 
 }
 
@@ -32,8 +33,7 @@ bool GdalFeatureTableConnector::loadMetaData(IlwisObject* data){
     if(!GdalConnector::loadMetaData(data))
         return false;
 
-    int layer = 0;
-    OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
+    OGRLayerH hLayer = getLayerHandle();
     if ( hLayer){
         GdalTableLoader loader;
         loader.loadMetaData((Table *)data, hLayer);
@@ -45,14 +45,14 @@ bool GdalFeatureTableConnector::storeMetaData(Ilwis::IlwisObject *obj){
     return true;
 }
 
-bool GdalFeatureTableConnector::loadBinaryData(IlwisObject * data){
+bool GdalFeatureTableConnector::loadData(IlwisObject * data){
     if(!GdalConnector::loadMetaData(data))
         return false;
 
     Table *attTable = static_cast<Table *>(data);
 
+    OGRLayerH hLayer = getLayerHandle();
     bool ok = true;
-    OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), 0);
     if ( hLayer) {
         std::vector<QVariant> record(attTable->columnCount());
 
@@ -69,7 +69,7 @@ bool GdalFeatureTableConnector::loadBinaryData(IlwisObject * data){
                 gdal()->destroyFeature( hFeature );
                 attTable->record(index++, record);
             }
-             _binaryIsLoaded = true;
+            _binaryIsLoaded = true;
             return true;
         } catch (FeatureCreationError& ) {
             gdal()->destroyFeature( hFeature );

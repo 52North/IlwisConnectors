@@ -9,15 +9,15 @@ class RawConverter;
 class TableConnector : public Ilwis3Connector
 {
 public:
-    TableConnector(const Ilwis::Resource &resource, bool load);
+    TableConnector(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
     bool loadMetaData(IlwisObject* data);
     bool storeMetaData(Ilwis::IlwisObject *obj);
     QString type() const;
     virtual IlwisObject *create() const;
-    bool loadBinaryData(IlwisObject *);
+    bool loadData(IlwisObject *);
     bool storeBinaryData(IlwisObject* obj);
 
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
     static bool storeTable(const ITable& tbl);
     void attributeDomain(const QString& attdom);
     void selectedRecords(const std::vector<quint32> &recs);

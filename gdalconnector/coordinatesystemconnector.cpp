@@ -7,7 +7,10 @@
 #include "kernel.h"
 #include "geometries.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "ilwisdata.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
@@ -16,7 +19,6 @@
 #include "coordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
 #include "gdalproxy.h"
-#include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
 #include "coordinatesystemconnector.h"
 
@@ -24,8 +26,8 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *CoordinateSystemConnector::create(const Resource &resource,bool load){
-    return new CoordinateSystemConnector(resource, load);
+ConnectorInterface *CoordinateSystemConnector::create(const Resource &resource, bool load, const PrepareOptions &options){
+    return new CoordinateSystemConnector(resource, load, options);
 }
 
 IlwisObject *CoordinateSystemConnector::create() const{
@@ -35,7 +37,7 @@ IlwisObject *CoordinateSystemConnector::create() const{
     return object;
 }
 
-CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, bool load) : GdalConnector(resource, load)
+CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, bool load, const PrepareOptions &options) : GdalConnector(resource, load, options)
 {
 
 }
@@ -89,7 +91,7 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data){
         ret = ERROR2(ERR_INVALID_PROPERTY_FOR_2,"OGRSpatialReference",data->name());
     }
     gdal()->releaseSrsHandle(_handle, srshandle, data->name());
-    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
+    QFileInfo fileinf = containerConnector()->toLocalFile(source());
     gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
     return ret;
 }

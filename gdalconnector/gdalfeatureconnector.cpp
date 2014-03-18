@@ -11,6 +11,7 @@
 #include "geos/geom/LinearRing.h"
 #include "geos/geom/Polygon.h"
 #include "geos/geom/GeometryFactory.h"
+#include "geos/geom/Coordinate.inl"
 #include "module.h"
 #include "ilwiscontext.h"
 #include "catalog.h"
@@ -29,6 +30,8 @@
 #include "featureiterator.h"
 #include "gdalproxy.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "gdalconnector.h"
 #include "coverageconnector.h"
 #include "juliantime.h"
@@ -38,11 +41,11 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-GdalFeatureConnector::GdalFeatureConnector(const Resource &resource, bool load) : CoverageConnector(resource,load){
+GdalFeatureConnector::GdalFeatureConnector(const Resource &resource, bool load, const PrepareOptions &options) : CoverageConnector(resource,load, options){
 }
 
-ConnectorInterface* GdalFeatureConnector::create(const Resource &resource, bool load) {
-    return new GdalFeatureConnector(resource, load);
+ConnectorInterface* GdalFeatureConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+    return new GdalFeatureConnector(resource, load, options);
 }
 
 Ilwis::IlwisObject* GdalFeatureConnector::create() const{
@@ -74,8 +77,8 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
-    int layer = 0;// TODO: only first layer will be read/fit into single FeatureCoverage(*data)
-    OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
+    OGRLayerH hLayer = getLayerHandle();
+
     if ( hLayer) {
         //attribute table
         ITable attTable;
@@ -90,7 +93,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
         //feature types
         IlwisTypes type = translateOGRType(gdal()->getLayerGeometry(hLayer));
         if (type == itUNKNOWN){
-            WARN(QString("Unknown feature type of layer %1 from: %2").arg(layer).arg(_filename.toString()));
+            WARN(QString("Unknown feature type of layer %1 from: %2").arg(0).arg(_filename.toString()));
         }else{
             fcoverage->featureTypes(type);
         }
@@ -98,7 +101,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
         //feature counts
         int temp = gdal()->getFeatureCount(hLayer, FALSE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
         if (temp == -1){
-            WARN(QString("Couldn't determine feature count of layer %1 from meta data of %2").arg(layer).arg(_filename.toString()));
+            WARN(QString("Couldn't determine feature count of layer %1 from meta data of %2").arg(0).arg(_filename.toString()));
         }else{
             int featureCount = fcoverage->featureCount(type);
             featureCount += temp;
@@ -111,9 +114,9 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
         OGRErr err = gdal()->getLayerExtent(hLayer, &envelope , FALSE);//TRUE to FORCE
         if (err != OGRERR_NONE){
             if (err == OGRERR_FAILURE){//on an empty layer or if simply too expensive(FORECE=FALSE) OGR_L_GetExtent may return OGRERR_FAILURE
-                WARN(QString("Couldn't determine the extent of layer %1 from meta data of %2").arg(layer).arg(_filename.toString()));
+                WARN(QString("Couldn't determine the extent of layer %1 from meta data of %2").arg(0).arg(_filename.toString()));
             }else{
-                ERROR0(QString("Couldn't load extent of layer %1 from %2: %3").arg(layer).arg(_filename.toString()).arg(gdal()->translateOGRERR(err)));
+                ERROR0(QString("Couldn't load extent of layer %1 from %2: %3").arg(0).arg(_filename.toString()).arg(gdal()->translateOGRERR(err)));
             }
         }else{
             bbox = Envelope(Coordinate(envelope.MinX,envelope.MinY),Coordinate(envelope.MaxX,envelope.MaxY));
@@ -122,12 +125,12 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
 //        fcoverage->coordinateSystem()->envelope(bbox);
     }
 
-    gdal()->closeFile(containerConnector()->toLocalFile(_filename).absoluteFilePath(), data->id());
+    gdal()->closeFile(containerConnector()->toLocalFile(source()).absoluteFilePath(), data->id());
 
     return true;
 }
 
-bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
+bool GdalFeatureConnector::loadData(IlwisObject* data){
 
     if(!GdalConnector::loadMetaData(data))
         return false;
@@ -144,9 +147,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
         fcoverage->setFeatureCount(itLINE, 0, 0);
         fcoverage->setFeatureCount(itPOINT, 0, 0);
 
-        //each LAYER
-        int layer = 0;//only the first layer fits into one FeatureCoverage
-        OGRLayerH hLayer = gdal()->getLayer(_handle->handle(), layer);
+        OGRLayerH hLayer = getLayerHandle();
         if ( hLayer) {
             GdalTableLoader loader;
             attTable->dataLoaded(true); // new table, dont want any loading behaviour
@@ -183,7 +184,7 @@ bool GdalFeatureConnector::loadBinaryData(IlwisObject* data){
         }
         fcoverage->envelope(bbox);
     }
-    gdal()->closeFile(containerConnector()->toLocalFile(_filename).absoluteFilePath(), data->id());
+    gdal()->closeFile(containerConnector()->toLocalFile(source()).absoluteFilePath(), data->id());
     _binaryIsLoaded = ok;
     return ok;
 }
@@ -438,7 +439,7 @@ bool GdalFeatureConnector::createDataSourceAndLayers(IlwisTypes types,
                                                      std::vector<SourceHandles>& datasources,
                                                      std::vector<bool>& validAttributes ){
 
-    QFileInfo fileinfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(_filename);
+    QFileInfo fileinfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(source());
     int typeIndex  = ilwisType2Index(types);
     AttributeTable tbl = features->attributeTable();
     datasources[typeIndex]._source =  createFileBasedDataSource(postfix, fileinfo);

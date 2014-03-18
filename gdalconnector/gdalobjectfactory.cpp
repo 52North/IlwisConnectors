@@ -10,10 +10,11 @@
 #include "abstractfactory.h"
 #include "ilwisobjectfactory.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "connectorfactory.h"
 #include "gdalproxy.h"
-#include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
 #include "gdalobjectfactory.h"
 
@@ -24,17 +25,17 @@ GdalObjectFactory::GdalObjectFactory() : IlwisObjectFactory("IlwisObjectFactory"
 {
 }
 
-IlwisObject *GdalObjectFactory::create(const Resource &resource) const
+IlwisObject *GdalObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
 {
 
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    GdalConnector *connector = factory->createFromResource<GdalConnector>(resource, "gdal");
+    IlwisObjectConnector *connector = factory->createFromResource<IlwisObjectConnector>(resource, "gdal", options);
 
    if(!connector) {
        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
        return 0;
    }
-   IlwisObject *object = createObject(connector);
+   IlwisObject *object = createObject(connector, options);
    if ( object)
        return object;
 
@@ -50,6 +51,7 @@ bool GdalObjectFactory::canUse(const Resource &resource) const
     if (!gdal()->supports(resource))
         return false;
 
+
     IlwisTypes type = resource.ilwisType() ;
     if ( type & itDOMAIN)
         return true;
@@ -62,6 +64,8 @@ bool GdalObjectFactory::canUse(const Resource &resource) const
     else if ( type & itFEATURE)
         return true;
     else if ( type & itTABLE)
+        return true;
+    else if ( type & itCATALOG)
         return true;
 
     return false;

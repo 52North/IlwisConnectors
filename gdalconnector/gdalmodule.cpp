@@ -16,8 +16,9 @@
 #include "catalog.h"
 #include "pixeliterator.h"
 #include "gdalproxy.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "gdalconnector.h"
 #include "coordinatesystemconnector.h"
 #include "coverageconnector.h"
@@ -38,14 +39,13 @@
 #include "symboltable.h"
 #include "OperationExpression.h"
 #include "gdalmodule.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "dataformat.h"
-#include "gdalcatalogconnector.h"
 #include "ilwisobjectfactory.h"
 #include "gdalobjectfactory.h"
 #include "gdalproxy.h"
 #include "dataformat.h"
-#include "gdalcontainerconnector.h"
 
 using namespace Ilwis;
 using namespace Gdal;
@@ -73,10 +73,6 @@ void GdalModule::prepare()
     factory->prepare();
     kernel()->addFactory(factory );
 
-    CatalogConnectorFactory *catfact = kernel()->factory<CatalogConnectorFactory>("catalogconnectorfactory", "ilwis");
-    if ( catfact)
-        catfact->add(GdalCatalogConnector::create);
-
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (!cfactory)
         return ;
@@ -88,7 +84,7 @@ void GdalModule::prepare()
     cfactory->addCreator(itCOORDSYSTEM,"gdal", CoordinateSystemConnector::create);
     cfactory->addCreator(itFEATURE,"gdal", GdalFeatureConnector::create);
     cfactory->addCreator(itTABLE,"gdal", GdalFeatureTableConnector::create);
-    cfactory->addCreator(itCONTAINER,"gdal", GdalContainerConnector::create);
+    cfactory->addCreator(itCATALOG,"gdal", CatalogConnector::create);
 
 
     for(int i=0; i < gdal()->getDriverCount(); ++i) {

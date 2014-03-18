@@ -15,12 +15,12 @@
 
 #include "raster.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
-#include "inifile.h"
 #include "numericrange.h"
 #include "ilwisobjectconnector.h"
-#include "ilwis3connector.h"
+#include "catalogconnector.h"
 #include "factory.h"
+#include "inifile.h"
+#include "ilwis3connector.h"
 #include "columndefinition.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
@@ -33,10 +33,10 @@
 #include "ilwisobjectfactory.h"
 #include "ilwis3objectfactory.h"
 #include "catalog.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
-#include "filecatalogconnector.h"
-#include "ilwis3catalogconnector.h"
-#include "catalogconnectorfactory.h"
+#include "foldercatalogexplorer.h"
+#include "ilwis3catalogexplorer.h"
 #include "rawconverter.h"
 #include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
@@ -52,6 +52,7 @@
 #include "ilwiscontext.h"
 #include "dataformat.h"
 #include "ilwis3featureconnector.h"
+
 
 using namespace Ilwis;
 using namespace Ilwis3;
@@ -84,15 +85,13 @@ void Ilwis3Module::prepare()
     factory->addCreator(itELLIPSOID,"ilwis3",Ilwis3::EllipsoidConnector::create);
     factory->addCreator(itCOORDSYSTEM,"ilwis3",Ilwis3::CoordinateSystemConnector::create);
     factory->addCreator(itFEATURE,"ilwis3",Ilwis3::FeatureConnector::create);
+    //factory->addCreator(itCATALOG,"ilwis3",Ilwis::CatalogConnector::create);
 
     factory->addCreator("map","ilwis3",Ilwis3::RasterCoverageConnector::create);
     factory->addCreator("georef","ilwis3",Ilwis3::GeorefConnector::create);
     factory->addCreator("vectormap","ilwis3",Ilwis3::FeatureConnector::create);
     factory->addCreator("domain","ilwis3",Ilwis3::DomainConnector::create);
-
-    CatalogConnectorFactory *catfact = kernel()->factory<CatalogConnectorFactory>("catalogconnectorfactory", "ilwis");
-    if ( catfact)
-        catfact->add(Ilwis3CatalogConnector::create);
+    factory->addCreator("coordsystem","ilwis3",Ilwis3::CoordinateSystemConnector::create);
 
     IlwisObject::addTypeFunction(Ilwis3Connector::ilwisType);
 

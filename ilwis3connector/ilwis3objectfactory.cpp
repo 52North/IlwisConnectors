@@ -7,17 +7,18 @@
 #include "kernel.h"
 #include "ilwiscontext.h"
 #include "numericrange.h"
-#include "ilwisdata.h"
+//#include "ilwisdata.h"
 #include "raster.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "inifile.h"
 #include "numericdomain.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "ilwisobjectfactory.h"
 #include "connectorfactory.h"
-#include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "ilwis3objectfactory.h"
 #include "domainconnector.h"
@@ -45,13 +46,13 @@ Ilwis3ObjectFactory::Ilwis3ObjectFactory() : IlwisObjectFactory("IlwisObjectFact
 {
 }
 
-IlwisObject *Ilwis3ObjectFactory::create(const Resource &resource) const
+IlwisObject *Ilwis3ObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
 {
 
     //Ilwis3Connector *connector = ConnectorFactory::screate<Ilwis3Connector>(resource, "ilwis3");
 
      const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-     Ilwis3Connector *connector = factory->createFromResource<Ilwis3Connector>(resource, "ilwis3");
+     Ilwis3Connector *connector = factory->createFromResource<Ilwis3Connector>(resource, "ilwis3", options);
 
     if(!connector) {
         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
@@ -85,8 +86,10 @@ bool Ilwis3ObjectFactory::canUse(const Resource &resource) const
 
     QString ext = QFileInfo(filename).suffix();
     QString exts = "mprmpamppmpsdomtbtgrfcsympl";
-    if ( exts.indexOf(ext) == -1 || ext.isEmpty())
-        return false;
+    if ( !hasType(type, itCATALOG)){
+        if ( exts.indexOf(ext) == -1 || ext.isEmpty())
+            return false;
+    }
 
     if ( type & itDOMAIN)
         return true;

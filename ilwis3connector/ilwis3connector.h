@@ -11,7 +11,7 @@ namespace Ilwis3 {
 
 class ILWIS3CONNECTORSHARED_EXPORT Ilwis3Connector : public Ilwis::IlwisObjectConnector {
 public:
-    Ilwis3Connector(const Ilwis::Resource &resource, bool load=true);
+    Ilwis3Connector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
     //static IlwisTypes type(const QString &name);
     static IlwisTypes ilwisType(const QString &name);
     static QString name2Code(const QString &name, const QString &type);
@@ -27,7 +27,6 @@ public:
 
 protected:
     bool willStore(const Ilwis::IlwisObject *obj) const;
-    QString suffix(IlwisTypes type) const;
     QUrl resolve(const Resource &resource) const;
     bool isSystemObject(const QString &filename);
     bool loadMetaData(IlwisObject* data);
@@ -41,9 +40,12 @@ protected:
     QString noExt(const QString& name);
     QString filename2FullPath(const QString &name, const Resource &owner=Resource()) const;
 
+    static IniFile *makeIni(const Resource& res,const UPCatalogConnector &container, IlwisTypes type);
+    static QString suffix(IlwisTypes type) ;
+
     mutable ODF _odf;
 
-    QUrl makeUrl(const QString &path, const QString &name=sUNDEF);
+    QUrl makeUrl(const QString &path, const QString &name=sUNDEF, IlwisTypes type=itUNKNOWN);
     static QString type2humanName(IlwisTypes tp);
 };
 }

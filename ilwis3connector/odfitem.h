@@ -6,7 +6,7 @@ namespace Ilwis3{
 class ODFItem : public Resource
 {
 public:
-    ODFItem(const QUrl& file, const UPContainerConnector &container);
+    ODFItem(const QFileInfo& file);
     bool resolveNames(const QHash<QString, quint64>& names);
 
 
@@ -27,16 +27,16 @@ private:
     */
     bool setFileId(const QHash<QString, quint64> &names, const QString &unboundName, quint64 &fileid) const;
 
-    QString findDomainName(const UPContainerConnector &container) const;
-    IlwisTypes findDomainType(const UPContainerConnector &container) const;
-    QString findCsyName(const UPContainerConnector &container) const;
-    IlwisTypes findCsyType(const UPContainerConnector &container) const;
+    QString findDomainName(const QString &path) const;
+    IlwisTypes findDomainType(const QString &path) const;
+    QString findCsyName(const QString &path) const;
+    IlwisTypes findCsyType(const QString &path) const;
     QString findGrfName() const;
     QString findDatumName() const;
     QString findProjectionName() const;
-    quint64 findSize(const UPContainerConnector &container) const;
-    quint64 objectSize(const UPContainerConnector &container) const;
-    quint64 partSize(const QUrl &file, const QString &section, const QString &key, const UPContainerConnector& container) const;
+    quint64 findSize() const;
+    quint64 objectSize() const;
+    quint64 partSize(const QUrl &file, const QString &section, const QString &key) const;
     QString findDimensions() const;
     QString stripExtension(const QString &name) const;
     static bool isSystemObject(const QString &name);

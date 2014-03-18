@@ -1,15 +1,14 @@
 #include  <stdio.h>
 #include  <stdlib.h>
-#include <QFile>
 #include <QTextStream>
-#include <QStringList>
 #include <QRegExp>
-#include <QDir>
-#include "ilwis.h"
 #include "catalog.h"
 #include "kernel.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "ilwiscontext.h"
 #include "inifile.h"
 
@@ -23,23 +22,20 @@ IniFile::~IniFile()
 {
 }
 
-bool IniFile::setIniFile(const QUrl& fn, const UPContainerConnector &container, bool loadfile) {
-    if ( !container || !container->isValid())
-        return false;
+bool IniFile::setIniFile(const QFileInfo& file, bool loadfile) {
 
-     _filename = fn;
+     _filename = file;
     if ( !loadfile ) // not interested in loading an inifile; we are creating a new one
         return true;
 
-    if(!load(container))
-        return ERROR1(ERR_MISSING_DATA_FILE_1,fn.toLocalFile());
+    if(!load())
+        return ERROR1(ERR_MISSING_DATA_FILE_1,file.fileName());
 
     return true;
 
 }
 
-void IniFile::setKeyValue(const QString& section, const QString& key, const QString& value)
-{
+void IniFile::setValue(const QString& section, const QString& key, const QString& value){
     Sections::iterator iterSect = _sections.find(section);
     if (iterSect == _sections.end())
     {
@@ -54,6 +50,21 @@ void IniFile::setKeyValue(const QString& section, const QString& key, const QStr
         SectionEntries& entries = iterSect.value();
         entries[key.toLower()] = value;
     }
+}
+
+void IniFile::setKeyValue(const QString& section, const QString& key, const QString& value)
+{
+    setValue(section, key, value);
+}
+
+void IniFile::setKeyValue(const QString& section, const QString& key, double value)
+{
+    setValue(section, key, QString::number(value)) ;
+}
+
+void IniFile::setKeyValue(const QString& section, const QString& key, int value)
+{
+    setValue(section, key, QString::number(value)) ;
 }
 
 QString IniFile::value(const QString& section, const QString& key) const
@@ -96,7 +107,7 @@ void IniFile::removeSection(const QString& section)
 
 QString IniFile::file() const
 {
-    return _filename.toString();
+    return QUrl::fromLocalFile(_filename.absoluteFilePath()).toString();
 }
 
 QStringList IniFile::childKeys(const QString &section) const
@@ -113,16 +124,15 @@ QStringList IniFile::childKeys(const QString &section) const
     return keys;
 }
 
-bool IniFile::load(const UPContainerConnector& container)
+bool IniFile::load()
 {
     enum ParseState { FindSection, FindKey, ReadFindKey, StoreKey, None } state;
-    QFileInfo fileinfo = container->toLocalFile(_filename);
-    if (!fileinfo.exists())
+    if (!_filename.exists())
         return false;
 
-    QFile txtfile(fileinfo.absoluteFilePath());
+    QFile txtfile(_filename.absoluteFilePath());
     if (!txtfile.open(QIODevice::ReadOnly | QIODevice::Text)){
-        return ERROR1(ERR_COULD_NOT_OPEN_READING_1, fileinfo.fileName());
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1, _filename.fileName());
     }
     QTextStream textfile(&txtfile);
     QString text = textfile.readAll();
@@ -184,20 +194,16 @@ bool IniFile::load(const UPContainerConnector& container)
      return true;
 }
 
-void IniFile::store(const QString& ext, const UPContainerConnector &container )
+void IniFile::store(const QString& ext, const QFileInfo& file )
 {
-    if (!container || !container->isValid())
-        return;
+    QString path = file.absoluteFilePath();
 
-    QFileInfo fileinf = container->toLocalFile(_filename);
-    QString path = fileinf.absoluteFilePath();
-
-    if ( ext != "" && fileinf.suffix() != ext ) {
-        path = fileinf.absolutePath() + "/" + fileinf.baseName() + "." + ext;
+    if ( ext != "" && file.suffix() != ext ) {
+        path = file.absolutePath() + "/" + file.baseName() + "." + ext;
     }
     QFile fileIni(path);
 
-    if (!fileIni.open(QIODevice::ReadWrite | QIODevice::Text))
+    if (!fileIni.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate))
         return;
 
     QTextStream text(&fileIni);

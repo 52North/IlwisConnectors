@@ -6,19 +6,21 @@ namespace Ilwis3{
 class CoordinateSystemConnector : public Ilwis3Connector
 {
 public:
-    CoordinateSystemConnector(const Resource &resource, bool load=true);
+    CoordinateSystemConnector(const Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
     bool loadMetaData(IlwisObject *data);
+    bool storeMetaData(IlwisObject *data);
 
-    static bool canUse(const Ilwis::Resource &resource, const UPContainerConnector &container);
+    static bool canUse(const Ilwis::Resource &resource, const UPCatalogConnector &container);
 
     IlwisObject *create() const;
-    static ConnectorInterface *create(const Resource &resource, bool load=true);
+    static ConnectorInterface *create(const Resource &resource, bool load=true, const Ilwis::PrepareOptions &options=PrepareOptions());
 
-    static QString createCsyFromCode(const QString &code);
 private:
     GeodeticDatum *getDatum(QString& ellipsoid);
     IProjection getProjection(Ilwis::ConventionalCoordinateSystem *csycc);
     IEllipsoid getEllipsoid();
+
+    static QString prjParam2IlwisName(Projection::ProjectionParamValue parm);
 };
 }
 }

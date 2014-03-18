@@ -16,6 +16,7 @@
 #include "identifieritem.h"
 #include "identifierrange.h"
 #include "gdalproxy.h"
+#include "connectorinterface.h"
 #include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
 #include "juliantime.h"

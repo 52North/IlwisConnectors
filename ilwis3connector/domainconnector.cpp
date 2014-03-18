@@ -1,7 +1,10 @@
 #include "kernel.h"
 #include "geos/geom/Coordinate.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "inifile.h"
 #include "ilwisdata.h"
 #include "domainitem.h"
@@ -13,7 +16,6 @@
 #include "itemrange.h"
 #include "identifierrange.h"
 #include "rawconverter.h"
-#include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "numericdomain.h"
 #include "datadefinition.h"
@@ -27,12 +29,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *DomainConnector::create(const Resource& resource, bool load) {
-    return new DomainConnector(resource, load);
+ConnectorInterface *DomainConnector::create(const Resource& resource, bool load, const PrepareOptions &options) {
+    return new DomainConnector(resource, load, options);
 
 }
 
-DomainConnector::DomainConnector(const Resource& resource, bool load) : Ilwis3Connector(resource, load)
+DomainConnector::DomainConnector(const Resource& resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
 {
 }
 
@@ -309,16 +311,37 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
     } else if ( dom->ilwisType() == itCOORDDOMAIN) {
     }
 
-    _odf->store("dom", containerConnector());
+    _odf->store("dom", containerConnector()->toLocalFile(source()));
     return true;
 }
 
+
+IlwisObject *DomainConnector::fromValueRange() const{
+    QString range = _odf->value("BaseMap","Range");
+    if ( range != sUNDEF) {
+        QStringList parts = range.split(":");
+        if ( parts.size() > 2){
+            double vmin = parts[0].toDouble();
+            double vmax = parts[1].toDouble();
+            double resolution = 1;
+            if ( parts.size() > 3 ){
+                resolution = parts[2].toDouble();
+            }
+            return new NumericDomain( new NumericRange(vmin, vmax, resolution));
+        }
+    }
+    return 0;
+}
 IlwisObject *DomainConnector::create() const
 {
     //TODO: other domain types time, coordinatesystem
     QString subtype = sUNDEF;
+    IlwisTypes tp = Ilwis3Connector::ilwisType(_resource.name());
     if ( type() & itCOVERAGE) {
         subtype = parseDomainInfo( _odf->value("BaseMap","DomainInfo"));
+        if ( subtype == "image.dom" || subtype == "value.dom"){
+            return fromValueRange();
+        }
 
     } else if( type() & itTABLE) {
         QUrlQuery queryItem(_resource.url());
@@ -337,6 +360,10 @@ IlwisObject *DomainConnector::create() const
             return new ItemDomain<IndexedIdentifier>(_resource);
         if ( subtype == "DomainClass" || subtype == "DomainSort")
             return new ItemDomain<ThematicItem>(_resource);
+        subtype = parseDomainInfo( _odf->value("BaseMap","DomainInfo"));
+        if ( subtype.left(5) == "image" || subtype.left(5) == "value"){
+            return fromValueRange();
+        }
     }
     return 0;
 }

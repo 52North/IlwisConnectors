@@ -6,7 +6,10 @@
 #include "kernel.h"
 #include "identity.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "resource.h"
 #include "gdalproxy.h"
 #include "gdalitem.h"
@@ -15,12 +18,12 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-GDALItems::GDALItems(const QUrl &url, const UPContainerConnector &containerc, IlwisTypes extTypes)
+GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes extTypes)
 {
-    if ( !containerc || !containerc->isValid())
+    if ( localFile.isRoot())
         return ;
-    QFileInfo file = containerc->toLocalFile(url);
-    GdalHandle* handle = gdal()->openFile(file.absoluteFilePath(), i64UNDEF , GA_ReadOnly);
+    QFileInfo file = localFile;
+    GdalHandle* handle = gdal()->openFile(file.absoluteFilePath(), i64UNDEF , GA_ReadOnly, false);
     if (handle){
         int count = 0;
         if (handle->type() == GdalHandle::etGDALDatasetH){
@@ -32,15 +35,34 @@ GDALItems::GDALItems(const QUrl &url, const UPContainerConnector &containerc, Il
             return;
         //TODO: at the moment simplistic approach; all is corners georef and domain value
         // and a homogenous type if files. when we have example of more complex nature we wille xtend this+
-        quint64 csyId = addCsy(handle, file, url);
+        quint64 csyId = addCsy(handle, file, url, false);
         if ( handle->type() == GdalHandle::etGDALDatasetH) {
             Resource resGrf(url, itGEOREF);
             resGrf.addProperty("coordinatesystem", csyId);
             resGrf.setExtendedType(itCONVENTIONALCOORDSYSTEM);
             insert(resGrf);
             addItem(url, csyId, resGrf.id());
-        } else
-            addItem(url, csyId, iUNDEF, itFEATURE, extTypes);
+        } else{
+            if ( count == 1) //  default case, one layer per object
+                addItem(url, csyId, iUNDEF, itFEATURE , extTypes);
+            else { // multiple layers, the file itself will be marked as container; internal layers will be added using this file as container
+                //TODO: atm the assumption is that all gdal containers are files. this is true in the majority of the cases but not in all. Without a proper testcase the non-file option will not(yet) be implemented
+                addItem(url, iUNDEF, iUNDEF, itCATALOG , extTypes | itFILE);
+                for(int i = 0; i < count; ++i){
+                    OGRLayerH layerH = gdal()->getLayer(handle->handle(),i);
+                    if ( layerH){
+                        const char *cname = gdal()->getLayerName(layerH);
+                        if ( cname){
+                            QString layerName(gdal()->getLayerName(layerH));
+                            QString layerurl = url.toString() + "/" + layerName;
+                            addItem(QUrl(layerurl), csyId, iUNDEF, itFEATURE , extTypes);
+                        }
+
+                    }
+
+                }
+            }
+        }
 
 
         gdal()->closeFile(file.absoluteFilePath(), i64UNDEF);
@@ -61,9 +83,9 @@ void GDALItems::addItem(const QUrl& url, quint64 csyid, quint64 grfId, IlwisType
     insert(gdalItem);
 }
 
-quint64 GDALItems::addCsy(GdalHandle* handle, const QFileInfo &path, const QUrl& url) {
+quint64 GDALItems::addCsy(GdalHandle* handle, const QFileInfo &path, const QUrl& url, bool message) {
     quint64 ret = i64UNDEF;
-    OGRSpatialReferenceH srshandle = gdal()->srsHandle(handle, path.absoluteFilePath());
+    OGRSpatialReferenceH srshandle = gdal()->srsHandle(handle, path.absoluteFilePath(), message);
     if (srshandle != 0){
         const char * projcs_epsg = gdal()->getAuthorityCode(srshandle, "PROJCS");
         const char * geocs_epsg = gdal()->getAuthorityCode(srshandle, "GEOGCS");
@@ -77,7 +99,8 @@ quint64 GDALItems::addCsy(GdalHandle* handle, const QFileInfo &path, const QUrl&
                 ret = resource.id();
         }
     }
-    gdal()->releaseSrsHandle(handle, srshandle, path.absoluteFilePath());
+    if ( srshandle)
+        gdal()->releaseSrsHandle(handle, srshandle, path.absoluteFilePath());
 
     if(ret == i64UNDEF){
         Resource resource(url,itCONVENTIONALCOORDSYSTEM );

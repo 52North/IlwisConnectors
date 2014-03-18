@@ -2,15 +2,17 @@
 #include "ilwisdata.h"
 #include "gdalproxy.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "dataformat.h"
 #include "gdalconnector.h"
 
 using namespace Ilwis;
 using namespace Gdal;
 
-GdalConnector::GdalConnector(const Resource &resource, bool load) : IlwisObjectConnector(resource,load), _internalPath(sUNDEF)
+GdalConnector::GdalConnector(const Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource,load, options), _internalPath(sUNDEF)
 {
     _handle = NULL;
     if ( resource.url().hasFragment())
@@ -38,10 +40,10 @@ IlwisTypes GdalConnector::ilwisType(const QString &name)
 
     QString ext = inf.suffix();
     QString filter = "*." + ext;
-    if ( gdal()->getRasterExtensions().contains(filter,Qt::CaseInsensitive))
+    if ( gdal()->getExtensions(itRASTER).contains(filter,Qt::CaseInsensitive))
         return itRASTER;
 
-    if ( DataFormat::supports(DataFormat::fpEXTENSION, itFEATURE,ext, "gdal"))
+    if ( gdal()->getExtensions(itFEATURE).contains(filter, Qt::CaseInsensitive))
         return itFEATURE;
     return itUNKNOWN; //TODO: add table formats here
 }
@@ -58,7 +60,11 @@ bool GdalConnector::loadMetaData(IlwisObject *data){
     }
 
     QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
-    _handle = gdal()->openFile(fileinf, data->id(), GA_ReadOnly);
+    _handle = gdal()->openFile(fileinf, data->id(), GA_ReadOnly,false); // no messages here
+    if (!_handle){ // could be a container based object
+        QFileInfo inf = fileinf.absolutePath();
+        _handle = gdal()->openFile(inf, data->id(), GA_ReadOnly);
+    }
     if (!_handle){
         return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename.toString(),QString(gdal()->getLastErrorMsg()));
     }
@@ -123,7 +129,7 @@ OGRFieldType GdalConnector::ilwisType2GdalFieldType(IlwisTypes tp) {
 QString GdalConnector::constructOutputName(GDALDriverH hdriver) const
 {
     const char *cext = gdal()->getMetaDataItem(hdriver,GDAL_DMD_EXTENSION,NULL);
-    QFileInfo fileinfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(_filename);
+    QFileInfo fileinfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(source());
     QString filename = fileinfo.absoluteFilePath();
     if ( cext != 0 ) {
         QString ext(cext);
@@ -137,4 +143,13 @@ QString GdalConnector::constructOutputName(GDALDriverH hdriver) const
            filename += "." + ext;
     }
     return filename;
+}
+
+OGRLayerH GdalConnector::getLayerHandle() const{
+    int layer = 0;
+    QFileInfo inf(source().toLocalFile());
+    OGRLayerH hLayer = gdal()->getLayerByName(_handle->handle(), inf.fileName().toLatin1());
+    if ( !hLayer) // so this was not a gdal container connector url, then the one layer per source case
+         hLayer = gdal()->getLayer(_handle->handle(), layer);
+    return hLayer;
 }

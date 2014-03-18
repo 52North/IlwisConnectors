@@ -11,9 +11,14 @@
 #include "geos/geom/LinearRing.h"
 #include "geos/geom/Polygon.h"
 #include "geos/geom/GeometryFactory.h"
+#include "geos/geom/Coordinate.inl"
+#include "geos/geom/Envelope.inl"
 #include "module.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "inifile.h"
 #include "coverage.h"
 #include "ilwiscontext.h"
@@ -32,7 +37,6 @@
 #include "featureiterator.h"
 #include "containerstatistics.h"
 #include "rawconverter.h"
-#include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "binaryilwis3table.h"
 #include "coordinatedomain.h"
@@ -48,8 +52,8 @@ struct XYZ {
     double x,y,z;
 };
 
-ConnectorInterface *FeatureConnector::create(const Resource &resource, bool load) {
-    return new FeatureConnector(resource, load);
+ConnectorInterface *FeatureConnector::create(const Resource &resource, bool load,const PrepareOptions& options) {
+    return new FeatureConnector(resource, load, options);
 
 }
 
@@ -62,7 +66,7 @@ void FeatureConnector::calcStatics(const IlwisObject *obj, NumericStatistics::Pr
 {
 }
 
-FeatureConnector::FeatureConnector(const Resource &resource, bool load) : CoverageConnector(resource, load)
+FeatureConnector::FeatureConnector(const Resource &resource, bool load, const PrepareOptions &options) : CoverageConnector(resource, load, options)
 {
 }
 
@@ -195,7 +199,7 @@ bool FeatureConnector::isForwardStartDirection(const BinaryIlwis3Table& topTable
 
 bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& tbl) {
     QString datafile = _odf->value("PolygonMapStore","DataPol");
-    datafile = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + datafile;
+    datafile = QFileInfo(QUrl(_odf->file()).toLocalFile()).absolutePath() + "/" + datafile;
     QFile file(datafile);
 
     if (!file.exists()){
@@ -369,7 +373,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
     return true;
 }
 
-bool FeatureConnector::loadBinaryData(Ilwis::IlwisObject *obj) {
+bool FeatureConnector::loadData(Ilwis::IlwisObject *obj) {
     if ( obj == nullptr)
         return false;
 
@@ -814,7 +818,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         ext = "mpp";
     }
 
-    _odf->store(ext, containerConnector());
+    _odf->store(ext, QFileInfo(baseName));
     return ok;
 }
 

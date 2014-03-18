@@ -6,11 +6,16 @@ namespace Gdal{
 class GdalCatalogConnector : public CatalogConnector
 {
 public:
-    GdalCatalogConnector(const Ilwis::Resource &resource);
+    GdalCatalogConnector(const Ilwis::Resource &resource, bool load=true);
+    bool prepare();
 
     virtual bool loadItems();
     bool canUse(const Resource& resource) const;
     QString provider() const;
+
+    std::vector<QUrl> sources(const QStringList& filter, int options=foFULLPATHS) const;
+    QFileInfo toLocalFile(const QUrl &datasource) const;
+
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
 protected:

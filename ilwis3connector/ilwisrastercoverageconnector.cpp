@@ -12,14 +12,16 @@
 #include "module.h"
 #include "numericrange.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "inifile.h"
 #include "numericrange.h"
 #include "numericdomain.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
 #include "pixeliterator.h"
-#include "ilwisobjectconnector.h"
 #include "ilwis3connector.h"
 #include "rawconverter.h"
 #include "coverageconnector.h"
@@ -28,14 +30,14 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load) {
-    return new RasterCoverageConnector(resource, load);
+ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+    return new RasterCoverageConnector(resource, load, options);
 
 }
 
 
 
-RasterCoverageConnector::RasterCoverageConnector(const Resource &resource, bool load) : CoverageConnector(resource, load),_storesize(1)
+RasterCoverageConnector::RasterCoverageConnector(const Resource &resource, bool load, const PrepareOptions &options) : CoverageConnector(resource, load, options),_storesize(1)
 {
 }
 
@@ -63,12 +65,12 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data) {
     for(int i = 0; i < z; ++i) {
         QString file = _odf->value("MapList",QString("Map%1").arg(i));
         //file = filename2FullPath(file);
-        file = _resource.container().toString() + "/" + file;
+        file = _resource.container().toLocalFile()+ "/" + file;
         if ( file != sUNDEF) {
             IniFile odf;
-            odf.setIniFile(file, containerConnector());
+            odf.setIniFile(file);
             //QString dataFile = filename2FullPath(odf.value("MapStore","Data"));
-            QUrl url (_resource.container().toString() + "/" + odf.value("MapStore","Data"));
+            QUrl url (QUrl::fromLocalFile(_resource.container().toLocalFile() + "/" + odf.value("MapStore","Data")));
             _dataFiles.push_back(url);
         } else {
             ERROR2(ERR_COULD_NOT_LOAD_2,"files","maplist");
@@ -77,7 +79,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data) {
     }
 
     IniFile odf;
-    if (!odf.setIniFile(file, containerConnector()))
+    if (!odf.setIniFile(QUrl(file).toLocalFile()))
         return ERROR2(ERR_COULD_NOT_LOAD_2,"files","maplist");
 
     QString storeType = odf.value("MapStore","Type");
@@ -412,7 +414,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
     if ( localName == sUNDEF)
         return false;
     _odf->setKeyValue("Ilwis","Type","MapList");
-    _odf->setKeyValue("MapList","GeoRef",localName);
+    _odf->setKeyValue("MapList","GeoRef",QFileInfo(localName).fileName());
     Size<> sz = raster->size();
     _odf->setKeyValue("MapList","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
     _odf->setKeyValue("MapList","Maps",QString::number(sz.zsize()));
@@ -441,7 +443,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         gcMap->store(IlwisObject::smBINARYDATA | IlwisObject::smMETADATA);
     }
 
-    _odf->store("mpl", containerConnector());
+    _odf->store("mpl", containerConnector()->toLocalFile(source()));
     return true;
 }
 
@@ -452,29 +454,24 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
         return sUNDEF;
     }
     QString name = grf->source(IlwisObject::cmOUTPUT).url().toString();
-    if ( grf->isAnonymous()) {
+    if ( grf->isAnonymous()) { // get a suitable output name
         name = raster->source(IlwisObject::cmOUTPUT).url().toString();
-        int index = name.lastIndexOf(".");
-        name = name.left(index);
-        name += ".grf";
+//        int index = name.lastIndexOf(".");
+//        name = name.left(index);
+//        name += ".grf";
     }
-    QString localName = Resource::toLocalFile(QUrl(name),false);
+    QString localName = Resource::toLocalFile(QUrl(name),false, "grf");
     QFileInfo localGrf(localName);
-    if ( !localGrf.exists()) {
-        //QFileInfo coveragePath(Resource::toLocalFile(obj->target()));
-//        localName = raster->name();
+
+    if ( !localGrf.exists()) { // if it is not an existing ilwis3 grf, we create one from scratch
         QFileInfo res(_odf->file());
         localName = res.fileName();
-        int index;
-        if ( (index = localName.indexOf(".")) != -1)
-            localName = localName.left(index);
-        localName += ".grf";
         grf->setName(localName);
-        QUrl url = makeUrl( _odf->file(), localName);
+        QUrl url = makeUrl( _odf->file(), localName, itGEOREF);
         grf->connectTo(url, "georef", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
         grf->store(IlwisObject::smMETADATA);
-    } else
-        localName = localGrf.fileName();
+        localName = url.toLocalFile();
+    }
 
     return localName;
 }
@@ -505,7 +502,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     if ( localName == sUNDEF)
         return false;
 
-    _odf->setKeyValue("Map","GeoRef",localName);
+    _odf->setKeyValue("Map","GeoRef",QFileInfo(localName).fileName());
     Size<> sz = raster->size();
     _odf->setKeyValue("Map","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
     _odf->setKeyValue("Map","Type","MapStore");
@@ -544,7 +541,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     _odf->setKeyValue("MapStore","SwapBytes","No");
     _odf->setKeyValue("MapStore","UseAs","No");
 
-    _odf->store("mpr", containerConnector());
+    _odf->store("mpr", containerConnector()->toLocalFile(source()));
 
 
     return true;

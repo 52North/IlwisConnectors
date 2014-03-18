@@ -7,6 +7,7 @@
 #include "geos/geom/LinearRing.h"
 #include "geos/geom/Polygon.h"
 #include "geos/geom/Coordinate.h"
+#include "geos/geom/Envelope.inl"
 
 #include "../../IlwisCore/core/util/location.h"
 #include "../../IlwisCore/core/util/coordinate.h"

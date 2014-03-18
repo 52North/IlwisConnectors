@@ -9,7 +9,7 @@ namespace Ilwis3{
 class RasterCoverageConnector : public CoverageConnector
 {
 public:
-    RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true);
+    RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 
     bool loadMetaData(IlwisObject *data);
     bool storeMetaData(Ilwis::IlwisObject *obj);
@@ -17,7 +17,7 @@ public:
     bool storeBinaryData(Ilwis::IlwisObject *obj);
 
     Ilwis::IlwisObject *create() const;
-    static ConnectorInterface *create(const Ilwis::Resource &resource,bool load = true);
+    static ConnectorInterface *create(const Ilwis::Resource &resource,bool load = true,const PrepareOptions& options=PrepareOptions());
 
     void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
 
@@ -32,6 +32,7 @@ private:
     bool setDataType(IlwisObject *data);
 
     template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& raster, const Size<>& sz) const{
+        //TODO optimize this
         PixelIterator pixiter(raster, BoundingBox(sz));
         int  i=0;
         T c = 0;

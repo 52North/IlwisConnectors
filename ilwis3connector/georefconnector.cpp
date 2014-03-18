@@ -7,10 +7,11 @@
 #include "ilwisdata.h"
 #include "geometries.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
-#include "inifile.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
+#include "inifile.h"
 #include "ilwis3connector.h"
 #include "RawConverter.h"
 #include "coordinatesystem.h"
@@ -32,13 +33,13 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *GeorefConnector::create(const Resource &resource, bool load) {
-    return new GeorefConnector(resource, load);
+ConnectorInterface *GeorefConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+    return new GeorefConnector(resource, load, options);
 
 }
 
 
-GeorefConnector::GeorefConnector(const Resource &resource, bool load) : Ilwis3Connector(resource, load) {
+GeorefConnector::GeorefConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options) {
 
 }
 
@@ -64,7 +65,7 @@ bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
         QString name = odf.value("GeoRefSubMap","GeoRef");
         QUrl resource = mastercatalog()->name2url(name, itGEOREF);
         IniFile odf;
-        odf.setIniFile(resource, containerConnector());
+        odf.setIniFile(containerConnector()->toLocalFile(resource));
         bool ok = loadGeoref(odf,data);
         if (!ok)
             return false;
@@ -149,7 +150,8 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
 {
     Ilwis3Connector::storeMetaData(obj, itGEOREF);
     GeoReference *grf = static_cast<GeoReference *>(obj);
-    _odf->setKeyValue("GeoRef","CoordSystem",Resource::toLocalFile(grf->coordinateSystem()->source().url(),true));
+    QString localPath = Resource::toLocalFile(grf->coordinateSystem()->source().url(),true, "csy");
+    _odf->setKeyValue("GeoRef","CoordSystem", QFileInfo(localPath).fileName());
     Size<> sz = grf->size();
     _odf->setKeyValue("GeoRef","Lines", QString::number(sz.ysize()));
     _odf->setKeyValue("GeoRef","Columns", QString::number(sz.xsize()));
@@ -175,7 +177,7 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
          _odf->setKeyValue("GeoRefSmpl", "b1", QString::number(support[0]));
          _odf->setKeyValue("GeoRefSmpl", "b2", QString::number(support[1]));
 
-         _odf->store("grf", containerConnector());
+         _odf->store("grf", containerConnector()->toLocalFile(source()));
         return true;
 
     }
@@ -191,7 +193,7 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
     ICoordinateSystem csy;
     if(!csy.prepare(path.toLocalFile())) {
         kernel()->issues()->log(TR("Couldn't find coordinate system %1, loading unknown").arg(csyName),IssueObject::itWarning);
-        QString resource = QString("ilwis://file/unknown.csy");
+        QString resource = QString("code=unknown");
         if(!csy.prepare(resource)) {
             kernel()->issues()->log(TR("Cound find coordinate system unknown, corrupt system file"));
             return false;
@@ -226,7 +228,7 @@ IlwisObject *GeorefConnector::createGeoreference(const IniFile &odf) const{
         auto name = _odf->value("GeoRefSubMap","GeoRef");
         QUrl resource = mastercatalog()->name2url(name, itGEOREF);
         IniFile odf;
-        odf.setIniFile(resource, containerConnector());
+        odf.setIniFile(containerConnector()->toLocalFile(resource));
         return createGeoreference(odf);
     }
     return 0;

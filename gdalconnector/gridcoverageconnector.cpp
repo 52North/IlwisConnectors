@@ -30,13 +30,13 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load) {
-    return new RasterCoverageConnector(resource, load);
+ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+    return new RasterCoverageConnector(resource, load, options);
 
 }
 
 
-RasterCoverageConnector::RasterCoverageConnector(const Ilwis::Resource &resource, bool load) : CoverageConnector(resource,load){
+RasterCoverageConnector::RasterCoverageConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : CoverageConnector(resource,load, options){
 }
 
 bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
