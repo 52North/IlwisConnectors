@@ -6,9 +6,14 @@
 
 #include "kernel.h"
 #include "ilwis.h"
+#include "mastercatalog.h"
 #include "connectorinterface.h"
-#include "catalog/containerconnector.h"
+#include "abstractfactory.h"
+#include "catalogconnectorfactory.h"
+#include "containerconnector.h"
+#include "catalogconnector.h"
 #include "wfs.h"
+#include "wfsutils.h"
 #include "wfsresponse.h"
 #include "wfscontainerconnector.h"
 
@@ -31,13 +36,26 @@ ConnectorInterface *WfsContainerConnector::create(const Resource &res, bool)
 
 bool WfsContainerConnector::prepare()
 {
+//    auto *cfactory = kernel()->factory<CatalogConnectorFactory>("catalogconnectorfactory", source());
+//     if (!cfactory) {
+//         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Connector Factory",source().toLocalFile());
+//     }
+//    QList<CatalogConnector*> catalogs = cfactory->create(Resource(source().url(), itCATALOG));
+//    for(CatalogConnector *catalog : catalogs) {
+//        catalog->loadItems();
+//    }
+    QList<Resource> resources;
+    Resource resource(source().url(), itCATALOG);
+    resources.push_back(resource);
+    mastercatalog()->addItems(resources);
     return true;
 }
 
 std::vector<QUrl> WfsContainerConnector::sources(const QStringList &filter, int options) const
 {
-    std::vector<QUrl> wfsFeatures;
-    return wfsFeatures;
+    std::vector<QUrl> ret;
+    ret.push_back(source().url());
+    return ret;
 }
 
 QFileInfo WfsContainerConnector::toLocalFile(const QUrl &datasource) const
@@ -71,7 +89,7 @@ bool WfsContainerConnector::canUse(const Resource &resource) const
 
     IlwisTypes type = resource.ilwisType() ;
     if ( type & itCONTAINER)
-        return true;
+        return WfsUtils::isValidWfsUrl(resource.url());
 
     return false;
 }

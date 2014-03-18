@@ -71,7 +71,7 @@ QString WfsResponse::parseException() const
     QXmlStreamReader *reader = parser.reader();
     if (parser.startParsing("ows:ExceptionReport")) {
         QString current = reader->name().toString();
-        if (parser.moveToNext("ows:Exception")) {
+        if (parser.findNextOf( {"ows:Exception"} )) {
             current = reader->name().toString();
 
             QString serverMsg;
@@ -80,7 +80,7 @@ QString WfsResponse::parseException() const
             serverMsg.append("locator '").append(attributes.value("locator")).append("' ");
 
             QString details("(");
-            while (parser.moveToNext("ows:ExceptionText"))
+            while (parser.findNextOf( {"ows:ExceptionText"} ))
             {
                 current = reader->name().toString();
                 details.append(parser.readElementText());

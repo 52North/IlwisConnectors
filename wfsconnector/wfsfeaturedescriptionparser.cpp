@@ -100,10 +100,10 @@ void WfsFeatureDescriptionParser::parseNamespaces(WfsParsingContext &context)
 void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcoverage, WfsParsingContext &context)
 {
     ITable table = fcoverage->attributeTable();
-    if (_parser->moveToNext("xsd:complexContent")) {
-        if (_parser->moveToNext("xsd:extension")) {
-            if (_parser->moveToNext("xsd:sequence")) {
-                if (_parser->moveToNext("xsd:element")) {
+    if (_parser->findNextOf( { "xsd:complexContent" } )) {
+        if (_parser->findNextOf( { "xsd:extension" } )) {
+            if (_parser->findNextOf( { "xsd:sequence" } )) {
+                if (_parser->findNextOf( { "xsd:element" } )) {
 
                     /*
                      * Parse schema elements to table colummns to obtain feature
@@ -125,7 +125,8 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcover
                                 table->addColumn(name, domain);
                             }
                         }
-                    } while (_parser->moveToNext("xsd:element"));
+                        _parser->skipCurrentElement(); // move to end
+                    } while (_parser->findNextOf( { "xsd:element"} ));
                 }
             }
         }

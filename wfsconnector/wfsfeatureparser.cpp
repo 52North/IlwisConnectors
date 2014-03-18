@@ -6,6 +6,7 @@
 #include "geos/geom/GeometryFactory.h"
 #include "geos/geom/LinearRing.h"
 #include "geos/geom/Polygon.h"
+#include "geos/geom/Point.h"
 
 #include "kernel.h"
 #include "coverage.h"
@@ -65,20 +66,26 @@ void WfsFeatureParser::parseFeatureMembers()
     QString targetNamespace =  _context.namespaceMappings()[""];
     _parser->addNamespaceMapping("target", targetNamespace);
     ITable table = _fcoverage->attributeTable();
-    QString featureType = table->name();
-    featureType = "target:" + featureType;
+    _featureType = table->name();
+    _featureType = "target:" + _featureType;
 
     quint64 featureCount = 0;
-    if (_parser->moveToNext("wfs:FeatureCollection")) {
+    if (_parser->findNextOf( {"wfs:FeatureCollection"} )) {
         if (_parser->findNextOf( {"gml:featureMembers", "gml:featureMember"} )) {
-            while (_parser->moveToNext(featureType)) {
+            QString collectiontype = _parser->name();
+            qint32 colonIdx = collectiontype.indexOf(":");
+            collectiontype = collectiontype.mid(colonIdx + 1);
+            while (_parser->findNextOf( {_featureType} )) {
                 std::vector<QVariant> record(table->columnCount());
 
                 parseFeature(record);
                 table->record(featureCount++, record); // load content
-                _parser->readNextStartElement(); // next collection item
-                if ( !_parser->isAtEndOf("gml:featureMember")) {
-                    // to next separately wrapped member
+                while ( !_parser->isAtEndOf(_featureType)) {
+                    // leave parsed feature type element
+                    _parser->readNext();
+                }
+                if (collectiontype == "gml:featureMember" || collectiontype == "featureMember") {
+                    // enter next collection member
                     _parser->readNextStartElement();
                 }
             }
@@ -224,8 +231,6 @@ void WfsFeatureParser::createNewFeature()
     }
 }
 
-
-
 geos::geom::Geometry *WfsFeatureParser::parseFeatureGeometry()
 {
     // move on element
@@ -238,7 +243,7 @@ geos::geom::Geometry *WfsFeatureParser::parseFeatureGeometry()
     } else if (isLineStringType()) {
         return createLineString(isMultiGeometry);
     } else if (isPointType()) {
-
+        return createPoint(isMultiGeometry);
     }
 }
 
@@ -278,7 +283,7 @@ geos::geom::Geometry *WfsFeatureParser::createPolygon(bool isMultiGeometry)
                     return _fcoverage->geomfactory()->createMultiPolygon();
                 }
                 multi->push_back(geometry);
-            } while (_parser->moveToNext("gml:surfaceMember"));
+            } while (_parser->findNextOf( {"gml:surfaceMember"} ));
             return _fcoverage->geomfactory()->createMultiPolygon(multi);
         }
     } else {
@@ -304,7 +309,7 @@ geos::geom::Geometry *WfsFeatureParser::createLineString(bool isMultiGeometry)
                     return _fcoverage->geomfactory()->createMultiLineString();
                 }
                 multi->push_back(geometry);
-            } while (_parser->moveToNext("gml:curveMember"));
+            } while (_parser->findNextOf( { "gml:curveMember" } ));
             return _fcoverage->geomfactory()->createMultiLineString(multi);
         }
     } else {
@@ -313,6 +318,33 @@ geos::geom::Geometry *WfsFeatureParser::createLineString(bool isMultiGeometry)
         geos::geom::Geometry *geometry = parseLineString(ok);
         if ( !ok) {
             ERROR0("Could not parse GML Curve.");
+        }
+        return geometry;
+    }
+}
+
+geos::geom::Geometry *WfsFeatureParser::createPoint(bool isMultiGeometry)
+{
+    if (isMultiGeometry) {
+        std::vector<geos::geom::Geometry *>* multi = new std::vector<geos::geom::Geometry *>();
+        if (updateSrsInfoUntil("gml:pointMember")) {
+            do {
+                bool ok = false;
+                geos::geom::Geometry *geometry = parsePoint(ok);
+                if ( !ok) {
+                    ERROR0("Could not parse GML MultiPoint member.");
+                    return _fcoverage->geomfactory()->createMultiPoint();
+                }
+                multi->push_back(geometry);
+            } while (_parser->findNextOf( {"gml:pointMember"} ));
+            return _fcoverage->geomfactory()->createMultiPoint(multi);
+        }
+    } else {
+        bool ok = false;
+        updateSrsInfo();
+        geos::geom::Geometry *geometry = parsePoint(ok);
+        if ( !ok) {
+            ERROR0("Could not parse GML Point.");
         }
         return geometry;
     }
@@ -337,6 +369,25 @@ bool WfsFeatureParser::updateSrsInfoUntil(QString qname)
         }
     }
     return true;
+}
+
+geos::geom::Point *WfsFeatureParser::parsePoint(bool &ok)
+{
+    try {
+        if (_parser->findNextOf( { "gml:pos"} )) {
+            ok = true;
+            updateSrsInfo();
+            QString wkt = gmlPosListToWktLineString(_parser->readElementText());
+            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
+            return _fcoverage->geomfactory()->createPoint(geometry->getCoordinates());
+        }
+        ERROR0("Could not find gml:pos");
+    } catch(std::exception &e) {
+        ERROR1("Could not parse WKT Point %1", e.what());
+    }
+
+    ok = false; // return empty point
+    return _fcoverage->geomfactory()->createPoint();
 }
 
 geos::geom::LineString *WfsFeatureParser::parseLineString(bool &ok)
@@ -378,7 +429,7 @@ geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing()
     geos::geom::LinearRing *ring;
 
     _parser->readNextStartElement();
-    if (_parser->moveToNext("gml:exterior")) {
+    if (_parser->findNextOf( {"gml:exterior"} )) {
         if (_parser->findNextOf( {"gml:posList"} )) {
             QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
             geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
@@ -393,16 +444,16 @@ std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings()
 {
    std::vector<geos::geom::Geometry *>* innerRings = new std::vector<geos::geom::Geometry *>();
 
-    _parser->readNextStartElement();
     do {
         if (_parser->findNextOf( { "gml:posList" })) {
             QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
             geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
-            geos::geom::LinearRing *ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
-            innerRings->push_back(ring);
-            _parser->readNextStartElement();
+
+            geos::geom::LinearRing *ring;
+            ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
+            innerRings->push_back(ring->clone());
         }
-    } while (_parser->moveToNext("gml:interior"));
+    } while (_parser->findNextOf( {"gml:interior"} ));
     return innerRings;
 }
 

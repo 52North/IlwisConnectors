@@ -116,32 +116,37 @@ void XmlStreamParser::readNext() const
     _reader->readNext();
 }
 
-bool XmlStreamParser::moveToNext(QString qName, void (*callback)())
-{
-    if (_reader->atEnd()) {
-        return false;
-    }
+//bool XmlStreamParser::moveToNext(QString qName, void (*callback)())
+//{
+//    if (_reader->atEnd()) {
+//        return false;
+//    }
 
-    bool found = false;
-    _reader->readNextStartElement();
-    nextElementDo(callback);
+//    bool found = false;
+//    bool onStartElement = _reader->isStartElement();
+//    bool hasInnerStartElement = _reader->readNextStartElement();
+//    if (onStartElement && !hasInnerStartElement) {
+//        return false;
+//    }
+//    nextElementDo(callback);
 
-    while ( !(_reader->atEnd() || found)) {
-        if (_reader->isStartElement()) {
-            found = isAtBeginningOf(qName);
-            if ( !found) {
-                _reader->skipCurrentElement();
-                _reader->readNext();
-            }
-        } else {
-            if ( !_reader->readNextStartElement()) {
-                break;
-            }
-            nextElementDo(callback);
-        }
-    }
-    return found;
-}
+//    while ( !(_reader->atEnd() || found)) {
+//        if (_reader->isStartElement()) {
+//            found = isAtBeginningOf(qName);
+//            if ( !found) {
+//                _reader->skipCurrentElement();
+//                _reader->readNext();
+//            }
+//        } else {
+//            if ( !_reader->readNextStartElement()) {
+//                break;
+//            }
+//            nextElementDo(callback);
+//        }
+//    }
+//    return found;
+//}
+
 
 bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, void (*callback)())
 {
@@ -151,7 +156,11 @@ bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, voi
 
     bool found = false;
     QString startElement = name();
-    _reader->readNextStartElement();
+    bool onStartElement = _reader->isStartElement();
+    bool hasInnerStartElement = _reader->readNextStartElement();
+    if ( !onStartElement && !hasInnerStartElement) {
+        return false;
+    }
     nextElementDo(callback);
 
     while ( !(_reader->atEnd() || found)) {

@@ -44,6 +44,7 @@ private:
     XmlStreamParser *_parser;
     FeatureCoverage *_fcoverage;
     WfsParsingContext _context;
+    QString _featureType;
 
     void parseFeature(std::vector<QVariant> &record);
 
@@ -66,6 +67,7 @@ private:
 
     geos::geom::Geometry *createPolygon(bool isMultiGeometry);
     geos::geom::Geometry *createLineString(bool isMultiGeometry);
+    geos::geom::Geometry *createPoint(bool isMultiGeometry);
 
     bool isPolygonType();
     bool isLineStringType();
@@ -74,6 +76,7 @@ private:
     void updateSrsInfo();
     bool updateSrsInfoUntil(QString qname);
 
+    geos::geom::Point *parsePoint(bool &ok);
     geos::geom::LineString *parseLineString(bool &ok);
     geos::geom::Polygon *parsePolygon(bool &ok);
     geos::geom::LinearRing *parseExteriorRing();
