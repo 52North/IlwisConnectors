@@ -96,7 +96,7 @@ QUrl WfsCapabilitiesParser::createGetFeatureUrl(QString featureName) const
     query.addQueryItem("service", "WFS");
     query.addQueryItem("version", "1.1.0");
     query.addQueryItem("request", "GetFeature");
-    query.addQueryItem("featureName", featureName);
+    query.addQueryItem("typeName", featureName);
     QUrl getFeatureUrl = _url; // copy
     getFeatureUrl.setQuery(query);
     return getFeatureUrl;
