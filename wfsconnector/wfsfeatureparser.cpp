@@ -428,12 +428,12 @@ geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing()
 {
     geos::geom::LinearRing *ring;
 
-    _parser->readNextStartElement();
     if (_parser->findNextOf( {"gml:exterior"} )) {
         if (_parser->findNextOf( {"gml:posList"} )) {
             QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
             geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
             ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
+            _parser->moveToEndOf("gml:exterior");
         }
     }
     return ring;
@@ -442,7 +442,7 @@ geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing()
 
 std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings()
 {
-   std::vector<geos::geom::Geometry *>* innerRings = new std::vector<geos::geom::Geometry *>();
+    std::vector<geos::geom::Geometry *>* innerRings = new std::vector<geos::geom::Geometry *>();
 
     do {
         if (_parser->findNextOf( { "gml:posList" })) {
