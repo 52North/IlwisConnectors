@@ -39,6 +39,10 @@ public:
         return normalizedCode.append(code.trimmed());
     }
 
+    static QString getInternalNameFrom(QString name, quint64 id) {
+        return QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id);
+    }
+
 private:
     static void checkVersionCompatibility(QString kvpValueVersions) {
         QStringList versions = kvpValueVersions.split(",",QString::SkipEmptyParts);

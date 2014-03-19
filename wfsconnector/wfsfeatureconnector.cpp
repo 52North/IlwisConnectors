@@ -24,7 +24,6 @@
 #include "featurecoverage.h"
 #include "featureiterator.h"
 #include "ilwisobjectconnector.h"
-#include "wfsconnector.h"
 #include "wfsparsingcontext.h"
 #include "wfsfeatureconnector.h"
 #include "wfsfeatureparser.h"
@@ -37,10 +36,11 @@ using namespace Ilwis;
 using namespace Wfs;
 
 ConnectorInterface* WfsFeatureConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
-    return new WfsFeatureConnector(resource, load);
+    return new WfsFeatureConnector(resource, load, options);
 }
 
-WfsFeatureConnector::WfsFeatureConnector(const Resource &resource, bool load, const Ilwis::PrepareOptions &options) : WfsConnector(resource,load) {
+WfsFeatureConnector::WfsFeatureConnector(const Resource &resource, bool load, const Ilwis::PrepareOptions &options) :
+    IlwisObjectConnector(resource,load, options) {
 }
 
 
@@ -50,10 +50,6 @@ Ilwis::IlwisObject* WfsFeatureConnector::create() const {
 
 bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
 {
-    if (!WfsConnector::loadMetaData(data)) {
-        return false;
-    }
-
     QUrl featureUrl = source().url();
     WebFeatureService wfs(featureUrl);
     QUrlQuery queryFeatureType(featureUrl);
@@ -64,19 +60,18 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
     return schemaParser.parseSchemaDescription(fcoverage, _context);
 }
 
-void WfsFeatureConnector::initFeatureTable(ITable &table) const
-{
-
-}
-
 
 bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
 {
-    // check how to avoid double loading metadata
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+    QString name = fcoverage->name();
+    quint64 id = fcoverage->id();
+    QString internalName = WfsUtils::getInternalNameFrom(name, id);
+
+    // TODO: check how to avoid double loading metadata
     //if(!loadMetaData(data))
     //    return false;
 
-    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     QUrl featureUrl = source().url();
     WebFeatureService wfs(featureUrl);
 
@@ -111,4 +106,10 @@ IlwisTypes WfsFeatureConnector::ilwisType(const QString &resourceUrl)
     }
 
     return itUNKNOWN;
+}
+
+
+QString WfsFeatureConnector::provider() const
+{
+    return QString("wfs");
 }

@@ -20,7 +20,6 @@ DEFINES += WFSCONNECTOR_LIBRARY
 
 SOURCES += \
     wfsconnector/wfsobjectfactory.cpp \
-    wfsconnector/wfsconnector.cpp \
     wfsconnector/wfsmodule.cpp \
     wfsconnector/wfsfeatureconnector.cpp \
     wfsconnector/wfs.cpp \
@@ -36,7 +35,6 @@ SOURCES += \
 
 HEADERS += \
     wfsconnector/wfsobjectfactory.h \
-    wfsconnector/wfsconnector.h \
     wfsconnector/wfsmodule.h \
     wfsconnector/wfsfeatureconnector.h \
     wfsconnector/wfs.h \

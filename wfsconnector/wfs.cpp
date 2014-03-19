@@ -11,7 +11,6 @@
 #include "attributerecord.h"
 #include "feature.h"
 #include "featurecoverage.h"
-#include "wfsconnector.h"
 #include "wfsresponse.h"
 #include "wfsutils.h"
 #include "wfs.h"

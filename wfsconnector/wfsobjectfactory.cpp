@@ -14,8 +14,10 @@
 #include "ilwisobjectfactory.h"
 #include "connectorfactory.h"
 #include "ilwisobjectconnector.h"
+
+#include "wfsparsingcontext.h"
+#include "wfsfeatureconnector.h"
 #include "wfsobjectfactory.h"
-#include "wfsconnector.h"
 #include "wfsutils.h"
 
 using namespace Ilwis;
@@ -30,7 +32,7 @@ IlwisObject *WfsObjectFactory::create(const Resource &resource, const PrepareOpt
      const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
 
      // TODO: check for table | feature
-     WfsConnector *connector = factory->createFromResource<WfsConnector>(resource, "wfs");
+     WfsFeatureConnector *connector = factory->createFromResource<WfsFeatureConnector>(resource, "wfs");
 
     if(!connector) {
         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));

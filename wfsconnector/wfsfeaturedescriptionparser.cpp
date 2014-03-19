@@ -48,12 +48,12 @@ WfsFeatureDescriptionParser::~WfsFeatureDescriptionParser()
 
 bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcoverage, WfsParsingContext &context)
 {
-    QString name(fcoverage->name());
+    QString name = fcoverage->name();
     quint64 id = fcoverage->id();
-    QUrl schemaResourceUrl(QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id));
+    QString schemaResource = WfsUtils::getInternalNameFrom(name, id);
 
     ITable featureTable;
-    Resource resource(schemaResourceUrl, itFLATTABLE);
+    Resource resource(QUrl(schemaResource), itFLATTABLE);
     if(!featureTable.prepare(resource)) {
         ERROR1(ERR_NO_INITIALIZED_1, resource.name());
         return false;

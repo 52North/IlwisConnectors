@@ -28,7 +28,6 @@
 #include "ilwisobjectconnector.h"
 #include "symboltable.h"
 #include "wfsmodule.h"
-#include "wfsconnector.h"
 #include "wfsparsingcontext.h"
 #include "wfsfeatureconnector.h"
 #include "catalogconnector.h"
