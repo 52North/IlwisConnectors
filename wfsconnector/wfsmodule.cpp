@@ -48,13 +48,11 @@ WfsModule::WfsModule(QObject *parent) :
 
 WfsModule::~WfsModule()
 {
-
 }
 
 QString WfsModule::getInterfaceVersion() const
 {
     return "iv40";
-
 }
 
 void WfsModule::prepare()
@@ -64,11 +62,12 @@ void WfsModule::prepare()
     kernel()->addFactory(factory);
 
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    if (cfactory) {
-        cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
-        IlwisObject::addTypeFunction(WfsFeatureConnector::ilwisType);
-    }
+    if (!cfactory)
+        return;
 
+    cfactory->addCreator(itCATALOG,"wfs", CatalogConnector::create);
+    cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
+    IlwisObject::addTypeFunction(WfsFeatureConnector::ilwisType);
 }
 
 QString WfsModule::getName() const
@@ -81,6 +80,7 @@ QString WfsModule::getVersion() const
     return "1.0";
 }
 
-void WfsModule::getOperations(QVector<ICommandInfo *> &) const{
+void WfsModule::getOperations(QVector<ICommandInfo *> &) const
+{
 }
 
