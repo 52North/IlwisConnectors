@@ -63,14 +63,12 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
 
 bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
 {
-    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
-    QString name = fcoverage->name();
-    quint64 id = fcoverage->id();
-    QString internalName = WfsUtils::getInternalNameFrom(name, id);
 
     // TODO: check how to avoid double loading metadata
-    //if(!loadMetaData(data))
-    //    return false;
+    if(!loadMetaData(data))
+        return false;
+
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
     QUrl featureUrl = source().url();
     WebFeatureService wfs(featureUrl);
