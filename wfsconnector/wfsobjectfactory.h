@@ -9,11 +9,8 @@ class WfsObjectFactory : public IlwisObjectFactory
 {
 public:
     WfsObjectFactory();
-
-    IlwisObject *create(const Ilwis::Resource &resource) const;
+    IlwisObject *create(const Resource &resource,const PrepareOptions& options=PrepareOptions()) const;
     bool canUse(const Resource &resource) const;
-    bool prepare();
-
 };
 
 }

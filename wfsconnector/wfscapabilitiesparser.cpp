@@ -29,7 +29,7 @@ WfsCapabilitiesParser::~WfsCapabilitiesParser()
     delete _parser;
 }
 
-void WfsCapabilitiesParser::parseFeatures(QList<WfsFeature> &wfsFeatures)
+void WfsCapabilitiesParser::parseFeatures(std::vector<Resource> &wfsFeatures)
 {
     QXmlResultItems results;
     QXmlQuery *query = _parser->queryFromRoot("//wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType");
@@ -96,7 +96,7 @@ QUrl WfsCapabilitiesParser::createGetFeatureUrl(QString featureName) const
     query.addQueryItem("service", "WFS");
     query.addQueryItem("version", "1.1.0");
     query.addQueryItem("request", "GetFeature");
-    query.addQueryItem("featureName", featureName);
+    query.addQueryItem("typeName", featureName);
     QUrl getFeatureUrl = _url; // copy
     getFeatureUrl.setQuery(query);
     return getFeatureUrl;

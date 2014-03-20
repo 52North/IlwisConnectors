@@ -6,6 +6,21 @@
 
 #include "xmlstreamparser.h"
 
+
+
+/*
+ *
+ * Open:
+ * The function pointer takes only free function pointers, i.e. member
+ * free functions (doNothing is static).
+ *
+ * see:
+ * http://stackoverflow.com/questions/2374847/passing-member-function-pointer-to-member-object-in-c
+ *
+ */
+
+
+
 XmlStreamParser::XmlStreamParser()
 {
 }
@@ -36,7 +51,7 @@ void XmlStreamParser::addNamespaceMapping(QString prefix, QString ns)
 
 QString XmlStreamParser::getPrefixForNamespaceUri(QString namespaceUri) const
 {
-    _namespaces.key(namespaceUri);
+    return _namespaces.key(namespaceUri);
 }
 
 bool XmlStreamParser::startParsing(QString qName) const
@@ -101,7 +116,26 @@ void XmlStreamParser::readNext() const
     _reader->readNext();
 }
 
-bool XmlStreamParser::moveToNext(QString qName) const
+bool XmlStreamParser::moveToEndOf(QString qName)
+{
+    bool found = false;
+    while ( !(_reader->atEnd() || found)) {
+        if (_reader->isEndElement()) {
+            found = isAtEndOf(qName);
+            if ( !found) {
+                _reader->readNext();
+            }
+        } else {
+            if (_reader->isStartElement()) {
+                _reader->skipCurrentElement();
+            }
+            _reader->readNext();
+        }
+    }
+    return found;
+}
+
+bool XmlStreamParser::moveToNext(QString qName, void (*callback)())
 {
     if (_reader->atEnd()) {
         return false;
@@ -109,6 +143,8 @@ bool XmlStreamParser::moveToNext(QString qName) const
 
     bool found = false;
     _reader->readNextStartElement();
+    nextElementDo(callback);
+
     while ( !(_reader->atEnd() || found)) {
         if (_reader->isStartElement()) {
             found = isAtBeginningOf(qName);
@@ -120,34 +156,54 @@ bool XmlStreamParser::moveToNext(QString qName) const
             if ( !_reader->readNextStartElement()) {
                 break;
             }
+            nextElementDo(callback);
         }
     }
     return found;
 }
 
-bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList) const
+
+bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, void (*callback)())
 {
     if (_reader->atEnd()) {
         return false;
     }
 
     bool found = false;
-    _reader->readNextStartElement();
+    QString startElement = name();
+    bool onStartElement = _reader->isStartElement();
+    bool hasInnerStartElement = _reader->readNextStartElement();
+    if ( !onStartElement && !hasInnerStartElement) {
+        return false;
+    }
+    nextElementDo(callback);
+
     while ( !(_reader->atEnd() || found)) {
         if (_reader->isStartElement()) {
             for (QString qName : elementList) {
                 found = isAtBeginningOf(qName);
                 if (found) {
                     break;
-                } else {
-                    if ( !_reader->readNextStartElement()) {
-                        break;
+                }
+            }
+            if ( !found) {
+                bool hasNextNestedElement = _reader->readNextStartElement();
+                bool atEndOfStartElement = name() == startElement;
+                if ( !hasNextNestedElement) {
+                    if (atEndOfStartElement) {
+                        break; // not found;
                     }
+                    nextElementDo(callback);
                 }
             }
         } else {
-            if ( !_reader->readNextStartElement()) {
-                break;
+            bool hasNextNestedElement = _reader->readNextStartElement();
+            bool atEndOfStartElement = name() == startElement;
+            if ( !hasNextNestedElement) {
+                if (atEndOfStartElement) {
+                    break; // not found;
+                }
+                nextElementDo(callback);
             }
         }
     }
@@ -195,4 +251,3 @@ bool XmlStreamParser::isAtElement(QString qName) const
         }
     }
 }
-

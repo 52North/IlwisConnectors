@@ -3,6 +3,8 @@
 
 #include "wfsconnector_global.h"
 
+#include "geos/geom/Polygon.h"
+
 class QString;
 class XmlStreamParser;
 
@@ -18,10 +20,14 @@ public:
     WfsFeatureParser(WfsResponse *response, FeatureCoverage *fcoverage);
     ~WfsFeatureParser();
 
+    void context(const WfsParsingContext &context);
+
+    WfsParsingContext context() const;
+
     /**
      * Parses feature instances and add them to the feature coverage.<br/>
      * <br/>
-     * Note that a WFS feature attribute table has to be constructed first to give
+     * Note that the feature's attribute table has to be constructed first to give
      * valuable results. This can be done by means of a WfsFeatureDescriptionParser
      * which uses the feature's schema description served by the WFS to create appropriate
      * Domain columns for each feature attribute.<br/>
@@ -30,43 +36,58 @@ public:
      * feature collection. To keep track of the elements the WfsFeatureDescriptionParser
      * gives access to those used in the schema document.
      *
-     * TODO: for now only the target namespace is being used ... propably this is enough
-     *
-     * @param mappings the xml schema namespace mappings.
+     * NOTE: for now only the target namespace is being used ... propably this is enough
      */
-    void parseFeatureMembers(QMap<QString,QString> &mappings);
-
-    /**
-     * Sets individual column handlers according to the domain associated with the given
-     * table.<br/>
-     * <br/>
-     * Note that a WFS feature attribute table has to be constructed first to give
-     * valuable results. This can be done by means of a WfsFeatureDescriptionParser
-     * which uses the feature's schema description served by the WFS to create appropriate
-     * Domain columns for each feature attribute.<br/>
-     *
-     * @param table the table having domain descriptions for each column.
-     */
-    void setColumnCallbacks(ITable &table);
+    void parseFeatureMembers();
 
 private:
     XmlStreamParser *_parser;
     FeatureCoverage *_fcoverage;
-    std::vector<FillerColumnDef*> _columnFillers;
+    WfsParsingContext _context;
+    QString _featureType;
 
-    void loadRecord(ITable &table, std::vector<QVariant> &record);
+    void parseFeature(std::vector<QVariant> &record);
 
     QVariant fillStringColumn();
     QVariant fillDoubleColumn();
+    QVariant fillBoolColumn();
     QVariant fillDateTimeColumn();
     QVariant fillIntegerColumn();
-    QVariant parseFeatureGeometry();
 
-};
+    /**
+     * Parses the feature's geometry from GML. <br/>
+     * <br/>
+     * Note that parsing GML has its limitations, so don't expect a full GML parsing engine
+     * here, e.g. attributes are only read until a certain depth.
+     *
+     * @return the parsed geometry.
+     */
+    geos::geom::Geometry *parseFeatureGeometry();
+    void createNewFeature();
 
-struct FillerColumnDef {
-    QVariant (WfsFeatureParser::* fillFunc)();
-    FillerColumnDef(QVariant(WfsFeatureParser::* func)()): fillFunc(func) {}
+    geos::geom::Geometry *createPolygon(bool isMultiGeometry);
+    geos::geom::Geometry *createLineString(bool isMultiGeometry);
+    geos::geom::Geometry *createPoint(bool isMultiGeometry);
+
+    bool isPolygonType();
+    bool isLineStringType();
+    bool isPointType();
+
+    void updateSrsInfo();
+    bool updateSrsInfoUntil(QString qname);
+
+    geos::geom::Point *parsePoint(bool &ok);
+    geos::geom::LineString *parseLineString(bool &ok);
+    geos::geom::Polygon *parsePolygon(bool &ok);
+    geos::geom::LinearRing *parseExteriorRing();
+    std::vector<geos::geom::Geometry *> *parseInteriorRings();
+
+
+    QString gmlPosListToWktCoords(QString gmlPosList);
+    QString gmlPosListToWktPolygon(QString gmlPosList);
+    QString gmlPosListToWktLineString(QString gmlPosList);
+    QString gmlPosListToWktPoint(QString gmlPosList);
+
 };
 
 }

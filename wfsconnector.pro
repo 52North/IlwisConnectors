@@ -20,37 +20,35 @@ DEFINES += WFSCONNECTOR_LIBRARY
 
 SOURCES += \
     wfsconnector/wfsobjectfactory.cpp \
-    wfsconnector/wfsconnector.cpp \
-    wfsconnector/wfscatalogconnector.cpp \
     wfsconnector/wfsmodule.cpp \
     wfsconnector/wfsfeatureconnector.cpp \
     wfsconnector/wfs.cpp \
     wfsconnector/wfsresponse.cpp \
     wfsconnector/wfsfeature.cpp \
-    wfsconnector/wfscontainerconnector.cpp \
     wfsconnector/wfscapabilitiesparser.cpp \
     wfsconnector/xmlstreamparser.cpp \
     wfsconnector/xpathparser.cpp \
     wfsconnector/wfsfeatureparser.cpp \
-    wfsconnector/wfsfeaturedescriptionparser.cpp
+    wfsconnector/wfsfeaturedescriptionparser.cpp \
+    wfsconnector/wfsparsingcontext.cpp \
+    wfsconnector/wfscatalogexplorer.cpp
 
 HEADERS += \
     wfsconnector/wfsobjectfactory.h \
-    wfsconnector/wfsconnector.h \
-    wfsconnector/wfscatalogconnector.h \
     wfsconnector/wfsmodule.h \
     wfsconnector/wfsfeatureconnector.h \
     wfsconnector/wfs.h \
     wfsconnector/wfsconnector_global.h \
     wfsconnector/wfsresponse.h \
     wfsconnector/wfsfeature.h \
-    wfsconnector/wfscontainerconnector.h \
     wfsconnector/wfscapabilitiesparser.h \
     wfsconnector/xmlstreamparser.h \
     wfsconnector/xpathparser.h \
     wfsconnector/wfsfeatureparser.h \
     wfsconnector/wfsfeaturedescriptionparser.h \
-    wfsconnector/wfsutils.h
+    wfsconnector/wfsutils.h \
+    wfsconnector/wfsparsingcontext.h \
+    wfsconnector/wfscatalogexplorer.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \

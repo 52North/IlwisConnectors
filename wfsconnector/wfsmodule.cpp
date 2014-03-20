@@ -16,8 +16,6 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "catalog.h"
-#include "containerconnector.h"
-#include "ilwisobjectconnector.h"
 #include "attributerecord.h"
 #include "feature.h"
 #include "coverage.h"
@@ -27,14 +25,14 @@
 #include "abstractfactory.h"
 #include "connectorfactory.h"
 #include "catalogconnectorfactory.h"
+#include "ilwisobjectconnector.h"
 #include "symboltable.h"
-#include "OperationExpression.h"
 #include "wfsmodule.h"
-#include "wfsconnector.h"
+#include "wfsparsingcontext.h"
 #include "wfsfeatureconnector.h"
 #include "catalogconnector.h"
-#include "wfscatalogconnector.h"
-#include "wfscontainerconnector.h"
+#include "catalogexplorer.h"
+#include "wfscatalogexplorer.h"
 #include "ilwisobjectfactory.h"
 #include "wfsobjectfactory.h"
 #include "wfsresponse.h"
@@ -50,13 +48,11 @@ WfsModule::WfsModule(QObject *parent) :
 
 WfsModule::~WfsModule()
 {
-
 }
 
 QString WfsModule::getInterfaceVersion() const
 {
     return "iv40";
-
 }
 
 void WfsModule::prepare()
@@ -65,19 +61,13 @@ void WfsModule::prepare()
     factory->prepare();
     kernel()->addFactory(factory);
 
-    CatalogConnectorFactory *catfact = kernel()->factory<CatalogConnectorFactory>("ilwis::catalogconnectorfactory");
-    if (catfact) {
-        catfact->add(WfsCatalogConnector::create);
-    }
-
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    if (cfactory) {
-        cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
-        cfactory->addCreator(itCONTAINER,"wfs", WfsContainerConnector::create);
-    }
+    if (!cfactory)
+        return;
 
-
-    IlwisObject::addTypeFunction(WfsConnector::ilwisType);
+    cfactory->addCreator(itCATALOG,"wfs", CatalogConnector::create);
+    cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
+    IlwisObject::addTypeFunction(WfsFeatureConnector::ilwisType);
 }
 
 QString WfsModule::getName() const
@@ -90,6 +80,7 @@ QString WfsModule::getVersion() const
     return "1.0";
 }
 
-void WfsModule::getOperations(QVector<ICommandInfo *> &) const{
+void WfsModule::getOperations(QVector<ICommandInfo *> &) const
+{
 }
 

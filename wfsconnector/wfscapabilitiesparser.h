@@ -18,7 +18,7 @@ public:
     WfsCapabilitiesParser(WfsResponse *response, QUrl wfsUrl);
     ~WfsCapabilitiesParser();
 
-    void parseFeatures(QList<WfsFeature> &wfsFeaturesTypes);
+    void parseFeatures(std::vector<Ilwis::Resource> &wfsFeaturesTypes);
 
 private:
     QUrl _url;

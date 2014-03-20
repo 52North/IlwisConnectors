@@ -6,9 +6,6 @@
 namespace Ilwis {
 namespace Wfs {
 
-// indicates which xml element holds gml
-#define GEOM_ATTRIBUTE_NAME "geom_attr"
-
 class WfsUtils
 {
 
@@ -40,6 +37,10 @@ public:
         }
         QString code = epsgCode.mid(splitIndex + 1);
         return normalizedCode.append(code.trimmed());
+    }
+
+    static QString getInternalNameFrom(QString name, quint64 id) {
+        return QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id);
     }
 
 private:

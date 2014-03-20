@@ -14,14 +14,15 @@
 #include "featurecoverage.h"
 #include "connectorinterface.h"
 #include "identity.h"
-#include "containerconnector.h"
 #include "resource.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
-#include "catalogconnector.h"
+#include "abstractfactory.h"
+#include "connectorfactory.h"
+#include "catalogexplorer.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
-#include "wfscatalogconnector.h"
+#include "wfscatalogexplorer.h"
 #include "wfsutils.h"
 #include "wfs.h"
 #include "wfsresponse.h"
@@ -31,62 +32,60 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-ConnectorInterface *WfsCatalogConnector::create(const Resource &resource, bool)
+REGISTER_CATALOGEXPLORER(WfsCatalogExplorer)
+
+CatalogExplorer *WfsCatalogExplorer::create(const Resource &resource, const PrepareOptions &options)
 {
-    return new WfsCatalogConnector(resource);
+    return new WfsCatalogExplorer(resource, options);
 }
 
-WfsCatalogConnector::WfsCatalogConnector(const Resource &resource) : CatalogConnector(resource)
+WfsCatalogExplorer::WfsCatalogExplorer(const Resource &resource, const PrepareOptions &options) : CatalogExplorer(resource,options)
 {
 }
 
-WfsCatalogConnector::~WfsCatalogConnector()
+WfsCatalogExplorer::~WfsCatalogExplorer()
 {
 }
 
-bool WfsCatalogConnector::loadItems()
+std::vector<Resource> WfsCatalogExplorer::loadItems()
 {
-    if (!isValid())
-        return false;
-
     QUrl serviceUrl = source().url();
     WebFeatureService wfs(serviceUrl);
     WfsResponse *response = wfs.getCapabilities();
     WfsCapabilitiesParser parser(response, serviceUrl);
 
-    QList<WfsFeature> wfsFeatures;
+    std::vector<Resource> wfsFeatures;
     parser.parseFeatures(wfsFeatures);
-
-    QList<Resource> wfsResources;
-    std::for_each(wfsFeatures.begin(), wfsFeatures.end(), [&](WfsFeature &feature) {
-        wfsResources.push_back(feature);
-    });
-
-    mastercatalog()->addItems(wfsResources);
-    return true;
+    mastercatalog()->addItems(wfsFeatures);
+    return wfsFeatures;
 }
 
-bool WfsCatalogConnector::canUse(const Resource &resource) const
+bool WfsCatalogExplorer::canUse(const Resource &resource) const
 {
     if ( resource.ilwisType() != itCATALOG)
         return false;
     if (!WfsUtils::isValidWfsUrl(resource.url()))
         return false;
-
-    // TODO: does a wfs:// protocol make sense for testing?
-    //       local response files has to be explicitly set
-    //       in the tests anyway
-    if (resource.url().toString().startsWith("wfs-test://"))
-        return true;
-
     return true;
 }
 
-QString WfsCatalogConnector::provider() const
+QString WfsCatalogExplorer::provider() const
 {
     return "wfs";
 }
 
 
 
+
+
+
+
+
+
+
+QFileInfo WfsCatalogExplorer::toLocalFile(const QUrl &datasource) const
+{
+    QFileInfo fileInfo;
+    return fileInfo;
+}
 

@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iterator>
 
+#include "geos/geom/LinearRing.h"
+
 #include "kernel.h"
 #include "module.h"
 #include "coverage.h"
@@ -22,22 +24,25 @@
 #include "featurecoverage.h"
 #include "featureiterator.h"
 #include "ilwisobjectconnector.h"
-#include "wfsconnector.h"
+#include "wfsparsingcontext.h"
 #include "wfsfeatureconnector.h"
 #include "wfsfeatureparser.h"
 #include "wfsfeaturedescriptionparser.h"
 #include "wfs.h"
 #include "wfsresponse.h"
+#include "wfsutils.h"
 
 using namespace Ilwis;
 using namespace Wfs;
 
-WfsFeatureConnector::WfsFeatureConnector(const Resource &resource, bool load) : WfsConnector(resource,load) {
+ConnectorInterface* WfsFeatureConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+    return new WfsFeatureConnector(resource, load, options);
 }
 
-ConnectorInterface* WfsFeatureConnector::create(const Resource &resource, bool load) {
-    return new WfsFeatureConnector(resource, load);
+WfsFeatureConnector::WfsFeatureConnector(const Resource &resource, bool load, const Ilwis::PrepareOptions &options) :
+    IlwisObjectConnector(resource,load, options) {
 }
+
 
 Ilwis::IlwisObject* WfsFeatureConnector::create() const {
     return new FeatureCoverage(this->_resource);
@@ -45,10 +50,6 @@ Ilwis::IlwisObject* WfsFeatureConnector::create() const {
 
 bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
 {
-    if (!WfsConnector::loadMetaData(data)) {
-        return false;
-    }
-
     QUrl featureUrl = source().url();
     WebFeatureService wfs(featureUrl);
     QUrlQuery queryFeatureType(featureUrl);
@@ -56,33 +57,57 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
     WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse);
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
-    return schemaParser.parseSchemaDescription(fcoverage, _namespaceMappings);
-}
-
-void WfsFeatureConnector::initFeatureTable(ITable &table) const
-{
-
+    return schemaParser.parseSchemaDescription(fcoverage, _context);
 }
 
 
 bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
 {
-    // check how to avoid double loading metadata
-    //if(!loadMetaData(data))
-    //    return false;
 
-    // TODO: request data and load it into *data
+    // TODO: check how to avoid double loading metadata
+    if(!loadMetaData(data))
+        return false;
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+
     QUrl featureUrl = source().url();
     WebFeatureService wfs(featureUrl);
-
-    // TODO: parse Feature metadata and fill coverage
 
     QUrlQuery queryFeature(featureUrl);
     WfsResponse *response = wfs.getFeature(queryFeature);
     WfsFeatureParser featureParser(response, fcoverage);
-    featureParser.parseFeatureMembers(_namespaceMappings);
 
-    return false;
+    featureParser.context(_context);
+    featureParser.parseFeatureMembers();
+
+    return true;
+}
+
+IlwisTypes WfsFeatureConnector::ilwisType(const QString &resourceUrl)
+{
+    QUrl url(resourceUrl);
+    if (WfsUtils::isValidWfsUrl(url)) {
+        return itUNKNOWN;
+    }
+
+    QUrlQuery query(url);
+    WfsUtils::lowerCaseKeys(query);
+    QString request = query.queryItemValue("request");
+
+    // TODO when stand-alone table connector is present!
+    //if (request == "DescribeFeature") {
+    //    return itTABLE;
+    //}
+
+    if (request == "GetFeature" || request == "DescribeFeature") {
+        return itFEATURE;
+    }
+
+    return itUNKNOWN;
+}
+
+
+QString WfsFeatureConnector::provider() const
+{
+    return QString("wfs");
 }
