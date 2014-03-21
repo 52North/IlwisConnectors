@@ -7,7 +7,7 @@
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
 
 #include "pythonapi_coverage.h"
-#include "pythonapi_pycontainer.h"
+#include "pythonapi_pyobject.h"
 
 
 using namespace pythonapi;

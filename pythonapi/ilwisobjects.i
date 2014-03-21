@@ -8,9 +8,9 @@
 %include "std_string.i"
 
 %{
-#include "datetime.h"
-#include "pythonapi_qtGNUTypedefs.h"
-#include "pythonapi_ilwis.h"
+#include "pythonapi_pyobject.h"
+#include "pythonapi_error.h"
+#include "pythonapi_extension.h"
 #include "pythonapi_object.h"
 #include "pythonapi_engine.h"
 #include "pythonapi_ilwisobject.h"
@@ -52,8 +52,6 @@
         return NULL;
     }
 
-    //import datetime module
-    PyDateTime_IMPORT;
 %}
 //adds the export flag to pyd library for the IlwisException
 %pythoncode %{
@@ -92,7 +90,7 @@
 }
 
 namespace pythonapi {
-    //instead of including whole (pythonapi_ilwis.h)
+    //instead of including whole (pythonapi_extension.h)
     void disconnectIssueLogger();
     void connectIssueLogger();
 }

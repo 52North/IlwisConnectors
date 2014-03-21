@@ -7,9 +7,10 @@
 #include "../../IlwisCore/core/ilwisobjects/coverage/pixeliterator.h"
 
 #include "pythonapi_pixeliterator.h"
-#include "pythonapi_ilwis.h"
+#include "pythonapi_extension.h"
 #include "pythonapi_rastercoverage.h"
-#include "pythonapi_pycontainer.h"
+#include "pythonapi_pyobject.h"
+#include "pythonapi_error.h"
 
 namespace pythonapi {
 

@@ -6,7 +6,8 @@
 
 #include "pythonapi_range.h"
 #include "pythonapi_domain.h"
-#include "pythonapi_pyvariant.h"
+#include "pythonapi_qvariant.h"
+#include "pythonapi_error.h"
 
 
 using namespace pythonapi;

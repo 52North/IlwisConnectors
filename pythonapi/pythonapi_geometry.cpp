@@ -27,6 +27,7 @@
 
 #include "pythonapi_geometry.h"
 #include "pythonapi_feature.h"
+#include "pythonapi_error.h"
 
 namespace pythonapi{
 

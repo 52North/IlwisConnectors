@@ -14,52 +14,53 @@ DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
 PYTHONDIR = C:/Python33
 
 HEADERS += \
-    pythonapi/pythonapi_rastercoverage.h \
-    pythonapi/pythonapi_coordinatesystem.h \
-    pythonapi/pythonapi_engine.h \
-    pythonapi/pythonapi_coverage.h \
-    pythonapi/pythonapi_feature.h \
-    pythonapi/pythonapi_featurecoverage.h \
-    pythonapi/pythonapi_featureiterator.h \
-    pythonapi/pythonapi_ilwis.h \
-    pythonapi/pythonapi_ilwisobject.h \
-    pythonapi/pythonapi_object.h \
-    pythonapi/pythonapi_qissuelogger.h \
-    pythonapi/pythonapi_pyvariant.h \
-    pythonapi/pythonapi_geometry.h \
-    pythonapi/pythonapi_qtGNUTypedefs.h \
-    pythonapi/pythonapi_pixeliterator.h \
     pythonapi/pythonapi_util.h \
-    pythonapi/pythonapi_pycontainer.h \
     pythonapi/pythonapi_table.h \
+    pythonapi/pythonapi_rastercoverage.h \
+    pythonapi/pythonapi_range.h \
+    pythonapi/pythonapi_qvariant.h \
+    pythonapi/pythonapi_qtGNUTypedefs.h \
+    pythonapi/pythonapi_qissuelogger.h \
+    pythonapi/pythonapi_pyobject.h \
+    pythonapi/pythonapi_pixeliterator.h \
+    pythonapi/pythonapi_object.h \
+    pythonapi/pythonapi_ilwisobject.h \
     pythonapi/pythonapi_georeference.h \
-    pythonapi/pythonapi_pydatetime.h \
+    pythonapi/pythonapi_geometry.h \
+    pythonapi/pythonapi_featureiterator.h \
+    pythonapi/pythonapi_featurecoverage.h \
+    pythonapi/pythonapi_feature.h \
+    pythonapi/pythonapi_extension.h \
+    pythonapi/pythonapi_error.h \
+    pythonapi/pythonapi_engine.h \
     pythonapi/pythonapi_domain.h \
-    pythonapi/pythonapi_range.h
+    pythonapi/pythonapi_coverage.h \
+    pythonapi/pythonapi_coordinatesystem.h
+
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
-    pythonapi/pythonapi_coordinatesystem.cpp \
-    pythonapi/pythonapi_coverage.cpp \
-    pythonapi/pythonapi_engine.cpp \
-    pythonapi/pythonapi_feature.cpp \
-    pythonapi/pythonapi_featurecoverage.cpp \
-    pythonapi/pythonapi_featureiterator.cpp \
-    pythonapi/pythonapi_ilwis.cpp \
-    pythonapi/pythonapi_ilwisobject.cpp \
-    pythonapi/pythonapi_qissuelogger.cpp \
-    pythonapi/pythonapi_rastercoverage.cpp \
-    pythonapi/pythonapi_pyvariant.cpp \
-    pythonapi/pythonapi_pyerror.cpp \
-    pythonapi/pythonapi_geometry.cpp \
-    pythonapi/pythonapi_pycontainer.cpp \
-    pythonapi/pythonapi_pixeliterator.cpp \
     pythonapi/pythonapi_util.cpp \
     pythonapi/pythonapi_table.cpp \
+    pythonapi/pythonapi_rastercoverage.cpp \
+    pythonapi/pythonapi_range.cpp \
+    pythonapi/pythonapi_qvariant.cpp \
+    pythonapi/pythonapi_qissuelogger.cpp \
+    pythonapi/pythonapi_pyobject.cpp \
+    pythonapi/pythonapi_pixeliterator.cpp \
+    pythonapi/pythonapi_ilwisobject.cpp \
     pythonapi/pythonapi_georeference.cpp \
-    pythonapi/pythonapi_pydatetime.cpp \
+    pythonapi/pythonapi_geometry.cpp \
+    pythonapi/pythonapi_featureiterator.cpp \
+    pythonapi/pythonapi_featurecoverage.cpp \
+    pythonapi/pythonapi_feature.cpp \
+    pythonapi/pythonapi_extension.cpp \
+    pythonapi/pythonapi_error.cpp \
+    pythonapi/pythonapi_engine.cpp \
     pythonapi/pythonapi_domain.cpp \
-    pythonapi/pythonapi_range.cpp
+    pythonapi/pythonapi_coverage.cpp \
+    pythonapi/pythonapi_coordinatesystem.cpp
+
 
 OTHER_FILES += \
     pythonapi/test.py \

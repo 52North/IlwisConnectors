@@ -16,6 +16,7 @@
 
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_engine.h"
+#include "pythonapi_error.h"
 
 using namespace pythonapi;
 

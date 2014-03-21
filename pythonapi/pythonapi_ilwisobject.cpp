@@ -2,6 +2,7 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 #include "pythonapi_ilwisobject.h"
+#include "pythonapi_error.h"
 
 using namespace pythonapi;
 

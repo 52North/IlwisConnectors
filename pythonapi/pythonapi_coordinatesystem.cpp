@@ -13,6 +13,7 @@
 #include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/conventionalcoordinatesystem.h"
 
 #include "pythonapi_coordinatesystem.h"
+#include "pythonapi_error.h"
 
 using namespace pythonapi;
 

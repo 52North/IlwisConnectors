@@ -1,7 +1,7 @@
 #ifndef PYTHONAPI_OBJECT_H
 #define PYTHONAPI_OBJECT_H
 
-#include "pythonapi_ilwis.h"
+#include "pythonapi_extension.h"
 
 typedef quint64 IlwisTypes;
 

@@ -9,9 +9,9 @@
 
 #include "pythonapi_table.h"
 
-#include "pythonapi_pycontainer.h"
+#include "pythonapi_pyobject.h"
 #include "pythonapi_feature.h"
-#include "pythonapi_pyvariant.h"
+#include "pythonapi_qvariant.h"
 
 namespace pythonapi {
 

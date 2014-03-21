@@ -15,8 +15,9 @@
 #include "../../IlwisCore/core/ilwisobjects/coverage/featureiterator.h"
 
 #include "pythonapi_featureiterator.h"
-#include "pythonapi_ilwis.h"
+#include "pythonapi_extension.h"
 #include "pythonapi_featurecoverage.h"
+#include "pythonapi_error.h"
 
 using namespace pythonapi;
 

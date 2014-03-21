@@ -663,8 +663,8 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 self.skipTest("could not set working directory!")
 
         def test_FromFile(self):
-            csy = CoordinateSystem(workingDir+featureDir+"/Cochabamba.csy")
-            self.assertEqual("Cochabamba.csy", csy.name())
+            csy = CoordinateSystem(workingDir+featureDir+"/cochabamba.csy")
+            self.assertEqual("cochabamba.csy", csy.name())
             fc = FeatureCoverage("Rainfall.mpp")
             rainCsy = fc.coordinateSystem()
             self.assertEqual(csy.ilwisID(), rainCsy.ilwisID())

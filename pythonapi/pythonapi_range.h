@@ -1,54 +1,59 @@
 #ifndef PYTHONAPI_RANGE_H
 #define PYTHONAPI_RANGE_H
 
-#include "pythonapi_ilwis.h"
+#include "pythonapi_object.h"
+
+#include<string>
 
 namespace Ilwis {
     class Range;
 }
+
+typedef struct _object PyObject;
+
 namespace pythonapi {
-class Range
-{
-public:
-    friend class Domain;
 
-    bool isValid() const;
-    std::string toString() const;
-    IlwisTypes valueType() const;
+    class Range: public Object{
+        public:
+            friend class Domain;
 
-    PyObject *ensure(const PyObject* v, bool inclusive = true) const;
-    bool contains(const PyObject *value, bool inclusive = true) const;
+            bool __bool__() const;
+            std::string __str__();
+            IlwisTypes valueType();
 
-    bool isContinuous() const;
-    PyObject *impliedValue(const PyObject *value) const;
+            PyObject *ensure(const PyObject* v, bool inclusive = true) const;
+            bool contains(const PyObject *value, bool inclusive = true) const;
 
-protected:
-    std::shared_ptr<Ilwis::Range> _range;
-    Range(Ilwis::Range *rng);
+            bool isContinuous() const;
+            PyObject *impliedValue(const PyObject *value) const;
 
-    Range();
-private:
-};
+        protected:
+            std::shared_ptr<Ilwis::Range> _range;
+            Range(Ilwis::Range *rng);
 
-class NumericRange : public Range {
-public:
-    NumericRange(double mi, double ma, double resolution=0);
-    NumericRange(const NumericRange &vr);
+            Range();
+        private:
+    };
+
+    class NumericRange : public Range {
+        public:
+            NumericRange(double mi, double ma, double resolution=0);
+            NumericRange(const NumericRange &vr);
 
 
-    bool contains(double v, bool inclusive = true) const;
-    double max() const;
-    void setMax(double v);
-    double min() const;
-    void setMin(double v);
-    double distance() const;
+            bool contains(double v, bool inclusive = true) const;
+            double max() const;
+            void setMax(double v);
+            double min() const;
+            void setMin(double v);
+            double distance() const;
 
-    void setResolution(double resolution);
-    double resolution() const ;
+            void setResolution(double resolution);
+            double resolution() const ;
 
-    void set(const NumericRange& vr);
-    void clear();
-};
+            void set(const NumericRange& vr);
+            void clear();
+    };
 }
 
 #endif // PYTHONAPI_RANGE_H

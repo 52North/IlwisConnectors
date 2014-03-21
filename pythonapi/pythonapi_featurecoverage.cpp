@@ -21,6 +21,7 @@
 #include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
 
 #include "pythonapi_featurecoverage.h"
+#include "pythonapi_error.h"
 
 using namespace pythonapi;
 

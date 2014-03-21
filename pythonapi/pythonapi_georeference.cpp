@@ -7,6 +7,7 @@
 #include "../../IlwisCore/core/ilwisobjects/geometry/georeference/georeference.h"
 
 #include "pythonapi_georeference.h"
+#include "pythonapi_error.h"
 
 namespace pythonapi {
 

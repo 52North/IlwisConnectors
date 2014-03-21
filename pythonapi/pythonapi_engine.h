@@ -3,6 +3,8 @@
 
 #include "pythonapi_object.h"
 
+typedef struct _object PyObject;
+
 namespace pythonapi {
 
     class Engine{

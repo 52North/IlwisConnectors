@@ -8,6 +8,8 @@ namespace Ilwis {
     typedef IlwisData<Table> ITable;
 }
 
+typedef struct _object PyObject;
+
 namespace pythonapi {
     class Table : public IlwisObject{
         friend class Coverage;

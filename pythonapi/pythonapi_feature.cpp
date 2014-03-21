@@ -22,7 +22,7 @@
 #include "pythonapi_feature.h"
 #include "pythonapi_featurecoverage.h"
 
-#include "pythonapi_pyvariant.h"
+#include "pythonapi_qvariant.h"
 #include <QVariant>
 
 using namespace pythonapi;

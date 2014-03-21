@@ -1,7 +1,7 @@
 #ifndef PYTHONAPI_UTIL_H
 #define PYTHONAPI_UTIL_H
 
-#include "pythonapi_ilwis.h"
+#include "pythonapi_extension.h"
 #include <memory>
 
 namespace geos {

@@ -1,12 +1,13 @@
-#include "pythonapi_ilwis.h"
-
 #include "pythonapi_qissuelogger.h"
 
-using namespace pythonapi;
+#include "pythonapi_pyobject.h"
 
-QIssueLogger::QIssueLogger(){
-}
-//QT SLOT
-void QIssueLogger::ilwiserrormessage(const QString &message){
-    pythonapi::log(message.toStdString());
+namespace pythonapi{
+
+    QIssueLogger::QIssueLogger(){
+    }
+    //QT SLOT
+    void QIssueLogger::ilwiserrormessage(const QString &message){
+        log(message.toStdString());
+    }
 }
