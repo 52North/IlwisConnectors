@@ -26,6 +26,7 @@
 #include "pythonapi_pixeliterator.h"
 #include "pythonapi_georeference.h"
 #include "pythonapi_rastercoverage.h"
+#include "pythonapi_range.h"
 %}
 
 %include "pythonapi_qtGNUTypedefs.h"
@@ -230,4 +231,6 @@ namespace pythonapi {
 %include "pythonapi_georeference.h"
 
 %include "pythonapi_rastercoverage.h"
+
+%include "pythonapi_range.h"
 

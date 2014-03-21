@@ -44,10 +44,14 @@ The prepare_PATH scripts can be used in bash like this ". ./prepare_PATH.sh" or 
 or in cmd like this "prepare_PATH.bat" to only set the PATH environment separately for the session.
 For permanent setup you might add those pathes to the systems environment variables.
 
-The Qt library  requires the qt.conf file to be found in the executable path, which in this case is the path
-to the Python33.exe. Within that config file the Prefix (folder) for Qt dynamic plugin loading is set to
+The Qt library  requires the qt.conf file to be found in the executable path, which in this case is the path to the Python33.exe. Within that config file the Prefix (folder) for Qt dynamic plugin loading is set to
 
 Prefix = <yourPathToQt>\
+
+Note that this prefix doesn't include the .\bin sub-directory!
+if the plugins sub-directory for qt plugint was customized, the qt.conf should also refer to the new sub-directory like:
+
+Plugins = <plugins sub-dir>
 
 --3--  ILWIS environment
 

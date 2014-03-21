@@ -11,6 +11,8 @@ TEMPLATE = lib
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/pythonapi
 DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
 
+PYTHONDIR = C:/Python33
+
 HEADERS += \
     pythonapi/pythonapi_rastercoverage.h \
     pythonapi/pythonapi_coordinatesystem.h \
@@ -31,7 +33,9 @@ HEADERS += \
     pythonapi/pythonapi_pycontainer.h \
     pythonapi/pythonapi_table.h \
     pythonapi/pythonapi_georeference.h \
-    pythonapi/pythonapi_pydatetime.h
+    pythonapi/pythonapi_pydatetime.h \
+    pythonapi/pythonapi_domain.h \
+    pythonapi/pythonapi_range.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
@@ -53,7 +57,9 @@ SOURCES += \
     pythonapi/pythonapi_util.cpp \
     pythonapi/pythonapi_table.cpp \
     pythonapi/pythonapi_georeference.cpp \
-    pythonapi/pythonapi_pydatetime.cpp
+    pythonapi/pythonapi_pydatetime.cpp \
+    pythonapi/pythonapi_domain.cpp \
+    pythonapi/pythonapi_range.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \
@@ -71,7 +77,7 @@ OTHER_FILES += \
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
-        -LC:\Python33\libs -lpython33
+        -L$$PYTHONDIR/libs -lpython33
 
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
@@ -79,7 +85,7 @@ win32:CONFIG(release, debug|release): {
 
 INCLUDEPATH += $$PWD/../ilwiscore/core \
                $$PWD/../external/geos \
-               C:/Python33/include/
+               $$PYTHONDIR/include/
 DEPENDPATH += $$PWD/../ilwiscore/core \
               $$PWD/../external/geos
 
@@ -92,9 +98,9 @@ mytarget.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
 
 python_target.files = pythonapi/ilwisobjects.py \
                       pythonapi/CHANGELOG
-python_target.path = C:/Python33/Lib/site-packages
+python_target.path = $$PYTHONDIR/Lib/site-packages
 
-target.path = C:/Python33/Lib/site-packages
+target.path = $$PYTHONDIR/Lib/site-packages
 
 INSTALLS += mytarget python_target target
 
