@@ -10,7 +10,6 @@ class WFSCONNECTORSHARED_EXPORT XmlStreamParser
 {
 public:
 
-    XmlStreamParser();
     XmlStreamParser(QXmlStreamReader *reader);
     XmlStreamParser(QIODevice *device);
 

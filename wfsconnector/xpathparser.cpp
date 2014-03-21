@@ -3,11 +3,6 @@
 
 #include "xpathparser.h"
 
-XPathParser::XPathParser()
-{
-    _query = new QXmlQuery;
-}
-
 XPathParser::XPathParser(QIODevice *device): _iodevice(device)
 {
     _query = new QXmlQuery;

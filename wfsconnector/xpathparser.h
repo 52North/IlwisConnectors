@@ -13,7 +13,6 @@ class QXmlItem;
 class WFSCONNECTORSHARED_EXPORT XPathParser
 {
 public:
-    XPathParser();
     XPathParser(QIODevice *device);
     ~XPathParser();
 

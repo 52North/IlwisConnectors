@@ -19,12 +19,6 @@
  *
  */
 
-
-
-XmlStreamParser::XmlStreamParser()
-{
-}
-
 XmlStreamParser::XmlStreamParser(QXmlStreamReader *reader): _reader(reader)
 {
 }
