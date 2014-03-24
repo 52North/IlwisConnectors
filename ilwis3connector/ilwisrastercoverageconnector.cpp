@@ -256,7 +256,7 @@ qint64  RasterCoverageConnector::conversion(QFile& file, Grid *grid, int& count)
 
             values[i] = noconversionneeded ? v :_converter.raw2real(v);
         }
-        grid->setBlock(count, values, true);
+        grid->setBlockData(count, values, true);
         totalRead += result;
         ++count;
         szLeft -= blockSizeBytes;

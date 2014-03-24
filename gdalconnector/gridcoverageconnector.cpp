@@ -179,7 +179,7 @@ Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
                 double v = value(block, i);
                 values[i] = v;
             }
-            grid->setBlock(count, values, true);
+            grid->setBlockData(count, values, true);
             ++count;
             ++gdalindex;
             if ( linesLeft < linesPerBlock )
