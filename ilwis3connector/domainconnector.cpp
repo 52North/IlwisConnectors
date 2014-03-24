@@ -246,13 +246,13 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
     }
 
     std::map<quint32, std::vector<QVariant>> orderedRecords;
-    for(SPDomainItem item : iddomain){
+    for(DomainItem *item : iddomain){
         std::vector<QVariant> record(tp == itTHEMATICITEM ? 5 : 3);
         record[0] = item->name();
         record[1] = item->raw() + 1;
         record[2] = item->raw() + 1;
         if ( tp == itTHEMATICITEM) {
-            SPThematicItem thematicItem = item.staticCast<ThematicItem>();
+            ThematicItem *thematicItem = static_cast<ThematicItem *>(item);
             record[3] = thematicItem->code();
             record[4] = thematicItem->description();
         }
