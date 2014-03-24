@@ -1,6 +1,6 @@
 /* The ILWIS SWIG interface file*/
 
-%module(docstring="The Python API for ILWIS NG") ilwisobjects
+%module(docstring="The Python API for ILWIS Objects") ilwisobjects
 
 %feature("autodoc","1");
 
@@ -32,6 +32,10 @@
 %include "pythonapi_qtGNUTypedefs.h"
 
 %init %{
+    //init FeatureCreationError for Python
+    pythonapi::featureCreationError = PyErr_NewException("_ilwisobjects.FeatureCreationError",NULL,NULL);
+    Py_INCREF(pythonapi::featureCreationError);
+    PyModule_AddObject(m, "FeatureCreationError", pythonapi::featureCreationError);//m is SWIG declaration for Python C API modul creation
     //init IlwisException for Python
     pythonapi::ilwisException = PyErr_NewException("_ilwisobjects.IlwisException",NULL,NULL);
     Py_INCREF(pythonapi::ilwisException);
@@ -57,27 +61,7 @@
 %pythoncode %{
     IlwisException = _ilwisobjects.IlwisException
     InvalidObjectException = _ilwisobjects.InvalidObjectException
-
-    class ReadOnly(type):
-        @property
-        def sUNDEF(cls):
-            return "?"
-        @property
-        def shUNDEF(cls):
-            return -32767
-        @property
-        def iUNDEF(cls):
-            return -2147483647
-        @property
-        def rUNDEF(cls):
-            return -1e308
-        @property
-        def flUNDEF(cls):
-            return -1e38
-        @property
-        def i64UNDEF(cls):
-            return -9223372036854775808
-    class Const(metaclass=ReadOnly):pass
+    FeatureCreationError = _ilwisobjects.FeatureCreationError
 %}
 //catch std::exception's on all C API function calls
 %exception{
@@ -232,3 +216,26 @@ namespace pythonapi {
 
 %include "pythonapi_range.h"
 
+// declaring the Const for Python side xUNDEF declarations
+%pythoncode %{
+    class ReadOnly(type):
+        @property
+        def sUNDEF(cls):
+            return "?"
+        @property
+        def shUNDEF(cls):
+            return -32767
+        @property
+        def iUNDEF(cls):
+            return -2147483647
+        @property
+        def rUNDEF(cls):
+            return -1e308
+        @property
+        def flUNDEF(cls):
+            return -1e38
+        @property
+        def i64UNDEF(cls):
+            return -9223372036854775808
+    class Const(metaclass=ReadOnly):pass
+%}

@@ -17,6 +17,7 @@ namespace pythonapi {
     void log(std::string message);
     extern PyObject* ilwisException;
     extern PyObject* invalidObjectException;
+    extern PyObject* featureCreationError;
     PyObject* translate_Exception_type(std::exception& e);
 
     //=======basic types=======================

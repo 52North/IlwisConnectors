@@ -453,7 +453,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             fc_invalid = FeatureCoverage("newFC")
             self.assertTrue(fc_invalid.isInternal())
             g = Geometry("POINT(5.4 6 9.0)", CoordinateSystem("code=epsg:23035"))
-            with self.assertRaises(Exception, msg="should raise FeatureCreationError"):  # TODO to be translated into Python FeatureCreationError
+            with self.assertRaises(FeatureCreationError, msg="should raise FeatureCreationError"):
                 newfeature = fc_invalid.newFeature(g)
 
 

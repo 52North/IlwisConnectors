@@ -28,7 +28,7 @@ namespace pythonapi{
             virtual const char* what() const throw();
     };
 
-    //to indicate an error system interaction (like IO error)
+    //to indicate an error during operating system interaction (like IO error)
     class OSError : public std::exception{
         private:
             std::string _what;
@@ -46,7 +46,7 @@ namespace pythonapi{
             virtual const char* what() const throw();
     };
 
-    //to indicate next() == it.end() the Python way
+    //to indicate next() == it.end() the Python way during for(each) loops
     class StopIteration : public std::exception{
         public:
             StopIteration(){}
@@ -56,7 +56,8 @@ namespace pythonapi{
     //can retrieve Ilwis::ErrorObject::message() or std::exception::what()
     const char *get_err_message(std::exception& e);
     //returns typeid(Ilwis::ErrorObject) to compare in translate_Exception_type
-    size_t ilwisErrorObject_type_info();
+    const std::type_info& ilwisErrorObject_type_info();
+    const std::type_info& ilwisFeatureCreationError_type_info();
 
 }
 

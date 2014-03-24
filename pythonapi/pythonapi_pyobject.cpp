@@ -22,6 +22,7 @@ namespace pythonapi {
 
     PyObject* ilwisException;
     PyObject* invalidObjectException;
+    PyObject* featureCreationError;
 
     PyObject* translate_Exception_type(std::exception& e){
         if (typeid(e) == typeid(std::domain_error)){
@@ -32,8 +33,9 @@ namespace pythonapi {
             return PyExc_MemoryError;
         }else if (typeid(e) == typeid(std::bad_cast)){
             return invalidObjectException;
-        //TODO detect FeatureCreationError and raise translated Python FeatureCreationError
-        }else if(typeid(e).hash_code() == ilwisErrorObject_type_info()){
+        }else if(typeid(e) == ilwisFeatureCreationError_type_info()){
+            return featureCreationError;
+        }else if(typeid(e) == ilwisErrorObject_type_info()){
             return ilwisException;
         }else if (typeid(e) == typeid(InvalidObject)){
             return invalidObjectException;

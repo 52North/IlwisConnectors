@@ -3,6 +3,7 @@
 #include "../../IlwisCore/core/kernel.h"
 #include "../../IlwisCore/core/errorobject.h"
 
+#include <typeinfo>
 
 namespace pythonapi {
 
@@ -46,8 +47,12 @@ namespace pythonapi {
             return e.what();
     }
 
-    size_t ilwisErrorObject_type_info(){
-        return typeid(Ilwis::ErrorObject).hash_code();
+    const std::type_info& ilwisErrorObject_type_info(){
+        return typeid(Ilwis::ErrorObject);
+    }
+
+    const std::type_info& ilwisFeatureCreationError_type_info(){
+        return typeid(Ilwis::FeatureCreationError);
     }
 
 }//namespace pythonapi
