@@ -1138,9 +1138,9 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             # bi = [0., 25.5, 51., 76.5, 102., 127.5, 153., 178.5, 204., 229.5, 255.]
             # self.assertTrue(all(bi[i] == bins[i] for i in range(len(bi))))
 
-            plt.figure()
-            plt.hist(npRaster, 255, (0, 253))
-            plt.show()
+            # plt.figure()
+            # plt.hist(npRaster, 255, (0, 253))
+            # plt.show()
 
             # n = 5
             # menMeans = (20, 35, 30, 35, 27)
