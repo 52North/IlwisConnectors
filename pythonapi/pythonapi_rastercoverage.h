@@ -16,6 +16,7 @@ namespace pythonapi {
     class RasterCoverage : public Coverage{
          friend class PixelIterator;
          friend class Engine;
+         friend class Catalog;
     private:
          RasterCoverage(Ilwis::IRasterCoverage* coverage);
     public:

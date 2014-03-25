@@ -9,6 +9,23 @@
 #include "pythonapi_pyobject.h"
 #include "pythonapi_error.h"
 
+#include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/numericrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/numericdomain.h"
+#include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
+#include "../../IlwisCore/core/ilwisobjects/table/table.h"
+#include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
+#include "../../IlwisCore/core/factory.h"
+#include "../../IlwisCore/core/abstractfactory.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/featurefactory.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
+#include "pythonapi_featurecoverage.h"
+
+#include "../../IlwisCore/core/ilwisobjects/coverage/raster.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/rastercoverage.h"
+#include "pythonapi_rastercoverage.h"
+
 namespace pythonapi {
 
     Catalog::Catalog(const std::string& url, const std::string& filter){
@@ -50,6 +67,24 @@ namespace pythonapi {
         }else{
             return newPyTuple(0);
         }
+    }
+
+    IlwisObject* Catalog::_getitem(const std::string &name){
+        Ilwis::Resource res;
+        std::vector<Ilwis::Resource> itms = this->_data->items();
+        for(auto it = itms.begin(); it < itms.end(); it++ ){
+            if(it->name().compare(QString::fromStdString(name), Qt::CaseInsensitive) == 0){
+                IlwisTypes type = it->ilwisType();
+                if (hasType(type,itFEATURE)){//TODO extent for itCOORDSYSTEM,itGEOREF, etc..
+                    return new FeatureCoverage(new Ilwis::IFeatureCoverage(*it));
+                }else if (hasType(type,itRASTER)){
+                    return new RasterCoverage(new Ilwis::IRasterCoverage(*it));
+                }else{
+                    return new IlwisObject(new Ilwis::IIlwisObject(*it));
+                }
+            }
+        }
+        throw std::out_of_range(std::string("item not found: ")+name);
     }
 
 

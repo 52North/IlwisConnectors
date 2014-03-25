@@ -15,6 +15,7 @@ using namespace pythonapi;
 Coverage::Coverage():IlwisObject(){}
 
 Coverage::Coverage(Ilwis::ICoverage *coverage):IlwisObject(new Ilwis::IIlwisObject(*coverage)){
+    delete coverage;
 }
 
 bool Coverage::addAttribute(const std::string& name, const std::string& domain){

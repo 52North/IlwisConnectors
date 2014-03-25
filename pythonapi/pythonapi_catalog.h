@@ -1,9 +1,7 @@
 #ifndef PYTHONAPI_CATALOG_H
 #define PYTHONAPI_CATALOG_H
 
-#include "pythonapi_object.h"
-
-#include <memory>
+#include "pythonapi_ilwisobject.h"
 
 namespace Ilwis {
     class CatalogView;
@@ -23,7 +21,8 @@ namespace pythonapi {
             IlwisTypes ilwisType();
 
             PyObject* items();
-        protected:
+            IlwisObject* _getitem(const std::string &name);
+    protected:
             std::unique_ptr<Ilwis::CatalogView> _data;
     };
 

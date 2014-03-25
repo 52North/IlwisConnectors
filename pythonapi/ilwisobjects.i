@@ -218,6 +218,25 @@ namespace pythonapi {
 %include "pythonapi_range.h"
 
 %include "pythonapi_catalog.h"
+%extend pythonapi::Catalog {
+%insert("python") %{
+    def __getitem__(self, name):
+        obj = self._getitem(name)
+        type = obj.ilwisType()
+        if type == 8:
+            return RasterCoverage.toRasterCoverage(obj)
+        elif 1 <= type <= 7:
+            return FeatureCoverage.toFeatureCoverage(obj)
+        elif type == 524288:
+            return GeoReference.toGeoReference(obj)
+        elif (type == 4096) or (type == 8192):
+            return CoordinateSystem.toCoordinateSystem(obj)
+        elif type == 0:
+            raise TypeError("unknown IlwisType")
+        else:
+            return obj
+%}
+}
 
 // declaring the Const for Python side xUNDEF declarations
 %pythoncode %{

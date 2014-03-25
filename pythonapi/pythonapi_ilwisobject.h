@@ -15,6 +15,7 @@ namespace pythonapi {
 
     class IlwisObject: public Object{
         friend class Engine;
+        friend class Catalog;
     public:
         //should be the same as enum Ilwis::IlwisObject::ConnectorMode (ilwisobject.h)
         enum ConnectorMode{cmINPUT=1, cmOUTPUT=2, cmEXTENDED=4};

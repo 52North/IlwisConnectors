@@ -41,7 +41,7 @@ using namespace pythonapi;
 Engine::Engine(){
 }
 
-Object *Engine::_do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5,std::string c6, std::string c7, std::string c8, std::string c9){
+Object* Engine::_do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5,std::string c6, std::string c7, std::string c8, std::string c9){
     Ilwis::SymbolTable symtbl;
     Ilwis::ExecutionContext ctx;
     ctx.clear();

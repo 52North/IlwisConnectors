@@ -426,7 +426,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertFalse(fc.isInternal())
             self.assertEqual(fc.featureCount(), 0)
             for f in fc:
-                self.assertEqual("", str(f.geometry()))
+                self.assertRegex(str(f.geometry()), r"MULTILINESTRING\s\(\([\s\.\-\,0-9]*\)\)")
 
         ##@ut.skip("temporarily")
         def test_FeatureCoverage(self):
@@ -752,6 +752,14 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             cat = Catalog(workingDir+featureDir+"/test.gpx")  # TODO use setWorkingCatalog instead of full Url
             self.assertTupleEqual(('route_points', 'routes', 'track_points', 'tracks', 'waypoints'), cat.items())
             self.assertTrue(bool(cat))
+            trks = cat['tracks']
+            self.assertTrue(bool(trks))
+            it = iter(trks)
+            self.assertEqual(1, trks.featureCount())
+            trkpts = cat['track_points']
+            self.assertTrue(bool(trkpts))
+            it = iter(trkpts)
+            self.assertEqual(830, trkpts.featureCount())
 
 
     #@ut.skip("temporarily")
