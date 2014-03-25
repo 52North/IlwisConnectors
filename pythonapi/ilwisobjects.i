@@ -27,6 +27,7 @@
 #include "pythonapi_georeference.h"
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_range.h"
+#include "pythonapi_catalog.h"
 %}
 
 %include "pythonapi_qtGNUTypedefs.h"
@@ -215,6 +216,8 @@ namespace pythonapi {
 %include "pythonapi_rastercoverage.h"
 
 %include "pythonapi_range.h"
+
+%include "pythonapi_catalog.h"
 
 // declaring the Const for Python side xUNDEF declarations
 %pythoncode %{

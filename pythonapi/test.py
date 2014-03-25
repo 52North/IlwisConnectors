@@ -422,8 +422,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 self.skipTest("could not set working directory!")
 
         def test_GPXFromFile(self):
-            # fc = FeatureCoverage("favourites.gpx")
-            fc = FeatureCoverage("test.gpx")
+            fc = FeatureCoverage(workingDir+featureDir+"/test.gpx/tracks")  # TODO use setWorkingCatalog instead of full Url
             self.assertFalse(fc.isInternal())
             self.assertEqual(fc.featureCount(), 0)
             for f in fc:
@@ -737,6 +736,22 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertEqual("POLYGON(536 478,536 478)", str(
                 gr.envelope2Box(Envelope(Coordinate(-319195.47, 784540.64), Coordinate(-319990.248000, 784032.506500)))
             ))
+
+    #@ut.skip("temporarily")
+    class TestCatalog(ut.TestCase):
+        def setUp(self):
+            try:
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir+featureDir)
+                connectIssueLogger()
+            except IlwisException:
+                connectIssueLogger()
+                self.skipTest("could not set working directory!")
+
+        def test_GPX(self):
+            cat = Catalog(workingDir+featureDir+"/test.gpx")  # TODO use setWorkingCatalog instead of full Url
+            self.assertTupleEqual(('route_points', 'routes', 'track_points', 'tracks', 'waypoints'), cat.items())
+            self.assertTrue(bool(cat))
 
 
     #@ut.skip("temporarily")

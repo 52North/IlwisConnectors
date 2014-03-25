@@ -35,7 +35,8 @@ HEADERS += \
     pythonapi/pythonapi_engine.h \
     pythonapi/pythonapi_domain.h \
     pythonapi/pythonapi_coverage.h \
-    pythonapi/pythonapi_coordinatesystem.h
+    pythonapi/pythonapi_coordinatesystem.h \
+    pythonapi/pythonapi_catalog.h
 
 
 SOURCES += \
@@ -59,7 +60,8 @@ SOURCES += \
     pythonapi/pythonapi_engine.cpp \
     pythonapi/pythonapi_domain.cpp \
     pythonapi/pythonapi_coverage.cpp \
-    pythonapi/pythonapi_coordinatesystem.cpp
+    pythonapi/pythonapi_coordinatesystem.cpp \
+    pythonapi/pythonapi_catalog.cpp
 
 
 OTHER_FILES += \
