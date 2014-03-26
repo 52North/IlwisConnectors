@@ -27,11 +27,7 @@ namespace pythonapi{
         this->ptr()->get<Ilwis::Domain>()->setStrict(yesno);
     }
 
-    IlwisTypes Domain::valueType() const{
-        return itUNKNOWN;
-    }
-
-    PyObject *Domain::impliedValue(PyObject *value) const{
+    PyObject* Domain::impliedValue(PyObject *value) const{
         return value;
     }
 
@@ -46,9 +42,9 @@ namespace pythonapi{
         this->ptr()->get<Ilwis::Domain>()->setParent(dom.ptr()->get<Ilwis::Domain>());
     }
 
-    Ilwis::Domain::Containement Domain::contains(PyObject *value) const{
+    Domain::Containement Domain::contains(PyObject* value) const{
         std::unique_ptr<QVariant> var(PyObject2QVariant(value));
-        return this->ptr()->get<Ilwis::Domain>()->contains(*var);
+        return (Domain::Containement)this->ptr()->get<Ilwis::Domain>()->contains(*var);
     }
 
     bool Domain::isCompatibleWith(const Domain &dom) const{

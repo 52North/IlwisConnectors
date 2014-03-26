@@ -21,11 +21,11 @@ namespace pythonapi {
             std::string __str__();
             IlwisTypes valueType();
 
-            PyObject *ensure(const PyObject* v, bool inclusive = true) const;
+            PyObject* ensure(const PyObject* v, bool inclusive = true) const;
             bool contains(const PyObject *value, bool inclusive = true) const;
 
             bool isContinuous() const;
-            PyObject *impliedValue(const PyObject *value) const;
+            PyObject* impliedValue(const PyObject *value) const;
 
         protected:
             std::shared_ptr<Ilwis::Range> _range;

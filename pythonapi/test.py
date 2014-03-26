@@ -774,7 +774,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
 
         def test_fromWFS(self):
             cat = Catalog("http://ogi.state.ok.us/geoserver/wfs?acceptVersions=1.1.0&REQUEST=GetCapabilities&SERVICE=WFS")
-            self.assertTupleEqual((), cat.items())
+            self.assertTupleEqual((), cat.items())  # TODO WFS not yet working
 
 
     #@ut.skip("temporarily")

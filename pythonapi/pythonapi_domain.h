@@ -17,19 +17,18 @@ namespace pythonapi {
 
     class Domain : public IlwisObject{
         public:
-            //enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
+            enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
 
             Domain();
 
             bool isStrict() const;
             void setStrict(bool yesno);
 
-            virtual IlwisTypes valueType() const ;
             virtual PyObject* impliedValue(PyObject *value) const;
             Domain parent() const;
             void setParent(const Domain& dom);
 
-            Ilwis::Domain::Containement contains(PyObject *value) const;
+            Containement contains(PyObject* value) const;
             bool isCompatibleWith(const Domain& dom) const;
             void setRange(const Range& rng);
             static Domain* toDomain(Object* obj);
