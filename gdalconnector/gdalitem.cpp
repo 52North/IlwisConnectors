@@ -43,8 +43,12 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
             insert(resGrf);
             addItem(url, csyId, resGrf.id());
         } else{
-            if ( count == 1) //  default case, one layer per object
-                addItem(url, csyId, iUNDEF, itFEATURE , extTypes);
+            if ( count == 1) {//  default case, one layer per object
+                addItem(url, csyId, iUNDEF, itFEATURE , itCOORDSYSTEM | itTABLE);
+                addItem(url, 0, iUNDEF, itTABLE , 0);
+                if (! mastercatalog()->id2Resource(csyId).isValid())
+                    addItem(QUrl(url), 0, iUNDEF, itCONVENTIONALCOORDSYSTEM , 0);
+            }
             else { // multiple layers, the file itself will be marked as container; internal layers will be added using this file as container
                 //TODO: atm the assumption is that all gdal containers are files. this is true in the majority of the cases but not in all. Without a proper testcase the non-file option will not(yet) be implemented
                 addItem(url, iUNDEF, iUNDEF, itCATALOG , extTypes | itFILE);
@@ -55,7 +59,10 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
                         if ( cname){
                             QString layerName(gdal()->getLayerName(layerH));
                             QString layerurl = url.toString() + "/" + layerName;
-                            addItem(QUrl(layerurl), csyId, iUNDEF, itFEATURE , extTypes);
+                            addItem(QUrl(layerurl), csyId, iUNDEF, itFEATURE , itCOORDSYSTEM | itTABLE);
+                            addItem(QUrl(layerurl), 0, iUNDEF, itTABLE , 0);
+                            if (! mastercatalog()->id2Resource(csyId).isValid())
+                                addItem(QUrl(layerurl), 0, iUNDEF, itCONVENTIONALCOORDSYSTEM , 0);
                         }
 
                     }
@@ -78,7 +85,7 @@ void GDALItems::addItem(const QUrl& url, quint64 csyid, quint64 grfId, IlwisType
         gdalItem.addProperty("georeference", grfId);
         gdalItem.setExtendedType(itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM);
     }else
-       gdalItem.setExtendedType(itCONVENTIONALCOORDSYSTEM | extTypes);
+       gdalItem.setExtendedType(extTypes);
 
     insert(gdalItem);
 }
