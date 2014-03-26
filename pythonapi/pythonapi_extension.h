@@ -3,10 +3,31 @@
 
 #include "pythonapi_qtGNUTypedefs.h"
 
+#include "../../core/ilwistypes.h"
+
 namespace pythonapi{
     //init modul
-    bool initIlwisObjects();
+    bool _initIlwisObjects();
     void disconnectIssueLogger();
     void connectIssueLogger();
+
+    //ilwisTypes
+    struct it{
+        enum ilwisType{
+            FEATURE = itFEATURE,
+            RASTER = itRASTER,
+            COVERAGE = itCOVERAGE,
+            TABLE = itTABLE,
+            GEOREF = itGEOREF,
+            COORDSYSTEM = itCOORDSYSTEM,
+            DOMAIN = itDOMAIN,
+            NUMERICDOMAIN = itNUMERICDOMAIN,
+            OPERATIONMETADATA = itOPERATIONMETADATA,
+            PROJECTION = itPROJECTION,
+            ELLIPSOID = itELLIPSOID,
+            CATALOG = itCATALOG,
+            CONTINUOUSCOLOR = itCONTINUOUSCOLOR
+        };
+    };
 }
 #endif // PYTHONAPI_EXTENSION_H

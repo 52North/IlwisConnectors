@@ -12,6 +12,7 @@
 #include "pythonapi_pyobject.h"
 #include "pythonapi_feature.h"
 #include "pythonapi_qvariant.h"
+#include "pythonapi_error.h"
 
 namespace pythonapi {
 
@@ -19,6 +20,7 @@ namespace pythonapi {
     }
 
     Table::Table(Ilwis::ITable *table):IlwisObject(new Ilwis::IIlwisObject(*table)){
+        delete table;
     }
 
     Table::Table(std::string resource){
@@ -130,5 +132,11 @@ namespace pythonapi {
         return StdVectorOfQVariant2PyTuple(this->ptr()->get<Ilwis::Table>()->record(rec));
     }
 
+    Table* Table::toTable(Object *obj){
+        Table* ptr = dynamic_cast<Table*>(obj);
+        if(!ptr)
+            throw InvalidObject("cast to Table not possible");
+        return ptr;
+    }
 
 } // namespace pythonapi

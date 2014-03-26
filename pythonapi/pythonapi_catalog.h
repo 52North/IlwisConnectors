@@ -21,8 +21,11 @@ namespace pythonapi {
             IlwisTypes ilwisType();
 
             PyObject* items();
-            IlwisObject* _getitem(const std::string &name);
+            Object* _getitem(const std::string &name);
+
+            Catalog* toCatalog(Object* obj);
     protected:
+            Catalog(Ilwis::CatalogView* cat);
             std::unique_ptr<Ilwis::CatalogView> _data;
     };
 

@@ -13,39 +13,40 @@ namespace Ilwis {
 
 namespace pythonapi {
 
-class Domain : public IlwisObject
-{
-public:
-    //enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
+    class Range;
 
-    Domain();
+    class Domain : public IlwisObject{
+        public:
+            //enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
 
-    bool isStrict() const;
-    void setStrict(bool yesno);
+            Domain();
 
-    virtual IlwisTypes valueType() const ;
-    virtual PyObject* impliedValue(PyObject *value) const;
-    Domain parent() const;
-    void setParent(const Domain& dom);
+            bool isStrict() const;
+            void setStrict(bool yesno);
 
-    Ilwis::Domain::Containement contains(PyObject *value) const;
-    bool isCompatibleWith(const Domain& dom) const;
-    void setRange(const Range& rng);
+            virtual IlwisTypes valueType() const ;
+            virtual PyObject* impliedValue(PyObject *value) const;
+            Domain parent() const;
+            void setParent(const Domain& dom);
 
-private:
-    Domain(Ilwis::IDomain *domain);
-};
+            Ilwis::Domain::Containement contains(PyObject *value) const;
+            bool isCompatibleWith(const Domain& dom) const;
+            void setRange(const Range& rng);
+            static Domain* toDomain(Object* obj);
+        protected:
+            Domain(Ilwis::IDomain *domain);
+    };
 
-class NumericDomain : public Domain
-{
-public:
-    NumericDomain(const std::string& resource);
-    static NumericDomain *toNumericDomain(Object *obj);
+    class NumericDomain : public Domain{
+        friend class Catalog;
+        public:
+            NumericDomain(const std::string& resource);
+            static NumericDomain* toNumericDomain(Object *obj);
 
 
-private:
-    NumericDomain(Ilwis::INumericDomain *dom);
-};
-}
+        private:
+            NumericDomain(Ilwis::INumericDomain* domain);
+    };
+    }
 
 #endif // PYTHONAPI_DOMAIN_H

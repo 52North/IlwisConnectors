@@ -26,6 +26,12 @@
 #include "../../IlwisCore/core/ilwisobjects/coverage/rastercoverage.h"
 #include "pythonapi_rastercoverage.h"
 
+#include "pythonapi_domain.h"
+
+#include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/projection.h"
+#include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/ellipsoid.h"
+#include "../../IlwisCore/core/ilwisobjects/operation/operationmetadata.h"
+
 namespace pythonapi {
 
     Catalog::Catalog(const std::string& url, const std::string& filter){
@@ -69,16 +75,34 @@ namespace pythonapi {
         }
     }
 
-    IlwisObject* Catalog::_getitem(const std::string &name){
+    Object* Catalog::_getitem(const std::string &name){
         Ilwis::Resource res;
         std::vector<Ilwis::Resource> itms = this->_data->items();
         for(auto it = itms.begin(); it < itms.end(); it++ ){
             if(it->name().compare(QString::fromStdString(name), Qt::CaseInsensitive) == 0){
                 IlwisTypes type = it->ilwisType();
-                if (hasType(type,itFEATURE)){//TODO extent for itCOORDSYSTEM,itGEOREF, etc..
+                if (hasType(type,itFEATURE)){
                     return new FeatureCoverage(new Ilwis::IFeatureCoverage(*it));
                 }else if (hasType(type,itRASTER)){
                     return new RasterCoverage(new Ilwis::IRasterCoverage(*it));
+                }else if (hasType(type,itTABLE)){
+                    return new Table(new Ilwis::ITable(*it));
+                }else if (hasType(type,itNUMERICDOMAIN)){
+                    return new NumericDomain(new Ilwis::INumericDomain(*it));
+                }else if (hasType(type,itCOORDSYSTEM)){
+                    return new CoordinateSystem(new Ilwis::ICoordinateSystem(*it));
+                }else if (hasType(type,itGEOREF)){
+                    return new GeoReference(new Ilwis::IGeoReference(*it));
+//                }else if (hasType(type,itOPERATIONMETADATA)){
+//                    return new OperationMetaData(new Ilwis::IOperationMetaData(*it));
+//                }else if (hasType(type,itPROJECTION)){
+//                    return new Projection(new Ilwis::IProjection(*it));
+//                }else if (hasType(type,itELLIPSOID)){
+//                    return new Ellipsoid(new Ilwis::IEllipsoid(*it));
+                }else if (hasType(type,itCATALOG)){
+                    Ilwis::CatalogView* cat = new Ilwis::CatalogView();
+                    cat->prepare(it->url());
+                    return new Catalog(cat);
                 }else{
                     return new IlwisObject(new Ilwis::IIlwisObject(*it));
                 }
@@ -87,6 +111,15 @@ namespace pythonapi {
         throw std::out_of_range(std::string("item not found: ")+name);
     }
 
+    Catalog *Catalog::toCatalog(Object *obj){
+        Catalog* ptr = dynamic_cast<Catalog*>(obj);
+        if(!ptr)
+            throw InvalidObject("cast to Catalog not possible");
+        return ptr;
+    }
 
+    Catalog::Catalog(Ilwis::CatalogView *cat){
+        this->_data.reset(cat);
+    }
 
 } // namespace pythonapi

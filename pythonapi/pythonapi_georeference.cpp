@@ -12,6 +12,7 @@
 namespace pythonapi {
 
     GeoReference::GeoReference(Ilwis::IGeoReference* gr): IlwisObject(new Ilwis::IIlwisObject(*gr)){
+        delete gr;
     }
 
     GeoReference::GeoReference(const std::string& resource){

@@ -13,6 +13,7 @@ typedef struct _object PyObject;
 namespace pythonapi {
     class Table : public IlwisObject{
         friend class Coverage;
+        friend class Catalog;
         public:
             Table();
             Table(std::string resource);
@@ -38,6 +39,8 @@ namespace pythonapi {
             void setCell(quint32 colIndex, quint32 rec, std::string value);
             void setCell(const std::string &name, quint32 rec, double value);
             void setCell(quint32 colIndex, quint32 rec, double value);
+
+            static Table* toTable(Object* obj);
         private:
             Table(Ilwis::ITable* table);
     };

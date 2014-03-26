@@ -354,6 +354,17 @@ try:
             self.assertFalse(bool(fc))
             connectIssueLogger()
 
+        def test_ilwisTypes(self):
+            self.assertEqual(7, it.FEATURE)
+            self.assertTrue((it.FEATURE & 4) != 0)
+            self.assertFalse((it.CATALOG & it.FEATURE) != 0)
+            self.assertEqual(4, (it.FEATURE & 4))
+            self.assertEqual(524288, it.CATALOG)
+            it.CATALOG = 0
+            self.assertEqual(0, it.CATALOG)
+            it.CATALOG = 524288
+            self.assertEqual(0, it.CONTINUOUSCOLOR, msg="SWIG uses static_cat<int> before translation which destroys big enum values!")
+
     #@ut.skip("temporarily")
     class TestConst(ut.TestCase):
         def test_UNDEF(self):
@@ -748,7 +759,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
-        def test_GPX(self):
+        def test_fromGPX(self):
             cat = Catalog(workingDir+featureDir+"/test.gpx")  # TODO use setWorkingCatalog instead of full Url
             self.assertTupleEqual(('route_points', 'routes', 'track_points', 'tracks', 'waypoints'), cat.items())
             self.assertTrue(bool(cat))
@@ -760,6 +771,10 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertTrue(bool(trkpts))
             it = iter(trkpts)
             self.assertEqual(830, trkpts.featureCount())
+
+        def test_fromWFS(self):
+            cat = Catalog("http://ogi.state.ok.us/geoserver/wfs?acceptVersions=1.1.0&REQUEST=GetCapabilities&SERVICE=WFS")
+            self.assertTupleEqual((), cat.items())
 
 
     #@ut.skip("temporarily")

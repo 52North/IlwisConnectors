@@ -1,4 +1,11 @@
 ==================CHANGELOG===================
+--alpha4--
+*added Catalog for multi layer coverages (and other containers)
+*added basic Domain and Range implementation
+
+--alpha3--
+*solved installer issue #44 regarding PATH environment manipulation
+
 --alpha2--
 *solved weak naming issue in nested raster calculations (caused by empty Symbol tables)
 

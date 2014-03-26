@@ -48,7 +48,7 @@
 
     //init QtCoreApllication, Ilwis library and IssueLogger connection
     try {
-        if (!pythonapi::initIlwisObjects()){
+        if (!pythonapi::_initIlwisObjects()){
             PyErr_SetString(PyExc_ImportError,"ILWIS couldn't be initiallized!");
             return NULL;
         }
@@ -74,11 +74,38 @@
     }
 }
 
-namespace pythonapi {
-    //instead of including whole (pythonapi_extension.h)
-    void disconnectIssueLogger();
-    void connectIssueLogger();
-}
+%include "pythonapi_extension.h"
+
+%pythoncode %{
+def object_cast(obj):
+    type = obj.ilwisType()
+    if it.RASTER & type != 0:
+        return RasterCoverage.toRasterCoverage(obj)
+    elif it.FEATURE & type != 0:
+        return FeatureCoverage.toFeatureCoverage(obj)
+    elif it.GEOREF & type != 0:
+        return GeoReference.toGeoReference(obj)
+    elif it.TABLE & type != 0:
+        return Table.toTable(obj)
+    elif it.NUMERICDOMAIN & type != 0:
+      return NumericDomain.toNumericDomain(obj)
+    elif it.DOMAIN & type != 0:
+      return Domain.toDomain(obj)
+    elif it.COORDSYSTEM & type != 0:
+        return CoordinateSystem.toCoordinateSystem(obj)
+#    elif it.OPERATIONMETADATA & type != 0:
+#        return OperationMetaData.toOperationMetaData(obj)
+#    elif it.PROJECTION & type != 0:
+#        return Projection.toProjection(obj)
+#    elif it.ELLIPSOID & type != 0:
+#        return Ellipsoid.toEllipsoid(obj)
+    elif it.CATALOG & type != 0:
+        return Catalog.toCatalog(obj)
+    elif type == 0:
+        raise TypeError("unknown IlwisType")
+    else:
+        return obj
+%}
 
 %include "pythonapi_object.h"
 
@@ -91,19 +118,7 @@ namespace pythonapi {
             obj = Engine__do(str(out),str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7))
         else:
             raise IlwisException("no operation given!")
-        type = obj.ilwisType()
-        if type == 8:
-            return RasterCoverage.toRasterCoverage(obj)
-        elif 1 <= type <= 7:
-            return FeatureCoverage.toFeatureCoverage(obj)
-        elif type == 524288:
-            return GeoReference.toGeoReference(obj)
-        elif (type == 4096) or (type == 8192):
-            return CoordinateSystem.toCoordinateSystem(obj)
-        elif type == 0:
-            raise TypeError("unknown IlwisType")
-        else:
-            return obj
+        return object_cast(obj)
 %}
 }
 
@@ -221,20 +236,7 @@ namespace pythonapi {
 %extend pythonapi::Catalog {
 %insert("python") %{
     def __getitem__(self, name):
-        obj = self._getitem(name)
-        type = obj.ilwisType()
-        if type == 8:
-            return RasterCoverage.toRasterCoverage(obj)
-        elif 1 <= type <= 7:
-            return FeatureCoverage.toFeatureCoverage(obj)
-        elif type == 524288:
-            return GeoReference.toGeoReference(obj)
-        elif (type == 4096) or (type == 8192):
-            return CoordinateSystem.toCoordinateSystem(obj)
-        elif type == 0:
-            raise TypeError("unknown IlwisType")
-        else:
-            return obj
+        return object_cast(self._getitem(name))
 %}
 }
 
