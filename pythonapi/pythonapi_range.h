@@ -61,6 +61,19 @@ public:
     void remove(const std::string& name);
     void clear();
 };
+
+class NumericItemRange : public ItemRange{
+
+    void add(PyObject *item);
+};
+
+class NamedItemRange : public ItemRange {
+    void add(PyObject *item);
+};
+
+class ThematicRange : public ItemRange {
+    void add(PyObject *item);
+};
 }
 
 #endif // PYTHONAPI_RANGE_H

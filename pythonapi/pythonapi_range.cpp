@@ -1,9 +1,16 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "range.h"
+#include "domain.h"
+#include "domainitem.h"
+#include "itemdomain.h"
 #include "numericrange.h"
 #include "itemrange.h"
-
+#include "numericitem.h"
+#include "identifieritem.h"
+#include "thematicitem.h"
+#include "numericitemrange.h"
+#include "pythonapi_pyobject.h"
 #include "pythonapi_range.h"
 #include "pythonapi_qvariant.h"
 
@@ -127,4 +134,57 @@ void ItemRange::remove(const std::string &name)
 void ItemRange::clear()
 {
     static_cast<Ilwis::ItemRange*>(_range.get())->clear();
+}
+
+//------------------------------------------------------------
+void NumericItemRange::add(PyObject *item)
+{
+    if (CppTupleElementCount(item) == 3 || CppTupleElementCount(item) == 4){
+        QString label = QString::fromStdString(CppTupleElement2String(item,0));
+        if ( label == sUNDEF)
+            return;
+
+        double rmin = CppTupleElement2Double(item, 1);
+        double rmax = CppTupleElement2Double(item,2);
+        if ( rmin == rUNDEF || rmax == rUNDEF)
+            return;
+        Ilwis::NumericItem *numitem;
+        if ( CppTupleElementCount(item) == 4){
+            double resolution = CppTupleElement2Double(item,3);
+            if ( resolution == rUNDEF)
+                return;
+            numitem = new Ilwis::NumericItem(label, { rmin, rmax,resolution});
+        }else
+            numitem = new Ilwis::NumericItem(label, { rmin, rmax});
+
+        static_cast<Ilwis::ItemRange*>(_range.get())->add(numitem);
+    }
+}
+//------------------------------------------------------------
+void NamedItemRange::add(PyObject *item)
+{
+    QString name = QString::fromStdString(CppString2stdString(item));
+    Ilwis::NamedIdentifier *id = new Ilwis::NamedIdentifier(name);
+    static_cast<Ilwis::ItemRange*>(_range.get())->add(id);
+
+}
+//-----------------------------------------------------------
+void ThematicRange::add(PyObject *item)
+{
+    int elements = CppTupleElementCount(item);
+
+    if ( elements > 0 && elements <=3 ) {
+        QString description = sUNDEF, code = sUNDEF;
+        QString label = QString::fromStdString(CppTupleElement2String(item,0));
+        if ( label == sUNDEF)
+            return;
+        if ( elements == 2){
+            description = QString::fromStdString(CppTupleElement2String(item,1));
+        }
+        if ( elements == 2){
+            code = QString::fromStdString(CppTupleElement2String(item,2));
+        }
+        Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description});
+        static_cast<Ilwis::ItemRange*>(_range.get())->add(titem);
+    }
 }
