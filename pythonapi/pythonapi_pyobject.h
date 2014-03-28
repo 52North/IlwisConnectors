@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <limits>
 
 typedef struct _object PyObject;
 typedef struct bufferinfo Py_buffer;
@@ -10,6 +11,9 @@ typedef struct bufferinfo Py_buffer;
 #include "pythonapi_qtGNUTypedefs.h"
 
 namespace pythonapi {
+    const double rUNDEF = -1e308;
+    const long   iUNDEF  = -2147483647L;
+    const long long i64UNDEF = std::numeric_limits < qint64 >::min();
 
     const char* typeName(const PyObject* obj);
 
@@ -68,6 +72,17 @@ namespace pythonapi {
     int PyDateTimeTIME_GET_MINUTE(const void* o);
     int PyDateTimeTIME_GET_SECOND(const void* o);
     int PyDateTimeTIME_GET_MICROSECOND(const void* o);
+
+    //-------------------------------------------
+    double CppFloat2Double(const PyObject* ob);
+    long    CppLong2long(PyObject *ob);
+    unsigned long long CppULongLong2ulonglong(PyObject* ob);
+    std::string CppString2stdString(PyObject* ob);
+    double CppTupleElement2Double(PyObject* ob, int index);
+    long CppTupleElement2Long(PyObject* ob, int index);
+    unsigned long long CppTupleElement2ulonglong(PyObject* ob, int index);
+    std::string CppTupleElement2String(PyObject* ob, int index);
+    int CppTupleElementCount(PyObject* ob);
 
 } // namespace pythonapi
 

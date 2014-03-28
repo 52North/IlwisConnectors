@@ -184,4 +184,80 @@ namespace pythonapi {
         return PyDateTime_TIME_GET_MICROSECOND(reinterpret_cast<PyDateTime_Time*>(const_cast<void*>(o)));
     }
 
+    //-------------------------------------------------------------------
+
+    double CppFloat2Double(const PyObject* ob){
+        if (PyFloat_CheckExact(ob)) {
+            return PyFloat_AS_DOUBLE(ob);
+        }
+        return rUNDEF;
+    }
+
+    long CppLong2long(PyObject* ob){
+        if (PyLong_CheckExact(ob)) {
+            return PyLong_AsLong(ob);
+        }
+        return iUNDEF;
+    }
+
+    unsigned long long CppULongLong2ulonglong(PyObject* ob){
+        if (PyLong_CheckExact(ob)) {
+            return PyLong_AsUnsignedLongLong(ob);
+        }
+        return i64UNDEF;
+    }
+
+    std::string CppString2stdString(PyObject* ob){
+        if ( PyUnicode_CheckExact(ob)){
+            return std::string(PyUnicode_AsUTF8(ob));
+        }
+        return "?";
+    }
+
+    double CppTupleElement2Double(PyObject* ob, int index){
+        if (PyTuple_CheckExact(ob))    {
+            if ( PyTuple_Size(ob) < index){
+                PyObject *dobj =  PyTuple_GetItem(ob, index);
+                return CppFloat2Double(dobj);
+            }
+        }
+        return rUNDEF;
+    }
+
+    long CppTupleElement2Long(PyObject* ob, int index){
+        if (PyTuple_CheckExact(ob))    {
+            if ( PyTuple_Size(ob) < index){
+                PyObject *lobj =  PyTuple_GetItem(ob, index);
+                return CppLong2long(lobj);
+            }
+        }
+        return iUNDEF;
+    }
+    unsigned long long CppTupleElement2ulonglong(PyObject* ob, int index){
+        if (PyTuple_CheckExact(ob))    {
+            if ( PyTuple_Size(ob) < index){
+                PyObject *lobj =  PyTuple_GetItem(ob, index);
+                return CppULongLong2ulonglong(lobj);
+            }
+        }
+        return iUNDEF;
+    }
+
+    std::string CppTupleElement2String(PyObject* ob, int index){
+        if (PyTuple_CheckExact(ob))    {
+            if ( PyTuple_Size(ob) < index){
+                PyObject *dobj =  PyTuple_GetItem(ob, index);
+                return CppString2stdString(dobj);
+            }
+        }
+        return "?";
+    }
+
+    int CppTupleElementCount(PyObject* ob){
+        return PyTuple_Size(ob);
+    }
+
+
+
+
 } // namespace pythonapi
