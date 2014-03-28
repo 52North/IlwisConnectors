@@ -96,6 +96,11 @@ NumericDomain::NumericDomain(Ilwis::INumericDomain *domain): Domain(new Ilwis::I
 
 
 
+ItemDomain::ItemDomain()
+{
+
+}
+
 PyObject *ItemDomain::item(int index, bool labelOnly)
 {
     Ilwis::SPDomainItem domitem = this->ptr()->get<Ilwis::NumericItemDomain>()->item(index);
