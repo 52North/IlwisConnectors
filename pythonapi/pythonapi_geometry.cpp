@@ -35,7 +35,7 @@ Geometry::Geometry(std::string wkt, const CoordinateSystem& csy):
     _standalone(true),
     _feature(nullptr),
     _index(-1),
-    _ilwisGeometry(Ilwis::GeometryHelper::fromWKT(wkt)){
+    _ilwisGeometry(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt))){
     Ilwis::GeometryHelper::setCoordinateSystem(this->_ilwisGeometry.get(),csy.ptr()->get<Ilwis::CoordinateSystem>().ptr());
 }
 
@@ -85,24 +85,24 @@ void Geometry::fromWKT(const std::string& wkt){
             this->_standalone = true;
             this->_feature = nullptr;
             this->_index = -1;
-            this->_ilwisGeometry.reset(Ilwis::GeometryHelper::fromWKT(wkt));
+            this->_ilwisGeometry.reset(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt)));
         }else{
             if (this->_feature != nullptr && (bool)this->_feature && this->_feature->__bool__()){
-                this->_feature->ptr()->set(Ilwis::GeometryHelper::fromWKT(wkt), this->_index);
+                this->_feature->ptr()->set(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt)), this->_index);
             }else
                 throw InvalidObject("invalid referenc to hosting feature of non-standalone geometry!");
         }
     }else{
         if (_standalone){
-            this->_ilwisGeometry.reset(Ilwis::GeometryHelper::fromWKT(wkt));
+            this->_ilwisGeometry.reset(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt)));
         }else{
-            this->_feature->ptr()->set(Ilwis::GeometryHelper::fromWKT(wkt), this->_index);
+            this->_feature->ptr()->set(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt)), this->_index);
         }
     }
 }
 
 std::string Geometry::toWKT(){
-    return Ilwis::GeometryHelper::toWKT(this->ptr().get());
+    return Ilwis::GeometryHelper::toWKT(this->ptr().get()).toStdString();
 }
 
 CoordinateSystem Geometry::coordinateSystem(){

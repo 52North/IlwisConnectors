@@ -23,7 +23,7 @@ namespace pythonapi{
             Coverage();
             Coverage(Ilwis::ICoverage* coverage);
         public:
-            virtual ~Coverage(){};
+            virtual ~Coverage(){}
             bool addAttribute(const std::string& name, const std::string& domain);
             quint32 attributeCount();
             PyObject *attributes();
