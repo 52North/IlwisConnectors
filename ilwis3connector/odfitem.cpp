@@ -206,6 +206,8 @@ IlwisTypes ODFItem::findDomainType(const QString& path) const
         return itNUMERICDOMAIN;
     if ( _domname == "image.dom")
         return itNUMERICDOMAIN;
+    if ( _domname == "color.dom")
+        return itCOLORDOMAIN;
 
     //Resource resource = mastercatalog()->name2Resource(stripExtension(_domname),itDOMAIN);
     Resource resource = mastercatalog()->name2Resource(_domname,itDOMAIN);
