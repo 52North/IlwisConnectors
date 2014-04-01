@@ -154,6 +154,10 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data) {
                     if ( index != -1) {
                         _converter = RawConverter("UniqueID");
                     }
+                    index = dminfo.indexOf("color;");
+                     if ( index != -1) {
+                        _converter = RawConverter("color");
+                     }
                 }
             }
 
