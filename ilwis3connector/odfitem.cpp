@@ -17,8 +17,7 @@
 #include "odfitem.h"
 #include "ilwis3connector.h"
 
-const QString Ilwis::Ilwis3::ODFItem::systemObjectNames="value;image;image;min1to1;nilto1;count;distance;ndvi;percentage;none;latlonwgs84;latlon;bool;byte \
-        color;colorcmp";
+const QString Ilwis::Ilwis3::ODFItem::systemObjectNames="value;image;image;min1to1;nilto1;count;distance;ndvi;percentage;none;latlonwgs84;latlon;bool;byte;color;colorcmp";
 
 using namespace Ilwis;
 using namespace Ilwis3;
