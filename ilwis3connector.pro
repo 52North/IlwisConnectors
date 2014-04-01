@@ -12,7 +12,6 @@ include(global.pri)
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
 DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
-QT       -= gui
 QT       += sql
 
 TEMPLATE = lib
