@@ -1,3 +1,4 @@
+#include <QColor>
 #include "kernel.h"
 #include "geos/geom/Coordinate.h"
 #include "connectorinterface.h"
@@ -13,6 +14,8 @@
 #include "identifieritem.h"
 #include "thematicitem.h"
 #include "numericrange.h"
+#include "colorrange.h"
+#include "colordomain.h"
 #include "itemrange.h"
 #include "identifierrange.h"
 #include "rawconverter.h"
@@ -336,7 +339,6 @@ IlwisObject *DomainConnector::create() const
 {
     //TODO: other domain types time, coordinatesystem
     QString subtype = sUNDEF;
-    IlwisTypes tp = Ilwis3Connector::ilwisType(_resource.name());
     if ( type() & itCOVERAGE) {
         subtype = parseDomainInfo( _odf->value("BaseMap","DomainInfo"));
         if ( subtype == "image.dom" || subtype == "value.dom"){
@@ -363,6 +365,12 @@ IlwisObject *DomainConnector::create() const
         subtype = parseDomainInfo( _odf->value("BaseMap","DomainInfo"));
         if ( subtype.left(5) == "image" || subtype.left(5) == "value"){
             return fromValueRange();
+        }
+        if ( subtype.left(5) == "color" ){
+            ColorDomain *dm = new ColorDomain(_resource);
+            ContinousColorRange *rng = new ContinousColorRange(QColor("#000000"), QColor("(#ffffff"));
+            dm->range(rng);
+            return dm;
         }
     }
     return 0;
