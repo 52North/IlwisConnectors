@@ -10,7 +10,11 @@ public:
     {
         _scale = 1;
         _offset = -1;
-         _undefined = 0;
+        _undefined = 0;
+        if(type == "color"){
+            _storeType = itUINT32;
+            _colors = true;
+        }
         if ( type == "class") {
             _storeType = itUINT8;
         } else if ( type == "ident"){
@@ -45,6 +49,12 @@ public:
 
 
     double raw2real(double raw) const{
+        if (_colors){
+            if ( raw == iUNDEF)
+                return clrUNDEF2;
+            return (quint32)raw;
+
+        }
         if ( raw == _undefined || raw == 0)
             return rUNDEF;
         return (raw + _offset) * _scale;
@@ -55,7 +65,7 @@ public:
         return real / _scale - _offset;
     }
     bool isNeutral() const{
-        return (_offset == 0 && _scale == 1.0) || _scale == 0;
+        return !_colors && ((_offset == 0 && _scale == 1.0) || _scale == 0);
     }
 
     double offset() const {
@@ -100,6 +110,7 @@ private:
     double _scale;
     IlwisTypes _storeType;
     double _undefined;
+    bool _colors=false;
 
 
 };
