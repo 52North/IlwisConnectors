@@ -52,7 +52,7 @@ public:
         if (_colors){
             if ( raw == iUNDEF)
                 return clrUNDEF2;
-            return (quint32)raw;
+            return ( (quint32)raw | 0xFF000000); // setting transparency bit to 255 as this is by default not present
 
         }
         if ( raw == _undefined || raw == 0)
