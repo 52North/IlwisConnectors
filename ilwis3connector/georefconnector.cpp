@@ -138,9 +138,9 @@ bool GeorefConnector::loadGeorefTiepoints(const IniFile& odf, GeoReference *grf)
     return true;
 }
 
-bool GeorefConnector::loadMetaData(IlwisObject *data)
+bool GeorefConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
-    Ilwis3Connector::loadMetaData(data);
+    Ilwis3Connector::loadMetaData(data, options);
     IniFile *odf = _odf.data();
 
     return loadGeoref(*odf, data);

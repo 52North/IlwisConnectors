@@ -11,7 +11,7 @@ class RasterCoverageConnector : public CoverageConnector
 public:
     RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 
-    bool loadMetaData(IlwisObject *data);
+    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
     bool storeMetaData(Ilwis::IlwisObject *obj);
     Ilwis::Grid *loadGridData(Ilwis::IlwisObject *) ;
     bool storeBinaryData(Ilwis::IlwisObject *obj);
@@ -26,10 +26,10 @@ private:
     //qint64 noconversionneeded(QFile &file, Ilwis::Grid *grid, int &count);
     double value(char *block, int index) const;
     void setStoreType(const QString &storeType);
-    bool loadMapList(IlwisObject *data);
+    bool loadMapList(IlwisObject *data, const Ilwis::PrepareOptions &options);
     bool storeMetaDataMapList(Ilwis::IlwisObject *obj);
     QString getGrfName(const IRasterCoverage &raster);
-    bool setDataType(IlwisObject *data);
+    bool setDataType(IlwisObject *data, const Ilwis::PrepareOptions &options);
 
     template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& raster, const Size<>& sz) const{
         //TODO optimize this

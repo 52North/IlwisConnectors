@@ -32,8 +32,8 @@ GeorefConnector::GeorefConnector(const Ilwis::Resource &resource, bool load, con
 {
 }
 
-bool GeorefConnector::loadMetaData(IlwisObject *data){
-    if(!GdalConnector::loadMetaData(data))
+bool GeorefConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
+    if(!GdalConnector::loadMetaData(data, options))
         return false;
 
     //TODO: tiepoints grf

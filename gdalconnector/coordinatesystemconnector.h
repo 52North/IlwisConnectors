@@ -9,7 +9,7 @@ class CoordinateSystemConnector : public GdalConnector
 public:
     CoordinateSystemConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 
-    bool loadMetaData(IlwisObject *data);
+    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
 
    // static bool canUse(const Ilwis::Resource &resource);
 

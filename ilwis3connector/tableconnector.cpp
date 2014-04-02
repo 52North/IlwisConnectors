@@ -49,11 +49,11 @@ TableConnector::TableConnector(const Resource &resource, bool load, const Prepar
    // _type = itTABLE;
 }
 
-bool TableConnector::loadMetaData(IlwisObject *data)
+bool TableConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
     Locker lock(_mutex);
 
-    if(!Ilwis3Connector::loadMetaData(data))
+    if(!Ilwis3Connector::loadMetaData(data, options))
         return false;
 
     quint32 ncolumns = _odf->value("Table","Columns").toInt();

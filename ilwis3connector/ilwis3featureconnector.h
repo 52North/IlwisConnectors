@@ -18,7 +18,7 @@ class FeatureConnector : public CoverageConnector
 {
 public:
     FeatureConnector(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
-    bool loadMetaData(Ilwis::IlwisObject *data);
+    bool loadMetaData(Ilwis::IlwisObject *data, const PrepareOptions &options);
     bool loadData(Ilwis::IlwisObject *obj);
     bool storeMetaData(IlwisObject *obj) ;
     bool storeBinaryData(IlwisObject *obj);

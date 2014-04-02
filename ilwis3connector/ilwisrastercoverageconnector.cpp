@@ -41,8 +41,8 @@ RasterCoverageConnector::RasterCoverageConnector(const Resource &resource, bool 
 {
 }
 
-bool RasterCoverageConnector::loadMapList(IlwisObject *data) {
-    Ilwis3Connector::loadMetaData(data);
+bool RasterCoverageConnector::loadMapList(IlwisObject *data,const PrepareOptions& options) {
+    Ilwis3Connector::loadMetaData(data, options);
 
     RasterCoverage *gcoverage = static_cast<RasterCoverage *>(data);
 
@@ -131,11 +131,11 @@ void RasterCoverageConnector::setStoreType(const QString& storeType) {
     _converter.storeType(_storetype);
 }
 
-bool RasterCoverageConnector::setDataType(IlwisObject *data) {
+bool RasterCoverageConnector::setDataType(IlwisObject *data, const PrepareOptions &options) {
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
-    DataDefinition def = determineDataDefintion();
+    DataDefinition def = determineDataDefintion(options);
     if ( !def.isValid()) {
         return false;
     }
@@ -168,20 +168,20 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data) {
     return true;
 }
 
-bool RasterCoverageConnector::loadMetaData(IlwisObject *data)
+bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
     Locker lock(_mutex);
 
     QFileInfo inf(_resource.toLocalFile());
-    if(!setDataType(data))
+    if(!setDataType(data, options))
         return false;
 
     bool isMapList  = inf.suffix().toLower() == "mpl";
 
     if (isMapList ){
-        return loadMapList(data);
+        return loadMapList(data, options);
     }
-    else if(!CoverageConnector::loadMetaData(data))
+    else if(!CoverageConnector::loadMetaData(data, options))
         return false;
 
     RasterCoverage *gcoverage = static_cast<RasterCoverage *>(data);
@@ -189,7 +189,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data)
     QString grfName = _odf->value("Map","GeoRef");
     grfName = filename2FullPath(grfName, _resource);
     IGeoReference grf;
-    if (!grf.prepare(grfName)) {
+    if (!grf.prepare(grfName, itGEOREF, options)) {
         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Georeference",grfName));
         return false;
     }

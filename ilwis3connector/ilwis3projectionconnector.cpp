@@ -44,7 +44,7 @@ ProjectionConnector::ProjectionConnector(const Resource &resource, bool load, co
     }
 }
 
-bool ProjectionConnector::loadMetaData(IlwisObject *data)
+bool ProjectionConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
     if (_odf.isNull())
         return false;

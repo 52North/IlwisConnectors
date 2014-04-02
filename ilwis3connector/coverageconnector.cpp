@@ -61,7 +61,7 @@ bool CoverageConnector::getRawInfo(const QString& range, double& vmin, double& v
     return false;
 }
 
-ITable CoverageConnector::prepareAttributeTable(const QString& file, const QString& basemaptype) const{
+ITable CoverageConnector::prepareAttributeTable(const QString& file, const QString& basemaptype,const PrepareOptions &options) const{
 
     ITable extTable;
     if ( file != sUNDEF) {
@@ -85,7 +85,7 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
             name = name.left(index);
         }
         Resource resource(QUrl(QString("ilwis://internalcatalog/%1").arg(name)), itFLATTABLE);
-        if(!attTable.prepare(resource)) {
+        if(!attTable.prepare(resource, options)) {
             ERROR1(ERR_NO_INITIALIZED_1,resource.name());
             return ITable();
         }
@@ -99,7 +99,7 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
         attTable = extTable;
     }
     if ( attTable->columnIndex(COVERAGEKEYCOLUMN) == iUNDEF) { // external tables might already have these
-        DataDefinition def = determineDataDefintion();
+        DataDefinition def = determineDataDefintion(options);
         attTable->addColumn(ColumnDefinition(COVERAGEKEYCOLUMN,def, attTable->columnCount()));
         //attTable->addColumn(FEATUREIDCOLUMN,covdom);
     }
@@ -116,9 +116,9 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
 
 }
 
-bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
+bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOptions& options)
 {
-    Ilwis3Connector::loadMetaData(data);
+    Ilwis3Connector::loadMetaData(data, options);
 
     Coverage *coverage = static_cast<Coverage *>(data);
     QString csyName = _odf->value("BaseMap","CoordSystem");
@@ -128,7 +128,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
         csyName = filename2FullPath(csyName, this->_resource);
     }
     ICoordinateSystem csy;
-    if ( !csy.prepare(csyName, itCONVENTIONALCOORDSYSTEM)) {
+    if ( !csy.prepare(csyName, itCONVENTIONALCOORDSYSTEM, options)) {
         kernel()->issues()->log(csyName,TR("Coordinate system couldnt be initialized, defaulting to 'unknown'"),IssueObject::itWarning);
         QString resource = QString("code=unknown");
         if (!csy.prepare(resource)) {
@@ -143,7 +143,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data)
     QString basemaptype = _odf->value("BaseMap", "Type");
     // feature coverages always have an attribute table; rasters might have
     if ( basemaptype != "Map" || attfile != sUNDEF) {
-        ITable attTable = prepareAttributeTable(attfile, basemaptype);
+        ITable attTable = prepareAttributeTable(attfile, basemaptype, options);
         if (!attTable.isValid())
             return false;
 
@@ -334,9 +334,9 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     }
     return 0;
 }
-DataDefinition CoverageConnector::determineDataDefintion() const{
+DataDefinition CoverageConnector::determineDataDefintion(const PrepareOptions &options) const{
     IDomain dom;
-    if(!dom.prepare(_odf->file())) {
+    if(!dom.prepare(_odf->file(), options)) {
         ERROR2(ERR_NO_INITIALIZED_2,"domain",_odf->file());
         return DataDefinition();
     }

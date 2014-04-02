@@ -70,9 +70,9 @@ IlwisTypes GdalFeatureConnector::translateOGRType(OGRwkbGeometryType type) const
     return ret;
 }
 
-bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
+bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOptions& options){
 
-    if(!CoverageConnector::loadMetaData(data))
+    if(!CoverageConnector::loadMetaData(data, options))
         return false;
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
@@ -132,7 +132,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data){
 
 bool GdalFeatureConnector::loadData(IlwisObject* data){
 
-    if(!GdalConnector::loadMetaData(data))
+    if(!GdalConnector::loadMetaData(data, PrepareOptions()))
         return false;
 
     bool ok = true;

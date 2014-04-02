@@ -10,7 +10,7 @@ public:
     PostgresqlConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
     virtual ~PostgresqlConnector();
 
-    bool loadMetaData(IlwisObject* data);
+    bool loadMetaData(IlwisObject* data,const PrepareOptions&);
 
     QString provider() const;
 private:

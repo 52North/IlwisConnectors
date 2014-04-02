@@ -29,8 +29,8 @@ IlwisObject* GdalFeatureTableConnector::create() const{
 }
 
 
-bool GdalFeatureTableConnector::loadMetaData(IlwisObject* data){
-    if(!GdalConnector::loadMetaData(data))
+bool GdalFeatureTableConnector::loadMetaData(IlwisObject* data, const PrepareOptions& options){
+    if(!GdalConnector::loadMetaData(data, options))
         return false;
 
     OGRLayerH hLayer = getLayerHandle();
@@ -46,7 +46,7 @@ bool GdalFeatureTableConnector::storeMetaData(Ilwis::IlwisObject *obj){
 }
 
 bool GdalFeatureTableConnector::loadData(IlwisObject * data){
-    if(!GdalConnector::loadMetaData(data))
+    if(!GdalConnector::loadMetaData(data, PrepareOptions())) // ??
         return false;
 
     Table *attTable = static_cast<Table *>(data);

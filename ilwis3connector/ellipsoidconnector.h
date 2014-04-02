@@ -8,7 +8,7 @@ class EllipsoidConnector : public Ilwis3Connector
 {
 public:
     EllipsoidConnector(const Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
-    bool loadMetaData(IlwisObject *data);
+    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
     Ilwis::IlwisObject *create() const;
     static ConnectorInterface *create(const Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 private:

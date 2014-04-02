@@ -8,7 +8,7 @@ class DomainConnector : public GdalConnector
 public:
     DomainConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 
-    bool loadMetaData(IlwisObject *data);
+    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
 
     static ConnectorInterface *create(const Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
     IlwisObject *create() const;

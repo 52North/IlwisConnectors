@@ -11,7 +11,7 @@ class CoverageConnector : public GdalConnector
 {
 public:
     CoverageConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
-    bool loadMetaData(Ilwis::IlwisObject *data);
+    bool loadMetaData(Ilwis::IlwisObject *data, const PrepareOptions &options);
 
 protected:
     bool store(IlwisObject *obj, IlwisTypes type);

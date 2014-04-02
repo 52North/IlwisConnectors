@@ -41,9 +41,9 @@ DomainConnector::DomainConnector(const Resource& resource, bool load, const Prep
 {
 }
 
-bool DomainConnector::loadMetaData(IlwisObject* data)
+bool DomainConnector::loadMetaData(IlwisObject* data, const PrepareOptions& options)
 {
-    Ilwis3Connector::loadMetaData(data);
+    Ilwis3Connector::loadMetaData(data, options);
 
     if (type() == itUNKNOWN) {
         kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Domain type",_resource.name()));

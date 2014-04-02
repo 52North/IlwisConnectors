@@ -48,7 +48,7 @@ IlwisTypes GdalConnector::ilwisType(const QString &name)
     return itUNKNOWN; //TODO: add table formats here
 }
 
-bool GdalConnector::loadMetaData(IlwisObject *data){
+bool GdalConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
     if (data == nullptr)
         return false;
 

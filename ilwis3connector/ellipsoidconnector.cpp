@@ -29,7 +29,7 @@ EllipsoidConnector::EllipsoidConnector(const Resource &resource, bool load, cons
 {
 }
 
-bool EllipsoidConnector::loadMetaData(IlwisObject *data)
+bool EllipsoidConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
 
     QString ell = _odf->value("CoordSystem","Ellipsoid");

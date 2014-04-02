@@ -29,7 +29,7 @@ protected:
     bool willStore(const Ilwis::IlwisObject *obj) const;
     QUrl resolve(const Resource &resource) const;
     bool isSystemObject(const QString &filename);
-    bool loadMetaData(IlwisObject* data);
+    bool loadMetaData(IlwisObject* data,const PrepareOptions&);
     bool storeMetaData(const IlwisObject* data, IlwisTypes type) const;
     QString adjustPath(const QUrl& container, const QString& filename) const;
     QString unquote(const QString& name);

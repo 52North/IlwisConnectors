@@ -32,9 +32,9 @@ ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &reso
     return new PostgresqlTableConnector(resource, load,options);
 }
 
-bool PostgresqlTableConnector::loadMetaData(IlwisObject *data)
+bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
-    return PostgresqlConnector::loadMetaData(data);
+    return PostgresqlConnector::loadMetaData(data, options);
 }
 
 bool PostgresqlTableConnector::storeMetaData(Ilwis::IlwisObject *obj)

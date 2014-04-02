@@ -39,9 +39,9 @@ ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bo
 RasterCoverageConnector::RasterCoverageConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : CoverageConnector(resource,load, options){
 }
 
-bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
+bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
 
-    if(!CoverageConnector::loadMetaData(data))
+    if(!CoverageConnector::loadMetaData(data, options))
         return false;
 
     auto *gcoverage = static_cast<RasterCoverage *>(data);
@@ -88,7 +88,8 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
         if (!layerHandle) {
             return ERROR2(ERR_COULD_NOT_LOAD_2, gcoverage->name(),"layer");
         }
-        GDALColorInterp value = gdal()->colorInterpretation(layerHandle);
+        //TODO colors. all tools are there but unclear how much the effort is worth
+       // GDALColorInterp value = gdal()->colorInterpretation(layerHandle);
 
         int ok;
 

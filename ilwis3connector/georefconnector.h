@@ -7,7 +7,7 @@ class GeorefConnector : public Ilwis3Connector
 {
 public:
     GeorefConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
-    bool loadMetaData(IlwisObject *data);
+    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
     bool storeMetaData(IlwisObject *obj);
     IlwisObject *create() const;
 

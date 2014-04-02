@@ -33,7 +33,7 @@ Ilwis3Connector::Ilwis3Connector(const Resource &resource, bool load, const Prep
         _resource.setId(resource.id());
 }
 
-bool Ilwis3Connector::loadMetaData(IlwisObject *data)
+bool Ilwis3Connector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
     QFileInfo inf = _resource.url().toLocalFile();
     if ( inf.exists()) {

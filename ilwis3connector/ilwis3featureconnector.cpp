@@ -411,9 +411,9 @@ bool FeatureConnector::loadData(Ilwis::IlwisObject *obj) {
     return ok;
 }
 
-bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj)
+bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj,const PrepareOptions& options)
 {
-    bool ok = CoverageConnector::loadMetaData(obj);
+    bool ok = CoverageConnector::loadMetaData(obj, options);
     if ( !ok)
         return false;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);

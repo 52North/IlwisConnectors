@@ -13,7 +13,7 @@ public:
     virtual ~GdalConnector();
     static IlwisTypes ilwisType(const QString &name);
 
-    bool loadMetaData(IlwisObject* data);
+    bool loadMetaData(IlwisObject* data,const PrepareOptions&);
 
     QString provider() const;
     void format(const QString&);

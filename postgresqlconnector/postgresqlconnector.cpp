@@ -27,7 +27,7 @@ PostgresqlConnector::~PostgresqlConnector()
 
 }
 
-bool PostgresqlConnector::loadMetaData(IlwisObject *data)
+bool PostgresqlConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
     if (data == nullptr)
         return false;

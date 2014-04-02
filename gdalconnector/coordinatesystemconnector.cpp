@@ -42,9 +42,9 @@ CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, b
 
 }
 
-bool CoordinateSystemConnector::loadMetaData(IlwisObject *data){
+bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
 
-    if (!GdalConnector::loadMetaData(data))
+    if (!GdalConnector::loadMetaData(data, options))
         return false;
     bool ret = true;
     OGRSpatialReferenceH srshandle = gdal()->srsHandle(_handle, data->name());

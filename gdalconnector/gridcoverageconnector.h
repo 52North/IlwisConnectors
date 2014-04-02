@@ -10,7 +10,7 @@ public:
 
     RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 
-    bool loadMetaData(IlwisObject *data);
+    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
     Ilwis::Grid *loadGridData(Ilwis::IlwisObject *data) ;
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());

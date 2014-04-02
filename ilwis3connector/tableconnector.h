@@ -10,7 +10,7 @@ class TableConnector : public Ilwis3Connector
 {
 public:
     TableConnector(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
-    bool loadMetaData(IlwisObject* data);
+    bool loadMetaData(IlwisObject* data,const PrepareOptions&);
     bool storeMetaData(Ilwis::IlwisObject *obj);
     QString type() const;
     virtual IlwisObject *create() const;

@@ -41,9 +41,9 @@ IlwisObject *CoordinateSystemConnector::create() const {
     return object;
 }
 
-bool CoordinateSystemConnector::loadMetaData(IlwisObject* data)
+bool CoordinateSystemConnector::loadMetaData(IlwisObject* data, const PrepareOptions& options)
 {
-    Ilwis3Connector::loadMetaData(data);
+    Ilwis3Connector::loadMetaData(data, options);
     CoordinateSystem *csy = static_cast<CoordinateSystem *>(data);
     QString ellipsoideName;
 

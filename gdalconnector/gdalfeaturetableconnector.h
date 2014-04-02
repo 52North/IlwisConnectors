@@ -11,7 +11,7 @@ namespace Ilwis{
                 IlwisObject *create() const;
                 static ConnectorInterface *create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
 
-                bool loadMetaData(IlwisObject* data);
+                bool loadMetaData(IlwisObject* data,const PrepareOptions&);
                 bool storeMetaData(Ilwis::IlwisObject *obj);
 
                 bool loadData(IlwisObject *data);

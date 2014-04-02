@@ -33,9 +33,9 @@ DomainConnector::DomainConnector(const Resource& resource, bool load, const Prep
 {
 }
 
-bool DomainConnector::loadMetaData(IlwisObject *data){
+bool DomainConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
     bool ret = true;
-    if (!GdalConnector::loadMetaData(data))
+    if (!GdalConnector::loadMetaData(data, options))
         ret = false;
 
     if (type() == itUNKNOWN) {

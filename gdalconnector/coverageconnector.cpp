@@ -34,9 +34,9 @@ CoverageConnector::CoverageConnector(const Resource& resource, bool load, const 
 {
 }
 
-bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data){
+bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOptions& options){
 
-    if(!GdalConnector::loadMetaData(data))
+    if(!GdalConnector::loadMetaData(data, options))
         return false;
 
     Coverage *coverage = static_cast<Coverage *>(data);
