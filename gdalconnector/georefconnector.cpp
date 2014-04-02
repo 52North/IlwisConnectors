@@ -40,7 +40,7 @@ bool GeorefConnector::loadMetaData(IlwisObject *data){
 
     GeoReference * grf = static_cast<GeoReference *>(data);
 
-    ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", _filename.toString());
+    ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", _filename);
     if(!csy.isValid()) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "coordinatesystem", grf->name());
     }

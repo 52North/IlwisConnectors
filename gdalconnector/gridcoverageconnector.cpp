@@ -67,7 +67,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
         gcoverage->coordinateSystem()->envelope(gcoverage->envelope());
 
         IGeoReference grf;
-        if(!grf.prepare(_resource.url().toLocalFile()))
+        if(!grf.prepare(_resource.url().toString()))
             return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
 
         Size<> sz(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
@@ -88,6 +88,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data){
         if (!layerHandle) {
             return ERROR2(ERR_COULD_NOT_LOAD_2, gcoverage->name(),"layer");
         }
+        GDALColorInterp value = gdal()->colorInterpretation(layerHandle);
 
         int ok;
 

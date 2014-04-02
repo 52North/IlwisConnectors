@@ -44,7 +44,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data){
         return false;
 
     QFileInfo fileinf = containerConnector()->toLocalFile(source());
-    ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", fileinf.absoluteFilePath());
+    ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", QUrl::fromLocalFile(fileinf.absoluteFilePath()));
     if(!csy.isValid()) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "coordinatesystem", coverage->name());
     }
