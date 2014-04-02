@@ -19,7 +19,7 @@ public:
     WfsFeatureDescriptionParser(WfsResponse *response);
     ~WfsFeatureDescriptionParser();
 
-    bool parseSchemaDescription(FeatureCoverage *fcoverage, WfsParsingContext &context);
+    bool parseSchemaDescription(FeatureCoverage *fcoverage, const QUrl &wfsUrl, WfsParsingContext &context);
 
 private:
     XmlStreamParser *_parser;

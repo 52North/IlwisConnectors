@@ -78,7 +78,7 @@ void WfsFeatureParser::parseFeatureMembers()
             while (_parser->findNextOf( {_featureType} )) {
                 std::vector<QVariant> record(table->columnCount());
 
-                parseFeature(record);
+                parseFeature(record, table);
                 table->record(featureCount++, record); // load content
                 while ( !_parser->isAtEndOf(_featureType)) {
                     // leave parsed feature type element
@@ -93,10 +93,9 @@ void WfsFeatureParser::parseFeatureMembers()
     }
 }
 
-void WfsFeatureParser::parseFeature(std::vector<QVariant> &record)
+void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table)
 {
     bool continueReadingStream = true;
-    ITable table = _fcoverage->attributeTable();
     QString geometryAttributeName = _context.geometryAtttributeName();
     for (int i = 0; i < table->columnCount(); i++) {
 
@@ -113,6 +112,7 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record)
         }
 
         if (continueReadingStream) {
+            QString rr = _parser->name();
             if ( !_parser->readNextStartElement()) {
                 break; // end of feature record
             }
@@ -245,6 +245,7 @@ geos::geom::Geometry *WfsFeatureParser::parseFeatureGeometry()
     } else if (isPointType()) {
         return createPoint(isMultiGeometry);
     }
+    return 0;
 }
 
 bool WfsFeatureParser::isPolygonType()
@@ -294,6 +295,7 @@ geos::geom::Geometry *WfsFeatureParser::createPolygon(bool isMultiGeometry)
         }
         return geometry;
     }
+    return 0;
 }
 
 geos::geom::Geometry *WfsFeatureParser::createLineString(bool isMultiGeometry)
@@ -321,6 +323,7 @@ geos::geom::Geometry *WfsFeatureParser::createLineString(bool isMultiGeometry)
         }
         return geometry;
     }
+    return 0;
 }
 
 geos::geom::Geometry *WfsFeatureParser::createPoint(bool isMultiGeometry)
@@ -348,6 +351,7 @@ geos::geom::Geometry *WfsFeatureParser::createPoint(bool isMultiGeometry)
         }
         return geometry;
     }
+    return 0;
 }
 
 void WfsFeatureParser::updateSrsInfo()
@@ -378,7 +382,7 @@ geos::geom::Point *WfsFeatureParser::parsePoint(bool &ok)
             ok = true;
             updateSrsInfo();
             QString wkt = gmlPosListToWktLineString(_parser->readElementText());
-            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
+            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt);
             return _fcoverage->geomfactory()->createPoint(geometry->getCoordinates());
         }
         ERROR0("Could not find gml:pos");
@@ -397,7 +401,7 @@ geos::geom::LineString *WfsFeatureParser::parseLineString(bool &ok)
             ok = true;
             updateSrsInfo();
             QString wkt = gmlPosListToWktLineString(_parser->readElementText());
-            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
+            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt);
             return _fcoverage->geomfactory()->createLineString(geometry->getCoordinates());
         }
         ERROR0("Could not neither find gml:posList nor gml:pos");
@@ -431,7 +435,7 @@ geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing()
     if (_parser->findNextOf( {"gml:exterior"} )) {
         if (_parser->findNextOf( {"gml:posList"} )) {
             QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
-            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
+            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt);
             ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
             _parser->moveToEndOf("gml:exterior");
         }
@@ -447,7 +451,7 @@ std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings()
     do {
         if (_parser->findNextOf( { "gml:posList" })) {
             QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
-            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt.toStdString());
+            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt);
 
             geos::geom::LinearRing *ring;
             ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());

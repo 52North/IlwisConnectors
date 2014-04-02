@@ -46,7 +46,7 @@ private:
     WfsParsingContext _context;
     QString _featureType;
 
-    void parseFeature(std::vector<QVariant> &record);
+    void parseFeature(std::vector<QVariant> &record, ITable& table);
 
     QVariant fillStringColumn();
     QVariant fillDoubleColumn();

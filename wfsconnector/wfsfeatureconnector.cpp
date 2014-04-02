@@ -48,29 +48,29 @@ Ilwis::IlwisObject* WfsFeatureConnector::create() const {
     return new FeatureCoverage(this->_resource);
 }
 
-bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data)
+bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const PrepareOptions&)
 {
-    QUrl featureUrl = source().url();
+    QUrl featureUrl = source().url(true);
     WebFeatureService wfs(featureUrl);
     QUrlQuery queryFeatureType(featureUrl);
     WfsResponse *featureDescriptionResponse = wfs.describeFeatureType(queryFeatureType);
     WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse);
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
-    return schemaParser.parseSchemaDescription(fcoverage, _context);
+    return schemaParser.parseSchemaDescription(fcoverage, source().url(true) ,_context);
 }
 
 
-bool WfsFeatureConnector::loadBinaryData(IlwisObject *data)
+bool WfsFeatureConnector::loadData(IlwisObject *data)
 {
 
     // TODO: check how to avoid double loading metadata
-    if(!loadMetaData(data))
+    if(!loadMetaData(data, PrepareOptions()))
         return false;
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
-    QUrl featureUrl = source().url();
+    QUrl featureUrl = source().url(true);
     WebFeatureService wfs(featureUrl);
 
     QUrlQuery queryFeature(featureUrl);

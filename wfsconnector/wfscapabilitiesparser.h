@@ -24,7 +24,7 @@ private:
     QUrl _url;
     XPathParser *_parser;
 
-    QUrl createGetFeatureUrl(QString featureType) const;
+    void createGetFeatureUrl(const QString &featureType, QUrl &rawUrl, QUrl &normalizedUrl) const;
     void parseFeature(QXmlItem &item, WfsFeature &feature) const;
     Coordinate createCoordinateFromWgs84LatLon(QString latlon) const;
 

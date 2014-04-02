@@ -28,8 +28,8 @@ public:
     static IlwisTypes ilwisType(const QString &name);
 
 protected:
-    bool loadMetaData(IlwisObject* data);
-    bool loadBinaryData(IlwisObject* data);
+    bool loadMetaData(IlwisObject* data,const PrepareOptions&);
+    bool loadData(IlwisObject* data);
 
 private:
     WfsParsingContext _context;

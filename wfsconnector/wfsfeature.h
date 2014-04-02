@@ -19,7 +19,7 @@ class WFSCONNECTORSHARED_EXPORT WfsFeature : public Resource
 {
 public:
     WfsFeature();
-    WfsFeature(QUrl featureUrl);
+    WfsFeature(const QUrl& rawfeatureUrl, const QUrl& normalizedUrl=QUrl());
     ~WfsFeature();
 
     QUrl getFeatureUrl();

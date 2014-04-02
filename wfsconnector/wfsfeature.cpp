@@ -12,8 +12,19 @@ WfsFeature::WfsFeature()
 {
 }
 
-WfsFeature::WfsFeature(QUrl featureUrl): Resource(featureUrl, itFEATURE)
+WfsFeature::WfsFeature(const QUrl &rawfeatureUrl, const QUrl &normalizedUrl): Resource(normalizedUrl, rawfeatureUrl, itFEATURE)
 {
+    if ( !normalizedUrl.isValid()){
+        if ( rawfeatureUrl.hasQuery()) {
+            QString normUrl = rawfeatureUrl.toString(QUrl::RemoveQuery);
+            QUrlQuery query(rawfeatureUrl);
+            if ( query.hasQueryItem("typeName")){
+                QString tpName = query.queryItemValue("typeName");
+                setUrl(normUrl + "/" + tpName);
+
+            }
+        }
+    }
 }
 
 WfsFeature::~WfsFeature()

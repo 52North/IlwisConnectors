@@ -51,7 +51,7 @@ bool WfsObjectFactory::canUse(const Resource &resource) const
     if ( resource.url().scheme() == "ilwis")
         return false; // can't use anything marked as internal
 
-    if (!WfsUtils::isValidWfsUrl(resource.url()))
+    if (!WfsUtils::isValidWfsUrl(resource.url(true)))
         return false;
 
     IlwisTypes type = resource.ilwisType() ;

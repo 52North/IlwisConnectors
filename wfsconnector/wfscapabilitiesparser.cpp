@@ -58,7 +58,9 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) co
     query->evaluateTo( &name);
     QString type = name.trimmed();
 
-    feature = WfsFeature(createGetFeatureUrl(type));
+    QUrl rawUrl, normalizedUrl;
+    createGetFeatureUrl(type, rawUrl, normalizedUrl);
+    feature = WfsFeature(rawUrl, normalizedUrl);
     feature.setName(type, false);
 
     QString title;
@@ -89,17 +91,16 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) co
     Envelope envelope(ll, ur);
     feature.setBBox(envelope);
 }
-
-QUrl WfsCapabilitiesParser::createGetFeatureUrl(QString featureName) const
+void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl& rawUrl, QUrl& normalizedUrl) const
 {
     QUrlQuery query;
     query.addQueryItem("service", "WFS");
     query.addQueryItem("version", "1.1.0");
     query.addQueryItem("request", "GetFeature");
     query.addQueryItem("typeName", featureName);
-    QUrl getFeatureUrl = _url; // copy
-    getFeatureUrl.setQuery(query);
-    return getFeatureUrl;
+    rawUrl = _url; // copy
+    rawUrl.setQuery(query);
+    normalizedUrl = _url.toString(QUrl::RemoveQuery) + "/" + featureName;
 }
 
 Coordinate WfsCapabilitiesParser::createCoordinateFromWgs84LatLon(QString latlon) const
