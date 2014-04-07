@@ -92,10 +92,12 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
        // GDALColorInterp value = gdal()->colorInterpretation(layerHandle);
 
         int ok;
+        _gdalValueType = gdal()->rasterDataType(layerHandle);
+        double resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
 
         auto vmin = gdal()->minValue(layerHandle, &ok);
         auto vmax = gdal()->maxValue(layerHandle, &ok);
-        QString domName = NumericDomain::standardNumericDomainName(vmin, vmax);
+        QString domName = NumericDomain::standardNumericDomainName(vmin, vmax,  resolution);
         IDomain dom;
         dom.prepare(domName);
         if(!dom.isValid()) {
@@ -105,7 +107,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
         gcoverage->datadef().domain(dom);
         gcoverage->datadef().range(new NumericRange(vmin, vmax, numdom->range2range<NumericRange>()->resolution()));
 
-        _gdalValueType = gdal()->rasterDataType(layerHandle);
+
         _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
 
         return true;
@@ -119,7 +121,7 @@ inline double RasterCoverageConnector::value(char *block, int index) const{
     char *c = &(block[index * _typeSize]);
     switch (_gdalValueType) {
     case GDT_Byte:
-        v = *(qint8 *)c; break;
+        v = (quint8)*c; break;
     case GDT_Int16:
         v =  *(qint16 *)c; break;
     case GDT_UInt16:
@@ -181,6 +183,7 @@ Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
                 double v = value(block, i);
                 values[i] = v;
             }
+
             grid->setBlockData(count, values, true);
             ++count;
             ++gdalindex;
