@@ -43,7 +43,7 @@ std::string IlwisObject::name(){
 }
 
 void IlwisObject::name(std::string name){
-    (*this->ptr())->setName(QString::fromStdString(name));
+    (*this->ptr())->name(QString::fromStdString(name));
 }
 
 bool IlwisObject::isInternal() const{

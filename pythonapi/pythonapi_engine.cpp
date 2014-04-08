@@ -88,28 +88,28 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
             if (result._var.canConvert<Ilwis::IRasterCoverage>()){
                 Ilwis::IRasterCoverage* obj = new Ilwis::IRasterCoverage(result._var.value<Ilwis::IRasterCoverage>());
                 if (rename)
-                    (*obj)->setName(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                    (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
                 return new RasterCoverage(obj);
             }
         }else if (result._type == itFEATURE){
             if (result._var.canConvert<Ilwis::IFeatureCoverage>()){
                 Ilwis::IFeatureCoverage* obj = new Ilwis::IFeatureCoverage(result._var.value<Ilwis::IFeatureCoverage>());
                 if (rename)
-                    (*obj)->setName(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                    (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
                 return new FeatureCoverage(obj);
             }
         }else if (result._type == itCOORDSYSTEM){
             if (result._var.canConvert<Ilwis::ICoordinateSystem>()){
                 Ilwis::ICoordinateSystem* obj = new Ilwis::ICoordinateSystem(result._var.value<Ilwis::ICoordinateSystem>());
                 if (rename)
-                    (*obj)->setName(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                    (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
                 return new CoordinateSystem(obj);
             }
         }else if (result._type == itGEOREF){
             if (result._var.canConvert<Ilwis::IGeoReference>()){
                 Ilwis::IGeoReference* obj = new Ilwis::IGeoReference(result._var.value<Ilwis::IGeoReference>());
                 if (rename)
-                    (*obj)->setName(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                    (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
                 return new GeoReference(obj);
             }
         }
