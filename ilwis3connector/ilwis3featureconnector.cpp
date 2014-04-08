@@ -774,7 +774,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     } else {
         INamedIdDomain indexdom;
         indexdom.prepare();
-        indexdom->setName(fcov->name());
+        indexdom->name(fcov->name());
         NamedIdentifierRange range;
         for(int i=0; i < fcov->featureCount(type); ++i){
             QStringList parts = Ilwis3Connector::ilwis3ClassName(type).split(" ");

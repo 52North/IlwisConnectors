@@ -73,7 +73,7 @@ bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcover
                     parseFeatureProperties(fcoverage, context);
                 } else if (_parser->isAtBeginningOf("xsd:element")) {
                     QStringRef typeName = _parser->attributes().value("name");
-                    featureTable->setName(typeName.toString());
+                    featureTable->name(typeName.toString());
                 }
             }
         }

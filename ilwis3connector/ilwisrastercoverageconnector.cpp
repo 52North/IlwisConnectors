@@ -428,7 +428,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         _odf->setKeyValue("MapList",QString("Map%1").arg(i),mapName);
 
         Resource resource(itRASTER);
-        resource.setName(mapName);
+        resource.name(mapName);
         resource.addProperty("size", IVARIANT(Size<>(sz.xsize(), sz.ysize(),1)));
         resource.addProperty("bounds", IVARIANT(raster->envelope()));
         resource.addProperty("georeference", raster->georeference()->id());
@@ -470,7 +470,7 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
     if ( !localGrf.exists()) { // if it is not an existing ilwis3 grf, we create one from scratch
         QFileInfo res(_odf->file());
         localName = res.fileName();
-        grf->setName(localName);
+        grf->name(localName);
         QUrl url = makeUrl( _odf->file(), localName, itGEOREF);
         grf->connectTo(url, "georef", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
         grf->store(IlwisObject::smMETADATA);

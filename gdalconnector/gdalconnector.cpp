@@ -68,7 +68,7 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const PrepareOptions &option
     if (!_handle){
         return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename.toString(),QString(gdal()->getLastErrorMsg()));
     }
-    data->setName(fileinf.fileName());
+    data->name(fileinf.fileName());
 
     return true;
 }

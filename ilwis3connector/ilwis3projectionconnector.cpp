@@ -64,7 +64,7 @@ bool ProjectionConnector::loadMetaData(IlwisObject *data, const PrepareOptions &
             proj->setAuthority(rec.field("authority").value().toString());
             proj->setWkt(rec.field("wkt").value().toString());
             proj->setConnector(this);
-            proj->setCode(code);
+            proj->code(code);
             QStringList keys = _odf->childKeys("Projection");
             foreach(QString key,keys) {
                 Projection::ProjectionParamValue pv = mapKeyToEnum(key);

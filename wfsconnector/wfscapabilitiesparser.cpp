@@ -61,7 +61,7 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) co
     QUrl rawUrl, normalizedUrl;
     createGetFeatureUrl(type, rawUrl, normalizedUrl);
     feature = WfsFeature(rawUrl, normalizedUrl);
-    feature.setName(type, false);
+    feature.name(type, false);
 
     QString title;
     query = _parser->queryRelativeFrom(item, "./wfs:Title/string()");

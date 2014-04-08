@@ -40,13 +40,13 @@ bool Ilwis3Connector::loadMetaData(IlwisObject *data, const PrepareOptions &opti
         IniFile *ini = new IniFile();
         ini->setIniFile(inf);
         _odf.reset(ini);
-        data->setName(inf.fileName());
+        data->name(inf.fileName());
         data->setDescription(_odf->value("Ilwis","Description"));
         bool ok;
         quint32 sec = _odf->value("Ilwis","Time").toULong(&ok);
         if ( ok) {
-            data->setCreateTime((time_t)sec);
-            data->setModifiedTime( tUNDEF);
+            data->createTime((time_t)sec);
+            data->modifiedTime( tUNDEF);
         }
         return true;
     } else {

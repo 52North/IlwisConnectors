@@ -131,7 +131,7 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
         double majoraxis = _odf->value("Ellipsoid","a").toDouble();
         Ellipsoid *ellips = new Ellipsoid();
         ellips->setEllipsoid(majoraxis,invf);;
-        ellips->setName("User Defined");
+        ellips->name("User Defined");
         IEllipsoid ellipsoid(ellips);
         return ellipsoid;
     }
@@ -217,7 +217,7 @@ GeodeticDatum *CoordinateSystemConnector::getDatum(QString& ellipsoid) {
             double dy = stmt.value(stmt.record().indexOf("dy")).toDouble();
             double dz = stmt.value(stmt.record().indexOf("dz")).toDouble();
             gdata->setArea(area);
-            gdata->setCode(code);
+            gdata->code(code);
             gdata->set3TransformationParameters(dx, dy, dz);
             ellipsoid = stmt.value(stmt.record().indexOf("ellipsoid")).toString();
 

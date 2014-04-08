@@ -76,7 +76,7 @@ std::vector<Resource> GdalCatalogExplorer::loadItems()
             } else {
                 Resource resource(url, itCATALOG);
                 QString filename = file.isRoot() ? file.absoluteFilePath() : file.fileName();
-                resource.setName(filename);
+                resource.name(filename);
 
                 folders.push_back(resource);
             }
