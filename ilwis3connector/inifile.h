@@ -20,6 +20,7 @@ class IniFile
 {
 public:
     IniFile();
+    IniFile(const QFileInfo &file, bool loadfile=true);
     bool setIniFile(const QFileInfo &file, bool loadfile=true);
     virtual ~IniFile();
 

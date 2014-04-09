@@ -18,6 +18,11 @@ IniFile::IniFile()
 {
 }
 
+IniFile::IniFile(const QFileInfo &file, bool loadfile)
+{
+    setIniFile(file, loadfile);
+}
+
 IniFile::~IniFile()
 {
 }
