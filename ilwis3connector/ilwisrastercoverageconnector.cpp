@@ -67,11 +67,17 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const PrepareOptions
         //file = filename2FullPath(file);
         file = _resource.container().toLocalFile()+ "/" + file;
         if ( file != sUNDEF) {
-            IniFile odf;
-            odf.setIniFile(file);
+            ODF odf(new IniFile(file));
             //QString dataFile = filename2FullPath(odf.value("MapStore","Data"));
-            QUrl url (QUrl::fromLocalFile(_resource.container().toLocalFile() + "/" + odf.value("MapStore","Data")));
+            QUrl url (QUrl::fromLocalFile(_resource.container().toLocalFile() + "/" + odf->value("MapStore","Data")));
             _dataFiles.push_back(url);
+
+            DataDefinition def = determineDataDefintion(odf, options);
+            if ( !def.isValid()) {
+                return false;
+            }
+            gcoverage->datadef(i) = def;
+
         } else {
             ERROR2(ERR_COULD_NOT_LOAD_2,"files","maplist");
             --z;
@@ -135,7 +141,7 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data, const PrepareOption
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
-    DataDefinition def = determineDataDefintion(options);
+    DataDefinition def = determineDataDefintion(_odf, options);
     if ( !def.isValid()) {
         return false;
     }

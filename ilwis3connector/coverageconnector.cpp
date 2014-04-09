@@ -99,7 +99,7 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
         attTable = extTable;
     }
     if ( attTable->columnIndex(COVERAGEKEYCOLUMN) == iUNDEF) { // external tables might already have these
-        DataDefinition def = determineDataDefintion(options);
+        DataDefinition def = determineDataDefintion(_odf, options);
         attTable->addColumn(ColumnDefinition(COVERAGEKEYCOLUMN,def, attTable->columnCount()));
         //attTable->addColumn(FEATUREIDCOLUMN,covdom);
     }
@@ -334,16 +334,16 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     }
     return 0;
 }
-DataDefinition CoverageConnector::determineDataDefintion(const PrepareOptions &options) const{
+DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const PrepareOptions &options) const{
     IDomain dom;
-    if(!dom.prepare(_odf->file(), options)) {
-        ERROR2(ERR_NO_INITIALIZED_2,"domain",_odf->file());
+    if(!dom.prepare(odf->file(), options)) {
+        ERROR2(ERR_NO_INITIALIZED_2,"domain",odf->file());
         return DataDefinition();
     }
 
     DataDefinition def(dom);
     double vmax,vmin,scale,offset;
-    QString range = _odf->value("BaseMap","Range");
+    QString range = odf->value("BaseMap","Range");
     if ( range != sUNDEF ) {
         if ( getRawInfo(range, vmin,vmax,scale,offset)) {
             if ( scale == 1.0) {
