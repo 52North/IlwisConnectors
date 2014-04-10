@@ -126,7 +126,7 @@ void GdalTableLoader::setColumnCallbacks(Table * attTable, OGRLayerH hLayer){
                         if (tp & itSTRING){
                             _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillStringColumn, j);
                         }else if (tp & itINTEGER){
-                            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
+                            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
                             //creating the actual range as invalid to be adjusted in the fillers
                             double min = r->min();
                             r->min(r->max());
@@ -135,7 +135,7 @@ void GdalTableLoader::setColumnCallbacks(Table * attTable, OGRLayerH hLayer){
                             _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillIntegerColumn, j);
                         }else if (tp & itDOUBLE){
                             //creating the actual range as invalid to be adjusted in the fillers
-                            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
+                            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
                             double min = r->min();
                             r->min(r->max());
                             r->max(min);

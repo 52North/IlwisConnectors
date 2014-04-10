@@ -103,9 +103,8 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
         if(!dom.isValid()) {
             return ERROR1(ERR_FIND_SYSTEM_OBJECT_1, domName);
         }
-        INumericDomain numdom = dom.get<NumericDomain>();
         gcoverage->datadef().domain(dom);
-        gcoverage->datadef().range(new NumericRange(vmin, vmax, numdom->range2range<NumericRange>()->resolution()));
+        gcoverage->datadef().range(new NumericRange(vmin, vmax, dom->range<NumericRange>()->resolution()));
 
 
         _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;

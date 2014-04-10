@@ -258,7 +258,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             if ( _domainName == sUNDEF){
                 _domainName = QFileInfo(baseName).baseName() + ".dom";
             }
-            IThematicDomain themdom = dom.get<ThematicDomain>();
+            IThematicDomain themdom = dom.as<ThematicDomain>();
             if ( themdom.isValid()) {
                 _domainInfo = QString("%1;Byte;class;%2;;").arg(_domainName).arg(themdom->count());
                 _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
@@ -271,7 +271,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
             _odf->setKeyValue("BaseMap","Domain",_domainName);
         } else if ( dom->valueType() == itNAMEDITEM) {
-            INamedIdDomain iddom = dom.get<NamedIdDomain>();
+            INamedIdDomain iddom = dom.as<NamedIdDomain>();
             _domainName = Resource::toLocalFile(dom->source().url(), true);
             if ( _domainName == sUNDEF){
                 _domainName = QFileInfo(baseName).baseName() + ".dom";

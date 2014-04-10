@@ -317,7 +317,7 @@ bool CoordinateSystemConnector::storeMetaData(IlwisObject *data) {
         _odf->setKeyValue("CoordSystem", "Datum", "WGS 1984");
         _odf->setKeyValue("CoordSystem","Type","LatLon");
     }else{
-        IConventionalCoordinateSystem projectedCsy = csy.get<ConventionalCoordinateSystem>();
+        IConventionalCoordinateSystem projectedCsy = csy.as<ConventionalCoordinateSystem>();
         if( !projectedCsy->ellipsoid().isValid() || !projectedCsy->projection().isValid()){
                 ERROR2(ERR_NO_INITIALIZED_2, "Ellipsoid/Projection", csy->name());
                 return sUNDEF;
