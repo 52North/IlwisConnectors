@@ -158,7 +158,7 @@ bool TableConnector::loadData(IlwisObject* data ) {
         if ( col.isValid()) {
             std::vector<QVariant> varlist(tbl.rows());
             RawConverter conv = _converters[colName];
-            IlwisTypes valueType = col.datadef().domain()->valueType();
+            IlwisTypes valueType = col.datadef().domain<>()->valueType();
             for(quint32 j = 0; j < tbl.rows(); ++j){
                 if ( (valueType >= itINT8 && valueType <= itDOUBLE) || ((valueType & itDOMAINITEM) != 0)) {
                     double value;
@@ -261,7 +261,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         ColumnDefinition def = tbl->columndefinition(i);
         if ( def.name() == FEATUREIDCOLUMN)
             continue;
-        IDomain dmColumn = def.datadef().domain();
+        IDomain dmColumn = def.datadef().domain<>();
         bool isOldSystem = true;
         QString domName = getDomainName(dmColumn, isOldSystem);
         if ( !isOldSystem) {

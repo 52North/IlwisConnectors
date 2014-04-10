@@ -305,7 +305,7 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     QString attDom = dataFile;
     if ( hasType(tp,itRASTER)) {
         RasterCoverage *raster = static_cast<RasterCoverage *>(coverage);
-        Resource resource = raster->datadef().domain()->source();
+        Resource resource = raster->datadef().domain<>()->source();
         QFileInfo inf(resource.toLocalFile());
         attDom = inf.fileName();
     }

@@ -769,7 +769,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
 
     ITable attTable = fcov->attributeTable();
     ColumnDefinition coldef = attTable->columndefinition(COVERAGEKEYCOLUMN);
-    if ( coldef.isValid() && coldef.datadef().domain()->ilwisType() == itITEMDOMAIN) {
+    if ( coldef.isValid() && coldef.datadef().domain<>()->ilwisType() == itITEMDOMAIN) {
         datadef = coldef.datadef();
     } else {
         INamedIdDomain indexdom;

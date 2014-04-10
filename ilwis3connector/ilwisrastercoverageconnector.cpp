@@ -91,7 +91,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const PrepareOptions
     QString storeType = odf.value("MapStore","Type");
     setStoreType(storeType);
 
-    gcoverage->datadef().domain(mp->datadef().domain());
+    gcoverage->datadef().domain(mp->datadef().domain<>());
 
     double vmax,vmin,scale,offset;
     QString range = odf.value("BaseMap","Range");
@@ -145,7 +145,7 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data, const PrepareOption
     if ( !def.isValid()) {
         return false;
     }
-    if ( def.domain()->valueType() != itNUMBER){
+    if ( def.domain<>()->valueType() != itNUMBER){
         QString dminfo = _odf->value("BaseMap","DomainInfo");
         if ( dminfo != sUNDEF) {
             int index = dminfo.indexOf("class;");
@@ -349,7 +349,7 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
     if ( raster->size().zsize() > 1) // mpl doesnt have binary data
         return true;
 
-    const IDomain dom = raster->datadef().domain();
+    const IDomain dom = raster->datadef().domain<>();
     if (!dom.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Domain", raster->name());
 
@@ -439,7 +439,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         resource.addProperty("bounds", IVARIANT(raster->envelope()));
         resource.addProperty("georeference", raster->georeference()->id());
         resource.addProperty("coordinatesystem", raster->coordinateSystem()->id());
-        resource.addProperty("domain", raster->datadef().domain()->id());
+        resource.addProperty("domain", raster->datadef().domain<>()->id());
         mastercatalog()->addItems({resource});
 
         IRasterCoverage gcMap;
@@ -498,7 +498,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     if ( raster->size().zsize() > 1)
         return storeMetaDataMapList(obj);
 
-    bool ok = CoverageConnector::storeMetaData(obj, itRASTER, raster->datadef().domain());
+    bool ok = CoverageConnector::storeMetaData(obj, itRASTER, raster->datadef().domain<>());
     if ( !ok)
         return false;
 
@@ -517,7 +517,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     _odf->setKeyValue("Map","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
     _odf->setKeyValue("Map","Type","MapStore");
 
-    const IDomain dom = raster->datadef().domain();
+    const IDomain dom = raster->datadef().domain<>();
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
         const NumericStatistics& stats = raster->statistics();
         int digits = stats.significantDigits();

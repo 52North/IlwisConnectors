@@ -338,7 +338,7 @@ bool BinaryIlwis3Table::openOutput(const QString& basename, std::ofstream& outpu
 }
 
 void BinaryIlwis3Table::addStoreDefinition(const DataDefinition& def) {
-    IDomain dmColumn = def.domain();
+    IDomain dmColumn = def.domain<>();
     IlwisTypes colType = dmColumn->ilwisType();
     ColumnInfo inf;
     if ( hasType(colType,itNUMERICDOMAIN) ) {
