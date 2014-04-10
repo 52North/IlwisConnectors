@@ -284,7 +284,7 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
 
     _odf->setKeyValue("Ilwis", "Type", "Domain");
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
-        SPNumericRange numRange = dom->range2range<NumericRange>();
+        SPNumericRange numRange = dom->range<NumericRange>();
         int width=12;
         QString type = "DomainValueInt";
         if ( dom->valueType() & (itINT8 & itUINT8)){

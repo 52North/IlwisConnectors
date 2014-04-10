@@ -282,12 +282,12 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         _odf->setKeyValue(colName, "OwnedByTable", "Yes");
         QString domainInfo;
         if ( dmColumn->ilwisType() == itNUMERICDOMAIN) {
-            INumericDomain numdom = dmColumn.get<NumericDomain>();
-            SPNumericRange numdmrange = numdom->range2range<NumericRange>();
+            //INumericDomain numdom = dmColumn.get<NumericDomain>();
+            SPNumericRange numdmrange = dmColumn->range<NumericRange>();
             if ( numdmrange.isNull()){
                 return ERROR1(ERR_NO_INITIALIZED_1,TR("numeric range"));
             }
-            SPNumericRange numrange = def.datadef().range().dynamicCast<NumericRange>();
+            SPNumericRange numrange = def.datadef().range<NumericRange>();
             RawConverter conv(numrange->min(), numrange->max(), numrange->resolution());
             double resolution = numrange->resolution();
             if ( domName == sUNDEF) {
@@ -327,7 +327,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
             domainInfo = "string.dom;String;string;0;;";
             _odf->setKeyValue(colName, "StoreType","String");
         } else if ( dmColumn->valueType() & itIDENTIFIERITEM) {
-            int count = dmColumn->range2range<ItemRange>()->count();
+            int count = dmColumn->range<ItemRange>()->count();
             domainInfo = QString("%1;Long;id;%2;;").arg(dmColumn->source().toLocalFile(true)).arg(count) ;
             _odf->setKeyValue(colName, "StoreType", "Long");
         }
