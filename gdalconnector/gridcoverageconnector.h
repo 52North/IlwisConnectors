@@ -57,6 +57,7 @@ private:
     }
 
     bool loadDriver();
+    DataDefinition createDataDef(double vmin, double vmax, double resolution);
 };
 }
 }

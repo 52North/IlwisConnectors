@@ -28,7 +28,6 @@
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_range.h"
 #include "pythonapi_catalog.h"
-#include "pythonapi_domain.h"
 %}
 
 %include "pythonapi_qtGNUTypedefs.h"
@@ -230,10 +229,6 @@ def object_cast(obj):
 %include "pythonapi_georeference.h"
 
 %include "pythonapi_rastercoverage.h"
-
-%include "pythonapi_range.h"
-
-%include "pythonapi_domain.h"
 
 %include "pythonapi_catalog.h"
 %extend pythonapi::Catalog {

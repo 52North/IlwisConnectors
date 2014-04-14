@@ -69,7 +69,7 @@ PyObject* Feature::attribute(std::string name,const QVariant& defaultValue, int 
         QVariant var = this->ptr()->cell(QString::fromStdString(name),index,false);
         Ilwis::ColumnDefinition coldef = this->ptr()->columndefinition(QString::fromStdString(name));
         if (coldef.isValid()){
-            IlwisTypes type = coldef.datadef().domain()->valueType();
+            IlwisTypes type = coldef.datadef().domain<>()->valueType();
             if( (type & itNUMBER) || (type & itDATETIME)){
                 if(var.canConvert(QVariant::Double)){
                     if(var.toDouble() == Ilwis::rUNDEF){

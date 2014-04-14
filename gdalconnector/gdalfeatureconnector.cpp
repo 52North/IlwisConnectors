@@ -400,7 +400,7 @@ void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, UPFeatureI& featu
     for(int i=0; i < feature->attributeColumnCount(); ++i){
         if ( !validAttributes[i])
             continue;
-        IDomain dom = columnDef[i].datadef().domain();
+        IDomain dom = columnDef[i].datadef().domain<>();
         if(hasType(dom->valueType(),itINTEGER)) {
             gdal()->setIntegerAttribute(hfeature,index,feature->cell(i).toInt());
         } else if (hasType(dom->valueType(),itDOUBLE | itFLOAT)) {
@@ -464,7 +464,7 @@ bool GdalFeatureConnector::setDataSourceAndLayers(const IFeatureCoverage& featur
         if ( tbl->columndefinition(i).name() == FEATUREIDCOLUMN ){
             continue;
         }
-        OGRFieldType ogrtype = ilwisType2GdalFieldType(tbl->columndefinition(i).datadef().domain()->valueType());
+        OGRFieldType ogrtype = ilwisType2GdalFieldType(tbl->columndefinition(i).datadef().domain<>()->valueType());
         OGRFieldDefnH fieldef = gdal()->createAttributeDefintion(tbl->columndefinition(i).name().toLocal8Bit(),ogrtype);
         if ( fieldef == 0){
             WARN2(ERR_INVALID_INIT_FOR_2, TR("data-type"), tbl->columndefinition(i).name());

@@ -310,7 +310,6 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
         storeMetaDataSortDomain(dom, itIDENTIFIERITEM);
     } else if ( dom->ilwisType() == itTEXTDOMAIN) {
     } else if ( dom->ilwisType() == itCOLORDOMAIN) {
-    } else if ( dom->ilwisType() == itTIMEDOMAIN) {
     } else if ( dom->ilwisType() == itCOORDDOMAIN) {
     }
 

@@ -158,7 +158,7 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table
         } else if (tp & itDATETIME || tp & itDATE){
             record[i] = fillDateTimeColumn();
         } else if (tp & itINTEGER){
-            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
+            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
             //creating the actual range as invalid to be adjusted in the fillers
             double min = r->min();
             r->min(r->max());
@@ -167,7 +167,7 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table
             record[i] = fillIntegerColumn();
         } else if (tp & itDOUBLE){
             //creating the actual range as invalid to be adjusted in the fillers
-            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range2range<NumericRange>()->clone());
+            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
             double min = r->min();
             r->min(r->max());
             r->max(min);

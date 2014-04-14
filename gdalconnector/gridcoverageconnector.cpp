@@ -76,35 +76,24 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
 
         gcoverage->size(sz);
 
-        int layerIndex = 1;
-        auto index = _internalPath.indexOf("layerindex=");
-        if ( index == 0) {
-            bool ok = true;
-            layerIndex = _internalPath.mid(11).toInt(&ok);
-            if (!ok)
-                return ERROR2(ERR_COULD_NOT_LOAD_2,gcoverage->name(),"layer");
-        }
-        auto layerHandle = gdal()->getRasterBand(_handle->handle(), layerIndex);
-        if (!layerHandle) {
-            return ERROR2(ERR_COULD_NOT_LOAD_2, gcoverage->name(),"layer");
-        }
-        //TODO colors. all tools are there but unclear how much the effort is worth
-       // GDALColorInterp value = gdal()->colorInterpretation(layerHandle);
+        double vminRaster=rUNDEF, vmaxRaster=rUNDEF;
+        double resolution= 0;
+        for(int i =0 ; i < sz.zsize(); ++i){
+            auto layerHandle = gdal()->getRasterBand(_handle->handle(), i+1);
+            if (!layerHandle) {
+                return ERROR2(ERR_COULD_NOT_LOAD_2, gcoverage->name(),"layer");
+            }
+            //TODO colors. all tools are there but unclear how much the effort is worth
+            // GDALColorInterp value = gdal()->colorInterpretation(layerHandle);
 
-        int ok;
-        _gdalValueType = gdal()->rasterDataType(layerHandle);
-        double resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
-
-        auto vmin = gdal()->minValue(layerHandle, &ok);
-        auto vmax = gdal()->maxValue(layerHandle, &ok);
-        QString domName = NumericDomain::standardNumericDomainName(vmin, vmax,  resolution);
-        IDomain dom;
-        dom.prepare(domName);
-        if(!dom.isValid()) {
-            return ERROR1(ERR_FIND_SYSTEM_OBJECT_1, domName);
-        }
-        gcoverage->datadef().domain(dom);
-        gcoverage->datadef().range(new NumericRange(vmin, vmax, dom->range<NumericRange>()->resolution()));
+            int ok;
+            _gdalValueType = gdal()->rasterDataType(layerHandle);
+            resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
+            auto vmin = gdal()->minValue(layerHandle, &ok);
+            auto vmax = gdal()->maxValue(layerHandle, &ok);
+            vminRaster = std::min(vmin, vminRaster);
+            vmaxRaster = std::max(vmax, vmaxRaster);
+            gcoverage->datadef(i) = createDataDef(vmin, vmax, resolution);
 
 
         _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
@@ -113,6 +102,21 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
     }else{
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"non-RasterCoverage",_filename.toLocalFile());
     }
+}
+
+DataDefinition RasterCoverageConnector::createDataDef(double vmin, double vmax, double resolution){
+
+    QString domName = NumericDomain::standardNumericDomainName(vmin, vmax,  resolution);
+    IDomain dom;
+    dom.prepare(domName);
+    if(!dom.isValid()) {
+        ERROR1(ERR_FIND_SYSTEM_OBJECT_1, domName);
+        return DataDefinition();
+    }
+    DataDefinition def;
+    def.domain(dom);
+    def.range(new NumericRange(vmin, vmax, dom->range<NumericRange>()->resolution()));
+    return def;
 }
 
 inline double RasterCoverageConnector::value(char *block, int index) const{
