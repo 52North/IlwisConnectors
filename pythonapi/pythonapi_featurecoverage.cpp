@@ -47,11 +47,11 @@ FeatureIterator FeatureCoverage::__iter__(){
 }
 
 unsigned int FeatureCoverage::featureCount() const{
-    return this->ptr()->get<Ilwis::FeatureCoverage>()->featureCount();
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->featureCount();
 }
 
 Feature FeatureCoverage::newFeature(Geometry &geometry){
-    return Feature(this->ptr()->get<Ilwis::FeatureCoverage>()->newFeature(geometry.ptr().get()->clone()),this);
+    return Feature(this->ptr()->as<Ilwis::FeatureCoverage>()->newFeature(geometry.ptr().get()->clone()),this);
 }
 
 FeatureCoverage *FeatureCoverage::toFeatureCoverage(Object *obj){

@@ -6,10 +6,10 @@
 #include "itemdomain.h"
 #include "numericrange.h"
 #include "itemrange.h"
-#include "numericitem.h"
+#include "interval.h"
 #include "identifieritem.h"
 #include "thematicitem.h"
-#include "numericitemrange.h"
+#include "intervalrange.h"
 #include "pythonapi_pyobject.h"
 #include "pythonapi_range.h"
 #include "pythonapi_qvariant.h"
@@ -148,14 +148,14 @@ void NumericItemRange::add(PyObject *item)
         double rmax = CppTupleElement2Double(item,2);
         if ( rmin == rUNDEF || rmax == rUNDEF)
             return;
-        Ilwis::NumericItem *numitem;
+        Ilwis::Interval *numitem;
         if ( CppTupleElementCount(item) == 4){
             double resolution = CppTupleElement2Double(item,3);
             if ( resolution == rUNDEF)
                 return;
-            numitem = new Ilwis::NumericItem(label, { rmin, rmax,resolution});
+            numitem = new Ilwis::Interval(label, { rmin, rmax,resolution});
         }else
-            numitem = new Ilwis::NumericItem(label, { rmin, rmax});
+            numitem = new Ilwis::Interval(label, { rmin, rmax});
 
         static_cast<Ilwis::ItemRange*>(_range.get())->add(numitem);
     }

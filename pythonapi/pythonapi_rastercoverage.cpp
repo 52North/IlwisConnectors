@@ -160,7 +160,7 @@ RasterCoverage *RasterCoverage::__rtruediv__(double value){
 }
 
 double RasterCoverage::coord2value(const Coordinate& c){
-    return this->ptr()->get<Ilwis::RasterCoverage>()->coord2value(c.data());
+    return this->ptr()->as<Ilwis::RasterCoverage>()->coord2value(c.data());
 }
 
 PixelIterator RasterCoverage::__iter__(){
@@ -168,23 +168,23 @@ PixelIterator RasterCoverage::__iter__(){
 }
 
 double RasterCoverage::pix2value(const PixelD &pix){
-    return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(pix.data());
+    return this->ptr()->as<Ilwis::RasterCoverage>()->pix2value(pix.data());
 }
 
 double RasterCoverage::pix2value(const Pixel &pix){
-    return this->ptr()->get<Ilwis::RasterCoverage>()->pix2value(pix.data());
+    return this->ptr()->as<Ilwis::RasterCoverage>()->pix2value(pix.data());
 }
 
 Size RasterCoverage::size(){
-    return Size(this->ptr()->get<Ilwis::RasterCoverage>()->size());
+    return Size(this->ptr()->as<Ilwis::RasterCoverage>()->size());
 }
 
 void RasterCoverage::setSize(const Size &sz){
-    this->ptr()->get<Ilwis::RasterCoverage>()->size(sz.data());
+    this->ptr()->as<Ilwis::RasterCoverage>()->size(sz.data());
 }
 
 void RasterCoverage::unloadBinary(){
-    this->ptr()->get<Ilwis::RasterCoverage>()->unloadBinary();
+    this->ptr()->as<Ilwis::RasterCoverage>()->unloadBinary();
 }
 
 RasterCoverage* RasterCoverage::toRasterCoverage(Object* obj){
@@ -196,9 +196,9 @@ RasterCoverage* RasterCoverage::toRasterCoverage(Object* obj){
 
 
 GeoReference RasterCoverage::geoReference(){
-    return GeoReference(new Ilwis::IGeoReference(this->ptr()->get<Ilwis::RasterCoverage>()->georeference()));
+    return GeoReference(new Ilwis::IGeoReference(this->ptr()->as<Ilwis::RasterCoverage>()->georeference()));
 }
 
 void RasterCoverage::setGeoReference(const GeoReference& gr){
-    this->ptr()->get<Ilwis::RasterCoverage>()->georeference(gr.ptr()->get<Ilwis::GeoReference>());
+    this->ptr()->as<Ilwis::RasterCoverage>()->georeference(gr.ptr()->as<Ilwis::GeoReference>());
 }

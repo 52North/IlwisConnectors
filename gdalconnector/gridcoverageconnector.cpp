@@ -95,7 +95,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
             vmaxRaster = std::max(vmax, vmaxRaster);
             gcoverage->datadef(i) = createDataDef(vmin, vmax, resolution);
 
-
+        }
         _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
 
         return true;

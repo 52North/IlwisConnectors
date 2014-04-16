@@ -30,19 +30,19 @@ namespace pythonapi {
     }
 
     quint32 Table::recordCount() const{
-        return this->ptr()->get<Ilwis::Table>()->recordCount();
+        return this->ptr()->as<Ilwis::Table>()->recordCount();
     }
 
     quint32 Table::columnCount() const{
-        return this->ptr()->get<Ilwis::Table>()->columnCount();
+        return this->ptr()->as<Ilwis::Table>()->columnCount();
     }
 
     bool Table::addColumn(const std::string& name, const std::string& domain){
-        return this->ptr()->get<Ilwis::Table>()->addColumn(QString::fromStdString(name),QString::fromStdString(domain));
+        return this->ptr()->as<Ilwis::Table>()->addColumn(QString::fromStdString(name),QString::fromStdString(domain));
     }
 
     PyObject* Table::columns() const{
-        Ilwis::ITable tbl = this->ptr()->get<Ilwis::Table>();
+        Ilwis::ITable tbl = this->ptr()->as<Ilwis::Table>();
         PyObject* list = newPyTuple(tbl->columnCount());
         for(int i = 0; i < tbl->columnCount(); i++){
             if (!setTupleItem(list, i, PyUnicodeFromString(tbl->columndefinition(i).name().toStdString().data())))
@@ -52,7 +52,7 @@ namespace pythonapi {
     }
 
     PyObject* Table::select(const std::string& conditions) const{
-        std::vector<quint32> lst = this->ptr()->get<Ilwis::Table>()->select(QString::fromStdString(conditions));
+        std::vector<quint32> lst = this->ptr()->as<Ilwis::Table>()->select(QString::fromStdString(conditions));
         PyObject* list = newPyTuple(lst.size());
         int i = 0;
         for(auto it = lst.begin(); it != lst.end(); it++){
@@ -63,7 +63,7 @@ namespace pythonapi {
     }
 
     qint32 Table::columnIndex(const std::string& name) const{
-        quint32 idx = this->ptr()->get<Ilwis::Table>()->columnIndex(QString::fromStdString(name));
+        quint32 idx = this->ptr()->as<Ilwis::Table>()->columnIndex(QString::fromStdString(name));
         if (idx == Ilwis::iUNDEF)
             return Ilwis::iUNDEF;
         else
@@ -71,14 +71,14 @@ namespace pythonapi {
     }
 
     PyObject* Table::cell(const std::string& name, quint32 rec){
-        QVariant ret = this->ptr()->get<Ilwis::Table>()->cell(QString::fromStdString(name), rec,false);
+        QVariant ret = this->ptr()->as<Ilwis::Table>()->cell(QString::fromStdString(name), rec,false);
         if (!ret.isValid())
             throw std::out_of_range(QString("No attribute '%1' found or record %2 out of bound").arg(name.c_str()).arg(rec).toStdString());
         return QVariant2PyObject(ret);
     }
 
     PyObject* Table::cell(quint32 colIndex, quint32 rec){
-        QVariant ret = this->ptr()->get<Ilwis::Table>()->cell(colIndex, rec,false);
+        QVariant ret = this->ptr()->as<Ilwis::Table>()->cell(colIndex, rec,false);
         if (!ret.isValid())
             throw std::out_of_range(QString("No attribute in '%1.' column found or record %2 out of bound").arg(colIndex).arg(rec).toStdString());
         return QVariant2PyObject(ret);
@@ -86,50 +86,50 @@ namespace pythonapi {
 
     void Table::setCell(const std::string& name, quint32 rec, const PyObject* value){
         QVariant* v = PyObject2QVariant(value);
-        this->ptr()->get<Ilwis::Table>()->setCell(QString::fromStdString(name), rec, *v);
+        this->ptr()->as<Ilwis::Table>()->setCell(QString::fromStdString(name), rec, *v);
         delete v;
     }
 
     void Table::setCell(quint32 colIndex, quint32 rec, const PyObject* value){
         QVariant* v = PyObject2QVariant(value);
-        this->ptr()->get<Ilwis::Table>()->setCell(colIndex, rec, *v);
+        this->ptr()->as<Ilwis::Table>()->setCell(colIndex, rec, *v);
         delete v;
     }
 
     void Table::setCell(const std::string& name, quint32 rec, qint64 value){
-        this->ptr()->get<Ilwis::Table>()->setCell(QString::fromStdString(name), rec, QVariant(value));
+        this->ptr()->as<Ilwis::Table>()->setCell(QString::fromStdString(name), rec, QVariant(value));
     }
 
     void Table::setCell(quint32 colIndex, quint32 rec, qint64 value){
-        this->ptr()->get<Ilwis::Table>()->setCell(colIndex, rec, QVariant(value));
+        this->ptr()->as<Ilwis::Table>()->setCell(colIndex, rec, QVariant(value));
     }
 
     void Table::setCell(const std::string& name, quint32 rec, std::string value){
-        this->ptr()->get<Ilwis::Table>()->setCell(QString::fromStdString(name), rec, QVariant(value.c_str()));
+        this->ptr()->as<Ilwis::Table>()->setCell(QString::fromStdString(name), rec, QVariant(value.c_str()));
     }
 
     void Table::setCell(quint32 colIndex, quint32 rec, std::string value){
-        this->ptr()->get<Ilwis::Table>()->setCell(colIndex, rec, QVariant(value.c_str()));
+        this->ptr()->as<Ilwis::Table>()->setCell(colIndex, rec, QVariant(value.c_str()));
     }
 
     void Table::setCell(const std::string& name, quint32 rec, double value){
-        this->ptr()->get<Ilwis::Table>()->setCell(QString::fromStdString(name), rec, QVariant(value));
+        this->ptr()->as<Ilwis::Table>()->setCell(QString::fromStdString(name), rec, QVariant(value));
     }
 
     void Table::setCell(quint32 colIndex, quint32 rec, double value){
-        this->ptr()->get<Ilwis::Table>()->setCell(colIndex, rec, QVariant(value));
+        this->ptr()->as<Ilwis::Table>()->setCell(colIndex, rec, QVariant(value));
     }
 
     PyObject* Table::column(const std::string& name) const{
-        return StdVectorOfQVariant2PyTuple(this->ptr()->get<Ilwis::Table>()->column(QString::fromStdString(name)));
+        return StdVectorOfQVariant2PyTuple(this->ptr()->as<Ilwis::Table>()->column(QString::fromStdString(name)));
     }
 
     PyObject* Table::column(quint32 columnIndex) const{
-        return StdVectorOfQVariant2PyTuple(this->ptr()->get<Ilwis::Table>()->column(columnIndex));
+        return StdVectorOfQVariant2PyTuple(this->ptr()->as<Ilwis::Table>()->column(columnIndex));
    }
 
     PyObject* Table::record(quint32 rec) const{
-        return StdVectorOfQVariant2PyTuple(this->ptr()->get<Ilwis::Table>()->record(rec));
+        return StdVectorOfQVariant2PyTuple(this->ptr()->as<Ilwis::Table>()->record(rec));
     }
 
     Table* Table::toTable(Object *obj){

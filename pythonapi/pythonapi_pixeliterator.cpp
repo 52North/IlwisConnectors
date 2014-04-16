@@ -1,6 +1,5 @@
 #include "../../IlwisCore/core/kernel.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/raster.h"
-#include "../../IlwisCore/core/util/linerasterizer.h"
 #include "../../IlwisCore/core/util/tranquilizer.h"
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"

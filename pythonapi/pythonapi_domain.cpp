@@ -8,7 +8,7 @@
 #include "itemrange.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
-#include "numericitem.h"
+#include "interval.h"
 #include "identifieritem.h"
 #include "thematicitem.h"
 
@@ -29,11 +29,11 @@ Domain::Domain(Ilwis::IDomain *domain) : IlwisObject(new Ilwis::IIlwisObject(*do
 }
 
 bool Domain::isStrict() const{
-    return this->ptr()->get<Ilwis::Domain>()->isStrict();
+    return this->ptr()->as<Ilwis::Domain>()->isStrict();
 }
 
 void Domain::setStrict(bool yesno){
-    this->ptr()->get<Ilwis::Domain>()->setStrict(yesno);
+    this->ptr()->as<Ilwis::Domain>()->setStrict(yesno);
 }
 
 PyObject* Domain::impliedValue(PyObject *value) const{
@@ -42,31 +42,31 @@ PyObject* Domain::impliedValue(PyObject *value) const{
 
 Domain Domain::parent() const{
     Ilwis::IDomain *domain = new Ilwis::IDomain();
-    unsigned long long id = this->ptr()->get<Ilwis::Domain>()->parent()->id();
+    unsigned long long id = this->ptr()->as<Ilwis::Domain>()->parent()->id();
     (*domain).prepare(id);
     return Domain( domain);
 }
 
 void Domain::setParent(const Domain &dom){
-    this->ptr()->get<Ilwis::Domain>()->setParent(dom.ptr()->get<Ilwis::Domain>());
+    this->ptr()->as<Ilwis::Domain>()->setParent(dom.ptr()->as<Ilwis::Domain>());
 }
 
 Domain::Containement Domain::contains(PyObject* value) const{
     std::unique_ptr<QVariant> var(PyObject2QVariant(value));
-    return (Domain::Containement)this->ptr()->get<Ilwis::Domain>()->contains(*var);
+    return (Domain::Containement)this->ptr()->as<Ilwis::Domain>()->contains(*var);
 }
 
 bool Domain::isCompatibleWith(const Domain &dom) const{
-    return this->ptr()->get<Ilwis::Domain>()->isCompatibleWith(dom.ptr()->get<Ilwis::Domain>());
+    return this->ptr()->as<Ilwis::Domain>()->isCompatibleWith(dom.ptr()->as<Ilwis::Domain>());
 }
 
 void Domain::setRange(const Range &rng){
-    return this->ptr()->get<Ilwis::Domain>()->range(rng._range->clone());
+    return this->ptr()->as<Ilwis::Domain>()->range(rng._range->clone());
 }
 
 IlwisTypes Domain::valueType() const
 {
-    return this->ptr()->get<Ilwis::Domain>()->valueType();
+    return this->ptr()->as<Ilwis::Domain>()->valueType();
 }
 
 Domain *Domain::toDomain(Object *obj){
@@ -103,11 +103,11 @@ ItemDomain::ItemDomain()
 
 PyObject *ItemDomain::item(int index, bool labelOnly)
 {
-    Ilwis::SPDomainItem domitem = this->ptr()->get<Ilwis::NumericItemDomain>()->item(index);
+    Ilwis::SPDomainItem domitem = this->ptr()->as<Ilwis::IntervalDomain>()->item(index);
     IlwisTypes vt = valueType();
     switch (vt) {
     case itNUMERICITEM:{
-        Ilwis::NumericItem *numitem = domitem->toType<Ilwis::NumericItem>();
+        Ilwis::Interval *numitem = domitem->toType<Ilwis::Interval>();
         PyObject* list;
         if ( labelOnly)
             list = newPyTuple(1);

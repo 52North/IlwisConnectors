@@ -28,11 +28,11 @@ CoordinateSystem::CoordinateSystem(const std::string& resource){
 }
 
 Envelope CoordinateSystem::envelope(){
-    return Envelope(this->ptr()->get<Ilwis::CoordinateSystem>()->envelope());
+    return Envelope(this->ptr()->as<Ilwis::CoordinateSystem>()->envelope());
 }
 
 bool CoordinateSystem::operator==(const CoordinateSystem &csy){
-    return (this->ptr()->ptr()->ilwisType() == itCONVENTIONALCOORDSYSTEM) && this->ptr()->get<Ilwis::ConventionalCoordinateSystem>()->isEqual(csy.ptr()->ptr());
+    return (this->ptr()->ptr()->ilwisType() == itCONVENTIONALCOORDSYSTEM) && this->ptr()->as<Ilwis::ConventionalCoordinateSystem>()->isEqual(csy.ptr()->ptr());
 }
 
 bool CoordinateSystem::operator!=(const CoordinateSystem &csy){

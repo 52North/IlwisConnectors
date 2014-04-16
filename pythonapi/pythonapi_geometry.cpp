@@ -36,7 +36,7 @@ Geometry::Geometry(std::string wkt, const CoordinateSystem& csy):
     _feature(nullptr),
     _index(-1),
     _ilwisGeometry(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt))){
-    Ilwis::GeometryHelper::setCoordinateSystem(this->_ilwisGeometry.get(),csy.ptr()->get<Ilwis::CoordinateSystem>().ptr());
+    Ilwis::GeometryHelper::setCoordinateSystem(this->_ilwisGeometry.get(),csy.ptr()->as<Ilwis::CoordinateSystem>().ptr());
 }
 
 Geometry::Geometry(geos::geom::Geometry* geometry, const Ilwis::ICoordinateSystem& csy):
@@ -110,13 +110,13 @@ CoordinateSystem Geometry::coordinateSystem(){
 }
 
 void Geometry::setCoordinateSystem(const CoordinateSystem &cs){
-    Ilwis::GeometryHelper::setCoordinateSystem(this->ptr().get(), cs.ptr()->get<Ilwis::CoordinateSystem>().ptr());
+    Ilwis::GeometryHelper::setCoordinateSystem(this->ptr().get(), cs.ptr()->as<Ilwis::CoordinateSystem>().ptr());
 }
 
 Geometry* Geometry::transform(const CoordinateSystem &cs){
     geos::geom::Geometry* copy = this->ptr()->clone();
-    Ilwis::GeometryHelper::transform(copy,coordinateSystem().ptr()->get<Ilwis::CoordinateSystem>(), cs.ptr()->get<Ilwis::CoordinateSystem>());
-    return new Geometry(copy, cs.ptr()->get<Ilwis::CoordinateSystem>());
+    Ilwis::GeometryHelper::transform(copy,coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>(), cs.ptr()->as<Ilwis::CoordinateSystem>());
+    return new Geometry(copy, cs.ptr()->as<Ilwis::CoordinateSystem>());
 }
 
 Envelope Geometry::envelope(){
