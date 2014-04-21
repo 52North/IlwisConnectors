@@ -7,7 +7,10 @@
 #include "gdal.h"
 #include "cpl_vsi.h"
 
+#include "geometries.h"
+
 namespace Ilwis{
+
 namespace Gdal{
 
 typedef void *(*IGDALClose)(GDALDatasetH) ;
@@ -167,6 +170,7 @@ class GDALProxy {
         void closeFile(const QString& filename, quint64 asker);
         OGRSpatialReferenceH srsHandle(GdalHandle* handle, const QString& source, bool message=true);
         void releaseSrsHandle(GdalHandle* handle, OGRSpatialReferenceH srshandle, const QString& source);
+        Envelope envelope(GdalHandle *handle, int index, bool force=false);
 
         static QString translateOGRERR(char ogrErrCode);
 

@@ -479,16 +479,25 @@ QString ODFItem::findDimensions() const
         case itPOINT:
             return _odf.value( "PointMap", "Points");
         case itCOORDSYSTEM:
+        case itCONVENTIONALCOORDSYSTEM:
             {
                 QString sV = "";
                 QString bnds = _odf.value("CoordSystem", "CoordBounds");
                 QStringList parts = bnds.split(" ");
                 if ( parts.size() != 4)
                     return "";
-                sV = QString("%1 %2 %3 %4").arg(parts[0], parts[1], parts[2], parts[3]);
+                if ( parts[0] == "1e+030" || parts[0] == "-1e+308")
+                    return "";
+
+                if ( parts[0].toDouble() > -180 && parts[0].toDouble() < 180)
+                    sV = QString("%1 x %2 x %3 x %4").arg(parts[0].toDouble(),0,'g',3).arg(parts[1].toDouble(),0,'g',3).arg(parts[2].toDouble(),0,'g',3).arg(parts[3].toDouble(),0,'g',3);
+                else
+                    sV = QString("%1 x %2 x %3 x %4").arg(parts[0]).arg(parts[1]).arg(parts[2]).arg(parts[3]);
                 return sV;
             }
         case itDOMAIN:
+        case itITEMDOMAIN:
+        case itNUMERICDOMAIN:
             return _odf.value( "Table", "Records");
         case itTABLE:
             return QString ( "%1 x %2").arg( _odf.value( "Table", "Records"), _odf.value( "Table", "Columns"));

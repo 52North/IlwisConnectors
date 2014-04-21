@@ -413,3 +413,38 @@ void GDALProxy::releaseSrsHandle(GdalHandle *handle, OGRSpatialReferenceH srshan
         //nothing by now
     }
 }
+
+Envelope GDALProxy::envelope(GdalHandle* handle, int index, bool force){
+
+    Envelope bbox;
+    if (handle->type() == GdalHandle::etGDALDatasetH){
+        double geosys[6];
+        CPLErr err = gdal()->getGeotransform(handle->handle(), geosys) ;
+        if ( err != CE_None) {
+            return bbox;
+        }
+
+        double a1 = geosys[0];
+        double b1 = geosys[3];
+        double a2 = geosys[1];
+        double b2 = geosys[5];
+        Pixel pix(gdal()->xsize(handle->handle()), gdal()->ysize(handle->handle()));
+        Coordinate crdLeftup( a1 , b1);
+        Coordinate crdRightDown(a1 + pix.x * a2, b1 + pix.y * b2 ) ;
+        Coordinate cMin( min(crdLeftup.x, crdRightDown.x), min(crdLeftup.y, crdRightDown.y));
+        Coordinate cMax( max(crdLeftup.x, crdRightDown.x), max(crdLeftup.y, crdRightDown.y));
+        bbox = Envelope(cMin, cMax) ;
+    }else {
+        OGRLayerH layerH = gdal()->getLayer(handle->handle(),index);
+        if ( layerH){
+
+
+            OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
+            OGRErr err = gdal()->getLayerExtent(layerH, &envelope , force);//TRUE to FORCE
+            if (err == OGRERR_NONE){
+                bbox = Envelope(Coordinate(envelope.MinX,envelope.MinY),Coordinate(envelope.MaxX,envelope.MaxY));
+            }
+        }
+    }
+    return bbox;
+}

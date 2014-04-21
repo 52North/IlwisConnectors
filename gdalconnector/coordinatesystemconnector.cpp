@@ -42,6 +42,8 @@ CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, b
 
 }
 
+
+
 bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
 
     if (!GdalConnector::loadMetaData(data, options))
@@ -86,6 +88,11 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const PrepareOpt
                 if ( ellipsoid.isValid())
                     csyp->setEllipsoid(ellipsoid);
             }
+            Envelope env = gdal()->envelope(_handle, 0);
+            if ( env.isValid() && !env.isNull()){
+                csy->envelope(env);
+            }
+
         }
     }else{
         ret = ERROR2(ERR_INVALID_PROPERTY_FOR_2,"OGRSpatialReference",data->name());

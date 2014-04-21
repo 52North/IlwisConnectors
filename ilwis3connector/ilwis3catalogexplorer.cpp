@@ -55,17 +55,21 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems()
                                                                  CatalogConnector::foFULLPATHS | CatalogConnector::foEXTENSIONFILTER);
 
     std::set<ODFItem> odfitems;
-   // std::vector<Resource> folders;
+    std::vector<Resource> existingItems;
     QHash<QString, quint64> names;
     foreach(const QUrl& url, files) {
         QFileInfo file = toLocalFile(url);
         IlwisTypes tp = Ilwis3Connector::ilwisType(file.fileName());
-        if ( mastercatalog()->url2id(url, tp) == i64UNDEF) {
+        quint64 id = i64UNDEF;
+        if ( (id = mastercatalog()->url2id(url, tp)) == i64UNDEF) {
             if ( tp & itILWISOBJECT ) {
                 ODFItem item(file);
                 odfitems.insert(item);
                 names[url.toString().toLower()] = item.id();
             }
+        }else {
+            Resource res = mastercatalog()->id2Resource(id);
+            existingItems.push_back(res);
         }
 
     }
@@ -81,8 +85,8 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems()
         }
     }
     mastercatalog()->addItems(finalList);
-   // mastercatalog()->addItems(folders);
 
+    std::copy(existingItems.begin(), existingItems.end(), std::back_inserter(finalList));
 
     return finalList;
 }
