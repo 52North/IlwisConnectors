@@ -35,8 +35,8 @@
 namespace pythonapi {
 
     Catalog::Catalog(const std::string& url, const std::string& filter){
-        Ilwis::CatalogView* cat = new Ilwis::CatalogView();
-        cat->prepare(QUrl(QString::fromStdString(url)), QString::fromStdString(filter));
+        Ilwis::CatalogView* cat = new Ilwis::CatalogView(QUrl(QString::fromStdString(url)));
+        cat->filter(QString::fromStdString(filter))        ;
         this->_data.reset(cat);
     }
 
@@ -100,8 +100,8 @@ namespace pythonapi {
 //                }else if (hasType(type,itELLIPSOID)){
 //                    return new Ellipsoid(new Ilwis::IEllipsoid(*it));
                 }else if (hasType(type,itCATALOG)){
-                    Ilwis::CatalogView* cat = new Ilwis::CatalogView();
-                    cat->prepare(it->url());
+                    Ilwis::CatalogView* cat = new Ilwis::CatalogView(it->url());
+                    cat->prepare();
                     return new Catalog(cat);
                 }else{
                     return new IlwisObject(new Ilwis::IIlwisObject(*it));

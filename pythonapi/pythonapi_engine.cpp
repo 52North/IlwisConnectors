@@ -131,8 +131,9 @@ bool Engine::setWorkingCatalog(const std::string& location){
 
 
 PyObject* Engine::operations(const std::string& filter){
-    Ilwis::CatalogView opCat;
-    opCat.prepare(QUrl(QString("ilwis://operations")), "type='OperationMetaData'");
+    Ilwis::CatalogView opCat(QUrl(QString("ilwis://operations")));
+    opCat.filter("type='OperationMetaData'");
+    opCat.prepare();
     std::vector<Ilwis::Resource> ops = opCat.items();
     PyObject* list = newPyTuple(ops.size());
     int i = 0;
@@ -145,8 +146,9 @@ PyObject* Engine::operations(const std::string& filter){
 }
 
 std::string Engine::operationMetaData(const std::string &name){
-    Ilwis::CatalogView opCat;
-    opCat.prepare(QUrl(QString("ilwis://operations")), "type='OperationMetaData'");
+    Ilwis::CatalogView opCat(QUrl(QString("ilwis://operations")));
+    opCat.filter("type='OperationMetaData'");
+    opCat.prepare();
     std::vector<Ilwis::Resource> ops = opCat.items();
     QString ret;
     for(auto it = ops.begin();it != ops.end(); it++){
