@@ -100,8 +100,8 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
                 continue;
             geos::geom::LinearRing *outer = rings->front();
             vector<geos::geom::Geometry *> *geoms = new vector<geos::geom::Geometry *>(rings->size() - 1);
-            for(int i=1; i < rings->size(); ++i) {
-                (*geoms)[i-1] = rings->at(i);
+            for(int j=1; j < rings->size(); ++j) {
+                (*geoms)[j-1] = rings->at(j);
             }
 
             geos::geom::Polygon *polygon = fcoverage->geomfactory()->createPolygon(outer, geoms);
@@ -145,7 +145,7 @@ bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, c
             std::copy(coords.begin(), coords.end(), ring->begin());
         }
 
-        if ( ring->front() == ring->back() && ring->size() > 3) {
+        if ( ring->size() > 3 && ring->front() == ring->back()) {
             geos::geom::CoordinateArraySequence * ringIn = new geos::geom::CoordinateArraySequence(ring);
             ringIn->removeRepeatedPoints();
             rings->push_back( fcoverage->geomfactory()->createLinearRing(ringIn));
