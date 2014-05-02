@@ -191,9 +191,9 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
     QString csyName = odf.value("GeoRef","CoordSystem");
     QUrl path = mastercatalog()->name2url(csyName, itCOORDSYSTEM);
     ICoordinateSystem csy;
-    if(!csy.prepare(path.toString())) {
+    if(!path.isValid() ||  !csy.prepare(path.toString())) {
         kernel()->issues()->log(TR("Couldn't find coordinate system %1, loading unknown").arg(csyName),IssueObject::itWarning);
-        QString resource = QString("code=unknown");
+        Resource resource = mastercatalog()->name2Resource("code=epsg:4326", itCOORDSYSTEM);
         if(!csy.prepare(resource)) {
             kernel()->issues()->log(TR("Cound find coordinate system unknown, corrupt system file"));
             return false;
