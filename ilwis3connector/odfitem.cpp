@@ -101,7 +101,7 @@ bool ODFItem::setFileId(const QHash<QString, quint64> &names, const QString& val
         return true; // legal; some properties might not have a value(name)
     }
     if ( Ilwis3Connector::ilwisType(value) & itCOORDSYSTEM) {
-        if ( value == "latlonwgs84.csy") {
+        if ( value == "latlonwgs84.csy" || value == "unknown.csy") {
             Resource resource = mastercatalog()->name2Resource("code=epsg:4326", itCOORDSYSTEM);
             if ( !resource.isValid()) {
                return ERROR1(ERR_FIND_SYSTEM_OBJECT_1, "Wgs 84");
@@ -172,6 +172,7 @@ QString ODFItem::findDomainName(const QString& path) const
             QString rasmap = _odf.value("MapList","Map0");
             QFile file(rasmap) ;
             if ( !file.exists()) {
+                rasmap = rasmap.remove("\'");
                 rasmap = container().toLocalFile() + "/" + rasmap ;
             }
             if ( rasmap.indexOf(".mpr") == -1)
@@ -246,6 +247,7 @@ QString ODFItem::findCsyName(const QString& path) const
         else {
              QString grf = _odf.value("MapList","GeoRef");
              if ( grf != sUNDEF) {
+                 grf = grf.remove("\'");
                  QFileInfo infgrf(grf);
                  if ( !infgrf.exists()) {
                      QString grfpath = container().toLocalFile() + "/" + grf;
@@ -278,7 +280,7 @@ IlwisTypes ODFItem::findCsyType(const QString& path) const
     if ( resource.isValid())
         return resource.ilwisType();
     IniFile csy;
-    if ( _csyname == "latlonwgs84.csy")
+    if ( _csyname == "latlonwgs84.csy" || _csyname == "unknown.csy")
         return itCONVENTIONALCOORDSYSTEM;
 
     QString ext = _file.suffix().toLower();
@@ -288,14 +290,17 @@ IlwisTypes ODFItem::findCsyType(const QString& path) const
             QString csyname;
             QFileInfo infgrf(grf);
             if ( !infgrf.exists()) {
+                grf = grf.remove("\'");
                 grf = container().toLocalFile()+ "/" + grf;
             }
             IniFile ini;
             ini.setIniFile(grf);
             csyname = ini.value("GeoRef","CoordSystem");
             QFile file(csyname);
-            if ( !file.exists())
+            if ( !file.exists()){
+                csyname = csyname.remove("\'");
                 csyname = container().toLocalFile() + "/" + csyname;
+            }
             csy.setIniFile(csyname);
 
         }
