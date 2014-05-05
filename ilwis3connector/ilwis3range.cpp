@@ -130,7 +130,7 @@ RawConverter Ilwis3Range::converter(const ODF &odf, const QString &section)  {
         if ( parts.size() == 3) {
             offset = parts[2].mid(7).toDouble(&ok1);
         } if ( parts.size() == 4) {
-            scale = parts[2].toDouble();
+            scale = st != itDOUBLE ? parts[2].toDouble() : 1.0;
             offset = parts[3].mid(7).toDouble(&ok2);
 
         }
