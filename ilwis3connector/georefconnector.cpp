@@ -189,14 +189,19 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
 bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
     GeoReference *grf = static_cast<GeoReference *>(data);
     QString csyName = odf.value("GeoRef","CoordSystem");
-    QUrl path = mastercatalog()->name2url(csyName, itCOORDSYSTEM);
     ICoordinateSystem csy;
-    if(!path.isValid() ||  !csy.prepare(path.toString())) {
-        kernel()->issues()->log(TR("Couldn't find coordinate system %1, loading unknown").arg(csyName),IssueObject::itWarning);
+    if ( csyName.toLower() == "latlonwgs84.csy"){
         Resource resource = mastercatalog()->name2Resource("code=epsg:4326", itCOORDSYSTEM);
-        if(!csy.prepare(resource)) {
-            kernel()->issues()->log(TR("Cound find coordinate system unknown, corrupt system file"));
+        if(!csy.prepare(resource))
             return false;
+    }else {
+        QUrl path = mastercatalog()->name2url(csyName, itCOORDSYSTEM);
+        if( !csy.prepare(path.toString())) {
+            kernel()->issues()->log(TR("Couldn't find coordinate system %1, defaulting to latlong wgs84").arg(csyName),IssueObject::itWarning);
+            Resource resource = mastercatalog()->name2Resource("code=epsg:4326", itCOORDSYSTEM);
+            if(!csy.prepare(resource)) {
+                return false;
+            }
         }
     }
 
