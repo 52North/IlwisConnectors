@@ -342,6 +342,8 @@ QUrl Ilwis3Connector::resolve(const Resource& resource) const {
 
 QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& owner) const {
     QString localName = unquote(name);
+    if ( localName.toLower() == "none.grf")
+        return "code=georef:undetermined";
     if ( localName != sUNDEF) {
         if ( localName.contains(QRegExp("\\\\|/"))) {
             return localName;
