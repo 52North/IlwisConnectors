@@ -199,7 +199,16 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Georeference",grfName));
         return false;
     }
-
+    if ( grf->code() == "undetermined"){ // grf none comes from the internal factory; it doesnt read some properties
+        grf->name(data->name().left(data->name().indexOf(".")));
+        QString szstr = _odf->value("Map","Size");
+        QStringList parts = szstr.split(" ");
+        if ( parts.size() == 2){
+            Size<> sz(parts[0].toLong(), parts[1].toLong(),1);
+            grf->size(sz);
+        }
+        grf->coordinateSystem(gcoverage->coordinateSystem());
+    }
     QString dataFile = filename2FullPath(_odf->value("MapStore","Data"), _resource);
     if ( dataFile != sUNDEF)
          _dataFiles.push_back(dataFile);
