@@ -136,8 +136,8 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
         double invf = _odf->value("Ellipsoid","1/f").toDouble();
         double majoraxis = _odf->value("Ellipsoid","a").toDouble();
         Ellipsoid *ellips = new Ellipsoid();
-        ellips->setEllipsoid(majoraxis,invf);;
-        ellips->name("User Defined");
+        QString newName = ellips->setEllipsoid(majoraxis,invf);;
+        ellips->name(newName);
         IEllipsoid ellipsoid(ellips);
         return ellipsoid;
     }
