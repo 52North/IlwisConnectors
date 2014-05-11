@@ -81,14 +81,8 @@ bool EllipsoidConnector::createEllipsoidFromDatum(const QString &name, IlwisObje
     if (db.exec(query)) {
         if ( db.next()) {
            Ellipsoid *ellipsoid =  static_cast<Ellipsoid *>(data);
-           ellipsoid->name(db.record().field("name").value().toString());
-           ellipsoid->setDescription(db.record().field("description").value().toString());
-           double ma = db.record().field("majoraxis").value().toDouble();
-           double rf = db.record().field("invflattening").value().toDouble();
-           ellipsoid->setEllipsoid(ma,rf);
-           ellipsoid->setAuthority(db.record().field("authority").value().toString());
+           ellipsoid->fromInternal(db.record());
            ellipsoid->setConnector(this); // we are internal, no connector needed
-           ellipsoid->code(code);
            return true;
         }
     }else
