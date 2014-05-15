@@ -76,7 +76,8 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) co
     QString srs;
     query = _parser->queryRelativeFrom(item, "./wfs:DefaultSRS/string()");
     query->evaluateTo( &srs);
-    feature.setTitle(WfsUtils::normalizeEpsgCode(srs));
+    QString res = QString("code=").append(WfsUtils::normalizeEpsgCode(srs));
+    feature.addProperty("coordinateSystem", res);
 
     QString llText;
     query = _parser->queryRelativeFrom(item, "./ows:WGS84BoundingBox/ows:LowerCorner/string()");

@@ -29,6 +29,7 @@
 #include "wfsfeatureparser.h"
 #include "wfsfeaturedescriptionparser.h"
 #include "wfs.h"
+#include "wfsfeature.h"
 #include "wfsresponse.h"
 #include "wfsutils.h"
 
@@ -57,9 +58,16 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const PrepareOp
     WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse);
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
-    return schemaParser.parseSchemaDescription(fcoverage, source().url(true) ,_context);
-}
+    ICoordinateSystem crs;
+    QString res = _resource["coordinatesystem"].toString();
+    if (crs.prepare(res, itCONVENTIONALCOORDSYSTEM)) {
+        fcoverage->coordinateSystem(crs);
+    } else {
+        ERROR1("Could not prepare crs with %1.", res);
+    }
 
+    return schemaParser.parseSchemaDescription(fcoverage, source().url(true), _context);
+}
 
 bool WfsFeatureConnector::loadData(IlwisObject *data)
 {
