@@ -13,7 +13,7 @@
 #include "catalogconnector.h"
 #include "inifile.h"
 #include "ilwis3connector.h"
-#include "RawConverter.h"
+#include "rawconverter.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
 #include "georefimplementation.h"
