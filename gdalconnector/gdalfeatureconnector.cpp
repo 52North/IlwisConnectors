@@ -11,7 +11,9 @@
 #include "geos/geom/LinearRing.h"
 #include "geos/geom/Polygon.h"
 #include "geos/geom/GeometryFactory.h"
+#ifdef Q_OS_WIN
 #include "geos/geom/Coordinate.inl"
+#endif
 #include "module.h"
 #include "ilwiscontext.h"
 #include "catalog.h"
