@@ -55,8 +55,12 @@ OTHER_FILES += \
     gdalconnector/resources/ogr_formats.config
 
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
+
+INCLUDEPATH += $$PWD/../external/gdalheaders \
+               $$PWD/../external/geos
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 }

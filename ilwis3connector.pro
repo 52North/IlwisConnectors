@@ -79,7 +79,11 @@ resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resour
 
 INSTALLS += resources
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+
+
+INCLUDEPATH += $$PWD/../external/geos
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
