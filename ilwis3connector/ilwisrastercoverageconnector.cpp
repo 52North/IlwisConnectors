@@ -181,6 +181,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
     QFileInfo inf(_resource.toLocalFile());
     if(!setDataType(data, options))
         return false;
+    _dataFiles.clear();
 
     bool isMapList  = inf.suffix().toLower() == "mpl";
 
