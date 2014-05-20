@@ -14,23 +14,28 @@ CONF=release
 
 OUTDIR = $$PWD/output/$$CONF
 PLATFORM = generic
+PLATFORM = generic
 win32{
     PLATFORM = win32
+    BOOST=../external
+    SHAREDEXT=dll
+    PREFIXSHARED=
+    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+    INCLUDEPATH += $$PWD/../external/geos
+    DEPENDPATH += $$PWD/../external/geos
 }
-BOOST=../external
+linux{
+    BOOST=/usr/include
+    GEOSINCL=/usr/include
+    GEOSLIB=/usr/lib
+    SHAREDEXT=so
+    PREFIXSHARED=lib
+    INCLUDEPATH += $$GEOSINCL
+    DEPENDPATH += $$GEOSINCL
+    LIBS += -L$$GEOSLIB/ -lgeos-3.4.2
+}
 
 QT += sql
-
-plugin{
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-}dll{
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
-}else {
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
-}
 
 INCLUDEPATH += ../IlwisCore/core \
                 ../IlwisCore/core/ilwisobjects \
@@ -46,6 +51,5 @@ INCLUDEPATH += ../IlwisCore/core \
                 ../IlwisCore/core/catalog \
                 ../IlwisCore/core/ilwisobjects/domain \
                 $$BOOST
-
 
 
