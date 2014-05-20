@@ -15,17 +15,20 @@ public:
     int srsDimension() const;
     QString geometryAtttributeName() const;
     QMap<QString,QString> namespaceMappings() const;
+    Resource resource() const;
 
     void setSrsName(QString srsName);
     void setSrsDimension(int srsDimension);
     void setGeometryAtttributeName(QString geometryAtttributeName);
     void addNamespaceMapping(QString prefix, QString uriNamespace);
+    void setResource(Resource resource);
 
 private:
     QString _srsName;
     int _srsDimension;
     QString _geometryAttributeName;
     QMap<QString,QString> _namespaceMappings;
+    Resource _resource;
 };
 }
 }
