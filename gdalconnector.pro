@@ -54,19 +54,17 @@ OTHER_FILES += \
     gdalconnector/gdalconnector.json \
     gdalconnector/resources/ogr_formats.config
 
-
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
-
-
-
-win32{
-    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-    INCLUDEPATH += $$PWD/../external/gdalheaders
-}
+INCLUDEPATH +=  $$PWD/../external/gdalheaders
 
 resources.files = gdalconnector/resources/ogr_formats.config
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
 INSTALLS += resources
+
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
+
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+}
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
