@@ -96,7 +96,7 @@ void Ilwis3Module::prepare()
     IlwisObject::addTypeFunction(Ilwis3Connector::ilwisType);
 
     QFileInfo ilw = context()->ilwisFolder();
-    QString path = ilw.canonicalFilePath() + "/Extensions/ilwis3connector/resources";
+    QString path = ilw.canonicalFilePath() + "/extensions/ilwis3connector/resources";
     DataFormat::setFormatInfo(path + "/ilwis3formats.config","ilwis3");
 
 
