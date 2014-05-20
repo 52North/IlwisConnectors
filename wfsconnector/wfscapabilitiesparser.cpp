@@ -7,7 +7,6 @@
 #include <QXmlResultItems>
 
 #include "kernel.h"
-#include "geometries.h"
 #include "wfsresponse.h"
 #include "wfsfeature.h"
 #include "wfscapabilitiesparser.h"
@@ -87,10 +86,8 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) co
     query = _parser->queryRelativeFrom(item, "./ows:WGS84BoundingBox/ows:UpperCorner/string()");
     query->evaluateTo( &urText);
 
-    Coordinate ll = createCoordinateFromWgs84LatLon(llText);
-    Coordinate ur = createCoordinateFromWgs84LatLon(urText);
-    Envelope envelope(ll, ur);
-    feature.setBBox(envelope);
+    feature.addProperty("envelope.ll", llText);
+    feature.addProperty("envelope.ur", urText);
 }
 void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl& rawUrl, QUrl& normalizedUrl) const
 {
@@ -104,13 +101,5 @@ void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl
     normalizedUrl = _url.toString(QUrl::RemoveQuery) + "/" + featureName;
 }
 
-Coordinate WfsCapabilitiesParser::createCoordinateFromWgs84LatLon(QString latlon) const
-{
-    int splitIndex = latlon.indexOf(" ");
-    QString lon = latlon.left(splitIndex).trimmed();
-    QString lat = latlon.mid(splitIndex + 1).trimmed();
-    Coordinate coords(lon.toDouble(), lat.toDouble());
-    return coords;
-}
 
 
