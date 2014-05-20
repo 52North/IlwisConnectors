@@ -46,11 +46,12 @@ WfsFeatureDescriptionParser::~WfsFeatureDescriptionParser()
 {
 }
 
-bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcoverage, const QUrl& wfsUrl, WfsParsingContext &context)
+bool WfsFeatureDescriptionParser::parseMetadata(FeatureCoverage *fcoverage, WfsParsingContext &context)
 {
     QString name = fcoverage->name();
     quint64 id = fcoverage->id();
     QString schemaResource = WfsUtils::getInternalNameFrom(name, id);
+    WfsUtils::addSpatialMetadata(fcoverage, context.resource());
 
     ITable featureTable;
     Resource resource(schemaResource, itFLATTABLE);
@@ -78,6 +79,7 @@ bool WfsFeatureDescriptionParser::parseSchemaDescription(FeatureCoverage *fcover
             }
         }
     }
+
     return true;
 }
 
