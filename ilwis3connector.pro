@@ -9,9 +9,6 @@ TARGET = ilwis3connector
 
 include(global.pri)
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-
 QT       += sql
 
 TEMPLATE = lib
@@ -81,8 +78,6 @@ INSTALLS += resources
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
-
-INCLUDEPATH += $$PWD/../external/geos
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
