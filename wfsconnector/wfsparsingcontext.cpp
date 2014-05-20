@@ -37,6 +37,11 @@ Resource WfsParsingContext::resource() const
     return _resource;
 }
 
+QString WfsParsingContext::currentItem() const
+{
+    return _currentItem;
+}
+
 void WfsParsingContext::setSrsName(QString srsName)
 {
     _srsName = srsName;
@@ -60,6 +65,11 @@ void WfsParsingContext::addNamespaceMapping(QString prefix, QString uriNamespace
 void WfsParsingContext::setResource(Resource resource)
 {
     _resource = resource;
+}
+
+void WfsParsingContext::setCurrentItem(QString item)
+{
+    _currentItem = item;
 }
 
 
