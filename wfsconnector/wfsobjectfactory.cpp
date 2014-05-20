@@ -14,6 +14,7 @@
 #include "ilwisobjectfactory.h"
 #include "connectorfactory.h"
 #include "ilwisobjectconnector.h"
+#include "geometries.h"
 
 #include "wfsparsingcontext.h"
 #include "wfsfeatureconnector.h"
