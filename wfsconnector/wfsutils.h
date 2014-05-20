@@ -2,6 +2,13 @@
 #define WFSUTILS_H
 
 #include "kernel.h"
+#include "ilwisdata.h"
+#include "symboltable.h"
+#include "geometries.h"
+#include "coordinatesystem.h"
+#include "feature.h"
+#include "coverage.h"
+#include "featurecoverage.h"
 
 namespace Ilwis {
 namespace Wfs {
@@ -41,6 +48,32 @@ public:
 
     static QString getInternalNameFrom(QString name, quint64 id) {
         return QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id);
+    }
+
+
+    static void addSpatialMetadata(FeatureCoverage *fcoverage, Resource resource)
+    {
+        ICoordinateSystem crs;
+        QString res = resource["coordinatesystem"].toString();
+        if (crs.prepare(res, itCONVENTIONALCOORDSYSTEM)) {
+            fcoverage->coordinateSystem(crs);
+        } else {
+            ERROR1("Could not prepare crs with %1.", res);
+        }
+
+        Coordinate ll = createCoordinateFromWgs84LatLon(resource["envelope.ll"].toString());
+        Coordinate ur = createCoordinateFromWgs84LatLon(resource["envelope.ur"].toString());
+        Envelope envelope(ll, ur);
+        fcoverage->envelope(envelope);
+    }
+
+    static Coordinate createCoordinateFromWgs84LatLon(QString latlon)
+    {
+        int splitIndex = latlon.indexOf(" ");
+        QString lon = latlon.left(splitIndex).trimmed();
+        QString lat = latlon.mid(splitIndex + 1).trimmed();
+        Coordinate coords(lon.toDouble(), lat.toDouble());
+        return coords;
     }
 
 private:

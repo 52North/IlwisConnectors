@@ -10,6 +10,7 @@ class XPathParser;
 class QXmlItem;
 
 namespace Ilwis {
+
 namespace Wfs {
 
 class WFSCONNECTORSHARED_EXPORT WfsCapabilitiesParser
@@ -26,7 +27,6 @@ private:
 
     void createGetFeatureUrl(const QString &featureType, QUrl &rawUrl, QUrl &normalizedUrl) const;
     void parseFeature(QXmlItem &item, WfsFeature &feature) const;
-    Coordinate createCoordinateFromWgs84LatLon(QString latlon) const;
 
 };
 }
