@@ -19,7 +19,7 @@
 #include "domain.h"
 #include "datadefinition.h"
 #include "numericrange.h"
-#include "RawConverter.h"
+#include "rawconverter.h"
 #include "binaryilwis3table.h"
 
 

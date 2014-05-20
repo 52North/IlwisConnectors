@@ -66,17 +66,7 @@ OTHER_FILES += \
     ilwis3connector/resources/datum_allias.csv \
     ilwis3connector/resources/domain_allias.csv
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
-win32:CONFIG(release, debug|release): {
-    QMAKE_CXXFLAGS_RELEASE += -O2
-}
-
-INCLUDEPATH +=  $$PWD/core \
-                $$PWD/../external/geos
-DEPENDPATH +=   $$PWD/core \
-                $$PWD/../external/geos
 
 resources.files = ilwis3connector/ilwis3connector.json \
     ilwis3connector/resources/projection_allias.csv \
@@ -88,3 +78,12 @@ resources.files = ilwis3connector/ilwis3connector.json \
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
 INSTALLS += resources
+
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
+
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+}
+unix {
+    QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET/lib$${TARGET}.so $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+}

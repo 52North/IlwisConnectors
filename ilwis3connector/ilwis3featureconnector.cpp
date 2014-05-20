@@ -11,8 +11,10 @@
 #include "geos/geom/LinearRing.h"
 #include "geos/geom/Polygon.h"
 #include "geos/geom/GeometryFactory.h"
+#ifdef Q_OS_WIN
 #include "geos/geom/Coordinate.inl"
 #include "geos/geom/Envelope.inl"
+#endif
 #include "module.h"
 #include "connectorinterface.h"
 #include "mastercatalog.h"
