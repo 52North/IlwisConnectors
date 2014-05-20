@@ -45,7 +45,7 @@ GDALProxy::GDALProxy() {
     QString gdalLibrary, proj4jLibrary;
 #ifdef Q_OS_WIN
     gdalLibrary = "gdal.dll";
-    proj4jLibrary = "libproj-0.dll"
+    proj4jLibrary = "libproj-0.dll";
 #else
 #ifdef Q_OS_UNIX
     gdalLibrary = "libgdal.so";
