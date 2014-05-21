@@ -6,7 +6,6 @@
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "postgresqlconnector.h"
-#include "postgresql/libpq-fe.h"
 
 using namespace Ilwis;
 using namespace Postgresql;
