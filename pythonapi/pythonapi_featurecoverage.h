@@ -25,6 +25,7 @@ namespace pythonapi {
         FeatureCoverage();
         FeatureCoverage(std::string resource);
         FeatureIterator __iter__();
+        IlwisTypes featureTypes() const;
         unsigned int featureCount() const;
         Feature newFeature(Geometry& geometry);
         static FeatureCoverage* toFeatureCoverage(Object *obj);

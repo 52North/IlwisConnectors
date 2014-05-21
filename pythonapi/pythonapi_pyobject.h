@@ -31,10 +31,21 @@ namespace pythonapi {
     PyObject* PyUnicodeFromString(const char *u);
     PyObject* PyBoolFromLong(long v);
     PyObject* PyLongFromSize_t(quint32 v);
+    bool PyLongCheckExact(const PyObject* obj);
+    bool PyFloatCheckExact(const PyObject* obj);
+    bool PyUnicodeCheckExact(const PyObject* obj);
+    long PyLongAsLong(const PyObject* obj);
+    double PyFloatAsDouble(const PyObject* obj);
+    std::string PyBytesAsString(const PyObject* obj);
 
     //======tuple==========================
     PyObject* newPyTuple(int size);
     bool setTupleItem(PyObject *tuple, int i, PyObject* v);
+    bool PyTupleCheckExact(const PyObject* obj);
+    PyObject* PyTupleGetItem(PyObject* obj, int index);
+
+    //======list============================
+    bool PyListCheckExact(const PyObject* obj);
 
     //========Py_buffer==========================
     Py_buffer* newPyBuffer(void* buf, int len, int readOnly);
@@ -83,6 +94,16 @@ namespace pythonapi {
     unsigned long long CppTupleElement2ulonglong(PyObject* ob, int index);
     std::string CppTupleElement2String(PyObject* ob, int index);
     int CppTupleElementCount(PyObject* ob);
+
+    //================PyBuild============================
+    PyObject* PyBuildDouble(double value);
+    PyObject* PyBuildString(std::string str);
+
+    //===============dictionary=========================
+    bool PyDictCheckExact(const PyObject* obj);
+    PyObject* PyDictNew();
+    int PyDictSetItemString(PyObject *dicti, const char *key, PyObject *val);
+    PyObject* PyDictGetItemString(PyObject* dicti, const char* key);
 
 } // namespace pythonapi
 

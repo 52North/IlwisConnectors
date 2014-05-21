@@ -28,6 +28,7 @@ namespace pythonapi {
         std::string __str__();
         IlwisTypes ilwisType();
         void fromWKT(const std::string& wkt);
+        geos::geom::Geometry* fromWKTReader(const std::string& wkt);
         std::string toWKT();
         CoordinateSystem coordinateSystem();
         void setCoordinateSystem(const CoordinateSystem& cs);

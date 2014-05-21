@@ -79,11 +79,37 @@ namespace pythonapi {
         return PyLong_FromSize_t(v);
     }
 
+    bool PyLongCheckExact(const PyObject* obj){
+        return PyLong_CheckExact(const_cast<PyObject*>(obj));
+    }
+
+    bool PyFloatCheckExact(const PyObject* obj){
+        return PyFloat_CheckExact(const_cast<PyObject*>(obj));
+    }
+
+    bool PyUnicodeCheckExact(const PyObject* obj){
+        return PyUnicode_CheckExact(const_cast<PyObject*>(obj));
+    }
+
+    long PyLongAsLong(const PyObject* obj){
+        return PyLong_AsLong(const_cast<PyObject*>(obj));
+    }
+
+    double PyFloatAsDouble(const PyObject* obj){
+        return PyFloat_AsDouble(const_cast<PyObject*>(obj));
+    }
+
+    std::string PyBytesAsString(const PyObject* obj){
+        return PyBytes_AsString(PyUnicode_AsUTF8String(const_cast<PyObject*>(obj)));
+    }
+
     //======tuple==========================
 
     PyObject* newPyTuple(int size){
         return PyTuple_New(size);
     }
+
+
 
     bool setTupleItem(PyObject *tuple, int i, PyObject* v){
         if (v) {
@@ -95,6 +121,20 @@ namespace pythonapi {
             return false;
         }
     }
+
+    bool PyTupleCheckExact(const PyObject* obj){
+        return PyTuple_CheckExact(const_cast<PyObject*>(obj));
+    }
+
+    PyObject* PyTupleGetItem(PyObject* obj, int index){
+        return PyTuple_GetItem(obj, index);
+    }
+
+    //======list=============================
+    bool PyListCheckExact(const PyObject* obj){
+        return PyList_CheckExact(const_cast<PyObject*>(obj));
+    }
+
 
     //========Py_buffer==========================
 
@@ -216,39 +256,31 @@ namespace pythonapi {
 
     double CppTupleElement2Double(PyObject* ob, int index){
         if (PyTuple_CheckExact(ob))    {
-            if ( PyTuple_Size(ob) < index){
-                PyObject *dobj =  PyTuple_GetItem(ob, index);
-                return CppFloat2Double(dobj);
-            }
+            PyObject *dobj =  PyTuple_GetItem(ob, index);
+            return CppFloat2Double(dobj);
         }
         return rUNDEF;
     }
 
     long CppTupleElement2Long(PyObject* ob, int index){
         if (PyTuple_CheckExact(ob))    {
-            if ( PyTuple_Size(ob) < index){
-                PyObject *lobj =  PyTuple_GetItem(ob, index);
-                return CppLong2long(lobj);
-            }
+            PyObject *lobj =  PyTuple_GetItem(ob, index);
+            return CppLong2long(lobj);
         }
         return iUNDEF;
     }
     unsigned long long CppTupleElement2ulonglong(PyObject* ob, int index){
         if (PyTuple_CheckExact(ob))    {
-            if ( PyTuple_Size(ob) < index){
-                PyObject *lobj =  PyTuple_GetItem(ob, index);
-                return CppULongLong2ulonglong(lobj);
-            }
+            PyObject *lobj =  PyTuple_GetItem(ob, index);
+            return CppULongLong2ulonglong(lobj);
         }
         return iUNDEF;
     }
 
     std::string CppTupleElement2String(PyObject* ob, int index){
         if (PyTuple_CheckExact(ob))    {
-            if ( PyTuple_Size(ob) < index){
-                PyObject *dobj =  PyTuple_GetItem(ob, index);
-                return CppString2stdString(dobj);
-            }
+            PyObject *dobj =  PyTuple_GetItem(ob, index);
+            return CppString2stdString(dobj);
         }
         return "?";
     }
@@ -257,6 +289,36 @@ namespace pythonapi {
         return PyTuple_Size(ob);
     }
 
+    //==========================PyBuild====================================
+
+    PyObject* PyBuildDouble(double value){
+        return Py_BuildValue("d", value);
+    }
+
+    PyObject* PyBuildString(std::string str){
+        return Py_BuildValue("s", str.c_str());
+    }
+
+
+    //------------------------Dictionary-----------------------------------
+
+    bool PyDictCheckExact(const PyObject* obj)
+    {
+        return PyDict_CheckExact(const_cast<PyObject*>(obj));
+    }
+
+    PyObject* PyDictNew()
+    {
+        return PyDict_New();
+    }
+
+    int PyDictSetItemString(PyObject *dicti, const char *key, PyObject *val){
+        return PyDict_SetItemString(dicti, key, val);
+    }
+
+    PyObject* PyDictGetItemString(PyObject* dicti, const char* key){
+        return PyDict_GetItemString(dicti, key);
+    }
 
 
 

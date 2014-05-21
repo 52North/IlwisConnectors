@@ -26,7 +26,8 @@ namespace pythonapi{
             PROJECTION = itPROJECTION,
             ELLIPSOID = itELLIPSOID,
             CATALOG = itCATALOG,
-            CONTINUOUSCOLOR = itCONTINUOUSCOLOR
+            CONTINUOUSCOLOR = itCONTINUOUSCOLOR,
+            PALETTECOLOR = itPALETTECOLOR
         };
     };
 }

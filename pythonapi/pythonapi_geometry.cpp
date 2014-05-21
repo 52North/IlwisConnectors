@@ -10,6 +10,8 @@
 #include "geos/geom/Geometry.h"
 #include "geos/geom/GeometryFactory.h"
 #include "geos/geom/Coordinate.h"
+#include "geos/io/WKTReader.h"
+#include "geos/io/WKTReader.inl"
 #include "../../IlwisCore/core/util/location.h"
 #include "../../IlwisCore/core/util/coordinate.h"
 #include "../../IlwisCore/core/util/box.h"
@@ -35,7 +37,8 @@ Geometry::Geometry(std::string wkt, const CoordinateSystem& csy):
     _standalone(true),
     _feature(nullptr),
     _index(-1),
-    _ilwisGeometry(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt))){
+    _ilwisGeometry(fromWKTReader(wkt)){
+    if(_ilwisGeometry)
     Ilwis::GeometryHelper::setCoordinateSystem(this->_ilwisGeometry.get(),csy.ptr()->as<Ilwis::CoordinateSystem>().ptr());
 }
 
@@ -85,7 +88,7 @@ void Geometry::fromWKT(const std::string& wkt){
             this->_standalone = true;
             this->_feature = nullptr;
             this->_index = -1;
-            this->_ilwisGeometry.reset(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt)));
+            this->_ilwisGeometry.reset(fromWKTReader(wkt));
         }else{
             if (this->_feature != nullptr && (bool)this->_feature && this->_feature->__bool__()){
                 this->_feature->ptr()->set(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt)), this->_index);
@@ -94,12 +97,18 @@ void Geometry::fromWKT(const std::string& wkt){
         }
     }else{
         if (_standalone){
-            this->_ilwisGeometry.reset(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt)));
+            this->_ilwisGeometry.reset(fromWKTReader(wkt));
         }else{
             this->_feature->ptr()->set(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt)), this->_index);
         }
     }
 }
+
+geos::geom::Geometry* Geometry::fromWKTReader(const std::string& wkt) {
+    geos::io::WKTReader reader;
+    return reader.read(wkt);
+}
+
 
 std::string Geometry::toWKT(){
     return Ilwis::GeometryHelper::toWKT(this->ptr().get()).toStdString();
