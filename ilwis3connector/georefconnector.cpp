@@ -13,7 +13,7 @@
 #include "catalogconnector.h"
 #include "inifile.h"
 #include "ilwis3connector.h"
-#include "RawConverter.h"
+#include "rawconverter.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
 #include "georefimplementation.h"
@@ -197,8 +197,8 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
     }else {
         QUrl path = mastercatalog()->name2url(csyName, itCOORDSYSTEM);
         if( !csy.prepare(path.toString())) {
-            kernel()->issues()->log(TR("Couldn't find coordinate system %1, defaulting to latlong wgs84").arg(csyName),IssueObject::itWarning);
-            Resource resource = mastercatalog()->name2Resource("code=epsg:4326", itCOORDSYSTEM);
+            kernel()->issues()->log(TR("Couldn't find coordinate system %1, defaulting to unknown").arg(csyName),IssueObject::itWarning);
+            Resource resource = mastercatalog()->name2Resource("code=csy:unknown", itCOORDSYSTEM);
             if(!csy.prepare(resource)) {
                 return false;
             }
@@ -226,10 +226,13 @@ IlwisObject *GeorefConnector::createGeoreference(const IniFile &odf) const{
         return GeoReference::create("corners", _resource);
 
     }
-    if ( type == "GeoRefCTP") {
+    else if ( type == "GeoRefCTP") {
         return GeoReference::create("tiepoints", _resource);
     }
-    if ( type == "GeoRefSubMap") {
+    else if ( type == "GeoRefNone") {
+        return GeoReference::create("undetermined", _resource);
+    }
+    else if ( type == "GeoRefSubMap") {
         auto name = _odf->value("GeoRefSubMap","GeoRef");
         QUrl resource = mastercatalog()->name2url(name, itGEOREF);
         IniFile odf;

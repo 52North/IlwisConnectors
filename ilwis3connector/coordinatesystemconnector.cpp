@@ -19,6 +19,7 @@
 #include "projection.h"
 #include "coordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
+#include "boundsonlycoordinatesystem.h"
 #include "coordinatesystemconnector.h"
 
 using namespace Ilwis;
@@ -38,6 +39,9 @@ IlwisObject *CoordinateSystemConnector::create() const {
     IlwisObject *object = 0;
     if ( type() == itCONVENTIONALCOORDSYSTEM)
         object = new ConventionalCoordinateSystem(_resource);
+    if ( type() == itBOUNDSONLYCSY)
+        object = new BoundsOnlyCoordinateSystem(_resource);
+
     return object;
 }
 
@@ -116,7 +120,9 @@ bool CoordinateSystemConnector::canUse(const Resource& resource,const UPCatalogC
         if (t == "LatLon" && requiredType == itCONVENTIONALCOORDSYSTEM)
             return true;
         else if ( t == "Projection" && requiredType == itCONVENTIONALCOORDSYSTEM)
-           return true;
+            return true;
+        if ( t == "BoundsOnly" && requiredType == itBOUNDSONLYCSY)
+            return true;
 
     }
     return false;
@@ -130,8 +136,8 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
         double invf = _odf->value("Ellipsoid","1/f").toDouble();
         double majoraxis = _odf->value("Ellipsoid","a").toDouble();
         Ellipsoid *ellips = new Ellipsoid();
-        ellips->setEllipsoid(majoraxis,invf);;
-        ellips->name("User Defined");
+        QString newName = ellips->setEllipsoid(majoraxis,invf);;
+        ellips->name(newName);
         IEllipsoid ellipsoid(ellips);
         return ellipsoid;
     }

@@ -37,7 +37,7 @@
 #include "connectorfactory.h"
 #include "catalogconnectorfactory.h"
 #include "symboltable.h"
-#include "OperationExpression.h"
+#include "operationExpression.h"
 #include "gdalmodule.h"
 #include "catalogexplorer.h"
 #include "catalogconnector.h"

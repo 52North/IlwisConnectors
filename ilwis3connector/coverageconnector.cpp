@@ -124,15 +124,17 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOptio
     QString csyName = _odf->value("BaseMap","CoordSystem");
     if ( csyName.toLower() == "latlonwgs84.csy")
         csyName = "code=epsg:4326";
+    else if ( csyName.toLower() == "unknown.csy")
+        csyName = "code=csy:unknown";
     else{
         csyName = filename2FullPath(csyName, this->_resource);
     }
     ICoordinateSystem csy;
-    if ( !csy.prepare(csyName, itCONVENTIONALCOORDSYSTEM, options)) {
+    if ( !csy.prepare(csyName, itCOORDSYSTEM, options)) {
         kernel()->issues()->log(csyName,TR("Coordinate system couldnt be initialized, defaulting to 'unknown'"),IssueObject::itWarning);
-        QString resource = QString("code=unknown");
+        QString resource = QString("code=csy:unknown");
         if (!csy.prepare(resource)) {
-            kernel()->issues()->log(TR("Fallback to 'unknown failed', corrupt system files defintion"));
+            kernel()->issues()->log(TR("Fallback to 'unknown' failed, corrupt system files defintion"));
             return false;
         }
     }

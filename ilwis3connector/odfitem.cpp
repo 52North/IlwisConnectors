@@ -101,10 +101,28 @@ bool ODFItem::setFileId(const QHash<QString, quint64> &names, const QString& val
         return true; // legal; some properties might not have a value(name)
     }
     if ( Ilwis3Connector::ilwisType(value) & itCOORDSYSTEM) {
-        if ( value == "latlonwgs84.csy" || value == "unknown.csy") {
+        if ( value == "latlonwgs84.csy" ) {
             Resource resource = mastercatalog()->name2Resource("code=epsg:4326", itCOORDSYSTEM);
             if ( !resource.isValid()) {
                return ERROR1(ERR_FIND_SYSTEM_OBJECT_1, "Wgs 84");
+            }
+            fileid = resource.id();
+            return true;
+        }
+        if ( value == "unknown.csy" ) {
+            Resource resource = mastercatalog()->name2Resource("code=csy:unknown", itCOORDSYSTEM);
+            if ( !resource.isValid()) {
+                return ERROR1(ERR_FIND_SYSTEM_OBJECT_1, "'Unknown' coordinate system");
+            }
+            fileid = resource.id();
+            return true;
+        }
+    }
+    if ( Ilwis3Connector::ilwisType(value) & itGEOREF) {
+        if ( value == "none.grf" ) {
+            Resource resource = mastercatalog()->name2Resource("code=georef:undetermined", itGEOREF);
+            if ( !resource.isValid()) {
+                return ERROR1(ERR_FIND_SYSTEM_OBJECT_1, "'undetermined' georeference");
             }
             fileid = resource.id();
             return true;
@@ -280,8 +298,10 @@ IlwisTypes ODFItem::findCsyType(const QString& path) const
     if ( resource.isValid())
         return resource.ilwisType();
     IniFile csy;
-    if ( _csyname == "latlonwgs84.csy" || _csyname == "unknown.csy")
+    if ( _csyname == "latlonwgs84.csy")
         return itCONVENTIONALCOORDSYSTEM;
+    if ( _csyname == "unknown.csy")
+        return itBOUNDSONLYCSY;
 
     QString ext = _file.suffix().toLower();
     if(ext == "mpl") {
@@ -322,6 +342,8 @@ IlwisTypes ODFItem::findCsyType(const QString& path) const
     QString type = csy.value("CoordSystem", "Type");
     if ( type.compare("latlon",Qt::CaseInsensitive) == 0)
         return itCONVENTIONALCOORDSYSTEM;
+    if ( type.compare("boundsonly",Qt::CaseInsensitive) == 0)
+        return itBOUNDSONLYCSY;
 
     // type empty type can happen due to bug in older version of ilwis. no type was projected
     if ( type == sUNDEF || type.compare("projection",Qt::CaseInsensitive) == 0) {
@@ -485,6 +507,7 @@ QString ODFItem::findDimensions() const
             return _odf.value( "PointMap", "Points");
         case itCOORDSYSTEM:
         case itCONVENTIONALCOORDSYSTEM:
+        case itBOUNDSONLYCSY:
             {
                 QString sV = "";
                 QString bnds = _odf.value("CoordSystem", "CoordBounds");

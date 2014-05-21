@@ -9,9 +9,6 @@ TARGET = gdalconnector
 
 include(global.pri)
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-
 QT       -= gui
 
 TEMPLATE = lib
@@ -57,21 +54,17 @@ OTHER_FILES += \
     gdalconnector/gdalconnector.json \
     gdalconnector/resources/ogr_formats.config
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
-		
-win32:CONFIG(release, debug|release): {
-    QMAKE_CXXFLAGS_RELEASE += -O2
-}
-
-INCLUDEPATH +=  $$PWD/core \
-                $$PWD/../external/gdalheaders \
-                $$PWD/../external/geos
-
-DEPENDPATH +=   $$PWD/core \
-                $$PWD/../external/geos \
+INCLUDEPATH +=  $$PWD/../external/gdalheaders
 
 resources.files = gdalconnector/resources/ogr_formats.config
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
 INSTALLS += resources
+
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
+
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+}
+
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
