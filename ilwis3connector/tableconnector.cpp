@@ -52,6 +52,8 @@ TableConnector::TableConnector(const Resource &resource, bool load, const Prepar
 bool TableConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
     Locker lock(_mutex);
+    _converters.clear();
+    _selected.clear();
 
     if(!Ilwis3Connector::loadMetaData(data, options))
         return false;

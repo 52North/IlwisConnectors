@@ -2,8 +2,8 @@
 #define PYTHONAPI_RANGE_H
 
 #include "pythonapi_object.h"
-
 #include<string>
+#include<map>
 
 namespace Ilwis {
 class Range;
@@ -13,14 +13,16 @@ typedef struct _object PyObject;
 
 namespace pythonapi {
 
+
 class Range: public Object{
 public:
     friend class Domain;
 
     bool __bool__() const;
     std::string __str__();
-    IlwisTypes valueType();
+    IlwisTypes ilwisType();
 
+    IlwisTypes valueType() const;
     PyObject* ensure(const PyObject* v, bool inclusive = true) const;
     bool contains(const PyObject *value, bool inclusive = true) const;
 
@@ -58,22 +60,87 @@ public:
 class ItemRange : public Range {
 public:
     virtual void add(PyObject *dItem) = 0;
+    void count();
     void remove(const std::string& name);
     void clear();
 };
 
 class NumericItemRange : public ItemRange{
-
+public:
+    NumericItemRange();
+    NumericItemRange(PyObject *item);
     void add(PyObject *item);
 };
 
 class NamedItemRange : public ItemRange {
+public:
+    NamedItemRange();
+    NamedItemRange(PyObject *item);
     void add(PyObject *item);
 };
 
 class ThematicRange : public ItemRange {
+public:
+    ThematicRange();
+    ThematicRange(PyObject *item);
     void add(PyObject *item);
 };
+
+#ifdef SWIG
+%rename(ColorModel) ColorModelNS;
+#endif
+
+struct ColorModelNS{
+    enum Value{cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
+};
+
+typedef ColorModelNS::Value ColorModel;
+
+class Color{
+public:
+    Color();
+    Color(ColorModel type, PyObject* obj);
+    void readColor(ColorModel type, PyObject* obj);
+    double getItem(std::string key) const;
+    ColorModel getColorModel() const;
+private:
+    ColorModel _type = ColorModel::cmRGBA;
+    PyObject* _colorVal;
+};
+
+
+class ColorRange : public Range{
+public:
+
+    ColorRange();
+    ColorRange(IlwisTypes tp, ColorModel clrmodel);
+    ColorModel defaultColorModel() const;
+    void defaultColorModel(ColorModel m);
+
+    //static Color toColor(quint64 clrint, ColorModel clrModel) ;
+    static Color toColor(PyObject*, ColorModel colortype);
+    std::string toString(const Color &clr, ColorModel clrType);
+    ColorModel stringToColorModel(std::string clrmd);
+
+private:
+    IlwisTypes _valuetype;
+    ColorModel _defaultModel = ColorModel::cmRGBA;
+};
+
+class ContinousColorRange : public ColorRange{
+public:
+    ContinousColorRange();
+    ContinousColorRange(const Color& clr1, const Color& clr2, ColorModel colormodel=ColorModel::cmRGBA);
+    std::string toString() const;
+    bool isValid() const;
+    ContinousColorRange *clone() const;
+    PyObject* ensure(const PyObject *v, bool inclusive = true) const;
+    bool containsVar(const PyObject *v, bool inclusive = true) const;
+    bool containsColor(const Color clr, bool inclusive = true) const;
+    bool containsRange(ColorRange *v, bool inclusive = true) const;
+    Color impliedValue(const PyObject* v) const;
+};
+
 }
 
 #endif // PYTHONAPI_RANGE_H

@@ -46,6 +46,11 @@ FeatureIterator FeatureCoverage::__iter__(){
     return FeatureIterator(this);
 }
 
+IlwisTypes FeatureCoverage::featureTypes() const
+{
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->featureTypes();
+}
+
 unsigned int FeatureCoverage::featureCount() const{
     return this->ptr()->as<Ilwis::FeatureCoverage>()->featureCount();
 }

@@ -6,7 +6,7 @@ from unittest.case import skip
 try:
     from ilwisobjects import *
 
-    workingDir = "file:///D:/Profiles/KiesslingHG/ILWIS/testdata/pytest"
+    workingDir = "file:///D:/Profiles/KolbeJ/ILWIS/testdata/pytest"
     babyDir = "/baby"
     exampleDir = "/example"
     worldDir = "/world"
@@ -22,7 +22,7 @@ try:
         def setUp(self):
             try:
                 disconnectIssueLogger()
-                Engine.setWorkingCatalog(workingDir+featureDir)
+                Engine.setWorkingCatalog(workingDir + featureDir)
                 connectIssueLogger()
             except IlwisException:
                 connectIssueLogger()
@@ -59,7 +59,7 @@ try:
                 t.columns()
             )
             self.assertEqual((4, 5, 6), t.select("march < 100 AND march != 87"))
-            self.assertEqual((9, 10, 11), t.select("march == "+str(Const.rUNDEF) ))
+            self.assertEqual((9, 10, 11), t.select("march == " + str(Const.rUNDEF)))
             self.assertEqual(13, t.columnIndex("ident"))
             self.assertEqual(81, t.cell("march", 4))
             self.assertEqual(2, t.columnIndex("march"))
@@ -71,7 +71,8 @@ try:
             t.setCell("newColumn", 0, "text")
             connectIssueLogger()
             self.assertEqual(Const.rUNDEF, t.cell("newColumn", 0))
-            self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column("march"))
+            self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308),
+                                  t.column("march"))
             self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
             self.assertTupleEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
 
@@ -81,9 +82,10 @@ try:
             self.assertFalse(t.isInternal(), msg="created a new table object with that name!!")
             self.assertEqual(t.name(), "rainfall.shp")
             expected = ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
-                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT')
+                        'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT')
             actual = t.columns()
-            self.assertTrue(all(expected[i] == actual[i] for i in range(len(expected))))  # if rainfall.shp was loaded before "feature_id" might be the last field
+            self.assertTrue(all(expected[i] == actual[i] for i in range(
+                len(expected))))  # if rainfall.shp was loaded before "feature_id" might be the last field
             fc = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(fc))
             self.assertFalse(fc.isInternal(), msg="created a new table object with that name!!")
@@ -151,7 +153,7 @@ try:
         def test_BadWKT(self):
             g = True
             with self.assertRaises(SyntaxError):
-                g = Geometry("Pihkdjfhskdf", self.csy)
+                g = Geometry("dgjfdkgkjd", self.csy)
             self.assertTrue(bool(g))
             g = Geometry("POINT EMPTY", self.csy)
             self.assertTrue(bool(g))
@@ -160,13 +162,14 @@ try:
             with self.assertRaises(SyntaxError):
                 g.fromWKT("fdsfsds")
 
+
         def test_SimpleFeatures(self):
             p = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
             self.assertEqual(str(p), "POLYGON ((1.0000000000000000 1.0000000000000000, 1.0000000000000000 \
 10.0000000000000000, 10.0000000000000000 10.0000000000000000, 10.0000000000000000 1.0000000000000000, \
 1.0000000000000000 1.0000000000000000))")
             self.assertTrue(bool(p))
-            pin = Geometry("POINT(5 5)",self.csy)
+            pin = Geometry("POINT(5 5)", self.csy)
             self.assertEqual(str(pin), "POINT (5.0000000000000000 5.0000000000000000)")
             self.assertTrue(bool(pin))
             self.assertTrue(p.contains(pin))
@@ -265,7 +268,7 @@ try:
             sz = Size(2, 4, 5)
             self.assertTrue(bool(sz))
             self.assertEqual(str(sz), "Size(2, 4, 5)")
-            self.assertEqual(sz.linearSize(), 2*4*5)
+            self.assertEqual(sz.linearSize(), 2 * 4 * 5)
             sz *= 2
             self.assertEqual(str(sz), "Size(4, 8, 10)")
             sz += Size(4, 4, 0)
@@ -294,7 +297,7 @@ try:
             sz = SizeD(2.5, 4.4, 5.1)
             self.assertTrue(sz == SizeD(2.5, 4.4, 5.1))
             self.assertEqual(str(sz), "Size(2.5, 4.4, 5.1)")
-            self.assertEqual(sz.linearSize(), int(2.5)*int(4.4)*int(5.1))
+            self.assertEqual(sz.linearSize(), int(2.5) * int(4.4) * int(5.1))
             sz *= 2
             self.assertEqual(str(sz), "Size(5, 8.8, 10.2)")
             sz = Size(32, 43)
@@ -302,7 +305,7 @@ try:
 
         ##@ut.skip("temporarily")
         def test_BoxEnvelope(self):
-            b = Box(Pixel(3, 4, 5), Pixel(4, 5, 6,))
+            b = Box(Pixel(3, 4, 5), Pixel(4, 5, 6, ))
             self.assertTrue(bool(b))
             self.assertTrue(b.is3D())
             self.assertEqual(str(b), "POLYGON(3 4 5,4 5 6)")
@@ -314,7 +317,7 @@ try:
             self.assertEqual(str(b.maxCorner()), "pixel(4,5,6)")
             self.assertEqual(str(b.size()), "Size(2, 2, 2)")
             self.assertTrue(b.size() == Size(2, 2, 2))
-            self.assertEqual(b.size().linearSize(), 2*2*2)
+            self.assertEqual(b.size().linearSize(), 2 * 2 * 2)
             b = Box(Pixel(2, 3), Pixel(4, 5))
             self.assertEqual(str(b), "POLYGON(2 3,4 5)")
             self.assertFalse(b.is3D())
@@ -329,7 +332,7 @@ try:
             self.assertFalse(env.size() == SizeD(2.08889, 2.1, 2.))  # bug on Python float precision
             env = Envelope(env.size())
             self.assertEqual("POLYGON(0 0 0,1.08889 1.1 1)", str(env))
-            env = Envelope(Coordinate(3, 4, 5), Coordinate(4, 5, 6,))
+            env = Envelope(Coordinate(3, 4, 5), Coordinate(4, 5, 6, ))
             self.assertEqual(str(env), "POLYGON(3 4 5,4 5 6)")
             env = Envelope(env.size())
             self.assertEqual(str(env), "POLYGON(0 0 0,1 1 1)")
@@ -350,7 +353,7 @@ try:
 
         def test_IssueLogger(self):
             disconnectIssueLogger()
-            fc = FeatureCoverage(workingDir+"/noneexistentDir/nonexistent.file")
+            fc = FeatureCoverage(workingDir + "/noneexistentDir/nonexistent.file")
             self.assertFalse(bool(fc))
             connectIssueLogger()
 
@@ -359,11 +362,12 @@ try:
             self.assertTrue((it.FEATURE & 4) != 0)
             self.assertFalse((it.CATALOG & it.FEATURE) != 0)
             self.assertEqual(4, (it.FEATURE & 4))
-            self.assertEqual(524288, it.CATALOG)
+            self.assertEqual(262144, it.CATALOG)
             it.CATALOG = 0
             self.assertEqual(0, it.CATALOG)
             it.CATALOG = 524288
-            self.assertEqual(0, it.CONTINUOUSCOLOR, msg="SWIG uses static_cat<int> before translation which destroys big enum values!")
+            self.assertEqual(0, it.CONTINUOUSCOLOR,
+                             msg="SWIG uses static_cat<int> before translation which destroys big enum values!")
 
     #@ut.skip("temporarily")
     class TestConst(ut.TestCase):
@@ -405,13 +409,15 @@ try:
                     'cosh', 'sinh', 'binarylogicalraster', 'iff', 'rastervalue', 'resample', 'gridding', 'script',
                     'aggregateraster', 'areanumbering', 'cross', 'linearstretch', 'linearrasterfilter',
                     'rankorderrasterfilter'
-                    )
+            )
             self.assertTrue(all((op in ops) for op in oper))
             self.assertEqual("gridsize(rastercoverage,xsize|ysize|zsize)", e.operationMetaData("rastersize"))
-            self.assertEqual("gridding(coordinatesyste,top-coordinate,x-cell-size, y-cell-size, horizontal-cells, vertical-cells)",
-                             e.operationMetaData("gridding"))
-            self.assertEqual("iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)\n\
-iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaData("iff"))
+            self.assertEqual(
+                "gridding(coordinatesyste,top-coordinate,x-cell-size, y-cell-size, horizontal-cells, vertical-cells)",
+                e.operationMetaData("gridding"))
+            self.assertEqual(("iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)\n"
+                              "iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)"),
+                             e.operationMetaData("iff"))
 
         def test_Gridding(self):
             polygongrid = Engine.do("gridding", self.cs, Coordinate(225358.6605, 3849480.5700), 1000.0, 1000.0, 12, 12)
@@ -426,16 +432,16 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
         def setUp(self):
             try:
                 disconnectIssueLogger()
-                Engine.setWorkingCatalog(workingDir+featureDir)
+                Engine.setWorkingCatalog(workingDir + featureDir)
                 connectIssueLogger()
             except IlwisException:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
         def test_GPXFromFile(self):
-            fc = FeatureCoverage(workingDir+featureDir+"/test.gpx/tracks")  # TODO use setWorkingCatalog instead of full Url
+            fc = FeatureCoverage(workingDir + featureDir + "/test.gpx/tracks")
             self.assertFalse(fc.isInternal())
-            self.assertEqual(fc.featureCount(), 0)
+            self.assertEqual(fc.featureCount(), 1)
             for f in fc:
                 self.assertRegex(str(f.geometry()), r"MULTILINESTRING\s\(\([\s\.\-\,0-9]*\)\)")
 
@@ -509,7 +515,8 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertEqual(f.geometry().toWKT(), "LINESTRING (1.0000000000000000 1.0000000000000000, \
 2.0000000000000000 2.0000000000000000)", msg="unsuccessfully altered geometry")
             f.geometry().fromWKT("POINT(5.4 6 9.0)")
-            self.assertEqual(f.geometry().toWKT(), "POINT (5.4000000000000004 6.0000000000000000)", msg="not typecheck! butunsuccessfully altered geometry")
+            self.assertEqual(f.geometry().toWKT(), "POINT (5.4000000000000004 6.0000000000000000)",
+                             msg="not typecheck! butunsuccessfully altered geometry")
 
             with self.assertRaises(IndexError, msg="no IndexError on call of wrong attribute"):
                 v = f["wrongColum"]
@@ -517,7 +524,8 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertTrue(type(v) is str)
             self.assertEqual(str(v), "LINESTRING(1 1, 2 2)", msg="wrong attribute value")
             f["String"] = 12
-            self.assertEqual(12, int(f["String"]), msg="no real type check here since it could be converted back and forth")
+            self.assertEqual(12, int(f["String"]),
+                             msg="no real type check here since it could be converted back and forth")
 
             self.assertEqual(f["Integer"], 4123045)
             f["Integer"] = -1e+15  # -9223372036854775808
@@ -558,6 +566,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
 
             class NotSupportedObject:
                 pass
+
             with self.assertRaises(ValueError, msg="cannot convert instance NotSupportedObject() to Ilwis class"):
                 f["Date"] = NotSupportedObject()
             self.assertEqual(f["Date"], datetime.datetime(2014, 2, 27))
@@ -579,12 +588,12 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertEqual(f["DateTime"], datetime.datetime(2014, 2, 27))
 
             tup = (12, datetime.datetime(2014, 2, 27, 0, 0), datetime.time(12, 42, 33, 120000),
-                    datetime.datetime(2014, 2, 27, 0, 0), 9.223372036854776e+18, 2.34e-31)
+                   datetime.datetime(2014, 2, 27, 0, 0), 9.223372036854776e+18, 2.34e-31)
             rec = fc.attributeTable().record(0)
             self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
             self.assertEqual(len(rec), len(fc.attributeTable().columns()))
             tup = ('LINESTRING(1 1, 2 2, 3 3)', datetime.date(2014, 3, 4), datetime.time(12, 42, 33),
-                    datetime.datetime(2014, 3, 4, 12, 42, 33), 4123045, 2342451235.5434)
+                   datetime.datetime(2014, 3, 4, 12, 42, 33), 4123045, 2342451235.5434)
             rec = fc.attributeTable().record(2)
             self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
             self.assertEqual(len(rec), len(fc.attributeTable().columns()))
@@ -598,19 +607,19 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setConnection(workingDir+tempDir+"/countries_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.setOutputConnection(workingDir + tempDir + "/countries_fromshp.shp", "ESRI Shapefile", "gdal")
             world.store()
             # points
             world = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setConnection(workingDir+tempDir+"/rainfall_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.setOutputConnection(workingDir + tempDir + "/rainfall_fromshp.shp", "ESRI Shapefile", "gdal")
             world.store()
             # lines
             world = FeatureCoverage("drainage.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setConnection(workingDir+tempDir+"/drainage_fromshp.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            world.setOutputConnection(workingDir + tempDir + "/drainage_fromshp.shp", "ESRI Shapefile", "gdal")
             world.store()
 
         #@ut.skip("temporarily")
@@ -619,15 +628,15 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-#            world.setCoordinateSystem(CoordinateSystem("countries.csy"))  # TODO use/copy shp files coordinate system instead
-            world.setConnection(workingDir+tempDir+"/countries_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
+            #            world.setCoordinateSystem(CoordinateSystem("countries.csy"))  # TODO use/copy shp files coordinate system instead
+            world.setOutputConnection(workingDir + tempDir + "/countries_fromshp", "vectormap", "ilwis3")
             world.store()
             # points
             world = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.setOutputConnection(workingDir + tempDir + "/rainfall_fromshp", "vectormap", "ilwis3")
             world.store()
             self.assertEqual("rainfall.shp", world.attributeTable().name())
             # lines
@@ -635,46 +644,48 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setConnection(workingDir+tempDir+"/drainage_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
+            world.setOutputConnection(workingDir + tempDir + "/drainage_fromshp", "vectormap", "ilwis3")
             # world.store()  # skiped until Ilwis3Connector can handle datetime format
 
-        # def test_loadIlwis3storeIlwis3(self):
-        #     # polygons
-        #     world = FeatureCoverage("ne_110m_admin_0_countries.shp")
-        #     self.assertTrue(bool(world))
-        #     self.assertFalse(world.isInternal())
-        #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-        #     world.setConnection(workingDir+tempDir+"/countries_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
-        #     world.store()
-        #     # points
-        #     world = FeatureCoverage("rainfall.shp")
-        #     self.assertTrue(bool(world))
-        #     self.assertFalse(world.isInternal())
-        #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-        #     world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
-        #     world.store()
-        #     # lines
-        #     world = FeatureCoverage("drainage.shp")
-        #     self.assertTrue(bool(world))
-        #     self.assertFalse(world.isInternal())
-        #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-        #     world.setConnection(workingDir+tempDir+"/drainage_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
-        #     world.store()
+            # def test_loadIlwis3storeIlwis3(self):
+            #     # polygons
+            #     world = FeatureCoverage("ne_110m_admin_0_countries.shp")
+            #     self.assertTrue(bool(world))
+            #     self.assertFalse(world.isInternal())
+            #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
+            #     world.setConnection(workingDir+tempDir+"/countries_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
+            #     world.store()
+            #     # points
+            #     world = FeatureCoverage("rainfall.shp")
+            #     self.assertTrue(bool(world))
+            #     self.assertFalse(world.isInternal())
+            #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
+            #     world.setConnection(workingDir+tempDir+"/rainfall_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
+            #     world.store()
+            #     # lines
+            #     world = FeatureCoverage("drainage.shp")
+            #     self.assertTrue(bool(world))
+            #     self.assertFalse(world.isInternal())
+            #     world.setCoordinateSystem(CoordinateSystem("countries.csy"))
+            #     world.setConnection(workingDir+tempDir+"/drainage_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
+            #     world.store()
 
     #@ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
             try:
                 disconnectIssueLogger()
-                Engine.setWorkingCatalog(workingDir+featureDir)
+                Engine.setWorkingCatalog(workingDir + featureDir)
                 connectIssueLogger()
             except IlwisException:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
+        @ut.skip("temporarily")
         def test_FromFile(self):
-            csy = CoordinateSystem(workingDir+featureDir+"/cochabamba.csy")
-            self.assertEqual("cochabamba.csy", csy.name())
+            csy = CoordinateSystem(workingDir + featureDir + "/Cochabamba.csy")
+            csy2 = CoordinateSystem(workingDir + featureDir + "/Cochabamba.csy")
+            #self.assertEqual("Cochabamba.csy", csy.name())
             fc = FeatureCoverage("Rainfall.mpp")
             rainCsy = fc.coordinateSystem()
             self.assertEqual(csy.ilwisID(), rainCsy.ilwisID())
@@ -685,7 +696,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 "code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
             cs1.name("myProj4CSY")
             self.assertTrue(bool(cs1), msg="invalid CoordinateSystem from Proj4")
-            fc = FeatureCoverage(workingDir+featureDir+"/rainfall.shp")
+            fc = FeatureCoverage(workingDir + featureDir + "/rainfall.shp")
             fc.setCoordinateSystem(cs1)
             self.assertEqual(fc.coordinateSystem().name(), "myProj4CSY",
                              msg="could not alter FeatureCoverage's CoordinateSystem")
@@ -706,7 +717,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
         def setUp(self):
             try:
                 disconnectIssueLogger()
-                Engine.setWorkingCatalog(workingDir+rasterDir)
+                Engine.setWorkingCatalog(workingDir + rasterDir)
                 connectIssueLogger()
             except IlwisException:
                 connectIssueLogger()
@@ -753,15 +764,16 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
         def setUp(self):
             try:
                 disconnectIssueLogger()
-                Engine.setWorkingCatalog(workingDir+featureDir)
+                Engine.setWorkingCatalog(workingDir + featureDir)
                 connectIssueLogger()
             except IlwisException:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
         def test_fromGPX(self):
-            cat = Catalog(workingDir+featureDir+"/test.gpx")  # TODO use setWorkingCatalog instead of full Url
-            self.assertTupleEqual(('route_points','route_points', 'routes','routes', 'track_points','track_points', 'tracks','tracks', 'waypoints', 'waypoints'), cat.items())
+            cat = Catalog(workingDir + featureDir + "/test.gpx")  # TODO use setWorkingCatalog instead of full Url
+            self.assertTupleEqual(('route_points', 'route_points', 'routes', 'routes', 'track_points', 'track_points',
+                                   'tracks', 'tracks', 'waypoints', 'waypoints'), cat.items())
             self.assertTrue(bool(cat))
             trks = cat['tracks']
             self.assertTrue(bool(trks))
@@ -774,7 +786,8 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
 
         @ut.skip("temporarily")
         def test_fromWFS(self):
-            cat = Catalog("http://ogi.state.ok.us/geoserver/wfs?acceptVersions=1.1.0&REQUEST=GetCapabilities&SERVICE=WFS")
+            cat = Catalog(
+                "http://ogi.state.ok.us/geoserver/wfs?acceptVersions=1.1.0&REQUEST=GetCapabilities&SERVICE=WFS")
             self.assertTupleEqual((), cat.items())  # TODO WFS not yet working
 
 
@@ -783,7 +796,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
         def setUp(self):
             try:
                 disconnectIssueLogger()
-                Engine.setWorkingCatalog(workingDir+rasterDir)
+                Engine.setWorkingCatalog(workingDir + rasterDir)
                 connectIssueLogger()
                 self.small = [
                     3.0, 80.0, 80.0, 80.0, 3.0,
@@ -875,7 +888,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             aa12 = rc * 2
             self.assertEqual(aa12.pix2value(pix), 29.0 * 2)
 
-            aa1.setConnection(workingDir + tempDir + "/n000302_frommpr", "GTiff", "gdal", IlwisObject.cmOUTPUT)
+            aa1.setOutputConnection(workingDir + tempDir + "/n000302_frommpr", "GTiff", "gdal")
             aa1.store()
 
         def test_PixelIterator(self):
@@ -889,7 +902,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 i += 1
 
             it = iter(rcl)
-            self.assertEqual(str(it),"PixelIterator for small.mpl at position pixel(0,0,0)",
+            self.assertEqual(str(it), "PixelIterator for small.mpl at position pixel(0,0,0)",
                              msg="wrong string representation for PixelIterator")
             self.assertTrue(bool(it), msg="couldn't create PixelIterator from small.mpl")
             lin = rcl.size().linearSize()
@@ -898,11 +911,13 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 if it.yChanged():
                     self.assertTrue(i % 5 == 0, msg="yChanged not only every 5th step (i=" + str(i) + ")")
                 else:
-                    self.assertFalse((i % 5 == 0) and (i != 0), msg="yChanged not only every 2nd step (i="+str(i)+")")
+                    self.assertFalse((i % 5 == 0) and (i != 0),
+                                     msg="yChanged not only every 2nd step (i=" + str(i) + ")")
                 if it.zChanged():
                     self.assertTrue(i % 25 == 0, msg="zChanged not only every 25th step (i=" + str(i) + ")")
                 else:
-                    self.assertFalse((i % 25 == 0) and (i != 0), msg="zChanged not only every 2nd step (i="+str(i)+")")
+                    self.assertFalse((i % 25 == 0) and (i != 0),
+                                     msg="zChanged not only every 2nd step (i=" + str(i) + ")")
                 self.assertEqual(next(it), self.small[i])
 
             rit = iter(rcl)
@@ -963,11 +978,13 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 if bit.yChanged():
                     self.assertTrue(i % 2 == 0, msg="yChanged not only every 2nd step (i=" + str(i) + ")")
                 else:
-                    self.assertFalse((i % 2 == 0) and (i != 0), msg="yChanged not only every 2nd step (i="+str(i)+")")
+                    self.assertFalse((i % 2 == 0) and (i != 0),
+                                     msg="yChanged not only every 2nd step (i=" + str(i) + ")")
                 if bit.zChanged():
                     self.assertTrue(i % 4 == 0, msg="zChanged not only every 4th step (i=" + str(i) + ")")
                 else:
-                    self.assertFalse((i % 4 == 0) and (i != 0), msg="zChanged not only every 4th step (i="+str(i)+")")
+                    self.assertFalse((i % 4 == 0) and (i != 0),
+                                     msg="zChanged not only every 4th step (i=" + str(i) + ")")
                 self.assertEqual(next(bit), boxed_small[i][1])
 
         def test_NumPy(self):
@@ -989,8 +1006,8 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
 
             rc = RasterCoverage("n000302.mpr")
             it2 = PixelIterator(rc)
-            self.assertEqual(1152*1152, it2.box().size().linearSize())
-            bu = np.frombuffer(it2.asBuffer(), np.float, 500*1152, 0)  # numpy-array only from first block (500 lines)
+            self.assertEqual(1152 * 1152, it2.box().size().linearSize())
+            bu = np.frombuffer(it2.asBuffer(), np.float, 500 * 1152, 0)  # numpy-array only from first block (500 lines)
             self.assertTrue(all(0 <= v <= 255 for v in bu))
 
     #@ut.skip("temporarily")
@@ -1010,13 +1027,13 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             self.assertRegex(polygongrid.name(), r"gridding_[0-9]*")
             polygongrid.addAttribute("maxY", "value")
             for polygon in polygongrid:
-            #        polygon.setAttribute("maxY", 0)
+                #        polygon.setAttribute("maxY", 0)
                 for point in distribution:
                     if polygon.geometry().contains(point.geometry()):
                         maxval = max(polygon.attribute("maxY", 0), point.attribute("freq_speciesY", 0))
                         polygon.setAttribute("maxY", maxval)
 
-            polygongrid.setConnection(workingDir + exampleDir + "/polygongrid", "vectormap", "ilwis3",IlwisObject.cmOUTPUT)
+            polygongrid.setOutputConnection(workingDir + exampleDir + "/polygongrid", "vectormap", "ilwis3")
             polygongrid.store()
 
     #@ut.skip("temporarily")
@@ -1033,7 +1050,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
         def test_helloRaster(self):
             rc = RasterCoverage("n000302.mpr")
             res = Engine.do("aggregateraster", rc, "Avg", 10, True)
-            res.setConnection(workingDir+babyDir+"/avg_n000302", "map", "ilwis3", IlwisObject.cmOUTPUT)
+            res.setOutputConnection(workingDir + babyDir + "/avg_n000302", "map", "ilwis3")
             res.store()
 
         def test_helloFeature(self):
@@ -1050,10 +1067,10 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                 else:
                     feature["selected"] = False
             self.assertEqual(count, 3, msg="wrong count value!")
-            fc_soils.setConnection(workingDir + babyDir + "/soils_select", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
+            fc_soils.setOutputConnection(workingDir + babyDir + "/soils_select", "vectormap", "ilwis3")
             fc_soils.store()
 
-    ##@ut.skip("temporarily")
+    #@ut.skip("temporarily")
     class TestWorld(ut.TestCase):
         def setUp(self):
             try:
@@ -1109,7 +1126,7 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
                      'TJ': 7349145.0, 'TM': 4884887.0, 'TL': 1131612.0, 'TN': 10486339.0, 'AO': 12799293.0,
                      'AL': 3639453.0, 'AM': 2967004.0, 'IR': 66429284.0, 'IS': 306694.0, 'IQ': 31129225.0,
                      'AF': 28400000.0, 'AE': 4798491.0, 'ID': 240271522.0, 'IE': 4203200.0, 'AZ': 8238672.0,
-                     'IN': 1166079220.0, 'AT': 8210281.0, 'AU': 21262641.0, 'AR': 40913584.0,'AQ': 3802.0},
+                     'IN': 1166079220.0, 'AT': 8210281.0, 'AU': 21262641.0, 'AR': 40913584.0, 'AQ': 3802.0},
                     population_ranking)
             else:
                 self.skipTest("countries.mpa is missing")
@@ -1121,10 +1138,11 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             fc.name("newName")
             self.assertEqual("newName", fc.name())
             self.assertTrue(fc.isInternal())
-            fc.setConnection(workingDir + worldDir+"/countries.mpa", "vectormap", "ilwis3", IlwisObject.cmINPUT)
+            fc.setInputConnection(workingDir + worldDir + "/countries.mpa", "vectormap", "ilwis3")
+            #fc = FeatureCoverage("countries.mpa")
             self.assertFalse(fc.isInternal())
             self.assertEqual("newName", fc.name())
-            fc.setConnection(workingDir + worldDir+"/countries.shp", "ESRI Shapefile", "gdal", IlwisObject.cmOUTPUT)
+            fc.setOutputConnection(workingDir + worldDir + "/countries.shp", "ESRI Shapefile", "gdal")
             fc.store()
 
         def test_AttributeTable(self):
@@ -1198,6 +1216,257 @@ iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)", e.operationMetaD
             # ax.set_xticklabels( ('G1', 'G2', 'G3', 'G4', 'G5') )
             #
             # plt.show()
+
+
+    class TestNumericDomain(ut.TestCase):
+        def setUp(self):
+            disconnectIssueLogger()
+            connectIssueLogger()
+
+        def test_containementInt(self):
+            nr = NumericRange(5, 60, 5)
+            childnumdom = NumericDomain("numbers")
+            childnumdom.setRange(nr)
+            nr2 = NumericRange(0, 80, 5)
+            parentnumdom = NumericDomain("parentnumbers")
+            parentnumdom.setRange(nr2)
+
+            childnumdom.setParent(parentnumdom)
+
+            self.assertEqual(childnumdom.contains(20), "cSELF")
+            self.assertEqual(childnumdom.contains(80), "cPARENT")
+            self.assertEqual(childnumdom.contains(100), "cNONE")
+
+            self.assertFalse(childnumdom.isStrict())
+            childnumdom.setStrict(True)
+            self.assertTrue(childnumdom.isStrict())
+
+            self.assertEqual(childnumdom.contains(80), "cNONE")
+
+        def test_containementDouble(self):
+            nr = NumericRange(5.8, 60.2, 0.2)
+            childnumdom = NumericDomain("numbers")
+            childnumdom.setRange(nr)
+            nr2 = NumericRange(0, 80.5, 0.5)
+            parentnumdom = NumericDomain("parentnumbers")
+            parentnumdom.setRange(nr2)
+
+            childnumdom.setParent(parentnumdom)
+
+            self.assertEqual(childnumdom.contains(12.8), "cSELF")
+            self.assertEqual(childnumdom.contains(72.5), "cPARENT")
+            self.assertEqual(childnumdom.contains(100), "cNONE")
+
+            self.assertFalse(childnumdom.isStrict())
+            childnumdom.setStrict(True)
+            self.assertTrue(childnumdom.isStrict())
+
+            self.assertEqual(childnumdom.contains(72.5), "cNONE")
+
+        def test_boundaries(self):
+            nr = NumericRange(5.8, 60.2, 0.2)
+            childnumdom = NumericDomain("numbers")
+            childnumdom.setRange(nr)
+
+            self.assertEqual(childnumdom.contains(5.8), "cSELF")
+            self.assertEqual(childnumdom.contains(5.6), "cNONE")
+            self.assertEqual(childnumdom.contains(60.2), "cSELF")
+            self.assertEqual(childnumdom.contains(60.4), "cNONE")
+
+        def test_parents(self):
+            nr = NumericRange(5.8, 60.2, 0.2)
+            childnumdom = NumericDomain("numbers")
+            childnumdom.setRange(nr)
+            nr2 = NumericRange(0, 80.5, 0.5)
+            parentnumdom = NumericDomain("parentnumbers")
+            parentnumdom.setRange(nr2)
+
+            with self.assertRaises(IlwisException, msg="No parent domain found"):
+                childnumdom.parent()
+
+            childnumdom.setParent(parentnumdom)
+            self.assertTrue(childnumdom.parent())
+
+
+    class TestInterval(ut.TestCase):
+        def setUp(self):
+            disconnectIssueLogger()
+            connectIssueLogger()
+
+        def test_containement(self):
+            interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
+            interrange.add(("dijks", 101.0, 150.0, 1.0))
+
+            childdom = ItemDomain(interrange)
+
+            interrange.add(("by the sea", 151.0, 181.0, 5.0))
+            parentdom = ItemDomain(interrange)
+
+            childdom.setParent(parentdom)
+
+            self.assertEqual(childdom.contains(40.0), "cSELF")
+            self.assertEqual(childdom.contains(39.9), "cNONE")
+            self.assertEqual(childdom.contains(161.0), "cNONE")
+
+            childdom.setStrict(False)
+            self.assertEqual(childdom.contains(161.0), "cPARENT")
+
+        def test_parents(self):
+            nir = interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
+            childdom = ItemDomain(nir)
+
+            nir.add(("by the sea", 151.0, 181.0, 5.0))
+            parentdom = ItemDomain(nir)
+
+            with self.assertRaises(IlwisException, msg="No parent domain found"):
+                childdom.parent()
+
+            childdom.setParent(parentdom)
+            self.assertTrue(childdom.parent())
+
+        def test_removeAndCount(self):
+            nir = interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
+            nir.add(("by the sea", 151.0, 181.0, 5.0))
+            childdom = ItemDomain(nir)
+
+            self.assertEqual(childdom.count(), 2)
+            childdom.removeItem("sealevel")
+            self.assertEqual(childdom.count(), 1)
+
+        def test_theme(self):
+            nir = interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
+            nir.add(("by the sea", 151.0, 181.0, 5.0))
+            childdom = ItemDomain(nir)
+
+            childdom.setTheme("Seastuff")
+            self.assertEqual(childdom.theme(), "Seastuff")
+
+    class TestThematicDomain(ut.TestCase):
+        def test_containement(self):
+            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr.add(("greyhound", "0.32", "the fast one"))
+
+            td = ItemDomain(tr)
+
+            tr.add(("foxhound", "2.4", "hunting foxes"))
+
+            td2 = ItemDomain(tr)
+            td.setParent(td2)
+            td.setStrict(False)
+
+            self.assertEqual(td.contains("hound"), "cSELF")
+            self.assertEqual(td.contains("greyhound"), "cSELF")
+            self.assertEqual(td.contains("foxhound"), "cPARENT")
+            self.assertEqual(td.contains("ghosthound"), "cNONE")
+
+        def test_parents(self):
+            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr.add(("greyhound", "0.32", "the fast one"))
+
+            td = ItemDomain(tr)
+
+            with self.assertRaises(IlwisException, msg="No parent domain found"):
+                td.parent()
+
+            tr.add(("foxhound", "2.4", "hunting foxes"))
+            td2 = ItemDomain(tr)
+            td.setParent(td2)
+            self.assertTrue(td.parent())
+
+        def test_removeAndCount(self):
+            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr.add(("greyhound", "0.32", "the fast one"))
+
+            td = ItemDomain(tr)
+            self.assertEqual(td.count(), 2)
+            td.removeItem("hound")
+            self.assertEqual(td.count(), 1)
+            td.addItem(("fox", "34", "wait a second"))
+            self.assertEqual(td.count(), 2)
+
+        def test_theme(self):
+            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr.add(("greyhound", "0.32", "the fast one"))
+
+            td = ItemDomain(tr)
+
+            td.setTheme("Hounds")
+            self.assertEqual(td.theme(), "Hounds")
+
+
+
+    class TestIdentifierDomain(ut.TestCase):
+        def containement_tests(self):
+            nr = NamedItemRange("Perth")
+            nr.add("Darwin")
+
+            nchild = ItemDomain(nr)
+
+            nr.add("Broome")
+            nparent = ItemDomain(nr)
+
+            nchild.setParent(nparent)
+            nchild.setStrict(False)
+
+            self.assertEqual(nchild.contains("Perth"), "cSELF")
+            self.assertEqual(nchild.contains("Darwin"), "cSELF")
+            self.assertEqual(nchild.contains("Broome"), "cPARENT")
+            self.assertEqual(nchild.contains("Adelaide"), "cNONE")
+
+            nChild.setStrict(True)
+            self.assertEqual(nchild.contains("Broome"), "cNONE")
+
+
+        def test_parents(self):
+
+            nr = NamedItemRange("Perth")
+            nr.add("Darwin")
+
+            nchild = ItemDomain(nr)
+
+            with self.assertRaises(IlwisException, msg="No parent domain found"):
+                nchild.parent()
+
+            nr.add("Broome")
+            nparent = ItemDomain(nr)
+            nchild.setParent(nparent)
+            self.assertTrue(nchild.parent())
+
+        def test_removeAndCount(self):
+            nr = NamedItemRange("Perth")
+            nr.add("Darwin")
+
+            namedDom = ItemDomain(nr)
+            self.assertEqual(namedDom.count(), 2)
+            namedDom.removeItem("Perth")
+            self.assertEqual(namedDom.count(), 1)
+            namedDom.addItem("Childers")
+
+        def test_theme(self):
+            nr = NamedItemRange("Perth")
+            nr.add("Darwin")
+
+            namedRange = ItemDomain(nr)
+
+            namedRange.setTheme("Australian Cities")
+            self.assertEqual(namedRange.theme(), "Australian Cities")
+
+    class TestColorDomain(ut.TestCase):
+        def containement_test(self):
+            color1 = Color(ColorModel.cmRGBA, (255.0, 20.0, 30.0, 200.0))
+            color2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
+            color3 = Color(ColorModel.cmRGBA, (255.0, 60.0, 50.0, 240.0))
+
+            col = ContinousColorRange(color1, color2, ColorModel.cmRGBA)
+            self.assertTrue(col.isValid())
+            colDom.setRange(col)
+            col2 = col.clone()
+            col.defaultColorModel(ColorModel.cmRGBA)
+            self.assertEqual(col.defaultColorModel(), ColorModel.cmRGBA)
+
+            colDom = ColorDomain("testdomain")
+            self.assertEqual(colDom.containsColor(color3), "cSELF")
+            self.assertEqual(colDom.containsRange(col2), "cSELF")
 
 
     #here you can chose which test case will be executed

@@ -4,64 +4,87 @@
 #include "pythonapi_ilwisobject.h"
 
 namespace Ilwis {
-class Domain;
-typedef IlwisData<Domain> IDomain;
+    class Domain;
+    typedef IlwisData<Domain> IDomain;
 
-class NumericDomain;
-typedef IlwisData<NumericDomain> INumericDomain;
+    class NumericDomain;
+    typedef IlwisData<NumericDomain> INumericDomain;
+
 }
 
 namespace pythonapi {
 
-class Range;
+    class Range;
+    class Color;
 
-class Domain : public IlwisObject{
-public:
-    enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
+    class Domain : public IlwisObject{
+    public:
+        enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
 
-    Domain();
+        Domain();
+        virtual ~Domain();
 
-    bool isStrict() const;
-    void setStrict(bool yesno);
+        bool isStrict() const;
+        void setStrict(bool yesno);
 
-    virtual PyObject* impliedValue(PyObject *value) const;
-    Domain parent() const;
-    void setParent(const Domain& dom);
+        virtual PyObject* impliedValue(PyObject *value) const;
+        Domain parent() const;
+        void setParent(const Domain& dom);
 
-    Containement contains(PyObject* value) const;
-    bool isCompatibleWith(const Domain& dom) const;
-    void setRange(const Range& rng);
-    IlwisTypes valueType() const;
-    static Domain* toDomain(Object* obj);
+        std::string contains(PyObject* value) const;
+        bool isCompatibleWith(const Domain& dom) const;
+        void setRange(const Range& rng);
+        IlwisTypes valueType() const;
+        static Domain* toDomain(Object* obj);
 
-protected:
-    Domain(Ilwis::IDomain *domain);
-};
+    protected:
+        Domain(Ilwis::IDomain *domain);
+    };
 
-class NumericDomain : public Domain{
-    friend class Catalog;
-public:
-    NumericDomain(const std::string& resource);
-    static NumericDomain* toNumericDomain(Object *obj);
-
-
-private:
-    NumericDomain(Ilwis::INumericDomain* domain);
-};
+    class NumericDomain : public Domain{
+        friend class Catalog;
+    public:
+        NumericDomain(const std::string& resource);
+        static NumericDomain* toNumericDomain(Object *obj);
 
 
-
-class ItemDomain : public Domain {
-public:
-    ItemDomain();
-
-private:
-    ItemDomain(Ilwis::IDomain *domain);
-
-    PyObject *item(int index, bool labelOnly);
+    private:
+        NumericDomain(Ilwis::INumericDomain* domain);
+    };
 
 
-};
+
+    class ItemDomain : public Domain {
+    public:
+        ItemDomain();
+        ItemDomain(const Range& rng);
+        quint32 count();
+        void setTheme(const std::string &theme);
+        std::string theme();
+        void removeItem(const std::string& nme);
+        void addItem(PyObject* value);
+        PyObject *item(int index, bool labelOnly);
+
+    private:
+        ItemDomain(Ilwis::IDomain *domain);
+
+
+    };
+
+    class ColorDomain : public Domain {
+    public:
+        ColorDomain();
+        ColorDomain(const std::string& resource);
+        IlwisTypes ilwisType() const;
+        std::string containsColor(const Color &value) const;
+
+    };
+
+    class TextDomain : public Domain {
+    public:
+        TextDomain();
+        TextDomain(const std::string& resource);
+    };
 }
 
 

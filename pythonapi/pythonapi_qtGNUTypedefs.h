@@ -1,4 +1,4 @@
-#ifndef PYTHONAPI_QTGNUTYPEDEFS_H
+    #ifndef PYTHONAPI_QTGNUTYPEDEFS_H
 #define PYTHONAPI_QTGNUTYPEDEFS_H
 
 //Qt typedefs only for GNU compiler

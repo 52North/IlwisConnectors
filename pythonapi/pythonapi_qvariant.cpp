@@ -7,6 +7,7 @@
 
 #include "pythonapi_pyobject.h"
 
+#include "Python.h"
 #include <time.h>
 #include "../../IlwisCore/core/kernel.h"
 #include "../../IlwisCore/core/util/range.h"
@@ -18,7 +19,13 @@ namespace pythonapi{
 
     QVariant* PyObject2QVariant(const PyObject* obj){
         if (obj){
-            if(PyDateCheckExact(obj)){
+            if(PyLongCheckExact(obj)){
+                return new QVariant(IVARIANT(PyLongAsLong(obj)));
+            }else if(PyFloatCheckExact(obj)){
+                return new QVariant(IVARIANT(PyFloatAsDouble(obj)));
+            }else if(PyUnicodeCheckExact(obj)){
+                return new QVariant(QString::fromStdString(PyBytesAsString(obj)));
+            }else if(PyDateCheckExact(obj)){
                 Ilwis::Time time(
                             PyDateTimeGET_YEAR(obj),
                             PyDateTimeGET_MONTH(obj),

@@ -15,8 +15,12 @@ IlwisObject::IlwisObject(Ilwis::IIlwisObject *object): _ilwisObject(std::shared_
 IlwisObject::~IlwisObject(){
 }
 
-void IlwisObject::setConnection(const std::string& url, const std::string& format, const std::string& fnamespace, ConnectorMode cmode){
-    (*this->ptr())->connectTo(QUrl(url.c_str()), QString::fromStdString(format), QString::fromStdString(fnamespace), (Ilwis::IlwisObject::ConnectorMode)cmode);
+void IlwisObject::setInputConnection(const std::string& url, const std::string& format, const std::string& fnamespace){
+    (*this->ptr())->connectTo(QUrl(url.c_str()), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmINPUT);
+}
+
+void IlwisObject::setOutputConnection(const std::string& url, const std::string& format, const std::string& fnamespace){
+    (*this->ptr())->connectTo(QUrl(url.c_str()), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmOUTPUT);
 }
 
 void IlwisObject::store(int storeMode){
@@ -25,7 +29,14 @@ void IlwisObject::store(int storeMode){
 }
 
 bool IlwisObject::__bool__() const{
-    return this->_ilwisObject != NULL && this->_ilwisObject->isValid() && (*this->_ilwisObject)->isValid();
+    if(this->_ilwisObject != NULL && this->_ilwisObject->isValid()){
+        if((*this->_ilwisObject)->ilwisType() != itITEMDOMAIN){
+            return (*this->_ilwisObject)->isValid();
+        } else {
+            return true;
+        }
+    }
+    return false;
 }
 
 std::string IlwisObject::__str__(){

@@ -1,5 +1,6 @@
 /* The ILWIS SWIG interface file*/
 
+
 %module(docstring="The Python API for ILWIS Objects") ilwisobjects
 
 %feature("autodoc","1");
@@ -28,6 +29,7 @@
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_range.h"
 #include "pythonapi_catalog.h"
+#include "pythonapi_domain.h"
 %}
 
 %include "pythonapi_qtGNUTypedefs.h"
@@ -237,6 +239,10 @@ def object_cast(obj):
         return object_cast(self._getitem(name))
 %}
 }
+
+%include "pythonapi_domain.h"
+
+%include "pythonapi_range.h"
 
 // declaring the Const for Python side xUNDEF declarations
 %pythoncode %{

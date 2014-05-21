@@ -147,7 +147,7 @@ class GDALProxy {
     friend GDALProxy* gdal();
 
     public:
-        GDALProxy(const QString& gdalLibrary, const QString& proj4jLibrary);
+        GDALProxy();
         ~GDALProxy();
 
         bool isValid() const;
