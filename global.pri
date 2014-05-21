@@ -14,7 +14,6 @@ CONF=release
 
 OUTDIR = $$PWD/output/$$CONF
 PLATFORM = generic
-PLATFORM = generic
 win32{
     PLATFORM = win32
     BOOST=../external
