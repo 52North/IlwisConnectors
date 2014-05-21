@@ -56,9 +56,7 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$C
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
                                               -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
-INCLUDEPATH += $$PWD/core \
-            $$PWD/../external/geos
-DEPENDPATH += $$PWD/core
+INCLUDEPATH += $$PWD/../external/geos
 
 OTHER_FILES += \
     wfsconnector/wfsconnector.json \
