@@ -37,13 +37,9 @@ Geometry::Geometry(std::string wkt, const CoordinateSystem& csy):
     _standalone(true),
     _feature(nullptr),
     _index(-1),
-<<<<<<< HEAD
     _ilwisGeometry(fromWKTReader(wkt)){
     if(_ilwisGeometry)
-=======
-    _ilwisGeometry(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt), csy.ptr()->as<Ilwis::CoordinateSystem>())){
->>>>>>> 3912c3178b3f21d5c1007053362a0f229c959303
-    Ilwis::GeometryHelper::setCoordinateSystem(this->_ilwisGeometry.get(),csy.ptr()->as<Ilwis::CoordinateSystem>().ptr());
+        Ilwis::GeometryHelper::setCoordinateSystem(this->_ilwisGeometry.get(),csy.ptr()->as<Ilwis::CoordinateSystem>().ptr());
 }
 
 Geometry::Geometry(geos::geom::Geometry* geometry, const Ilwis::ICoordinateSystem& csy):
