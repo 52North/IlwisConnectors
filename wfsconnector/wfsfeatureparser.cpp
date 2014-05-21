@@ -76,6 +76,7 @@ void WfsFeatureParser::parseFeatureMembers()
             qint32 colonIdx = collectiontype.indexOf(":");
             collectiontype = collectiontype.mid(colonIdx + 1);
             while (_parser->findNextOf( {_featureType} )) {
+                _context.setCurrentItem(_parser->attributes().value("gml:id").toString());
                 std::vector<QVariant> record(table->columnCount());
 
                 parseFeature(record, table);
@@ -112,7 +113,6 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table
         }
 
         if (continueReadingStream) {
-            QString rr = _parser->name();
             if ( !_parser->readNextStartElement()) {
                 break; // end of feature record
             }
@@ -220,15 +220,8 @@ QVariant WfsFeatureParser::fillDateTimeColumn()
 
 void WfsFeatureParser::createNewFeature()
 {
-    ICoordinateSystem crs;
     geos::geom::Geometry *geometry = parseFeatureGeometry();
-    QString res = QString("code=").append(_context.srsName());
-    if (crs.prepare(res, itCONVENTIONALCOORDSYSTEM)) {
-        _fcoverage->coordinateSystem(crs);
-        _fcoverage->newFeature(geometry,false);
-    } else {
-        ERROR1("Could not prepare crs with code=%1.",_context.srsName());
-    }
+    _fcoverage->newFeature(geometry, false);
 }
 
 geos::geom::Geometry *WfsFeatureParser::parseFeatureGeometry()
@@ -375,15 +368,29 @@ bool WfsFeatureParser::updateSrsInfoUntil(QString qname)
     return true;
 }
 
+void WfsFeatureParser::initCrs(ICoordinateSystem &crs) {
+    QString geomCrsCode = QString("code=").append(_context.srsName());
+    if ( !crs.prepare(geomCrsCode, itCONVENTIONALCOORDSYSTEM)) {
+        ERROR1("Could not prepare crs with code=%1.",_context.srsName());
+    }
+}
+
 geos::geom::Point *WfsFeatureParser::parsePoint(bool &ok)
 {
     try {
+        ICoordinateSystem crs;
         if (_parser->findNextOf( { "gml:pos"} )) {
             ok = true;
             updateSrsInfo();
+            initCrs(crs);
             QString wkt = gmlPosListToWktLineString(_parser->readElementText());
-            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt);
-            return _fcoverage->geomfactory()->createPoint(geometry->getCoordinates());
+            if (wkt.isEmpty()) {
+                WARN1("Parsed empty geometry at feature '%1'", _context.currentItem());
+                return _fcoverage->geomfactory()->createPoint();
+            } else {
+                geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt, crs);
+                return _fcoverage->geomfactory()->createPoint(geometry->getCoordinates());
+            }
         }
         ERROR0("Could not find gml:pos");
     } catch(std::exception &e) {
@@ -397,12 +404,19 @@ geos::geom::Point *WfsFeatureParser::parsePoint(bool &ok)
 geos::geom::LineString *WfsFeatureParser::parseLineString(bool &ok)
 {
     try {
+        ICoordinateSystem crs;
         if (_parser->findNextOf( {"gml:posList", "gml:pos"} )) {
             ok = true;
             updateSrsInfo();
+            initCrs(crs);
             QString wkt = gmlPosListToWktLineString(_parser->readElementText());
-            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt);
-            return _fcoverage->geomfactory()->createLineString(geometry->getCoordinates());
+            if (wkt.isEmpty()) {
+                WARN1("Parsed empty geometry at feature '%1'", _context.currentItem());
+                return _fcoverage->geomfactory()->createLineString();
+            } else {
+                geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt, crs);
+                return _fcoverage->geomfactory()->createLineString(geometry->getCoordinates());
+            }
         }
         ERROR0("Could not neither find gml:posList nor gml:pos");
     } catch(std::exception &e) {
@@ -432,11 +446,18 @@ geos::geom::LinearRing *WfsFeatureParser::parseExteriorRing()
 {
     geos::geom::LinearRing *ring;
 
+    ICoordinateSystem crs;
     if (_parser->findNextOf( {"gml:exterior"} )) {
         if (_parser->findNextOf( {"gml:posList"} )) {
+            initCrs(crs);
             QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
-            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt);
-            ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
+            if (wkt.isEmpty()) {
+                WARN1("Parsed empty geometry at feature '%1'", _context.currentItem());
+                ring = _fcoverage->geomfactory()->createLinearRing();
+            } else {
+                geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt, crs);
+                ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
+            }
             _parser->moveToEndOf("gml:exterior");
         }
     }
@@ -449,14 +470,18 @@ std::vector<geos::geom::Geometry *> *WfsFeatureParser::parseInteriorRings()
     std::vector<geos::geom::Geometry *>* innerRings = new std::vector<geos::geom::Geometry *>();
 
     do {
+        ICoordinateSystem crs;
         if (_parser->findNextOf( { "gml:posList" })) {
+            initCrs(crs);
             QString wkt = gmlPosListToWktPolygon(_parser->readElementText());
-            geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt);
-
-            geos::geom::LinearRing *ring;
-            ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
-            innerRings->push_back(ring);
-
+            if ( !wkt.isEmpty()) {
+                geos::geom::LinearRing *ring;
+                geos::geom::Geometry *geometry = GeometryHelper::fromWKT(wkt, crs);
+                ring = _fcoverage->geomfactory()->createLinearRing(geometry->getCoordinates());
+                innerRings->push_back(ring);
+            } else {
+                WARN1("Parsed empty geometry at feature '%1'", _context.currentItem());
+            }
             _parser->moveToEndOf("gml:interior");
         }
     } while (_parser->findNextOf( {"gml:interior"} ));
@@ -468,12 +493,16 @@ QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList)
     QString wktCoords;
     QStringList coords = gmlPosList.split(" ");
     if (_context.srsDimension() == 2) {
-        for (int i = 0; i < coords.size(); i++) {
-            wktCoords.append(coords.at(i++)).append(" ");
+        for (int i = 0; i < coords.size() - 1; i++) {
             wktCoords.append(coords.at(i)).append(" ");
-            if (_context.srsDimension() == 3) {
-                wktCoords.append(coords.at(++i));
-            }
+            wktCoords.append(coords.at(i++)).append(" ");
+            wktCoords.append(", ");
+        }
+    } else if (_context.srsDimension() == 3) {
+        for (int i = 0; i < coords.size() - 2; i++) {
+            wktCoords.append(coords.at(i)).append(" ");
+            wktCoords.append(coords.at(i++)).append(" ");
+            wktCoords.append(coords.at(i++));
             wktCoords.append(", ");
         }
     }
@@ -482,22 +511,35 @@ QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList)
 
 QString WfsFeatureParser::gmlPosListToWktPolygon(QString gmlPosList)
 {
-    QString wkt("POLYGON((");
-    wkt.append(gmlPosListToWktCoords(gmlPosList));
-    return wkt.append("))");
+    if (gmlPosList.isEmpty()) {
+        return "";
+    } else {
+        QString wkt("POLYGON((");
+        wkt.append(gmlPosListToWktCoords(gmlPosList));
+        return wkt.append("))");
+    }
 }
 
 QString WfsFeatureParser::gmlPosListToWktLineString(QString gmlPosList)
 {
-    QString wkt("LINESTRING(");
-    wkt.append(gmlPosListToWktCoords(gmlPosList));
-    return wkt.append(")");
+    if (gmlPosList.isEmpty()) {
+        return "";
+    } else {
+        QString wkt("LINESTRING(");
+        wkt.append(gmlPosListToWktCoords(gmlPosList));
+        return wkt.append(")");
+    }
 }
 
 QString WfsFeatureParser::gmlPosListToWktPoint(QString gmlPosList)
 {
-    QString wkt("POINT(");
-    wkt.append(gmlPosListToWktCoords(gmlPosList));
-    return wkt.append(")");
+    if (gmlPosList.isEmpty()) {
+        return "";
+    } else {
+        QString wkt("POINT(");
+        wkt.append(gmlPosListToWktCoords(gmlPosList));
+        return wkt.append(")");
+    }
 }
+
 
