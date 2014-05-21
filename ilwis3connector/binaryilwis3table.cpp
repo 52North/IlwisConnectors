@@ -175,7 +175,13 @@ void BinaryIlwis3Table::readData(char *memblock) {
             const ColumnInfo& info = _columnInfo.at(c);
             char *p = _records + r * _recordSize + info._offset;
             if(  info._type == itINT32){
-                *(long *)p = *(long *)(memblock + posFile);
+                long v = *(long *)(memblock + posFile);
+                if ( v == -32767){
+                    v = shUNDEF;
+                }else if ( v == -2147483647L){
+                    v = iUNDEF;
+                }
+                *(long *)p = v;
                 posFile += 4;
              }else if ( info._type == itDOUBLE) {
                 *(double *)p = *(double *)(memblock + posFile);
