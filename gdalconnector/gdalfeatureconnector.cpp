@@ -78,6 +78,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOp
         return false;
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+    fcoverage->setFeatureCount(itFEATURE, 0,0);
 
     OGRLayerH hLayer = getLayerHandle();
 
