@@ -48,6 +48,7 @@ void* GdalHandle::handle(){
 
 GDALProxy::GDALProxy() {
     QFileInfo ilw = context()->ilwisFolder();
+<<<<<<< HEAD
     std::map<quint32, QString> order;
     loadLibraryConfig(order);
     QLibrary lib;
@@ -67,6 +68,28 @@ GDALProxy::GDALProxy() {
         }
     }
     _isValid = ok;
+=======
+    QString gdalLibrary, proj4jLibrary;
+#ifdef Q_OS_WIN
+    gdalLibrary = "gdal.dll";
+    proj4jLibrary = "libproj-0.dll";
+#else
+#ifdef Q_OS_UNIX
+    gdalLibrary = "libgdal.so";
+    proj4jLibrary = "libproj.so";
+
+#endif
+#endif
+    QString path = ilw.canonicalFilePath() + "/extensions/gdalconnector/" + gdalLibrary;
+    _libgdal.setFileName(path);
+    path = ilw.canonicalFilePath() + "/extensions/gdalconnector/" + proj4jLibrary;
+    _libproj4.setFileName(path);
+    bool ok = _libproj4.load();
+    //path = ilw.canonicalFilePath() + "/extensions/gdalconnector/" + "expat.dll";
+    //_libexpat.setFileName(path);
+    //ok &= _libexpat.load();
+    _isValid = _libgdal.load() && ok;
+>>>>>>> parent of b3586e0... extended python api
 }
 
 GDALProxy::~GDALProxy(){

@@ -252,18 +252,18 @@ def object_cast(obj):
             return "?"
         @property
         def shUNDEF(cls):
-            return 32767
+            return -32767
         @property
         def iUNDEF(cls):
-            return 2147483645
+            return -2147483647
         @property
         def rUNDEF(cls):
             return -1e308
         @property
         def flUNDEF(cls):
-            return 1e38
+            return -1e38
         @property
         def i64UNDEF(cls):
-            return 9223372036854775808
+            return -9223372036854775808
     class Const(metaclass=ReadOnly):pass
 %}
