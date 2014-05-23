@@ -147,6 +147,7 @@ class GDALProxy {
     friend GDALProxy* gdal();
 
     public:
+
         GDALProxy();
         ~GDALProxy();
 

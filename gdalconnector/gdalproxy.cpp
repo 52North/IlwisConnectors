@@ -55,12 +55,12 @@ GDALProxy::GDALProxy() {
 #endif
     QString path = ilw.canonicalFilePath() + "/extensions/gdalconnector/" + gdalLibrary;
     _libgdal.setFileName(path);
-    path = ilw.canonicalFilePath() + "/extensions/gdalconnector/" + proj4jLibrary;
+    path = ilw.canonicalFilePath() + "/Extensions/gdalconnector/" + proj4jLibrary;
     _libproj4.setFileName(path);
     bool ok = _libproj4.load();
-    //path = ilw.canonicalFilePath() + "/extensions/gdalconnector/" + "expat.dll";
-    //_libexpat.setFileName(path);
-    //ok &= _libexpat.load();
+    path = ilw.canonicalFilePath() + "/extensions/gdalconnector/" + "expat.dll";
+    _libexpat.setFileName(path);
+    ok &= _libexpat.load();
     _isValid = _libgdal.load() && ok;
 }
 

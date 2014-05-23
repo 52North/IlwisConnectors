@@ -106,6 +106,14 @@ NumericDomain::NumericDomain(const std::string &resource){
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(numdom));
 }
 
+NumericDomain::NumericDomain(const Range &rng){
+    Ilwis::INumericDomain numdom;
+    numdom.prepare();
+    if (numdom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(numdom));
+    this->setRange(rng);
+}
+
 NumericDomain *NumericDomain::toNumericDomain(Object *obj){
     NumericDomain* ptr = dynamic_cast<NumericDomain*>(obj);
     if(!ptr)
@@ -225,9 +233,9 @@ void ItemDomain::addItem(PyObject* item)
                 numitem = new Ilwis::Interval(label, { rmin, rmax});
 
             this->ptr()->as<Ilwis::IntervalDomain>()->addItem(numitem);
-        }
-    }
-        break;*/
+            }
+        }*/
+        break;
     case itTHEMATICITEM:{
         if ( CppTupleElementCount(item) > 0 && CppTupleElementCount(item) <=3 ) {
             QString description = sUNDEF, code = sUNDEF;
@@ -320,6 +328,14 @@ ColorDomain::ColorDomain()
 {
 }
 
+ColorDomain::ColorDomain(const Range& rng){
+    Ilwis::IColorDomain coldom;
+    coldom.prepare();
+    if (coldom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(coldom));
+    this->setRange(rng);
+}
+
 ColorDomain::ColorDomain(const std::string &resource)
 {
     Ilwis::IColorDomain coldom(QString::fromStdString(resource), itCOLORDOMAIN);
@@ -368,3 +384,25 @@ TextDomain::TextDomain(const std::string &resource)
 
 }
 
+//---------------------------------------------------------------------------------------------
+
+
+TimeDomain::TimeDomain()
+{
+}
+
+TimeDomain::TimeDomain(const std::string& resource)
+{
+    Ilwis::ITimeDomain timedom(QString::fromStdString(resource), itNUMERICDOMAIN);
+    if (timedom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(timedom));
+}
+
+TimeDomain::TimeDomain(const Range& rng)
+{
+    Ilwis::ITimeDomain timedom;
+    timedom.prepare();
+    if (timedom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(timedom));
+    this->setRange(rng);
+}

@@ -16,6 +16,7 @@ namespace pythonapi {
 
     class Range;
     class Color;
+    class CoordinateSystem;
 
     class Domain : public IlwisObject{
     public:
@@ -45,6 +46,7 @@ namespace pythonapi {
         friend class Catalog;
     public:
         NumericDomain(const std::string& resource);
+        NumericDomain(const Range &rng);
         static NumericDomain* toNumericDomain(Object *obj);
 
 
@@ -74,6 +76,7 @@ namespace pythonapi {
     class ColorDomain : public Domain {
     public:
         ColorDomain();
+        ColorDomain(const Range& rng);
         ColorDomain(const std::string& resource);
         IlwisTypes ilwisType() const;
         std::string containsColor(const Color &value) const;
@@ -85,6 +88,14 @@ namespace pythonapi {
         TextDomain();
         TextDomain(const std::string& resource);
     };
+
+    class TimeDomain : public Domain{
+    public:
+        TimeDomain();
+        TimeDomain(const std::string& resource);
+        TimeDomain(const Range& rng);
+    };
+
 }
 
 

@@ -68,21 +68,18 @@ public:
 class NumericItemRange : public ItemRange{
 public:
     NumericItemRange();
-    NumericItemRange(PyObject *item);
     void add(PyObject *item);
 };
 
 class NamedItemRange : public ItemRange {
 public:
     NamedItemRange();
-    NamedItemRange(PyObject *item);
     void add(PyObject *item);
 };
 
 class ThematicRange : public ItemRange {
 public:
     ThematicRange();
-    ThematicRange(PyObject *item);
     void add(PyObject *item);
 };
 
@@ -103,6 +100,7 @@ public:
     void readColor(ColorModel type, PyObject* obj);
     double getItem(std::string key) const;
     ColorModel getColorModel() const;
+    std::string toString() const;
 private:
     ColorModel _type = ColorModel::cmRGBA;
     PyObject* _colorVal;
@@ -136,9 +134,28 @@ public:
     ContinousColorRange *clone() const;
     PyObject* ensure(const PyObject *v, bool inclusive = true) const;
     bool containsVar(const PyObject *v, bool inclusive = true) const;
-    bool containsColor(const Color clr, bool inclusive = true) const;
+    bool containsColor(const Color &clr, bool inclusive = true) const;
     bool containsRange(ColorRange *v, bool inclusive = true) const;
     Color impliedValue(const PyObject* v) const;
+};
+
+class TimeInterval : public NumericRange{
+public:
+    TimeInterval(IlwisTypes tp = itUNKNOWN);
+    TimeInterval(PyObject* beg, PyObject* end, std::string step="", IlwisTypes tp = itUNKNOWN);
+
+    //TimeInterval& operator=(const TimeInterval& tiv);
+    PyObject* begin() const;
+    PyObject* end() const ;
+    void begin(const PyObject* t) ;
+    void end(const PyObject* t);
+    //Duration getStep() const { return _step;}
+    std::string toString(bool local, IlwisTypes) const;
+    bool contains(const std::string& value, bool inclusive = true) const;
+    bool contains(const PyObject* value, bool inclusive = true) const;
+
+    Ilwis::Range *clone() const ;
+    bool isValid() const;
 };
 
 }

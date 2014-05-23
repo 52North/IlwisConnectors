@@ -23,7 +23,7 @@ namespace pythonapi{
                 return new QVariant(IVARIANT(PyLongAsLong(obj)));
             }else if(PyFloatCheckExact(obj)){
                 return new QVariant(IVARIANT(PyFloatAsDouble(obj)));
-            }else if(PyUnicodeCheckExact(obj)){
+            }else if(PyUnicodeCheckExact(obj) && (!PyDateCheckExact(obj) | !PyTimeCheckExact(obj) | !PyDateTimeCheckExact(obj))){
                 return new QVariant(QString::fromStdString(PyBytesAsString(obj)));
             }else if(PyDateCheckExact(obj)){
                 Ilwis::Time time(
