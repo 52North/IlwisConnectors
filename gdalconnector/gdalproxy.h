@@ -192,6 +192,7 @@ class GDALProxy {
 
         QHash<QString, GdalHandle*> _openedDatasets;
 
+        void loadLibraryConfig(std::map<quint32, QString> &order) const;
 public:
         IGDALClose close;
         IGDALOpen open;
