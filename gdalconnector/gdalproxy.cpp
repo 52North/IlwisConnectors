@@ -3,11 +3,17 @@
 #include <QFileInfo>
 #include <QSettings>
 #include <functional>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 #include "kernel.h"
 #include "errorobject.h"
 #include "ilwiscontext.h"
 #include "dataformat.h"
 #include "gdalproxy.h"
+#include "oshelper.h"
 
 
 Ilwis::Gdal::GDALProxy* Ilwis::Gdal::GDALProxy::_proxy = 0;
@@ -42,26 +48,25 @@ void* GdalHandle::handle(){
 
 GDALProxy::GDALProxy() {
     QFileInfo ilw = context()->ilwisFolder();
-    QString gdalLibrary, proj4jLibrary;
-#ifdef Q_OS_WIN
-    gdalLibrary = "gdal.dll";
-    proj4jLibrary = "libproj-0.dll";
-#else
-#ifdef Q_OS_UNIX
-    gdalLibrary = "libgdal.so";
-    proj4jLibrary = "libproj.so";
-
-#endif
-#endif
-    QString path = ilw.canonicalFilePath() + "/extensions/gdalconnector/" + gdalLibrary;
-    _libgdal.setFileName(path);
-    path = ilw.canonicalFilePath() + "/extensions/gdalconnector/" + proj4jLibrary;
-    _libproj4.setFileName(path);
-    bool ok = _libproj4.load();
-    //path = ilw.canonicalFilePath() + "/extensions/gdalconnector/" + "expat.dll";
-    //_libexpat.setFileName(path);
-    //ok &= _libexpat.load();
-    _isValid = _libgdal.load() && ok;
+    std::map<quint32, QString> order;
+    loadLibraryConfig(order);
+    QLibrary lib;
+    bool ok = order.size() > 0;
+    for(auto name : order){
+        QString path = name.second.indexOf("/") == -1 ? ilw.canonicalFilePath() + "/extensions/gdalconnector/" + name.second : name.second;
+        if ( name.first != 100000){
+            lib.setFileName(path);
+            ok &= lib.load();
+        }else {
+            _libgdal.setFileName(path);
+            ok &= _libgdal.load();
+        }
+        if ( !ok){
+            ERROR2(ERR_COULD_NOT_LOAD_2, TR("name"), "gdal connector");
+            return;
+        }
+    }
+    _isValid = ok;
 }
 
 GDALProxy::~GDALProxy(){
@@ -74,6 +79,38 @@ GDALProxy::~GDALProxy(){
 //            }
 //        }
 //    }
+}
+
+void GDALProxy::loadLibraryConfig(std::map<quint32, QString>& order) const{
+
+
+    QString operatingSystem = OSHelper::operatingSystem();
+    QString path = context()->ilwisFolder().canonicalFilePath() + "/extensions/gdalconnector/resources/libraries.config";
+    QFile file;
+    file.setFileName(path);
+    if (file.open(QIODevice::ReadOnly)) {
+        QString settings = file.readAll();
+        QJsonDocument doc = QJsonDocument::fromJson(settings.toUtf8());
+        if ( !doc.isNull()){
+            QJsonObject obj = doc.object();
+            QJsonValue osses = obj.value("OperatingSystem");
+            if ( osses.isArray()){
+                QJsonArray arrOsses = osses.toArray();
+                for(auto jvalue : arrOsses) {
+                    QJsonObject os = jvalue.toObject();
+                    if ( os["name"].toString() == operatingSystem){
+                        QJsonArray libraries = os["libraries"].toArray();
+                        for(auto oslibsvalue : libraries){
+                            QJsonObject osprops = oslibsvalue.toObject();
+                            order[osprops["order"].toDouble()] = osprops["library"].toString();
+                        }
+                        return;
+
+                    }
+                }
+            }
+        }
+    }
 }
 
 bool GDALProxy::prepare() {
