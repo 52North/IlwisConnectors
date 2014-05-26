@@ -49,6 +49,12 @@ namespace pythonapi{
                             (double)PyDateTimeDATE_GET_SECOND(obj)+(round(((double)PyDateTimeDATE_GET_MICROSECOND(obj)/10000)) / 100)
                             );
                 return new QVariant(IVARIANT(time));
+            } else if(PyDeltaCheckExact(obj)){
+                Ilwis::Duration dur(QString::fromStdString(
+                            std::to_string(PyDateTimeDELTA_GET_DAYS(obj)) + "D" +
+                            std::to_string(PyDateTimeDELTA_GET_SECONDS(obj)) + "s")
+                            );
+                return new QVariant(IVARIANT(dur));
             }
             throw std::domain_error(QString("Cannot convert PyObject of type %1").arg(typeName(obj)).toStdString());
         }

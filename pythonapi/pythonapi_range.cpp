@@ -17,6 +17,8 @@
 #include "pythonapi_range.h"
 #include "pythonapi_qvariant.h"
 
+#define BIGTIME 1e150
+
 using namespace pythonapi;
 
 Range::Range() {
@@ -32,7 +34,7 @@ bool Range::__bool__() const
     return _range->isValid();
 }
 
-std::string Range::__str__() 
+std::string Range::__str__()
 {
     return _range->toString().toStdString();
 }
@@ -156,12 +158,6 @@ NumericItemRange::NumericItemRange()
     _range.reset(new Ilwis::IntervalRange());
 }
 
-NumericItemRange::NumericItemRange(PyObject *item)
-{
-    _range.reset(new Ilwis::IntervalRange());
-    add(item);
-}
-
 void NumericItemRange::add(PyObject *item)
 {
     if (CppTupleElementCount(item) == 3 || CppTupleElementCount(item) == 4){
@@ -170,12 +166,18 @@ void NumericItemRange::add(PyObject *item)
             return;
 
         double rmin = CppTupleElement2Double(item, 1);
+        if(rmin == rUNDEF)
+            rmin = (double)CppTupleElement2Long(item, 1);
         double rmax = CppTupleElement2Double(item,2);
+        if(rmax == rUNDEF)
+            rmax = (double)CppTupleElement2Long(item, 2);
         if ( rmin == rUNDEF || rmax == rUNDEF)
             return;
         Ilwis::Interval *numitem;
         if ( CppTupleElementCount(item) == 4){
             double resolution = CppTupleElement2Double(item,3);
+            if(resolution == rUNDEF)
+                resolution = (double)CppTupleElement2Long(item, 3);
             if ( resolution == rUNDEF)
                 return;
             numitem = new Ilwis::Interval(label, { rmin, rmax,resolution});
@@ -187,17 +189,10 @@ void NumericItemRange::add(PyObject *item)
 }
 
 
-
 //------------------------------------------------------------
 NamedItemRange::NamedItemRange()
 {
     _range.reset(new Ilwis::NamedIdentifierRange());
-}
-
-NamedItemRange::NamedItemRange(PyObject *item)
-{
-    _range.reset(new Ilwis::NamedIdentifierRange());
-    add(item);
 }
 
 void NamedItemRange::add(PyObject *item)
@@ -211,12 +206,6 @@ void NamedItemRange::add(PyObject *item)
 ThematicRange::ThematicRange()
 {
     _range.reset(new Ilwis::ThematicRange());
-}
-
-ThematicRange::ThematicRange(PyObject *item)
-{
-    _range.reset(new Ilwis::ThematicRange());
-    add(item);
 }
 
 void ThematicRange::add(PyObject *item)
@@ -297,6 +286,24 @@ double Color::getItem(std::string str) const{
 
 ColorModel Color::getColorModel() const{
     return _type;
+}
+
+std::string Color::toString() const{
+    QString colors;
+    switch(_type){
+    case ColorModel::cmCYMKA:
+        colors += QString("CMYKA(%1,%2,%3,%4,%5)").arg(this->getItem("cyan")).arg(this->getItem("magenta")).arg(this->getItem("yellow")).arg(this->getItem("black")).arg(this->getItem("alpha"));
+        break;
+    case ColorModel::cmHSLA:
+        colors += QString("HSLA(%1,%2,%3,%4)").arg(this->getItem("hue")).arg(this->getItem("saturation")).arg(this->getItem("lightness")).arg(this->getItem("alpha"));
+        break;
+    case ColorModel::cmRGBA:
+        colors += QString("RGBA(%1,%2,%3,%4)").arg(this->getItem("red")).arg(this->getItem("blue")).arg(this->getItem("green")).arg(this->getItem("alpha"));
+        break;
+    case ColorModel::cmGREYSCALE:
+        break;
+    }
+    return colors.toStdString();
 }
 
 //-----------------------------------------------------------------
@@ -412,16 +419,13 @@ ContinousColorRange::ContinousColorRange() : ColorRange(itCONTINUOUSCOLOR,ColorM
 
 ContinousColorRange::ContinousColorRange(const Color &clr1, const Color &clr2, ColorModel colormodel)
 {
-    ColorRange* colRan = new ColorRange();
-    Ilwis::ContinousColorRange* ilwRan = new Ilwis::ContinousColorRange();
-    QString color1 = QString::fromStdString(colRan->toString(clr1, colormodel));
-    QString color2 = QString::fromStdString(colRan->toString(clr2, colormodel));
+    QString color1 = QString::fromStdString(clr1.toString());
+    QString color2 = QString::fromStdString(clr2.toString());
 
-    int enumVal = colormodel;
-    Ilwis::ColorRange::ColorModel ilwColor = static_cast<Ilwis::ColorRange::ColorModel>(enumVal);
+    Ilwis::ColorRange::ColorModel ilwColor = static_cast<Ilwis::ColorRange::ColorModel>(colormodel);
 
-    QColor col1 = ilwRan->toColor(QVariant(color1), ilwColor);
-    QColor col2 = ilwRan->toColor(QVariant(color2), ilwColor);
+    QColor col1 = Ilwis::ContinousColorRange::toColor(QVariant(color1), ilwColor);
+    QColor col2 = Ilwis::ContinousColorRange::toColor(QVariant(color2), ilwColor);
      _range.reset(new Ilwis::ContinousColorRange(col1, col2, ilwColor));
 }
 
@@ -464,15 +468,13 @@ bool ContinousColorRange::containsVar(const PyObject *v, bool inclusive) const
 
 }
 
-bool ContinousColorRange::containsColor(const Color clr, bool inclusive) const
+bool ContinousColorRange::containsColor(const Color &clr, bool inclusive) const
 {
-    ColorRange* colRan = new ColorRange();
-    Ilwis::ContinousColorRange* ilwRan = new Ilwis::ContinousColorRange();
-    QString color = QString::fromStdString(colRan->toString(clr, defaultColorModel()));
+    QString color = QString::fromStdString(clr.toString());
 
     Ilwis::ColorRange::ColorModel ilwColor = static_cast<const Ilwis::ColorRange*>(_range.get())->defaultColorModel();
 
-    QColor col = ilwRan->toColor(QVariant(color), ilwColor);
+    QColor col = Ilwis::ContinousColorRange::toColor(QVariant(color), ilwColor);
 
     return _range.get()->contains(col, inclusive);
 
@@ -489,14 +491,86 @@ Color ContinousColorRange::impliedValue(const PyObject *v) const
     QVariant colVar = static_cast<const Ilwis::ContinousColorRange*>(_range.get())->impliedValue(*qvar);
     QColor ilwCol = colVar.value<QColor>();
 
-    ColorRange* colRan = new ColorRange();
-    Ilwis::ContinousColorRange* ilwRan = new Ilwis::ContinousColorRange();
     Ilwis::ColorRange::ColorModel ilwMod = static_cast<const Ilwis::ColorRange*>(_range.get())->defaultColorModel();
 
-    std::string colStr = (static_cast<const Ilwis::ColorRange*>(ilwRan)->toString(ilwCol, ilwMod)).toStdString();
+    std::string colStr = (Ilwis::ColorRange::toString(ilwCol, ilwMod)).toStdString();
     ColorModel type = static_cast<ColorModel>(ilwMod);
-    return colRan->toColor(PyBuildString(colStr),type);
-
-    return Color();
+    return static_cast<const ColorRange*>(this)->toColor(PyBuildString(colStr),type);
 
 }
+
+
+//---------------------------------------------------------------------------------------
+
+TimeInterval::TimeInterval(IlwisTypes tp) : NumericRange(-BIGTIME, BIGTIME,0) {
+    _range.reset(new Ilwis::TimeInterval(tp));
+}
+
+TimeInterval::TimeInterval(const PyObject* beg, const PyObject* end, std::string step, IlwisTypes tp):
+    NumericRange(-BIGTIME, BIGTIME,0){
+    QVariant* qvar = PyObject2QVariant(beg);
+    Ilwis::Time ilwBeg = qvar->value<Ilwis::Time>();
+    qvar = PyObject2QVariant(end);
+    Ilwis::Time ilwEnd = qvar->value<Ilwis::Time>();
+    Ilwis::Duration ilwStep {QString::fromStdString(step)};
+    _range.reset(new Ilwis::TimeInterval(ilwBeg, ilwEnd, ilwStep, tp));
+}
+
+std::string TimeInterval::toString(bool local, IlwisTypes tp) const{
+    return (static_cast<Ilwis::TimeInterval*>(_range.get())->toString(local, tp)).toStdString();
+}
+
+bool TimeInterval::contains(const std::string &value, bool inclusive) const
+{
+    return static_cast<Ilwis::TimeInterval*>(_range.get())->contains(QString::fromStdString(value));
+
+}
+
+bool TimeInterval::contains(const PyObject* value, bool inclusive) const
+{
+    std::unique_ptr<QVariant> qvar(PyObject2QVariant(value));
+    if(qvar->value<Ilwis::Time>())
+    {
+        Ilwis::Time timeVal = qvar->value<Ilwis::Time>();
+        return static_cast<Ilwis::TimeInterval*>(_range.get())->contains(timeVal);
+    } else
+        return static_cast<Ilwis::TimeInterval*>(_range.get())->contains(*qvar);
+}
+
+
+Ilwis::Range *TimeInterval::clone() const
+{
+    return static_cast<Ilwis::TimeInterval*>(_range.get())->clone();
+}
+
+bool TimeInterval::isValid() const
+{
+    return static_cast<Ilwis::TimeInterval*>(_range.get())->isValid();
+}
+
+void TimeInterval::begin(const PyObject *t)
+{
+    std::unique_ptr<QVariant> qvar(PyObject2QVariant(t));
+    Ilwis::Time timeVal = qvar->value<Ilwis::Time>();
+    static_cast<Ilwis::TimeInterval*>(_range.get())->begin(timeVal);
+}
+
+void TimeInterval::end(const PyObject *t)
+{
+    std::unique_ptr<QVariant> qvar(PyObject2QVariant(t));
+    Ilwis::Time timeVal = qvar->value<Ilwis::Time>();
+    static_cast<Ilwis::TimeInterval*>(_range.get())->end(timeVal);
+}
+
+PyObject* TimeInterval::begin() const
+{
+    QVariant* qvar = new QVariant(IVARIANT(static_cast<Ilwis::TimeInterval*>(_range.get())->begin()));
+    return QVariant2PyObject(*qvar);
+}
+
+PyObject* TimeInterval::end() const
+{
+    QVariant* qvar = new QVariant(IVARIANT(static_cast<Ilwis::TimeInterval*>(_range.get())->end()));
+    return QVariant2PyObject(*qvar);;
+}
+

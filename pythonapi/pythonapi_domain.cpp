@@ -368,3 +368,24 @@ TextDomain::TextDomain(const std::string &resource)
 
 }
 
+
+//---------------------------------------------------------------------------------------------
+TimeDomain::TimeDomain()
+{
+}
+
+TimeDomain::TimeDomain(const std::string& resource)
+{
+    Ilwis::ITimeDomain timedom(QString::fromStdString(resource), itNUMERICDOMAIN);
+    if (timedom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(timedom));
+}
+
+TimeDomain::TimeDomain(const Range& rng)
+{
+    Ilwis::ITimeDomain timedom;
+    timedom.prepare();
+    if (timedom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(timedom));
+    this->setRange(rng);
+}

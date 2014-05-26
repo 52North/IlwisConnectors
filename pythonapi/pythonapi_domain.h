@@ -85,6 +85,13 @@ namespace pythonapi {
         TextDomain();
         TextDomain(const std::string& resource);
     };
+
+    class TimeDomain : public Domain{
+        public:
+            TimeDomain();
+            TimeDomain(const std::string& resource);
+            TimeDomain(const Range& rng);
+        };
 }
 
 

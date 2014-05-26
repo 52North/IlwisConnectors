@@ -17,7 +17,7 @@ try:
 
     import unittest as ut
 
-    #@ut.skip("temporarily")
+    # @ut.skip("temporarily")
     class TestTable(ut.TestCase):
         def setUp(self):
             try:
@@ -59,7 +59,7 @@ try:
                 t.columns()
             )
             self.assertEqual((4, 5, 6), t.select("march < 100 AND march != 87"))
-            self.assertEqual((9, 10, 11), t.select("march == " + str(Const.rUNDEF)))
+            self.assertEqual((9, 10, 11), t.select("march == " + str(Const.iUNDEF)))
             self.assertEqual(13, t.columnIndex("ident"))
             self.assertEqual(81, t.cell("march", 4))
             self.assertEqual(2, t.columnIndex("march"))
@@ -362,7 +362,7 @@ try:
             self.assertTrue((it.FEATURE & 4) != 0)
             self.assertFalse((it.CATALOG & it.FEATURE) != 0)
             self.assertEqual(4, (it.FEATURE & 4))
-            self.assertEqual(262144, it.CATALOG)
+            self.assertEqual(524288, it.CATALOG)
             it.CATALOG = 0
             self.assertEqual(0, it.CATALOG)
             it.CATALOG = 524288
@@ -375,11 +375,11 @@ try:
             with self.assertRaises(AttributeError, msg="property is not read only!"):
                 Const.sUNDEF = "test"
             self.assertEqual(Const.sUNDEF, "?")
-            self.assertEqual(Const.shUNDEF, -32767)
-            self.assertEqual(Const.iUNDEF, -2147483647)
-            self.assertEqual(Const.flUNDEF, -1e38)
+            self.assertEqual(Const.shUNDEF, 32767)
+            self.assertEqual(Const.iUNDEF, 2147483645)
+            self.assertEqual(Const.flUNDEF, 1e38)
             self.assertEqual(Const.rUNDEF, -1e308)
-            self.assertEqual(Const.i64UNDEF, -9223372036854775808)
+            self.assertEqual(Const.i64UNDEF, 9223372036854775808)
 
     #@ut.skip("temporarily")
     class TestEngine(ut.TestCase):
@@ -415,8 +415,8 @@ try:
             self.assertEqual(
                 "gridding(coordinatesyste,top-coordinate,x-cell-size, y-cell-size, horizontal-cells, vertical-cells)",
                 e.operationMetaData("gridding"))
-            self.assertEqual(("iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)\n"
-                              "iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)"),
+            self.assertEqual(("iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)\n"
+                              "iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)"),
                              e.operationMetaData("iff"))
 
         def test_Gridding(self):
@@ -691,6 +691,7 @@ try:
             self.assertEqual(csy.ilwisID(), rainCsy.ilwisID())
             self.assertEqual(str(csy.envelope()), str(rainCsy.envelope()))
 
+        #ut.skip("temporarily")
         def test_Proj4(self):
             cs1 = CoordinateSystem(
                 "code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
@@ -706,6 +707,7 @@ try:
             self.assertTrue(bool(cs2))
             self.assertEqual(cs2.name(), r"ED50 / UTM zone 35N")
 
+        #@ut.skip("temporarily")
         def test_isEqual(self):
             cs1 = CoordinateSystem(
                 "code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
@@ -1294,8 +1296,9 @@ try:
             connectIssueLogger()
 
         def test_containement(self):
-            interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
-            interrange.add(("dijks", 101.0, 150.0, 1.0))
+            interrange = NumericItemRange()
+            interrange.add(("sealevel", 40.0, 100.0, 5.0))
+            interrange.add(("dijks", 101.0, 151.0, 1.0))
 
             childdom = ItemDomain(interrange)
 
@@ -1312,7 +1315,8 @@ try:
             self.assertEqual(childdom.contains(161.0), "cPARENT")
 
         def test_parents(self):
-            nir = interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
+            nir = NumericItemRange()
+            nir.add(("sealevel", 40.0, 100.0, 5.0))
             childdom = ItemDomain(nir)
 
             nir.add(("by the sea", 151.0, 181.0, 5.0))
@@ -1325,7 +1329,8 @@ try:
             self.assertTrue(childdom.parent())
 
         def test_removeAndCount(self):
-            nir = interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
+            nir = NumericItemRange()
+            nir.add(("sealevel", 40.0, 100.0, 5.0))
             nir.add(("by the sea", 151.0, 181.0, 5.0))
             childdom = ItemDomain(nir)
 
@@ -1334,7 +1339,8 @@ try:
             self.assertEqual(childdom.count(), 1)
 
         def test_theme(self):
-            nir = interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
+            nir = NumericItemRange()
+            nir.add(("sealevel", 40.0, 100.0, 5.0))
             nir.add(("by the sea", 151.0, 181.0, 5.0))
             childdom = ItemDomain(nir)
 
@@ -1343,7 +1349,8 @@ try:
 
     class TestThematicDomain(ut.TestCase):
         def test_containement(self):
-            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr = ThematicRange()
+            tr.add(("hound", "3.1", "Fierce doggy"))
             tr.add(("greyhound", "0.32", "the fast one"))
 
             td = ItemDomain(tr)
@@ -1360,7 +1367,8 @@ try:
             self.assertEqual(td.contains("ghosthound"), "cNONE")
 
         def test_parents(self):
-            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr = ThematicRange()
+            tr.add(("hound", "3.1", "Fierce doggy"))
             tr.add(("greyhound", "0.32", "the fast one"))
 
             td = ItemDomain(tr)
@@ -1374,7 +1382,8 @@ try:
             self.assertTrue(td.parent())
 
         def test_removeAndCount(self):
-            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr = ThematicRange()
+            tr.add(("hound", "3.1", "Fierce doggy"))
             tr.add(("greyhound", "0.32", "the fast one"))
 
             td = ItemDomain(tr)
@@ -1385,7 +1394,8 @@ try:
             self.assertEqual(td.count(), 2)
 
         def test_theme(self):
-            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr = ThematicRange()
+            tr.add(("hound", "3.1", "Fierce doggy"))
             tr.add(("greyhound", "0.32", "the fast one"))
 
             td = ItemDomain(tr)
@@ -1397,7 +1407,8 @@ try:
 
     class TestIdentifierDomain(ut.TestCase):
         def containement_tests(self):
-            nr = NamedItemRange("Perth")
+            nr = NamedItemRange()
+            nr.add("Perth")
             nr.add("Darwin")
 
             nchild = ItemDomain(nr)
@@ -1419,7 +1430,8 @@ try:
 
         def test_parents(self):
 
-            nr = NamedItemRange("Perth")
+            nr = NamedItemRange()
+            nr.add("Perth")
             nr.add("Darwin")
 
             nchild = ItemDomain(nr)
@@ -1433,7 +1445,8 @@ try:
             self.assertTrue(nchild.parent())
 
         def test_removeAndCount(self):
-            nr = NamedItemRange("Perth")
+            nr = NamedItemRange()
+            nr.add("Perth")
             nr.add("Darwin")
 
             namedDom = ItemDomain(nr)
@@ -1443,7 +1456,8 @@ try:
             namedDom.addItem("Childers")
 
         def test_theme(self):
-            nr = NamedItemRange("Perth")
+            nr = NamedItemRange()
+            nr.add("Perth")
             nr.add("Darwin")
 
             namedRange = ItemDomain(nr)
@@ -1453,21 +1467,37 @@ try:
 
     class TestColorDomain(ut.TestCase):
         def containement_test(self):
-            color1 = Color(ColorModel.cmRGBA, (255.0, 20.0, 30.0, 200.0))
+            color1 = Color(ColorModel.cmRGBA, (220.0, 20.0, 30.0, 200.0))
             color2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
-            color3 = Color(ColorModel.cmRGBA, (255.0, 60.0, 50.0, 240.0))
+            color3 = Color(ColorModel.cmRGBA, (230.0, 60.0, 50.0, 240.0))
 
             col = ContinousColorRange(color1, color2, ColorModel.cmRGBA)
             self.assertTrue(col.isValid())
-            colDom.setRange(col)
+
             col2 = col.clone()
             col.defaultColorModel(ColorModel.cmRGBA)
             self.assertEqual(col.defaultColorModel(), ColorModel.cmRGBA)
 
             colDom = ColorDomain("testdomain")
+            colDom.setRange(col)
             self.assertEqual(colDom.containsColor(color3), "cSELF")
-            self.assertEqual(colDom.containsRange(col2), "cSELF")
 
+
+    class TestTimeDomain(ut.TestCase):
+        def containement_test(self):
+            ti = TimeInterval(date(2014, 2, 17), date(2016, 2, 17))
+            td = TimeDomain(ti)
+            self.assertEqual(td.contains(date(2014, 5, 17)), "cSELF")
+            self.assertEqual(td.contains(date(2014, 1, 17)), "cNONE")
+
+            date1 = date(2014, 2, 17) - timedelta(365)
+            date2 = date(2016, 2, 17) + timedelta(365)
+            tip = TimeInterval(date1, date2)
+            tdp = TimeDomain(tip)
+
+            td.setParent(tdp)
+            td.setStrict(False)
+            self.assertEqual(td.contains(date(2013, 5, 17)), "cPARENT")
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":

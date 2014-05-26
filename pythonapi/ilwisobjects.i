@@ -246,24 +246,26 @@ def object_cast(obj):
 
 // declaring the Const for Python side xUNDEF declarations
 %pythoncode %{
-    class ReadOnly(type):
-        @property
-        def sUNDEF(cls):
+        class ReadOnly(type):
+          @property
+          def sUNDEF(cls):
             return "?"
-        @property
-        def shUNDEF(cls):
-            return -32767
-        @property
-        def iUNDEF(cls):
-            return -2147483647
-        @property
-        def rUNDEF(cls):
+          @property
+          def shUNDEF(cls):
+            return 32767
+          @property
+          def iUNDEF(cls):
+            return 2147483645
+          @property
+          def rUNDEF(cls):
             return -1e308
-        @property
-        def flUNDEF(cls):
-            return -1e38
-        @property
-        def i64UNDEF(cls):
-            return -9223372036854775808
-    class Const(metaclass=ReadOnly):pass
+          @property
+          def flUNDEF(cls):
+            return 1e38
+          @property
+          def i64UNDEF(cls):
+            return 9223372036854775808
+
+
+        class Const(metaclass=ReadOnly):pass
 %}

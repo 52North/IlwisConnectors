@@ -63,9 +63,10 @@ namespace pythonapi {
     //    Return a datetime.timedelta object representing the given number of days, seconds and microseconds. Normalization is performed so that the resulting number of microseconds and seconds lie in the ranges documented for datetime.timedelta objects.
     PyObject* PyDeltaFromDSU(int days, int seconds, int useconds);
 
-    int PyDateCheckExact(const PyObject* ob); // c_type(o) = PyDateTime_Date
-    int PyDateTimeCheckExact(const PyObject* ob); // c_type(o) =               PyDateTime_DateTime(PyDateTime_Date)
-    int PyTimeCheckExact(const PyObject* ob); // c_type(o) = PyDateTime_Time
+    bool PyDateCheckExact(const PyObject* obj); // c_type(o) = PyDateTime_Date
+    bool PyDateTimeCheckExact(const PyObject* obj); // c_type(o) = PyDateTime_DateTime(PyDateTime_Date)
+    bool PyTimeCheckExact(const PyObject* obj); // c_type(o) = PyDateTime_Time
+    bool PyDeltaCheckExact(const PyObject* obj); // c_type(o) = PyDateTime_Delta
 
     // c_type(o) = PyDateTime_Date | PyDateTime_DateTime
     int PyDateTimeGET_YEAR(const void* o);
@@ -83,6 +84,11 @@ namespace pythonapi {
     int PyDateTimeTIME_GET_MINUTE(const void* o);
     int PyDateTimeTIME_GET_SECOND(const void* o);
     int PyDateTimeTIME_GET_MICROSECOND(const void* o);
+
+    // c_type(o) = PyDateTime_Delta
+    int PyDateTimeDELTA_GET_DAYS(const void* o);
+    int PyDateTimeDELTA_GET_SECONDS(const void* o);
+    int PyDateTimeDELTA_GET_MICROSECONDS(const void* o);
 
     //-------------------------------------------
     double CppFloat2Double(const PyObject* ob);

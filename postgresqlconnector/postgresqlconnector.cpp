@@ -6,11 +6,7 @@
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "postgresqlconnector.h"
-<<<<<<< HEAD
-//#include "postgresql/libpq-fe.h"
-=======
-#include "postgresql/libpq-fe.h"
->>>>>>> parent of b3586e0... extended python api
+
 
 using namespace Ilwis;
 using namespace Postgresql;
