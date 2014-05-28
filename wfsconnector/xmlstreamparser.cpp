@@ -220,28 +220,6 @@ bool XmlStreamParser::isAtEndOf(QString qName) const
     return isAtElement(qName);
 }
 
-void XmlStreamParser::slotReadyRead()
-{
-    qDebug() << "XmlStreamParser: " << "ReadyRead";
-    _reader->addData(_device->readAll());
-}
-
-void XmlStreamParser::slotAboutToClose()
-{
-    qDebug() << "XmlStreamParser: " << "AboutToClose";
-}
-
-void XmlStreamParser::slotBytesWritten(qint64 bytes)
-{
-
-    qDebug() << "XmlStreamParser: " << "BytesWritten, byteswritten => " << bytes;
-}
-
-void XmlStreamParser::slotReadChannelFinished()
-{
-    qDebug() << "XmlStreamParser: " << "ReadChannelFinished";
-}
-
 bool XmlStreamParser::isAtElement(QString qName) const
 {
     QString prefix;
