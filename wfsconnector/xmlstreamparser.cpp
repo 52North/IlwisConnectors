@@ -94,9 +94,9 @@ QString XmlStreamParser::qname() const
 
 bool XmlStreamParser::readNextStartElement() const
 {
-    if (_reader->isEndElement()) {
-        _reader->readNext();
-    }
+//    if (_reader->isEndElement()) {
+//        _reader->readNext();
+//    }
     return _reader->readNextStartElement();
 }
 
@@ -113,7 +113,7 @@ void XmlStreamParser::readNext() const
 bool XmlStreamParser::moveToEndOf(QString qName)
 {
     bool found = false;
-    while ( !(_reader->atEnd() || found)) {
+    while ( !(atEnd() || found)) {
         if (_reader->isEndElement()) {
             found = isAtEndOf(qName);
             if ( !found) {
@@ -121,7 +121,7 @@ bool XmlStreamParser::moveToEndOf(QString qName)
             }
         } else {
             if (_reader->isStartElement()) {
-                _reader->skipCurrentElement();
+                skipCurrentElement();
             }
             _reader->readNext();
         }
@@ -131,23 +131,23 @@ bool XmlStreamParser::moveToEndOf(QString qName)
 
 bool XmlStreamParser::moveToNext(QString qName, void (*callback)())
 {
-    if (_reader->atEnd()) {
+    if (atEnd()) {
         return false;
     }
 
     bool found = false;
-    _reader->readNextStartElement();
+    readNextStartElement();
     nextElementDo(callback);
 
-    while ( !(_reader->atEnd() || found)) {
+    while ( !(atEnd() || found)) {
         if (_reader->isStartElement()) {
             found = isAtBeginningOf(qName);
             if ( !found) {
-                _reader->skipCurrentElement();
-                _reader->readNext();
+                skipCurrentElement();
+                readNext();
             }
         } else {
-            if ( !_reader->readNextStartElement()) {
+            if ( !readNextStartElement()) {
                 break;
             }
             nextElementDo(callback);
@@ -159,20 +159,20 @@ bool XmlStreamParser::moveToNext(QString qName, void (*callback)())
 
 bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, void (*callback)())
 {
-    if (_reader->atEnd()) {
+    if (atEnd()) {
         return false;
     }
 
     bool found = false;
     QString startElement = name();
     bool onStartElement = _reader->isStartElement();
-    bool hasInnerStartElement = _reader->readNextStartElement();
+    bool hasInnerStartElement = readNextStartElement();
     if ( !onStartElement && !hasInnerStartElement) {
         return false;
     }
     nextElementDo(callback);
 
-    while ( !(_reader->atEnd() || found)) {
+    while ( !(atEnd() || found)) {
         if (_reader->isStartElement()) {
             for (QString qName : elementList) {
                 found = isAtBeginningOf(qName);
@@ -181,7 +181,7 @@ bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, voi
                 }
             }
             if ( !found) {
-                bool hasNextNestedElement = _reader->readNextStartElement();
+                bool hasNextNestedElement = readNextStartElement();
                 bool atEndOfStartElement = name() == startElement;
                 if ( !hasNextNestedElement) {
                     if (atEndOfStartElement) {
@@ -191,7 +191,7 @@ bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, voi
                 }
             }
         } else {
-            bool hasNextNestedElement = _reader->readNextStartElement();
+            bool hasNextNestedElement = readNextStartElement();
             bool atEndOfStartElement = name() == startElement;
             if ( !hasNextNestedElement) {
                 if (atEndOfStartElement) {
@@ -206,7 +206,7 @@ bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, voi
 
 bool XmlStreamParser::isAtBeginningOf(QString qName) const
 {
-    if (_reader->atEnd() || !_reader->isStartElement()) {
+    if (atEnd() || !_reader->isStartElement()) {
         return false;
     }
     return isAtElement(qName);
@@ -214,10 +214,32 @@ bool XmlStreamParser::isAtBeginningOf(QString qName) const
 
 bool XmlStreamParser::isAtEndOf(QString qName) const
 {
-    if (_reader->atEnd() || !_reader->isEndElement()) {
+    if (atEnd() || !_reader->isEndElement()) {
         return false;
     }
     return isAtElement(qName);
+}
+
+void XmlStreamParser::slotReadyRead()
+{
+    qDebug() << "XmlStreamParser: " << "ReadyRead";
+    _reader->addData(_device->readAll());
+}
+
+void XmlStreamParser::slotAboutToClose()
+{
+    qDebug() << "XmlStreamParser: " << "AboutToClose";
+}
+
+void XmlStreamParser::slotBytesWritten(qint64 bytes)
+{
+
+    qDebug() << "XmlStreamParser: " << "BytesWritten, byteswritten => " << bytes;
+}
+
+void XmlStreamParser::slotReadChannelFinished()
+{
+    qDebug() << "XmlStreamParser: " << "ReadChannelFinished";
 }
 
 bool XmlStreamParser::isAtElement(QString qName) const
@@ -233,7 +255,7 @@ bool XmlStreamParser::isAtElement(QString qName) const
         QString currentNamespace = _reader->namespaceUri().toString();
         QString declaredNamespace = _namespaces[prefix];
         if (currentNamespace == declaredNamespace) {
-            return name == _reader->name().toString();
+            return name == this->name();
         } else {
             return false;
         }
