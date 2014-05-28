@@ -202,3 +202,4 @@ GeoReference RasterCoverage::geoReference(){
 void RasterCoverage::setGeoReference(const GeoReference& gr){
     this->ptr()->as<Ilwis::RasterCoverage>()->georeference(gr.ptr()->as<Ilwis::GeoReference>());
 }
+

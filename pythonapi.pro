@@ -36,7 +36,8 @@ HEADERS += \
     pythonapi/pythonapi_domain.h \
     pythonapi/pythonapi_coverage.h \
     pythonapi/pythonapi_coordinatesystem.h \
-    pythonapi/pythonapi_catalog.h
+    pythonapi/pythonapi_catalog.h \
+    pythonapi/pythonapi_itemiterator.h
 
 
 SOURCES += \
@@ -61,7 +62,8 @@ SOURCES += \
     pythonapi/pythonapi_domain.cpp \
     pythonapi/pythonapi_coverage.cpp \
     pythonapi/pythonapi_coordinatesystem.cpp \
-    pythonapi/pythonapi_catalog.cpp
+    pythonapi/pythonapi_catalog.cpp \
+    pythonapi/pythonapi_itemiterator.cpp
 
 
 OTHER_FILES += \

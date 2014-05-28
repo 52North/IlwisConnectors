@@ -1143,7 +1143,7 @@ try:
             fc.setInputConnection(workingDir + worldDir + "/countries.mpa", "vectormap", "ilwis3")
             #fc = FeatureCoverage("countries.mpa")
             self.assertFalse(fc.isInternal())
-            self.assertEqual("newName", fc.name())
+            self.assertEqual("countries.mpa", fc.name())
             fc.setOutputConnection(workingDir + worldDir + "/countries.shp", "ESRI Shapefile", "gdal")
             fc.store()
 
@@ -1171,6 +1171,7 @@ try:
             table.addColumn("newCol", "value")
             self.assertEqual(64, table.columnCount())
 
+    #@ut.skip("temporarily")
     class TestIntegration(ut.TestCase):
         def setUp(self):
             try:
@@ -1219,7 +1220,7 @@ try:
             #
             # plt.show()
 
-
+    #@ut.skip("temporarily")
     class TestNumericDomain(ut.TestCase):
         def setUp(self):
             disconnectIssueLogger()
@@ -1289,7 +1290,7 @@ try:
             childnumdom.setParent(parentnumdom)
             self.assertTrue(childnumdom.parent())
 
-
+    #@ut.skip("temporarily")
     class TestInterval(ut.TestCase):
         def setUp(self):
             disconnectIssueLogger()
@@ -1337,6 +1338,8 @@ try:
             self.assertEqual(childdom.count(), 2)
             childdom.removeItem("sealevel")
             self.assertEqual(childdom.count(), 1)
+            childdom.addItem(("sealevel", 185.0, 250.0, 5.0))
+            self.assertEqual(childdom.count(), 2)
 
         def test_theme(self):
             nir = NumericItemRange()
@@ -1347,6 +1350,7 @@ try:
             childdom.setTheme("Seastuff")
             self.assertEqual(childdom.theme(), "Seastuff")
 
+    #@ut.skip("temporarily")
     class TestThematicDomain(ut.TestCase):
         def test_containement(self):
             tr = ThematicRange()
@@ -1403,8 +1407,7 @@ try:
             td.setTheme("Hounds")
             self.assertEqual(td.theme(), "Hounds")
 
-
-
+    #@ut.skip("temporarily")
     class TestIdentifierDomain(ut.TestCase):
         def containement_tests(self):
             nr = NamedItemRange()
@@ -1426,7 +1429,6 @@ try:
 
             nChild.setStrict(True)
             self.assertEqual(nchild.contains("Broome"), "cNONE")
-
 
         def test_parents(self):
 
@@ -1454,6 +1456,7 @@ try:
             namedDom.removeItem("Perth")
             self.assertEqual(namedDom.count(), 1)
             namedDom.addItem("Childers")
+            self.assertEqual(namedDom.count(), 2)
 
         def test_theme(self):
             nr = NamedItemRange()
@@ -1465,8 +1468,9 @@ try:
             namedRange.setTheme("Australian Cities")
             self.assertEqual(namedRange.theme(), "Australian Cities")
 
+    #@ut.skip("temporarily")
     class TestColorDomain(ut.TestCase):
-        def containement_test(self):
+        def color_containement_test(self):
             color1 = Color(ColorModel.cmRGBA, (220.0, 20.0, 30.0, 200.0))
             color2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
             color3 = Color(ColorModel.cmRGBA, (230.0, 60.0, 50.0, 240.0))
@@ -1482,7 +1486,7 @@ try:
             colDom.setRange(col)
             self.assertEqual(colDom.containsColor(color3), "cSELF")
 
-
+    #@ut.skip("temporarily")
     class TestTimeDomain(ut.TestCase):
         def containement_test(self):
             ti = TimeInterval(date(2014, 2, 17), date(2016, 2, 17))

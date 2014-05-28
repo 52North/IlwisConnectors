@@ -2,6 +2,7 @@
 #define PYTHONAPI_DOMAIN_H
 
 #include "pythonapi_ilwisobject.h"
+#include "pythonapi_pyobject.h"
 
 namespace Ilwis {
     class Domain;
@@ -16,6 +17,7 @@ namespace pythonapi {
 
     class Range;
     class Color;
+    class ItemRange;
 
     class Domain : public IlwisObject{
     public:
@@ -44,6 +46,7 @@ namespace pythonapi {
     class NumericDomain : public Domain{
         friend class Catalog;
     public:
+        NumericDomain();
         NumericDomain(const std::string& resource);
         static NumericDomain* toNumericDomain(Object *obj);
 

@@ -69,18 +69,24 @@ class NumericItemRange : public ItemRange{
 public:
     NumericItemRange();
     void add(PyObject *item);
+    double index(double);
+    qint32 gotoIndex(qint32 index, qint32 step) const;
+    NumericItemRange* clone();
 };
 
 class NamedItemRange : public ItemRange {
 public:
     NamedItemRange();
     void add(PyObject *item);
+    qint32 gotoIndex(qint32 index, qint32 step) const;
+    NamedItemRange* clone();
 };
 
 class ThematicRange : public ItemRange {
 public:
     ThematicRange();
     void add(PyObject *item);
+    ThematicRange* clone();
 };
 
 #ifdef SWIG
@@ -115,7 +121,7 @@ public:
     ColorModel defaultColorModel() const;
     void defaultColorModel(ColorModel m);
 
-    //static Color toColor(quint64 clrint, ColorModel clrModel) ;
+    static Color toColor(quint64 clrint, ColorModel clrModel) ;
     static Color toColor(PyObject*, ColorModel colortype);
     std::string toString(const Color &clr, ColorModel clrType);
     ColorModel stringToColorModel(std::string clrmd);

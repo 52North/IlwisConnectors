@@ -73,6 +73,10 @@ Pixel PixelIterator::position(){
     return Pixel(this->ptr().position());
 }
 
+void PixelIterator::setFlow(Flow flw){
+    this->ptr().setFlow(static_cast<Ilwis::PixelIterator::Flow> (flw));
+}
+
 bool PixelIterator::xChanged(){
     return this->ptr().xchanged();
 }

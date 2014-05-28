@@ -37,6 +37,9 @@ namespace pythonapi {
             bool centerOfPixel() const;
             void centerOfPixel(bool yesno);
             bool isCompatible(const GeoReference& other) const;
+            bool isValid() const;
+            bool compute();
+            IlwisTypes ilwisType() const;
 
     };
 
