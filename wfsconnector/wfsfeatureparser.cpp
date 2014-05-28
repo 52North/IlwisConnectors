@@ -135,9 +135,12 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table
         if (currentElementName == geometryAttributeName) {
             i--; // not written to table
             createNewFeature();
-            while (_parser->name() != geometryAttributeName) {
+            if ( !_parser->moveToEndOf(geometryAttributeName)) {
+            //while ( !_parser->atEnd() && _parser->name() != geometryAttributeName) {
                 // leave the geometry element
-                _parser->readNextStartElement();
+                //_parser->readNextStartElement();
+
+                qWarning() << "could not find end of " << geometryAttributeName;
             }
             continue;
         }
