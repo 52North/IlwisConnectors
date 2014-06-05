@@ -3,6 +3,10 @@
 
 namespace Ilwis {
 namespace Ilwis3{
+
+const short  shILW3UNDEF = std::numeric_limits < qint16 >::min() + 1;
+const long   iILW3UNDEF  = std::numeric_limits < qint32 >::min() + 1;
+
 class RawConverter
 {
 public:
@@ -34,9 +38,9 @@ public:
         else {
             switch(_storeType) {
                 case itINT16:
-                    _undefined = -32767; break;
+                    _undefined = shILW3UNDEF; break;
                 case itINT32:
-                    _undefined = -2147483647L; break;
+                    _undefined = iILW3UNDEF; break;
                 case itDOUBLE:
                     _undefined = -1e308; break;
                 default:
@@ -50,7 +54,7 @@ public:
 
     double raw2real(double raw) const{
         if (_colors){
-            if ( raw == iUNDEF)
+            if ( raw == iILW3UNDEF)
                 return clrUNDEF2;
             return ( (quint32)raw | 0xFF000000); // setting transparency bit to 255 as this is by default not present
 
@@ -84,9 +88,9 @@ public:
         _storeType = st;
         switch(_storeType) {
             case itINT16:
-                _undefined = -32767; break;
+                _undefined = shILW3UNDEF; break;
             case itINT32:
-                _undefined = -2147483647L; break;
+                _undefined = iILW3UNDEF; break;
             case itDOUBLE:
                 _undefined = -1e308; break;
             default:
