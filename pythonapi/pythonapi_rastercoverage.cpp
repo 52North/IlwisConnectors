@@ -14,9 +14,12 @@
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/rastercoverage.h"
 
+#include "operationoverloads.h"
+
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_engine.h"
 #include "pythonapi_error.h"
+#include "pythonapi_datadefinition.h"
 
 using namespace pythonapi;
 
@@ -159,6 +162,11 @@ RasterCoverage *RasterCoverage::__rtruediv__(double value){
             );
 }
 
+//RasterCoverage *RasterCoverage::sin(){
+//    Ilwis::IRasterCoverage sum = sin(this->ptr()->as<Ilwis::RasterCoverage>());
+//    return new RasterCoverage(&sum);
+//}
+
 double RasterCoverage::coord2value(const Coordinate& c){
     return this->ptr()->as<Ilwis::RasterCoverage>()->coord2value(c.data());
 }
@@ -201,5 +209,17 @@ GeoReference RasterCoverage::geoReference(){
 
 void RasterCoverage::setGeoReference(const GeoReference& gr){
     this->ptr()->as<Ilwis::RasterCoverage>()->georeference(gr.ptr()->as<Ilwis::GeoReference>());
+}
+
+const DataDefinition& RasterCoverage::datadef(quint32 layer) const{
+    Ilwis::DataDefinition ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef(layer);
+    DataDefinition* pydef = new DataDefinition(ilwdef);
+    return *pydef;
+}
+
+DataDefinition& RasterCoverage::datadef(quint32 layer){
+    Ilwis::DataDefinition ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef(layer);
+    DataDefinition* pydef = new DataDefinition(ilwdef);
+    return *pydef;
 }
 

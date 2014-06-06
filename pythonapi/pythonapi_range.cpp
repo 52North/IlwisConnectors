@@ -158,6 +158,22 @@ NumericItemRange::NumericItemRange()
     _range.reset(new Ilwis::IntervalRange());
 }
 
+
+void NumericItemRange::add(std::string name, double min, double max, double resolution){
+
+    QString label = QString::fromStdString(name);
+    Ilwis::Interval *numitem;
+    if ( label == sUNDEF)
+        return;
+    if(resolution == 0){
+        numitem = new Ilwis::Interval(label, { min, max});
+    } else {
+        numitem = new Ilwis::Interval(label, { min, max, resolution});
+    }
+
+    static_cast<Ilwis::ItemRange*>(_range.get())->add(numitem);
+}
+
 void NumericItemRange::add(PyObject *item)
 {
     if (CppTupleElementCount(item) == 3 || CppTupleElementCount(item) == 4){
@@ -236,6 +252,21 @@ NamedItemRange *NamedItemRange::clone()
 ThematicRange::ThematicRange()
 {
     _range.reset(new Ilwis::ThematicRange());
+}
+
+void ThematicRange::add(std::string name, std::string id, std::string descr){
+    QString description = sUNDEF, code = sUNDEF;
+    QString label = QString::fromStdString(name);
+
+    if(label == sUNDEF)
+        return;
+    if(id != "")
+        QString code = QString::fromStdString(id);
+    if(descr != "")
+        QString description = QString::fromStdString(descr);
+
+    Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description});
+    static_cast<Ilwis::ItemRange*>(_range.get())->add(titem);
 }
 
 void ThematicRange::add(PyObject *item)

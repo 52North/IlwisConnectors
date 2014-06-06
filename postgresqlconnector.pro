@@ -22,7 +22,6 @@ OTHER_FILES += \
     postgresqlconnector/postgresqlconnector.json 
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/postgresqlconnector/ -lpq \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 		
 win32:CONFIG(release, debug|release): {

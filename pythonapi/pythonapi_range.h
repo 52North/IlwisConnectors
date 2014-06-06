@@ -17,6 +17,7 @@ namespace pythonapi {
 class Range: public Object{
 public:
     friend class Domain;
+    friend class DataDefinition;
 
     bool __bool__() const;
     std::string __str__();
@@ -68,6 +69,7 @@ public:
 class NumericItemRange : public ItemRange{
 public:
     NumericItemRange();
+    void add(std::string name, double min, double max, double resolution=0);
     void add(PyObject *item);
     double index(double);
     qint32 gotoIndex(qint32 index, qint32 step) const;
@@ -85,6 +87,7 @@ public:
 class ThematicRange : public ItemRange {
 public:
     ThematicRange();
+    void add(std::string name, std::string id="", std::string descr="");
     void add(PyObject *item);
     ThematicRange* clone();
 };
