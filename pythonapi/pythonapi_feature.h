@@ -13,10 +13,12 @@ class QVariant;
 
 typedef struct _object PyObject;
 
+
+
 namespace pythonapi{
 
     class FeatureCoverage;
-
+    const int COVERAGEATRIB = 100000000;
     class Feature: public Object{
         friend class Geometry;
         friend class FeatureCoverage;
@@ -27,23 +29,23 @@ namespace pythonapi{
         quint64 id();
         PyObject* __getitem__(std::string name);
         PyObject* __getitem__(quint32 colIndex);
-        PyObject* attribute(std::string name, qint64 defaultValue, int index = -1);
-        PyObject* attribute(std::string name, double defaultValue, int index = -1);
-        PyObject* attribute(std::string name, std::string defaultValue, int index = -1);
+        PyObject* attribute(std::string name, qint64 defaultValue, int index = COVERAGEATRIB);
+        PyObject* attribute(std::string name, double defaultValue, int index = COVERAGEATRIB);
+        PyObject* attribute(std::string name, std::string defaultValue, int index = COVERAGEATRIB);
         void __setitem__(std::string name, const PyObject* value);
-        void setAttribute(std::string name, const PyObject* value, int index = -1);
+        void setAttribute(std::string name, const PyObject* value, int index = COVERAGEATRIB);
         void __setitem__(std::string name, qint64 value);
-        void setAttribute(std::string name, qint64 value, int index = -1);
+        void setAttribute(std::string name, qint64 value, int index = COVERAGEATRIB);
         void __setitem__(std::string name, double value);
-        void setAttribute(std::string name, double value, int index = -1);
+        void setAttribute(std::string name, double value, int index = COVERAGEATRIB);
         void __setitem__(std::string name, std::string value);
-        void setAttribute(std::string name, std::string value, int index = -1);
+        void setAttribute(std::string name, std::string value, int index = COVERAGEATRIB);
         IlwisTypes ilwisType();
         Geometry* geometry(int index = 0);
-        void setGeometry(Geometry &geometry, int index = -1);
+        void setGeometry(Geometry &geometry, int index = COVERAGEATRIB);
 
     private:
-        PyObject* attribute(std::string name, const QVariant& defaultValue, int index = -1);
+        PyObject* attribute(std::string name, const QVariant& defaultValue, int index = COVERAGEATRIB);
         Feature(std::unique_ptr<Ilwis::FeatureInterface>& ilwisFeature, FeatureCoverage* fc);
         std::unique_ptr<Ilwis::FeatureInterface>& ptr() const;
         std::unique_ptr<Ilwis::FeatureInterface>& _ilwisSPFeatureI;

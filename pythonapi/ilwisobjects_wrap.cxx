@@ -14608,6 +14608,20 @@ SWIGINTERN PyObject *Geometry_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObj
   return SWIG_Py_Void();
 }
 
+SWIGINTERN int Swig_var_COVERAGEATRIB_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable COVERAGEATRIB is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_COVERAGEATRIB_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_int(static_cast< int >(pythonapi::COVERAGEATRIB));
+  return pyobj;
+}
+
+
 SWIGINTERN PyObject *_wrap_Feature___bool__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
@@ -27288,11 +27302,11 @@ static PyMethodDef SwigMethods[] = {
 		"Feature___getitem__(Feature self, quint32 colIndex) -> PyObject *\n"
 		""},
 	 { (char *)"Feature_attribute", _wrap_Feature_attribute, METH_VARARGS, (char *)"\n"
-		"attribute(std::string name, qint64 defaultValue, int index=-1) -> PyObject\n"
+		"attribute(std::string name, qint64 defaultValue, int index=COVERAGEATRIB) -> PyObject\n"
 		"attribute(std::string name, qint64 defaultValue) -> PyObject\n"
-		"attribute(std::string name, double defaultValue, int index=-1) -> PyObject\n"
+		"attribute(std::string name, double defaultValue, int index=COVERAGEATRIB) -> PyObject\n"
 		"attribute(std::string name, double defaultValue) -> PyObject\n"
-		"attribute(std::string name, std::string defaultValue, int index=-1) -> PyObject\n"
+		"attribute(std::string name, std::string defaultValue, int index=COVERAGEATRIB) -> PyObject\n"
 		"Feature_attribute(Feature self, std::string name, std::string defaultValue) -> PyObject *\n"
 		""},
 	 { (char *)"Feature___setitem__", _wrap_Feature___setitem__, METH_VARARGS, (char *)"\n"
@@ -27302,13 +27316,13 @@ static PyMethodDef SwigMethods[] = {
 		"Feature___setitem__(Feature self, std::string name, std::string value)\n"
 		""},
 	 { (char *)"Feature_setAttribute", _wrap_Feature_setAttribute, METH_VARARGS, (char *)"\n"
-		"setAttribute(std::string name, PyObject const * value, int index=-1)\n"
+		"setAttribute(std::string name, PyObject const * value, int index=COVERAGEATRIB)\n"
 		"setAttribute(std::string name, PyObject const * value)\n"
-		"setAttribute(std::string name, qint64 value, int index=-1)\n"
+		"setAttribute(std::string name, qint64 value, int index=COVERAGEATRIB)\n"
 		"setAttribute(std::string name, qint64 value)\n"
-		"setAttribute(std::string name, double value, int index=-1)\n"
+		"setAttribute(std::string name, double value, int index=COVERAGEATRIB)\n"
 		"setAttribute(std::string name, double value)\n"
-		"setAttribute(std::string name, std::string value, int index=-1)\n"
+		"setAttribute(std::string name, std::string value, int index=COVERAGEATRIB)\n"
 		"Feature_setAttribute(Feature self, std::string name, std::string value)\n"
 		""},
 	 { (char *)"Feature_ilwisType", _wrap_Feature_ilwisType, METH_VARARGS, (char *)"Feature_ilwisType(Feature self) -> IlwisTypes"},
@@ -27317,7 +27331,7 @@ static PyMethodDef SwigMethods[] = {
 		"Feature_geometry(Feature self) -> Geometry\n"
 		""},
 	 { (char *)"Feature_setGeometry", _wrap_Feature_setGeometry, METH_VARARGS, (char *)"\n"
-		"setGeometry(Geometry geometry, int index=-1)\n"
+		"setGeometry(Geometry geometry, int index=COVERAGEATRIB)\n"
 		"Feature_setGeometry(Feature self, Geometry geometry)\n"
 		""},
 	 { (char *)"delete_Feature", _wrap_delete_Feature, METH_VARARGS, (char *)"delete_Feature(Feature self)"},
@@ -28847,6 +28861,8 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "IlwisObject_smBINARYDATA",SWIG_From_int(static_cast< int >(pythonapi::IlwisObject::smBINARYDATA)));
   SWIG_Python_SetConstant(d, "Coverage_atCOVERAGE",SWIG_From_int(static_cast< int >(pythonapi::Coverage::atCOVERAGE)));
   SWIG_Python_SetConstant(d, "Coverage_atINDEX",SWIG_From_int(static_cast< int >(pythonapi::Coverage::atINDEX)));
+  PyDict_SetItemString(md,(char*)"cvar", SWIG_globals());
+  SWIG_addvarlink(SWIG_globals(),(char*)"COVERAGEATRIB",Swig_var_COVERAGEATRIB_get, Swig_var_COVERAGEATRIB_set);
   SWIG_Python_SetConstant(d, "Flow_fXYZ",SWIG_From_int(static_cast< int >(pythonapi::FlowVal::fXYZ)));
   SWIG_Python_SetConstant(d, "Flow_fYXZ",SWIG_From_int(static_cast< int >(pythonapi::FlowVal::fYXZ)));
   SWIG_Python_SetConstant(d, "Flow_fXZY",SWIG_From_int(static_cast< int >(pythonapi::FlowVal::fXZY)));

@@ -40,7 +40,7 @@ private:
 
 class NumericRange : public Range {
 public:
-    NumericRange(double mi, double ma, double resolution=0);
+    NumericRange(double mi, double ma, double resolution = 0);
     NumericRange(const NumericRange &vr);
 
 

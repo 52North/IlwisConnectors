@@ -1273,11 +1273,11 @@ class Feature(Object):
 
     def attribute(self, *args):
         """
-        attribute(Feature self, std::string name, qint64 defaultValue, int index=-1) -> PyObject
+        attribute(Feature self, std::string name, qint64 defaultValue, int index=COVERAGEATRIB) -> PyObject
         attribute(Feature self, std::string name, qint64 defaultValue) -> PyObject
-        attribute(Feature self, std::string name, double defaultValue, int index=-1) -> PyObject
+        attribute(Feature self, std::string name, double defaultValue, int index=COVERAGEATRIB) -> PyObject
         attribute(Feature self, std::string name, double defaultValue) -> PyObject
-        attribute(Feature self, std::string name, std::string defaultValue, int index=-1) -> PyObject
+        attribute(Feature self, std::string name, std::string defaultValue, int index=COVERAGEATRIB) -> PyObject
         attribute(Feature self, std::string name, std::string defaultValue) -> PyObject *
         """
         return _ilwisobjects.Feature_attribute(self, *args)
@@ -1293,13 +1293,13 @@ class Feature(Object):
 
     def setAttribute(self, *args):
         """
-        setAttribute(Feature self, std::string name, PyObject const * value, int index=-1)
+        setAttribute(Feature self, std::string name, PyObject const * value, int index=COVERAGEATRIB)
         setAttribute(Feature self, std::string name, PyObject const * value)
-        setAttribute(Feature self, std::string name, qint64 value, int index=-1)
+        setAttribute(Feature self, std::string name, qint64 value, int index=COVERAGEATRIB)
         setAttribute(Feature self, std::string name, qint64 value)
-        setAttribute(Feature self, std::string name, double value, int index=-1)
+        setAttribute(Feature self, std::string name, double value, int index=COVERAGEATRIB)
         setAttribute(Feature self, std::string name, double value)
-        setAttribute(Feature self, std::string name, std::string value, int index=-1)
+        setAttribute(Feature self, std::string name, std::string value, int index=COVERAGEATRIB)
         setAttribute(Feature self, std::string name, std::string value)
         """
         return _ilwisobjects.Feature_setAttribute(self, *args)
@@ -1317,7 +1317,7 @@ class Feature(Object):
 
     def setGeometry(self, *args):
         """
-        setGeometry(Feature self, Geometry geometry, int index=-1)
+        setGeometry(Feature self, Geometry geometry, int index=COVERAGEATRIB)
         setGeometry(Feature self, Geometry geometry)
         """
         return _ilwisobjects.Feature_setGeometry(self, *args)
@@ -1326,6 +1326,8 @@ class Feature(Object):
     __del__ = lambda self : None;
 Feature_swigregister = _ilwisobjects.Feature_swigregister
 Feature_swigregister(Feature)
+cvar = _ilwisobjects.cvar
+COVERAGEATRIB = cvar.COVERAGEATRIB
 
 class FeatureIterator(_object):
     """Proxy of C++ pythonapi::FeatureIterator class"""

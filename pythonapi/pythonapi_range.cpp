@@ -76,7 +76,7 @@ bool Range::contains(const PyObject *value, bool inclusive) const
 //----------------------------------------------------------------------------
 NumericRange::NumericRange(double mi, double ma, double resolution)
 {
-    _range.reset(new Ilwis::NumericRange(mi, ma,resolution))    ;
+    _range.reset(new Ilwis::NumericRange(mi, ma, resolution))    ;
 }
 
 NumericRange::NumericRange(const NumericRange &vr) : NumericRange(vr.min(), vr.max(), vr.resolution())
@@ -95,7 +95,7 @@ double NumericRange::max() const
 
 double NumericRange::min() const
 {
-    return static_cast<const Ilwis::NumericRange*>(_range.get())->max();
+    return static_cast<const Ilwis::NumericRange*>(_range.get())->min();
 }
 
 void NumericRange::setMax(double value)
