@@ -58,7 +58,7 @@ IlwisObject *Ilwis3ObjectFactory::create(const Resource &resource, const Prepare
         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
         return 0;
     }
-    IlwisObject *object = createObject(connector);
+    IlwisObject *object = createObject(connector, options);
     if ( object)
         return object;
 

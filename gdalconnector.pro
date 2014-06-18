@@ -9,8 +9,6 @@ TARGET = gdalconnector
 
 include(global.pri)
 
-QT       -= gui
-
 TEMPLATE = lib
 
 DEFINES += GDALCONNECTOR_LIBRARY
