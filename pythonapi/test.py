@@ -1579,7 +1579,7 @@ try:
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest='TestGeoReference', verbosity=2)
+        ut.main(defaultTest=None, verbosity=2)
 
 except ImportError as e:
     print(e)

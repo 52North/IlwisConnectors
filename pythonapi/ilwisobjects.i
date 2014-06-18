@@ -8,6 +8,10 @@
 %include "exception.i"
 %include "std_string.i"
 
+%begin %{
+   #include <cmath>
+%}
+
 %{
 #include "pythonapi_pyobject.h"
 #include "pythonapi_error.h"
