@@ -68,6 +68,7 @@ namespace pythonapi {
         void removeItem(const std::string& nme);
         void addItem(PyObject* value);
         PyObject *item(int index, bool labelOnly);
+        void range(const Range &rng);
 
     private:
         ItemDomain(Ilwis::IDomain *domain);

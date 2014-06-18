@@ -18,6 +18,7 @@ class Range: public Object{
 public:
     friend class Domain;
     friend class DataDefinition;
+    friend class ItemDomain;
 
     bool __bool__() const;
     std::string __str__();

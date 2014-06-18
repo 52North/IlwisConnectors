@@ -109,8 +109,6 @@ namespace pythonapi {
         return PyTuple_New(size);
     }
 
-
-
     bool setTupleItem(PyObject *tuple, int i, PyObject* v){
         if (v) {
             PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen

@@ -2937,73 +2937,79 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__CoordinateSystem_t swig_types[0]
-#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__Coverage_t swig_types[1]
-#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__Domain_t swig_types[2]
-#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__FeatureCoverage_t swig_types[3]
-#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__GeoReference_t swig_types[4]
-#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__IlwisObject_t swig_types[5]
-#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__NumericDomain_t swig_types[6]
-#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__RasterCoverage_t swig_types[7]
-#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__Table_t swig_types[8]
-#define SWIGTYPE_p_Ilwis__Range swig_types[9]
-#define SWIGTYPE_p__object swig_types[10]
-#define SWIGTYPE_p_bufferinfo swig_types[11]
-#define SWIGTYPE_p_char swig_types[12]
-#define SWIGTYPE_p_geos__geom__Geometry swig_types[13]
-#define SWIGTYPE_p_int swig_types[14]
-#define SWIGTYPE_p_long_long swig_types[15]
-#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t swig_types[16]
-#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t swig_types[17]
-#define SWIGTYPE_p_pythonapi__Catalog swig_types[18]
-#define SWIGTYPE_p_pythonapi__Color swig_types[19]
-#define SWIGTYPE_p_pythonapi__ColorDomain swig_types[20]
-#define SWIGTYPE_p_pythonapi__ColorModelNS swig_types[21]
-#define SWIGTYPE_p_pythonapi__ColorModelNS__Value swig_types[22]
-#define SWIGTYPE_p_pythonapi__ColorRange swig_types[23]
-#define SWIGTYPE_p_pythonapi__ContinousColorRange swig_types[24]
-#define SWIGTYPE_p_pythonapi__Coordinate swig_types[25]
-#define SWIGTYPE_p_pythonapi__CoordinateSystem swig_types[26]
-#define SWIGTYPE_p_pythonapi__Coverage swig_types[27]
-#define SWIGTYPE_p_pythonapi__DataDefinition swig_types[28]
-#define SWIGTYPE_p_pythonapi__Domain swig_types[29]
-#define SWIGTYPE_p_pythonapi__Engine swig_types[30]
-#define SWIGTYPE_p_pythonapi__Feature swig_types[31]
-#define SWIGTYPE_p_pythonapi__FeatureCoverage swig_types[32]
-#define SWIGTYPE_p_pythonapi__FeatureIterator swig_types[33]
-#define SWIGTYPE_p_pythonapi__FlowVal swig_types[34]
-#define SWIGTYPE_p_pythonapi__FlowVal__Value swig_types[35]
-#define SWIGTYPE_p_pythonapi__GeoReference swig_types[36]
-#define SWIGTYPE_p_pythonapi__Geometry swig_types[37]
-#define SWIGTYPE_p_pythonapi__IlwisObject swig_types[38]
-#define SWIGTYPE_p_pythonapi__ItemDomain swig_types[39]
-#define SWIGTYPE_p_pythonapi__ItemRange swig_types[40]
-#define SWIGTYPE_p_pythonapi__NamedItemRange swig_types[41]
-#define SWIGTYPE_p_pythonapi__NumericDomain swig_types[42]
-#define SWIGTYPE_p_pythonapi__NumericItemRange swig_types[43]
-#define SWIGTYPE_p_pythonapi__NumericRange swig_types[44]
-#define SWIGTYPE_p_pythonapi__Object swig_types[45]
-#define SWIGTYPE_p_pythonapi__PixelIterator swig_types[46]
-#define SWIGTYPE_p_pythonapi__PixelTemplateT_double_t swig_types[47]
-#define SWIGTYPE_p_pythonapi__PixelTemplateT_int_t swig_types[48]
-#define SWIGTYPE_p_pythonapi__Range swig_types[49]
-#define SWIGTYPE_p_pythonapi__RasterCoverage swig_types[50]
-#define SWIGTYPE_p_pythonapi__SizeTemplateT_double_t swig_types[51]
-#define SWIGTYPE_p_pythonapi__SizeTemplateT_unsigned_int_t swig_types[52]
-#define SWIGTYPE_p_pythonapi__Table swig_types[53]
-#define SWIGTYPE_p_pythonapi__TextDomain swig_types[54]
-#define SWIGTYPE_p_pythonapi__ThematicRange swig_types[55]
-#define SWIGTYPE_p_pythonapi__TimeDomain swig_types[56]
-#define SWIGTYPE_p_pythonapi__TimeInterval swig_types[57]
-#define SWIGTYPE_p_pythonapi__it swig_types[58]
-#define SWIGTYPE_p_short swig_types[59]
-#define SWIGTYPE_p_signed_char swig_types[60]
-#define SWIGTYPE_p_unsigned_char swig_types[61]
-#define SWIGTYPE_p_unsigned_int swig_types[62]
-#define SWIGTYPE_p_unsigned_long_long swig_types[63]
-#define SWIGTYPE_p_unsigned_short swig_types[64]
-static swig_type_info *swig_types[66];
-static swig_module_info swig_module = {swig_types, 65, 0, 0, 0, 0};
+#define SWIGTYPE_p_Ilwis__ContainerStatisticsT_double_t swig_types[0]
+#define SWIGTYPE_p_Ilwis__DataDefinition swig_types[1]
+#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__CoordinateSystem_t swig_types[2]
+#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__Coverage_t swig_types[3]
+#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__Domain_t swig_types[4]
+#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__FeatureCoverage_t swig_types[5]
+#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__GeoReference_t swig_types[6]
+#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__IlwisObject_t swig_types[7]
+#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__NumericDomain_t swig_types[8]
+#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__RasterCoverage_t swig_types[9]
+#define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__Table_t swig_types[10]
+#define SWIGTYPE_p_Ilwis__Range swig_types[11]
+#define SWIGTYPE_p__object swig_types[12]
+#define SWIGTYPE_p_bufferinfo swig_types[13]
+#define SWIGTYPE_p_char swig_types[14]
+#define SWIGTYPE_p_geos__geom__Geometry swig_types[15]
+#define SWIGTYPE_p_int swig_types[16]
+#define SWIGTYPE_p_long_long swig_types[17]
+#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t swig_types[18]
+#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t swig_types[19]
+#define SWIGTYPE_p_pythonapi__Catalog swig_types[20]
+#define SWIGTYPE_p_pythonapi__Color swig_types[21]
+#define SWIGTYPE_p_pythonapi__ColorDomain swig_types[22]
+#define SWIGTYPE_p_pythonapi__ColorModelNS swig_types[23]
+#define SWIGTYPE_p_pythonapi__ColorModelNS__Value swig_types[24]
+#define SWIGTYPE_p_pythonapi__ColorRange swig_types[25]
+#define SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t swig_types[26]
+#define SWIGTYPE_p_pythonapi__ContinousColorRange swig_types[27]
+#define SWIGTYPE_p_pythonapi__Coordinate swig_types[28]
+#define SWIGTYPE_p_pythonapi__CoordinateSystem swig_types[29]
+#define SWIGTYPE_p_pythonapi__Coverage swig_types[30]
+#define SWIGTYPE_p_pythonapi__DataDefinition swig_types[31]
+#define SWIGTYPE_p_pythonapi__Domain swig_types[32]
+#define SWIGTYPE_p_pythonapi__Engine swig_types[33]
+#define SWIGTYPE_p_pythonapi__Feature swig_types[34]
+#define SWIGTYPE_p_pythonapi__FeatureCoverage swig_types[35]
+#define SWIGTYPE_p_pythonapi__FeatureIterator swig_types[36]
+#define SWIGTYPE_p_pythonapi__FlowVal swig_types[37]
+#define SWIGTYPE_p_pythonapi__FlowVal__Value swig_types[38]
+#define SWIGTYPE_p_pythonapi__GeoReference swig_types[39]
+#define SWIGTYPE_p_pythonapi__Geometry swig_types[40]
+#define SWIGTYPE_p_pythonapi__IlwisObject swig_types[41]
+#define SWIGTYPE_p_pythonapi__ItemDomain swig_types[42]
+#define SWIGTYPE_p_pythonapi__ItemRange swig_types[43]
+#define SWIGTYPE_p_pythonapi__NamedItemRange swig_types[44]
+#define SWIGTYPE_p_pythonapi__NumericDomain swig_types[45]
+#define SWIGTYPE_p_pythonapi__NumericItemRange swig_types[46]
+#define SWIGTYPE_p_pythonapi__NumericRange swig_types[47]
+#define SWIGTYPE_p_pythonapi__Object swig_types[48]
+#define SWIGTYPE_p_pythonapi__PixelIterator swig_types[49]
+#define SWIGTYPE_p_pythonapi__PixelTemplateT_double_t swig_types[50]
+#define SWIGTYPE_p_pythonapi__PixelTemplateT_int_t swig_types[51]
+#define SWIGTYPE_p_pythonapi__Properties swig_types[52]
+#define SWIGTYPE_p_pythonapi__Properties__Values swig_types[53]
+#define SWIGTYPE_p_pythonapi__Range swig_types[54]
+#define SWIGTYPE_p_pythonapi__RasterCoverage swig_types[55]
+#define SWIGTYPE_p_pythonapi__SizeTemplateT_double_t swig_types[56]
+#define SWIGTYPE_p_pythonapi__SizeTemplateT_unsigned_int_t swig_types[57]
+#define SWIGTYPE_p_pythonapi__Table swig_types[58]
+#define SWIGTYPE_p_pythonapi__TextDomain swig_types[59]
+#define SWIGTYPE_p_pythonapi__ThematicRange swig_types[60]
+#define SWIGTYPE_p_pythonapi__TimeDomain swig_types[61]
+#define SWIGTYPE_p_pythonapi__TimeInterval swig_types[62]
+#define SWIGTYPE_p_pythonapi__it swig_types[63]
+#define SWIGTYPE_p_short swig_types[64]
+#define SWIGTYPE_p_signed_char swig_types[65]
+#define SWIGTYPE_p_std__pairT_double_double_t swig_types[66]
+#define SWIGTYPE_p_unsigned_char swig_types[67]
+#define SWIGTYPE_p_unsigned_int swig_types[68]
+#define SWIGTYPE_p_unsigned_long_long swig_types[69]
+#define SWIGTYPE_p_unsigned_short swig_types[70]
+static swig_type_info *swig_types[72];
+static swig_module_info swig_module = {swig_types, 71, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3124,6 +3130,7 @@ namespace swig {
 #include "pythonapi_range.h"
 #include "pythonapi_catalog.h"
 #include "pythonapi_domain.h"
+#include "pythonapi_datadefinition.h"
 
 
 SWIGINTERNINLINE PyObject*
@@ -3572,6 +3579,21 @@ SWIG_AsVal_long_SS_long (PyObject *obj, long long *val)
 
 
   #define SWIG_From_double   PyFloat_FromDouble 
+
+
+SWIGINTERNINLINE PyObject* 
+SWIG_From_unsigned_SS_long  (unsigned long value)
+{
+  return (value > LONG_MAX) ?
+    PyLong_FromUnsignedLong(value) : PyLong_FromLong(static_cast< long >(value)); 
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_unsigned_SS_short  (unsigned short value)
+{    
+  return SWIG_From_unsigned_SS_long  (value);
+}
 
 
 SWIGINTERN int
@@ -8608,6 +8630,61 @@ SWIGINTERN PyObject *Coordinate_swigregister(PyObject *SWIGUNUSEDPARM(self), PyO
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_new_PropertySets(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Properties *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_PropertySets")) SWIG_fail;
+  {
+    try {
+      result = (pythonapi::Properties *)new pythonapi::Properties();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__Properties, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_PropertySets(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Properties *arg1 = (pythonapi::Properties *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_PropertySets",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Properties, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_PropertySets" "', argument " "1"" of type '" "pythonapi::Properties *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Properties * >(argp1);
+  {
+    try {
+      delete arg1;
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *PropertySets_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_pythonapi__Properties, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 SWIGINTERN PyObject *_wrap_new_Pixel__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::PixelTemplate< qint32 > *arg1 = 0 ;
@@ -13079,6 +13156,446 @@ SWIGINTERN PyObject *Envelope_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObj
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
   SWIG_TypeNewClientData(SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_NumericStatistics__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ContainerStatistics< double > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_NumericStatistics")) SWIG_fail;
+  {
+    try {
+      result = (pythonapi::ContainerStatistics< double > *)new pythonapi::ContainerStatistics< double >();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_NumericStatistics__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Ilwis::ContainerStatistics< double > *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::ContainerStatistics< double > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_NumericStatistics",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_Ilwis__ContainerStatisticsT_double_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_NumericStatistics" "', argument " "1"" of type '" "Ilwis::ContainerStatistics< double > const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_NumericStatistics" "', argument " "1"" of type '" "Ilwis::ContainerStatistics< double > const &""'"); 
+  }
+  arg1 = reinterpret_cast< Ilwis::ContainerStatistics< double > * >(argp1);
+  {
+    try {
+      result = (pythonapi::ContainerStatistics< double > *)new pythonapi::ContainerStatistics< double >((Ilwis::ContainerStatistics< double > const &)*arg1);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_NumericStatistics(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[2];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 1) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 0) {
+    return _wrap_new_NumericStatistics__SWIG_0(self, args);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Ilwis__ContainerStatisticsT_double_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_NumericStatistics__SWIG_1(self, args);
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_NumericStatistics'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::ContainerStatistics< double >::ContainerStatistics()\n"
+    "    pythonapi::ContainerStatistics< double >::ContainerStatistics(Ilwis::ContainerStatistics< double > const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_NumericStatistics_significantDigits(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ContainerStatistics< double > *arg1 = (pythonapi::ContainerStatistics< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  quint16 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:NumericStatistics_significantDigits",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NumericStatistics_significantDigits" "', argument " "1"" of type '" "pythonapi::ContainerStatistics< double > const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ContainerStatistics< double > * >(argp1);
+  {
+    try {
+      result = (quint16)((pythonapi::ContainerStatistics< double > const *)arg1)->significantDigits();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_short(static_cast< unsigned short >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NumericStatistics_findSignificantDigits(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ContainerStatistics< double > *arg1 = (pythonapi::ContainerStatistics< double > *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NumericStatistics_findSignificantDigits",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NumericStatistics_findSignificantDigits" "', argument " "1"" of type '" "pythonapi::ContainerStatistics< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ContainerStatistics< double > * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NumericStatistics_findSignificantDigits" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      (arg1)->findSignificantDigits(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NumericStatistics_binCount(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ContainerStatistics< double > *arg1 = (pythonapi::ContainerStatistics< double > *) 0 ;
+  quint32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NumericStatistics_binCount",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NumericStatistics_binCount" "', argument " "1"" of type '" "pythonapi::ContainerStatistics< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ContainerStatistics< double > * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NumericStatistics_binCount" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  {
+    try {
+      (arg1)->binCount(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NumericStatistics___bool__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ContainerStatistics< double > *arg1 = (pythonapi::ContainerStatistics< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:NumericStatistics___bool__",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NumericStatistics___bool__" "', argument " "1"" of type '" "pythonapi::ContainerStatistics< double > const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ContainerStatistics< double > * >(argp1);
+  {
+    try {
+      result = (bool)((pythonapi::ContainerStatistics< double > const *)arg1)->__bool__();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NumericStatistics_stretchLinear(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ContainerStatistics< double > *arg1 = (pythonapi::ContainerStatistics< double > *) 0 ;
+  double arg2 ;
+  int arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  double result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:NumericStatistics_stretchLinear",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NumericStatistics_stretchLinear" "', argument " "1"" of type '" "pythonapi::ContainerStatistics< double > const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ContainerStatistics< double > * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NumericStatistics_stretchLinear" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "NumericStatistics_stretchLinear" "', argument " "3"" of type '" "int""'");
+  } 
+  arg3 = static_cast< int >(val3);
+  {
+    try {
+      result = (double)((pythonapi::ContainerStatistics< double > const *)arg1)->stretchLinear(arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NumericStatistics_stretchLimits(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ContainerStatistics< double > *arg1 = (pythonapi::ContainerStatistics< double > *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::pair< double,double > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NumericStatistics_stretchLimits",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NumericStatistics_stretchLimits" "', argument " "1"" of type '" "pythonapi::ContainerStatistics< double > const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ContainerStatistics< double > * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NumericStatistics_stretchLimits" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = ((pythonapi::ContainerStatistics< double > const *)arg1)->stretchLimits(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new std::pair< double,double >(static_cast< const std::pair< double,double >& >(result))), SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NumericStatistics___getitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ContainerStatistics< double > *arg1 = (pythonapi::ContainerStatistics< double > *) 0 ;
+  pythonapi::PropertySets arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  double result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NumericStatistics___getitem__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NumericStatistics___getitem__" "', argument " "1"" of type '" "pythonapi::ContainerStatistics< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ContainerStatistics< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NumericStatistics___getitem__" "', argument " "2"" of type '" "pythonapi::PropertySets""'");
+  } 
+  arg2 = static_cast< pythonapi::PropertySets >(val2);
+  {
+    try {
+      result = (double)(arg1)->__getitem__(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NumericStatistics_prop(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ContainerStatistics< double > *arg1 = (pythonapi::ContainerStatistics< double > *) 0 ;
+  pythonapi::PropertySets arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  double result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NumericStatistics_prop",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NumericStatistics_prop" "', argument " "1"" of type '" "pythonapi::ContainerStatistics< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ContainerStatistics< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NumericStatistics_prop" "', argument " "2"" of type '" "pythonapi::PropertySets""'");
+  } 
+  arg2 = static_cast< pythonapi::PropertySets >(val2);
+  {
+    try {
+      result = (double)(arg1)->prop(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NumericStatistics_histogram(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ContainerStatistics< double > *arg1 = (pythonapi::ContainerStatistics< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:NumericStatistics_histogram",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NumericStatistics_histogram" "', argument " "1"" of type '" "pythonapi::ContainerStatistics< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ContainerStatistics< double > * >(argp1);
+  {
+    try {
+      result = (PyObject *)(arg1)->histogram();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = result;
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_NumericStatistics(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ContainerStatistics< double > *arg1 = (pythonapi::ContainerStatistics< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_NumericStatistics",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_NumericStatistics" "', argument " "1"" of type '" "pythonapi::ContainerStatistics< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ContainerStatistics< double > * >(argp1);
+  {
+    try {
+      delete arg1;
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *NumericStatistics_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
@@ -18469,6 +18986,35 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_PixelIterator_end(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::PixelIterator *arg1 = (pythonapi::PixelIterator *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  SwigValueWrapper< pythonapi::PixelIterator > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:PixelIterator_end",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__PixelIterator, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PixelIterator_end" "', argument " "1"" of type '" "pythonapi::PixelIterator *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::PixelIterator * >(argp1);
+  {
+    try {
+      result = (arg1)->end();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::PixelIterator(static_cast< const pythonapi::PixelIterator& >(result))), SWIGTYPE_p_pythonapi__PixelIterator, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_PixelIterator_asBuffer(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::PixelIterator *arg1 = (pythonapi::PixelIterator *) 0 ;
@@ -20532,6 +21078,117 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_RasterCoverage_statistics__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::NumericStatistics *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:RasterCoverage_statistics",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_statistics" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RasterCoverage_statistics" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  {
+    try {
+      result = (pythonapi::NumericStatistics *)(arg1)->statistics(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_statistics__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::NumericStatistics *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_statistics",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_statistics" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  {
+    try {
+      result = (pythonapi::NumericStatistics *)(arg1)->statistics();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_statistics(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_RasterCoverage_statistics__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_RasterCoverage_statistics__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'RasterCoverage_statistics'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::RasterCoverage::statistics(int)\n"
+    "    pythonapi::RasterCoverage::statistics()\n");
+  return 0;
+}
+
+
 SWIGINTERN PyObject *_wrap_RasterCoverage_toRasterCoverage(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Object *arg1 = (pythonapi::Object *) 0 ;
@@ -20558,6 +21215,372 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_toRasterCoverage(PyObject *SWIGUNUSEDP
   return resultobj;
 fail:
   return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_begin(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  SwigValueWrapper< pythonapi::PixelIterator > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_begin",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_begin" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  {
+    try {
+      result = (arg1)->begin();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::PixelIterator(static_cast< const pythonapi::PixelIterator& >(result))), SWIGTYPE_p_pythonapi__PixelIterator, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_end(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  SwigValueWrapper< pythonapi::PixelIterator > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_end",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_end" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  {
+    try {
+      result = (arg1)->end();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::PixelIterator(static_cast< const pythonapi::PixelIterator& >(result))), SWIGTYPE_p_pythonapi__PixelIterator, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_band__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  PyObject *arg2 = (PyObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  SwigValueWrapper< pythonapi::PixelIterator > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:RasterCoverage_band",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_band" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  arg2 = obj1;
+  {
+    try {
+      result = (arg1)->band(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::PixelIterator(static_cast< const pythonapi::PixelIterator& >(result))), SWIGTYPE_p_pythonapi__PixelIterator, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_band__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  PyObject *arg2 = (PyObject *) 0 ;
+  SwigValueWrapper< pythonapi::PixelIterator > arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp3 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:RasterCoverage_band",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_band" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  arg2 = obj1;
+  {
+    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__PixelIterator,  0  | 0);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "RasterCoverage_band" "', argument " "3"" of type '" "pythonapi::PixelIterator""'"); 
+    }  
+    if (!argp3) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "RasterCoverage_band" "', argument " "3"" of type '" "pythonapi::PixelIterator""'");
+    } else {
+      pythonapi::PixelIterator * temp = reinterpret_cast< pythonapi::PixelIterator * >(argp3);
+      arg3 = *temp;
+      if (SWIG_IsNewObj(res3)) delete temp;
+    }
+  }
+  {
+    try {
+      (arg1)->band(arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_band(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      _v = (argv[1] != 0);
+      if (_v) {
+        return _wrap_RasterCoverage_band__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      _v = (argv[1] != 0);
+      if (_v) {
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_pythonapi__PixelIterator, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_RasterCoverage_band__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'RasterCoverage_band'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::RasterCoverage::band(PyObject *)\n"
+    "    pythonapi::RasterCoverage::band(PyObject *,pythonapi::PixelIterator)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_addBand(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  int arg2 ;
+  pythonapi::DataDefinition *arg3 = 0 ;
+  PyObject *arg4 = (PyObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:RasterCoverage_addBand",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_addBand" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RasterCoverage_addBand" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__DataDefinition,  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "RasterCoverage_addBand" "', argument " "3"" of type '" "pythonapi::DataDefinition &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "RasterCoverage_addBand" "', argument " "3"" of type '" "pythonapi::DataDefinition &""'"); 
+  }
+  arg3 = reinterpret_cast< pythonapi::DataDefinition * >(argp3);
+  arg4 = obj3;
+  {
+    try {
+      (arg1)->addBand(arg2,*arg3,arg4);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_select__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  std::string arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::RasterCoverage result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:RasterCoverage_select",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_select" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "RasterCoverage_select" "', argument " "2"" of type '" "std::string""'"); 
+    }
+    arg2 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
+    try {
+      result = (arg1)->select(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::RasterCoverage(static_cast< const pythonapi::RasterCoverage& >(result))), SWIGTYPE_p_pythonapi__RasterCoverage, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_select__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  pythonapi::Geometry *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::RasterCoverage result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:RasterCoverage_select",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_select" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Geometry,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "RasterCoverage_select" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "RasterCoverage_select" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Geometry * >(argp2);
+  {
+    try {
+      result = (arg1)->select(*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::RasterCoverage(static_cast< const pythonapi::RasterCoverage& >(result))), SWIGTYPE_p_pythonapi__RasterCoverage, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_select(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Geometry, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_RasterCoverage_select__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_RasterCoverage_select__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'RasterCoverage_select'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::RasterCoverage::select(std::string)\n"
+    "    pythonapi::RasterCoverage::select(pythonapi::Geometry &)\n");
+  return 0;
 }
 
 
@@ -21803,6 +22826,46 @@ SWIGINTERN PyObject *_wrap_ItemDomain_item(PyObject *SWIGUNUSEDPARM(self), PyObj
     }
   }
   resultobj = result;
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ItemDomain_range(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ItemDomain *arg1 = (pythonapi::ItemDomain *) 0 ;
+  pythonapi::Range *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:ItemDomain_range",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ItemDomain, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ItemDomain_range" "', argument " "1"" of type '" "pythonapi::ItemDomain *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ItemDomain * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Range,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ItemDomain_range" "', argument " "2"" of type '" "pythonapi::Range const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ItemDomain_range" "', argument " "2"" of type '" "pythonapi::Range const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Range * >(argp2);
+  {
+    try {
+      (arg1)->range((pythonapi::Range const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -26980,6 +28043,602 @@ SWIGINTERN PyObject *TimeInterval_swigregister(PyObject *SWIGUNUSEDPARM(self), P
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_new_DataDefinition__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::DataDefinition *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_DataDefinition")) SWIG_fail;
+  {
+    try {
+      result = (pythonapi::DataDefinition *)new pythonapi::DataDefinition();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__DataDefinition, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_DataDefinition__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Ilwis::DataDefinition *arg1 = (Ilwis::DataDefinition *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::DataDefinition *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_DataDefinition",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Ilwis__DataDefinition, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_DataDefinition" "', argument " "1"" of type '" "Ilwis::DataDefinition *""'"); 
+  }
+  arg1 = reinterpret_cast< Ilwis::DataDefinition * >(argp1);
+  {
+    try {
+      result = (pythonapi::DataDefinition *)new pythonapi::DataDefinition(arg1);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__DataDefinition, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_DataDefinition(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::DataDefinition *arg1 = (pythonapi::DataDefinition *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_DataDefinition",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__DataDefinition, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_DataDefinition" "', argument " "1"" of type '" "pythonapi::DataDefinition *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
+  {
+    try {
+      delete arg1;
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_DataDefinition__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Domain *arg1 = (pythonapi::Domain *) 0 ;
+  pythonapi::Range *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::DataDefinition *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:new_DataDefinition",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Domain, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_DataDefinition" "', argument " "1"" of type '" "pythonapi::Domain *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Domain * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Range,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_DataDefinition" "', argument " "2"" of type '" "pythonapi::Range const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_DataDefinition" "', argument " "2"" of type '" "pythonapi::Range const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Range * >(argp2);
+  {
+    try {
+      result = (pythonapi::DataDefinition *)new pythonapi::DataDefinition(arg1,(pythonapi::Range const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__DataDefinition, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_DataDefinition__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::DataDefinition *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::DataDefinition *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_DataDefinition",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_pythonapi__DataDefinition,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_DataDefinition" "', argument " "1"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_DataDefinition" "', argument " "1"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
+  {
+    try {
+      result = (pythonapi::DataDefinition *)new pythonapi::DataDefinition((pythonapi::DataDefinition const &)*arg1);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__DataDefinition, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_DataDefinition(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 0) {
+    return _wrap_new_DataDefinition__SWIG_0(self, args);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Ilwis__DataDefinition, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_DataDefinition__SWIG_1(self, args);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_pythonapi__DataDefinition, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_DataDefinition__SWIG_3(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Domain, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__Range, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_new_DataDefinition__SWIG_2(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_DataDefinition'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::DataDefinition::DataDefinition()\n"
+    "    pythonapi::DataDefinition::DataDefinition(Ilwis::DataDefinition *)\n"
+    "    pythonapi::DataDefinition::DataDefinition(pythonapi::Domain *,pythonapi::Range const &)\n"
+    "    pythonapi::DataDefinition::DataDefinition(pythonapi::DataDefinition const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_DataDefinition___bool__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::DataDefinition *arg1 = (pythonapi::DataDefinition *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:DataDefinition___bool__",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataDefinition___bool__" "', argument " "1"" of type '" "pythonapi::DataDefinition const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
+  {
+    try {
+      result = (bool)((pythonapi::DataDefinition const *)arg1)->__bool__();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_DataDefinition_range__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::DataDefinition *arg1 = (pythonapi::DataDefinition *) 0 ;
+  pythonapi::Range *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:DataDefinition_range",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataDefinition_range" "', argument " "1"" of type '" "pythonapi::DataDefinition *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Range,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataDefinition_range" "', argument " "2"" of type '" "pythonapi::Range const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataDefinition_range" "', argument " "2"" of type '" "pythonapi::Range const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Range * >(argp2);
+  {
+    try {
+      (arg1)->range((pythonapi::Range const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_DataDefinition_domain__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::DataDefinition *arg1 = (pythonapi::DataDefinition *) 0 ;
+  pythonapi::Domain *arg2 = (pythonapi::Domain *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:DataDefinition_domain",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataDefinition_domain" "', argument " "1"" of type '" "pythonapi::DataDefinition *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_pythonapi__Domain, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataDefinition_domain" "', argument " "2"" of type '" "pythonapi::Domain *""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Domain * >(argp2);
+  {
+    try {
+      (arg1)->domain(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_DataDefinition_isCompatibleWith(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::DataDefinition *arg1 = (pythonapi::DataDefinition *) 0 ;
+  pythonapi::DataDefinition *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:DataDefinition_isCompatibleWith",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataDefinition_isCompatibleWith" "', argument " "1"" of type '" "pythonapi::DataDefinition *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__DataDefinition,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataDefinition_isCompatibleWith" "', argument " "2"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataDefinition_isCompatibleWith" "', argument " "2"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::DataDefinition * >(argp2);
+  {
+    try {
+      result = (bool)(arg1)->isCompatibleWith((pythonapi::DataDefinition const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_DataDefinition_merge(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::DataDefinition *arg1 = (pythonapi::DataDefinition *) 0 ;
+  pythonapi::DataDefinition *arg2 = 0 ;
+  pythonapi::DataDefinition *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  pythonapi::DataDefinition *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:DataDefinition_merge",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataDefinition_merge" "', argument " "1"" of type '" "pythonapi::DataDefinition *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__DataDefinition,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataDefinition_merge" "', argument " "2"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataDefinition_merge" "', argument " "2"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::DataDefinition * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__DataDefinition,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "DataDefinition_merge" "', argument " "3"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataDefinition_merge" "', argument " "3"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  arg3 = reinterpret_cast< pythonapi::DataDefinition * >(argp3);
+  {
+    try {
+      result = (pythonapi::DataDefinition *)(arg1)->merge((pythonapi::DataDefinition const &)*arg2,(pythonapi::DataDefinition const &)*arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_DataDefinition___set__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::DataDefinition *arg1 = (pythonapi::DataDefinition *) 0 ;
+  pythonapi::DataDefinition *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::DataDefinition *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:DataDefinition___set__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataDefinition___set__" "', argument " "1"" of type '" "pythonapi::DataDefinition *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__DataDefinition,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataDefinition___set__" "', argument " "2"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataDefinition___set__" "', argument " "2"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::DataDefinition * >(argp2);
+  {
+    try {
+      result = (pythonapi::DataDefinition *)(arg1)->__set__((pythonapi::DataDefinition const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_DataDefinition_range__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::DataDefinition *arg1 = (pythonapi::DataDefinition *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::Range *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:DataDefinition_range",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataDefinition_range" "', argument " "1"" of type '" "pythonapi::DataDefinition const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
+  {
+    try {
+      result = (pythonapi::Range *)((pythonapi::DataDefinition const *)arg1)->range();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__Range, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_DataDefinition_range(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__DataDefinition, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_DataDefinition_range__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__DataDefinition, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__Range, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_DataDefinition_range__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'DataDefinition_range'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::DataDefinition::range(pythonapi::Range const &)\n"
+    "    pythonapi::DataDefinition::range() const\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_DataDefinition_domain__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::DataDefinition *arg1 = (pythonapi::DataDefinition *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::Domain *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:DataDefinition_domain",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataDefinition_domain" "', argument " "1"" of type '" "pythonapi::DataDefinition const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
+  {
+    try {
+      result = (pythonapi::Domain *)((pythonapi::DataDefinition const *)arg1)->domain();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__Domain, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_DataDefinition_domain(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__DataDefinition, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_DataDefinition_domain__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__DataDefinition, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Domain, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_DataDefinition_domain__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'DataDefinition_domain'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::DataDefinition::domain(pythonapi::Domain *)\n"
+    "    pythonapi::DataDefinition::domain() const\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *DataDefinition_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_pythonapi__DataDefinition, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"_initIlwisObjects", _wrap__initIlwisObjects, METH_VARARGS, (char *)"_initIlwisObjects() -> bool"},
@@ -27116,6 +28775,9 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Coordinate___bool__", _wrap_Coordinate___bool__, METH_VARARGS, (char *)"Coordinate___bool__(Coordinate self) -> bool"},
 	 { (char *)"delete_Coordinate", _wrap_delete_Coordinate, METH_VARARGS, (char *)"delete_Coordinate(Coordinate self)"},
 	 { (char *)"Coordinate_swigregister", Coordinate_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_PropertySets", _wrap_new_PropertySets, METH_VARARGS, (char *)"new_PropertySets() -> PropertySets"},
+	 { (char *)"delete_PropertySets", _wrap_delete_PropertySets, METH_VARARGS, (char *)"delete_PropertySets(PropertySets self)"},
+	 { (char *)"PropertySets_swigregister", PropertySets_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_Pixel", _wrap_new_Pixel, METH_VARARGS, (char *)"\n"
 		"Pixel(Pixel pixel)\n"
 		"Pixel(PixelD pixel)\n"
@@ -27252,6 +28914,21 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Envelope___bool__", _wrap_Envelope___bool__, METH_VARARGS, (char *)"Envelope___bool__(Envelope self) -> bool"},
 	 { (char *)"delete_Envelope", _wrap_delete_Envelope, METH_VARARGS, (char *)"delete_Envelope(Envelope self)"},
 	 { (char *)"Envelope_swigregister", Envelope_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_NumericStatistics", _wrap_new_NumericStatistics, METH_VARARGS, (char *)"\n"
+		"NumericStatistics()\n"
+		"new_NumericStatistics(Ilwis::ContainerStatistics< double > const & conStat) -> NumericStatistics\n"
+		""},
+	 { (char *)"NumericStatistics_significantDigits", _wrap_NumericStatistics_significantDigits, METH_VARARGS, (char *)"NumericStatistics_significantDigits(NumericStatistics self) -> quint16"},
+	 { (char *)"NumericStatistics_findSignificantDigits", _wrap_NumericStatistics_findSignificantDigits, METH_VARARGS, (char *)"NumericStatistics_findSignificantDigits(NumericStatistics self, double distance)"},
+	 { (char *)"NumericStatistics_binCount", _wrap_NumericStatistics_binCount, METH_VARARGS, (char *)"NumericStatistics_binCount(NumericStatistics self, quint32 value)"},
+	 { (char *)"NumericStatistics___bool__", _wrap_NumericStatistics___bool__, METH_VARARGS, (char *)"NumericStatistics___bool__(NumericStatistics self) -> bool"},
+	 { (char *)"NumericStatistics_stretchLinear", _wrap_NumericStatistics_stretchLinear, METH_VARARGS, (char *)"NumericStatistics_stretchLinear(NumericStatistics self, double input, int stretchRange) -> double"},
+	 { (char *)"NumericStatistics_stretchLimits", _wrap_NumericStatistics_stretchLimits, METH_VARARGS, (char *)"NumericStatistics_stretchLimits(NumericStatistics self, double percent) -> std::pair< double,double >"},
+	 { (char *)"NumericStatistics___getitem__", _wrap_NumericStatistics___getitem__, METH_VARARGS, (char *)"NumericStatistics___getitem__(NumericStatistics self, pythonapi::PropertySets pyMethod) -> double"},
+	 { (char *)"NumericStatistics_prop", _wrap_NumericStatistics_prop, METH_VARARGS, (char *)"NumericStatistics_prop(NumericStatistics self, pythonapi::PropertySets pyMethod) -> double"},
+	 { (char *)"NumericStatistics_histogram", _wrap_NumericStatistics_histogram, METH_VARARGS, (char *)"NumericStatistics_histogram(NumericStatistics self) -> PyObject *"},
+	 { (char *)"delete_NumericStatistics", _wrap_delete_NumericStatistics, METH_VARARGS, (char *)"delete_NumericStatistics(NumericStatistics self)"},
+	 { (char *)"NumericStatistics_swigregister", NumericStatistics_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_Geometry", _wrap_new_Geometry, METH_VARARGS, (char *)"\n"
 		"Geometry(std::string wkt, CoordinateSystem csy)\n"
 		"new_Geometry(Feature feature, int index) -> Geometry\n"
@@ -27400,6 +29077,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"PixelIterator___lt__", _wrap_PixelIterator___lt__, METH_VARARGS, (char *)"PixelIterator___lt__(PixelIterator self, PixelIterator other) -> bool"},
 	 { (char *)"PixelIterator___ge__", _wrap_PixelIterator___ge__, METH_VARARGS, (char *)"PixelIterator___ge__(PixelIterator self, PixelIterator other) -> bool"},
 	 { (char *)"PixelIterator___gt__", _wrap_PixelIterator___gt__, METH_VARARGS, (char *)"PixelIterator___gt__(PixelIterator self, PixelIterator other) -> bool"},
+	 { (char *)"PixelIterator_end", _wrap_PixelIterator_end, METH_VARARGS, (char *)"PixelIterator_end(PixelIterator self) -> PixelIterator"},
 	 { (char *)"PixelIterator_asBuffer", _wrap_PixelIterator_asBuffer, METH_VARARGS, (char *)"PixelIterator_asBuffer(PixelIterator self) -> Py_buffer *"},
 	 { (char *)"PixelIterator_swigregister", PixelIterator_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_GeoReference", _wrap_new_GeoReference, METH_VARARGS, (char *)"new_GeoReference(std::string const & resource) -> GeoReference"},
@@ -27464,10 +29142,25 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"RasterCoverage_geoReference", _wrap_RasterCoverage_geoReference, METH_VARARGS, (char *)"RasterCoverage_geoReference(RasterCoverage self) -> GeoReference"},
 	 { (char *)"RasterCoverage_setGeoReference", _wrap_RasterCoverage_setGeoReference, METH_VARARGS, (char *)"RasterCoverage_setGeoReference(RasterCoverage self, GeoReference gr)"},
 	 { (char *)"RasterCoverage_datadef", _wrap_RasterCoverage_datadef, METH_VARARGS, (char *)"\n"
-		"datadef(quint32 layer) -> pythonapi::DataDefinition const\n"
-		"RasterCoverage_datadef(RasterCoverage self, quint32 layer) -> pythonapi::DataDefinition &\n"
+		"datadef(quint32 layer) -> DataDefinition\n"
+		"RasterCoverage_datadef(RasterCoverage self, quint32 layer) -> DataDefinition\n"
+		""},
+	 { (char *)"RasterCoverage_statistics", _wrap_RasterCoverage_statistics, METH_VARARGS, (char *)"\n"
+		"statistics(int mode=0) -> NumericStatistics\n"
+		"RasterCoverage_statistics(RasterCoverage self) -> NumericStatistics\n"
 		""},
 	 { (char *)"RasterCoverage_toRasterCoverage", _wrap_RasterCoverage_toRasterCoverage, METH_VARARGS, (char *)"RasterCoverage_toRasterCoverage(Object obj) -> RasterCoverage"},
+	 { (char *)"RasterCoverage_begin", _wrap_RasterCoverage_begin, METH_VARARGS, (char *)"RasterCoverage_begin(RasterCoverage self) -> PixelIterator"},
+	 { (char *)"RasterCoverage_end", _wrap_RasterCoverage_end, METH_VARARGS, (char *)"RasterCoverage_end(RasterCoverage self) -> PixelIterator"},
+	 { (char *)"RasterCoverage_band", _wrap_RasterCoverage_band, METH_VARARGS, (char *)"\n"
+		"band(PyObject * pyTrackIndex) -> PixelIterator\n"
+		"RasterCoverage_band(RasterCoverage self, PyObject * pyTrackIndex, PixelIterator pyIter)\n"
+		""},
+	 { (char *)"RasterCoverage_addBand", _wrap_RasterCoverage_addBand, METH_VARARGS, (char *)"RasterCoverage_addBand(RasterCoverage self, int index, DataDefinition pyDef, PyObject * pyTrackIndex)"},
+	 { (char *)"RasterCoverage_select", _wrap_RasterCoverage_select, METH_VARARGS, (char *)"\n"
+		"select(std::string selectionQ) -> RasterCoverage\n"
+		"RasterCoverage_select(RasterCoverage self, Geometry geom) -> RasterCoverage\n"
+		""},
 	 { (char *)"delete_RasterCoverage", _wrap_delete_RasterCoverage, METH_VARARGS, (char *)"delete_RasterCoverage(RasterCoverage self)"},
 	 { (char *)"RasterCoverage_swigregister", RasterCoverage_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_Catalog", _wrap_new_Catalog, METH_VARARGS, (char *)"\n"
@@ -27512,6 +29205,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"ItemDomain_removeItem", _wrap_ItemDomain_removeItem, METH_VARARGS, (char *)"ItemDomain_removeItem(ItemDomain self, std::string const & nme)"},
 	 { (char *)"ItemDomain_addItem", _wrap_ItemDomain_addItem, METH_VARARGS, (char *)"ItemDomain_addItem(ItemDomain self, PyObject * value)"},
 	 { (char *)"ItemDomain_item", _wrap_ItemDomain_item, METH_VARARGS, (char *)"ItemDomain_item(ItemDomain self, int index, bool labelOnly) -> PyObject *"},
+	 { (char *)"ItemDomain_range", _wrap_ItemDomain_range, METH_VARARGS, (char *)"ItemDomain_range(ItemDomain self, Range rng)"},
 	 { (char *)"delete_ItemDomain", _wrap_delete_ItemDomain, METH_VARARGS, (char *)"delete_ItemDomain(ItemDomain self)"},
 	 { (char *)"ItemDomain_swigregister", ItemDomain_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_ColorDomain", _wrap_new_ColorDomain, METH_VARARGS, (char *)"\n"
@@ -27686,6 +29380,26 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"TimeInterval_isValid", _wrap_TimeInterval_isValid, METH_VARARGS, (char *)"TimeInterval_isValid(TimeInterval self) -> bool"},
 	 { (char *)"delete_TimeInterval", _wrap_delete_TimeInterval, METH_VARARGS, (char *)"delete_TimeInterval(TimeInterval self)"},
 	 { (char *)"TimeInterval_swigregister", TimeInterval_swigregister, METH_VARARGS, NULL},
+	 { (char *)"delete_DataDefinition", _wrap_delete_DataDefinition, METH_VARARGS, (char *)"delete_DataDefinition(DataDefinition self)"},
+	 { (char *)"new_DataDefinition", _wrap_new_DataDefinition, METH_VARARGS, (char *)"\n"
+		"DataDefinition()\n"
+		"DataDefinition(Ilwis::DataDefinition * datdef)\n"
+		"DataDefinition(Domain dm, Range rng)\n"
+		"new_DataDefinition(DataDefinition datdef) -> DataDefinition\n"
+		""},
+	 { (char *)"DataDefinition___bool__", _wrap_DataDefinition___bool__, METH_VARARGS, (char *)"DataDefinition___bool__(DataDefinition self) -> bool"},
+	 { (char *)"DataDefinition_isCompatibleWith", _wrap_DataDefinition_isCompatibleWith, METH_VARARGS, (char *)"DataDefinition_isCompatibleWith(DataDefinition self, DataDefinition datdef) -> bool"},
+	 { (char *)"DataDefinition_merge", _wrap_DataDefinition_merge, METH_VARARGS, (char *)"DataDefinition_merge(DataDefinition self, DataDefinition datdef1, DataDefinition datdef2) -> DataDefinition"},
+	 { (char *)"DataDefinition___set__", _wrap_DataDefinition___set__, METH_VARARGS, (char *)"DataDefinition___set__(DataDefinition self, DataDefinition datdef) -> DataDefinition"},
+	 { (char *)"DataDefinition_range", _wrap_DataDefinition_range, METH_VARARGS, (char *)"\n"
+		"range(Range rng)\n"
+		"DataDefinition_range(DataDefinition self) -> Range\n"
+		""},
+	 { (char *)"DataDefinition_domain", _wrap_DataDefinition_domain, METH_VARARGS, (char *)"\n"
+		"domain(Domain dm)\n"
+		"DataDefinition_domain(DataDefinition self) -> Domain\n"
+		""},
+	 { (char *)"DataDefinition_swigregister", DataDefinition_swigregister, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
@@ -27863,6 +29577,8 @@ static void *_p_pythonapi__IlwisObjectTo_p_pythonapi__Object(void *x, int *SWIGU
 static void *_p_pythonapi__ContinousColorRangeTo_p_pythonapi__ColorRange(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::ColorRange *)  ((pythonapi::ContinousColorRange *) x));
 }
+static swig_type_info _swigt__p_Ilwis__ContainerStatisticsT_double_t = {"_p_Ilwis__ContainerStatisticsT_double_t", "Ilwis::ContainerStatistics< double > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Ilwis__DataDefinition = {"_p_Ilwis__DataDefinition", "Ilwis::DataDefinition *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Ilwis__IlwisDataT_Ilwis__CoordinateSystem_t = {"_p_Ilwis__IlwisDataT_Ilwis__CoordinateSystem_t", "Ilwis::IlwisData< Ilwis::CoordinateSystem > *|Ilwis::ICoordinateSystem *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Ilwis__IlwisDataT_Ilwis__Coverage_t = {"_p_Ilwis__IlwisDataT_Ilwis__Coverage_t", "Ilwis::IlwisData< Ilwis::Coverage > *|Ilwis::ICoverage *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Ilwis__IlwisDataT_Ilwis__Domain_t = {"_p_Ilwis__IlwisDataT_Ilwis__Domain_t", "Ilwis::IlwisData< Ilwis::Domain > *|Ilwis::IDomain *", 0, 0, (void*)0, 0};
@@ -27887,6 +29603,7 @@ static swig_type_info _swigt__p_pythonapi__ColorDomain = {"_p_pythonapi__ColorDo
 static swig_type_info _swigt__p_pythonapi__ColorModelNS = {"_p_pythonapi__ColorModelNS", "pythonapi::ColorModelNS *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__ColorModelNS__Value = {"_p_pythonapi__ColorModelNS__Value", "enum pythonapi::ColorModelNS::Value *|pythonapi::ColorModel *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__ColorRange = {"_p_pythonapi__ColorRange", "pythonapi::ColorRange *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_pythonapi__ContainerStatisticsT_double_t = {"_p_pythonapi__ContainerStatisticsT_double_t", "pythonapi::NumericStatistics *|pythonapi::ContainerStatistics< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__ContinousColorRange = {"_p_pythonapi__ContinousColorRange", "pythonapi::ContinousColorRange *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__Coordinate = {"_p_pythonapi__Coordinate", "pythonapi::Coordinate *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__CoordinateSystem = {"_p_pythonapi__CoordinateSystem", "pythonapi::CoordinateSystem *", 0, 0, (void*)0, 0};
@@ -27912,6 +29629,8 @@ static swig_type_info _swigt__p_pythonapi__Object = {"_p_pythonapi__Object", "py
 static swig_type_info _swigt__p_pythonapi__PixelIterator = {"_p_pythonapi__PixelIterator", "pythonapi::PixelIterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__PixelTemplateT_double_t = {"_p_pythonapi__PixelTemplateT_double_t", "pythonapi::PixelD *|pythonapi::PixelTemplate< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__PixelTemplateT_int_t = {"_p_pythonapi__PixelTemplateT_int_t", "pythonapi::PixelTemplate< qint32 > *|pythonapi::PixelTemplate< int > *|pythonapi::Pixel *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_pythonapi__Properties = {"_p_pythonapi__Properties", "pythonapi::Properties *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_pythonapi__Properties__Values = {"_p_pythonapi__Properties__Values", "pythonapi::PropertySets *|enum pythonapi::Properties::Values *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__Range = {"_p_pythonapi__Range", "pythonapi::Range *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__RasterCoverage = {"_p_pythonapi__RasterCoverage", "pythonapi::RasterCoverage *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__SizeTemplateT_double_t = {"_p_pythonapi__SizeTemplateT_double_t", "pythonapi::SizeD *|pythonapi::SizeTemplate< double > *", 0, 0, (void*)0, 0};
@@ -27924,12 +29643,15 @@ static swig_type_info _swigt__p_pythonapi__TimeInterval = {"_p_pythonapi__TimeIn
 static swig_type_info _swigt__p_pythonapi__it = {"_p_pythonapi__it", "pythonapi::it *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_short = {"_p_short", "qint16 *|short *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "signed char *|qint8 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__pairT_double_double_t = {"_p_std__pairT_double_double_t", "std::pair< double,double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|quint8 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "quint32 *|unsigned int *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_long_long = {"_p_unsigned_long_long", "quint64 *|unsigned long long *|IlwisTypes *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_short = {"_p_unsigned_short", "quint16 *|unsigned short *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
+  &_swigt__p_Ilwis__ContainerStatisticsT_double_t,
+  &_swigt__p_Ilwis__DataDefinition,
   &_swigt__p_Ilwis__IlwisDataT_Ilwis__CoordinateSystem_t,
   &_swigt__p_Ilwis__IlwisDataT_Ilwis__Coverage_t,
   &_swigt__p_Ilwis__IlwisDataT_Ilwis__Domain_t,
@@ -27954,6 +29676,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_pythonapi__ColorModelNS,
   &_swigt__p_pythonapi__ColorModelNS__Value,
   &_swigt__p_pythonapi__ColorRange,
+  &_swigt__p_pythonapi__ContainerStatisticsT_double_t,
   &_swigt__p_pythonapi__ContinousColorRange,
   &_swigt__p_pythonapi__Coordinate,
   &_swigt__p_pythonapi__CoordinateSystem,
@@ -27979,6 +29702,8 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_pythonapi__PixelIterator,
   &_swigt__p_pythonapi__PixelTemplateT_double_t,
   &_swigt__p_pythonapi__PixelTemplateT_int_t,
+  &_swigt__p_pythonapi__Properties,
+  &_swigt__p_pythonapi__Properties__Values,
   &_swigt__p_pythonapi__Range,
   &_swigt__p_pythonapi__RasterCoverage,
   &_swigt__p_pythonapi__SizeTemplateT_double_t,
@@ -27991,12 +29716,15 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_pythonapi__it,
   &_swigt__p_short,
   &_swigt__p_signed_char,
+  &_swigt__p_std__pairT_double_double_t,
   &_swigt__p_unsigned_char,
   &_swigt__p_unsigned_int,
   &_swigt__p_unsigned_long_long,
   &_swigt__p_unsigned_short,
 };
 
+static swig_cast_info _swigc__p_Ilwis__ContainerStatisticsT_double_t[] = {  {&_swigt__p_Ilwis__ContainerStatisticsT_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Ilwis__DataDefinition[] = {  {&_swigt__p_Ilwis__DataDefinition, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Ilwis__IlwisDataT_Ilwis__CoordinateSystem_t[] = {  {&_swigt__p_Ilwis__IlwisDataT_Ilwis__CoordinateSystem_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Ilwis__IlwisDataT_Ilwis__Coverage_t[] = {  {&_swigt__p_Ilwis__IlwisDataT_Ilwis__Coverage_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Ilwis__IlwisDataT_Ilwis__Domain_t[] = {  {&_swigt__p_Ilwis__IlwisDataT_Ilwis__Domain_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -28021,6 +29749,7 @@ static swig_cast_info _swigc__p_pythonapi__ColorDomain[] = {  {&_swigt__p_python
 static swig_cast_info _swigc__p_pythonapi__ColorModelNS[] = {  {&_swigt__p_pythonapi__ColorModelNS, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__ColorModelNS__Value[] = {  {&_swigt__p_pythonapi__ColorModelNS__Value, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__ColorRange[] = {  {&_swigt__p_pythonapi__ColorRange, 0, 0, 0},  {&_swigt__p_pythonapi__ContinousColorRange, _p_pythonapi__ContinousColorRangeTo_p_pythonapi__ColorRange, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_pythonapi__ContainerStatisticsT_double_t[] = {  {&_swigt__p_pythonapi__ContainerStatisticsT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__ContinousColorRange[] = {  {&_swigt__p_pythonapi__ContinousColorRange, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__Coordinate[] = {  {&_swigt__p_pythonapi__Coordinate, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__CoordinateSystem[] = {  {&_swigt__p_pythonapi__CoordinateSystem, 0, 0, 0},{0, 0, 0, 0}};
@@ -28046,6 +29775,8 @@ static swig_cast_info _swigc__p_pythonapi__Object[] = {  {&_swigt__p_pythonapi__
 static swig_cast_info _swigc__p_pythonapi__PixelIterator[] = {  {&_swigt__p_pythonapi__PixelIterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__PixelTemplateT_double_t[] = {  {&_swigt__p_pythonapi__PixelTemplateT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__PixelTemplateT_int_t[] = {  {&_swigt__p_pythonapi__PixelTemplateT_int_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_pythonapi__Properties[] = {  {&_swigt__p_pythonapi__Properties, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_pythonapi__Properties__Values[] = {  {&_swigt__p_pythonapi__Properties__Values, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__Range[] = {  {&_swigt__p_pythonapi__Range, 0, 0, 0},  {&_swigt__p_pythonapi__ItemRange, _p_pythonapi__ItemRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__NumericItemRange, _p_pythonapi__NumericItemRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__NamedItemRange, _p_pythonapi__NamedItemRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__ThematicRange, _p_pythonapi__ThematicRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__NumericRange, _p_pythonapi__NumericRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__TimeInterval, _p_pythonapi__TimeIntervalTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__ColorRange, _p_pythonapi__ColorRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__ContinousColorRange, _p_pythonapi__ContinousColorRangeTo_p_pythonapi__Range, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__RasterCoverage[] = {  {&_swigt__p_pythonapi__RasterCoverage, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__SizeTemplateT_double_t[] = {  {&_swigt__p_pythonapi__SizeTemplateT_double_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -28058,12 +29789,15 @@ static swig_cast_info _swigc__p_pythonapi__TimeInterval[] = {  {&_swigt__p_pytho
 static swig_cast_info _swigc__p_pythonapi__it[] = {  {&_swigt__p_pythonapi__it, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_short[] = {  {&_swigt__p_short, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_signed_char[] = {  {&_swigt__p_signed_char, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__pairT_double_double_t[] = {  {&_swigt__p_std__pairT_double_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_long_long[] = {  {&_swigt__p_unsigned_long_long, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_short[] = {  {&_swigt__p_unsigned_short, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
+  _swigc__p_Ilwis__ContainerStatisticsT_double_t,
+  _swigc__p_Ilwis__DataDefinition,
   _swigc__p_Ilwis__IlwisDataT_Ilwis__CoordinateSystem_t,
   _swigc__p_Ilwis__IlwisDataT_Ilwis__Coverage_t,
   _swigc__p_Ilwis__IlwisDataT_Ilwis__Domain_t,
@@ -28088,6 +29822,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_pythonapi__ColorModelNS,
   _swigc__p_pythonapi__ColorModelNS__Value,
   _swigc__p_pythonapi__ColorRange,
+  _swigc__p_pythonapi__ContainerStatisticsT_double_t,
   _swigc__p_pythonapi__ContinousColorRange,
   _swigc__p_pythonapi__Coordinate,
   _swigc__p_pythonapi__CoordinateSystem,
@@ -28113,6 +29848,8 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_pythonapi__PixelIterator,
   _swigc__p_pythonapi__PixelTemplateT_double_t,
   _swigc__p_pythonapi__PixelTemplateT_int_t,
+  _swigc__p_pythonapi__Properties,
+  _swigc__p_pythonapi__Properties__Values,
   _swigc__p_pythonapi__Range,
   _swigc__p_pythonapi__RasterCoverage,
   _swigc__p_pythonapi__SizeTemplateT_double_t,
@@ -28125,6 +29862,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_pythonapi__it,
   _swigc__p_short,
   _swigc__p_signed_char,
+  _swigc__p_std__pairT_double_double_t,
   _swigc__p_unsigned_char,
   _swigc__p_unsigned_int,
   _swigc__p_unsigned_long_long,
@@ -28861,6 +30599,22 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "IlwisObject_smBINARYDATA",SWIG_From_int(static_cast< int >(pythonapi::IlwisObject::smBINARYDATA)));
   SWIG_Python_SetConstant(d, "Coverage_atCOVERAGE",SWIG_From_int(static_cast< int >(pythonapi::Coverage::atCOVERAGE)));
   SWIG_Python_SetConstant(d, "Coverage_atINDEX",SWIG_From_int(static_cast< int >(pythonapi::Coverage::atINDEX)));
+  SWIG_Python_SetConstant(d, "PropertySets_pNONE",SWIG_From_int(static_cast< int >(pythonapi::Properties::pNONE)));
+  SWIG_Python_SetConstant(d, "PropertySets_pBASIC",SWIG_From_int(static_cast< int >(pythonapi::Properties::pBASIC)));
+  SWIG_Python_SetConstant(d, "PropertySets_pMIN",SWIG_From_int(static_cast< int >(pythonapi::Properties::pMIN)));
+  SWIG_Python_SetConstant(d, "PropertySets_pMAX",SWIG_From_int(static_cast< int >(pythonapi::Properties::pMAX)));
+  SWIG_Python_SetConstant(d, "PropertySets_pDISTANCE",SWIG_From_int(static_cast< int >(pythonapi::Properties::pDISTANCE)));
+  SWIG_Python_SetConstant(d, "PropertySets_pDELTA",SWIG_From_int(static_cast< int >(pythonapi::Properties::pDELTA)));
+  SWIG_Python_SetConstant(d, "PropertySets_pNETTOCOUNT",SWIG_From_int(static_cast< int >(pythonapi::Properties::pNETTOCOUNT)));
+  SWIG_Python_SetConstant(d, "PropertySets_pCOUNT",SWIG_From_int(static_cast< int >(pythonapi::Properties::pCOUNT)));
+  SWIG_Python_SetConstant(d, "PropertySets_pSUM",SWIG_From_int(static_cast< int >(pythonapi::Properties::pSUM)));
+  SWIG_Python_SetConstant(d, "PropertySets_pMEAN",SWIG_From_int(static_cast< int >(pythonapi::Properties::pMEAN)));
+  SWIG_Python_SetConstant(d, "PropertySets_pMEDIAN",SWIG_From_int(static_cast< int >(pythonapi::Properties::pMEDIAN)));
+  SWIG_Python_SetConstant(d, "PropertySets_pPREDOMINANT",SWIG_From_int(static_cast< int >(pythonapi::Properties::pPREDOMINANT)));
+  SWIG_Python_SetConstant(d, "PropertySets_pSTDEV",SWIG_From_int(static_cast< int >(pythonapi::Properties::pSTDEV)));
+  SWIG_Python_SetConstant(d, "PropertySets_pHISTOGRAM",SWIG_From_int(static_cast< int >(pythonapi::Properties::pHISTOGRAM)));
+  SWIG_Python_SetConstant(d, "PropertySets_pLAST",SWIG_From_int(static_cast< int >(pythonapi::Properties::pLAST)));
+  SWIG_Python_SetConstant(d, "PropertySets_pALL",SWIG_From_int(static_cast< int >(pythonapi::Properties::pALL)));
   PyDict_SetItemString(md,(char*)"cvar", SWIG_globals());
   SWIG_addvarlink(SWIG_globals(),(char*)"COVERAGEATRIB",Swig_var_COVERAGEATRIB_get, Swig_var_COVERAGEATRIB_set);
   SWIG_Python_SetConstant(d, "Flow_fXYZ",SWIG_From_int(static_cast< int >(pythonapi::FlowVal::fXYZ)));

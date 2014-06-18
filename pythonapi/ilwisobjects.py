@@ -599,6 +599,39 @@ class Coordinate(_object):
 Coordinate_swigregister = _ilwisobjects.Coordinate_swigregister
 Coordinate_swigregister(Coordinate)
 
+class PropertySets(_object):
+    """Proxy of C++ pythonapi::Properties class"""
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, PropertySets, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, PropertySets, name)
+    __repr__ = _swig_repr
+    pNONE = _ilwisobjects.PropertySets_pNONE
+    pBASIC = _ilwisobjects.PropertySets_pBASIC
+    pMIN = _ilwisobjects.PropertySets_pMIN
+    pMAX = _ilwisobjects.PropertySets_pMAX
+    pDISTANCE = _ilwisobjects.PropertySets_pDISTANCE
+    pDELTA = _ilwisobjects.PropertySets_pDELTA
+    pNETTOCOUNT = _ilwisobjects.PropertySets_pNETTOCOUNT
+    pCOUNT = _ilwisobjects.PropertySets_pCOUNT
+    pSUM = _ilwisobjects.PropertySets_pSUM
+    pMEAN = _ilwisobjects.PropertySets_pMEAN
+    pMEDIAN = _ilwisobjects.PropertySets_pMEDIAN
+    pPREDOMINANT = _ilwisobjects.PropertySets_pPREDOMINANT
+    pSTDEV = _ilwisobjects.PropertySets_pSTDEV
+    pHISTOGRAM = _ilwisobjects.PropertySets_pHISTOGRAM
+    pLAST = _ilwisobjects.PropertySets_pLAST
+    pALL = _ilwisobjects.PropertySets_pALL
+    def __init__(self): 
+        """__init__(pythonapi::Properties self) -> PropertySets"""
+        this = _ilwisobjects.new_PropertySets()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _ilwisobjects.delete_PropertySets
+    __del__ = lambda self : None;
+PropertySets_swigregister = _ilwisobjects.PropertySets_swigregister
+PropertySets_swigregister(PropertySets)
+
 class Pixel(_object):
     """Proxy of C++ pythonapi::PixelTemplate<(qint32)> class"""
     __swig_setmethods__ = {}
@@ -1084,6 +1117,62 @@ class Envelope(_object):
     __del__ = lambda self : None;
 Envelope_swigregister = _ilwisobjects.Envelope_swigregister
 Envelope_swigregister(Envelope)
+
+class NumericStatistics(_object):
+    """Proxy of C++ pythonapi::ContainerStatistics<(double)> class"""
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, NumericStatistics, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, NumericStatistics, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        """
+        __init__(pythonapi::ContainerStatistics<(double)> self) -> NumericStatistics
+        __init__(pythonapi::ContainerStatistics<(double)> self, Ilwis::ContainerStatistics< double > const & conStat) -> NumericStatistics
+        """
+        this = _ilwisobjects.new_NumericStatistics(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def significantDigits(self):
+        """significantDigits(NumericStatistics self) -> quint16"""
+        return _ilwisobjects.NumericStatistics_significantDigits(self)
+
+    def findSignificantDigits(self, *args):
+        """findSignificantDigits(NumericStatistics self, double distance)"""
+        return _ilwisobjects.NumericStatistics_findSignificantDigits(self, *args)
+
+    def binCount(self, *args):
+        """binCount(NumericStatistics self, quint32 value)"""
+        return _ilwisobjects.NumericStatistics_binCount(self, *args)
+
+    def __bool__(self):
+        """__bool__(NumericStatistics self) -> bool"""
+        return _ilwisobjects.NumericStatistics___bool__(self)
+
+    def stretchLinear(self, *args):
+        """stretchLinear(NumericStatistics self, double input, int stretchRange) -> double"""
+        return _ilwisobjects.NumericStatistics_stretchLinear(self, *args)
+
+    def stretchLimits(self, *args):
+        """stretchLimits(NumericStatistics self, double percent) -> std::pair< double,double >"""
+        return _ilwisobjects.NumericStatistics_stretchLimits(self, *args)
+
+    def __getitem__(self, *args):
+        """__getitem__(NumericStatistics self, pythonapi::PropertySets pyMethod) -> double"""
+        return _ilwisobjects.NumericStatistics___getitem__(self, *args)
+
+    def prop(self, *args):
+        """prop(NumericStatistics self, pythonapi::PropertySets pyMethod) -> double"""
+        return _ilwisobjects.NumericStatistics_prop(self, *args)
+
+    def histogram(self):
+        """histogram(NumericStatistics self) -> PyObject *"""
+        return _ilwisobjects.NumericStatistics_histogram(self)
+
+    __swig_destroy__ = _ilwisobjects.delete_NumericStatistics
+    __del__ = lambda self : None;
+NumericStatistics_swigregister = _ilwisobjects.NumericStatistics_swigregister
+NumericStatistics_swigregister(NumericStatistics)
 
 class Geometry(Object):
     """Proxy of C++ pythonapi::Geometry class"""
@@ -1581,6 +1670,10 @@ class PixelIterator(_object):
         """__gt__(PixelIterator self, PixelIterator other) -> bool"""
         return _ilwisobjects.PixelIterator___gt__(self, *args)
 
+    def end(self):
+        """end(PixelIterator self) -> PixelIterator"""
+        return _ilwisobjects.PixelIterator_end(self)
+
     def asBuffer(self):
         """asBuffer(PixelIterator self) -> Py_buffer *"""
         return _ilwisobjects.PixelIterator_asBuffer(self)
@@ -1776,10 +1869,17 @@ class RasterCoverage(Coverage):
 
     def datadef(self, *args):
         """
-        datadef(RasterCoverage self, quint32 layer) -> pythonapi::DataDefinition const
-        datadef(RasterCoverage self, quint32 layer) -> pythonapi::DataDefinition &
+        datadef(RasterCoverage self, quint32 layer) -> DataDefinition
+        datadef(RasterCoverage self, quint32 layer) -> DataDefinition
         """
         return _ilwisobjects.RasterCoverage_datadef(self, *args)
+
+    def statistics(self, mode=0):
+        """
+        statistics(RasterCoverage self, int mode=0) -> NumericStatistics
+        statistics(RasterCoverage self) -> NumericStatistics
+        """
+        return _ilwisobjects.RasterCoverage_statistics(self, mode)
 
     def toRasterCoverage(*args):
         """toRasterCoverage(Object obj) -> RasterCoverage"""
@@ -1787,6 +1887,32 @@ class RasterCoverage(Coverage):
 
     if _newclass:toRasterCoverage = staticmethod(toRasterCoverage)
     __swig_getmethods__["toRasterCoverage"] = lambda x: toRasterCoverage
+    def begin(self):
+        """begin(RasterCoverage self) -> PixelIterator"""
+        return _ilwisobjects.RasterCoverage_begin(self)
+
+    def end(self):
+        """end(RasterCoverage self) -> PixelIterator"""
+        return _ilwisobjects.RasterCoverage_end(self)
+
+    def band(self, *args):
+        """
+        band(RasterCoverage self, PyObject * pyTrackIndex) -> PixelIterator
+        band(RasterCoverage self, PyObject * pyTrackIndex, PixelIterator pyIter)
+        """
+        return _ilwisobjects.RasterCoverage_band(self, *args)
+
+    def addBand(self, *args):
+        """addBand(RasterCoverage self, int index, DataDefinition pyDef, PyObject * pyTrackIndex)"""
+        return _ilwisobjects.RasterCoverage_addBand(self, *args)
+
+    def select(self, *args):
+        """
+        select(RasterCoverage self, std::string selectionQ) -> RasterCoverage
+        select(RasterCoverage self, Geometry geom) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage_select(self, *args)
+
     __swig_destroy__ = _ilwisobjects.delete_RasterCoverage
     __del__ = lambda self : None;
 RasterCoverage_swigregister = _ilwisobjects.RasterCoverage_swigregister
@@ -1986,6 +2112,10 @@ class ItemDomain(Domain):
     def item(self, *args):
         """item(ItemDomain self, int index, bool labelOnly) -> PyObject *"""
         return _ilwisobjects.ItemDomain_item(self, *args)
+
+    def range(self, *args):
+        """range(ItemDomain self, Range rng)"""
+        return _ilwisobjects.ItemDomain_range(self, *args)
 
     __swig_destroy__ = _ilwisobjects.delete_ItemDomain
     __del__ = lambda self : None;
@@ -2555,6 +2685,58 @@ class TimeInterval(NumericRange):
     __del__ = lambda self : None;
 TimeInterval_swigregister = _ilwisobjects.TimeInterval_swigregister
 TimeInterval_swigregister(TimeInterval)
+
+class DataDefinition(_object):
+    """Proxy of C++ pythonapi::DataDefinition class"""
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, DataDefinition, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, DataDefinition, name)
+    __repr__ = _swig_repr
+    __swig_destroy__ = _ilwisobjects.delete_DataDefinition
+    __del__ = lambda self : None;
+    def __init__(self, *args): 
+        """
+        __init__(pythonapi::DataDefinition self) -> DataDefinition
+        __init__(pythonapi::DataDefinition self, Ilwis::DataDefinition * datdef) -> DataDefinition
+        __init__(pythonapi::DataDefinition self, Domain dm, Range rng) -> DataDefinition
+        __init__(pythonapi::DataDefinition self, DataDefinition datdef) -> DataDefinition
+        """
+        this = _ilwisobjects.new_DataDefinition(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def __bool__(self):
+        """__bool__(DataDefinition self) -> bool"""
+        return _ilwisobjects.DataDefinition___bool__(self)
+
+    def isCompatibleWith(self, *args):
+        """isCompatibleWith(DataDefinition self, DataDefinition datdef) -> bool"""
+        return _ilwisobjects.DataDefinition_isCompatibleWith(self, *args)
+
+    def merge(self, *args):
+        """merge(DataDefinition self, DataDefinition datdef1, DataDefinition datdef2) -> DataDefinition"""
+        return _ilwisobjects.DataDefinition_merge(self, *args)
+
+    def __set__(self, *args):
+        """__set__(DataDefinition self, DataDefinition datdef) -> DataDefinition"""
+        return _ilwisobjects.DataDefinition___set__(self, *args)
+
+    def range(self, *args):
+        """
+        range(DataDefinition self, Range rng)
+        range(DataDefinition self) -> Range
+        """
+        return _ilwisobjects.DataDefinition_range(self, *args)
+
+    def domain(self, *args):
+        """
+        domain(DataDefinition self, Domain dm)
+        domain(DataDefinition self) -> Domain
+        """
+        return _ilwisobjects.DataDefinition_domain(self, *args)
+
+DataDefinition_swigregister = _ilwisobjects.DataDefinition_swigregister
+DataDefinition_swigregister(DataDefinition)
 
 class ReadOnly(type):
   @property

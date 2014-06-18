@@ -147,6 +147,12 @@ Py_buffer* PixelIterator::asBuffer(){
     return newPyBuffer(this->ptr().operator->(),sizeof(double)*this->ptr().box().size().linearSize(), false);
 }
 
+PixelIterator PixelIterator::end(){
+    PixelIterator newIter = PixelIterator(*this);
+    newIter._ilwisPixelIterator.reset(new Ilwis::PixelIterator(newIter.ptr().end()));
+    return newIter;
+}
+
 Ilwis::PixelIterator& PixelIterator::ptr() const{
     if (!this->__bool__())
         throw InvalidObject("use of invalid PixelIterator (ptr)");

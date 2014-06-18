@@ -13,6 +13,8 @@
 #include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/rastercoverage.h"
+#include "pixeliterator.h"
+#include "geometryhelper.h"
 
 #include "operationoverloads.h"
 
@@ -20,13 +22,16 @@
 #include "pythonapi_engine.h"
 #include "pythonapi_error.h"
 #include "pythonapi_datadefinition.h"
+#include "pythonapi_qvariant.h"
+#include "pythonapi_pyobject.h"
+#include "pythonapi_geometry.h"
 
 using namespace pythonapi;
 
 
 
 RasterCoverage::RasterCoverage(Ilwis::IRasterCoverage *coverage):Coverage(new Ilwis::ICoverage(*coverage)){
-    delete coverage;
+//delete coverage;
 }
 
 RasterCoverage::RasterCoverage(){
@@ -162,11 +167,6 @@ RasterCoverage *RasterCoverage::__rtruediv__(double value){
             );
 }
 
-//RasterCoverage *RasterCoverage::sin(){
-//    Ilwis::IRasterCoverage sum = sin(this->ptr()->as<Ilwis::RasterCoverage>());
-//    return new RasterCoverage(&sum);
-//}
-
 double RasterCoverage::coord2value(const Coordinate& c){
     return this->ptr()->as<Ilwis::RasterCoverage>()->coord2value(c.data());
 }
@@ -213,13 +213,77 @@ void RasterCoverage::setGeoReference(const GeoReference& gr){
 
 const DataDefinition& RasterCoverage::datadef(quint32 layer) const{
     Ilwis::DataDefinition ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef(layer);
-    DataDefinition* pydef = new DataDefinition(ilwdef);
+    DataDefinition* pydef = new DataDefinition(&ilwdef);
     return *pydef;
 }
 
 DataDefinition& RasterCoverage::datadef(quint32 layer){
     Ilwis::DataDefinition ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef(layer);
-    DataDefinition* pydef = new DataDefinition(ilwdef);
+    DataDefinition* pydef = new DataDefinition(&ilwdef);
     return *pydef;
+}
+
+NumericStatistics* RasterCoverage::statistics(int mode){
+    return new NumericStatistics(this->ptr()->as<Ilwis::RasterCoverage>()->statistics(mode));
+ }
+
+PixelIterator RasterCoverage::begin(){
+    return PixelIterator(this);
+}
+
+PixelIterator RasterCoverage::end(){
+    return PixelIterator(this).end();
+}
+
+PixelIterator RasterCoverage::band(PyObject* pyTrackIndex){
+    std::unique_ptr<QVariant> ilwTrackIndex(PyObject2QVariant(pyTrackIndex));
+    PixelIterator iter = PixelIterator(this);
+    Ilwis::PixelIterator ilwIter = this->ptr()->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex);
+    iter._ilwisPixelIterator.reset(new Ilwis::PixelIterator(ilwIter));
+    return iter;
+}
+
+void RasterCoverage::band(PyObject* pyTrackIndex, PixelIterator pyIter){
+    std::unique_ptr<QVariant> ilwTrackIndex(PyObject2QVariant(pyTrackIndex));
+    this->ptr()->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex, pyIter.ptr());
+}
+
+void RasterCoverage::addBand(int index, DataDefinition& pyDef, PyObject* pyTrackIndex){
+    std::unique_ptr<QVariant> ilwTrackIndex(PyObject2QVariant(pyTrackIndex));
+    this->ptr()->as<Ilwis::RasterCoverage>()->addBand(index, pyDef.ptr(), *ilwTrackIndex);
+}
+
+RasterCoverage RasterCoverage::select(std::string selectionQ){
+    QString selectGeom = QString::fromStdString(selectionQ);
+    geos::geom::Geometry *geom = Ilwis::GeometryHelper::fromWKT(selectGeom, this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
+    if(geom){
+        Ilwis::PixelIterator iterIn(this->ptr()->as<Ilwis::RasterCoverage>(), geom);
+        Ilwis::IRasterCoverage map2;
+        map2.prepare();
+
+        map2->coordinateSystem(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
+        map2->georeference(this->ptr()->as<Ilwis::RasterCoverage>()->georeference());
+        map2->datadef() = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
+
+        Ilwis::PixelIterator iterOut(map2, geom);
+
+        Ilwis::PixelIterator iterEnd = this->ptr()->as<Ilwis::RasterCoverage>()->end();
+        while( iterIn != iterEnd){
+            *iterOut = *iterIn;
+            ++iterOut;
+            ++iterIn;
+        }
+
+        return RasterCoverage(&map2);
+    }
+    else{
+        throw InvalidObject("Not a valid geometry description");
+    }
+
+    delete geom;
+}
+
+RasterCoverage RasterCoverage::select(Geometry& geom){
+    return select(geom.toWKT());
 }
 

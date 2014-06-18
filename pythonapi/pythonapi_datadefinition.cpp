@@ -17,7 +17,7 @@ using namespace pythonapi;
 DataDefinition::DataDefinition() : _ilwisDatadef(new Ilwis::DataDefinition()){
 }
 
-DataDefinition::DataDefinition(Ilwis::DataDefinition def) : _ilwisDatadef(new Ilwis::DataDefinition(def)){
+DataDefinition::DataDefinition(Ilwis::DataDefinition* datdef) : _ilwisDatadef(new Ilwis::DataDefinition(*datdef)){
 }
 
 DataDefinition::DataDefinition(Domain* dm, const Range &rng){
@@ -27,9 +27,9 @@ DataDefinition::DataDefinition(Domain* dm, const Range &rng){
     delete dm;
 }
 
-DataDefinition::DataDefinition(const DataDefinition &def){
-    if(def.__bool__())
-        this->_ilwisDatadef.reset(new Ilwis::DataDefinition(def.ptr()));
+DataDefinition::DataDefinition(const DataDefinition &datdef){
+    if(datdef.__bool__())
+        this->_ilwisDatadef.reset(new Ilwis::DataDefinition(datdef.ptr()));
 }
 
 
@@ -50,20 +50,20 @@ void DataDefinition::domain(Domain* dm){
     delete dm;
 }
 
-bool DataDefinition::isCompatibleWith(const DataDefinition& def){
-    return this->ptr().isCompatibleWith(def.ptr());
+bool DataDefinition::isCompatibleWith(const DataDefinition& datdef){
+    return this->ptr().isCompatibleWith(datdef.ptr());
 }
 
-DataDefinition* DataDefinition::merge(const DataDefinition& def1, const DataDefinition& def2){
-    DataDefinition* datdef = new DataDefinition();
+DataDefinition* DataDefinition::merge(const DataDefinition& datdef1, const DataDefinition& datdef2){
+    DataDefinition* newDatdef = new DataDefinition();
 
-    Ilwis::DataDefinition ilwdef = this->ptr().merge(def1.ptr(), def2.ptr());
+    Ilwis::DataDefinition ilwdef = this->ptr().merge(datdef1.ptr(), datdef2.ptr());
 
-    datdef->_ilwisDatadef.reset(&ilwdef);
-    return datdef;
+    newDatdef->_ilwisDatadef.reset(&ilwdef);
+    return newDatdef;
 }
 
-DataDefinition* DataDefinition::operator=(const DataDefinition& def){
+DataDefinition* DataDefinition::__set__(const DataDefinition& def){
     this->ptr() = def.ptr();
     return this;
 }
@@ -72,4 +72,15 @@ Ilwis::DataDefinition& DataDefinition::ptr() const{
     if (!this->__bool__())
         throw InvalidObject("use of invalid DataDefinition(ptr)");
     return (*this->_ilwisDatadef);
+}
+
+Range* DataDefinition::range() const{
+    Range* pyRan = new Range((this->ptr().range()).data());
+    return pyRan;
+}
+
+Domain* DataDefinition::domain() const{
+    Ilwis::IDomain ilwDom = (this->ptr().domain());
+    Domain* pyDom = new Domain(&ilwDom);
+    return pyDom;
 }

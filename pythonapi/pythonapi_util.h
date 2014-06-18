@@ -1,7 +1,10 @@
 #ifndef PYTHONAPI_UTIL_H
 #define PYTHONAPI_UTIL_H
 
+#include "kernel.h"
 #include "pythonapi_extension.h"
+#include "containerstatistics.h"
+#include "pythonapi_pyobject.h"
 #include <memory>
 
 namespace geos {
@@ -15,6 +18,8 @@ namespace Ilwis{
     class Coordinate;
     template<class CrdType> class Box;
     template<typename T> class Size;
+    class PixelIterator;
+   // template<typename DataType> class ContainerStatistics;
 }
 
 namespace pythonapi {
@@ -60,6 +65,8 @@ namespace pythonapi {
     typedef PixelTemplate<qint32> Pixel;
     typedef PixelTemplate<double> PixelD;
 
+//-----------------------------------------------------------------------------------------------------------------
+
     class Coordinate{
         template<class IlwisType, class PyType, typename T> friend class BoxTemplate;
         template<typename T> friend class SizeTemplate;
@@ -90,6 +97,8 @@ namespace pythonapi {
             Ilwis::Coordinate& data() const;
             std::shared_ptr<Ilwis::Coordinate> _data;
     };
+
+//-----------------------------------------------------------------------------------------------------------------
 
     template<typename T> class SizeTemplate{
         template<class IlwisType, class PyType, typename U> friend class BoxTemplate;
@@ -128,6 +137,8 @@ namespace pythonapi {
     typedef SizeTemplate<quint32> Size;
     typedef SizeTemplate<double> SizeD;
 
+//-----------------------------------------------------------------------------------------------------------------
+
     template<class IlwisType, class PyType, typename SizeType> class BoxTemplate{
         friend class PixelIterator;
         friend class GeoReference;
@@ -159,6 +170,100 @@ namespace pythonapi {
     };
     typedef BoxTemplate<Ilwis::Coordinate, Coordinate, double> Envelope;
     typedef BoxTemplate<Ilwis::Location<qint32, false>, Pixel, quint32 > Box;
+
+//-----------------------------------------------------------------------------------------------------------------
+
+    #ifdef SWIG
+    %rename(PropertySets) Properties;
+    #endif
+
+    struct Properties{
+        enum Values{pNONE = 0, pBASIC=1, pMIN=2, pMAX=4, pDISTANCE=8, pDELTA=16,pNETTOCOUNT=32, pCOUNT=64, pSUM=128,
+                          pMEAN=256, pMEDIAN=512, pPREDOMINANT=1024, pSTDEV=2048, pHISTOGRAM=4096, pLAST=8192, pALL=4294967296};
+
+    };
+
+    typedef Properties::Values PropertySets;
+
+
+    template<typename DataType> class ContainerStatistics{
+    public:
+        ContainerStatistics(): _data(new Ilwis::ContainerStatistics<DataType>()){
+        }
+
+        ContainerStatistics(const Ilwis::ContainerStatistics<DataType>& conStat)
+            : _data(new Ilwis::ContainerStatistics<DataType>(conStat)){
+        }
+
+        quint16 significantDigits() const{
+            return this->data().significantDigits();
+        }
+
+        void findSignificantDigits(double distance){
+            this->data().findSignificantDigits(distance);
+        }
+
+        void binCount(quint32 value){
+            this->data().binCount(value);
+        }
+
+        bool __bool__() const{
+            return this->data().isValid();
+        }
+
+        double stretchLinear(double input, int stretchRange) const{
+            return this->data().stretchLinear(input, stretchRange);
+        }
+
+        std::pair<double, double> stretchLimits(double percent) const{
+            return this->data().stretchLimits(percent);
+        }
+
+        double __getitem__(PropertySets pyMethod){
+            typename Ilwis::ContainerStatistics<DataType>::PropertySets ilwMethod;
+            ilwMethod = static_cast<typename Ilwis::ContainerStatistics<DataType>::PropertySets>(pyMethod);
+            return this->data().operator [](ilwMethod);
+        }
+
+        double prop(PropertySets pyMethod){
+            return this->__getitem__(pyMethod);
+        }
+
+        PyObject* histogram(){
+            std::vector<HistogramBin> hisVec = this->data().histogram();
+            PyObject* pyTup = newPyTuple(hisVec.size());
+            for(int i = 0; i < hisVec.size(); i++){
+                PyObject* histoTup = newPyTuple(2);
+                HistogramBin histo = hisVec[i];
+
+                setTupleItem(histoTup, 0, PyFloatFromDouble((double)histo._limit));
+                setTupleItem(histoTup, 1, PyFloatFromDouble((double)histo._count));
+
+                setTupleItem(pyTup, i, histoTup);
+            }
+            return pyTup;
+        }
+
+       template<typename IterType> bool calculate(IterType& begin, IterType& end,
+                                                   PropertySets mode = PropertySets::pBASIC){
+
+            typename Ilwis::ContainerStatistics<DataType>::PropertySets ilwMethod;
+            ilwMethod = static_cast<typename Ilwis::ContainerStatistics<DataType>::PropertySets>(mode);
+
+            return this->data.calculate(begin, end, ilwMethod);
+        }
+
+
+    protected:
+        Ilwis::ContainerStatistics<DataType>& data() const{
+            return (*this->_data);
+        }
+        std::shared_ptr<Ilwis::ContainerStatistics<DataType> > _data;
+        typedef typename Ilwis::ContainerStatistics<DataType>::HistogramBin HistogramBin;
+    };
+
+    typedef ContainerStatistics< double > NumericStatistics;
+
 
 } // namespace pythonapi
 

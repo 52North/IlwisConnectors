@@ -162,6 +162,28 @@ ItemDomain::ItemDomain(const Range& rng){
     }
 }
 
+void ItemDomain::range(const Range &rng){
+    Ilwis::ItemRange* itemRan =  static_cast<Ilwis::ItemRange*>(rng._range->clone());
+    IlwisTypes vt = rng.valueType();
+    switch (vt) {
+    case itNUMERICITEM:{
+        this->ptr()->as<Ilwis::ThematicDomain>()->setRange(*itemRan);
+    }
+        break;
+    case itTHEMATICITEM:{
+        this->ptr()->as<Ilwis::ThematicDomain>()->setRange(*itemRan);
+    }
+        break;
+    case itINDEXEDITEM:
+    case itNAMEDITEM:{
+        this->ptr()->as<Ilwis::NamedIdDomain>()->setRange(*itemRan);
+    }
+        break;
+    default:
+        break;
+    }
+}
+
 quint32 ItemDomain::count()
 {
     return this->ptr()->as<Ilwis::IntervalDomain>()->count();

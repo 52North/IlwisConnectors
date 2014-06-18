@@ -26,6 +26,9 @@ typedef FlowVal::Value Flow;
 class RasterCoverage;
 
 class PixelIterator{
+
+    friend class RasterCoverage;
+
     public:
         PixelIterator(const PixelIterator &pi);
         PixelIterator(RasterCoverage* rc, const Box &b = Box());
@@ -71,6 +74,8 @@ class PixelIterator{
         bool operator< (const PixelIterator& other);
         bool operator>=(const PixelIterator& other);
         bool operator> (const PixelIterator& other);
+
+        PixelIterator end();
 
         Py_buffer* asBuffer();
     protected:

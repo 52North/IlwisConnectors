@@ -127,6 +127,7 @@ try:
             self.assertEqual("Pulkovo 1942(58) / 3-degree Gauss-Kruger zone 5", gk5.name())
             etrs_laea = CoordinateSystem("code=epsg:3035")
             self.assertEqual("ETRS89 / LAEA Europe", etrs_laea.name())
+            proj4 = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
 
             g = Geometry("POINT(766489.647 6840642.671)", pm)
             g1 = g.transform(gk5)
@@ -139,6 +140,8 @@ try:
             self.assertEqual("POINT (2560502.5977886635810137 5787988.6849722778424621)", g1.toWKT())
             g1 = g2.transform(etrs_laea)
             self.assertEqual("POINT (4108242.5654639988206327 3239420.9621137753129005)", g1.toWKT())
+            g3 = g.transform(proj4)
+            self.assertEqual("POINT (-866479.8875676055904478 5979085.6121951946988702)", g3.toWKT())
 
         def test_Envelope(self):
             g = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
@@ -741,7 +744,7 @@ try:
             self.assertFalse(gr.isInternal())
             self.assertTrue(r.coordinateSystem() == gr.coordinateSystem())
             self.assertTrue(r.size() == gr.size())
-            box = Box(r.size())
+            box = Box(gr.size())
             env = gr.box2Envelope(box)
             self.assertEqual("POLYGON(0 0 0,1151 1151 0)", str(box))
             self.assertEqual("POLYGON(-4.60799e+06 -4.59997e+06,4.60001e+06 4.60803e+06)", str(env))
@@ -926,6 +929,41 @@ try:
             self.assertAlmostEqual(aa7.pix2value(pix), 96.0 + 0.1915 - 2, 1)
             aa8 = rc1 + rc2 + 2
             self.assertAlmostEqual(aa8.pix2value(pix), 96.0 + 0.1915 + 2, 1)
+
+        #@ut.skip("temporarily")
+        def test_RasterSelection(self):
+            rc = RasterCoverage("n000302.mpr")
+            rcSel = rc.select("Polygon((495209 80832,927209 -999367, 1887209 -1282307,2184809 311232,495209 80832))")
+            self.assertTrue(bool(rcSel))
+
+            pix1 = Pixel(740, 650, 0)
+            pix2 = Pixel(300, 400, 0)
+
+            self.assertEqual(rcSel.pix2value(pix1), rc.pix2value(pix1))
+            self.assertNotEqual(rcSel.pix2value(pix2), rc.pix2value(pix2))
+
+            rcSel.setOutputConnection(workingDir + rasterDir + "/avg_n000302", "map", "ilwis3")
+            rcSel.store()
+
+        #@ut.skip("temporarily")
+        def test_Datadefinition(self):
+            rc = RasterCoverage("n000302.mpr")
+            rc2 = RasterCoverage("small.mpr")
+            rc3 = RasterCoverage("subkenya.mpr")
+
+            dat = rc.datadef(0)
+            self.assertTrue(bool(dat), msg="couldn't load datadefinition")
+            dat2 = rc3.datadef(0)
+            dat3 = rc3.datadef(0)
+
+            self.assertTrue(dat.isCompatibleWith(dat2), msg="datadefinitions are not compatible")
+            self.assertTrue(dat.isCompatibleWith(dat3), msg="datadefinition of submap is not compatible")
+
+            datmerge = dat.merge(dat, dat2)
+            self.assertTrue(bool(datmerge), msg="couldn't merge datadefinitions")
+
+            dat3 = dat
+            self.assertTrue(dat3 == dat)
 
         #@ut.skip("temporarily")
         def test_PixelIterator(self):
@@ -1541,7 +1579,7 @@ try:
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest=None, verbosity=2)
+        ut.main(defaultTest='TestGeoReference', verbosity=2)
 
 except ImportError as e:
     print(e)
