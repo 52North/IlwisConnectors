@@ -7,7 +7,6 @@
 
 #include "pythonapi_pyobject.h"
 
-#include "Python.h"
 #include <time.h>
 #include "../../IlwisCore/core/kernel.h"
 #include "../../IlwisCore/core/util/range.h"

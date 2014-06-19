@@ -114,7 +114,7 @@ void GdalTableLoader::setColumnCallbacks(Table * attTable, OGRLayerH hLayer){
     _columnFillers.resize(attTable->columnCount(),0);
 
     for (int i = 0; i < attTable->columnCount(); i++){
-        ColumnDefinition& coldef = attTable->columndefinition(i);
+        ColumnDefinition& coldef = attTable->columndefinitionRef(i);
         if ( coldef.name() != QString(FEATUREIDCOLUMN) ){
             DataDefinition& datadef = coldef.datadef();
             if(datadef.domain().isValid()){

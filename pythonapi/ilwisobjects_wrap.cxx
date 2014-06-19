@@ -30630,6 +30630,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "Domain_cPARENT",SWIG_From_int(static_cast< int >(pythonapi::Domain::cPARENT)));
   SWIG_Python_SetConstant(d, "Domain_cDECLARED",SWIG_From_int(static_cast< int >(pythonapi::Domain::cDECLARED)));
   SWIG_Python_SetConstant(d, "Domain_cNONE",SWIG_From_int(static_cast< int >(pythonapi::Domain::cNONE)));
+  SWIG_Python_SetConstant(d, "ColorModel_cmNONE",SWIG_From_int(static_cast< int >(pythonapi::ColorModelNS::cmNONE)));
   SWIG_Python_SetConstant(d, "ColorModel_cmRGBA",SWIG_From_int(static_cast< int >(pythonapi::ColorModelNS::cmRGBA)));
   SWIG_Python_SetConstant(d, "ColorModel_cmHSLA",SWIG_From_int(static_cast< int >(pythonapi::ColorModelNS::cmHSLA)));
   SWIG_Python_SetConstant(d, "ColorModel_cmCYMKA",SWIG_From_int(static_cast< int >(pythonapi::ColorModelNS::cmCYMKA)));
