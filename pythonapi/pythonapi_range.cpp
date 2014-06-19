@@ -339,6 +339,8 @@ void Color::readColor(ColorModel type, PyObject* obj)
                 PyDictSetItemString(dict, "blue", PyTupleGetItem(obj, 2));
                 PyDictSetItemString(dict, "alpha", PyTupleGetItem(obj, 3));
                 break;
+            case ColorModel::cmNONE:
+                break;
             }
         }
     }
@@ -369,6 +371,8 @@ std::string Color::toString() const{
         colors += QString("RGBA(%1,%2,%3,%4)").arg(this->getItem("red")).arg(this->getItem("blue")).arg(this->getItem("green")).arg(this->getItem("alpha"));
         break;
     case ColorModel::cmGREYSCALE:
+        break;
+    case ColorModel::cmNONE:
         break;
     }
     return colors.toStdString();
@@ -459,6 +463,8 @@ std::string ColorRange::toString(const Color &clr, ColorModel clrType)
         break;
     case ColorModel::cmGREYSCALE:
         break;
+    case ColorModel::cmNONE:
+        break;
     }
     return colors.toStdString();
 }
@@ -488,8 +494,8 @@ ContinousColorRange::ContinousColorRange(const Color &clr1, const Color &clr2, C
 {
     QString color1 = QString::fromStdString(clr1.toString());
     QString color2 = QString::fromStdString(clr2.toString());
-
-    Ilwis::ColorRange::ColorModel ilwColor = static_cast<Ilwis::ColorRange::ColorModel>(colormodel);
+    int clmd = colormodel;
+    Ilwis::ColorRange::ColorModel ilwColor = static_cast<Ilwis::ColorRange::ColorModel>(clmd);
 
     QColor col1 = Ilwis::ContinousColorRange::toColor(QVariant(color1), ilwColor);
     QColor col2 = Ilwis::ContinousColorRange::toColor(QVariant(color2), ilwColor);

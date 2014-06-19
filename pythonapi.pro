@@ -108,5 +108,3 @@ python_target.path = $$PYTHONDIR/Lib/site-packages
 target.path = $$PYTHONDIR/Lib/site-packages
 
 INSTALLS += mytarget python_target target
-
-

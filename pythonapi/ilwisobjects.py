@@ -2456,6 +2456,7 @@ class ColorModel(_object):
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, ColorModel, name)
     __repr__ = _swig_repr
+    cmNONE = _ilwisobjects.ColorModel_cmNONE
     cmRGBA = _ilwisobjects.ColorModel_cmRGBA
     cmHSLA = _ilwisobjects.ColorModel_cmHSLA
     cmCYMKA = _ilwisobjects.ColorModel_cmCYMKA

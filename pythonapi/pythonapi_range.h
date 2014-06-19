@@ -98,7 +98,7 @@ public:
 #endif
 
 struct ColorModelNS{
-    enum Value{cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
+    enum Value{cmNONE, cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
 };
 
 typedef ColorModelNS::Value ColorModel;
