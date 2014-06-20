@@ -930,6 +930,9 @@ try:
             aa8 = rc1 + rc2 + 2
             self.assertAlmostEqual(aa8.pix2value(pix), 96.0 + 0.1915 + 2, 1)
 
+            aa1.setOutputConnection(workingDir + tempDir + "/kenya_frommpr", "map", "ilwis3")
+            aa1.store()
+
         #@ut.skip("temporarily")
         def test_RasterSelection(self):
             rc = RasterCoverage("n000302.mpr")

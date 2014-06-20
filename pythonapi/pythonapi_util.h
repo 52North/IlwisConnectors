@@ -244,6 +244,7 @@ namespace pythonapi {
             return pyTup;
         }
 
+       //not yet implemented in ilwisobjects.i
        template<typename IterType> bool calculate(IterType& begin, IterType& end,
                                                    PropertySets mode = PropertySets::pBASIC){
 

@@ -46,19 +46,19 @@ namespace pythonapi {
 
     class NumericDomain : public Domain{
         friend class Catalog;
+        friend class DataDefinition;
     public:
         NumericDomain();
         NumericDomain(const std::string& resource);
         static NumericDomain* toNumericDomain(Object *obj);
 
 
-    private:
+    protected:
         NumericDomain(Ilwis::INumericDomain* domain);
     };
 
-
-
     class ItemDomain : public Domain {
+        friend class DataDefinition;
     public:
         ItemDomain();
         ItemDomain(const Range& rng);
@@ -70,13 +70,14 @@ namespace pythonapi {
         PyObject *item(int index, bool labelOnly);
         void range(const Range &rng);
 
-    private:
+    protected:
         ItemDomain(Ilwis::IDomain *domain);
 
 
     };
 
     class ColorDomain : public Domain {
+        friend class DataDefinition;
     public:
         ColorDomain();
         ColorDomain(const std::string& resource);
@@ -86,12 +87,14 @@ namespace pythonapi {
     };
 
     class TextDomain : public Domain {
+        friend class DataDefinition;
     public:
         TextDomain();
         TextDomain(const std::string& resource);
     };
 
     class TimeDomain : public Domain{
+        friend class DataDefinition;
         public:
             TimeDomain();
             TimeDomain(const std::string& resource);
