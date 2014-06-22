@@ -68,7 +68,7 @@ void WcsDescribeCoverage::parseCoverage(QXmlItem &item, std::map<QString, Resour
     if ( cscode != sUNDEF){
         resource.addProperty("coordinatesystem",cscode);
     }
-    QString envelopeQuery = "./wcs:Domain/wcs:SpatialDomain/ows:BoundingBox[@crs='" + crs + "']/ows:LowerCorner";
+    QString envelopeQuery = "./wcs:Domain/wcs:SpatialDomain/ows:BoundingBox[@crs='" + crs + "']/ows:LowerCorner[1]";
     QString envelope = valueOf(item,envelopeQuery);
     
 }
