@@ -33,36 +33,39 @@ WcsResponse *WebCoverageService::getCapabilities(bool async) const
     return performRequest(query, "GetCapabilities", async);
 }
 
-WcsResponse *WebCoverageService::describeCoverage(QUrlQuery query, bool async) const
+WcsResponse *WebCoverageService::getDescribeCoverage(QUrlQuery query, const QString& id, bool async) const
 {
-    return performRequest(query, "DescribeCoverage", async);
+    return performRequest(query, "DescribeCoverage", async, id);
 }
 
-WcsResponse *WebCoverageService::getCoverage(QUrlQuery query, bool async) const
+WcsResponse *WebCoverageService::getCoverage(QUrlQuery query, const QString& id, bool async) const
 {
-    return performRequest(query, "GetCoverage", async);
+    return performRequest(query, "GetCoverage", async, id);
 }
 
-WcsResponse *WebCoverageService::performRequest(QUrlQuery query, QString wfsRequest, bool async) const
+WcsResponse *WebCoverageService::performRequest(QUrlQuery query, QString request, bool async, const QString& id) const
 {
     WcsUtils::lowerCaseKeys(query);
     query.removeQueryItem("request");
-    query.addQueryItem("request", wfsRequest);
-    if (wfsRequest == "GetCapabilities") {
+    query.addQueryItem("request", request);
+    if (request == "GetCapabilities") {
         query.removeQueryItem("acceptversions");
         query.addQueryItem("acceptversions", "1.1.0");
     } else {
         query.removeQueryItem("version");
         query.addQueryItem("version", "1.1.0");
     }
-    QUrl wfsUrl = _resource;
-    wfsUrl.setQuery(query);
+    if ( request == "DescribeCoverage"){
+        query.addQueryItem("identifiers", id);
+    }
+    QUrl serviceUrl = _resource;
+    serviceUrl.setQuery(query);
 
-    QString www = wfsUrl.toString();
+    QString www = serviceUrl.toString();
     if (!async) {
-        return performSyncRequest(wfsUrl);
+        return performSyncRequest(serviceUrl);
     } else {
-        return performAsyncRequest(wfsUrl);
+        return performAsyncRequest(serviceUrl);
     }
 }
 
@@ -77,9 +80,6 @@ WcsResponse *WebCoverageService::performSyncRequest(QUrl requestUrl) const
     loop.exec();
 
     response->readResponse(reply);
-    //QByteArray bytes = reply->readAll();
-    //QString str = QString::fromUtf8(bytes.data(), bytes.size());
-    //int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     return response;
 }
 
