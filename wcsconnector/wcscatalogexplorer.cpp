@@ -7,14 +7,9 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "domain.h"
-#include "coverage.h"
-#include "columndefinition.h"
-#include "attributerecord.h"
-#include "feature.h"
-#include "featurecoverage.h"
+#include "geos/geom/Coordinate.h"
+#include "coordinate.h"
 #include "connectorinterface.h"
-#include "identity.h"
-#include "resource.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
 #include "abstractfactory.h"
@@ -26,8 +21,10 @@
 #include "wcsutils.h"
 #include "wcs.h"
 #include "wcsresponse.h"
-#include "wcsitem.h"
+#include "xpathparser.h"
+#include "wcsservice.h"
 #include "wcscapabilitiesparser.h"
+#include "wcsdescribecoverage.h"
 
 using namespace Ilwis;
 using namespace Wcs;
@@ -50,15 +47,30 @@ WcsCatalogExplorer::~WcsCatalogExplorer()
 std::vector<Resource> WcsCatalogExplorer::loadItems()
 {
     QUrl serviceUrl = source().url(true);
-    QString dumm = serviceUrl.toString();
     WebCoverageService Wcs(serviceUrl);
-    WcsResponse *response = Wcs.getCapabilities();
-    WcsCapabilitiesParser parser(response, serviceUrl);
+    WcsResponse *gcresponse = Wcs.getCapabilities();
+    WcsCapabilitiesParser gcparser(gcresponse, serviceUrl);
+    std::map<QString, Resource> rastercoverages;
+    gcparser.parse(rastercoverages);
 
-    std::vector<Resource> WcsCoverages;
-    parser.parse(WcsCoverages);
-    mastercatalog()->addItems(WcsCoverages);
-    return WcsCoverages;
+    QString ids ;
+    for(const auto& resource : rastercoverages){
+        if ( ids != "")
+            ids += ",";
+        ids += resource.second.name();
+
+    }
+    QUrlQuery query(serviceUrl);
+    WcsResponse *dcresponse = Wcs.getDescribeCoverage(query,ids);
+    WcsDescribeCoverage dcparser(dcresponse, serviceUrl);
+    dcparser.parse(rastercoverages);
+
+    std::vector<Resource> resources;
+    for(auto cov : rastercoverages)
+        resources.push_back(cov.second);
+    mastercatalog()->addItems(resources);
+
+    return resources;
 }
 
 bool WcsCatalogExplorer::canUse(const Resource &resource) const
