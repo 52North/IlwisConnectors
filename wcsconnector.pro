@@ -21,8 +21,9 @@ SOURCES += \
     wcsconnector/wcscatalogexplorer.cpp \
     wcsconnector/wcs.cpp \
     wcsconnector/wcsresponse.cpp \
-    wcsconnector/wcsitem.cpp \
-    wcsconnector/wcscapabilitiesparser.cpp
+    wcsconnector/wcscapabilitiesparser.cpp \
+    wcsconnector/wcsdescribecoverage.cpp \
+    wcsconnector/wcsservice.cpp
 
 HEADERS += \ 
     wcsconnector/wcsmodule.h \
@@ -31,8 +32,9 @@ HEADERS += \
     wcsconnector/wcscatalogexplorer.h \
     wcsconnector/wcs.h \
     wcsconnector/wcsresponse.h \
-    wcsconnector/wcsitem.h \
-    wcsconnector/wcscapabilitiesparser.h
+    wcsconnector/wcscapabilitiesparser.h \
+    wcsconnector/wcsdescribecoverage.h \
+    wcsconnector/wcsservice.h
 
 OTHER_FILES += \
     wcsconnector/wcsconnector.json
