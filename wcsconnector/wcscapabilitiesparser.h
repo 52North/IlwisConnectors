@@ -10,21 +10,17 @@ class QXmlItem;
 namespace Ilwis {
 namespace Wcs {
 
-class WcsCapabilitiesParser
+class WcsCapabilitiesParser : public WcsService
 {
 public:
     WcsCapabilitiesParser(WcsResponse *response, QUrl wcsUrl);
     ~WcsCapabilitiesParser();
 
-    void parse(std::vector<Ilwis::Resource> &resources) const;
-
+    void parse(std::map<QString, Resource>& resources) const;
 
 private:
-    QUrl _url;
-    std::unique_ptr<XPathParser> _parser;
-
     Coordinate createCoordinateFromWgs84LatLon(QString latlon) const;
-    void parseCoverage(QXmlItem &item, WcsItem &coverage) const;
+    void parseCoverage(QXmlItem &item, Ilwis::Resource &coverage) const;
 };
 }
 }
