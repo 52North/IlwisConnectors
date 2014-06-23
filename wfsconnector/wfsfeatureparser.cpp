@@ -99,7 +99,7 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table
     QString geometryAttributeName = _context.geometryAtttributeName();
     for (int i = 0; i < table->columnCount(); i++) {
 
-        ColumnDefinition& coldef = table->columndefinition(i);
+        ColumnDefinition& coldef = table->columndefinitionRef(i);
         if ( coldef.name() == QString(FEATUREIDCOLUMN) ) {
             continue; // auto filled column
         }

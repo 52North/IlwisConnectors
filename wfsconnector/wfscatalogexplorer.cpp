@@ -74,15 +74,6 @@ QString WfsCatalogExplorer::provider() const
     return "wfs";
 }
 
-
-
-
-
-
-
-
-
-
 QFileInfo WfsCatalogExplorer::toLocalFile(const QUrl &datasource) const
 {
     QFileInfo fileInfo;

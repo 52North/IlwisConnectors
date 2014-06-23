@@ -58,7 +58,7 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
                         const char *cname = gdal()->getLayerName(layerH);
                         int featureCount = gdal()->getFeatureCount(layerH, FALSE);
                         if ( cname){
-                            QString layerName(gdal()->getLayerName(layerH));
+                            QString layerName(cname);
                             QString layerurl = url.toString() + "/" + layerName;
                             addItem(handle, QUrl(layerurl), csyId, featureCount, itFEATURE , itCOORDSYSTEM | itTABLE);
                             addItem(handle, QUrl(layerurl), 0, iUNDEF, itTABLE , 0);
