@@ -46,7 +46,11 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOptio
     QFileInfo fileinf = containerConnector()->toLocalFile(source());
     ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", QUrl::fromLocalFile(fileinf.absoluteFilePath()));
     if(!csy.isValid()) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "coordinatesystem", coverage->name());
+        QString resource = QString("code=csy:unknown");
+        if (!csy.prepare(resource)) {
+            kernel()->issues()->log(TR("Fallback to 'unknown' failed, corrupt system files defintion"));
+            return false;
+        }
     }
     coverage->coordinateSystem(csy);
 
