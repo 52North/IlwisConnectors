@@ -361,7 +361,7 @@ bool GDALProxy::supports(const Resource &resource) const{
         else {
             QFileInfo info (resource.toLocalFile());
             QString ext = info.suffix();
-            if (sAllIlwisExtensions.contains(ext))
+            if (ext != "" && sAllIlwisExtensions.contains("." + ext))
                 return false;
             else
                 return 0 != gdal()->identifyDriver(resource.toLocalFile().toLocal8Bit(), 0); // last resort, let GDAL actually probe the file
@@ -375,6 +375,33 @@ bool GDALProxy::supports(const Resource &resource) const{
 GdalHandle* GDALProxy::openFile(const QFileInfo& filename, quint64 asker, GDALAccess mode, bool message){
     void* handle = nullptr;
     auto name = filename.absoluteFilePath();
+    if (message){
+        setCPLErrorHandler(GDALProxy::cplErrorHandler);
+    }else
+        setCPLErrorHandler(GDALProxy::cplDummyHandler);
+
+    if (_openedDatasets.contains(name)){
+        return _openedDatasets[name];
+    } else {
+        handle = gdal()->ogrOpen(name.toLocal8Bit(), mode, NULL);
+        if (handle){
+            return _openedDatasets[name] = new GdalHandle(handle, GdalHandle::etOGRDataSourceH, asker);
+        }else{
+            handle = gdal()->open(name.toLocal8Bit(), mode);
+            if (handle){
+                return _openedDatasets[name] = new GdalHandle(handle, GdalHandle::etGDALDatasetH, asker);
+            }else{
+                if ( message)
+                    ERROR1(ERR_COULD_NOT_OPEN_READING_1,name);
+                return NULL;
+            }
+        }
+    }
+}
+
+GdalHandle* GDALProxy::openUrl(const QUrl& url, quint64 asker, GDALAccess mode, bool message){
+    void* handle = nullptr;
+    auto name = QUrl::fromPercentEncoding(url.toString(QUrl::None).toLocal8Bit());
     if (message){
         setCPLErrorHandler(GDALProxy::cplErrorHandler);
     }else
