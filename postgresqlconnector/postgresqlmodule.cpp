@@ -47,13 +47,13 @@ QString PostgresqlModule::getVersion() const
 
 void PostgresqlModule::prepare()
 {
-    QString ilwisfolder = context()->ilwisFolder().absoluteFilePath();
-    QString path = ilwisfolder + "/extensions/postgresqlconnector/libpq";
-    QLibrary lib;
-    lib.setFileName(path);
-    if ( !lib.load()){
-        ERROR2(ERR_COULD_NOT_LOAD_2,"libpq",lib.errorString());
-    }
+//    QString ilwisfolder = context()->ilwisFolder().absoluteFilePath();
+//    QString path = ilwisfolder + "/extensions/postgresqlconnector/libpq";
+//    QLibrary lib;
+//    lib.setFileName(path);
+//    if ( !lib.load()){
+//        ERROR2(ERR_COULD_NOT_LOAD_2,"libpq",lib.errorString());
+//    }
 
     PostgresqlObjectFactory *factory = new PostgresqlObjectFactory();
     factory->prepare();
