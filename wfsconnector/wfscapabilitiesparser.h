@@ -28,6 +28,7 @@ private:
     void parseFeature(QXmlItem &item, WfsFeature &feature) const;
     Coordinate createCoordinateFromWgs84LatLon(QString latlon) const;
 
+    QString valueOf(QXmlItem &item, const QString &xpathQuqery) const;
 };
 }
 }

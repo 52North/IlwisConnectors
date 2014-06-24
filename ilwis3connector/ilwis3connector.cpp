@@ -114,10 +114,14 @@ QString Ilwis3Connector::noExt(const QString &name)
 bool Ilwis3Connector::isSystemObject(const QString& filename) {
     IlwisTypes tp = ilwisType(filename);
     QString table;
+    QString fn = noExt(filename).toLower();
 
-
-    if ( tp & itDOMAIN)
+    if ( tp & itDOMAIN){
         table = "numericdomain";
+        QString realname = Ilwis3Connector::name2Code(fn,"domain");
+        if ( realname != sUNDEF)
+            fn = realname;
+    }
     else if ( tp & itGEODETICDATUM)
         table = "datum";
     else if ( tp & itPROJECTION)
@@ -132,7 +136,7 @@ bool Ilwis3Connector::isSystemObject(const QString& filename) {
         return false;
     }
 
-    QString fn = noExt(filename).toLower();
+
 
     QSqlQuery db(kernel()->database());
     QString query = QString("Select code from %1 where code='%2'").arg(table, fn);
@@ -162,7 +166,6 @@ QString Ilwis3Connector::name2Code(const QString& nameIn, const QString& type) {
         return sUNDEF;
     }
     if (!db.next()) {
-        kernel()->issues()->log(TR("Couldn't find %2 %1").arg(type).arg(name));
         return sUNDEF;
     }
 
