@@ -139,6 +139,7 @@ bool GDALProxy::prepare() {
     getLongName = add<IGDALGetDriverName>("GDALGetDriverLongName");
     getShortName = add<IGDALGetDriverName>("GDALGetDriverShortName");
     getMetaDataItem = add<IGDALGetMetadataItem>("GDALGetMetadataItem");
+    getMetaData = add<IGDALGetMetadata>("GDALGetMetadata");
     minValue = add<IGDALRasValue>("GDALGetRasterMinimum");
     maxValue = add<IGDALRasValue>("GDALGetRasterMaximum");
     colorInterpretation = add<IGDALGetRasterColorInterpretation>("GDALGetRasterColorInterpretation");

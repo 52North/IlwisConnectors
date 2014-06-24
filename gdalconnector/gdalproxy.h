@@ -34,6 +34,7 @@ typedef int (*IGDALGetDriverCount )() ;
 typedef GDALDriverH (*IGDALGetDriverByName)(const char * ) ;
 typedef const char* (*IGDALGetDriverName )(GDALDriverH) ;
 typedef const char* (*IGDALGetMetadataItem )(GDALMajorObjectH , const char *, const char *) ;
+typedef char ** (*IGDALGetMetadata)(GDALMajorObjectH , const char *);
 typedef double (*IGDALRasValue)(GDALRasterBandH, int * );
 typedef GDALColorInterp (*IGDALGetRasterColorInterpretation)(GDALRasterBandH);
 
@@ -219,6 +220,7 @@ public:
         IGDALGetDriverName getLongName;
         IGDALGetDriverName getShortName;
         IGDALGetMetadataItem getMetaDataItem;
+        IGDALGetMetadata getMetaData;
         IGDALGetRasterColorInterpretation colorInterpretation;
         //Open Spatial Reference
         IOSRNewSpatialReference newSpatialRef;
