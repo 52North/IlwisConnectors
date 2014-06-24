@@ -353,10 +353,19 @@ bool GDALProxy::supports(const Resource &resource) const{
             return true;
         return false;
     };
-
+    QString sAllIlwisExtensions = ".mpr.mpa.mps.mpp.tbt.mpl.ioc.mpv.ilo.atx.grh.dom.rpr.grf.csy.his.hsa.hss.hsp.sms.stp.smc.ta2.mat.fil.fun.isl";
     if (! testFunc(resource.toLocalFile()))   {
         QFileInfo info(resource.container().toLocalFile()); // possible case that the container is a gdal catalog
-        return info.isFile() && testFunc(info); // for the moment a gdal catalog has to be another file
+        if (info.isFile() && testFunc(info)) // for the moment a gdal catalog has to be another file
+            return true;
+        else {
+            QFileInfo info (resource.toLocalFile());
+            QString ext = info.suffix();
+            if (sAllIlwisExtensions.contains(ext))
+                return false;
+            else
+                return 0 != gdal()->identifyDriver(resource.toLocalFile().toLocal8Bit(), 0); // last resort, let GDAL actually probe the file
+        }
     }
 
     return true;
