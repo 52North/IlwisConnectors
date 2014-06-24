@@ -64,11 +64,16 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const PrepareOptions &option
     if (!_handle){ // could be a container based object
         QFileInfo inf = fileinf.absolutePath();
         _handle = gdal()->openFile(inf, data->id(), GA_ReadOnly);
-    }
+        if (!_handle){ // let GDAL "probe" the original string
+            _handle = gdal()->openUrl(_filename,data->id(), GA_ReadOnly,false);
+            data->name(_filename.toString());
+        } else
+            data->name(fileinf.fileName());
+    } else
+        data->name(fileinf.fileName());
     if (!_handle){
         return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename.toString(),QString(gdal()->getLastErrorMsg()));
-    }
-    data->name(fileinf.fileName());
+    }    
 
     return true;
 }
