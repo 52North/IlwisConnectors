@@ -32,8 +32,13 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
         }else if(handle->type() == GdalHandle::etOGRDataSourceH){
             count = gdal()->getLayerCount(handle->handle());
         }
-        if ( count == 0)
+        if ( count == 0) {// could be a complex dataset
+            char **pdatasets = gdal()->getMetaData(handle->handle(), "SUBDATASETS");
+            if ( pdatasets != 0){
+                auto datasets = kvp2Map(pdatasets);
+            }
             return;
+        }
         //TODO: at the moment simplistic approach; all is corners georef and domain value
         // and a homogenous type if files. when we have example of more complex nature we wille xtend this+
         quint64 csyId = addCsy(handle, file, url, false);
@@ -148,6 +153,32 @@ quint64 GDALItems::addCsy(GdalHandle* handle, const QFileInfo &path, const QUrl&
         return resource.id();
     }else
         return ret;
+}
+
+std::map<QString, QString> GDALItems::kvp2Map(char **kvplist)
+{
+    std::map<QString, QString> result;
+    if ( kvplist != 0){
+
+        quint32 nItems=0;
+
+        while(*(kvplist + nItems) != NULL)
+        {
+            nItems++;
+            //kvplist++;
+        }
+
+
+        for(int i =0; i < nItems; ++i){
+            char *c = kvplist[i];
+            QString item(kvplist[i]);
+            QStringList kvp = item.split("=");
+            if ( kvp.size() == 2)
+                result[kvp[0]] = kvp[1];
+
+        }
+    }
+    return result;
 }
 
 
