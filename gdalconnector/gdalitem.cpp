@@ -4,7 +4,8 @@
 #include <QLibrary>
 #include <QStringList>
 #include "kernel.h"
-#include "identity.h"
+#include "ilwisdata.h"
+#include "domain.h"
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
@@ -36,12 +37,13 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
             char **pdatasets = gdal()->getMetaData(handle->handle(), "SUBDATASETS");
             if ( pdatasets != 0){
                 auto datasets = kvp2Map(pdatasets);
+                handleComplexDataSet(datasets);
             }
             return;
         }
         //TODO: at the moment simplistic approach; all is corners georef and domain value
         // and a homogenous type if files. when we have example of more complex nature we wille xtend this+
-        quint64 csyId = addCsy(handle, file, url, false);
+        quint64 csyId = addCsy(handle, file.absoluteFilePath(), url, false);
         if ( handle->type() == GdalHandle::etGDALDatasetH) {
             quint64 grfId = addItem(handle, url, csyId, 0, itGEOREF,itCOORDSYSTEM);
             addItem(handle, url, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM);
@@ -80,6 +82,71 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
 
         gdal()->closeFile(file.absoluteFilePath(), i64UNDEF);
     }
+}
+
+void GDALItems::handleComplexDataSet(const std::map<QString, QString>& datasetdesc){
+    auto iter = datasetdesc.begin();
+    // we know there is altijd  pairs SUBDATASET_<n>_DESC,SUBDATASET_<n>_NAME in the map
+    while(iter !=  datasetdesc.end()) {
+        Size<> sz;
+        QString shortname;
+        QStringList parts = iter->second.split("//");
+        QString sizeString = parts[0].mid(1,parts[0].size() - 3);
+        bool ok1, ok2, ok3;
+
+        QStringList szMembers = sizeString.split("x");
+        if ( szMembers.size() == 2){
+            int x = szMembers[0].toInt(&ok1);
+            int y = szMembers[1].toInt(&ok2);
+            if ( ok1 && ok2)
+                sz = Size<>(x,y,1);
+        } else if ( szMembers.size() == 3){
+            int z = szMembers[0].toInt(&ok1);
+            int x = szMembers[1].toInt(&ok2);
+            int y = szMembers[2].toInt(&ok3);
+            if ( ok1 && ok2 && ok3)
+                sz = Size<>(x,y,z);
+        }
+        QStringList secondPart = parts[1].split("(");
+        shortname = secondPart[0].trimmed();
+        QString numbertype = secondPart[1].left(secondPart[1].size() - 1);
+        quint64 domid = numbertype2domainid(numbertype);
+        ++iter;
+        QString encodedUrl = QUrl::toPercentEncoding(iter->second,"/","\"");
+        QString rawUrl = "gdal://"+ encodedUrl;
+        parts = iter->second.split("\"");
+        QString normalizedUrl = "file:///" + parts[1] + "/" + shortname;
+        Resource gdalitem(normalizedUrl,rawUrl,itRASTER);
+        gdalitem.code(iter->second);
+        gdalitem.name(shortname, false);
+        gdalitem.dimensions(sz.toString());
+        GDALDatasetH handle = gdal()->open(gdalitem.code().toLocal8Bit(), GA_ReadOnly);
+        GdalHandle ihandle(handle,GdalHandle::etGDALDatasetH);
+        quint64 csyid = addCsy(&ihandle,gdalitem.code(),normalizedUrl,false);
+        if ( csyid != i64UNDEF){
+            gdalitem.addProperty("coordinatesystem", csyid);
+        }
+        gdal()->close(handle);
+        gdalitem.addProperty("domain",domid);
+        insert(gdalitem);
+        ++iter;
+
+    }
+}
+
+quint64 GDALItems::numbertype2domainid(const QString& numbertype) const{
+    QString systemdomain="value";
+    if ( numbertype.indexOf("integer") != -1)
+        systemdomain = "integer";
+    if ( numbertype == "8-bit integer"){
+        systemdomain = "image";
+    } if ( numbertype == "16-bit unsigned integer"){
+        systemdomain = "image16"    ;
+    } else if ( numbertype == "32-bit unsigned integer"){
+        systemdomain = "count";
+    }
+    IDomain dom(systemdomain);
+    return dom->id();
 }
 
 QString GDALItems::dimensions(GdalHandle* handle) const
@@ -122,9 +189,9 @@ quint64 GDALItems::addItem(GdalHandle* handle,const QUrl& url, quint64 csyid, qu
     return gdalItem.id();
 }
 
-quint64 GDALItems::addCsy(GdalHandle* handle, const QFileInfo &path, const QUrl& url, bool message) {
+quint64 GDALItems::addCsy(GdalHandle* handle, const QString &path, const QUrl& url, bool message) {
     quint64 ret = i64UNDEF;
-    OGRSpatialReferenceH srshandle = gdal()->srsHandle(handle, path.absoluteFilePath(), message);
+    OGRSpatialReferenceH srshandle = gdal()->srsHandle(handle, path, message);
     if (srshandle != 0){
         const char * projcs_epsg = gdal()->getAuthorityCode(srshandle, "PROJCS");
         const char * geocs_epsg = gdal()->getAuthorityCode(srshandle, "GEOGCS");
@@ -139,10 +206,10 @@ quint64 GDALItems::addCsy(GdalHandle* handle, const QFileInfo &path, const QUrl&
         }
     }
     if ( srshandle)
-        gdal()->releaseSrsHandle(handle, srshandle, path.absoluteFilePath());
+        gdal()->releaseSrsHandle(handle, srshandle, path);
 
     if(ret == i64UNDEF){
-        Resource resource(url,itCONVENTIONALCOORDSYSTEM );
+        Resource resource("code=csy:unknown",itCOORDSYSTEM);
         Envelope env = gdal()->envelope(handle,0);
         if ( env.isValid() && !env.isNull()){
             QString dim = QString("%1 x %2 x %3 x %4").arg(env.min_corner().x).arg(env.min_corner().y).arg(env.max_corner().x).arg(env.max_corner().y);
@@ -170,7 +237,6 @@ std::map<QString, QString> GDALItems::kvp2Map(char **kvplist)
 
 
         for(int i =0; i < nItems; ++i){
-            char *c = kvplist[i];
             QString item(kvplist[i]);
             QStringList kvp = item.split("=");
             if ( kvp.size() == 2)
