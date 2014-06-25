@@ -75,7 +75,6 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
         gcoverage->coordinateSystem()->envelope(gcoverage->envelope());
         grf->size(sz);
         gcoverage->georeference(grf);
-        gcoverage->size(sz);
 
         double vminRaster=rUNDEF, vmaxRaster=rUNDEF;
         double resolution= 0;
@@ -92,8 +91,8 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
             resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
             auto vmin = gdal()->minValue(layerHandle, &ok);
             auto vmax = gdal()->maxValue(layerHandle, &ok);
-            vminRaster = std::min(vmin, vminRaster);
-            vmaxRaster = std::max(vmax, vmaxRaster);
+            vminRaster = Ilwis::min(vmin, vminRaster);
+            vmaxRaster = Ilwis::max(vmax, vmaxRaster);
             gcoverage->datadef(i) = createDataDef(vmin, vmax, resolution);
 
         }
