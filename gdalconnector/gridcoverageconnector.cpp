@@ -223,7 +223,8 @@ bool RasterCoverageConnector::setGeotransform(RasterCoverage *raster,GDALDataset
         }
         return true;
     }
-    return ERROR2(ERR_OPERATION_NOTSUPPORTED2,TR("Georeference type"), "Gdal");
+    //return ERROR2(ERR_OPERATION_NOTSUPPORTED2,TR("Georeference type"), "Gdal");
+    return true;
 }
 
 bool RasterCoverageConnector::loadDriver()
@@ -294,9 +295,9 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
 bool RasterCoverageConnector::setSRS(Coverage *raster, GDALDatasetH dataset) const
 {
     OGRSpatialReferenceH srsH = createSRS(raster->coordinateSystem());
-    if ( srsH == 0) {
-        reportError(dataset);
-        return false;
+    if ( srsH == 0) { // we are not setting CRS
+       // reportError(dataset);
+        return true;
     }
     char *wktText = NULL;
     gdal()->exportToWkt(srsH,&wktText);
