@@ -54,7 +54,12 @@ bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
     quint32 lines = odf.value("GeoRef","Lines").toInt(&ok1);
     quint32 columns = odf.value("GeoRef","Columns").toInt(&ok2);
     if ( !(ok1 & ok2)) {
-        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Lines/Columns","Georeference");
+        // no consistency in how lines/columns are spelled ( casing). Mostely the above casing is used, but not always
+        // so we try again
+        lines = odf.value("GeoRef","lines").toInt(&ok1);
+        columns = odf.value("GeoRef","columns").toInt(&ok2);
+        if ( !(ok1 & ok2))
+            return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Lines/Columns","Georeference");
     }
 
     GeoReference *grf = static_cast<GeoReference *>(data);

@@ -270,8 +270,11 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
             DomainConnector conn(dmColumn->source(), itDOMAIN);
             conn.storeMetaData(dmColumn.ptr());
         }
-        _odf->setKeyValue("TableStore", QString("Col%1").arg(index - reduceColumns), def.name());
-        QString colName = QString("Col:%1").arg(def.name());
+        QString colpostfix = def.name();
+        if ( colpostfix.indexOf(QRegExp("[.]")) != -1)
+            colpostfix = "'" + colpostfix + "'";
+        _odf->setKeyValue("TableStore", QString("Col%1").arg(index - reduceColumns), colpostfix);
+        QString colName = QString("Col:%1").arg(colpostfix);
         _odf->setKeyValue(colName, "Time", Time::now().toString());
         _odf->setKeyValue(colName, "Version", "3.1");
         _odf->setKeyValue(colName, "Class", "Column");

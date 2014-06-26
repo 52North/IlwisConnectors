@@ -62,13 +62,20 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const PrepareOptions &option
     QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
     _handle = gdal()->openFile(fileinf, data->id(), GA_ReadOnly,false); // no messages here
     if (!_handle){ // could be a container based object
-        QFileInfo inf = fileinf.absolutePath();
-        _handle = gdal()->openFile(inf, data->id(), GA_ReadOnly);
-    }
+        QString code = source().code();
+        if ( code != sUNDEF){
+            _handle = gdal()->openUrl(code,data->id(), GA_ReadOnly,false);
+            data->name(source().name());
+        } else {
+            QFileInfo inf = fileinf.absolutePath();
+            _handle = gdal()->openFile(inf, data->id(), GA_ReadOnly);
+            data->name(fileinf.fileName());
+        }
+    } else
+        data->name(fileinf.fileName());
     if (!_handle){
         return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename.toString(),QString(gdal()->getLastErrorMsg()));
     }
-    data->name(fileinf.fileName());
 
     return true;
 }

@@ -139,6 +139,7 @@ bool GDALProxy::prepare() {
     getLongName = add<IGDALGetDriverName>("GDALGetDriverLongName");
     getShortName = add<IGDALGetDriverName>("GDALGetDriverShortName");
     getMetaDataItem = add<IGDALGetMetadataItem>("GDALGetMetadataItem");
+    getMetaData = add<IGDALGetMetadata>("GDALGetMetadata");
     minValue = add<IGDALRasValue>("GDALGetRasterMinimum");
     maxValue = add<IGDALRasValue>("GDALGetRasterMaximum");
     colorInterpretation = add<IGDALGetRasterColorInterpretation>("GDALGetRasterColorInterpretation");
@@ -353,10 +354,19 @@ bool GDALProxy::supports(const Resource &resource) const{
             return true;
         return false;
     };
-
+    QString sAllIlwisExtensions = ".mpr.mpa.mps.mpp.tbt.mpl.ioc.mpv.ilo.atx.grh.dom.rpr.grf.csy.his.hsa.hss.hsp.sms.stp.smc.ta2.mat.fil.fun.isl";
     if (! testFunc(resource.toLocalFile()))   {
         QFileInfo info(resource.container().toLocalFile()); // possible case that the container is a gdal catalog
-        return info.isFile() && testFunc(info); // for the moment a gdal catalog has to be another file
+        if (info.isFile() && testFunc(info)) // for the moment a gdal catalog has to be another file
+            return true;
+        else {
+            QFileInfo info (resource.toLocalFile());
+            QString ext = info.suffix();
+            if (ext != "" && sAllIlwisExtensions.contains("." + ext))
+                return false;
+            else
+                return 0 != gdal()->identifyDriver(resource.toLocalFile().toLocal8Bit(), 0); // last resort, let GDAL actually probe the file
+        }
     }
 
     return true;
@@ -366,6 +376,33 @@ bool GDALProxy::supports(const Resource &resource) const{
 GdalHandle* GDALProxy::openFile(const QFileInfo& filename, quint64 asker, GDALAccess mode, bool message){
     void* handle = nullptr;
     auto name = filename.absoluteFilePath();
+    if (message){
+        setCPLErrorHandler(GDALProxy::cplErrorHandler);
+    }else
+        setCPLErrorHandler(GDALProxy::cplDummyHandler);
+
+    if (_openedDatasets.contains(name)){
+        return _openedDatasets[name];
+    } else {
+        handle = gdal()->ogrOpen(name.toLocal8Bit(), mode, NULL);
+        if (handle){
+            return _openedDatasets[name] = new GdalHandle(handle, GdalHandle::etOGRDataSourceH, asker);
+        }else{
+            handle = gdal()->open(name.toLocal8Bit(), mode);
+            if (handle){
+                return _openedDatasets[name] = new GdalHandle(handle, GdalHandle::etGDALDatasetH, asker);
+            }else{
+                if ( message)
+                    ERROR1(ERR_COULD_NOT_OPEN_READING_1,name);
+                return NULL;
+            }
+        }
+    }
+}
+
+GdalHandle* GDALProxy::openUrl(const QUrl& url, quint64 asker, GDALAccess mode, bool message){
+    void* handle = nullptr;
+    auto name = QUrl::fromPercentEncoding(url.toString(QUrl::None).toLocal8Bit());
     if (message){
         setCPLErrorHandler(GDALProxy::cplErrorHandler);
     }else

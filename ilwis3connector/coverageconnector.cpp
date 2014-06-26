@@ -122,6 +122,10 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOptio
 
     Coverage *coverage = static_cast<Coverage *>(data);
     QString csyName = _odf->value("BaseMap","CoordSystem");
+    if ( csyName == sUNDEF){
+        //due to inconsistent spelling we have to check other cases
+        csyName = _odf->value("BaseMap","Coordsystem");
+    }
     if ( csyName.toLower() == "latlonwgs84.csy")
         csyName = "code=epsg:4326";
     else if ( csyName.toLower() == "unknown.csy")
@@ -153,6 +157,9 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOptio
     }
 
     QString cbounds = _odf->value("BaseMap","CoordBounds");
+    if ( cbounds == sUNDEF) // possible inconsistent spelling
+        cbounds = _odf->value("BaseMap","Coordbounds");
+
     QStringList parts = cbounds.split(" ", QString::SkipEmptyParts);
     if ( parts.size() == 4) {
         double minx = parts[0].toDouble();
@@ -316,13 +323,13 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
         dataFile = dataFile.left(index);
     }else{
         if ( tp == itPOLYGON)
-            attDom += ".dom";
+            attDom += ".mpa";
         if ( tp == itRASTER)
             attDom += ".mpr";
         if ( tp == itPOINT)
-            attDom += ".dom";
+            attDom += ".mpp";
         if ( tp == itLINE)
-            attDom += ".dom";
+            attDom += ".mps";
     }
     if ( attTable->columnCount() > 1) { // one column means only featurid which we dont save.
         QFileInfo inf(dataFile);
