@@ -1,6 +1,5 @@
 /* The ILWIS SWIG interface file*/
 
-
 %module(docstring="The Python API for ILWIS Objects") ilwisobjects
 
 %feature("autodoc","1");

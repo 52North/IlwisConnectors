@@ -771,9 +771,11 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     DataDefinition datadef;
 
     ITable attTable = fcov->attributeTable();
-    ColumnDefinition coldef = attTable->columndefinition(COVERAGEKEYCOLUMN);
-    if ( coldef.isValid() && coldef.datadef().domain<>()->ilwisType() == itITEMDOMAIN) {
-        datadef = coldef.datadef();
+    int index = attTable->columnIndex(COVERAGEKEYCOLUMN);
+    if ( index != iUNDEF ) {
+        const ColumnDefinition& coldef = attTable->columndefinitionRef(index);
+        if ( coldef.datadef().domain<>()->ilwisType() == itITEMDOMAIN)
+            datadef = DataDefinition(coldef.datadef().domain(),coldef.datadef().range()->clone());
     } else {
         INamedIdDomain indexdom;
         indexdom.prepare();
@@ -789,7 +791,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     }
     bool isMulti = (fcov->featureTypes() & (fcov->featureTypes() - 1)) != 0;
     QString baseName = Ilwis3Connector::outputNameFor(fcov, isMulti, type);
-    int index = baseName.lastIndexOf(".");
+    index = baseName.lastIndexOf(".");
     if ( index != -1) {
         baseName = baseName.left(index);
     }

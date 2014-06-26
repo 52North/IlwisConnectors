@@ -46,6 +46,9 @@ namespace pythonapi {
 
     //======list============================
     bool PyListCheckExact(const PyObject* obj);
+    PyObject* newPyList(int size);
+    PyObject* getListItem(PyObject* list, int index);
+    bool setListItem(PyObject* list, int index, PyObject* item);
 
     //========Py_buffer==========================
     Py_buffer* newPyBuffer(void* buf, int len, int readOnly);

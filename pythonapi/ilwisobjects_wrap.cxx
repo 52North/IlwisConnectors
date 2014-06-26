@@ -3006,13 +3006,12 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_pythonapi__it swig_types[63]
 #define SWIGTYPE_p_short swig_types[64]
 #define SWIGTYPE_p_signed_char swig_types[65]
-#define SWIGTYPE_p_std__pairT_double_double_t swig_types[66]
-#define SWIGTYPE_p_unsigned_char swig_types[67]
-#define SWIGTYPE_p_unsigned_int swig_types[68]
-#define SWIGTYPE_p_unsigned_long_long swig_types[69]
-#define SWIGTYPE_p_unsigned_short swig_types[70]
-static swig_type_info *swig_types[72];
-static swig_module_info swig_module = {swig_types, 71, 0, 0, 0, 0};
+#define SWIGTYPE_p_unsigned_char swig_types[66]
+#define SWIGTYPE_p_unsigned_int swig_types[67]
+#define SWIGTYPE_p_unsigned_long_long swig_types[68]
+#define SWIGTYPE_p_unsigned_short swig_types[69]
+static swig_type_info *swig_types[71];
+static swig_module_info swig_module = {swig_types, 70, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -13434,7 +13433,7 @@ SWIGINTERN PyObject *_wrap_NumericStatistics_stretchLimits(PyObject *SWIGUNUSEDP
   int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  std::pair< double,double > result;
+  PyObject *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:NumericStatistics_stretchLimits",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
@@ -13449,13 +13448,13 @@ SWIGINTERN PyObject *_wrap_NumericStatistics_stretchLimits(PyObject *SWIGUNUSEDP
   arg2 = static_cast< double >(val2);
   {
     try {
-      result = ((pythonapi::ContainerStatistics< double > const *)arg1)->stretchLimits(arg2);
+      result = (PyObject *)((pythonapi::ContainerStatistics< double > const *)arg1)->stretchLimits(arg2);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj((new std::pair< double,double >(static_cast< const std::pair< double,double >& >(result))), SWIGTYPE_p_std__pairT_double_double_t, SWIG_POINTER_OWN |  0 );
+  resultobj = result;
   return resultobj;
 fail:
   return NULL;
@@ -21287,7 +21286,7 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_band__SWIG_0(PyObject *SWIGUNUSEDPARM(
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  SwigValueWrapper< pythonapi::PixelIterator > result;
+  pythonapi::RasterCoverage result;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:RasterCoverage_band",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
@@ -21304,7 +21303,7 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_band__SWIG_0(PyObject *SWIGUNUSEDPARM(
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj((new pythonapi::PixelIterator(static_cast< const pythonapi::PixelIterator& >(result))), SWIGTYPE_p_pythonapi__PixelIterator, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_NewPointerObj((new pythonapi::RasterCoverage(static_cast< const pythonapi::RasterCoverage& >(result))), SWIGTYPE_p_pythonapi__RasterCoverage, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -21315,10 +21314,10 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_band__SWIG_1(PyObject *SWIGUNUSEDPARM(
   PyObject *resultobj = 0;
   pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
   PyObject *arg2 = (PyObject *) 0 ;
-  SwigValueWrapper< pythonapi::PixelIterator > arg3 ;
+  pythonapi::RasterCoverage *arg3 = (pythonapi::RasterCoverage *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp3 ;
+  void *argp3 = 0 ;
   int res3 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
@@ -21331,19 +21330,11 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_band__SWIG_1(PyObject *SWIGUNUSEDPARM(
   }
   arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
   arg2 = obj1;
-  {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__PixelIterator,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "RasterCoverage_band" "', argument " "3"" of type '" "pythonapi::PixelIterator""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "RasterCoverage_band" "', argument " "3"" of type '" "pythonapi::PixelIterator""'");
-    } else {
-      pythonapi::PixelIterator * temp = reinterpret_cast< pythonapi::PixelIterator * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
-    }
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "RasterCoverage_band" "', argument " "3"" of type '" "pythonapi::RasterCoverage *""'"); 
   }
+  arg3 = reinterpret_cast< pythonapi::RasterCoverage * >(argp3);
   {
     try {
       (arg1)->band(arg2,arg3);
@@ -21389,7 +21380,8 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_band(PyObject *self, PyObject *args) {
     if (_v) {
       _v = (argv[1] != 0);
       if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_pythonapi__PixelIterator, 0);
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
         _v = SWIG_CheckState(res);
         if (_v) {
           return _wrap_RasterCoverage_band__SWIG_1(self, args);
@@ -21402,7 +21394,7 @@ fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'RasterCoverage_band'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    pythonapi::RasterCoverage::band(PyObject *)\n"
-    "    pythonapi::RasterCoverage::band(PyObject *,pythonapi::PixelIterator)\n");
+    "    pythonapi::RasterCoverage::band(PyObject *,pythonapi::RasterCoverage *)\n");
   return 0;
 }
 
@@ -28926,7 +28918,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"NumericStatistics_binCount", _wrap_NumericStatistics_binCount, METH_VARARGS, (char *)"NumericStatistics_binCount(NumericStatistics self, quint32 value)"},
 	 { (char *)"NumericStatistics___bool__", _wrap_NumericStatistics___bool__, METH_VARARGS, (char *)"NumericStatistics___bool__(NumericStatistics self) -> bool"},
 	 { (char *)"NumericStatistics_stretchLinear", _wrap_NumericStatistics_stretchLinear, METH_VARARGS, (char *)"NumericStatistics_stretchLinear(NumericStatistics self, double input, int stretchRange) -> double"},
-	 { (char *)"NumericStatistics_stretchLimits", _wrap_NumericStatistics_stretchLimits, METH_VARARGS, (char *)"NumericStatistics_stretchLimits(NumericStatistics self, double percent) -> std::pair< double,double >"},
+	 { (char *)"NumericStatistics_stretchLimits", _wrap_NumericStatistics_stretchLimits, METH_VARARGS, (char *)"NumericStatistics_stretchLimits(NumericStatistics self, double percent) -> PyObject *"},
 	 { (char *)"NumericStatistics___getitem__", _wrap_NumericStatistics___getitem__, METH_VARARGS, (char *)"NumericStatistics___getitem__(NumericStatistics self, pythonapi::PropertySets pyMethod) -> double"},
 	 { (char *)"NumericStatistics_prop", _wrap_NumericStatistics_prop, METH_VARARGS, (char *)"NumericStatistics_prop(NumericStatistics self, pythonapi::PropertySets pyMethod) -> double"},
 	 { (char *)"NumericStatistics_histogram", _wrap_NumericStatistics_histogram, METH_VARARGS, (char *)"NumericStatistics_histogram(NumericStatistics self) -> PyObject *"},
@@ -29156,8 +29148,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"RasterCoverage_begin", _wrap_RasterCoverage_begin, METH_VARARGS, (char *)"RasterCoverage_begin(RasterCoverage self) -> PixelIterator"},
 	 { (char *)"RasterCoverage_end", _wrap_RasterCoverage_end, METH_VARARGS, (char *)"RasterCoverage_end(RasterCoverage self) -> PixelIterator"},
 	 { (char *)"RasterCoverage_band", _wrap_RasterCoverage_band, METH_VARARGS, (char *)"\n"
-		"band(PyObject * pyTrackIndex) -> PixelIterator\n"
-		"RasterCoverage_band(RasterCoverage self, PyObject * pyTrackIndex, PixelIterator pyIter)\n"
+		"band(PyObject * pyTrackIndex) -> RasterCoverage\n"
+		"RasterCoverage_band(RasterCoverage self, PyObject * pyTrackIndex, RasterCoverage pyRaster)\n"
 		""},
 	 { (char *)"RasterCoverage_addBand", _wrap_RasterCoverage_addBand, METH_VARARGS, (char *)"RasterCoverage_addBand(RasterCoverage self, int index, DataDefinition pyDef, PyObject * pyTrackIndex)"},
 	 { (char *)"RasterCoverage_select", _wrap_RasterCoverage_select, METH_VARARGS, (char *)"\n"
@@ -29646,7 +29638,6 @@ static swig_type_info _swigt__p_pythonapi__TimeInterval = {"_p_pythonapi__TimeIn
 static swig_type_info _swigt__p_pythonapi__it = {"_p_pythonapi__it", "pythonapi::it *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_short = {"_p_short", "qint16 *|short *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "signed char *|qint8 *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__pairT_double_double_t = {"_p_std__pairT_double_double_t", "std::pair< double,double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|quint8 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "quint32 *|unsigned int *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_long_long = {"_p_unsigned_long_long", "quint64 *|unsigned long long *|IlwisTypes *", 0, 0, (void*)0, 0};
@@ -29719,7 +29710,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_pythonapi__it,
   &_swigt__p_short,
   &_swigt__p_signed_char,
-  &_swigt__p_std__pairT_double_double_t,
   &_swigt__p_unsigned_char,
   &_swigt__p_unsigned_int,
   &_swigt__p_unsigned_long_long,
@@ -29792,7 +29782,6 @@ static swig_cast_info _swigc__p_pythonapi__TimeInterval[] = {  {&_swigt__p_pytho
 static swig_cast_info _swigc__p_pythonapi__it[] = {  {&_swigt__p_pythonapi__it, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_short[] = {  {&_swigt__p_short, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_signed_char[] = {  {&_swigt__p_signed_char, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__pairT_double_double_t[] = {  {&_swigt__p_std__pairT_double_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_long_long[] = {  {&_swigt__p_unsigned_long_long, 0, 0, 0},{0, 0, 0, 0}};
@@ -29865,7 +29854,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_pythonapi__it,
   _swigc__p_short,
   _swigc__p_signed_char,
-  _swigc__p_std__pairT_double_double_t,
   _swigc__p_unsigned_char,
   _swigc__p_unsigned_int,
   _swigc__p_unsigned_long_long,

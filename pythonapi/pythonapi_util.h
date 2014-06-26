@@ -215,8 +215,12 @@ namespace pythonapi {
             return this->data().stretchLinear(input, stretchRange);
         }
 
-        std::pair<double, double> stretchLimits(double percent) const{
-            return this->data().stretchLimits(percent);
+        PyObject* stretchLimits(double percent) const{
+            PyObject* pyTup = newPyTuple(2);
+            std::pair<double, double> cpair = this->data().stretchLimits(percent);
+            setTupleItem(pyTup, 0, PyFloatFromDouble(std::get<0>(cpair)));
+            setTupleItem(pyTup, 1, PyFloatFromDouble(std::get<1>(cpair)));
+            return pyTup;
         }
 
         double __getitem__(PropertySets pyMethod){
@@ -231,7 +235,7 @@ namespace pythonapi {
 
         PyObject* histogram(){
             std::vector<HistogramBin> hisVec = this->data().histogram();
-            PyObject* pyTup = newPyTuple(hisVec.size());
+            PyObject* pyList = newPyList(hisVec.size());
             for(int i = 0; i < hisVec.size(); i++){
                 PyObject* histoTup = newPyTuple(2);
                 HistogramBin histo = hisVec[i];
@@ -239,9 +243,9 @@ namespace pythonapi {
                 setTupleItem(histoTup, 0, PyFloatFromDouble((double)histo._limit));
                 setTupleItem(histoTup, 1, PyFloatFromDouble((double)histo._count));
 
-                setTupleItem(pyTup, i, histoTup);
+                setListItem(pyList, i, histoTup);
             }
-            return pyTup;
+            return pyList;
         }
 
        //not yet implemented in ilwisobjects.i

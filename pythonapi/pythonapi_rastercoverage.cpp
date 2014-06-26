@@ -235,16 +235,28 @@ PixelIterator RasterCoverage::end(){
     return PixelIterator(this).end();
 }
 
-PixelIterator RasterCoverage::band(PyObject* pyTrackIndex){
+RasterCoverage RasterCoverage::band(PyObject* pyTrackIndex){
     std::unique_ptr<QVariant> ilwTrackIndex(PyObject2QVariant(pyTrackIndex));
-    PixelIterator iter = PixelIterator(this);
+    Ilwis::IRasterCoverage map2;
+    map2.prepare();
+
+    map2->coordinateSystem(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
+    map2->georeference(this->ptr()->as<Ilwis::RasterCoverage>()->georeference());
+    map2->datadef() = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
+
+    Ilwis::PixelIterator iterOut(map2);
     Ilwis::PixelIterator ilwIter = this->ptr()->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex);
-    iter._ilwisPixelIterator.reset(new Ilwis::PixelIterator(ilwIter));
-    return iter;
+    while(ilwIter != ilwIter.end()){
+        *iterOut = *ilwIter;
+        ++iterOut;
+        ++ilwIter;
+    }
+    return RasterCoverage(&map2);
 }
 
-void RasterCoverage::band(PyObject* pyTrackIndex, PixelIterator pyIter){
+void RasterCoverage::band(PyObject* pyTrackIndex, RasterCoverage* pyRaster){
     std::unique_ptr<QVariant> ilwTrackIndex(PyObject2QVariant(pyTrackIndex));
+    PixelIterator pyIter(pyRaster);
     this->ptr()->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex, pyIter.ptr());
 }
 

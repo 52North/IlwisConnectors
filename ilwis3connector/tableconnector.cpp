@@ -202,7 +202,7 @@ bool TableConnector::storeBinaryData(IlwisObject *obj)
         return false;
 
     for(int i=0; i < tbl->columnCount(); ++i) {
-        const ColumnDefinition& def = tbl->columndefinition(i);
+        const ColumnDefinition& def = const_cast<Table *>(tbl)->columndefinitionRef(i);
         if ( def.name() == FEATUREIDCOLUMN)
             skip = i;
         ilw3tbl.addStoreDefinition(def.datadef());
