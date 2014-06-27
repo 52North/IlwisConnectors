@@ -7,6 +7,7 @@
 #include <QXmlResultItems>
 
 #include "kernel.h"
+#include "geometries.h"
 #include "wfsresponse.h"
 #include "wfsfeature.h"
 #include "wfscapabilitiesparser.h"
@@ -31,7 +32,7 @@ WfsCapabilitiesParser::~WfsCapabilitiesParser()
 void WfsCapabilitiesParser::parseFeatures(std::vector<Resource> &wfsFeatures)
 {
     QXmlResultItems results;
-    QXmlQuery *query = _parser->queryFromRoot("//wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType");
+    UPXmlQuery& query = _parser->queryFromRoot("//wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType");
 
     if (query->isValid()) {
         query->evaluateTo( &results);
@@ -48,46 +49,33 @@ void WfsCapabilitiesParser::parseFeatures(std::vector<Resource> &wfsFeatures)
     }
 }
 
+QString WfsCapabilitiesParser::valueOf(QXmlItem &item, const QString& xpathQuqery) const{
+    QString value;
+    UPXmlQuery& query = _parser->queryRelativeFrom(item, xpathQuqery);
+    query->evaluateTo(&value);
+    value = value.trimmed();
+
+    return value;
+}
+
 void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) const
 {
-    QXmlQuery *query;
-
-    QString name;
-    query = _parser->queryRelativeFrom(item, "./wfs:Name/string()");
-    query->evaluateTo( &name);
-    QString type = name.trimmed();
 
     QUrl rawUrl, normalizedUrl;
-    createGetFeatureUrl(type, rawUrl, normalizedUrl);
     feature = WfsFeature(rawUrl, normalizedUrl);
-    feature.name(type, false);
+    feature.name(valueOf(item, "./wfs:Name/string()"), false);
+    createGetFeatureUrl(feature.name(), rawUrl, normalizedUrl);
+    feature.setTitle(valueOf(item, "./wfs:Title/string()"));
+    feature.setTitle(valueOf(item, "./wfs:Abstract/string()"));
+    feature.setTitle(WfsUtils::normalizeEpsgCode(valueOf(item, "./wfs:DefaultSRS/string()")));
 
-    QString title;
-    query = _parser->queryRelativeFrom(item, "./wfs:Title/string()");
-    query->evaluateTo( &title);
-    feature.setTitle(title.trimmed());
+    QString llText = valueOf(item, "./ows:WGS84BoundingBox/ows:LowerCorner/string()");
+    QString urText = valueOf(item, "./ows:WGS84BoundingBox/ows:UpperCorner/string()");
 
-    QString abstract;
-    query = _parser->queryRelativeFrom(item, "./wfs:Abstract/string()");
-    query->evaluateTo( &abstract);
-    feature.setTitle(abstract.trimmed());
-
-    QString srs;
-    query = _parser->queryRelativeFrom(item, "./wfs:DefaultSRS/string()");
-    query->evaluateTo( &srs);
-    QString res = QString("code=").append(WfsUtils::normalizeEpsgCode(srs));
-    feature.addProperty("coordinateSystem", res);
-
-    QString llText;
-    query = _parser->queryRelativeFrom(item, "./ows:WGS84BoundingBox/ows:LowerCorner/string()");
-    query->evaluateTo( &llText);
-
-    QString urText;
-    query = _parser->queryRelativeFrom(item, "./ows:WGS84BoundingBox/ows:UpperCorner/string()");
-    query->evaluateTo( &urText);
-
-    feature.addProperty("envelope.ll", llText);
-    feature.addProperty("envelope.ur", urText);
+    Coordinate ll = createCoordinateFromWgs84LatLon(llText);
+    Coordinate ur = createCoordinateFromWgs84LatLon(urText);
+    Envelope envelope(ll, ur);
+    feature.setBBox(envelope);
 }
 void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl& rawUrl, QUrl& normalizedUrl) const
 {
@@ -101,5 +89,13 @@ void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl
     normalizedUrl = _url.toString(QUrl::RemoveQuery) + "/" + featureName;
 }
 
+Coordinate WfsCapabilitiesParser::createCoordinateFromWgs84LatLon(QString latlon) const
+{
+    int splitIndex = latlon.indexOf(" ");
+    QString lon = latlon.left(splitIndex).trimmed();
+    QString lat = latlon.mid(splitIndex + 1).trimmed();
+    Coordinate coords(lon.toDouble(), lat.toDouble());
+    return coords;
+}
 
 

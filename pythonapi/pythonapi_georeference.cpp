@@ -80,4 +80,16 @@ namespace pythonapi {
         return this->ptr()->as<Ilwis::GeoReference>()->isCompatible(other.ptr()->as<Ilwis::GeoReference>());
     }
 
+    bool GeoReference::isValid() const{
+        return this->ptr()->as<Ilwis::GeoReference>()->isValid();
+    }
+
+    bool GeoReference::compute(){
+        return this->ptr()->as<Ilwis::GeoReference>()->compute();
+    }
+
+    IlwisTypes GeoReference::ilwisType() const{
+        return itGEOREF;
+    }
+
 } // namespace pythonapi

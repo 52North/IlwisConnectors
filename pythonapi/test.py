@@ -5,6 +5,8 @@ from unittest.case import skip
 
 try:
     from ilwisobjects import *
+    from datetime import *
+    from math import *
 
     workingDir = "file:///D:/Profiles/KolbeJ/ILWIS/testdata/pytest"
     babyDir = "/baby"
@@ -17,7 +19,7 @@ try:
 
     import unittest as ut
 
-    #@ut.skip("temporarily")
+    # @ut.skip("temporarily")
     class TestTable(ut.TestCase):
         def setUp(self):
             try:
@@ -59,7 +61,7 @@ try:
                 t.columns()
             )
             self.assertEqual((4, 5, 6), t.select("march < 100 AND march != 87"))
-            self.assertEqual((9, 10, 11), t.select("march == " + str(Const.rUNDEF)))
+            self.assertEqual((9, 10, 11), t.select("march == ?"))
             self.assertEqual(13, t.columnIndex("ident"))
             self.assertEqual(81, t.cell("march", 4))
             self.assertEqual(2, t.columnIndex("march"))
@@ -125,6 +127,7 @@ try:
             self.assertEqual("Pulkovo 1942(58) / 3-degree Gauss-Kruger zone 5", gk5.name())
             etrs_laea = CoordinateSystem("code=epsg:3035")
             self.assertEqual("ETRS89 / LAEA Europe", etrs_laea.name())
+            proj4 = CoordinateSystem("code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
 
             g = Geometry("POINT(766489.647 6840642.671)", pm)
             g1 = g.transform(gk5)
@@ -137,6 +140,8 @@ try:
             self.assertEqual("POINT (2560502.5977886635810137 5787988.6849722778424621)", g1.toWKT())
             g1 = g2.transform(etrs_laea)
             self.assertEqual("POINT (4108242.5654639988206327 3239420.9621137753129005)", g1.toWKT())
+            g3 = g.transform(proj4)
+            self.assertEqual("POINT (-866479.8875676055904478 5979085.6121951946988702)", g3.toWKT())
 
         def test_Envelope(self):
             g = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
@@ -362,7 +367,7 @@ try:
             self.assertTrue((it.FEATURE & 4) != 0)
             self.assertFalse((it.CATALOG & it.FEATURE) != 0)
             self.assertEqual(4, (it.FEATURE & 4))
-            self.assertEqual(262144, it.CATALOG)
+            self.assertEqual(524288, it.CATALOG)
             it.CATALOG = 0
             self.assertEqual(0, it.CATALOG)
             it.CATALOG = 524288
@@ -375,11 +380,11 @@ try:
             with self.assertRaises(AttributeError, msg="property is not read only!"):
                 Const.sUNDEF = "test"
             self.assertEqual(Const.sUNDEF, "?")
-            self.assertEqual(Const.shUNDEF, -32767)
-            self.assertEqual(Const.iUNDEF, -2147483647)
-            self.assertEqual(Const.flUNDEF, -1e38)
+            self.assertEqual(Const.shUNDEF, 32767)
+            self.assertEqual(Const.iUNDEF, 2147483645)
+            self.assertEqual(Const.flUNDEF, 1e38)
             self.assertEqual(Const.rUNDEF, -1e308)
-            self.assertEqual(Const.i64UNDEF, -9223372036854775808)
+            self.assertEqual(Const.i64UNDEF, 9223372036854775808)
 
     #@ut.skip("temporarily")
     class TestEngine(ut.TestCase):
@@ -415,8 +420,8 @@ try:
             self.assertEqual(
                 "gridding(coordinatesyste,top-coordinate,x-cell-size, y-cell-size, horizontal-cells, vertical-cells)",
                 e.operationMetaData("gridding"))
-            self.assertEqual(("iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)\n"
-                              "iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)"),
+            self.assertEqual(("iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)\n"
+                              "iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)"),
                              e.operationMetaData("iff"))
 
         def test_Gridding(self):
@@ -462,7 +467,7 @@ try:
             newfeature = fc.newFeature(g)
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
             for c in att:
-                newfeature[c] = 12
+                newfeature[c] = "12"
                 self.assertEqual(int(newfeature[c]), 12, msg="new value of feature attribute not correct!")
             self.assertEqual(fc.featureCount(), 14, msg="new feature count wrong")
 
@@ -479,7 +484,7 @@ try:
             summ = 0
             for f in fc:
                 summ += f.attribute("MAY", 0)
-                f["sum"] = summ
+                f["sum"] = str(summ)
                 self.assertRegex(str(f), r"Feature\([0-9]*\)", msg="wrong feature representation")
                 self.assertRegex(str(f.geometry()),
                                  r"POINT\s\(([0-9\.\-]+|\-1e\+308|5\.4)\s([0-9\.\-]+|\-1e\+308|[0-9]+\.[0-9]+e\+[0-9]+)\)",
@@ -544,7 +549,7 @@ try:
             self.assertEqual(Const.rUNDEF, f["Integer"])  # overflow(MAX+1)
 
             f["Float"] = "9223372036854775808"
-            self.assertEqual(9223372036854775808, f["Float"])
+            self.assertEqual("9223372036854775808", f["Float"])
             f["Float"] = 9223372036854775808.
             self.assertEqual(9223372036854775808, f["Float"])
             f["Float"] = 0.432
@@ -587,8 +592,8 @@ try:
             f["DateTime"] = datetime.datetime(2014, 2, 27)
             self.assertEqual(f["DateTime"], datetime.datetime(2014, 2, 27))
 
-            tup = (12, datetime.datetime(2014, 2, 27, 0, 0), datetime.time(12, 42, 33, 120000),
-                   datetime.datetime(2014, 2, 27, 0, 0), 9.223372036854776e+18, 2.34e-31)
+            tup = ('12', datetime.datetime(2014, 2, 27, 0, 0), datetime.time(12, 42, 33, 120000),
+                   datetime.datetime(2014, 2, 27, 0, 0), Const.rUNDEF, 2.34e-31, 4126)
             rec = fc.attributeTable().record(0)
             self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
             self.assertEqual(len(rec), len(fc.attributeTable().columns()))
@@ -598,7 +603,7 @@ try:
             self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
             self.assertEqual(len(rec), len(fc.attributeTable().columns()))
             self.assertTupleEqual(
-                (12, 'LINESTRING(1 1, 3 3)', 'LINESTRING(1 1, 2 2, 3 3)'),
+                ('12', 'LINESTRING(1 1, 3 3)', 'LINESTRING(1 1, 2 2, 3 3)'),
                 fc.attributeTable().column(0)
             )
 
@@ -691,6 +696,7 @@ try:
             self.assertEqual(csy.ilwisID(), rainCsy.ilwisID())
             self.assertEqual(str(csy.envelope()), str(rainCsy.envelope()))
 
+        #ut.skip("temporarily")
         def test_Proj4(self):
             cs1 = CoordinateSystem(
                 "code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
@@ -706,6 +712,7 @@ try:
             self.assertTrue(bool(cs2))
             self.assertEqual(cs2.name(), r"ED50 / UTM zone 35N")
 
+        #@ut.skip("temporarily")
         def test_isEqual(self):
             cs1 = CoordinateSystem(
                 "code=proj4:+proj=utm +zone=35 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs")
@@ -737,7 +744,7 @@ try:
             self.assertFalse(gr.isInternal())
             self.assertTrue(r.coordinateSystem() == gr.coordinateSystem())
             self.assertTrue(r.size() == gr.size())
-            box = Box(r.size())
+            box = Box(gr.size())
             env = gr.box2Envelope(box)
             self.assertEqual("POLYGON(0 0 0,1151 1151 0)", str(box))
             self.assertEqual("POLYGON(-4.60799e+06 -4.59997e+06,4.60001e+06 4.60803e+06)", str(env))
@@ -869,16 +876,14 @@ try:
             self.assertEqual(aa3.pix2value(pix), 2 + 29.0)
             aa4 = rc - rctif
             self.assertEqual(aa4.pix2value(pix), 29.0 - 29.0)
-            #TODO fix parsing of numeric - raster (don't switch arguments)
-            aa5 = 2 - rc  # until now this is parsed as "rc - 2" :(
-            #self.assertEqual(aa5.pix2value(pix),2-29.0)
+            aa5 = 2 - rc
+            self.assertEqual(aa5.pix2value(pix), 2-29.0)
             aa6 = rc - 2
             self.assertEqual(aa6.pix2value(pix), 29.0 - 2)
             aa7 = rc / rctif
             self.assertEqual(aa7.pix2value(pix), 29.0 / 29.0)
-            #TODO fix parsing of numeric / raster (don't switch arguments)
-            aa8 = 2 / rc  # until now this is parsed as "rc / 2" :(
-            #self.assertEqual(aa8.pix2value(pix),2/29.0)
+            aa8 = 2 / rc
+            self.assertAlmostEqual(aa8.pix2value(pix), 2/29.0, 2)
             aa9 = rc / 2
             self.assertAlmostEqual(aa9.pix2value(pix), 29.0 / 2, 1)
             aa10 = rc * rctif
@@ -887,10 +892,80 @@ try:
             self.assertEqual(aa11.pix2value(pix), 2 * 29.0)
             aa12 = rc * 2
             self.assertEqual(aa12.pix2value(pix), 29.0 * 2)
+            aa13 = rc + 3 * rctif
+            self.assertEqual(aa13.pix2value(pix), 29.0 + 3 * 29.0)
+            aa14 = rctif - 3 + rc / 2
+            self.assertAlmostEqual(aa14.pix2value(pix), 29.0 - 3 + 29.0 / 2, 1)
+            aa15 = (rc + 3) * 5 + rctif / 5
+            self.assertAlmostEqual(aa15.pix2value(pix), (29.0 + 3) * 5 + 29.0 / 5, 1)
+            aa16 = Engine.do("sqrt", rc)
+            self.assertAlmostEqual(aa16.pix2value(pix), sqrt(29), 2)
 
             aa1.setOutputConnection(workingDir + tempDir + "/n000302_frommpr", "GTiff", "gdal")
             aa1.store()
 
+        #@ut.skip("temporarily")
+        def test_RasterCalculationsDifferentGeoref(self):
+            rc1 = RasterCoverage("subkenya.mpr")
+            rc2 = RasterCoverage("kenya_2009ndvi_cor_22.mpr")
+            pix = Pixel(120, 120, 0)
+            self.assertTrue(pix in rc1.size())
+            self.assertEqual(rc1.pix2value(pix), 96.0)
+            aa1 = rc1 + rc2
+            self.assertAlmostEqual(aa1.pix2value(pix), 96.0 + 0.1915, 1)
+            aa2 = rc1 - rc2
+            self.assertAlmostEqual(aa2.pix2value(pix), 96.0 - 0.1915, 1)
+            aa3 = rc1 * rc2
+            self.assertAlmostEqual(aa3.pix2value(pix), 96.0 * 0.1915, 1)
+            aa4 = rc1 / rc2
+            self.assertAlmostEqual(aa4.pix2value(pix), 96.0 / 0.1915, 1)
+            # aa5 = rc1 + rc2 / 3
+            # self.assertAlmostEqual(aa5.pix2value(pix), 96.0 + 0.1915 / 3, 1)
+            aa5 = rc1 / 3 + rc2
+            self.assertAlmostEqual(aa5.pix2value(pix), 96.0 / 3 + 0.1915, 1)
+            aa6 = 2 * rc1 - rc2
+            self.assertAlmostEqual(aa6.pix2value(pix), 2 * 96.0 - 0.1915, 1)
+            aa7 = rc1 + rc2 - 2
+            self.assertAlmostEqual(aa7.pix2value(pix), 96.0 + 0.1915 - 2, 1)
+            aa8 = rc1 + rc2 + 2
+            self.assertAlmostEqual(aa8.pix2value(pix), 96.0 + 0.1915 + 2, 1)
+
+        #@ut.skip("temporarily")
+        def test_RasterSelection(self):
+            rc = RasterCoverage("n000302.mpr")
+            rcSel = rc.select("Polygon((495209 80832,927209 -999367, 1887209 -1282307,2184809 311232,495209 80832))")
+            self.assertTrue(bool(rcSel))
+
+            pix1 = Pixel(740, 650, 0)
+            pix2 = Pixel(300, 400, 0)
+
+            self.assertEqual(rcSel.pix2value(pix1), rc.pix2value(pix1))
+            self.assertNotEqual(rcSel.pix2value(pix2), rc.pix2value(pix2))
+
+            rcSel.setOutputConnection(workingDir + rasterDir + "/avg_n000302", "map", "ilwis3")
+            rcSel.store()
+
+        #@ut.skip("temporarily")
+        def test_Datadefinition(self):
+            rc = RasterCoverage("n000302.mpr")
+            rc2 = RasterCoverage("small.mpr")
+            rc3 = RasterCoverage("subkenya.mpr")
+
+            dat = rc.datadef(0)
+            self.assertTrue(bool(dat), msg="couldn't load datadefinition")
+            dat2 = rc3.datadef(0)
+            dat3 = rc3.datadef(0)
+
+            self.assertTrue(dat.isCompatibleWith(dat2), msg="datadefinitions are not compatible")
+            self.assertTrue(dat.isCompatibleWith(dat3), msg="datadefinition of submap is not compatible")
+
+            datmerge = dat.merge(dat, dat2)
+            self.assertTrue(bool(datmerge), msg="couldn't merge datadefinitions")
+
+            dat3 = dat
+            self.assertTrue(dat3 == dat)
+
+        #@ut.skip("temporarily")
         def test_PixelIterator(self):
             rcl = RasterCoverage("small.mpl")
             self.assertTrue(bool(rcl), msg="couldn't load small.mpl")
@@ -1131,7 +1206,7 @@ try:
             else:
                 self.skipTest("countries.mpa is missing")
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_IlwisObject(self):
             fc = FeatureCoverage("newFC")
             self.assertEqual("newFC", fc.name())
@@ -1141,9 +1216,9 @@ try:
             fc.setInputConnection(workingDir + worldDir + "/countries.mpa", "vectormap", "ilwis3")
             #fc = FeatureCoverage("countries.mpa")
             self.assertFalse(fc.isInternal())
-            self.assertEqual("newName", fc.name())
+            self.assertEqual("countries.mpa", fc.name())
             fc.setOutputConnection(workingDir + worldDir + "/countries.shp", "ESRI Shapefile", "gdal")
-            fc.store()
+            #fc.store()
 
         def test_AttributeTable(self):
             table = Table("countries.tbt")
@@ -1169,6 +1244,7 @@ try:
             table.addColumn("newCol", "value")
             self.assertEqual(64, table.columnCount())
 
+    #@ut.skip("temporarily")
     class TestIntegration(ut.TestCase):
         def setUp(self):
             try:
@@ -1217,7 +1293,7 @@ try:
             #
             # plt.show()
 
-
+    #@ut.skip("temporarily")
     class TestNumericDomain(ut.TestCase):
         def setUp(self):
             disconnectIssueLogger()
@@ -1236,6 +1312,7 @@ try:
             self.assertEqual(childnumdom.contains(20), "cSELF")
             self.assertEqual(childnumdom.contains(80), "cPARENT")
             self.assertEqual(childnumdom.contains(100), "cNONE")
+            self.assertEqual(childnumdom.contains(31), "cNONE")
 
             self.assertFalse(childnumdom.isStrict())
             childnumdom.setStrict(True)
@@ -1247,14 +1324,14 @@ try:
             nr = NumericRange(5.8, 60.2, 0.2)
             childnumdom = NumericDomain("numbers")
             childnumdom.setRange(nr)
-            nr2 = NumericRange(0, 80.5, 0.5)
+            nr2 = NumericRange(0, 80.4, 0.2)
             parentnumdom = NumericDomain("parentnumbers")
             parentnumdom.setRange(nr2)
 
             childnumdom.setParent(parentnumdom)
 
             self.assertEqual(childnumdom.contains(12.8), "cSELF")
-            self.assertEqual(childnumdom.contains(72.5), "cPARENT")
+            self.assertEqual(childnumdom.contains(72.2), "cPARENT")
             self.assertEqual(childnumdom.contains(100), "cNONE")
 
             self.assertFalse(childnumdom.isStrict())
@@ -1268,7 +1345,7 @@ try:
             childnumdom = NumericDomain("numbers")
             childnumdom.setRange(nr)
 
-            self.assertEqual(childnumdom.contains(5.8), "cSELF")
+            self.assertEqual(childnumdom.contains(6.0), "cSELF")
             self.assertEqual(childnumdom.contains(5.6), "cNONE")
             self.assertEqual(childnumdom.contains(60.2), "cSELF")
             self.assertEqual(childnumdom.contains(60.4), "cNONE")
@@ -1277,7 +1354,7 @@ try:
             nr = NumericRange(5.8, 60.2, 0.2)
             childnumdom = NumericDomain("numbers")
             childnumdom.setRange(nr)
-            nr2 = NumericRange(0, 80.5, 0.5)
+            nr2 = NumericRange(0, 80.4, 0.2)
             parentnumdom = NumericDomain("parentnumbers")
             parentnumdom.setRange(nr2)
 
@@ -1287,15 +1364,16 @@ try:
             childnumdom.setParent(parentnumdom)
             self.assertTrue(childnumdom.parent())
 
-
+    #@ut.skip("temporarily")
     class TestInterval(ut.TestCase):
         def setUp(self):
             disconnectIssueLogger()
             connectIssueLogger()
 
         def test_containement(self):
-            interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
-            interrange.add(("dijks", 101.0, 150.0, 1.0))
+            interrange = NumericItemRange()
+            interrange.add(("sealevel", 40.0, 100.0, 5.0))
+            interrange.add(("dijks", 101.0, 151.0, 1.0))
 
             childdom = ItemDomain(interrange)
 
@@ -1312,7 +1390,8 @@ try:
             self.assertEqual(childdom.contains(161.0), "cPARENT")
 
         def test_parents(self):
-            nir = interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
+            nir = NumericItemRange()
+            nir.add(("sealevel", 40.0, 100.0, 5.0))
             childdom = ItemDomain(nir)
 
             nir.add(("by the sea", 151.0, 181.0, 5.0))
@@ -1325,25 +1404,31 @@ try:
             self.assertTrue(childdom.parent())
 
         def test_removeAndCount(self):
-            nir = interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
+            nir = NumericItemRange()
+            nir.add(("sealevel", 40.0, 100.0, 5.0))
             nir.add(("by the sea", 151.0, 181.0, 5.0))
             childdom = ItemDomain(nir)
 
             self.assertEqual(childdom.count(), 2)
             childdom.removeItem("sealevel")
             self.assertEqual(childdom.count(), 1)
+            childdom.addItem(("sealevel", 185.0, 250.0, 5.0))
+            self.assertEqual(childdom.count(), 2)
 
         def test_theme(self):
-            nir = interrange = NumericItemRange(("sealevel", 40.0, 100.0, 5.0))
+            nir = NumericItemRange()
+            nir.add(("sealevel", 40.0, 100.0, 5.0))
             nir.add(("by the sea", 151.0, 181.0, 5.0))
             childdom = ItemDomain(nir)
 
             childdom.setTheme("Seastuff")
             self.assertEqual(childdom.theme(), "Seastuff")
 
+    #@ut.skip("temporarily")
     class TestThematicDomain(ut.TestCase):
         def test_containement(self):
-            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr = ThematicRange()
+            tr.add(("hound", "3.1", "Fierce doggy"))
             tr.add(("greyhound", "0.32", "the fast one"))
 
             td = ItemDomain(tr)
@@ -1360,7 +1445,8 @@ try:
             self.assertEqual(td.contains("ghosthound"), "cNONE")
 
         def test_parents(self):
-            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr = ThematicRange()
+            tr.add(("hound", "3.1", "Fierce doggy"))
             tr.add(("greyhound", "0.32", "the fast one"))
 
             td = ItemDomain(tr)
@@ -1374,7 +1460,8 @@ try:
             self.assertTrue(td.parent())
 
         def test_removeAndCount(self):
-            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr = ThematicRange()
+            tr.add(("hound", "3.1", "Fierce doggy"))
             tr.add(("greyhound", "0.32", "the fast one"))
 
             td = ItemDomain(tr)
@@ -1385,7 +1472,8 @@ try:
             self.assertEqual(td.count(), 2)
 
         def test_theme(self):
-            tr = ThematicRange(("hound", "3.1", "Fierce doggy"))
+            tr = ThematicRange()
+            tr.add(("hound", "3.1", "Fierce doggy"))
             tr.add(("greyhound", "0.32", "the fast one"))
 
             td = ItemDomain(tr)
@@ -1393,11 +1481,11 @@ try:
             td.setTheme("Hounds")
             self.assertEqual(td.theme(), "Hounds")
 
-
-
+    #@ut.skip("temporarily")
     class TestIdentifierDomain(ut.TestCase):
-        def containement_tests(self):
-            nr = NamedItemRange("Perth")
+        def test_containement(self):
+            nr = NamedItemRange()
+            nr.add("Perth")
             nr.add("Darwin")
 
             nchild = ItemDomain(nr)
@@ -1413,13 +1501,13 @@ try:
             self.assertEqual(nchild.contains("Broome"), "cPARENT")
             self.assertEqual(nchild.contains("Adelaide"), "cNONE")
 
-            nChild.setStrict(True)
+            nchild.setStrict(True)
             self.assertEqual(nchild.contains("Broome"), "cNONE")
-
 
         def test_parents(self):
 
-            nr = NamedItemRange("Perth")
+            nr = NamedItemRange()
+            nr.add("Perth")
             nr.add("Darwin")
 
             nchild = ItemDomain(nr)
@@ -1433,7 +1521,8 @@ try:
             self.assertTrue(nchild.parent())
 
         def test_removeAndCount(self):
-            nr = NamedItemRange("Perth")
+            nr = NamedItemRange()
+            nr.add("Perth")
             nr.add("Darwin")
 
             namedDom = ItemDomain(nr)
@@ -1441,9 +1530,11 @@ try:
             namedDom.removeItem("Perth")
             self.assertEqual(namedDom.count(), 1)
             namedDom.addItem("Childers")
+            self.assertEqual(namedDom.count(), 2)
 
         def test_theme(self):
-            nr = NamedItemRange("Perth")
+            nr = NamedItemRange()
+            nr.add("Perth")
             nr.add("Darwin")
 
             namedRange = ItemDomain(nr)
@@ -1451,27 +1542,44 @@ try:
             namedRange.setTheme("Australian Cities")
             self.assertEqual(namedRange.theme(), "Australian Cities")
 
+    #@ut.skip("temporarily")
     class TestColorDomain(ut.TestCase):
-        def containement_test(self):
-            color1 = Color(ColorModel.cmRGBA, (255.0, 20.0, 30.0, 200.0))
+        def test_colorcontainement(self):
+            color1 = Color(ColorModel.cmRGBA, (220.0, 20.0, 30.0, 200.0))
             color2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
-            color3 = Color(ColorModel.cmRGBA, (255.0, 60.0, 50.0, 240.0))
+            color3 = Color(ColorModel.cmRGBA, (230.0, 60.0, 50.0, 240.0))
 
             col = ContinousColorRange(color1, color2, ColorModel.cmRGBA)
             self.assertTrue(col.isValid())
-            colDom.setRange(col)
+
             col2 = col.clone()
             col.defaultColorModel(ColorModel.cmRGBA)
             self.assertEqual(col.defaultColorModel(), ColorModel.cmRGBA)
 
             colDom = ColorDomain("testdomain")
+            colDom.setRange(col)
             self.assertEqual(colDom.containsColor(color3), "cSELF")
-            self.assertEqual(colDom.containsRange(col2), "cSELF")
 
+    #@ut.skip("temporarily")
+    class TestTimeDomain(ut.TestCase):
+        def test_containement(self):
+            ti = TimeInterval(date(2014, 2, 17), date(2016, 2, 17))
+            td = TimeDomain(ti)
+            self.assertEqual(td.contains(date(2014, 5, 17)), "cSELF")
+            self.assertEqual(td.contains(date(2014, 1, 17)), "cNONE")
+
+            date1 = date(2014, 2, 17) - timedelta(365)
+            date2 = date(2016, 2, 17) + timedelta(365)
+            tip = TimeInterval(date1, date2)
+            tdp = TimeDomain(tip)
+
+            td.setParent(tdp)
+            td.setStrict(False)
+            self.assertEqual(td.contains(date(2013, 5, 17)), "cPARENT")
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(verbosity=2)
+        ut.main(defaultTest=None, verbosity=2)
 
 except ImportError as e:
     print(e)

@@ -100,6 +100,13 @@ Domain *Domain::toDomain(Object *obj){
 
 //--------------------------------------------------------------
 
+NumericDomain::NumericDomain(){
+    Ilwis::INumericDomain numdom;
+    numdom.prepare();
+    if (numdom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(numdom));
+}
+
 NumericDomain::NumericDomain(const std::string &resource){
     Ilwis::INumericDomain numdom(QString::fromStdString(resource), itNUMERICDOMAIN);
     if (numdom.isValid())
@@ -141,6 +148,7 @@ ItemDomain::ItemDomain(const Range& rng){
         setRange(rng);
     }
         break;
+    case itINDEXEDITEM:
     case itNAMEDITEM:{
         Ilwis::INamedIdDomain namdom;
         namdom.prepare();
@@ -149,8 +157,26 @@ ItemDomain::ItemDomain(const Range& rng){
         setRange(rng);
     }
         break;
+    default:
+        break;
+    }
+}
+
+void ItemDomain::range(const Range &rng){
+    Ilwis::ItemRange* itemRan =  static_cast<Ilwis::ItemRange*>(rng._range->clone());
+    IlwisTypes vt = rng.valueType();
+    switch (vt) {
+    case itNUMERICITEM:{
+        this->ptr()->as<Ilwis::ThematicDomain>()->setRange(*itemRan);
+    }
+        break;
+    case itTHEMATICITEM:{
+        this->ptr()->as<Ilwis::ThematicDomain>()->setRange(*itemRan);
+    }
+        break;
     case itINDEXEDITEM:
-    {
+    case itNAMEDITEM:{
+        this->ptr()->as<Ilwis::NamedIdDomain>()->setRange(*itemRan);
     }
         break;
     default:
@@ -187,12 +213,9 @@ void ItemDomain::removeItem(const std::string& nme)
         this->ptr()->as<Ilwis::ThematicDomain>()->removeItem(QString::fromStdString(nme));
     }
         break;
+    case itINDEXEDITEM:
     case itNAMEDITEM:{
         this->ptr()->as<Ilwis::NamedIdDomain>()->removeItem(QString::fromStdString(nme));
-    }
-        break;
-    case itINDEXEDITEM:
-    {
     }
         break;
     default:
@@ -205,7 +228,7 @@ void ItemDomain::addItem(PyObject* item)
     IlwisTypes vt = valueType();
 
     switch (vt) {
-    /*case itNUMERICITEM:{
+    case itNUMERICITEM:{
         if (CppTupleElementCount(item) == 3 || CppTupleElementCount(item) == 4){
             QString label = QString::fromStdString(CppTupleElement2String(item,0));
             if ( label == sUNDEF)
@@ -224,10 +247,10 @@ void ItemDomain::addItem(PyObject* item)
             }else
                 numitem = new Ilwis::Interval(label, { rmin, rmax});
 
-            this->ptr()->as<Ilwis::IntervalDomain>()->addItem(numitem);
+            this->ptr()->as<Ilwis::NamedIdDomain>()->addItem(numitem);
         }
     }
-        break;*/
+        break;
     case itTHEMATICITEM:{
         if ( CppTupleElementCount(item) > 0 && CppTupleElementCount(item) <=3 ) {
             QString description = sUNDEF, code = sUNDEF;
@@ -246,14 +269,11 @@ void ItemDomain::addItem(PyObject* item)
         }
     }
         break;
+    case itINDEXEDITEM:
     case itNAMEDITEM:{
         QString name = QString::fromStdString(CppString2stdString(item));
         Ilwis::NamedIdentifier *id = new Ilwis::NamedIdentifier(name);
         this->ptr()->as<Ilwis::NamedIdDomain>()->addItem(id);
-    }
-        break;
-    case itINDEXEDITEM:
-    {
     }
         break;
     default:
@@ -297,15 +317,11 @@ PyObject *ItemDomain::item(int index, bool labelOnly)
         return list;
     }
         break;
+    case itINDEXEDITEM:
     case itNAMEDITEM:{
         PyObject* list = newPyTuple(1);
         setTupleItem(list, 0, PyUnicodeFromString(domitem->name().toLatin1()));
         return list;
-    }
-        break;
-    case itINDEXEDITEM:
-    {
-
     }
         break;
     default:
@@ -368,3 +384,24 @@ TextDomain::TextDomain(const std::string &resource)
 
 }
 
+
+//---------------------------------------------------------------------------------------------
+TimeDomain::TimeDomain()
+{
+}
+
+TimeDomain::TimeDomain(const std::string& resource)
+{
+    Ilwis::ITimeDomain timedom(QString::fromStdString(resource), itNUMERICDOMAIN);
+    if (timedom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(timedom));
+}
+
+TimeDomain::TimeDomain(const Range& rng)
+{
+    Ilwis::ITimeDomain timedom;
+    timedom.prepare();
+    if (timedom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(timedom));
+    this->setRange(rng);
+}

@@ -90,9 +90,9 @@ double RawConverter::determineOffset(double low, double high, double step, Ilwis
 
 double RawConverter::guessUndef(double vmin, double vmax) {
     if ( vmin >  std::numeric_limits<short>::min() && vmax < std::numeric_limits<short>::max())
-       return shUNDEF;
+       return shILW3UNDEF;
     else if ( vmin >  std::numeric_limits<long>::min() && vmax < std::numeric_limits<long>::max())
-        return iUNDEF;
+        return iILW3UNDEF;
     if ( vmin >  std::numeric_limits<float>::min() && vmax < std::numeric_limits<float>::max())
         return flUNDEF;
     return rUNDEF;

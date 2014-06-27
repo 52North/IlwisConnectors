@@ -28,6 +28,7 @@ private:
     void createGetFeatureUrl(const QString &featureType, QUrl &rawUrl, QUrl &normalizedUrl) const;
     void parseFeature(QXmlItem &item, WfsFeature &feature) const;
 
+    QString valueOf(QXmlItem &item, const QString &xpathQuqery) const;
 };
 }
 }

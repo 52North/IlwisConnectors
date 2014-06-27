@@ -419,6 +419,7 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj,const PrepareOptions
     if ( !ok)
         return false;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
+    fcoverage->setFeatureCount(itFEATURE, 0,0);
     IlwisTypes coverageType = itPOINT;
 
     int features = _odf->value("PointMap","Points").toInt(&ok);

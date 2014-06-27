@@ -73,6 +73,10 @@ Pixel PixelIterator::position(){
     return Pixel(this->ptr().position());
 }
 
+void PixelIterator::setFlow(Flow flw){
+    this->ptr().setFlow(static_cast<Ilwis::PixelIterator::Flow> (flw));
+}
+
 bool PixelIterator::xChanged(){
     return this->ptr().xchanged();
 }
@@ -141,6 +145,12 @@ bool PixelIterator::operator> (const PixelIterator &other){
 
 Py_buffer* PixelIterator::asBuffer(){
     return newPyBuffer(this->ptr().operator->(),sizeof(double)*this->ptr().box().size().linearSize(), false);
+}
+
+PixelIterator PixelIterator::end(){
+    PixelIterator newIter = PixelIterator(*this);
+    newIter._ilwisPixelIterator.reset(new Ilwis::PixelIterator(newIter.ptr().end()));
+    return newIter;
 }
 
 Ilwis::PixelIterator& PixelIterator::ptr() const{

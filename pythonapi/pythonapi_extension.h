@@ -22,6 +22,7 @@ namespace pythonapi{
             COORDSYSTEM = itCOORDSYSTEM,
             DOMAIN = itDOMAIN,
             NUMERICDOMAIN = itNUMERICDOMAIN,
+            ITEMDOMAIN = itITEMDOMAIN,
             OPERATIONMETADATA = itOPERATIONMETADATA,
             PROJECTION = itPROJECTION,
             ELLIPSOID = itELLIPSOID,

@@ -1,4 +1,5 @@
 #include "Python.h"
+
 #include "pythonapi_pyobject.h"
 
 #include "pythonapi_error.h"
@@ -109,8 +110,6 @@ namespace pythonapi {
         return PyTuple_New(size);
     }
 
-
-
     bool setTupleItem(PyObject *tuple, int i, PyObject* v){
         if (v) {
             PyTuple_SET_ITEM(tuple, i, v);   // reference to v stolen
@@ -168,60 +167,94 @@ namespace pythonapi {
         return PyDelta_FromDSU(days, seconds, useconds);
     }
 
-    int PyDateCheckExact(const PyObject* ob){
-        return PyDate_CheckExact(const_cast<PyObject*>(ob));
+    bool PyDateCheckExact(const PyObject* obj){
+        PyDateTime_IMPORT;
+        return PyDate_CheckExact(const_cast<PyObject*>(obj));
     }
 
-    int PyDateTimeCheckExact(const PyObject* ob){
-        return PyDateTime_CheckExact(const_cast<PyObject*>(ob));
+    bool PyDateTimeCheckExact(const PyObject* obj){
+        PyDateTime_IMPORT;
+        return PyDateTime_CheckExact(const_cast<PyObject*>(obj));
     }
 
-    int PyTimeCheckExact(const PyObject* ob){
-        return PyTime_CheckExact(const_cast<PyObject*>(ob));
+    bool PyDeltaCheckExact(const PyObject* obj){
+        PyDateTime_IMPORT;
+        return PyDelta_CheckExact(const_cast<PyObject*>(obj));
+    }
+
+    bool PyTimeCheckExact(const PyObject* obj){
+        PyDateTime_IMPORT;
+        return PyTime_CheckExact(const_cast<PyObject*>(obj));
     }
 
     int PyDateTimeGET_YEAR(const void* o){
+        PyDateTime_IMPORT;
         return PyDateTime_GET_YEAR(reinterpret_cast<PyDateTime_Date*>(const_cast<void*>(o)));
     }
 
     int PyDateTimeGET_MONTH(const void* o){
+        PyDateTime_IMPORT;
         return PyDateTime_GET_MONTH(reinterpret_cast<PyDateTime_Date*>(const_cast<void*>(o)));
     }
 
     int PyDateTimeGET_DAY(const void* o){
+        PyDateTime_IMPORT;
         return PyDateTime_GET_DAY(reinterpret_cast<PyDateTime_Date*>(const_cast<void*>(o)));
     }
 
     int PyDateTimeDATE_GET_HOUR(const void* o){
+        PyDateTime_IMPORT;
         return PyDateTime_DATE_GET_HOUR(reinterpret_cast<PyDateTime_DateTime*>(const_cast<void*>(o)));
     }
 
     int PyDateTimeDATE_GET_MINUTE(const void* o){
+        PyDateTime_IMPORT;
         return PyDateTime_DATE_GET_MINUTE(reinterpret_cast<PyDateTime_DateTime*>(const_cast<void*>(o)));
     }
 
     int PyDateTimeDATE_GET_SECOND(const void* o){
+        PyDateTime_IMPORT;
         return PyDateTime_DATE_GET_SECOND(reinterpret_cast<PyDateTime_DateTime*>(const_cast<void*>(o)));
     }
 
     int PyDateTimeDATE_GET_MICROSECOND(const void* o){
+        PyDateTime_IMPORT;
         return PyDateTime_DATE_GET_MICROSECOND(reinterpret_cast<PyDateTime_DateTime*>(const_cast<void*>(o)));
     }
 
     int PyDateTimeTIME_GET_HOUR(const void* o){
+        PyDateTime_IMPORT;
         return PyDateTime_TIME_GET_HOUR(reinterpret_cast<PyDateTime_Time*>(const_cast<void*>(o)));
     }
 
     int PyDateTimeTIME_GET_MINUTE(const void* o){
+        PyDateTime_IMPORT;
         return PyDateTime_TIME_GET_MINUTE(reinterpret_cast<PyDateTime_Time*>(const_cast<void*>(o)));
     }
 
     int PyDateTimeTIME_GET_SECOND(const void* o){
+        PyDateTime_IMPORT;
         return PyDateTime_TIME_GET_SECOND(reinterpret_cast<PyDateTime_Time*>(const_cast<void*>(o)));
     }
 
     int PyDateTimeTIME_GET_MICROSECOND(const void* o){
+        PyDateTime_IMPORT;
         return PyDateTime_TIME_GET_MICROSECOND(reinterpret_cast<PyDateTime_Time*>(const_cast<void*>(o)));
+    }
+
+    int PyDateTimeDELTA_GET_DAYS(const void* o){
+        PyDateTime_IMPORT;
+        return PyDateTime_DELTA_GET_DAYS(reinterpret_cast<PyDateTime_Delta*>(const_cast<void*>(o)));
+    }
+
+    int PyDateTimeDELTA_GET_SECONDS(const void* o){
+        PyDateTime_IMPORT;
+        return PyDateTime_DELTA_GET_SECONDS(reinterpret_cast<PyDateTime_Delta*>(const_cast<void*>(o)));
+    }
+
+    int PyDateTimeDELTA_GET_MICROSECONDS(const void* o){
+        PyDateTime_IMPORT;
+        return PyDateTime_DELTA_GET_MICROSECONDS(reinterpret_cast<PyDateTime_Delta*>(const_cast<void*>(o)));
     }
 
     //-------------------------------------------------------------------

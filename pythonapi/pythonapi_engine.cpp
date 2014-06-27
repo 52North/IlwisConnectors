@@ -113,9 +113,9 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
                 return new GeoReference(obj);
             }
         }
-        throw Ilwis::ErrorObject(QString("couln't handle return type of do(%1)").arg(command));
+        throw Ilwis::ErrorObject(QString("couldn't handle return type of do(%1)").arg(command));
     }else{
-        throw Ilwis::ErrorObject(QString("couln't do(%1)").arg(command));
+        throw Ilwis::ErrorObject(QString("couldn't do(%1)").arg(command));
     }
 }
 

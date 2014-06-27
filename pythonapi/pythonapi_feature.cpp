@@ -25,6 +25,8 @@
 #include "pythonapi_qvariant.h"
 #include <QVariant>
 
+
+
 using namespace pythonapi;
 
 Feature::Feature(std::unique_ptr<Ilwis::FeatureInterface> &ilwisFeature, FeatureCoverage* fc): _ilwisSPFeatureI(ilwisFeature), _coverage(fc){
@@ -46,14 +48,14 @@ quint64 Feature::id(){
 }
 
 PyObject* Feature::__getitem__(std::string name){
-    QVariant ret = this->ptr()->cell(QString::fromStdString(name),-1,false);
+    QVariant ret = this->ptr()->cell(QString::fromStdString(name),COVERAGEATRIB,false);
     if (!ret.isValid())
         throw std::out_of_range(QString("No attribute '%1' found").arg(name.c_str()).toStdString());
     return QVariant2PyObject(ret);
 }
 
 PyObject* Feature::__getitem__(quint32 colIndex){
-    QVariant ret = this->ptr()->cell(colIndex,-1,false);
+    QVariant ret = this->ptr()->cell(colIndex,COVERAGEATRIB,false);
     if (!ret.isValid())
         throw std::out_of_range(QString("No attribute in '%1.' column found").arg(colIndex).toStdString());
     return QVariant2PyObject(ret);

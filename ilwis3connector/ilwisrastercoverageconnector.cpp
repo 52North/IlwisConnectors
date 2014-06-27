@@ -76,7 +76,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const PrepareOptions
             if ( !def.isValid()) {
                 return false;
             }
-            gcoverage->datadef(i) = def;
+            gcoverage->addBand(i, def,i);
 
         } else {
             ERROR2(ERR_COULD_NOT_LOAD_2,"files","maplist");
@@ -215,6 +215,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
          _dataFiles.push_back(dataFile);
 
     QString storeType = _odf->value("MapStore","Type");
+    gcoverage->addBand(0, gcoverage->datadef(),0);
 
     setStoreType(storeType);
 
@@ -305,12 +306,12 @@ Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
     grid->prepare();
 
     for(quint32 i=0; i < _dataFiles.size(); ++i) {
-        QFileInfo localfile =  this->containerConnector()->toLocalFile(_dataFiles[i]);
-        QString datafile = localfile.absoluteFilePath();
+        QString  datafile = _dataFiles[i].toLocalFile();
         if ( datafile.right(1) != "#") { // can happen, # is a special token in urls
             datafile += "#";
         }
-        QFile file(datafile);
+        QFileInfo localfile =  this->containerConnector()->toLocalFile(QUrl::fromLocalFile(datafile));
+        QFile file(localfile.absoluteFilePath());
         if ( !file.exists()){
             ERROR1(ERR_MISSING_DATA_FILE_1,datafile);
             return 0;

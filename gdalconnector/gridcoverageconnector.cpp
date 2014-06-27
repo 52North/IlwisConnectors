@@ -47,33 +47,34 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
     auto *gcoverage = static_cast<RasterCoverage *>(data);
 
     if (_handle->type() == GdalHandle::etGDALDatasetH){
+        Coordinate cMin, cMax;
+        Size<> sz(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
+        IGeoReference grf;
         double geosys[6];
         CPLErr err = gdal()->getGeotransform(_handle->handle(), geosys) ;
         if ( err != CE_None) {
-            return ERROR2(ERR_INVALID_PROPERTY_FOR_2, "Bounds", gcoverage->name());
+            cMin = Coordinate( 0, 0 );
+            cMax = Coordinate( sz.xsize() - 1, sz.ysize() - 1);
+            if(!grf.prepare("code=georef:undetermined"))
+                return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
+            grf->coordinateSystem(gcoverage->coordinateSystem()); // the grf.prepare() for internal ilwis georeferences (among others "undetermined") does not autmatically set its csy
+        } else {
+            double a1 = geosys[0];
+            double b1 = geosys[3];
+            double a2 = geosys[1];
+            double b2 = geosys[5];
+            Coordinate crdLeftup( a1 , b1);
+            Coordinate crdRightDown(a1 + sz.xsize() * a2, b1 + sz.ysize() * b2 ) ;
+            cMin = Coordinate( min(crdLeftup.x, crdRightDown.x), min(crdLeftup.y, crdRightDown.y));
+            cMax = Coordinate( max(crdLeftup.x, crdRightDown.x), max(crdLeftup.y, crdRightDown.y));
+
+            if(!grf.prepare(_resource.url().toString()))
+                return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
         }
-
-        double a1 = geosys[0];
-        double b1 = geosys[3];
-        double a2 = geosys[1];
-        double b2 = geosys[5];
-        Pixel pix(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()));
-        Coordinate crdLeftup( a1 , b1);
-        Coordinate crdRightDown(a1 + pix.x * a2, b1 + pix.y * b2 ) ;
-        Coordinate cMin( min(crdLeftup.x, crdRightDown.x), min(crdLeftup.y, crdRightDown.y));
-        Coordinate cMax( max(crdLeftup.x, crdRightDown.x), max(crdLeftup.y, crdRightDown.y));
-
         gcoverage->envelope(Envelope(cMin, cMax));
         gcoverage->coordinateSystem()->envelope(gcoverage->envelope());
-
-        IGeoReference grf;
-        if(!grf.prepare(_resource.url().toString()))
-            return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
-
-        Size<> sz(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
-        grf->size(sz);
         gcoverage->georeference(grf);
-
+        grf->size(sz);
         gcoverage->size(sz);
 
         double vminRaster=rUNDEF, vmaxRaster=rUNDEF;
@@ -91,8 +92,8 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
             resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
             auto vmin = gdal()->minValue(layerHandle, &ok);
             auto vmax = gdal()->maxValue(layerHandle, &ok);
-            vminRaster = std::min(vmin, vminRaster);
-            vmaxRaster = std::max(vmax, vmaxRaster);
+            vminRaster = Ilwis::min(vmin, vminRaster);
+            vmaxRaster = Ilwis::max(vmax, vmaxRaster);
             gcoverage->datadef(i) = createDataDef(vmin, vmax, resolution);
 
         }
@@ -223,7 +224,8 @@ bool RasterCoverageConnector::setGeotransform(RasterCoverage *raster,GDALDataset
         }
         return true;
     }
-    return ERROR2(ERR_OPERATION_NOTSUPPORTED2,TR("Georeference type"), "Gdal");
+    //return ERROR2(ERR_OPERATION_NOTSUPPORTED2,TR("Georeference type"), "Gdal");
+    return true;
 }
 
 bool RasterCoverageConnector::loadDriver()
@@ -294,9 +296,9 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
 bool RasterCoverageConnector::setSRS(Coverage *raster, GDALDatasetH dataset) const
 {
     OGRSpatialReferenceH srsH = createSRS(raster->coordinateSystem());
-    if ( srsH == 0) {
-        reportError(dataset);
-        return false;
+    if ( srsH == 0) { // we are not setting CRS
+       // reportError(dataset);
+        return true;
     }
     char *wktText = NULL;
     gdal()->exportToWkt(srsH,&wktText);

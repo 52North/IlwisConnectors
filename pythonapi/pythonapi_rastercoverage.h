@@ -12,6 +12,7 @@ namespace Ilwis {
 }
 
 namespace pythonapi {
+    class DataDefinition;
 
     class RasterCoverage : public Coverage{
          friend class PixelIterator;
@@ -34,6 +35,7 @@ namespace pythonapi {
         RasterCoverage* __truediv__ (RasterCoverage &rc);
         RasterCoverage* __truediv__ (double value);
         RasterCoverage* __rtruediv__(double value);
+        //RasterCoverage* sin();
         PixelIterator __iter__();
         double coord2value(const Coordinate& c);
         double pix2value(const Pixel& pix);
@@ -46,7 +48,22 @@ namespace pythonapi {
         GeoReference geoReference();
         void setGeoReference(const GeoReference& gr);
 
+        const DataDefinition& datadef(quint32 layer) const;
+        DataDefinition& datadef(quint32 layer);
+
+        NumericStatistics* statistics(int mode=0);
+
         static RasterCoverage* toRasterCoverage(Object *obj);
+
+        PixelIterator begin();
+        PixelIterator end();
+
+        PixelIterator band(PyObject* pyTrackIndex);
+        void band(PyObject* pyTrackIndex, PixelIterator pyIter);
+        void addBand(int index, DataDefinition& pyDef, PyObject* pyTrackIndex);
+
+        RasterCoverage select(std::string selectionQ);
+        RasterCoverage select(Geometry& geom);
     };
 
 }

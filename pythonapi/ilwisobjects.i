@@ -8,6 +8,10 @@
 %include "exception.i"
 %include "std_string.i"
 
+%begin %{
+   #include <cmath>
+%}
+
 %{
 #include "pythonapi_pyobject.h"
 #include "pythonapi_error.h"
@@ -30,6 +34,7 @@
 #include "pythonapi_range.h"
 #include "pythonapi_catalog.h"
 #include "pythonapi_domain.h"
+#include "pythonapi_datadefinition.h"
 %}
 
 %include "pythonapi_qtGNUTypedefs.h"
@@ -142,6 +147,7 @@ def object_cast(obj):
 %template(SizeD) pythonapi::SizeTemplate<double>;
 %template(Box) pythonapi::BoxTemplate<Ilwis::Location<qint32, false>, pythonapi::PixelTemplate<qint32>, quint32>;
 %template(Envelope) pythonapi::BoxTemplate<Ilwis::Coordinate, pythonapi::Coordinate, double>;
+%template(NumericStatistics) pythonapi::ContainerStatistics<double>;
 
 %extend pythonapi::SizeTemplate<quint32> {
 %insert("python") %{
@@ -244,26 +250,30 @@ def object_cast(obj):
 
 %include "pythonapi_range.h"
 
+%include "pythonapi_datadefinition.h"
+
 // declaring the Const for Python side xUNDEF declarations
 %pythoncode %{
-    class ReadOnly(type):
-        @property
-        def sUNDEF(cls):
+        class ReadOnly(type):
+          @property
+          def sUNDEF(cls):
             return "?"
-        @property
-        def shUNDEF(cls):
-            return -32767
-        @property
-        def iUNDEF(cls):
-            return -2147483647
-        @property
-        def rUNDEF(cls):
+          @property
+          def shUNDEF(cls):
+            return 32767
+          @property
+          def iUNDEF(cls):
+            return 2147483645
+          @property
+          def rUNDEF(cls):
             return -1e308
-        @property
-        def flUNDEF(cls):
-            return -1e38
-        @property
-        def i64UNDEF(cls):
-            return -9223372036854775808
-    class Const(metaclass=ReadOnly):pass
+          @property
+          def flUNDEF(cls):
+            return 1e38
+          @property
+          def i64UNDEF(cls):
+            return 9223372036854775808
+
+
+        class Const(metaclass=ReadOnly):pass
 %}

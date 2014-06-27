@@ -22,6 +22,7 @@
 
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_error.h"
+#include "pythonapi_pyobject.h"
 
 using namespace pythonapi;
 
@@ -66,5 +67,13 @@ FeatureCoverage *FeatureCoverage::toFeatureCoverage(Object *obj){
     return ptr;
 }
 
+PyObject* FeatureCoverage::select(std::string spatialQuery){
+    std::vector<quint32> vec = this->ptr()->as<Ilwis::FeatureCoverage>()->select(QString::fromStdString(spatialQuery));
+    PyObject* pyTup = newPyTuple(vec.size());
+    for(int i = 0; i < vec.size(); i++){
+        setTupleItem(pyTup, i, PyFloatFromDouble((double)vec[i]));
+    }
+    return pyTup;
+}
 
 

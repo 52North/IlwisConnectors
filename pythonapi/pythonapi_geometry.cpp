@@ -109,7 +109,6 @@ geos::geom::Geometry* Geometry::fromWKTReader(const std::string& wkt) {
     return reader.read(wkt);
 }
 
-
 std::string Geometry::toWKT(){
     return Ilwis::GeometryHelper::toWKT(this->ptr().get()).toStdString();
 }

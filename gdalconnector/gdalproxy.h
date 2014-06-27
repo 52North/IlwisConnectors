@@ -34,6 +34,7 @@ typedef int (*IGDALGetDriverCount )() ;
 typedef GDALDriverH (*IGDALGetDriverByName)(const char * ) ;
 typedef const char* (*IGDALGetDriverName )(GDALDriverH) ;
 typedef const char* (*IGDALGetMetadataItem )(GDALMajorObjectH , const char *, const char *) ;
+typedef char ** (*IGDALGetMetadata)(GDALMajorObjectH , const char *);
 typedef double (*IGDALRasValue)(GDALRasterBandH, int * );
 typedef GDALColorInterp (*IGDALGetRasterColorInterpretation)(GDALRasterBandH);
 
@@ -167,6 +168,7 @@ class GDALProxy {
         }
 
         GdalHandle* openFile(const QFileInfo &filename, quint64 asker, GDALAccess mode=GA_ReadOnly, bool message=true);
+        GdalHandle* openUrl(const QUrl &url, quint64 asker, GDALAccess mode=GA_ReadOnly, bool message=true);
         void closeFile(const QString& filename, quint64 asker);
         OGRSpatialReferenceH srsHandle(GdalHandle* handle, const QString& source, bool message=true);
         void releaseSrsHandle(GdalHandle* handle, OGRSpatialReferenceH srshandle, const QString& source);
@@ -191,6 +193,7 @@ class GDALProxy {
 
         QHash<QString, GdalHandle*> _openedDatasets;
 
+        void loadLibraryConfig(std::map<quint32, QString> &order) const;
 public:
         IGDALClose close;
         IGDALOpen open;
@@ -217,6 +220,7 @@ public:
         IGDALGetDriverName getLongName;
         IGDALGetDriverName getShortName;
         IGDALGetMetadataItem getMetaDataItem;
+        IGDALGetMetadata getMetaData;
         IGDALGetRasterColorInterpretation colorInterpretation;
         //Open Spatial Reference
         IOSRNewSpatialReference newSpatialRef;

@@ -13,6 +13,8 @@
 #include "../../IlwisCore/core/util/coordinate.h"
 #include "../../IlwisCore/core/util/box.h"
 #include "../../IlwisCore/core/util/location.h"
+#include "../../IlwisCore/core/util/containerstatistics.h"
+
 
 #include "pythonapi_util.h"
 
@@ -372,5 +374,8 @@ namespace pythonapi {
 
     template class BoxTemplate<Ilwis::Coordinate, Coordinate, double>;
     template class BoxTemplate<Ilwis::Location<qint32, false>, Pixel, quint32>;
+
+    //==============ContainerStatistics====================================
+
 
 } // namespace pythonapi

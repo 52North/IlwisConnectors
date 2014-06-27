@@ -9,8 +9,6 @@ TARGET = gdalconnector
 
 include(global.pri)
 
-QT       -= gui
-
 TEMPLATE = lib
 
 DEFINES += GDALCONNECTOR_LIBRARY
@@ -57,6 +55,7 @@ OTHER_FILES += \
 INCLUDEPATH +=  $$PWD/../external/gdalheaders
 
 resources.files = gdalconnector/resources/ogr_formats.config
+resources.files += gdalconnector/resources/libraries.config
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
 INSTALLS += resources

@@ -29,6 +29,7 @@ namespace pythonapi {
         unsigned int featureCount() const;
         Feature newFeature(Geometry& geometry);
         static FeatureCoverage* toFeatureCoverage(Object *obj);
+        PyObject* select(std::string spatialQuery);
     };
 }
 

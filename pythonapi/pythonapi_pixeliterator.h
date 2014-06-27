@@ -13,9 +13,22 @@ namespace Ilwis {
 
 namespace pythonapi {
 
+#ifdef SWIG
+%rename(Flow) FlowVal;
+#endif
+
+struct FlowVal{
+    enum Value{ fXYZ, fYXZ, fXZY, fYZX, fZXY, fZYX};
+};
+
+typedef FlowVal::Value Flow;
+
 class RasterCoverage;
 
 class PixelIterator{
+
+    friend class RasterCoverage;
+
     public:
         PixelIterator(const PixelIterator &pi);
         PixelIterator(RasterCoverage* rc, const Box &b = Box());
@@ -44,6 +57,7 @@ class PixelIterator{
         bool __contains__(const Pixel& vox);
         Box box();
         Pixel position();
+        void setFlow(Flow flw);
         bool xChanged();
         bool yChanged();
         bool zChanged();
@@ -60,6 +74,8 @@ class PixelIterator{
         bool operator< (const PixelIterator& other);
         bool operator>=(const PixelIterator& other);
         bool operator> (const PixelIterator& other);
+
+        PixelIterator end();
 
         Py_buffer* asBuffer();
     protected:

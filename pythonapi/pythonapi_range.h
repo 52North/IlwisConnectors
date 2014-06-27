@@ -17,6 +17,8 @@ namespace pythonapi {
 class Range: public Object{
 public:
     friend class Domain;
+    friend class DataDefinition;
+    friend class ItemDomain;
 
     bool __bool__() const;
     std::string __str__();
@@ -39,7 +41,7 @@ private:
 
 class NumericRange : public Range {
 public:
-    NumericRange(double mi, double ma, double resolution=0);
+    NumericRange(double mi, double ma, double resolution = 0);
     NumericRange(const NumericRange &vr);
 
 
@@ -68,22 +70,27 @@ public:
 class NumericItemRange : public ItemRange{
 public:
     NumericItemRange();
-    NumericItemRange(PyObject *item);
+    void add(std::string name, double min, double max, double resolution=0);
     void add(PyObject *item);
+    double index(double);
+    qint32 gotoIndex(qint32 index, qint32 step) const;
+    NumericItemRange* clone();
 };
 
 class NamedItemRange : public ItemRange {
 public:
     NamedItemRange();
-    NamedItemRange(PyObject *item);
     void add(PyObject *item);
+    qint32 gotoIndex(qint32 index, qint32 step) const;
+    NamedItemRange* clone();
 };
 
 class ThematicRange : public ItemRange {
 public:
     ThematicRange();
-    ThematicRange(PyObject *item);
+    void add(std::string name, std::string id="", std::string descr="");
     void add(PyObject *item);
+    ThematicRange* clone();
 };
 
 #ifdef SWIG
@@ -91,7 +98,7 @@ public:
 #endif
 
 struct ColorModelNS{
-    enum Value{cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
+    enum Value{cmNONE, cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
 };
 
 typedef ColorModelNS::Value ColorModel;
@@ -103,6 +110,7 @@ public:
     void readColor(ColorModel type, PyObject* obj);
     double getItem(std::string key) const;
     ColorModel getColorModel() const;
+    std::string toString() const;
 private:
     ColorModel _type = ColorModel::cmRGBA;
     PyObject* _colorVal;
@@ -117,7 +125,7 @@ public:
     ColorModel defaultColorModel() const;
     void defaultColorModel(ColorModel m);
 
-    //static Color toColor(quint64 clrint, ColorModel clrModel) ;
+    static Color toColor(quint64 clrint, ColorModel clrModel) ;
     static Color toColor(PyObject*, ColorModel colortype);
     std::string toString(const Color &clr, ColorModel clrType);
     ColorModel stringToColorModel(std::string clrmd);
@@ -136,9 +144,28 @@ public:
     ContinousColorRange *clone() const;
     PyObject* ensure(const PyObject *v, bool inclusive = true) const;
     bool containsVar(const PyObject *v, bool inclusive = true) const;
-    bool containsColor(const Color clr, bool inclusive = true) const;
+    bool containsColor(const Color &clr, bool inclusive = true) const;
     bool containsRange(ColorRange *v, bool inclusive = true) const;
     Color impliedValue(const PyObject* v) const;
+};
+
+class TimeInterval : public NumericRange{
+public:
+    TimeInterval(IlwisTypes tp = itUNKNOWN);
+    TimeInterval(const PyObject *beg, const PyObject *end, std::string step="", IlwisTypes tp = itUNKNOWN);
+
+    //TimeInterval& operator=(const TimeInterval& tiv);
+    PyObject* begin() const;
+    PyObject* end() const ;
+    void begin(const PyObject* t) ;
+    void end(const PyObject* t);
+    //Duration getStep() const { return _step;}
+    std::string toString(bool local, IlwisTypes) const;
+    bool contains(const std::string& value, bool inclusive = true) const;
+    bool contains(const PyObject* value, bool inclusive = true) const;
+
+    Ilwis::Range *clone() const ;
+    bool isValid() const;
 };
 
 }

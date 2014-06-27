@@ -78,6 +78,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOp
         return false;
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+    fcoverage->setFeatureCount(itFEATURE, 0,0);
 
     OGRLayerH hLayer = getLayerHandle();
 
@@ -145,9 +146,7 @@ bool GdalFeatureConnector::loadData(IlwisObject* data){
             ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename.toString());
             return false;
         }
-        fcoverage->setFeatureCount(itPOLYGON, 0, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
-        fcoverage->setFeatureCount(itLINE, 0, 0);
-        fcoverage->setFeatureCount(itPOINT, 0, 0);
+        fcoverage->setFeatureCount(itFEATURE, 0, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
 
         OGRLayerH hLayer = getLayerHandle();
         if ( hLayer) {
