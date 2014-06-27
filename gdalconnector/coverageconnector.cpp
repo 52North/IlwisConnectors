@@ -63,15 +63,17 @@ bool CoverageConnector::store(IlwisObject *obj, IlwisTypes type)
 }
 
 OGRSpatialReferenceH CoverageConnector::createSRS(const ICoordinateSystem& coordsystem) const{
-    IConventionalCoordinateSystem csy = coordsystem.as<ConventionalCoordinateSystem>();
-    if ( csy->projection().isValid()){
-        QString proj4def = csy->projection()->toProj4();
-        OGRSpatialReferenceH srsH = gdal()->newSpatialRef(0);
-        OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());
-        if ( errOgr != OGRERR_NONE) {
-            return 0;
+    if ( hasType(coordsystem->ilwisType(), itCONVENTIONALCOORDSYSTEM)){
+        IConventionalCoordinateSystem csy = coordsystem.as<ConventionalCoordinateSystem>();
+        if ( csy->projection().isValid()){
+            QString proj4def = csy->projection()->toProj4();
+            OGRSpatialReferenceH srsH = gdal()->newSpatialRef(0);
+            OGRErr errOgr = gdal()->importFromProj4(srsH, proj4def.toLocal8Bit());
+            if ( errOgr != OGRERR_NONE) {
+                return 0;
+            }
+            return srsH;
         }
-        return srsH;
     }
     return 0;
 }

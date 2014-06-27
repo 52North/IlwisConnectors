@@ -617,7 +617,7 @@ try:
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setOutputConnection(workingDir + tempDir + "/countries_fromshp.shp", "ESRI Shapefile", "gdal")
-           # world.store()
+            #world.store()
             # points
             world = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(world))

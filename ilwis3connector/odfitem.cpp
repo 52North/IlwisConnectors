@@ -34,14 +34,14 @@ ODFItem::ODFItem(const QFileInfo &file) : Resource(QUrl::fromLocalFile(file.abso
     csytp = domtp = grftp = itUNKNOWN;
 
     _ilwtype = Ilwis3Connector::ilwisType(_file.absoluteFilePath());
-    _csyname = findCsyName(file.absolutePath());
+    _csyname = findCsyName(file.absoluteFilePath());
     _domname = findDomainName(file.absoluteFilePath());
     _grfname = findGrfName();
     _datumName = findDatumName();
 
 
-    csytp = findCsyType(file.absolutePath());
-    domtp = findDomainType(file.absolutePath());
+    csytp = findCsyType(file.absoluteFilePath());
+    domtp = findDomainType(file.absoluteFilePath());
 
 
     if ( csytp != itUNKNOWN && _ilwtype == itCOORDSYSTEM)
