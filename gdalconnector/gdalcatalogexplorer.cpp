@@ -62,53 +62,61 @@ std::vector<Resource> GdalCatalogExplorer::loadItems()
         ERROR1(ERR_NO_INITIALIZED_1,"gdal library");
         return std::vector<Resource>();
     }
-    for(const QUrl& url : files) {
-        quint64 id1=i64UNDEF, id2=i64UNDEF;
-        if ( (id1=mastercatalog()->url2id(url, itRASTER)) == i64UNDEF && (id2=mastercatalog()->url2id(url, itFEATURE)) == i64UNDEF) {
-            QFileInfo file = toLocalFile(url);
-            if ( !file.exists())
-                continue;
+    kernel()->issues()->silent(true); // error messages during scan are not needed
+    try{
+        for(const QUrl& url : files) {
+            quint64 id1=i64UNDEF, id2=i64UNDEF;
+            if ( (id1=mastercatalog()->url2id(url, itRASTER)) == i64UNDEF && (id2=mastercatalog()->url2id(url, itFEATURE)) == i64UNDEF) {
+                QFileInfo file = toLocalFile(url);
+                if ( !file.exists())
+                    continue;
 
-            if ( !file.isDir() ) {
-                IlwisTypes extendedTypes = extendedType(formats, file.suffix());
-                GDALItems items(url, file, extendedTypes);
-                for(auto item : items) {
-                    gdalitems.insert(item);
+                if ( !file.isDir() ) {
+                    IlwisTypes extendedTypes = extendedType(formats, file.suffix());
+                    GDALItems items(url, file, extendedTypes);
+                    for(auto item : items) {
+                        gdalitems.insert(item);
+                    }
+                } else {
+                    Resource resource(url, itCATALOG);
+                    QString filename = file.isRoot() ? file.absoluteFilePath() : file.fileName();
+                    resource.name(filename);
+
+                    folders.push_back(resource);
                 }
-            } else {
-                Resource resource(url, itCATALOG);
-                QString filename = file.isRoot() ? file.absoluteFilePath() : file.fileName();
-                resource.name(filename);
-
-                folders.push_back(resource);
+            }else{
+                quint64 id = id1 ==i64UNDEF ? id2 : id1;
+                Resource res = mastercatalog()->id2Resource(id);
+                existingItems.push_back(res);
             }
-        }else{
-          quint64 id = id1 ==i64UNDEF ? id2 : id1;
-          Resource res = mastercatalog()->id2Resource(id);
-          existingItems.push_back(res);
+
+        }
+        std::vector<Resource> items;
+        for( const auto& resource : gdalitems){
+            items.push_back(resource);
+        }
+        kernel()->issues()->silent(false);
+
+        mastercatalog()->addItems(items);
+
+        mastercatalog()->addItems(folders);
+
+        std::vector<Resource> output(items.size());
+
+        std::copy(items.begin(), items.end(), output.begin());
+
+
+        for(const auto& resource : folders){
+            output.push_back(resource);
         }
 
+        std::copy(existingItems.begin(), existingItems.end(), std::back_inserter(output));
+
+        return output;
+    } catch(const ErrorObject& err){
+        kernel()->issues()->silent(false);
+        throw err;
     }
-    std::vector<Resource> items;
-    for( const auto& resource : gdalitems){
-        items.push_back(resource);
-    }
-
-    mastercatalog()->addItems(items);
-
-    mastercatalog()->addItems(folders);
-
-    std::vector<Resource> output(items.size());
-
-    std::copy(items.begin(), items.end(), output.begin());
-
-    for(const auto& resource : folders){
-        output.push_back(resource);
-    }
-
-    std::copy(existingItems.begin(), existingItems.end(), std::back_inserter(output));
-
-    return output;
 }
 
 IlwisTypes GdalCatalogExplorer::extendedType(const std::multimap<QString, DataFormat>& formats, const QString& ext) const{

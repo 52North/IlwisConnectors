@@ -57,6 +57,8 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems()
     std::set<ODFItem> odfitems;
     std::vector<Resource> existingItems;
     QHash<QString, quint64> names;
+    kernel()->issues()->silent(true);  // error messages during scan are not needed
+    try{
     foreach(const QUrl& url, files) {
         QFileInfo file = toLocalFile(url);
         IlwisTypes tp = Ilwis3Connector::ilwisType(file.fileName());
@@ -85,10 +87,15 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems()
         }
     }
     mastercatalog()->addItems(finalList);
+    kernel()->issues()->silent(false);
 
     std::copy(existingItems.begin(), existingItems.end(), std::back_inserter(finalList));
-
     return finalList;
+    }
+    catch(const ErrorObject& err){
+       kernel()->issues()->silent(false);
+       throw err;
+    }
 }
 
 bool Ilwis3CatalogExplorer::canUse(const Resource &resource) const
