@@ -192,34 +192,38 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
 
     // create a suitable filepath
-    _csyName = Resource::toLocalFile(csy->source().url(),true, "csy");
-    if ( _csyName == sUNDEF || _csyName == "") {
-        return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
-    }
-
-    QFileInfo csyinf(_csyName);
-    if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
-        QUrl url = QUrl::fromLocalFile(_csyName); // new attempt to create a suitable path;
-        csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
-        if(!csy->store(Ilwis::IlwisObject::smMETADATA)){ // fail, we default to unknown
-            _csyName = "Unknown.csy";
-            WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
-        } else {
-            _csyName = url.toLocalFile();
+    if ( csy->code() != "unknown"){
+        _csyName = Resource::toLocalFile(csy->source().url(),true, "csy");
+        if ( _csyName == sUNDEF || _csyName == "") {
+            return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
         }
-    }
 
+        QFileInfo csyinf(_csyName);
+        if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
+            QUrl url = QUrl::fromLocalFile(_csyName); // new attempt to create a suitable path;
+            csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
+            if(!csy->store(Ilwis::IlwisObject::smMETADATA)){ // fail, we default to unknown
+                _csyName = "Unknown.csy";
+                WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
+            } else {
+                _csyName = url.toLocalFile();
+            }
+        }
+        _odf->setKeyValue("BaseMap","CoordSystem", QFileInfo(_csyName).fileName());
+    }else
+        _odf->setKeyValue("BaseMap","CoordSystem", "unknown.csy");
 
-    _odf->setKeyValue("BaseMap","CoordSystem", QFileInfo(_csyName).fileName());
     Envelope bounds = coverage->envelope();
+    if ( bounds.isNull())
+        bounds = coverage->coordinateSystem()->envelope();
     if(!bounds.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Bounds", coverage->name());
 
     _odf->setKeyValue("BaseMap","CoordBounds",QString("%1 %2 %3 %4").
-                      arg(bounds.min_corner().x,10,'f').
-                      arg(bounds.min_corner().y,10,'f').
-                      arg(bounds.max_corner().x,10,'f').
-                      arg(bounds.max_corner().y,10,'f'));
+                      arg(bounds.min_corner().x,0,'f').
+                      arg(bounds.min_corner().y,0,'f').
+                      arg(bounds.max_corner().x,0,'f').
+                      arg(bounds.max_corner().y,0,'f'));
 
 
 

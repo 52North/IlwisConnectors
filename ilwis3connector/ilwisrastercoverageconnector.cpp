@@ -474,6 +474,9 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
         ERROR2(ERR_NO_INITIALIZED_2, "Georeference", raster->name());
         return sUNDEF;
     }
+    if ( grf->code() == "undetermined"){
+        return "none.grf";
+    }
     QString name = grf->source(IlwisObject::cmOUTPUT).url().toString();
     if ( grf->isAnonymous()) { // get a suitable output name
         name = raster->source(IlwisObject::cmOUTPUT).url().toString();
@@ -522,6 +525,16 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     QString localName = getGrfName(raster);
     if ( localName == sUNDEF)
         return false;
+    if ( raster->georeference()->code() == "undetermined"){
+        Envelope bounds = raster->envelope();
+        if ( bounds.isNull())
+            bounds = raster->coordinateSystem()->envelope();
+        _odf->setKeyValue("BaseMap","CoordBounds",QString("%1 %2 %3 %4").
+                          arg(bounds.min_corner().x,0,'f',10).
+                          arg(-bounds.max_corner().y,0,'f',10).
+                          arg(bounds.max_corner().x,0,'f',10).
+                          arg(-bounds.min_corner().y,0,'f',10));
+    }
 
     _odf->setKeyValue("Map","GeoRef",QFileInfo(localName).fileName());
     Size<> sz = raster->size();

@@ -186,7 +186,7 @@ Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
             std::vector<double> values(noItems);
             for(quint32 i=0; i < noItems; ++i) {
                 double v = value(block, i);
-                values[i] = v;
+                values[i] = std::isnan(v) ? rUNDEF : v;
             }
 
             grid->setBlockData(count, values, true);
