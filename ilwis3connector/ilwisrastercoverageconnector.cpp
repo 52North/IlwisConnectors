@@ -446,7 +446,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
 
         Resource resource(itRASTER);
         resource.name(mapName);
-        resource.addProperty("size", IVARIANT(Size<>(sz.xsize(), sz.ysize(),1)));
+        resource.addProperty("size", Size<>(sz.xsize(), sz.ysize(),1).toString());
         resource.addProperty("bounds", IVARIANT(raster->envelope()));
         resource.addProperty("georeference", raster->georeference()->id());
         resource.addProperty("coordinatesystem", raster->coordinateSystem()->id());
@@ -456,8 +456,8 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         IRasterCoverage gcMap;
         if (!gcMap.prepare(resource))
             return false;
-        gcMap->copyBinary(raster, i);
         int index = _odf->file().lastIndexOf("/");
+        gcMap->copyBinary(raster, i);
         QString path = _odf->file().left(index);
         QUrl url = makeUrl( path + "/" + mapName);
         gcMap->connectTo(url, "map", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
