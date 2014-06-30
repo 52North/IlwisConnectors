@@ -1565,6 +1565,7 @@ class PixelIterator(_object):
         __init__(pythonapi::PixelIterator self, PixelIterator pi) -> PixelIterator
         __init__(pythonapi::PixelIterator self, RasterCoverage rc, Box b=pythonapi::Box()) -> PixelIterator
         __init__(pythonapi::PixelIterator self, RasterCoverage rc) -> PixelIterator
+        __init__(pythonapi::PixelIterator self, Ilwis::PixelIterator * ilwIt) -> PixelIterator
         """
         this = _ilwisobjects.new_PixelIterator(*args)
         try: self.this.append(this)
@@ -1897,7 +1898,7 @@ class RasterCoverage(Coverage):
 
     def band(self, *args):
         """
-        band(RasterCoverage self, PyObject * pyTrackIndex) -> RasterCoverage
+        band(RasterCoverage self, PyObject * pyTrackIndex) -> PixelIterator
         band(RasterCoverage self, PyObject * pyTrackIndex, RasterCoverage pyRaster)
         """
         return _ilwisobjects.RasterCoverage_band(self, *args)

@@ -1091,8 +1091,9 @@ try:
             rc = RasterCoverage("n000302.mpr")
             it2 = PixelIterator(rc)
             self.assertEqual(1152 * 1152, it2.box().size().linearSize())
-            bu = np.frombuffer(it2.asBuffer(), np.float, 500 * 1152, 0)  # numpy-array only from first block (500 lines)
+            bu = np.frombuffer(it2.asBuffer(), np.float, it2.box().size().linearSize(), 0)
             self.assertTrue(all(0 <= v <= 255 for v in bu))
+
 
     #@ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation

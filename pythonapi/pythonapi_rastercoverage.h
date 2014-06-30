@@ -58,7 +58,7 @@ namespace pythonapi {
         PixelIterator begin();
         PixelIterator end();
 
-        RasterCoverage band(PyObject* pyTrackIndex);
+        PixelIterator band(PyObject* pyTrackIndex);
         void band(PyObject* pyTrackIndex, RasterCoverage* pyRaster);
         void addBand(int index, DataDefinition& pyDef, PyObject* pyTrackIndex);
 
