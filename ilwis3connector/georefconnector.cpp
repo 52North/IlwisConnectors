@@ -155,7 +155,11 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
 {
     Ilwis3Connector::storeMetaData(obj, itGEOREF);
     GeoReference *grf = static_cast<GeoReference *>(obj);
-    QString localPath = Resource::toLocalFile(grf->coordinateSystem()->source().url(),true, "csy");
+    QString localPath;
+    if ( grf->coordinateSystem()->code() == "unknown")
+        localPath = "unknown.csy";
+    else
+        localPath = Resource::toLocalFile(grf->coordinateSystem()->source().url(),true, "csy");
     _odf->setKeyValue("GeoRef","CoordSystem", QFileInfo(localPath).fileName());
     Size<> sz = grf->size();
     _odf->setKeyValue("GeoRef","Lines", QString::number(sz.ysize()));
