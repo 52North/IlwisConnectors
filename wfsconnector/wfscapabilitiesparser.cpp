@@ -72,8 +72,8 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) co
     QString llText = valueOf(item, "./ows:WGS84BoundingBox/ows:LowerCorner/string()");
     QString urText = valueOf(item, "./ows:WGS84BoundingBox/ows:UpperCorner/string()");
 
-    Coordinate ll = createCoordinateFromWgs84LatLon(llText);
-    Coordinate ur = createCoordinateFromWgs84LatLon(urText);
+    Coordinate ll = WfsUtils::createCoordinateFromWgs84LatLon(llText);
+    Coordinate ur = WfsUtils::createCoordinateFromWgs84LatLon(urText);
     Envelope envelope(ll, ur);
     feature.setBBox(envelope);
 }
@@ -88,14 +88,4 @@ void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl
     rawUrl.setQuery(query);
     normalizedUrl = _url.toString(QUrl::RemoveQuery) + "/" + featureName;
 }
-
-Coordinate WfsCapabilitiesParser::createCoordinateFromWgs84LatLon(QString latlon) const
-{
-    int splitIndex = latlon.indexOf(" ");
-    QString lon = latlon.left(splitIndex).trimmed();
-    QString lat = latlon.mid(splitIndex + 1).trimmed();
-    Coordinate coords(lon.toDouble(), lat.toDouble());
-    return coords;
-}
-
 
