@@ -19088,6 +19088,35 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_PixelIterator_raster(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::PixelIterator *arg1 = (pythonapi::PixelIterator *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::RasterCoverage *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:PixelIterator_raster",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__PixelIterator, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PixelIterator_raster" "', argument " "1"" of type '" "pythonapi::PixelIterator *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::PixelIterator * >(argp1);
+  {
+    try {
+      result = (pythonapi::RasterCoverage *)(arg1)->raster();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *PixelIterator_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
@@ -29115,6 +29144,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"PixelIterator___gt__", _wrap_PixelIterator___gt__, METH_VARARGS, (char *)"PixelIterator___gt__(PixelIterator self, PixelIterator other) -> bool"},
 	 { (char *)"PixelIterator_end", _wrap_PixelIterator_end, METH_VARARGS, (char *)"PixelIterator_end(PixelIterator self) -> PixelIterator"},
 	 { (char *)"PixelIterator_asBuffer", _wrap_PixelIterator_asBuffer, METH_VARARGS, (char *)"PixelIterator_asBuffer(PixelIterator self) -> Py_buffer *"},
+	 { (char *)"PixelIterator_raster", _wrap_PixelIterator_raster, METH_VARARGS, (char *)"PixelIterator_raster(PixelIterator self) -> RasterCoverage"},
 	 { (char *)"PixelIterator_swigregister", PixelIterator_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_GeoReference", _wrap_new_GeoReference, METH_VARARGS, (char *)"new_GeoReference(std::string const & resource) -> GeoReference"},
 	 { (char *)"GeoReference_toGeoReference", _wrap_GeoReference_toGeoReference, METH_VARARGS, (char *)"GeoReference_toGeoReference(Object obj) -> GeoReference"},

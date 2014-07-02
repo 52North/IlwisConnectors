@@ -1679,6 +1679,10 @@ class PixelIterator(_object):
         """asBuffer(PixelIterator self) -> Py_buffer *"""
         return _ilwisobjects.PixelIterator_asBuffer(self)
 
+    def raster(self):
+        """raster(PixelIterator self) -> RasterCoverage"""
+        return _ilwisobjects.PixelIterator_raster(self)
+
 PixelIterator_swigregister = _ilwisobjects.PixelIterator_swigregister
 PixelIterator_swigregister(PixelIterator)
 

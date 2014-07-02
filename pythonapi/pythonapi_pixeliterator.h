@@ -32,7 +32,7 @@ class PixelIterator{
     public:
         PixelIterator(const PixelIterator &pi);
         PixelIterator(RasterCoverage* rc, const Box &b = Box());
-        PixelIterator(Ilwis::PixelIterator *ilwIt);
+        PixelIterator(Ilwis::PixelIterator* ilwIt);
         ~PixelIterator();
         /**
          * @brief next confusingly returns current value bevore iterating to the next item
@@ -77,8 +77,8 @@ class PixelIterator{
         bool operator> (const PixelIterator& other);
 
         PixelIterator end();
-
         Py_buffer* asBuffer();
+        RasterCoverage* raster();
     protected:
         Ilwis::PixelIterator& ptr() const;
         RasterCoverage* _coverage;
