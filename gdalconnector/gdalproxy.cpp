@@ -57,13 +57,14 @@ GDALProxy::GDALProxy() {
         if ( name.first != 100000){
             lib.setFileName(path);
             ok &= lib.load();
+            if ( !ok)
+                break;
         }else {
             _libgdal.setFileName(path);
             ok &= _libgdal.load();
         }
         if ( !ok){
             ERROR2(ERR_COULD_NOT_LOAD_2, TR("name"), "gdal connector");
-            return;
         }
     }
     _isValid = ok;
