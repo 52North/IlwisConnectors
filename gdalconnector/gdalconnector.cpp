@@ -52,8 +52,10 @@ IlwisTypes GdalConnector::ilwisType(const QString &name)
         return itFEATURE;
 
     filename = name;
-    if ( !name.contains(QRegExp("\\\\|/")))
-        filename = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + name;
+    if ( !name.contains(QRegExp("\\\\|/"))){
+        if ( context()->workingCatalog().isValid() )
+            filename = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + name;
+    }
     if ( gdal()->identifyDriver(filename.toLocal8Bit(), 0) != 0)
         return itRASTER;
 
