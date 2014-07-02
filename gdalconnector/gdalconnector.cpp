@@ -8,6 +8,8 @@
 #include "catalogconnector.h"
 #include "dataformat.h"
 #include "gdalconnector.h"
+#include "catalog.h"
+#include "ilwiscontext.h"
 
 using namespace Ilwis;
 using namespace Gdal;
@@ -30,6 +32,9 @@ GdalConnector::~GdalConnector()
 
 IlwisTypes GdalConnector::ilwisType(const QString &name)
 {
+    if (name == sUNDEF)
+        return itUNKNOWN;
+
     QString filename = name;
     if (name.contains("?") == 0) {
         filename = name.split("?").front();
@@ -45,6 +50,15 @@ IlwisTypes GdalConnector::ilwisType(const QString &name)
 
     if ( gdal()->getExtensions(itFEATURE).contains(filter, Qt::CaseInsensitive))
         return itFEATURE;
+
+    filename = name;
+    if ( !name.contains(QRegExp("\\\\|/"))){
+        if ( context()->workingCatalog().isValid() )
+            filename = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + name;
+    }
+    if ( gdal()->identifyDriver(filename.toLocal8Bit(), 0) != 0)
+        return itRASTER;
+
     return itUNKNOWN; //TODO: add table formats here
 }
 
