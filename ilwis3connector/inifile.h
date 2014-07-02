@@ -10,8 +10,8 @@ using namespace std;
 
 namespace Ilwis {
 
-typedef QHash<QString, QString> SectionEntries;
-typedef QHash<QString, SectionEntries> Sections;
+typedef std::map<QString, QString> SectionEntries;
+typedef std::map<QString, SectionEntries> Sections;
 
 class CatalogConnector;
 typedef std::unique_ptr<Ilwis::CatalogConnector> UPCatalogConnector;

@@ -99,10 +99,12 @@ mytarget.files = pythonapi/ilwisobjects.py \
                  pythonapi/README \
                  pythonapi/UPDATE \
                  pythonapi/CHANGELOG
+
 mytarget.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
 
 python_target.files = pythonapi/ilwisobjects.py \
                       pythonapi/CHANGELOG
+
 python_target.path = $$PYTHONDIR/Lib/site-packages
 
 target.path = $$PYTHONDIR/Lib/site-packages

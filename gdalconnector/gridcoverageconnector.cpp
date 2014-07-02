@@ -212,10 +212,11 @@ Ilwis::IlwisObject *RasterCoverageConnector::create() const{
 bool RasterCoverageConnector::setGeotransform(RasterCoverage *raster,GDALDatasetH dataset) {
     if ( raster->georeference()->grfType<CornersGeoReference>()) {
         std::vector<double> sup = raster->georeference()->impl<CornersGeoReference>()->support();
-        Envelope env = raster->envelope();
-        double a2 = (env.max_corner().x - env.min_corner().x) / raster->size().xsize();
-        double b2 = (env.max_corner().y - env.min_corner().y) / raster->size().ysize();
-        double geoTransform[6] = { env.min_corner().x, a2, sup[0], env.min_corner().y, sup[1], b2 };
+        Envelope env = raster->georeference()->impl<CornersGeoReference>()->envelope();
+        Size <> sz = raster->georeference()->impl<CornersGeoReference>()->size();
+        double a2 = (env.max_corner().x - env.min_corner().x) / sz.xsize();
+        double b2 = (env.max_corner().y - env.min_corner().y) / sz.ysize();
+        double geoTransform[6] = { env.min_corner().x, a2, 0, env.max_corner().y, 0, -b2 };
 
         CPLErr err = gdal()->setGeoTransform(dataset,geoTransform);
         if ( err != CE_None) {

@@ -53,7 +53,7 @@ void IniFile::setValue(const QString& section, const QString& key, const QString
     else
     {
         // Add one new key/value entry in an existing section
-        SectionEntries& entries = iterSect.value();
+        SectionEntries& entries = iterSect->second;
         //entries[key.toLower()] = value;
         entries[key] = value;
     }
@@ -80,10 +80,13 @@ QString IniFile::value(const QString& section, const QString& key) const
     Sections::const_iterator iterSect = _sections.find(section);
     if (iterSect != _sections.end())
     {
-        const SectionEntries& entries = iterSect.value();
-        SectionEntries::const_iterator iterEntry = entries.find(key);
-        if (iterEntry != entries.end())
-            return iterEntry.value();
+        const SectionEntries& entries = iterSect->second;
+
+        for(const auto& entry : entries){
+            if ( entry.first.toLower() == key.toLower())
+                return entry.second;
+        }
+
     }
 
     return sUNDEF;
@@ -95,8 +98,8 @@ void IniFile::removeKeyValue(const QString& section, const QString& key)
     if (iterSect != _sections.end())
     {
         // The section exists, now erase entry "key"
-        SectionEntries& entries = iterSect.value();
-        entries.remove(key);
+        SectionEntries& entries = iterSect->second;
+        entries.erase(key);
     }
 }
 
@@ -106,7 +109,7 @@ void IniFile::removeSection(const QString& section)
     if (iterSect != _sections.end())
     {
         // The section exists, so remove it and all its entries.
-        SectionEntries& entries = iterSect.value();
+        SectionEntries& entries = iterSect->second;
         entries.clear();
         _sections.erase(iterSect);
     }
@@ -122,10 +125,10 @@ QStringList IniFile::childKeys(const QString &section) const
     QStringList keys;
     for (Sections::const_iterator iter = _sections.begin(); iter != _sections.end(); ++iter)
     {
-        if ( iter.key() == section) {
-            const SectionEntries& entries = iter.value();
+        if ( iter->first == section) {
+            const SectionEntries& entries = iter->second;
             for(SectionEntries::const_iterator cur = entries.begin(); cur != entries.end(); ++cur)
-                keys.push_back(cur.value()) ;
+                keys.push_back(cur->second) ;
         }
     }
     return keys;
@@ -220,14 +223,14 @@ void IniFile::store(const QString& ext, const QFileInfo& file )
     {
         if ( !first)
             text << "\n";
-        text << "[" << iterSect.key() << "]"  << "\n";
-        SectionEntries& entries = iterSect.value();
+        text << "[" << iterSect->first << "]"  << "\n";
+        SectionEntries& entries = iterSect->second;
         SectionEntries::iterator iterEntry;
         for (iterEntry = entries.begin(); iterEntry != entries.end(); ++iterEntry)
         {
-            QString key = iterEntry.key();
+            QString key = iterEntry->first;
             key[0] = key[0].toUpper();
-            text <<  key.trimmed() << "=" << iterEntry.value() << "\n";
+            text <<  key.trimmed() << "=" << iterEntry->second << "\n";
         }
         first = false;
     }

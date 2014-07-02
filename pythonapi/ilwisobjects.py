@@ -1154,7 +1154,7 @@ class NumericStatistics(_object):
         return _ilwisobjects.NumericStatistics_stretchLinear(self, *args)
 
     def stretchLimits(self, *args):
-        """stretchLimits(NumericStatistics self, double percent) -> std::pair< double,double >"""
+        """stretchLimits(NumericStatistics self, double percent) -> PyObject *"""
         return _ilwisobjects.NumericStatistics_stretchLimits(self, *args)
 
     def __getitem__(self, *args):
@@ -1897,8 +1897,8 @@ class RasterCoverage(Coverage):
 
     def band(self, *args):
         """
-        band(RasterCoverage self, PyObject * pyTrackIndex) -> PixelIterator
-        band(RasterCoverage self, PyObject * pyTrackIndex, PixelIterator pyIter)
+        band(RasterCoverage self, PyObject * pyTrackIndex) -> RasterCoverage
+        band(RasterCoverage self, PyObject * pyTrackIndex, RasterCoverage pyRaster)
         """
         return _ilwisobjects.RasterCoverage_band(self, *args)
 

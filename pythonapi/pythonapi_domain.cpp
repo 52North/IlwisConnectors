@@ -29,7 +29,6 @@ Domain::Domain(){
 }
 
 Domain::Domain(Ilwis::IDomain *domain) : IlwisObject(new Ilwis::IIlwisObject(*domain)){
-    delete domain;
 }
 
 Domain::~Domain(){

@@ -134,6 +134,17 @@ namespace pythonapi {
         return PyList_CheckExact(const_cast<PyObject*>(obj));
     }
 
+    PyObject* newPyList(int size){
+        return PyList_New(size);
+    }
+
+    PyObject* getListItem(PyObject* list, int index){
+        return PyList_GetItem(list, index);
+    }
+
+    bool setListItem(PyObject* list, int index, PyObject* item){
+        return PyList_SetItem(list, index, item);
+    }
 
     //========Py_buffer==========================
 
