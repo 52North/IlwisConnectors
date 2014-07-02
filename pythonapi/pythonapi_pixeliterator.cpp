@@ -17,11 +17,23 @@ PixelIterator::PixelIterator(const PixelIterator& pi): _coverage(pi._coverage), 
 }
 
 PixelIterator::PixelIterator(RasterCoverage *rc, const Box &b): _coverage(rc){
-    if (rc && rc->__bool__()){
+    if (rc && rc->__bool__())
+    {
         this->_ilwisPixelIterator.reset(new Ilwis::PixelIterator((*rc->ptr()), b.data()));
         if ((bool)this->_ilwisPixelIterator && this->_ilwisPixelIterator->isValid())
             this->_endposition = this->_ilwisPixelIterator->end().linearPosition();
     }
+}
+
+PixelIterator::PixelIterator(Ilwis::PixelIterator* ilwIt){
+    this->_ilwisPixelIterator.reset(ilwIt);
+    if ((bool)this->_ilwisPixelIterator && this->_ilwisPixelIterator->isValid())
+    {
+        this->_endposition = this->_ilwisPixelIterator->end().linearPosition();
+        RasterCoverage* rc = new RasterCoverage(const_cast<Ilwis::IRasterCoverage*>(&(_ilwisPixelIterator->raster())));
+        this->_coverage = rc;
+    }
+
 }
 
 PixelIterator::~PixelIterator(){
@@ -151,6 +163,10 @@ PixelIterator PixelIterator::end(){
     PixelIterator newIter = PixelIterator(*this);
     newIter._ilwisPixelIterator.reset(new Ilwis::PixelIterator(newIter.ptr().end()));
     return newIter;
+}
+
+RasterCoverage* PixelIterator::raster(){
+    return _coverage;
 }
 
 Ilwis::PixelIterator& PixelIterator::ptr() const{

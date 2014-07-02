@@ -2951,67 +2951,68 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__NumericDomain_t swig_types[8]
 #define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__RasterCoverage_t swig_types[9]
 #define SWIGTYPE_p_Ilwis__IlwisDataT_Ilwis__Table_t swig_types[10]
-#define SWIGTYPE_p_Ilwis__Range swig_types[11]
-#define SWIGTYPE_p__object swig_types[12]
-#define SWIGTYPE_p_bufferinfo swig_types[13]
-#define SWIGTYPE_p_char swig_types[14]
-#define SWIGTYPE_p_geos__geom__Geometry swig_types[15]
-#define SWIGTYPE_p_int swig_types[16]
-#define SWIGTYPE_p_long_long swig_types[17]
-#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t swig_types[18]
-#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t swig_types[19]
-#define SWIGTYPE_p_pythonapi__Catalog swig_types[20]
-#define SWIGTYPE_p_pythonapi__Color swig_types[21]
-#define SWIGTYPE_p_pythonapi__ColorDomain swig_types[22]
-#define SWIGTYPE_p_pythonapi__ColorModelNS swig_types[23]
-#define SWIGTYPE_p_pythonapi__ColorModelNS__Value swig_types[24]
-#define SWIGTYPE_p_pythonapi__ColorRange swig_types[25]
-#define SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t swig_types[26]
-#define SWIGTYPE_p_pythonapi__ContinousColorRange swig_types[27]
-#define SWIGTYPE_p_pythonapi__Coordinate swig_types[28]
-#define SWIGTYPE_p_pythonapi__CoordinateSystem swig_types[29]
-#define SWIGTYPE_p_pythonapi__Coverage swig_types[30]
-#define SWIGTYPE_p_pythonapi__DataDefinition swig_types[31]
-#define SWIGTYPE_p_pythonapi__Domain swig_types[32]
-#define SWIGTYPE_p_pythonapi__Engine swig_types[33]
-#define SWIGTYPE_p_pythonapi__Feature swig_types[34]
-#define SWIGTYPE_p_pythonapi__FeatureCoverage swig_types[35]
-#define SWIGTYPE_p_pythonapi__FeatureIterator swig_types[36]
-#define SWIGTYPE_p_pythonapi__FlowVal swig_types[37]
-#define SWIGTYPE_p_pythonapi__FlowVal__Value swig_types[38]
-#define SWIGTYPE_p_pythonapi__GeoReference swig_types[39]
-#define SWIGTYPE_p_pythonapi__Geometry swig_types[40]
-#define SWIGTYPE_p_pythonapi__IlwisObject swig_types[41]
-#define SWIGTYPE_p_pythonapi__ItemDomain swig_types[42]
-#define SWIGTYPE_p_pythonapi__ItemRange swig_types[43]
-#define SWIGTYPE_p_pythonapi__NamedItemRange swig_types[44]
-#define SWIGTYPE_p_pythonapi__NumericDomain swig_types[45]
-#define SWIGTYPE_p_pythonapi__NumericItemRange swig_types[46]
-#define SWIGTYPE_p_pythonapi__NumericRange swig_types[47]
-#define SWIGTYPE_p_pythonapi__Object swig_types[48]
-#define SWIGTYPE_p_pythonapi__PixelIterator swig_types[49]
-#define SWIGTYPE_p_pythonapi__PixelTemplateT_double_t swig_types[50]
-#define SWIGTYPE_p_pythonapi__PixelTemplateT_int_t swig_types[51]
-#define SWIGTYPE_p_pythonapi__Properties swig_types[52]
-#define SWIGTYPE_p_pythonapi__Properties__Values swig_types[53]
-#define SWIGTYPE_p_pythonapi__Range swig_types[54]
-#define SWIGTYPE_p_pythonapi__RasterCoverage swig_types[55]
-#define SWIGTYPE_p_pythonapi__SizeTemplateT_double_t swig_types[56]
-#define SWIGTYPE_p_pythonapi__SizeTemplateT_unsigned_int_t swig_types[57]
-#define SWIGTYPE_p_pythonapi__Table swig_types[58]
-#define SWIGTYPE_p_pythonapi__TextDomain swig_types[59]
-#define SWIGTYPE_p_pythonapi__ThematicRange swig_types[60]
-#define SWIGTYPE_p_pythonapi__TimeDomain swig_types[61]
-#define SWIGTYPE_p_pythonapi__TimeInterval swig_types[62]
-#define SWIGTYPE_p_pythonapi__it swig_types[63]
-#define SWIGTYPE_p_short swig_types[64]
-#define SWIGTYPE_p_signed_char swig_types[65]
-#define SWIGTYPE_p_unsigned_char swig_types[66]
-#define SWIGTYPE_p_unsigned_int swig_types[67]
-#define SWIGTYPE_p_unsigned_long_long swig_types[68]
-#define SWIGTYPE_p_unsigned_short swig_types[69]
-static swig_type_info *swig_types[71];
-static swig_module_info swig_module = {swig_types, 70, 0, 0, 0, 0};
+#define SWIGTYPE_p_Ilwis__PixelIterator swig_types[11]
+#define SWIGTYPE_p_Ilwis__Range swig_types[12]
+#define SWIGTYPE_p__object swig_types[13]
+#define SWIGTYPE_p_bufferinfo swig_types[14]
+#define SWIGTYPE_p_char swig_types[15]
+#define SWIGTYPE_p_geos__geom__Geometry swig_types[16]
+#define SWIGTYPE_p_int swig_types[17]
+#define SWIGTYPE_p_long_long swig_types[18]
+#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t swig_types[19]
+#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t swig_types[20]
+#define SWIGTYPE_p_pythonapi__Catalog swig_types[21]
+#define SWIGTYPE_p_pythonapi__Color swig_types[22]
+#define SWIGTYPE_p_pythonapi__ColorDomain swig_types[23]
+#define SWIGTYPE_p_pythonapi__ColorModelNS swig_types[24]
+#define SWIGTYPE_p_pythonapi__ColorModelNS__Value swig_types[25]
+#define SWIGTYPE_p_pythonapi__ColorRange swig_types[26]
+#define SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t swig_types[27]
+#define SWIGTYPE_p_pythonapi__ContinousColorRange swig_types[28]
+#define SWIGTYPE_p_pythonapi__Coordinate swig_types[29]
+#define SWIGTYPE_p_pythonapi__CoordinateSystem swig_types[30]
+#define SWIGTYPE_p_pythonapi__Coverage swig_types[31]
+#define SWIGTYPE_p_pythonapi__DataDefinition swig_types[32]
+#define SWIGTYPE_p_pythonapi__Domain swig_types[33]
+#define SWIGTYPE_p_pythonapi__Engine swig_types[34]
+#define SWIGTYPE_p_pythonapi__Feature swig_types[35]
+#define SWIGTYPE_p_pythonapi__FeatureCoverage swig_types[36]
+#define SWIGTYPE_p_pythonapi__FeatureIterator swig_types[37]
+#define SWIGTYPE_p_pythonapi__FlowVal swig_types[38]
+#define SWIGTYPE_p_pythonapi__FlowVal__Value swig_types[39]
+#define SWIGTYPE_p_pythonapi__GeoReference swig_types[40]
+#define SWIGTYPE_p_pythonapi__Geometry swig_types[41]
+#define SWIGTYPE_p_pythonapi__IlwisObject swig_types[42]
+#define SWIGTYPE_p_pythonapi__ItemDomain swig_types[43]
+#define SWIGTYPE_p_pythonapi__ItemRange swig_types[44]
+#define SWIGTYPE_p_pythonapi__NamedItemRange swig_types[45]
+#define SWIGTYPE_p_pythonapi__NumericDomain swig_types[46]
+#define SWIGTYPE_p_pythonapi__NumericItemRange swig_types[47]
+#define SWIGTYPE_p_pythonapi__NumericRange swig_types[48]
+#define SWIGTYPE_p_pythonapi__Object swig_types[49]
+#define SWIGTYPE_p_pythonapi__PixelIterator swig_types[50]
+#define SWIGTYPE_p_pythonapi__PixelTemplateT_double_t swig_types[51]
+#define SWIGTYPE_p_pythonapi__PixelTemplateT_int_t swig_types[52]
+#define SWIGTYPE_p_pythonapi__Properties swig_types[53]
+#define SWIGTYPE_p_pythonapi__Properties__Values swig_types[54]
+#define SWIGTYPE_p_pythonapi__Range swig_types[55]
+#define SWIGTYPE_p_pythonapi__RasterCoverage swig_types[56]
+#define SWIGTYPE_p_pythonapi__SizeTemplateT_double_t swig_types[57]
+#define SWIGTYPE_p_pythonapi__SizeTemplateT_unsigned_int_t swig_types[58]
+#define SWIGTYPE_p_pythonapi__Table swig_types[59]
+#define SWIGTYPE_p_pythonapi__TextDomain swig_types[60]
+#define SWIGTYPE_p_pythonapi__ThematicRange swig_types[61]
+#define SWIGTYPE_p_pythonapi__TimeDomain swig_types[62]
+#define SWIGTYPE_p_pythonapi__TimeInterval swig_types[63]
+#define SWIGTYPE_p_pythonapi__it swig_types[64]
+#define SWIGTYPE_p_short swig_types[65]
+#define SWIGTYPE_p_signed_char swig_types[66]
+#define SWIGTYPE_p_unsigned_char swig_types[67]
+#define SWIGTYPE_p_unsigned_int swig_types[68]
+#define SWIGTYPE_p_unsigned_long_long swig_types[69]
+#define SWIGTYPE_p_unsigned_short swig_types[70]
+static swig_type_info *swig_types[72];
+static swig_module_info swig_module = {swig_types, 71, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -17979,6 +17980,35 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_new_PixelIterator__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Ilwis::PixelIterator *arg1 = (Ilwis::PixelIterator *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::PixelIterator *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_PixelIterator",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Ilwis__PixelIterator, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_PixelIterator" "', argument " "1"" of type '" "Ilwis::PixelIterator *""'"); 
+  }
+  arg1 = reinterpret_cast< Ilwis::PixelIterator * >(argp1);
+  {
+    try {
+      result = (pythonapi::PixelIterator *)new pythonapi::PixelIterator(arg1);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__PixelIterator, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_new_PixelIterator(PyObject *self, PyObject *args) {
   int argc;
   PyObject *argv[3];
@@ -18006,6 +18036,15 @@ SWIGINTERN PyObject *_wrap_new_PixelIterator(PyObject *self, PyObject *args) {
       return _wrap_new_PixelIterator__SWIG_2(self, args);
     }
   }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Ilwis__PixelIterator, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_PixelIterator__SWIG_3(self, args);
+    }
+  }
   if (argc == 2) {
     int _v;
     void *vptr = 0;
@@ -18025,7 +18064,8 @@ fail:
     "  Possible C/C++ prototypes are:\n"
     "    pythonapi::PixelIterator::PixelIterator(pythonapi::PixelIterator const &)\n"
     "    pythonapi::PixelIterator::PixelIterator(pythonapi::RasterCoverage *,pythonapi::Box const &)\n"
-    "    pythonapi::PixelIterator::PixelIterator(pythonapi::RasterCoverage *)\n");
+    "    pythonapi::PixelIterator::PixelIterator(pythonapi::RasterCoverage *)\n"
+    "    pythonapi::PixelIterator::PixelIterator(Ilwis::PixelIterator *)\n");
   return 0;
 }
 
@@ -19042,6 +19082,35 @@ SWIGINTERN PyObject *_wrap_PixelIterator_asBuffer(PyObject *SWIGUNUSEDPARM(self)
   {
     resultobj = PyMemoryView_FromBuffer(result);
   }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_PixelIterator_raster(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::PixelIterator *arg1 = (pythonapi::PixelIterator *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::RasterCoverage *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:PixelIterator_raster",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__PixelIterator, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PixelIterator_raster" "', argument " "1"" of type '" "pythonapi::PixelIterator *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::PixelIterator * >(argp1);
+  {
+    try {
+      result = (pythonapi::RasterCoverage *)(arg1)->raster();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -21286,7 +21355,7 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_band__SWIG_0(PyObject *SWIGUNUSEDPARM(
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  pythonapi::RasterCoverage result;
+  SwigValueWrapper< pythonapi::PixelIterator > result;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:RasterCoverage_band",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
@@ -21303,7 +21372,7 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_band__SWIG_0(PyObject *SWIGUNUSEDPARM(
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj((new pythonapi::RasterCoverage(static_cast< const pythonapi::RasterCoverage& >(result))), SWIGTYPE_p_pythonapi__RasterCoverage, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_NewPointerObj((new pythonapi::PixelIterator(static_cast< const pythonapi::PixelIterator& >(result))), SWIGTYPE_p_pythonapi__PixelIterator, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -29042,7 +29111,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_PixelIterator", _wrap_new_PixelIterator, METH_VARARGS, (char *)"\n"
 		"PixelIterator(PixelIterator pi)\n"
 		"PixelIterator(RasterCoverage rc, Box b=pythonapi::Box())\n"
-		"new_PixelIterator(RasterCoverage rc) -> PixelIterator\n"
+		"PixelIterator(RasterCoverage rc)\n"
+		"new_PixelIterator(Ilwis::PixelIterator * ilwIt) -> PixelIterator\n"
 		""},
 	 { (char *)"delete_PixelIterator", _wrap_delete_PixelIterator, METH_VARARGS, (char *)"delete_PixelIterator(PixelIterator self)"},
 	 { (char *)"PixelIterator___iter__", _wrap_PixelIterator___iter__, METH_VARARGS, (char *)"PixelIterator___iter__(PixelIterator self) -> PixelIterator"},
@@ -29074,6 +29144,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"PixelIterator___gt__", _wrap_PixelIterator___gt__, METH_VARARGS, (char *)"PixelIterator___gt__(PixelIterator self, PixelIterator other) -> bool"},
 	 { (char *)"PixelIterator_end", _wrap_PixelIterator_end, METH_VARARGS, (char *)"PixelIterator_end(PixelIterator self) -> PixelIterator"},
 	 { (char *)"PixelIterator_asBuffer", _wrap_PixelIterator_asBuffer, METH_VARARGS, (char *)"PixelIterator_asBuffer(PixelIterator self) -> Py_buffer *"},
+	 { (char *)"PixelIterator_raster", _wrap_PixelIterator_raster, METH_VARARGS, (char *)"PixelIterator_raster(PixelIterator self) -> RasterCoverage"},
 	 { (char *)"PixelIterator_swigregister", PixelIterator_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_GeoReference", _wrap_new_GeoReference, METH_VARARGS, (char *)"new_GeoReference(std::string const & resource) -> GeoReference"},
 	 { (char *)"GeoReference_toGeoReference", _wrap_GeoReference_toGeoReference, METH_VARARGS, (char *)"GeoReference_toGeoReference(Object obj) -> GeoReference"},
@@ -29148,7 +29219,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"RasterCoverage_begin", _wrap_RasterCoverage_begin, METH_VARARGS, (char *)"RasterCoverage_begin(RasterCoverage self) -> PixelIterator"},
 	 { (char *)"RasterCoverage_end", _wrap_RasterCoverage_end, METH_VARARGS, (char *)"RasterCoverage_end(RasterCoverage self) -> PixelIterator"},
 	 { (char *)"RasterCoverage_band", _wrap_RasterCoverage_band, METH_VARARGS, (char *)"\n"
-		"band(PyObject * pyTrackIndex) -> RasterCoverage\n"
+		"band(PyObject * pyTrackIndex) -> PixelIterator\n"
 		"RasterCoverage_band(RasterCoverage self, PyObject * pyTrackIndex, RasterCoverage pyRaster)\n"
 		""},
 	 { (char *)"RasterCoverage_addBand", _wrap_RasterCoverage_addBand, METH_VARARGS, (char *)"RasterCoverage_addBand(RasterCoverage self, int index, DataDefinition pyDef, PyObject * pyTrackIndex)"},
@@ -29583,6 +29654,7 @@ static swig_type_info _swigt__p_Ilwis__IlwisDataT_Ilwis__IlwisObject_t = {"_p_Il
 static swig_type_info _swigt__p_Ilwis__IlwisDataT_Ilwis__NumericDomain_t = {"_p_Ilwis__IlwisDataT_Ilwis__NumericDomain_t", "Ilwis::IlwisData< Ilwis::NumericDomain > *|Ilwis::INumericDomain *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Ilwis__IlwisDataT_Ilwis__RasterCoverage_t = {"_p_Ilwis__IlwisDataT_Ilwis__RasterCoverage_t", "Ilwis::IlwisData< Ilwis::RasterCoverage > *|Ilwis::IRasterCoverage *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Ilwis__IlwisDataT_Ilwis__Table_t = {"_p_Ilwis__IlwisDataT_Ilwis__Table_t", "Ilwis::ITable *|Ilwis::IlwisData< Ilwis::Table > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Ilwis__PixelIterator = {"_p_Ilwis__PixelIterator", "Ilwis::PixelIterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Ilwis__Range = {"_p_Ilwis__Range", "Ilwis::Range *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p__object = {"_p__object", "_object *|PyObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_bufferinfo = {"_p_bufferinfo", "bufferinfo *|Py_buffer *", 0, 0, (void*)0, 0};
@@ -29655,6 +29727,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Ilwis__IlwisDataT_Ilwis__NumericDomain_t,
   &_swigt__p_Ilwis__IlwisDataT_Ilwis__RasterCoverage_t,
   &_swigt__p_Ilwis__IlwisDataT_Ilwis__Table_t,
+  &_swigt__p_Ilwis__PixelIterator,
   &_swigt__p_Ilwis__Range,
   &_swigt__p__object,
   &_swigt__p_bufferinfo,
@@ -29727,6 +29800,7 @@ static swig_cast_info _swigc__p_Ilwis__IlwisDataT_Ilwis__IlwisObject_t[] = {  {&
 static swig_cast_info _swigc__p_Ilwis__IlwisDataT_Ilwis__NumericDomain_t[] = {  {&_swigt__p_Ilwis__IlwisDataT_Ilwis__NumericDomain_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Ilwis__IlwisDataT_Ilwis__RasterCoverage_t[] = {  {&_swigt__p_Ilwis__IlwisDataT_Ilwis__RasterCoverage_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Ilwis__IlwisDataT_Ilwis__Table_t[] = {  {&_swigt__p_Ilwis__IlwisDataT_Ilwis__Table_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Ilwis__PixelIterator[] = {  {&_swigt__p_Ilwis__PixelIterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Ilwis__Range[] = {  {&_swigt__p_Ilwis__Range, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p__object[] = {  {&_swigt__p__object, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_bufferinfo[] = {  {&_swigt__p_bufferinfo, 0, 0, 0},{0, 0, 0, 0}};
@@ -29799,6 +29873,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Ilwis__IlwisDataT_Ilwis__NumericDomain_t,
   _swigc__p_Ilwis__IlwisDataT_Ilwis__RasterCoverage_t,
   _swigc__p_Ilwis__IlwisDataT_Ilwis__Table_t,
+  _swigc__p_Ilwis__PixelIterator,
   _swigc__p_Ilwis__Range,
   _swigc__p__object,
   _swigc__p_bufferinfo,

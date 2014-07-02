@@ -146,13 +146,13 @@ try:
         def test_Envelope(self):
             g = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
             e = g.envelope()
-            self.assertEqual("POLYGON(1 1,10 10)", str(e))
+            self.assertEqual("1 1 10 10", str(e))
             g = Geometry("POINT(1 1 1)", self.csy)
             e = g.envelope()
-            self.assertEqual("POLYGON(1 1,1 1)", str(e),
+            self.assertEqual("1 1 1 1", str(e),
                              msg="z's are always 0, since boost can only manage 2D geometries until now")
             g = Geometry("POINT(766489.647 6840642.671)", self.csy)
-            self.assertEqual("POLYGON(766490 6.84064e+06,766490 6.84064e+06)", str(g.envelope()))
+            self.assertEqual("766490 6.84064e+06 766490 6.84064e+06", str(g.envelope()))
             self.assertEqual("POINT (766489.6469999999972060 6840642.6710000000894070)", str(g))
 
         def test_BadWKT(self):
@@ -313,7 +313,7 @@ try:
             b = Box(Pixel(3, 4, 5), Pixel(4, 5, 6, ))
             self.assertTrue(bool(b))
             self.assertTrue(b.is3D())
-            self.assertEqual(str(b), "POLYGON(3 4 5,4 5 6)")
+            self.assertEqual(str(b), "3 4 5 4 5 6")
             self.assertTrue(b == Box("POLYGON(3 4 5,4 5 6)"))
             self.assertEqual(str(b.minCorner()), "pixel(3,4,5)")
             b.minCorner().x = 39
@@ -324,23 +324,23 @@ try:
             self.assertTrue(b.size() == Size(2, 2, 2))
             self.assertEqual(b.size().linearSize(), 2 * 2 * 2)
             b = Box(Pixel(2, 3), Pixel(4, 5))
-            self.assertEqual(str(b), "POLYGON(2 3,4 5)")
+            self.assertEqual(str(b), "2 3 4 5")
             self.assertFalse(b.is3D())
             self.assertTrue(bool(b))
 
             env = Envelope(Coordinate(3.6111119, 4.7, 5.9), Coordinate(4.7, 5.8, 6.9))
-            self.assertEqual(str(env), "POLYGON(3.61111 4.7 5.9,4.7 5.8 6.9)")
+            self.assertEqual(str(env), "3.61111 4.7 5.9 4.7 5.8 6.9")
             self.assertEqual(str(env.size()), "Size(2.08889, 2.1, 2)")
             env = Envelope("POLYGON(3.6111119 4.7 5.9,4.7 5.8 6.9)")
-            self.assertEqual(str(env), "POLYGON(3.61111 4.7 5.9,4.7 5.8 6.9)")
+            self.assertEqual(str(env), "3.61111 4.7 5.9 4.7 5.8 6.9")
             self.assertEqual(str(env.size()), "Size(2.08889, 2.1, 2)")
             self.assertFalse(env.size() == SizeD(2.08889, 2.1, 2.))  # bug on Python float precision
             env = Envelope(env.size())
-            self.assertEqual("POLYGON(0 0 0,1.08889 1.1 1)", str(env))
+            self.assertEqual("0 0 0 1.08889 1.1 1", str(env))
             env = Envelope(Coordinate(3, 4, 5), Coordinate(4, 5, 6, ))
-            self.assertEqual(str(env), "POLYGON(3 4 5,4 5 6)")
+            self.assertEqual(str(env), "3 4 5 4 5 6")
             env = Envelope(env.size())
-            self.assertEqual(str(env), "POLYGON(0 0 0,1 1 1)")
+            self.assertEqual(str(env), "0 0 0 1 1 1")
             self.assertTrue(Coordinate(.5, .5, .5) in env)
             self.assertTrue(env in env)
 
@@ -751,23 +751,23 @@ try:
             self.assertTrue(r.size() == gr.size())
             box = Box(gr.size())
             env = gr.box2Envelope(box)
-            self.assertEqual("POLYGON(0 0 0,1151 1151 0)", str(box))
-            self.assertEqual("POLYGON(-4.60799e+06 -4.59997e+06,4.60001e+06 4.60803e+06)", str(env))
+            self.assertEqual("0 0 0 1151 1151 0", str(box))
+            self.assertEqual("-4.60799e+06 -4.59997e+06 4.60001e+06 4.60803e+06", str(env))
             subenv = Envelope(Coordinate(-1e+06, -1e+06), Coordinate(1e+06, 1e+06))
             subbox = gr.envelope2Box(subenv)
-            self.assertEqual("POLYGON(-1e+06 -1e+06,1e+06 1e+06)", str(subenv))
-            self.assertEqual("POLYGON(451 451,701 701)", str(subbox))
+            self.assertEqual("-1e+06 -1e+06 1e+06 1e+06", str(subenv))
+            self.assertEqual("451 451 701 701", str(subbox))
             self.assertEqual("pixel(536.599,478.436)", str(gr.coord2Pixel(Coordinate(-319195.47, 784540.64))))
             self.assertEqual("coordinate(-315198.248000,780544.506500)", str(gr.pixel2Coord(PixelD(536.599, 478.436))))
             self.assertEqual("coordinate(-319990.248000,784032.506500)", str(gr.pixel2Coord(Pixel(536, 478))))
             # self.assertEqual(0, gr.pixelSize())  # TODO possible bug in GeoRefImplementaion  - nan is not a good pixelSize!!
             self.assertTrue(gr.centerOfPixel())
-            self.assertEqual("POLYGON(536 478,536 478)", str(
+            self.assertEqual("536 478 536 478", str(
                 gr.envelope2Box(Envelope(Coordinate(-319195.47, 784540.64), Coordinate(-319990.248000, 784032.506500)))
             ))
             gr.centerOfPixel(False)
             self.assertFalse(gr.centerOfPixel())
-            self.assertEqual("POLYGON(536 478,536 478)", str(
+            self.assertEqual("536 478 536 478", str(
                 gr.envelope2Box(Envelope(Coordinate(-319195.47, 784540.64), Coordinate(-319990.248000, 784032.506500)))
             ))
 
@@ -1040,7 +1040,7 @@ try:
             self.assertEqual(int(rit), 63)
             self.assertEqual(float(rit), 101.0)
             box = Box("(1 1 0,2 2 3)")
-            self.assertEqual(str(box), "POLYGON(1 1 0,2 2 3)")
+            self.assertEqual(str(box), "1 1 0 2 2 3")
             bit = PixelIterator(rcl, box)
             self.assertTrue(bool(bit))
             boxed_small = [
@@ -1091,8 +1091,12 @@ try:
             rc = RasterCoverage("n000302.mpr")
             it2 = PixelIterator(rc)
             self.assertEqual(1152 * 1152, it2.box().size().linearSize())
-            bu = np.frombuffer(it2.asBuffer(), np.float, 500 * 1152, 0)  # numpy-array only from first block (500 lines)
+            bu = np.frombuffer(it2.asBuffer(), np.float, it2.box().size().linearSize(), 0)
             self.assertTrue(all(0 <= v <= 255 for v in bu))
+
+        def test_band(self):
+            rc = RasterCoverage("landuse.mpr")
+            pixIt = rc.band(0)
 
     #@ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
