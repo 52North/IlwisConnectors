@@ -344,7 +344,7 @@ namespace pythonapi {
     }
 
 
-    //------------------------Dictionary-----------------------------------
+    //=======================Dictionary===================================
 
     bool PyDictCheckExact(const PyObject* obj)
     {
@@ -365,5 +365,10 @@ namespace pythonapi {
     }
 
 
+    //============================PyUnicode=====================================
+
+    PyObject* PyUnicodeAsUTF8(PyObject* obj){
+        return PyUnicode_AsUTF8String(obj);
+    }
 
 } // namespace pythonapi

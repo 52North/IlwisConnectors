@@ -119,12 +119,11 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
     }
 }
 
-bool Engine::setWorkingCatalog(const std::string& location){
+void Engine::setWorkingCatalog(const std::string& location){
     Ilwis::ICatalog cat;
     cat.prepare(QString::fromStdString(location));
     if(cat.isValid()){
         Ilwis::context()->setWorkingCatalog(cat);
-        return true;
     }else
         throw Ilwis::ErrorObject(QString("invalid container location: '%1'").arg(location.c_str()));
 }

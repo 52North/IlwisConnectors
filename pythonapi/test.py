@@ -740,7 +740,7 @@ try:
             gr = GeoReference("n000302.grf")
             self.assertTrue(bool(gr))
             self.assertFalse(gr.isInternal())
-            self.assertTrue(gr.centerOfPixel())
+            self.assertFalse(gr.centerOfPixel())
 
         def test_fromRaster(self):
             r = RasterCoverage("n000302.mpr")
@@ -752,14 +752,14 @@ try:
             box = Box(gr.size())
             env = gr.box2Envelope(box)
             self.assertEqual("0 0 0 1151 1151 0", str(box))
-            self.assertEqual("-4.60799e+06 -4.59997e+06 4.60001e+06 4.60803e+06", str(env))
+            self.assertEqual("-4.61199e+06 -4.59597e+06 4.59601e+06 4.61203e+06", str(env))
             subenv = Envelope(Coordinate(-1e+06, -1e+06), Coordinate(1e+06, 1e+06))
             subbox = gr.envelope2Box(subenv)
             self.assertEqual("-1e+06 -1e+06 1e+06 1e+06", str(subenv))
             self.assertEqual("451 451 701 701", str(subbox))
             self.assertEqual("pixel(536.599,478.436)", str(gr.coord2Pixel(Coordinate(-319195.47, 784540.64))))
-            self.assertEqual("coordinate(-315198.248000,780544.506500)", str(gr.pixel2Coord(PixelD(536.599, 478.436))))
-            self.assertEqual("coordinate(-319990.248000,784032.506500)", str(gr.pixel2Coord(Pixel(536, 478))))
+            self.assertEqual("coordinate(-319198.248000,784544.506500)", str(gr.pixel2Coord(PixelD(536.599, 478.436))))
+            self.assertEqual("coordinate(-323990.248000,788032.506500)", str(gr.pixel2Coord(Pixel(536, 478))))
             # self.assertEqual(0, gr.pixelSize())  # TODO possible bug in GeoRefImplementaion  - nan is not a good pixelSize!!
             self.assertTrue(gr.centerOfPixel())
             self.assertEqual("536 478 536 478", str(
@@ -919,23 +919,23 @@ try:
             aa1 = rc1 + rc2
             aa1.setOutputConnection(workingDir + rasterDir + "/kenya_frommpr", "map", "ilwis3")
             aa1.store()
-            self.assertAlmostEqual(aa1.pix2value(pix), 96.0 + 0.1915, 1)
+            self.assertAlmostEqual(aa1.pix2value(pix), 96.0 + 0.164948, 1)
             aa2 = rc1 - rc2
-            self.assertAlmostEqual(aa2.pix2value(pix), 96.0 - 0.1915, 1)
+            self.assertAlmostEqual(aa2.pix2value(pix), 96.0 - 0.164948, 1)
             aa3 = rc1 * rc2
-            self.assertAlmostEqual(aa3.pix2value(pix), 96.0 * 0.1915, 1)
+            self.assertAlmostEqual(aa3.pix2value(pix), 96.0 * 0.164948, 1)
             aa4 = rc1 / rc2
-            self.assertAlmostEqual(aa4.pix2value(pix), 96.0 / 0.1915, 1)
+            self.assertAlmostEqual(aa4.pix2value(pix), 96.0 / 0.164948, 1)
             # aa5 = rc1 + rc2 / 3
             # self.assertAlmostEqual(aa5.pix2value(pix), 96.0 + 0.1915 / 3, 1)
             aa5 = rc1 / 3 + rc2
-            self.assertAlmostEqual(aa5.pix2value(pix), 96.0 / 3 + 0.1915, 1)
+            self.assertAlmostEqual(aa5.pix2value(pix), 96.0 / 3 + 0.164948, 1)
             aa6 = 2 * rc1 - rc2
-            self.assertAlmostEqual(aa6.pix2value(pix), 2 * 96.0 - 0.1915, 1)
+            self.assertAlmostEqual(aa6.pix2value(pix), 2 * 96.0 - 0.164948, 1)
             aa7 = rc1 + rc2 - 2
-            self.assertAlmostEqual(aa7.pix2value(pix), 96.0 + 0.1915 - 2, 1)
+            self.assertAlmostEqual(aa7.pix2value(pix), 96.0 + 0.164948 - 2, 1)
             aa8 = rc1 + rc2 + 2
-            self.assertAlmostEqual(aa8.pix2value(pix), 96.0 + 0.1915 + 2, 1)
+            self.assertAlmostEqual(aa8.pix2value(pix), 96.0 + 0.164948 + 2, 1)
 
 
 
@@ -1593,7 +1593,7 @@ try:
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest=None, verbosity=2)
+        ut.main(defaultTest='TestBaby', verbosity=2)
 
 except ImportError as e:
     print(e)

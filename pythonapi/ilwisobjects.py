@@ -209,7 +209,7 @@ class Engine(_object):
     if _newclass:_do = staticmethod(_do)
     __swig_getmethods__["_do"] = lambda x: _do
     def setWorkingCatalog(*args):
-        """setWorkingCatalog(std::string const & location) -> bool"""
+        """setWorkingCatalog(std::string const & location)"""
         return _ilwisobjects.Engine_setWorkingCatalog(*args)
 
     if _newclass:setWorkingCatalog = staticmethod(setWorkingCatalog)
@@ -258,7 +258,7 @@ def Engine__do(*args):
   return _ilwisobjects.Engine__do(*args)
 
 def Engine_setWorkingCatalog(*args):
-  """Engine_setWorkingCatalog(std::string const & location) -> bool"""
+  """Engine_setWorkingCatalog(std::string const & location)"""
   return _ilwisobjects.Engine_setWorkingCatalog(*args)
 
 class IlwisObject(Object):
@@ -1879,12 +1879,13 @@ class RasterCoverage(Coverage):
         """
         return _ilwisobjects.RasterCoverage_datadef(self, *args)
 
-    def statistics(self, mode=0):
+    def statistics(self, mode=0, bins=0):
         """
+        statistics(RasterCoverage self, int mode=0, int bins=0) -> NumericStatistics
         statistics(RasterCoverage self, int mode=0) -> NumericStatistics
         statistics(RasterCoverage self) -> NumericStatistics
         """
-        return _ilwisobjects.RasterCoverage_statistics(self, mode)
+        return _ilwisobjects.RasterCoverage_statistics(self, mode, bins)
 
     def toRasterCoverage(*args):
         """toRasterCoverage(Object obj) -> RasterCoverage"""

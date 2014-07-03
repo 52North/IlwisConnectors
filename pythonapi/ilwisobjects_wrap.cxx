@@ -4789,7 +4789,6 @@ SWIGINTERN PyObject *_wrap_Engine_setWorkingCatalog(PyObject *SWIGUNUSEDPARM(sel
   std::string *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   PyObject * obj0 = 0 ;
-  bool result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:Engine_setWorkingCatalog",&obj0)) SWIG_fail;
   {
@@ -4805,13 +4804,13 @@ SWIGINTERN PyObject *_wrap_Engine_setWorkingCatalog(PyObject *SWIGUNUSEDPARM(sel
   }
   {
     try {
-      result = (bool)pythonapi::Engine::setWorkingCatalog((std::string const &)*arg1);
+      pythonapi::Engine::setWorkingCatalog((std::string const &)*arg1);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj;
 fail:
@@ -21153,6 +21152,53 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_statistics__SWIG_0(PyObject *SWIGUNUSE
   PyObject *resultobj = 0;
   pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
   int arg2 ;
+  int arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  pythonapi::NumericStatistics *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:RasterCoverage_statistics",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_statistics" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RasterCoverage_statistics" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  ecode3 = SWIG_AsVal_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "RasterCoverage_statistics" "', argument " "3"" of type '" "int""'");
+  } 
+  arg3 = static_cast< int >(val3);
+  {
+    try {
+      result = (pythonapi::NumericStatistics *)(arg1)->statistics(arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_statistics__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  int arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int val2 ;
@@ -21187,7 +21233,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RasterCoverage_statistics__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_RasterCoverage_statistics__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
   void *argp1 = 0 ;
@@ -21218,12 +21264,12 @@ fail:
 
 SWIGINTERN PyObject *_wrap_RasterCoverage_statistics(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[3];
+  PyObject *argv[4];
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
   }
   if (argc == 1) {
@@ -21232,7 +21278,7 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_statistics(PyObject *self, PyObject *a
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      return _wrap_RasterCoverage_statistics__SWIG_1(self, args);
+      return _wrap_RasterCoverage_statistics__SWIG_2(self, args);
     }
   }
   if (argc == 2) {
@@ -21246,7 +21292,28 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_statistics(PyObject *self, PyObject *a
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        return _wrap_RasterCoverage_statistics__SWIG_0(self, args);
+        return _wrap_RasterCoverage_statistics__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_RasterCoverage_statistics__SWIG_0(self, args);
+        }
       }
     }
   }
@@ -21254,6 +21321,7 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_statistics(PyObject *self, PyObject *a
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'RasterCoverage_statistics'.\n"
     "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::RasterCoverage::statistics(int,int)\n"
     "    pythonapi::RasterCoverage::statistics(int)\n"
     "    pythonapi::RasterCoverage::statistics()\n");
   return 0;
@@ -28733,7 +28801,7 @@ static PyMethodDef SwigMethods[] = {
 		"_do(std::string output_name, std::string operation, std::string c3=\"\") -> Object\n"
 		"Engine__do(std::string output_name, std::string operation) -> Object\n"
 		""},
-	 { (char *)"Engine_setWorkingCatalog", _wrap_Engine_setWorkingCatalog, METH_VARARGS, (char *)"Engine_setWorkingCatalog(std::string const & location) -> bool"},
+	 { (char *)"Engine_setWorkingCatalog", _wrap_Engine_setWorkingCatalog, METH_VARARGS, (char *)"Engine_setWorkingCatalog(std::string const & location)"},
 	 { (char *)"Engine_operations", _wrap_Engine_operations, METH_VARARGS, (char *)"\n"
 		"operations(std::string const & filter=\"*\") -> PyObject\n"
 		"Engine_operations(Engine self) -> PyObject *\n"
@@ -29212,6 +29280,7 @@ static PyMethodDef SwigMethods[] = {
 		"RasterCoverage_datadef(RasterCoverage self, quint32 layer) -> DataDefinition\n"
 		""},
 	 { (char *)"RasterCoverage_statistics", _wrap_RasterCoverage_statistics, METH_VARARGS, (char *)"\n"
+		"statistics(int mode=0, int bins=0) -> NumericStatistics\n"
 		"statistics(int mode=0) -> NumericStatistics\n"
 		"RasterCoverage_statistics(RasterCoverage self) -> NumericStatistics\n"
 		""},

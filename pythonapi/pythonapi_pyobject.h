@@ -114,6 +114,9 @@ namespace pythonapi {
     int PyDictSetItemString(PyObject *dicti, const char *key, PyObject *val);
     PyObject* PyDictGetItemString(PyObject* dicti, const char* key);
 
+    //====================unicode========================
+    PyObject* PyUnicodeAsUTF8(PyObject* obj);
+
 } // namespace pythonapi
 
 #endif // PYTHONAPI_PYOBJECT_H
