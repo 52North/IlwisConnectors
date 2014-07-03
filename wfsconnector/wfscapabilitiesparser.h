@@ -6,10 +6,11 @@
 #include <QList>
 
 class QUrl;
-class XPathParser;
 class QXmlItem;
 
 namespace Ilwis {
+
+class XPathParser;
 
 namespace Wfs {
 
