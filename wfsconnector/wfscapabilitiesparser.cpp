@@ -62,9 +62,10 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) co
 {
 
     QUrl rawUrl, normalizedUrl;
+    QString name = valueOf(item, "./wfs:Name/string()");
+    createGetFeatureUrl(name, rawUrl, normalizedUrl);
     feature = WfsFeature(rawUrl, normalizedUrl);
-    feature.name(valueOf(item, "./wfs:Name/string()"), false);
-    createGetFeatureUrl(feature.name(), rawUrl, normalizedUrl);
+    feature.name(name, false);
     feature.setTitle(valueOf(item, "./wfs:Title/string()"));
     feature.setTitle(valueOf(item, "./wfs:Abstract/string()"));
     feature.setTitle(WfsUtils::normalizeEpsgCode(valueOf(item, "./wfs:DefaultSRS/string()")));

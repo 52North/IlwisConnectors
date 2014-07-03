@@ -18,10 +18,11 @@ WfsFeature::WfsFeature(const QUrl &rawfeatureUrl, const QUrl &normalizedUrl): Re
         if ( rawfeatureUrl.hasQuery()) {
             QString normUrl = rawfeatureUrl.toString(QUrl::RemoveQuery);
             QUrlQuery query(rawfeatureUrl);
-            if ( query.hasQueryItem("typeName")){
+            if ( !query.hasQueryItem("typeName")){
+                setUrl(normUrl);
+            } else {
                 QString tpName = query.queryItemValue("typeName");
                 setUrl(normUrl + "/" + tpName);
-
             }
         }
     }
