@@ -29,6 +29,7 @@
 #include "wfsfeatureparser.h"
 #include "wfsfeaturedescriptionparser.h"
 #include "wfs.h"
+#include "wfsfeature.h"
 #include "wfsresponse.h"
 #include "wfsutils.h"
 
@@ -57,9 +58,9 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const PrepareOp
     WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse);
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
-    return schemaParser.parseSchemaDescription(fcoverage, source().url(true) ,_context);
+    _context.setResource(_resource);
+    return schemaParser.parseMetadata(fcoverage, _context);
 }
-
 
 bool WfsFeatureConnector::loadData(IlwisObject *data)
 {

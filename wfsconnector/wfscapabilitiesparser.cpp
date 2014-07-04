@@ -60,23 +60,24 @@ QString WfsCapabilitiesParser::valueOf(QXmlItem &item, const QString& xpathQuqer
 
 void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) const
 {
-
     QUrl rawUrl, normalizedUrl;
+    QString name = valueOf(item, "./wfs:Name/string()");
+    createGetFeatureUrl(name, rawUrl, normalizedUrl);
     feature = WfsFeature(rawUrl, normalizedUrl);
-    feature.name(valueOf(item, "./wfs:Name/string()"), false);
-    createGetFeatureUrl(feature.name(), rawUrl, normalizedUrl);
+    feature.name(name, false);
     feature.setTitle(valueOf(item, "./wfs:Title/string()"));
-    feature.setTitle(valueOf(item, "./wfs:Abstract/string()"));
-    feature.setTitle(WfsUtils::normalizeEpsgCode(valueOf(item, "./wfs:DefaultSRS/string()")));
+    feature.setAbstract(valueOf(item, "./wfs:Abstract/string()"));
 
+    QString code = valueOf(item, "./wfs:DefaultSRS/string()");
+    QString srs = QString("code=").append(WfsUtils::normalizeEpsgCode(code));
     QString llText = valueOf(item, "./ows:WGS84BoundingBox/ows:LowerCorner/string()");
     QString urText = valueOf(item, "./ows:WGS84BoundingBox/ows:UpperCorner/string()");
 
-    Coordinate ll = createCoordinateFromWgs84LatLon(llText);
-    Coordinate ur = createCoordinateFromWgs84LatLon(urText);
-    Envelope envelope(ll, ur);
-    feature.setBBox(envelope);
+    feature.addProperty("coordinatesystem", srs);
+    feature.addProperty("envelope.ll", llText);
+    feature.addProperty("envelope.ur", urText);
 }
+
 void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl& rawUrl, QUrl& normalizedUrl) const
 {
     QUrlQuery query;
@@ -88,14 +89,4 @@ void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl
     rawUrl.setQuery(query);
     normalizedUrl = _url.toString(QUrl::RemoveQuery) + "/" + featureName;
 }
-
-Coordinate WfsCapabilitiesParser::createCoordinateFromWgs84LatLon(QString latlon) const
-{
-    int splitIndex = latlon.indexOf(" ");
-    QString lon = latlon.left(splitIndex).trimmed();
-    QString lat = latlon.mid(splitIndex + 1).trimmed();
-    Coordinate coords(lon.toDouble(), lat.toDouble());
-    return coords;
-}
-
 

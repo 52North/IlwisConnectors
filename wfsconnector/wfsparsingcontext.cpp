@@ -1,6 +1,8 @@
 #include <QString>
+#include <QVariant>
 #include <QMap>
 
+#include "kernel.h"
 #include "wfsparsingcontext.h"
 
 using namespace Ilwis;
@@ -30,6 +32,16 @@ QMap<QString, QString> WfsParsingContext::namespaceMappings() const
     return _namespaceMappings;
 }
 
+Resource WfsParsingContext::resource() const
+{
+    return _resource;
+}
+
+QString WfsParsingContext::currentItem() const
+{
+    return _currentItem;
+}
+
 void WfsParsingContext::setSrsName(QString srsName)
 {
     _srsName = srsName;
@@ -48,6 +60,16 @@ void WfsParsingContext::setGeometryAtttributeName(QString geometryAtttributeName
 void WfsParsingContext::addNamespaceMapping(QString prefix, QString uriNamespace)
 {
     _namespaceMappings[prefix] = uriNamespace;
+}
+
+void WfsParsingContext::setResource(Resource resource)
+{
+    _resource = resource;
+}
+
+void WfsParsingContext::setCurrentItem(QString item)
+{
+    _currentItem = item;
 }
 
 

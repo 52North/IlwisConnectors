@@ -82,12 +82,12 @@ private:
     geos::geom::LinearRing *parseExteriorRing();
     std::vector<geos::geom::Geometry *> *parseInteriorRings();
 
+    void initCrs(ICoordinateSystem &crs);
 
     QString gmlPosListToWktCoords(QString gmlPosList);
     QString gmlPosListToWktPolygon(QString gmlPosList);
     QString gmlPosListToWktLineString(QString gmlPosList);
     QString gmlPosListToWktPoint(QString gmlPosList);
-
 };
 
 }
