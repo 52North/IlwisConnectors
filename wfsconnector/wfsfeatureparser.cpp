@@ -53,6 +53,8 @@ WfsFeatureParser::~WfsFeatureParser()
 
 void WfsFeatureParser::context(const WfsParsingContext &context)
 {
+    QString targetNamespace =  context.namespaceMappings()[""];
+    _parser->addTargetNamespaceMapping(targetNamespace);
     _context = context;
 }
 
@@ -63,8 +65,6 @@ WfsParsingContext WfsFeatureParser::context() const
 
 void WfsFeatureParser::parseFeatureMembers()
 {
-    QString targetNamespace =  _context.namespaceMappings()[""];
-    _parser->addNamespaceMapping("target", targetNamespace);
     ITable table = _fcoverage->attributeTable();
     _featureType = table->name();
     _featureType = "target:" + _featureType;
@@ -135,11 +135,7 @@ void WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table
         if (currentElementName == geometryAttributeName) {
             i--; // not written to table
             createNewFeature();
-            if ( !_parser->moveToEndOf(geometryAttributeName)) {
-            //while ( !_parser->atEnd() && _parser->name() != geometryAttributeName) {
-                // leave the geometry element
-                //_parser->readNextStartElement();
-
+            if ( !_parser->moveToEndOf(_parser->qname())) {
                 qWarning() << "could not find end of " << geometryAttributeName;
             }
             continue;

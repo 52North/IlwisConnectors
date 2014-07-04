@@ -60,24 +60,24 @@ QString WfsCapabilitiesParser::valueOf(QXmlItem &item, const QString& xpathQuqer
 
 void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) const
 {
-
     QUrl rawUrl, normalizedUrl;
     QString name = valueOf(item, "./wfs:Name/string()");
     createGetFeatureUrl(name, rawUrl, normalizedUrl);
     feature = WfsFeature(rawUrl, normalizedUrl);
     feature.name(name, false);
     feature.setTitle(valueOf(item, "./wfs:Title/string()"));
-    feature.setTitle(valueOf(item, "./wfs:Abstract/string()"));
-    feature.setTitle(WfsUtils::normalizeEpsgCode(valueOf(item, "./wfs:DefaultSRS/string()")));
+    feature.setAbstract(valueOf(item, "./wfs:Abstract/string()"));
 
+    QString code = valueOf(item, "./wfs:DefaultSRS/string()");
+    QString srs = QString("code=").append(WfsUtils::normalizeEpsgCode(code));
     QString llText = valueOf(item, "./ows:WGS84BoundingBox/ows:LowerCorner/string()");
     QString urText = valueOf(item, "./ows:WGS84BoundingBox/ows:UpperCorner/string()");
 
-    Coordinate ll = WfsUtils::createCoordinateFromWgs84LatLon(llText);
-    Coordinate ur = WfsUtils::createCoordinateFromWgs84LatLon(urText);
-    Envelope envelope(ll, ur);
-    feature.setBBox(envelope);
+    feature.addProperty("coordinatesystem", srs);
+    feature.addProperty("envelope.ll", llText);
+    feature.addProperty("envelope.ur", urText);
 }
+
 void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl& rawUrl, QUrl& normalizedUrl) const
 {
     QUrlQuery query;
