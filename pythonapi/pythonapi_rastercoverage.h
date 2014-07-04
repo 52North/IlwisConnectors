@@ -59,7 +59,7 @@ namespace pythonapi {
         PixelIterator end();
 
         PixelIterator band(PyObject* pyTrackIndex);
-        void addBand(PyObject* pyTrackIndex, RasterCoverage* pyRaster);
+        void addBand(PyObject* pyTrackIndex, PixelIterator* pyIter);
 
         RasterCoverage select(std::string selectionQ);
         RasterCoverage select(Geometry& geom);

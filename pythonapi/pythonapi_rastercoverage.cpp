@@ -244,10 +244,9 @@ PixelIterator RasterCoverage::band(PyObject* pyTrackIndex){
         throw InvalidObject("Not a valid band");
 }
 
-void RasterCoverage::addBand(PyObject* pyTrackIndex, RasterCoverage* pyRaster){
+void RasterCoverage::addBand(PyObject* pyTrackIndex, PixelIterator* pyIter){
     std::unique_ptr<QVariant> ilwTrackIndex(PyObject2QVariant(pyTrackIndex));
-    PixelIterator pyIter(pyRaster);
-    this->ptr()->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex, pyIter.ptr());
+    this->ptr()->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex, pyIter->ptr());
 }
 
 RasterCoverage RasterCoverage::select(std::string selectionQ){

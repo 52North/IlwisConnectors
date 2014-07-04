@@ -375,6 +375,13 @@ class CoordinateSystem(IlwisObject):
 
     if _newclass:toCoordinateSystem = staticmethod(toCoordinateSystem)
     __swig_getmethods__["toCoordinateSystem"] = lambda x: toCoordinateSystem
+    def toWKT(self, spaces=0):
+        """
+        toWKT(CoordinateSystem self, quint32 spaces=0) -> std::string
+        toWKT(CoordinateSystem self) -> std::string
+        """
+        return _ilwisobjects.CoordinateSystem_toWKT(self, spaces)
+
     __swig_destroy__ = _ilwisobjects.delete_CoordinateSystem
     __del__ = lambda self : None;
 CoordinateSystem_swigregister = _ilwisobjects.CoordinateSystem_swigregister
@@ -1902,14 +1909,11 @@ class RasterCoverage(Coverage):
         return _ilwisobjects.RasterCoverage_end(self)
 
     def band(self, *args):
-        """
-        band(RasterCoverage self, PyObject * pyTrackIndex) -> PixelIterator
-        band(RasterCoverage self, PyObject * pyTrackIndex, RasterCoverage pyRaster)
-        """
+        """band(RasterCoverage self, PyObject * pyTrackIndex) -> PixelIterator"""
         return _ilwisobjects.RasterCoverage_band(self, *args)
 
     def addBand(self, *args):
-        """addBand(RasterCoverage self, int index, DataDefinition pyDef, PyObject * pyTrackIndex)"""
+        """addBand(RasterCoverage self, PyObject * pyTrackIndex, PixelIterator pyIter)"""
         return _ilwisobjects.RasterCoverage_addBand(self, *args)
 
     def select(self, *args):

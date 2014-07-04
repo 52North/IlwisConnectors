@@ -919,23 +919,23 @@ try:
             aa1 = rc1 + rc2
             aa1.setOutputConnection(workingDir + rasterDir + "/kenya_frommpr", "map", "ilwis3")
             aa1.store()
-            self.assertAlmostEqual(aa1.pix2value(pix), 96.0 + 0.164948, 1)
+            self.assertAlmostEqual(aa1.pix2value(pix), 96.0 + 0.201173, 1)
             aa2 = rc1 - rc2
-            self.assertAlmostEqual(aa2.pix2value(pix), 96.0 - 0.164948, 1)
+            self.assertAlmostEqual(aa2.pix2value(pix), 96.0 - 0.201173, 1)
             aa3 = rc1 * rc2
-            self.assertAlmostEqual(aa3.pix2value(pix), 96.0 * 0.164948, 1)
+            self.assertAlmostEqual(aa3.pix2value(pix), 96.0 * 0.201173, 1)
             aa4 = rc1 / rc2
-            self.assertAlmostEqual(aa4.pix2value(pix), 96.0 / 0.164948, 1)
+            self.assertAlmostEqual(aa4.pix2value(pix), 96.0 / 0.201173, 1)
             # aa5 = rc1 + rc2 / 3
             # self.assertAlmostEqual(aa5.pix2value(pix), 96.0 + 0.1915 / 3, 1)
             aa5 = rc1 / 3 + rc2
-            self.assertAlmostEqual(aa5.pix2value(pix), 96.0 / 3 + 0.164948, 1)
+            self.assertAlmostEqual(aa5.pix2value(pix), 96.0 / 3 + 0.201173, 1)
             aa6 = 2 * rc1 - rc2
-            self.assertAlmostEqual(aa6.pix2value(pix), 2 * 96.0 - 0.164948, 1)
+            self.assertAlmostEqual(aa6.pix2value(pix), 2 * 96.0 - 0.201173, 1)
             aa7 = rc1 + rc2 - 2
-            self.assertAlmostEqual(aa7.pix2value(pix), 96.0 + 0.164948 - 2, 1)
+            self.assertAlmostEqual(aa7.pix2value(pix), 96.0 + 0.201173 - 2, 1)
             aa8 = rc1 + rc2 + 2
-            self.assertAlmostEqual(aa8.pix2value(pix), 96.0 + 0.164948 + 2, 1)
+            self.assertAlmostEqual(aa8.pix2value(pix), 96.0 + 0.201173 + 2, 1)
 
 
 
@@ -1593,7 +1593,7 @@ try:
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest='TestBaby', verbosity=2)
+        ut.main(defaultTest='TestRaster', verbosity=2)
 
 except ImportError as e:
     print(e)

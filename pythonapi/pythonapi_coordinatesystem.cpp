@@ -39,6 +39,11 @@ bool CoordinateSystem::operator!=(const CoordinateSystem &csy){
     return !this->operator==(csy);
 }
 
+std::string CoordinateSystem::toWKT(quint32 spaces) const{
+    QString ilwStr = this->ptr()->as<Ilwis::CoordinateSystem>()->toWKT();
+    return ilwStr.toStdString();
+}
+
 CoordinateSystem *CoordinateSystem::toCoordinateSystem(Object *obj){
     CoordinateSystem* ptr = dynamic_cast<CoordinateSystem*>(obj);
     if(!ptr)
