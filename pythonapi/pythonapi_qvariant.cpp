@@ -64,7 +64,9 @@ namespace pythonapi{
         bool ok = false;
         QMetaType::Type t = (QMetaType::Type)var.type();
         if (t == QMetaType::QString){
-            return PyUnicodeFromString(var.toString().toLocal8Bit());
+            QByteArray byteArray = var.toString().toUtf8();
+            const char *cString = byteArray.constData();
+            return PyUnicodeFromString(cString);
         }else if(t == QMetaType::Bool){
             return PyBoolFromLong(var.toBool());
         }else if(t == QMetaType::Double){

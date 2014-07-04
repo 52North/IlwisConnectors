@@ -223,8 +223,8 @@ DataDefinition& RasterCoverage::datadef(quint32 layer){
     return *pydef;
 }
 
-NumericStatistics* RasterCoverage::statistics(int mode){
-    return new NumericStatistics(this->ptr()->as<Ilwis::RasterCoverage>()->statistics(mode));
+NumericStatistics* RasterCoverage::statistics(int mode, int bins){
+    return new NumericStatistics(this->ptr()->as<Ilwis::RasterCoverage>()->statistics(mode, bins));
  }
 
 PixelIterator RasterCoverage::begin(){
@@ -244,15 +244,9 @@ PixelIterator RasterCoverage::band(PyObject* pyTrackIndex){
         throw InvalidObject("Not a valid band");
 }
 
-void RasterCoverage::band(PyObject* pyTrackIndex, RasterCoverage* pyRaster){
+void RasterCoverage::addBand(PyObject* pyTrackIndex, PixelIterator* pyIter){
     std::unique_ptr<QVariant> ilwTrackIndex(PyObject2QVariant(pyTrackIndex));
-    PixelIterator pyIter(pyRaster);
-    this->ptr()->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex, pyIter.ptr());
-}
-
-void RasterCoverage::addBand(int index, DataDefinition& pyDef, PyObject* pyTrackIndex){
-    std::unique_ptr<QVariant> ilwTrackIndex(PyObject2QVariant(pyTrackIndex));
-    this->ptr()->as<Ilwis::RasterCoverage>()->addBand(index, pyDef.ptr(), *ilwTrackIndex);
+    this->ptr()->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex, pyIter->ptr());
 }
 
 RasterCoverage RasterCoverage::select(std::string selectionQ){

@@ -51,7 +51,7 @@ namespace pythonapi {
         const DataDefinition& datadef(quint32 layer) const;
         DataDefinition& datadef(quint32 layer);
 
-        NumericStatistics* statistics(int mode=0);
+        NumericStatistics* statistics(int mode=0, int bins=0);
 
         static RasterCoverage* toRasterCoverage(Object *obj);
 
@@ -59,8 +59,7 @@ namespace pythonapi {
         PixelIterator end();
 
         PixelIterator band(PyObject* pyTrackIndex);
-        void band(PyObject* pyTrackIndex, RasterCoverage* pyRaster);
-        void addBand(int index, DataDefinition& pyDef, PyObject* pyTrackIndex);
+        void addBand(PyObject* pyTrackIndex, PixelIterator* pyIter);
 
         RasterCoverage select(std::string selectionQ);
         RasterCoverage select(Geometry& geom);

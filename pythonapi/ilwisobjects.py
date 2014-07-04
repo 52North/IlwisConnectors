@@ -209,7 +209,7 @@ class Engine(_object):
     if _newclass:_do = staticmethod(_do)
     __swig_getmethods__["_do"] = lambda x: _do
     def setWorkingCatalog(*args):
-        """setWorkingCatalog(std::string const & location) -> bool"""
+        """setWorkingCatalog(std::string const & location)"""
         return _ilwisobjects.Engine_setWorkingCatalog(*args)
 
     if _newclass:setWorkingCatalog = staticmethod(setWorkingCatalog)
@@ -258,7 +258,7 @@ def Engine__do(*args):
   return _ilwisobjects.Engine__do(*args)
 
 def Engine_setWorkingCatalog(*args):
-  """Engine_setWorkingCatalog(std::string const & location) -> bool"""
+  """Engine_setWorkingCatalog(std::string const & location)"""
   return _ilwisobjects.Engine_setWorkingCatalog(*args)
 
 class IlwisObject(Object):
@@ -375,6 +375,13 @@ class CoordinateSystem(IlwisObject):
 
     if _newclass:toCoordinateSystem = staticmethod(toCoordinateSystem)
     __swig_getmethods__["toCoordinateSystem"] = lambda x: toCoordinateSystem
+    def toWKT(self, spaces=0):
+        """
+        toWKT(CoordinateSystem self, quint32 spaces=0) -> std::string
+        toWKT(CoordinateSystem self) -> std::string
+        """
+        return _ilwisobjects.CoordinateSystem_toWKT(self, spaces)
+
     __swig_destroy__ = _ilwisobjects.delete_CoordinateSystem
     __del__ = lambda self : None;
 CoordinateSystem_swigregister = _ilwisobjects.CoordinateSystem_swigregister
@@ -1879,12 +1886,13 @@ class RasterCoverage(Coverage):
         """
         return _ilwisobjects.RasterCoverage_datadef(self, *args)
 
-    def statistics(self, mode=0):
+    def statistics(self, mode=0, bins=0):
         """
+        statistics(RasterCoverage self, int mode=0, int bins=0) -> NumericStatistics
         statistics(RasterCoverage self, int mode=0) -> NumericStatistics
         statistics(RasterCoverage self) -> NumericStatistics
         """
-        return _ilwisobjects.RasterCoverage_statistics(self, mode)
+        return _ilwisobjects.RasterCoverage_statistics(self, mode, bins)
 
     def toRasterCoverage(*args):
         """toRasterCoverage(Object obj) -> RasterCoverage"""
@@ -1901,14 +1909,11 @@ class RasterCoverage(Coverage):
         return _ilwisobjects.RasterCoverage_end(self)
 
     def band(self, *args):
-        """
-        band(RasterCoverage self, PyObject * pyTrackIndex) -> PixelIterator
-        band(RasterCoverage self, PyObject * pyTrackIndex, RasterCoverage pyRaster)
-        """
+        """band(RasterCoverage self, PyObject * pyTrackIndex) -> PixelIterator"""
         return _ilwisobjects.RasterCoverage_band(self, *args)
 
     def addBand(self, *args):
-        """addBand(RasterCoverage self, int index, DataDefinition pyDef, PyObject * pyTrackIndex)"""
+        """addBand(RasterCoverage self, PyObject * pyTrackIndex, PixelIterator pyIter)"""
         return _ilwisobjects.RasterCoverage_addBand(self, *args)
 
     def select(self, *args):
