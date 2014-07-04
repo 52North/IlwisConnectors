@@ -4,6 +4,7 @@
 #include "ilwisdata.h"
 #include "factory.h"
 #include "abstractfactory.h"
+#include "symboltable.h"
 #include "HttpServerModule.h"
 #include "OperationExpression.h"
 #include "operationmetadata.h"
@@ -28,15 +29,14 @@ QString HttpServerModule::getInterfaceVersion() const
 
 void HttpServerModule::prepare()
 {
-    commandhandler()->addOperation(HTTPServer::createMetadata(), HTTPServer::create);
 }
 
-QString HttpServerModule::name() const
+QString HttpServerModule::getName() const
 {
-    return "HTTP Server plugin (Proj4)";
+    return "HTTP Server plugin";
 }
 
-QString HttpServerModule::version() const
+QString HttpServerModule::getVersion() const
 {
     return "1.0";
 }

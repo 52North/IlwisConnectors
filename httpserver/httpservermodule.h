@@ -18,8 +18,8 @@ public:
     explicit HttpServerModule(QObject *parent = 0);
 
     QString getInterfaceVersion() const;
-    QString name() const;
-    QString version() const;
+    QString getName() const;
+    QString getVersion() const;
     void prepare();
 
     Q_PLUGIN_METADATA(IID "n52.ilwis.httpserver" FILE  "httpserver.json")
