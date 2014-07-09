@@ -14,6 +14,7 @@
 #include "resource.h"
 #include "gdalproxy.h"
 #include "gdalitem.h"
+#include "proj4parameters.h"
 #include "mastercatalog.h"
 #include "size.h"
 
@@ -203,6 +204,28 @@ quint64 GDALItems::addCsy(GdalHandle* handle, const QString &path, const QUrl& u
             Resource resource = mastercatalog()->name2Resource(QString("code=epsg:%1").arg(geocs_epsg), itCONVENTIONALCOORDSYSTEM);
             if ( resource.isValid())
                 ret = resource.id();
+        }else {
+            char *proj4;
+            gdal()->export2Proj4(srshandle, &proj4);
+            QString sproj4 = proj4;
+            if ( proj4){
+                gdal()->free(proj4);
+
+                Proj4Def def = Proj4Parameters::lookupDefintion(sproj4);
+                if ( def._epsg != sUNDEF){
+                    return mastercatalog()->name2id("code=" + def._epsg);
+                }else {
+                    Resource res("code=proj4:" + sproj4, itCOORDSYSTEM);
+                    QFileInfo inf(path);
+                    res.name(inf.baseName());
+                    mastercatalog()->addItems({res});
+                    //Proj4Parameters::add2lookup(res.name(),sproj4,0);
+                    return res.id();
+                }
+            }
+
+
+
         }
     }
     if ( srshandle)
