@@ -156,6 +156,7 @@ bool GDALProxy::prepare() {
     importFromWkt = add<IOSRImportFromWkt>("OSRImportFromWkt");
     exportToWkt = add<IExportToWkt>("OSRExportToWkt");
     importFromProj4 = add<IOSRImportFromProj4>("OSRImportFromProj4");
+    export2Proj4 = add<IOSRExportToProj4>("OSRExportToProj4");
     releaseSRS = add<IOSRRelease>("OSRRelease");
     //OGR
     ogrOpen = add<IOGROpen>("OGROpen");

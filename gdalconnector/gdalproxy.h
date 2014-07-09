@@ -80,6 +80,7 @@ typedef OGRGeometryH (*IGetSubGeometryRef )(OGRGeometryH,int) ;
 typedef OGRSpatialReferenceH (*IGetSpatialRef )(OGRLayerH hLayer) ;
 typedef OGRErr (*IExportToWkt )(OGRSpatialReferenceH,char **) ;
 typedef OGRErr (*IOSRImportFromProj4)(OGRSpatialReferenceH, const char *);
+typedef OGRErr (*IOSRExportToProj4)(OGRSpatialReferenceH hSRS, char **);
 typedef int (*IGetFeatureCount )(OGRLayerH,int) ;
 typedef OGRErr 	(*IGetLayerExtent )(OGRLayerH, OGREnvelope *, int) ;
 typedef const char * (*IGetFieldName )(OGRFieldDefnH) ;
@@ -234,6 +235,7 @@ public:
         IOSRGetAuthorityCode getAuthorityCode;
         IOSRGetAuthorityName getAuthorityName;
         IOSRImportFromProj4 importFromProj4;
+        IOSRExportToProj4 export2Proj4;
         IOSRRelease releaseSRS;
         //OGR
         IOGROpen ogrOpen;
