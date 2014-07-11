@@ -12,7 +12,11 @@ namespace Ilwis {
 }
 
 namespace pythonapi {
+
+    const quint32 WHOLE_RASTER = 200000;
+
     class DataDefinition;
+    class Domain;
 
     class RasterCoverage : public Coverage{
          friend class PixelIterator;
@@ -23,6 +27,7 @@ namespace pythonapi {
     public:
         RasterCoverage();
         RasterCoverage(std::string resource);
+        ~RasterCoverage();
         RasterCoverage* operator+ (RasterCoverage &rc);
         RasterCoverage* operator+ (double value);
         RasterCoverage* __radd__(double value);
@@ -48,8 +53,9 @@ namespace pythonapi {
         GeoReference geoReference();
         void setGeoReference(const GeoReference& gr);
 
-        const DataDefinition& datadef(quint32 layer) const;
-        DataDefinition& datadef(quint32 layer);
+        DataDefinition& datadef(quint32 layer = WHOLE_RASTER) const;
+        void setDataDef(DataDefinition* datdef);
+        void setDataDef(Domain& dm);
 
         NumericStatistics* statistics(int mode=0, int bins=0);
 

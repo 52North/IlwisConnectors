@@ -25,6 +25,9 @@ Range::Range() {
 
 }
 
+Range::~Range(){
+}
+
 Range::Range(Ilwis::Range *rng) : _range(rng) {
 
 }
@@ -36,7 +39,8 @@ bool Range::__bool__() const
 
 std::string Range::__str__()
 {
-    return _range->toString().toStdString();
+    if(this->__bool__())
+        return _range->toString().toStdString();
 }
 
 IlwisTypes Range::ilwisType()
@@ -81,6 +85,10 @@ NumericRange::NumericRange(double mi, double ma, double resolution)
 
 NumericRange::NumericRange(const NumericRange &vr) : NumericRange(vr.min(), vr.max(), vr.resolution())
 {
+}
+
+NumericRange::~NumericRange(){
+
 }
 
 bool NumericRange::contains(double v, bool inclusive) const

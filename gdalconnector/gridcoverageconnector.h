@@ -45,7 +45,15 @@ private:
                 v = *iter;
                 ++iter;
             });
-            gdal()->rasterIO(hband, GF_Write, 0, iter.position().y - 1, columns, 1, (void *)&data[0],columns,1, gdaltype,0,0 );
+            if(iter.position().y == 318){
+                qDebug() << "STOP";
+            }
+
+            --iter; //to get the right y offset from the iterator for the next line
+            gdal()->rasterIO(hband, GF_Write, 0, iter.position().y, columns, 1, (void *)&data[0], columns-1, 1, gdaltype,0,0 );
+            ++iter;
+
+
 
             if ( iter.zchanged())     {
                 hband = gdal()->getRasterBand(dataset,++bandcount);

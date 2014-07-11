@@ -14,17 +14,18 @@
 
 using namespace pythonapi;
 
-DataDefinition::DataDefinition() : _ilwisDatadef(new Ilwis::DataDefinition()){
+DataDefinition::DataDefinition(): _ilwisDatadef(new Ilwis::DataDefinition()){
 }
 
 DataDefinition::DataDefinition(Ilwis::DataDefinition* datdef) : _ilwisDatadef(new Ilwis::DataDefinition(*datdef)){
 }
 
-DataDefinition::DataDefinition(Domain* dm, const Range &rng){
-    if(dm->__bool__() && rng.__bool__()){
-        this->_ilwisDatadef.reset(new Ilwis::DataDefinition(dm->ptr()->as<Ilwis::Domain>(), rng._range.get()));
+DataDefinition::DataDefinition(const Domain& dm, Range* rng){
+    if(dm.__bool__() && rng->__bool__()){
+        this->_ilwisDatadef.reset(new Ilwis::DataDefinition(dm.ptr()->as<Ilwis::Domain>(), rng->_range->clone()));
+    } else if(dm.__bool__()){
+        this->_ilwisDatadef.reset(new Ilwis::DataDefinition(dm.ptr()->as<Ilwis::Domain>()));
     }
-    delete dm;
 }
 
 DataDefinition::DataDefinition(const DataDefinition &datdef){
@@ -32,9 +33,11 @@ DataDefinition::DataDefinition(const DataDefinition &datdef){
         this->_ilwisDatadef.reset(new Ilwis::DataDefinition(datdef.ptr()));
 }
 
-
 DataDefinition::~DataDefinition(){
-    this->ptr().~DataDefinition();
+}
+
+std::string DataDefinition::__str__(){
+    return "Domain: " + this->domain()->__str__() + ", Range: " + this->range()->__str__();
 }
 
 bool DataDefinition::__bool__() const{
@@ -75,7 +78,7 @@ Ilwis::DataDefinition& DataDefinition::ptr() const{
 }
 
 Range* DataDefinition::range() const{
-    Range* pyRan = new Range((this->ptr().range()).data());
+    Range* pyRan = new Range(this->ptr().range()->clone());
     return pyRan;
 }
 

@@ -27,6 +27,7 @@ namespace pythonapi {
         bool operator!=(const CoordinateSystem& csy);
         static CoordinateSystem* toCoordinateSystem(Object *obj);
         std::string toWKT(quint32 spaces=0) const;
+        std::string toProj4() const;
     };
 
 } // namespace pythonapi

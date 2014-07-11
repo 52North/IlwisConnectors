@@ -25,6 +25,7 @@
 #include "pythonapi_qvariant.h"
 #include "pythonapi_pyobject.h"
 #include "pythonapi_geometry.h"
+#include "pythonapi_domain.h"
 
 using namespace pythonapi;
 
@@ -45,6 +46,10 @@ RasterCoverage::RasterCoverage(std::string resource){
     Ilwis::IRasterCoverage fc(QString::fromStdString(resource), itRASTER);
     if (fc.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
+}
+
+RasterCoverage::~RasterCoverage(){
+
 }
 
 RasterCoverage* RasterCoverage::operator+(RasterCoverage &rc){
@@ -211,16 +216,21 @@ void RasterCoverage::setGeoReference(const GeoReference& gr){
     this->ptr()->as<Ilwis::RasterCoverage>()->georeference(gr.ptr()->as<Ilwis::GeoReference>());
 }
 
-const DataDefinition& RasterCoverage::datadef(quint32 layer) const{
+DataDefinition& RasterCoverage::datadef(quint32 layer) const{
     Ilwis::DataDefinition ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef(layer);
     DataDefinition* pydef = new DataDefinition(&ilwdef);
     return *pydef;
 }
 
-DataDefinition& RasterCoverage::datadef(quint32 layer){
-    Ilwis::DataDefinition ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef(layer);
-    DataDefinition* pydef = new DataDefinition(&ilwdef);
-    return *pydef;
+void RasterCoverage::setDataDef(DataDefinition* datdef){
+    Ilwis::DataDefinition& ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
+    ilwdef = datdef->ptr();
+}
+
+void RasterCoverage::setDataDef(Domain& dm){
+    Ilwis::DataDefinition& ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
+    DataDefinition* newDef = new DataDefinition(dm);
+    ilwdef = newDef->ptr();
 }
 
 NumericStatistics* RasterCoverage::statistics(int mode, int bins){

@@ -23,8 +23,9 @@ public:
     DataDefinition();
     DataDefinition(Ilwis::DataDefinition* datdef);
     ~DataDefinition();
-    DataDefinition(Domain* dm, const Range &rng);
+    DataDefinition(const Domain& dm, Range *rng = 0);
     DataDefinition(const DataDefinition &datdef);
+    std::string __str__();
     bool __bool__() const;
     void range(const Range &rng);
     void domain(Domain* dm);
