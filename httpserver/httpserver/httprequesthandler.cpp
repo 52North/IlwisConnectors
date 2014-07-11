@@ -7,7 +7,9 @@
 
 HttpRequestHandler::HttpRequestHandler(QObject* parent)
     : QObject(parent)
-{}
+{
+    qDebug() << "after create"    ;
+}
 
 HttpRequestHandler::~HttpRequestHandler() {}
 

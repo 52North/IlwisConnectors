@@ -77,9 +77,6 @@ public:
 
 private:
 
-    /** Configuration settings */
-    QSettings* settings;
-
     /** Storage for the sessions */
     QMap<QByteArray,HttpSession> sessions;
 

@@ -13,6 +13,7 @@
 #include "httpconnectionhandlerpool.h"
 #include "httprequesthandler.h"
 
+
 /**
   Listens for incoming TCP connections and and passes all incoming HTTP requests to your implementation of HttpRequestHandler,
   which processes the request and generates the response (usually a HTML document).
@@ -44,7 +45,7 @@ public:
       @param requestHandler Processes each received HTTP request, usually by dispatching to controller classes.
       @param parent Parent object.
     */
-    HttpListener(HttpRequestHandler* requestHandler, QObject* parent = 0);
+    HttpListener(HttpRequestHandler* requestHandler);
 
     /** Destructor */
     virtual ~HttpListener();
@@ -58,6 +59,7 @@ private:
 
     /** Pool of connection handlers */
     HttpConnectionHandlerPool* pool;
+    UPHTTPRequestHandler _requestHandler;
 
 signals:
 

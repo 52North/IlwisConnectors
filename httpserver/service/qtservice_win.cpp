@@ -816,7 +816,7 @@ bool QtServiceBasePrivate::start()
     for (int i = 0; i < argc; ++i)
         argv[i] = argvData[i].data();
 
-    q_ptr->createApplication(argc, argv.data());
+   // q_ptr->createApplication(argc, argv.data());
     QCoreApplication *app = QCoreApplication::instance();
     if (!app)
         return false;
@@ -831,7 +831,7 @@ bool QtServiceBasePrivate::start()
 
     sys->startSemaphore2.release(); // let serviceMain continue (and end)
 
-    sys->status.dwWin32ExitCode = q_ptr->executeApplication();
+   // sys->status.dwWin32ExitCode = q_ptr->executeApplication();
     sys->setStatus(SERVICE_STOPPED);
 
     if (ht->isRunning())

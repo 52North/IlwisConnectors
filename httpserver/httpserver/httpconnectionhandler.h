@@ -45,7 +45,7 @@ public:
       @param settings Configuration settings of the HTTP webserver
       @param requestHandler handler that will process each incomin HTTP request
     */
-    HttpConnectionHandler(HttpRequestHandler* requestHandler);
+    HttpConnectionHandler(UPHTTPRequestHandler& requestHandler);
 
     /** Destructor */
     virtual ~HttpConnectionHandler();
@@ -68,7 +68,7 @@ private:
     HttpRequest* currentRequest;
 
     /** Dispatches received requests to services */
-    HttpRequestHandler* requestHandler;
+    UPHTTPRequestHandler& _requestHandler;
 
     /** This shows the busy-state from a very early time */
     bool busy;

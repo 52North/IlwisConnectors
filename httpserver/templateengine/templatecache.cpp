@@ -10,8 +10,8 @@ using namespace Ilwis;
 TemplateCache::TemplateCache(QObject* parent)
     :TemplateLoader(parent)
 {
-    cache.setMaxCost(ilwisconfig("server-setings/cache-size",1000000));
-    cacheTimeout = ilwisconfig("server-setings/cache-time",60000);
+    cache.setMaxCost(ilwisconfig("server-settings/cache-size",1000000));
+    cacheTimeout = ilwisconfig("server-settings/cache-time",60000);
     qDebug("TemplateCache: timeout=%i, size=%i",cacheTimeout,cache.maxCost());
 }
 

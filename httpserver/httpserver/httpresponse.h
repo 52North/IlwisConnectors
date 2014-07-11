@@ -11,6 +11,8 @@
 #include <QTcpSocket>
 #include "httpcookie.h"
 
+#include "../httpserver_global.h"
+
 /**
   This object represents a HTTP response, in particular the response headers.
   <p>
@@ -33,7 +35,7 @@
   a progress bar.
 */
 
-class HttpResponse {
+class HTTPSERVER_EXPORT HttpResponse {
     Q_DISABLE_COPY(HttpResponse)
 public:
 

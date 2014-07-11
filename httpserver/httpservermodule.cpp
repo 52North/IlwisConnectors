@@ -11,6 +11,9 @@
 #include "operation.h"
 #include "commandhandler.h"
 #include "httpserver.h"
+#include "httpserver/httprequesthandler.h"
+#include "requesthandlerfactory.h"
+#include "httpserver/staticfilecontroller.h"
 
 
 using namespace Ilwis;
@@ -29,6 +32,12 @@ QString HttpServerModule::getInterfaceVersion() const
 
 void HttpServerModule::prepare()
 {
+    HTTPRequestHandlerFactory *handlerFactory = new HTTPRequestHandlerFactory();
+    kernel()->addFactory(handlerFactory);
+
+    handlerFactory->addHandler("staticfilecontroller",StaticFileController::create);
+
+
 }
 
 QString HttpServerModule::getName() const

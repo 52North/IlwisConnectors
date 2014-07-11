@@ -12,15 +12,15 @@
 
 using namespace Ilwis;
 
-HttpListener::HttpListener(HttpRequestHandler* requestHandler, QObject *parent)
-    : QTcpServer(parent)
+HttpListener::HttpListener(HttpRequestHandler* requestHandler)
+    : QTcpServer(0), _requestHandler(requestHandler)
 {
     // Reqister type of socketDescriptor for signal/slot handling
     qRegisterMetaType<tSocketDescriptor>("tSocketDescriptor");
     // Create connection handler pool
-    pool=new HttpConnectionHandlerPool(requestHandler);
+    pool=new HttpConnectionHandlerPool(_requestHandler);
     // Start listening
-    int port=ilwisconfig("server-setings/port",8080);
+    int port=ilwisconfig("server-settings/port",8080);
     listen(QHostAddress::Any, port);
     if (!isListening()) {
         qCritical("HttpListener: Cannot bind on port %i: %s",port,qPrintable(errorString()));

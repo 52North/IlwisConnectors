@@ -9,9 +9,13 @@
 #include "commandhandler.h"
 #include "httpserver/httplistener.h"
 #include "httpserver.h"
+#include "httpserver/requestmapper.h"
+#include "httpserver/serverstarter.h"
 
 using namespace Ilwis;
 using namespace HTTP;
+
+std::unique_ptr<ServerStarter> HTTPServer::_server;
 
 REGISTER_OPERATION(HTTPServer)
 
@@ -26,6 +30,7 @@ HTTPServer::HTTPServer()
 
 HTTPServer::HTTPServer(quint64 metaid, const Ilwis::OperationExpression &expr) : OperationImplementation(metaid, expr)
 {
+    _server.reset(new ServerStarter);
 }
 
 HTTPServer::~HTTPServer()
@@ -34,13 +39,24 @@ HTTPServer::~HTTPServer()
 }
 
 OperationImplementation::State HTTPServer::prepare(ExecutionContext *ctx, const SymbolTable& symTable) {
+
     return OperationImplementation::sPREPARED;
 }
 
-bool HTTPServer::execute(ExecutionContext *ctx, SymbolTable &)
+bool HTTPServer::execute(ExecutionContext *ctx, SymbolTable &symTable)
 {
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
+            return false;
 
-    _server.reset(new HttpListener(0));
+    QString appLoc = "myserver"; //qApp->applicationFilePath();
+    QStringList args;
+    args.append(appLoc);
+    if ( _server)
+        _server->exec(args);
+
+    std::chrono::milliseconds dura( 5000000 ); // just for the testing, server must keep running
+    ::std::this_thread::sleep_for(dura);
 
     return true;
 }
@@ -48,15 +64,11 @@ bool HTTPServer::execute(ExecutionContext *ctx, SymbolTable &)
 quint64 HTTPServer::createMetadata()
 {
     OperationResource operation({"ilwis://operations/httpserver"});
-    operation.setSyntax("httpserver([port[,maxhtreads[,cleanupInterval[,readTimeout[,maxRequestSize[,maxMultiPartSize]]]]]]");
+    operation.setSyntax("httpserver([port]");
     operation.setDescription(TR("transpose the raster according to the method indicated by the second parameter"));
-    operation.setInParameterCount({0,1,2,3,4,5});
+    operation.setInParameterCount({0,1});
     operation.addInParameter(0,itUINT16,  TR("port number"));
-    operation.addInParameter(1,itUINT16, TR("max number of threads"),TR("maximum number of threads the server is allowed to start"));
-    operation.addInParameter(2,itUINT16, TR("cleanup interval"),TR("Time interval for starting the garbage collect"));
-    operation.addInParameter(3,itUINT32, TR("read timeout"),TR("Interval after which a read disconnects"));
-    operation.addInParameter(4,itUINT32, TR("max request size"));
-    operation.addInParameter(5,itUINT16, TR("max  multi part size"));
+
     operation.setOutParameterCount({0});
     operation.setKeywords("server, http");
 
