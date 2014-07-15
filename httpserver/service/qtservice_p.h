@@ -54,25 +54,25 @@ public:
 
 class QtServiceBasePrivate
 {
-    Q_DECLARE_PUBLIC(QtServiceBase)
+    Q_DECLARE_PUBLIC(QtService)
 public:
 
     QtServiceBasePrivate(const QString &name);
-    ~QtServiceBasePrivate();
+    virtual ~QtServiceBasePrivate();
 
-    QtServiceBase *q_ptr;
+    QtService *q_ptr;
 
     QString serviceDescription;
     QtServiceController::StartupType startupType;
-    QtServiceBase::ServiceFlags serviceFlags;
+    QtService::ServiceFlags serviceFlags;
     QStringList args;
 
-    static class QtServiceBase *instance;
+    static class QtService *instance;
 
     QtServiceController controller;
 
     void startService();
-    int run(bool asService, const QStringList &argList);
+    int run(const QStringList &argList);
     bool install(const QString &account, const QString &password);
 
     bool start();

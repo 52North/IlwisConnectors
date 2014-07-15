@@ -17,14 +17,14 @@ using namespace Ilwis;
 TemplateLoader::TemplateLoader(QObject* parent)
     : QObject(parent)
 {
-    templatePath = ilwisconfig("server-setings/template-path",QString("app-base"));
+    templatePath = ilwisconfig("server-settings/template-path",QString("app-base"));
     // Convert relative path to absolute, based on the directory of the config file.
     if (QDir::isRelativePath(templatePath))
     {
         templatePath = context()->resourceRoot().absoluteFilePath() + "servertemplates";
     }
-    fileNameSuffix=ilwisconfig("server-setings/template-suffix",QString(".tpl"));
-    QString encoding=ilwisconfig("server-setings/encoding",QString("UTF-8"));
+    fileNameSuffix=ilwisconfig("server-settings/template-suffix",QString(".tpl"));
+    QString encoding=ilwisconfig("server-settings/encoding",QString("UTF-8"));
     if (encoding.isEmpty()) {
         textCodec=QTextCodec::codecForLocale();
     }

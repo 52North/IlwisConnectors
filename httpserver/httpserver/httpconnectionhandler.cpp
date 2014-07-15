@@ -5,6 +5,7 @@
 
 #include "kernel.h"
 #include "ilwiscontext.h"
+#include "httprequesthandler.h"
 #include "httpconnectionhandler.h"
 #include "httpresponse.h"
 #include <QTimer>
@@ -12,11 +13,11 @@
 
 using namespace Ilwis;
 
-HttpConnectionHandler::HttpConnectionHandler(HttpRequestHandler* requestHandler)
-    : QThread()
+HttpConnectionHandler::HttpConnectionHandler(UPHTTPRequestHandler &requestHandler) :
+    QThread(),
+     _requestHandler(requestHandler)
 {
     Q_ASSERT(requestHandler!=0);
-    this->requestHandler=requestHandler;
     currentRequest=0;
     busy = false;
     // execute signals in my own thread
@@ -67,7 +68,7 @@ void HttpConnectionHandler::handleConnection(tSocketDescriptor socketDescriptor)
         return;
     }
     // Start timer for read timeout
-    int readTimeout= ilwisconfig("server-setings/read-timeout", 10000);
+    int readTimeout= ilwisconfig("server-settings/read-timeout", 10000);
     readTimer.start(readTimeout);
     // delete previous request
     delete currentRequest;
@@ -119,7 +120,7 @@ void HttpConnectionHandler::read() {
         if (currentRequest->getStatus()==HttpRequest::waitForBody) {
             // Restart timer for read timeout, otherwise it would
             // expire during large file uploads.
-            int readTimeout=ilwisconfig("server-setings/read-timeout", 10000);
+            int readTimeout=ilwisconfig("server-settings/read-timeout", 10000);
             readTimer.start(readTimeout);
         }
     }
@@ -139,7 +140,7 @@ void HttpConnectionHandler::read() {
         qDebug("HttpConnectionHandler (%p): received request",this);
         HttpResponse response(&socket);
         try {
-            requestHandler->service(*currentRequest, response);
+            _requestHandler->service(*currentRequest, response);
         }
         catch (...) {
             qCritical("HttpConnectionHandler (%p): An uncatched exception occured in the request handler",this);
@@ -155,7 +156,7 @@ void HttpConnectionHandler::read() {
         }
         else {
             // Start timer for next request
-            int readTimeout=ilwisconfig("server-setings/read-timeout", 10000);
+            int readTimeout=ilwisconfig("server-settings/read-timeout", 10000);
             readTimer.start(readTimeout);
         }
         // Prepare for next request

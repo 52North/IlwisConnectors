@@ -16,7 +16,7 @@ HttpRequest::HttpRequest() {
     status=waitForRequest;
     currentSize=0;
     expectedBodySize=0;
-    maxSize = ilwisconfig("server-setings/max-request-size", 20000);
+    maxSize = ilwisconfig("server-settings/max-request-size", 20000);
     maxMultiPartSize = ilwisconfig("server-setingsmax-multipart-size",10000);
 }
 

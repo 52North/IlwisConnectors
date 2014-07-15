@@ -4,13 +4,10 @@
 
 using namespace Ilwis;
 
-HttpConnectionHandlerPool::HttpConnectionHandlerPool(HttpRequestHandler* requestHandler)
-    : QObject()
+HttpConnectionHandlerPool::HttpConnectionHandlerPool(UPHTTPRequestHandler& requestHandler)
+    : QObject(), _requestHandler(requestHandler)
 {
-    Q_ASSERT(settings!=0);
-    this->settings=settings;
-    this->requestHandler=requestHandler;
-    cleanupTimer.start(ilwisconfig("server-setings/cleanup-interval",1000));
+    cleanupTimer.start(ilwisconfig("server-settings/cleanup-interval",1000));
     connect(&cleanupTimer, SIGNAL(timeout()), SLOT(cleanup()));
 }
 
@@ -37,9 +34,9 @@ HttpConnectionHandler* HttpConnectionHandlerPool::getConnectionHandler() {
     }
     // create a new handler, if necessary
     if (!freeHandler) {
-        int maxConnectionHandlers=ilwisconfig("server-setings/max-threads",100);
+        int maxConnectionHandlers=ilwisconfig("server-settings/max-threads",100);
         if (pool.count()<maxConnectionHandlers) {
-            freeHandler=new HttpConnectionHandler(requestHandler);
+            freeHandler=new HttpConnectionHandler(_requestHandler);
             freeHandler->setBusy();
             pool.append(freeHandler);
         }
@@ -51,7 +48,7 @@ HttpConnectionHandler* HttpConnectionHandlerPool::getConnectionHandler() {
 
 
 void HttpConnectionHandlerPool::cleanup() {
-    int maxIdleHandlers=settings->value("minThreads",1).toInt();
+    int maxIdleHandlers=ilwisconfig("server-settings/min-threads",1);
     int idleCounter=0;
     mutex.lock();
     foreach(HttpConnectionHandler* handler, pool) {

@@ -1,7 +1,8 @@
 #ifndef HTTPSERVER_H
 #define HTTPSERVER_H
 
-class HttpListener;
+class ServerStarter;
+
 
 namespace Ilwis {
 namespace HTTP {
@@ -19,7 +20,7 @@ public:
     NEW_OPERATION(HTTPServer);
 
 private:
-    std::unique_ptr<HttpListener> _server;
+    static std::unique_ptr<ServerStarter>_server;
 };
 }
 }

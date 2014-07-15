@@ -99,7 +99,7 @@ private:
 
 class QtServiceBasePrivate;
 
-class QT_QTSERVICE_EXPORT QtServiceBase
+class QT_QTSERVICE_EXPORT QtService
 {
     Q_DECLARE_PRIVATE(QtServiceBase)
 public:
@@ -119,8 +119,8 @@ public:
 
     Q_DECLARE_FLAGS(ServiceFlags, ServiceFlag)
 
-    QtServiceBase(int argc, char **argv, const QString &name);
-    virtual ~QtServiceBase();
+    QtService(const QStringList &, const QString &name);
+    virtual ~QtService();
 
     QString serviceName() const;
 
@@ -133,24 +133,20 @@ public:
     ServiceFlags serviceFlags() const;
     void setServiceFlags(ServiceFlags flags);
 
-    int exec();
+    int exec(const QStringList &args);
 
     void logMessage(const QString &message, MessageType type = Success,
                 int id = 0, uint category = 0, const QByteArray &data = QByteArray());
 
-    static QtServiceBase *instance();
+    static QtService *instance();
 
 protected:
 
-    virtual void start() = 0;
+    virtual void start();
     virtual void stop();
     virtual void pause();
     virtual void resume();
     virtual void processCommand(int code);
-
-    virtual void createApplication(int &argc, char **argv) = 0;
-
-    virtual int executeApplication() = 0;
 
 private:
 
@@ -158,35 +154,9 @@ private:
     QtServiceBasePrivate *d_ptr;
 };
 
-template <typename Application>
-class QtService : public QtServiceBase
-{
-public:
-    QtService(int argc, char **argv, const QString &name)
-        : QtServiceBase(argc, argv, name), app(0)
-    {  }
-    ~QtService()
-    {
-    }
 
-protected:
-    Application *application() const
-    { return app; }
 
-    virtual void createApplication(int &argc, char **argv)
-    {
-        app = new Application(argc, argv);
-        QCoreApplication *a = app;
-        Q_UNUSED(a);
-    }
+Q_DECLARE_OPERATORS_FOR_FLAGS(QtService::ServiceFlags)
 
-    virtual int executeApplication()
-    { return Application::exec(); }
-
-private:
-    Application *app;
-};
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QtServiceBase::ServiceFlags)
 
 #endif // QTSERVICE_H

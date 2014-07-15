@@ -6,8 +6,10 @@
 #ifndef HTTPREQUESTHANDLER_H
 #define HTTPREQUESTHANDLER_H
 
+#include <memory>
 #include "httprequest.h"
 #include "httpresponse.h"
+#include "../httpserver_global.h"
 
 /**
    The request handler generates a response for each HTTP request. Web Applications
@@ -21,7 +23,7 @@
    @see StaticFileController which delivers static local files.
 */
 
-class HttpRequestHandler : public QObject {
+class HTTPSERVER_EXPORT HttpRequestHandler : public QObject {
     Q_OBJECT
     Q_DISABLE_COPY(HttpRequestHandler)
 public:
@@ -41,5 +43,7 @@ public:
     virtual void service(HttpRequest& request, HttpResponse& response);
 
 };
+
+typedef std::unique_ptr<HttpRequestHandler> UPHTTPRequestHandler;
 
 #endif // HTTPREQUESTHANDLER_H

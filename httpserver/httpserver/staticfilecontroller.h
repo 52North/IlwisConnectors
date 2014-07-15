@@ -50,6 +50,8 @@ public:
     /** Generates the response */
     void service(HttpRequest& request, HttpResponse& response);
 
+    static HttpRequestHandler *create();
+
 private:
 
     /** Encoding of text files */

@@ -14,12 +14,11 @@ using namespace Ilwis;
 HttpSessionStore::HttpSessionStore( QObject* parent)
     :QObject(parent)
 {
-    this->settings=settings;
     connect(&cleanupTimer,SIGNAL(timeout()),this,SLOT(timerEvent()));
     cleanupTimer.start(60000);
-    QString tcookieName = ilwisconfig("server-setings/cookie-name", QString("sessionid"));
+    QString tcookieName = ilwisconfig("server-settings/cookie-name", QString("sessionid"));
     cookieName = tcookieName.toLocal8Bit();
-    expirationTime = ilwisconfig("server-setings/expiration-time",3600000);
+    expirationTime = ilwisconfig("server-settings/expiration-time",3600000);
     qDebug("HttpSessionStore: Sessions expire after %i milliseconds",expirationTime);
 }
 
@@ -61,10 +60,10 @@ HttpSession HttpSessionStore::getSession(HttpRequest& request, HttpResponse& res
     }
     // Need to create a new session
     if (allowCreate) {
-        QByteArray cookieName=settings->value("cookieName","sessionid").toByteArray();
-        QByteArray cookiePath=settings->value("cookiePath").toByteArray();
-        QByteArray cookieComment=settings->value("cookieComment").toByteArray();
-        QByteArray cookieDomain=settings->value("cookieDomain").toByteArray();
+        QByteArray cookieName=ilwisconfig("server-settings/cookie-name",QString("sessionid")).toLocal8Bit();
+        QByteArray cookiePath=ilwisconfig("server-settings/cookie-path",QString(".")).toLocal8Bit();
+        QByteArray cookieComment=ilwisconfig("server-settings/cookie-comment",QString("")).toLocal8Bit();
+        QByteArray cookieDomain=ilwisconfig("server-settings/cookieDomain",QString("ilwis")).toLocal8Bit();
         HttpSession session(true);
         qDebug("HttpSessionStore: create new session with ID %s",session.getId().data());
         sessions.insert(session.getId(),session);

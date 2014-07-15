@@ -15,14 +15,14 @@ using namespace Ilwis;
 StaticFileController::StaticFileController(QObject* parent)
     :HttpRequestHandler(parent)
 {
-    maxAge = ilwisconfig("server-setings/max-age", 6000);
-    encoding = ilwisconfig("server-setings/encoding",QString("UTF-8"));
-    docroot = ilwisconfig("server-setings/document-root-path",QString("."));
+    maxAge = ilwisconfig("server-settings/max-age", 6000);
+    encoding = ilwisconfig("server-settings/encoding",QString("UTF-8"));
+    docroot = ilwisconfig("server-settings/document-root-path",QString("."));
 
     qDebug("StaticFileController: docroot=%s, encoding=%s, maxAge=%i",qPrintable(docroot),qPrintable(encoding),maxAge);
-    maxCachedFileSize=ilwisconfig("server-setings/max-cached-filesize",65536);
-    cache.setMaxCost(ilwisconfig("server-setings/cache-size",1000000));
-    cacheTimeout=ilwisconfig("server-setings/cache-time",60000);
+    maxCachedFileSize=ilwisconfig("server-settings/max-cached-filesize",65536);
+    cache.setMaxCost(ilwisconfig("server-settings/cache-size",1000000));
+    cacheTimeout=ilwisconfig("server-settings/cache-time",60000);
     qDebug("StaticFileController: cache timeout=%i, size=%i",cacheTimeout,cache.maxCost());
 }
 
@@ -54,11 +54,12 @@ void StaticFileController::service(HttpRequest& request, HttpResponse& response)
             return;
         }
         // If the filename is a directory, append index.html.
-        if (QFileInfo(docroot+path).isDir()) {
-            path+="/index.html";
+        QString resource = docroot+path;
+        if (QFileInfo(resource).isDir()) {
+            resource = context()->ilwisFolder().absoluteFilePath() + "/resources/index.html";
         }
         // Try to open the file
-        QFile file(docroot+path);
+        QFile file(resource);
         qDebug("StaticFileController: Open file %s",qPrintable(file.fileName()));
         if (file.open(QIODevice::ReadOnly)) {
             setContentType(path,response);
@@ -97,6 +98,11 @@ void StaticFileController::service(HttpRequest& request, HttpResponse& response)
             }
         }
     }
+}
+
+HttpRequestHandler *StaticFileController::create()
+{
+    return new StaticFileController();
 }
 
 void StaticFileController::setContentType(QString fileName, HttpResponse& response) const {

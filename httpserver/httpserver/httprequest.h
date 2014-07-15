@@ -14,6 +14,8 @@
 #include <QTemporaryFile>
 #include <QUuid>
 
+#include "../httpserver_global.h"
+
 /**
   This object represents a single HTTP request. It reads the request
   from a TCP socket and provides getters for the individual parts
@@ -31,7 +33,7 @@
   The body is always a little larger than the file itself.
 */
 
-class HttpRequest {
+class HTTPSERVER_EXPORT HttpRequest {
     Q_DISABLE_COPY(HttpRequest)
     friend class HttpSessionStore;
 public:
