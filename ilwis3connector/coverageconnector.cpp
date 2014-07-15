@@ -201,6 +201,8 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
                 name = name.replace(QRegExp("[/ .'\"]"),"_");
             }
             _csyName = path + name;
+            if ( !_csyName.endsWith(".csy"))
+                _csyName += ".csy";
             //return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
         }
 
