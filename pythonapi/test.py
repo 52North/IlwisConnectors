@@ -69,10 +69,6 @@ try:
             self.assertEqual(Const.rUNDEF, t.cell("newColumn", 0))
             t.setCell("newColumn", 0, 32)
             self.assertEqual(32, t.cell("newColumn", 0))
-            disconnectIssueLogger()
-            t.setCell("newColumn", 0, "text")
-            connectIssueLogger()
-            self.assertEqual(Const.rUNDEF, t.cell("newColumn", 0))
             self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308),
                                   t.column("march"))
             self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
@@ -596,7 +592,7 @@ try:
             self.assertEqual(f["DateTime"], datetime.datetime(2014, 2, 27))
 
             tup = ('12', datetime.datetime(2014, 2, 27, 0, 0), datetime.time(12, 42, 33, 120000),
-                   datetime.datetime(2014, 2, 27, 0, 0), Const.rUNDEF, 2.34e-31, 3697)
+                   datetime.datetime(2014, 2, 27, 0, 0), Const.rUNDEF, 2.34e-31, 2866)
             rec = fc.attributeTable().record(0)
             self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
             self.assertEqual(len(rec), len(fc.attributeTable().columns()))
@@ -752,7 +748,7 @@ try:
             box = Box(gr.size())
             env = gr.box2Envelope(box)
             self.assertEqual("0 0 0 1151 1151 0", str(box))
-            self.assertEqual("-4.61199e+06 -4.59597e+06 4.59601e+06 4.61203e+06", str(env))
+            self.assertEqual("-4.61199e+06 -4.60397e+06 4.60401e+06 4.61203e+06", str(env))
             subenv = Envelope(Coordinate(-1e+06, -1e+06), Coordinate(1e+06, 1e+06))
             subbox = gr.envelope2Box(subenv)
             self.assertEqual("-1e+06 -1e+06 1e+06 1e+06", str(subenv))
@@ -1071,6 +1067,7 @@ try:
                                      msg="zChanged not only every 4th step (i=" + str(i) + ")")
                 self.assertEqual(next(bit), boxed_small[i][1])
 
+        #@ut.skip("fsdgf")
         def test_NumPy(self):
             try:
                 import numpy as np
@@ -1124,6 +1121,47 @@ try:
 
             polygongrid.setOutputConnection(workingDir + exampleDir + "/polygongrid", "vectormap", "ilwis3")
             polygongrid.store()
+
+        def test_claudio2(self):
+            import numpy as np
+            rcl = RasterCoverage("small.mpl")
+            it = rcl.band(0)
+
+            a = np.fromiter(it, np.float, it.box().size().linearSize())
+            a[3] = 234.1
+
+            rc = RasterCoverage("storetest")
+            rc.setGeoReference(rcl.geoReference())
+            rc.setDataDef(rcl.datadef())
+
+            rc2 = RasterCoverage()
+            rc2.setGeoReference(rcl.geoReference())
+            rc2.setDataDef(rcl.datadef())
+
+            itNew = rc.begin()
+            for y in range(rc.size().linearSize()):
+                itNew[y] = a[y]
+
+            it = rcl.band(1)
+            b = np.fromiter(it, np.float, it.box().size().linearSize())
+
+            itNew = rc2.begin()
+
+            for y in range(rc2.size().linearSize()):
+                itNew[y] = b[y]
+
+            rc.addBand(1, rc2.begin())
+
+            it = rcl.band(2)
+            c = np.fromiter(it, np.float, it.box().size().linearSize())
+            itNew = rc2.begin()
+            for y in range(rc2.size().linearSize()):
+                itNew[y] = c[y]
+
+            rc.addBand(2, rc2.begin())
+
+            rc.setOutputConnection(workingDir + "/newRaster", "GTiff", "gdal")
+            rc.store()
 
     #@ut.skip("temporarily")
     class TestBaby(ut.TestCase):
@@ -1591,9 +1629,10 @@ try:
             td.setStrict(False)
             self.assertEqual(td.contains(date(2013, 5, 17)), "cPARENT")
 
+
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest='TestRaster', verbosity=2)
+        ut.main(defaultTest=None, verbosity=2)
 
 except ImportError as e:
     print(e)

@@ -2,7 +2,6 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
-
 #include "../../IlwisCore/core/ilwisobjects/domain/domain.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/datadefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
@@ -25,6 +24,7 @@
 #include "pythonapi_qvariant.h"
 #include "pythonapi_pyobject.h"
 #include "pythonapi_geometry.h"
+#include "pythonapi_domain.h"
 
 using namespace pythonapi;
 
@@ -45,6 +45,10 @@ RasterCoverage::RasterCoverage(std::string resource){
     Ilwis::IRasterCoverage fc(QString::fromStdString(resource), itRASTER);
     if (fc.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
+}
+
+RasterCoverage::~RasterCoverage(){
+
 }
 
 RasterCoverage* RasterCoverage::operator+(RasterCoverage &rc){
@@ -211,16 +215,21 @@ void RasterCoverage::setGeoReference(const GeoReference& gr){
     this->ptr()->as<Ilwis::RasterCoverage>()->georeference(gr.ptr()->as<Ilwis::GeoReference>());
 }
 
-const DataDefinition& RasterCoverage::datadef(quint32 layer) const{
+DataDefinition& RasterCoverage::datadef(quint32 layer) const{
     Ilwis::DataDefinition ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef(layer);
     DataDefinition* pydef = new DataDefinition(&ilwdef);
     return *pydef;
 }
 
-DataDefinition& RasterCoverage::datadef(quint32 layer){
-    Ilwis::DataDefinition ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef(layer);
-    DataDefinition* pydef = new DataDefinition(&ilwdef);
-    return *pydef;
+void RasterCoverage::setDataDef(DataDefinition* datdef){
+    Ilwis::DataDefinition& ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
+    ilwdef = datdef->ptr();
+}
+
+void RasterCoverage::setDataDef(Domain& dm){
+    Ilwis::DataDefinition& ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
+    DataDefinition* newDef = new DataDefinition(dm);
+    ilwdef = newDef->ptr();
 }
 
 NumericStatistics* RasterCoverage::statistics(int mode, int bins){
@@ -274,6 +283,7 @@ RasterCoverage RasterCoverage::select(std::string selectionQ){
     }
     else{
         throw InvalidObject("Not a valid geometry description");
+        return NULL;
     }
 
     delete geom;
@@ -281,5 +291,22 @@ RasterCoverage RasterCoverage::select(std::string selectionQ){
 
 RasterCoverage RasterCoverage::select(Geometry& geom){
     return select(geom.toWKT());
+}
+
+void RasterCoverage::reprojectRaster(quint32 epsg){
+    CoordinateSystem* targetPyCsy = new CoordinateSystem("code=epsg:" + std::to_string(epsg));
+    Ilwis::ICoordinateSystem targetIlwCsy = targetPyCsy->ptr()->as<Ilwis::CoordinateSystem>();
+    Ilwis::IGeoReference georef = this->geoReference().ptr()->as<Ilwis::GeoReference>();
+    Ilwis::ICoordinateSystem sourceCsy = georef->coordinateSystem();
+    Ilwis::Envelope env  = this->ptr()->as<Ilwis::RasterCoverage>()->envelope();
+    env = sourceCsy->convertEnvelope(targetIlwCsy, env);
+    Ilwis::BoundingBox bo = georef->coord2Pixel(env);
+    Ilwis::Size<> sz = bo.size();
+    std::string refStr = "code=georef:type=corners,csy=epsg:" + std::to_string(epsg) + ",envelope=" +
+            env.toString().toStdString() + ",gridsize=" + std::to_string(sz.xsize()) + " " + std::to_string(sz.ysize()) +
+            ",name=" + this->name();
+    this->ptr()->as<Ilwis::RasterCoverage>()->envelope(env);
+    this->setGeoReference(refStr);
+    this->setCoordinateSystem(*targetPyCsy);
 }
 

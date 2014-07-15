@@ -195,7 +195,15 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
     if ( csy->code() != "unknown"){
         _csyName = Resource::toLocalFile(csy->source().url(),true, "csy");
         if ( _csyName == sUNDEF || _csyName == "") {
-            return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
+            QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
+            QString name = csy->name();
+            if ( !csy->isAnonymous()) {
+                name = name.replace(QRegExp("[/ .'\"]"),"_");
+            }
+            _csyName = path + name;
+            if ( !_csyName.endsWith(".csy"))
+                _csyName += ".csy";
+            //return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
         }
 
         QFileInfo csyinf(_csyName);

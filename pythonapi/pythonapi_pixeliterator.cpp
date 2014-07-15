@@ -4,6 +4,7 @@
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/pixeliterator.h"
+#include "geos/geom/Geometry.h"
 
 #include "pythonapi_pixeliterator.h"
 #include "pythonapi_extension.h"
@@ -20,6 +21,16 @@ PixelIterator::PixelIterator(RasterCoverage *rc, const Box &b): _coverage(rc){
     if (rc && rc->__bool__())
     {
         this->_ilwisPixelIterator.reset(new Ilwis::PixelIterator((*rc->ptr()), b.data()));
+        if ((bool)this->_ilwisPixelIterator && this->_ilwisPixelIterator->isValid())
+            this->_endposition = this->_ilwisPixelIterator->end().linearPosition();
+    }
+}
+
+PixelIterator::PixelIterator(RasterCoverage *rc, const Geometry& geom){
+    if (rc && rc->__bool__() && geom.__bool__())
+    {
+        geos::geom::Geometry* geometry = geom.ptr().get();
+        this->_ilwisPixelIterator.reset(new Ilwis::PixelIterator((*rc->ptr()), geometry));
         if ((bool)this->_ilwisPixelIterator && this->_ilwisPixelIterator->isValid())
             this->_endposition = this->_ilwisPixelIterator->end().linearPosition();
     }

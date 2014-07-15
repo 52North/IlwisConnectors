@@ -144,6 +144,8 @@ namespace pythonapi {
         friend class GeoReference;
         friend class CoordinateSystem;
         friend class Geometry;
+        friend class RasterCoverage;
+        friend class Coverage;
         public:
             BoxTemplate();
             BoxTemplate(const std::string &envelope);

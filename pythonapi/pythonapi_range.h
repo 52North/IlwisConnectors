@@ -36,6 +36,7 @@ protected:
     Range(Ilwis::Range *rng);
 
     Range();
+    virtual ~Range();
 private:
 };
 
@@ -43,7 +44,7 @@ class NumericRange : public Range {
 public:
     NumericRange(double mi, double ma, double resolution = 0);
     NumericRange(const NumericRange &vr);
-
+    ~NumericRange();
 
     bool contains(double v, bool inclusive = true) const;
     double max() const;

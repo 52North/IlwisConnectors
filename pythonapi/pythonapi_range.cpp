@@ -25,6 +25,9 @@ Range::Range() {
 
 }
 
+Range::~Range(){
+}
+
 Range::Range(Ilwis::Range *rng) : _range(rng) {
 
 }
@@ -81,6 +84,10 @@ NumericRange::NumericRange(double mi, double ma, double resolution)
 
 NumericRange::NumericRange(const NumericRange &vr) : NumericRange(vr.min(), vr.max(), vr.resolution())
 {
+}
+
+NumericRange::~NumericRange(){
+
 }
 
 bool NumericRange::contains(double v, bool inclusive) const

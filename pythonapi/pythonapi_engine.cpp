@@ -35,6 +35,7 @@
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_pyobject.h"
+#include "pythonapi_catalog.h"
 
 using namespace pythonapi;
 
@@ -128,6 +129,11 @@ void Engine::setWorkingCatalog(const std::string& location){
         throw Ilwis::ErrorObject(QString("invalid container location: '%1'").arg(location.c_str()));
 }
 
+std::string Engine::getLocation(){
+    Ilwis::ICatalog cat = Ilwis::context()->workingCatalog();
+    QUrl location = cat->filesystemLocation();
+    return location.toString().toStdString();
+}
 
 PyObject* Engine::operations(const std::string& filter){
     Ilwis::CatalogView opCat(QUrl(QString("ilwis://operations")));

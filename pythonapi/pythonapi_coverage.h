@@ -4,6 +4,7 @@
 #include "pythonapi_ilwisobject.h"
 #include "pythonapi_coordinatesystem.h"
 #include "pythonapi_table.h"
+#include "pythonapi_util.h"
 
 #include <vector>
 
@@ -28,8 +29,10 @@ namespace pythonapi{
             quint32 attributeCount();
             PyObject *attributes();
             Table attributeTable(AttributeType attType=atCOVERAGE);
+            void setTable(Table& tbl, AttributeType attType=atCOVERAGE);
             CoordinateSystem coordinateSystem();
             void setCoordinateSystem(const CoordinateSystem &cs);
+            pythonapi::Envelope envelope();
     };
 
 }

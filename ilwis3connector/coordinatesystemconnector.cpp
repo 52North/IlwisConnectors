@@ -338,23 +338,38 @@ bool CoordinateSystemConnector::storeMetaData(IlwisObject *data) {
             _odf->setKeyValue("Ellipsoid","a",projectedCsy->ellipsoid()->majorAxis() );
             _odf->setKeyValue("Ellipsoid","1/f",projectedCsy->ellipsoid()->flattening() );
 
-        }
+        }else
+            ellipsoidName = Ilwis3Connector::code2name(ellipsoidName, "ellipsoid");
         _odf->setKeyValue("CoordSystem","Ellipsoid",ellipsoidName);
         IProjection projection = projectedCsy->projection();
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvAZIMCLINE),projection->parameter(Projection::pvAZIMCLINE).toDouble());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvAZIMYAXIS),projection->parameter(Projection::pvAZIMYAXIS).toDouble());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvHEIGHT),projection->parameter(Projection::pvHEIGHT).toDouble());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvK0),projection->parameter(Projection::pvK0).toDouble());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT0),projection->parameter(Projection::pvLAT0).toDouble());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT1),projection->parameter(Projection::pvLAT1).toDouble());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT2),projection->parameter(Projection::pvLAT2).toDouble());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLATTS),projection->parameter(Projection::pvLATTS).toDouble());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLON0),projection->parameter(Projection::pvLON0).toDouble());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORIENTED),projection->parameter(Projection::pvNORIENTED).toString());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORTH),projection->parameter(Projection::pvNORTH).toString());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvX0),projection->parameter(Projection::pvX0).toDouble());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvY0),projection->parameter(Projection::pvY0).toDouble());
-        _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvZONE),projection->parameter(Projection::pvZONE).toInt());
+        if ( projection->isSet(Projection::pvAZIMCLINE))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvAZIMCLINE),projection->parameter(Projection::pvAZIMCLINE).toDouble());
+        if ( projection->isSet(Projection::pvAZIMYAXIS))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvAZIMYAXIS),projection->parameter(Projection::pvAZIMYAXIS).toDouble());
+        if ( projection->isSet(Projection::pvHEIGHT))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvHEIGHT),projection->parameter(Projection::pvHEIGHT).toDouble());
+        if ( projection->isSet(Projection::pvK0))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvK0),projection->parameter(Projection::pvK0).toDouble());
+        if ( projection->isSet(Projection::pvLAT0))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT0),projection->parameter(Projection::pvLAT0).toDouble());
+        if ( projection->isSet(Projection::pvLAT1))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT1),projection->parameter(Projection::pvLAT1).toDouble());
+        if ( projection->isSet(Projection::pvLAT2))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT2),projection->parameter(Projection::pvLAT2).toDouble());
+        if ( projection->isSet(Projection::pvLATTS))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLATTS),projection->parameter(Projection::pvLATTS).toDouble());
+        if ( projection->isSet(Projection::pvLON0))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLON0),projection->parameter(Projection::pvLON0).toDouble());
+        if ( projection->isSet(Projection::pvNORIENTED))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORIENTED),projection->parameter(Projection::pvNORIENTED).toString());
+        if ( projection->isSet(Projection::pvNORTH))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORTH),projection->parameter(Projection::pvNORTH).toString());
+        if ( projection->isSet(Projection::pvX0))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvX0),projection->parameter(Projection::pvX0).toDouble());
+        if ( projection->isSet(Projection::pvY0))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvY0),projection->parameter(Projection::pvY0).toDouble());
+        if ( projection->isSet(Projection::pvZONE))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvZONE),projection->parameter(Projection::pvZONE).toInt());
 
     }
     _odf->store("csy", containerConnector()->toLocalFile(source()));

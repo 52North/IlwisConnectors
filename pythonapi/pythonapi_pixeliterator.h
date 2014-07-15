@@ -32,6 +32,7 @@ class PixelIterator{
     public:
         PixelIterator(const PixelIterator &pi);
         PixelIterator(RasterCoverage* rc, const Box &b = Box());
+        PixelIterator(RasterCoverage *rc, const Geometry& geom);
         PixelIterator(Ilwis::PixelIterator* ilwIt);
         ~PixelIterator();
         /**

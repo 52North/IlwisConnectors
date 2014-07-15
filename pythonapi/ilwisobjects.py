@@ -214,6 +214,10 @@ class Engine(_object):
 
     if _newclass:setWorkingCatalog = staticmethod(setWorkingCatalog)
     __swig_getmethods__["setWorkingCatalog"] = lambda x: setWorkingCatalog
+    def getLocation(self):
+        """getLocation(Engine self) -> std::string"""
+        return _ilwisobjects.Engine_getLocation(self)
+
     def operations(self, filter="*"):
         """
         operations(Engine self, std::string const & filter="*") -> PyObject
@@ -332,6 +336,10 @@ class IlwisObject(Object):
         """type(IlwisObject self) -> std::string"""
         return _ilwisobjects.IlwisObject_type(self)
 
+    def type2Name(self, *args):
+        """type2Name(IlwisObject self, IlwisTypes ilwType) -> std::string"""
+        return _ilwisobjects.IlwisObject_type2Name(self, *args)
+
     def ilwisID(self):
         """ilwisID(IlwisObject self) -> quint64"""
         return _ilwisobjects.IlwisObject_ilwisID(self)
@@ -381,6 +389,10 @@ class CoordinateSystem(IlwisObject):
         toWKT(CoordinateSystem self) -> std::string
         """
         return _ilwisobjects.CoordinateSystem_toWKT(self, spaces)
+
+    def toProj4(self):
+        """toProj4(CoordinateSystem self) -> std::string"""
+        return _ilwisobjects.CoordinateSystem_toProj4(self)
 
     __swig_destroy__ = _ilwisobjects.delete_CoordinateSystem
     __del__ = lambda self : None;
@@ -511,6 +523,13 @@ class Coverage(IlwisObject):
         """
         return _ilwisobjects.Coverage_attributeTable(self, *args)
 
+    def setTable(self, *args):
+        """
+        setTable(Coverage self, Table tbl, pythonapi::Coverage::AttributeType attType=atCOVERAGE)
+        setTable(Coverage self, Table tbl)
+        """
+        return _ilwisobjects.Coverage_setTable(self, *args)
+
     def coordinateSystem(self):
         """coordinateSystem(Coverage self) -> CoordinateSystem"""
         return _ilwisobjects.Coverage_coordinateSystem(self)
@@ -518,6 +537,10 @@ class Coverage(IlwisObject):
     def setCoordinateSystem(self, *args):
         """setCoordinateSystem(Coverage self, CoordinateSystem cs)"""
         return _ilwisobjects.Coverage_setCoordinateSystem(self, *args)
+
+    def envelope(self):
+        """envelope(Coverage self) -> Envelope"""
+        return _ilwisobjects.Coverage_envelope(self)
 
 Coverage_swigregister = _ilwisobjects.Coverage_swigregister
 Coverage_swigregister(Coverage)
@@ -1572,6 +1595,7 @@ class PixelIterator(_object):
         __init__(pythonapi::PixelIterator self, PixelIterator pi) -> PixelIterator
         __init__(pythonapi::PixelIterator self, RasterCoverage rc, Box b=pythonapi::Box()) -> PixelIterator
         __init__(pythonapi::PixelIterator self, RasterCoverage rc) -> PixelIterator
+        __init__(pythonapi::PixelIterator self, RasterCoverage rc, Geometry geom) -> PixelIterator
         __init__(pythonapi::PixelIterator self, Ilwis::PixelIterator * ilwIt) -> PixelIterator
         """
         this = _ilwisobjects.new_PixelIterator(*args)
@@ -1800,6 +1824,8 @@ class RasterCoverage(Coverage):
         this = _ilwisobjects.new_RasterCoverage(*args)
         try: self.this.append(this)
         except: self.this = this
+    __swig_destroy__ = _ilwisobjects.delete_RasterCoverage
+    __del__ = lambda self : None;
     def __add__(self, *args):
         """
         __add__(RasterCoverage self, RasterCoverage rc) -> RasterCoverage
@@ -1881,10 +1907,17 @@ class RasterCoverage(Coverage):
 
     def datadef(self, *args):
         """
-        datadef(RasterCoverage self, quint32 layer) -> DataDefinition
-        datadef(RasterCoverage self, quint32 layer) -> DataDefinition
+        datadef(RasterCoverage self, quint32 layer=WHOLE_RASTER) -> DataDefinition
+        datadef(RasterCoverage self) -> DataDefinition
         """
         return _ilwisobjects.RasterCoverage_datadef(self, *args)
+
+    def setDataDef(self, *args):
+        """
+        setDataDef(RasterCoverage self, DataDefinition datdef)
+        setDataDef(RasterCoverage self, Domain dm)
+        """
+        return _ilwisobjects.RasterCoverage_setDataDef(self, *args)
 
     def statistics(self, mode=0, bins=0):
         """
@@ -1923,10 +1956,13 @@ class RasterCoverage(Coverage):
         """
         return _ilwisobjects.RasterCoverage_select(self, *args)
 
-    __swig_destroy__ = _ilwisobjects.delete_RasterCoverage
-    __del__ = lambda self : None;
+    def reprojectRaster(self, *args):
+        """reprojectRaster(RasterCoverage self, quint32 epsg)"""
+        return _ilwisobjects.RasterCoverage_reprojectRaster(self, *args)
+
 RasterCoverage_swigregister = _ilwisobjects.RasterCoverage_swigregister
 RasterCoverage_swigregister(RasterCoverage)
+WHOLE_RASTER = cvar.WHOLE_RASTER
 
 def RasterCoverage_toRasterCoverage(*args):
   """RasterCoverage_toRasterCoverage(Object obj) -> RasterCoverage"""
@@ -2255,8 +2291,6 @@ class Range(Object):
         """impliedValue(Range self, PyObject const * value) -> PyObject *"""
         return _ilwisobjects.Range_impliedValue(self, *args)
 
-    __swig_destroy__ = _ilwisobjects.delete_Range
-    __del__ = lambda self : None;
 Range_swigregister = _ilwisobjects.Range_swigregister
 Range_swigregister(Range)
 
@@ -2278,6 +2312,8 @@ class NumericRange(Range):
         this = _ilwisobjects.new_NumericRange(*args)
         try: self.this.append(this)
         except: self.this = this
+    __swig_destroy__ = _ilwisobjects.delete_NumericRange
+    __del__ = lambda self : None;
     def contains(self, *args):
         """
         contains(NumericRange self, double v, bool inclusive=True) -> bool
@@ -2321,8 +2357,6 @@ class NumericRange(Range):
         """clear(NumericRange self)"""
         return _ilwisobjects.NumericRange_clear(self)
 
-    __swig_destroy__ = _ilwisobjects.delete_NumericRange
-    __del__ = lambda self : None;
 NumericRange_swigregister = _ilwisobjects.NumericRange_swigregister
 NumericRange_swigregister(NumericRange)
 
@@ -2710,12 +2744,17 @@ class DataDefinition(_object):
         """
         __init__(pythonapi::DataDefinition self) -> DataDefinition
         __init__(pythonapi::DataDefinition self, Ilwis::DataDefinition * datdef) -> DataDefinition
-        __init__(pythonapi::DataDefinition self, Domain dm, Range rng) -> DataDefinition
+        __init__(pythonapi::DataDefinition self, Domain dm, Range rng=None) -> DataDefinition
+        __init__(pythonapi::DataDefinition self, Domain dm) -> DataDefinition
         __init__(pythonapi::DataDefinition self, DataDefinition datdef) -> DataDefinition
         """
         this = _ilwisobjects.new_DataDefinition(*args)
         try: self.this.append(this)
         except: self.this = this
+    def __str__(self):
+        """__str__(DataDefinition self) -> std::string"""
+        return _ilwisobjects.DataDefinition___str__(self)
+
     def __bool__(self):
         """__bool__(DataDefinition self) -> bool"""
         return _ilwisobjects.DataDefinition___bool__(self)

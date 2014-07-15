@@ -27,6 +27,8 @@
 #include "georefconnector.h"
 #include "binaryilwis3table.h"
 #include "factory.h"
+#include "catalog.h"
+#include "ilwiscontext.h"
 #include "abstractfactory.h"
 #include "georefimplementationfactory.h"
 
@@ -158,8 +160,17 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
     QString localPath;
     if ( grf->coordinateSystem()->code() == "unknown")
         localPath = "unknown.csy";
-    else
+    else{
         localPath = Resource::toLocalFile(grf->coordinateSystem()->source().url(),true, "csy");
+        if ( localPath == sUNDEF){
+            QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
+            QString name = grf->coordinateSystem()->name();
+            if ( !grf->coordinateSystem()->isAnonymous()) {
+                name = name.replace(QRegExp("[/ .'\"]"),"_");
+            }
+            localPath = path + name;
+        }
+    }
     _odf->setKeyValue("GeoRef","CoordSystem", QFileInfo(localPath).fileName());
     Size<> sz = grf->size();
     _odf->setKeyValue("GeoRef","Lines", QString::number(sz.ysize()));
