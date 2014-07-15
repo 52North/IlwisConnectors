@@ -8,7 +8,7 @@
 
 #include "pythonapi_coverage.h"
 #include "pythonapi_pyobject.h"
-
+#include "pythonapi_util.h"
 
 using namespace pythonapi;
 
@@ -49,6 +49,11 @@ Table Coverage::attributeTable(AttributeType attType){
     return Table(new Ilwis::ITable(this->ptr()->as<Ilwis::Coverage>()->attributeTable((Ilwis::Coverage::AttributeType)attType)));
 }
 
+void Coverage::setTable(Table& tbl, AttributeType attType){
+    Ilwis::ITable ilwTab = tbl.ptr()->as<Ilwis::Table>();
+    this->ptr()->as<Ilwis::Coverage>()->attributeTable(ilwTab, (Ilwis::Coverage::AttributeType)attType);
+}
+
 CoordinateSystem Coverage::coordinateSystem(){
     return CoordinateSystem(new Ilwis::ICoordinateSystem(this->ptr()->as<Ilwis::Coverage>()->coordinateSystem()));
 }
@@ -57,3 +62,6 @@ void Coverage::setCoordinateSystem(const CoordinateSystem &cs){
     this->ptr()->as<Ilwis::Coverage>()->coordinateSystem(cs.ptr()->as<Ilwis::CoordinateSystem>());
 }
 
+Envelope Coverage::envelope(){
+    return Envelope(this->ptr()->as<Ilwis::Coverage>()->envelope());
+}

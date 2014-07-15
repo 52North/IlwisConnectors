@@ -40,6 +40,7 @@ namespace pythonapi {
         void name(std::string name);
         bool isInternal() const;
         std::string type();
+        std::string type2Name(IlwisTypes ilwType);
         quint64 ilwisID() const;
         IlwisTypes ilwisType();
     };

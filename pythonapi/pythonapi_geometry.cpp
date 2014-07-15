@@ -124,6 +124,7 @@ void Geometry::setCoordinateSystem(const CoordinateSystem &cs){
 Geometry* Geometry::transform(const CoordinateSystem &cs){
     geos::geom::Geometry* copy = this->ptr()->clone();
     Ilwis::GeometryHelper::transform(copy,coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>(), cs.ptr()->as<Ilwis::CoordinateSystem>());
+    copy->geometryChangedAction();
     return new Geometry(copy, cs.ptr()->as<Ilwis::CoordinateSystem>());
 }
 

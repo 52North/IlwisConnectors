@@ -2,7 +2,6 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
-
 #include "../../IlwisCore/core/ilwisobjects/domain/domain.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/datadefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
@@ -284,6 +283,7 @@ RasterCoverage RasterCoverage::select(std::string selectionQ){
     }
     else{
         throw InvalidObject("Not a valid geometry description");
+        return NULL;
     }
 
     delete geom;
@@ -291,5 +291,22 @@ RasterCoverage RasterCoverage::select(std::string selectionQ){
 
 RasterCoverage RasterCoverage::select(Geometry& geom){
     return select(geom.toWKT());
+}
+
+void RasterCoverage::reprojectRaster(quint32 epsg){
+    CoordinateSystem* targetPyCsy = new CoordinateSystem("code=epsg:" + std::to_string(epsg));
+    Ilwis::ICoordinateSystem targetIlwCsy = targetPyCsy->ptr()->as<Ilwis::CoordinateSystem>();
+    Ilwis::IGeoReference georef = this->geoReference().ptr()->as<Ilwis::GeoReference>();
+    Ilwis::ICoordinateSystem sourceCsy = georef->coordinateSystem();
+    Ilwis::Envelope env  = this->ptr()->as<Ilwis::RasterCoverage>()->envelope();
+    env = sourceCsy->convertEnvelope(targetIlwCsy, env);
+    Ilwis::BoundingBox bo = georef->coord2Pixel(env);
+    Ilwis::Size<> sz = bo.size();
+    std::string refStr = "code=georef:type=corners,csy=epsg:" + std::to_string(epsg) + ",envelope=" +
+            env.toString().toStdString() + ",gridsize=" + std::to_string(sz.xsize()) + " " + std::to_string(sz.ysize()) +
+            ",name=" + this->name();
+    this->ptr()->as<Ilwis::RasterCoverage>()->envelope(env);
+    this->setGeoReference(refStr);
+    this->setCoordinateSystem(*targetPyCsy);
 }
 

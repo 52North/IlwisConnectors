@@ -250,11 +250,14 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
 
-    IDomain dom;
-    if(!dom.prepare("code=value")) { //TODO:  for the moment only value maps in gdal
-        return ERROR1(ERR_NO_INITIALIZED_1,obj->name());
+    if ( raster->datadef().domain()->ilwisType() != itNUMERICDOMAIN){
+        IDomain dom;
+        if(!dom.prepare("code=value")) { //TODO:  for the moment only value maps in gdal
+            return ERROR1(ERR_NO_INITIALIZED_1,obj->name());
+        }
+        raster->datadef().domain(dom);
     }
-    raster->datadef().domain(dom);
+
     Size<> sz = raster->size();
     GDALDataType gdalType = ilwisType2GdalType(raster->datadef().range()->determineType());
     QString filename = constructOutputName(_driver);

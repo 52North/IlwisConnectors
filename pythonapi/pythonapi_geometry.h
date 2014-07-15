@@ -19,6 +19,7 @@ namespace pythonapi {
     class Geometry : public Object{
         friend class Feature;
         friend class FeatureCoverage;
+        friend class PixelIterator;
     public:
         Geometry(std::string wkt, const CoordinateSystem &csy);
         Geometry(Feature* feature, int index);

@@ -69,10 +69,6 @@ try:
             self.assertEqual(Const.rUNDEF, t.cell("newColumn", 0))
             t.setCell("newColumn", 0, 32)
             self.assertEqual(32, t.cell("newColumn", 0))
-            disconnectIssueLogger()
-            t.setCell("newColumn", 0, "text")
-            connectIssueLogger()
-            self.assertEqual(Const.rUNDEF, t.cell("newColumn", 0))
             self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308),
                                   t.column("march"))
             self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
@@ -596,7 +592,7 @@ try:
             self.assertEqual(f["DateTime"], datetime.datetime(2014, 2, 27))
 
             tup = ('12', datetime.datetime(2014, 2, 27, 0, 0), datetime.time(12, 42, 33, 120000),
-                   datetime.datetime(2014, 2, 27, 0, 0), Const.rUNDEF, 2.34e-31, 3697)
+                   datetime.datetime(2014, 2, 27, 0, 0), Const.rUNDEF, 2.34e-31, 2866)
             rec = fc.attributeTable().record(0)
             self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
             self.assertEqual(len(rec), len(fc.attributeTable().columns()))

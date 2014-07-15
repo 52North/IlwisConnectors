@@ -35,6 +35,7 @@
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_pyobject.h"
+#include "pythonapi_catalog.h"
 
 using namespace pythonapi;
 

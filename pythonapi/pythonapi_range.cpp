@@ -39,8 +39,7 @@ bool Range::__bool__() const
 
 std::string Range::__str__()
 {
-    if(this->__bool__())
-        return _range->toString().toStdString();
+    return _range->toString().toStdString();
 }
 
 IlwisTypes Range::ilwisType()

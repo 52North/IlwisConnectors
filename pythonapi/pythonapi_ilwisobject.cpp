@@ -68,6 +68,13 @@ std::string IlwisObject::type(){
         return  std::string("invalid IlwisObject!");
 }
 
+std::string IlwisObject::type2Name(IlwisTypes ilwType){
+    if (this->__bool__())
+        return Ilwis::IlwisObject::type2Name(ilwType).toStdString();
+    else
+        return  std::string("invalid IlwisObject!");
+}
+
 std::string IlwisObject::__add__(std::string value){
     if (this->__bool__())
         return this->__str__()+value;

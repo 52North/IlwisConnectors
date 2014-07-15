@@ -76,4 +76,3 @@ PyObject* FeatureCoverage::select(std::string spatialQuery){
     return pyTup;
 }
 
-

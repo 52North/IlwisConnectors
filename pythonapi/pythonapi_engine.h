@@ -6,7 +6,7 @@
 typedef struct _object PyObject;
 
 namespace pythonapi {
-
+    class Catalog;
     class Engine{
     public:
         Engine();
