@@ -46,7 +46,7 @@ private:
                 ++iter;
             });            
 
-            double y = iter.zchanged() ? iter.box().ylength()  : iter.position().y;
+          double y = iter.zchanged() ? iter.box().ylength()  : iter.position().y;
 
             if(iter == iter.end()){
                 y = iter.box().ylength();
