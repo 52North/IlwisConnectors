@@ -12,6 +12,7 @@
 #include "columndefinition.h"
 #include "basetable.h"
 #include "databasetable.h"
+
 #include "postgresqlconnector.h"
 #include "postgresqltableconnector.h"
 

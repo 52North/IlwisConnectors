@@ -1,5 +1,9 @@
 - review status and clean dead code
+  - pgmodule + pgobjectfactory
 - list findings
   - module loading Q_PLUGIN_METADATA
   - restructure to new design (connector vs catalog)
   -
+
+Questions
+- pgconnector does provide itFEATURE, itTABLE, but omits provision of tDOMAIN, itCOORDSYSTEM, itRASTER, itGEOREF for now

@@ -15,6 +15,7 @@
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "connectorfactory.h"
+
 #include "postgresqlconnector.h"
 #include "postgresqlobjectfactory.h"
 
@@ -28,19 +29,20 @@ PostgresqlObjectFactory::PostgresqlObjectFactory() : IlwisObjectFactory("IlwisOb
 
 bool PostgresqlObjectFactory::canUse(const Resource &resource) const
 {
-    if ( resource.url().scheme() != "ilwis:postgresql") // can't use anything marked as internal
-        return false;
+    if ( resource.url().scheme() != "ilwis:postgresql")
+        return false; // can't use anything marked as internal
 
     IlwisTypes type = resource.ilwisType() ;
-    if ( type & itDOMAIN)
-        return true;
-    else if ( type & itCOORDSYSTEM)
-        return true;
-    else if ( type & itRASTER)
-        return true;
-    else if ( type & itGEOREF)
-        return true;
-    else if ( type & itFEATURE)
+//    if ( type & itDOMAIN)
+//        return true;
+//    else if ( type & itCOORDSYSTEM)
+//        return true;
+//    else if ( type & itRASTER)
+//        return true;
+//    else if ( type & itGEOREF)
+//        return true;
+//    else
+    if ( type & itFEATURE)
         return true;
     else if ( type & itTABLE)
         return true;

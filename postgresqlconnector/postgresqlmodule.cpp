@@ -14,7 +14,8 @@
 
 #include "postgresqlobjectfactory.h"
 #include "postgresqlconnector.h"
-#include "postgresqlcatalogconnector.h"
+#include "postgresqlcatalogexplorer.h"
+#include "postgresqlfeatureconnector.h"
 #include "postgresqltableconnector.h"
 #include "postgresqlmodule.h"
 
@@ -55,7 +56,7 @@ void PostgresqlModule::prepare()
     if (!cfactory)
         return ;
 
-    cfactory->addCreator(itFEATURE, "postgresql", PostgresqlCatalogConnector::create);
+    cfactory->addCreator(itFEATURE, "postgresql", PostgresqlFeatureConnector::create);
     cfactory->addCreator(itTABLE, "postgresql", PostgresqlTableConnector::create);
     //IlwisObject::addTypeFunction(PGFeatureConnector::ilwisType);
 }

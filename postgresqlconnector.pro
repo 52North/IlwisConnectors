@@ -37,16 +37,18 @@ DEPENDPATH +=   $$PWD/core \
                 $$PWD/../external/geos \
 
 HEADERS += \
-    postgresqlconnector/postgresqlcatalogconnector.h \
     postgresqlconnector/postgresqlconnector.h \
     postgresqlconnector/postgresqlmodule.h \
     postgresqlconnector/postgresqlobjectfactory.h \
-    postgresqlconnector/postgresqltableconnector.h
+    postgresqlconnector/postgresqlfeatureconnector.h \
+    postgresqlconnector/postgresqltableconnector.h \
+    postgresqlconnector/postgresqlcatalogexplorer.h
 
 SOURCES += \
-    postgresqlconnector/postgresqlcatalogconnector.cpp \
     postgresqlconnector/postgresqlconnector.cpp \
     postgresqlconnector/postgresqlmodule.cpp \
     postgresqlconnector/postgresqlobjectfactory.cpp \
-    postgresqlconnector/postgresqltableconnector.cpp
+    postgresqlconnector/postgresqlfeatureconnector.cpp \
+    postgresqlconnector/postgresqltableconnector.cpp \
+    postgresqlconnector/postgresqlcatalogexplorer.cpp
 
