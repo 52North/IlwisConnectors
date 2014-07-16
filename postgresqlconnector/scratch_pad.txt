@@ -1,3 +1,11 @@
+
+Testdata
+- http://www.census.gov/cgi-bin/geo/shapefiles2010/main
+  - download tl_2010_us_rails
+  - download tl_2010_us_state10
+
+
+
 - review status and clean dead code
   - pgmodule + pgobjectfactory
 - list findings
