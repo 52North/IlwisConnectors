@@ -510,14 +510,14 @@ QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList)
     if (_context.srsDimension() == 2) {
         for (int i = 0; i < coords.size() - 1; i++) {
             wktCoords.append(coords.at(i)).append(" ");
-            wktCoords.append(coords.at(i++)).append(" ");
+            wktCoords.append(coords.at(++i)).append(" ");
             wktCoords.append(", ");
         }
     } else if (_context.srsDimension() == 3) {
         for (int i = 0; i < coords.size() - 2; i++) {
             wktCoords.append(coords.at(i)).append(" ");
-            wktCoords.append(coords.at(i++)).append(" ");
-            wktCoords.append(coords.at(i++));
+            wktCoords.append(coords.at(++i)).append(" ");
+            wktCoords.append(coords.at(++i));
             wktCoords.append(", ");
         }
     }
