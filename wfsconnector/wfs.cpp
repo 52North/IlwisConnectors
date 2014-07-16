@@ -58,7 +58,6 @@ WfsResponse *WebFeatureService::performRequest(QUrlQuery query, QString wfsReque
     QUrl wfsUrl = _resource;
     wfsUrl.setQuery(query);
 
-    QString www = wfsUrl.toString();
     if (!async) {
         return performSyncRequest(wfsUrl);
     } else {

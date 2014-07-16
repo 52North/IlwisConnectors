@@ -110,7 +110,7 @@ QNetworkReply *WfsResponse::performRequest(QNetworkRequest &request, bool async)
     }
 
     _reply = _networkManager->get(request);
-    _connectionTimeout->start(5000);
+    _connectionTimeout->start(30000);
     return _reply;
 }
 
