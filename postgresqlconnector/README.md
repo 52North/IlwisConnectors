@@ -1,7 +1,7 @@
 
 1. Install prerequisites (PostgreSQL with PostGIS and PGAdmin III). For [windows there is a stack builder](http://postgis.net/windows_downloads), otherwise check [the install section](http://postgis.net/install) of PostGIS.
 1. [Download the test data ](https://drive.google.com/?pli=1&authuser=0&urp=https://docs.google.com/?pli%3D1%26authuser%3D0#folders/0B8n9lfkrXoqScnVFRmF5blFSSVU)
-1. Create database with name  `ilwis-pg-test`, should be like 
+1. Create database from PostGIS template with name  `ilwis-pg-test`, should be like 
 ```
 CREATE DATABASE "ilwis-pg-test"
   WITH OWNER = postgres
