@@ -1,0 +1,5 @@
+- review status and clean dead code
+- list findings
+  - module loading Q_PLUGIN_METADATA
+  - restructure to new design (connector vs catalog)
+  -

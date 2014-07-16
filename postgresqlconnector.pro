@@ -19,7 +19,8 @@ TEMPLATE = lib
 DEFINES += POSTGRESSQLCONNECTOR_LIBRARY
 
 OTHER_FILES += \
-    postgresqlconnector/postgresqlconnector.json 
+    postgresqlconnector/postgresqlconnector.json \ 
+    postgresqlconnector/scratch_pad.txt
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
@@ -36,16 +37,16 @@ DEPENDPATH +=   $$PWD/core \
                 $$PWD/../external/geos \
 
 HEADERS += \
+    postgresqlconnector/postgresqlcatalogconnector.h \
+    postgresqlconnector/postgresqlconnector.h \
     postgresqlconnector/postgresqlmodule.h \
     postgresqlconnector/postgresqlobjectfactory.h \
-    postgresqlconnector/postgresqlconnector.h \
-    postgresqlconnector/postgresqltableconnector.h \
-    postgresqlconnector/postgresqlcatalogconnector.h
+    postgresqlconnector/postgresqltableconnector.h
 
 SOURCES += \
+    postgresqlconnector/postgresqlcatalogconnector.cpp \
+    postgresqlconnector/postgresqlconnector.cpp \
     postgresqlconnector/postgresqlmodule.cpp \
     postgresqlconnector/postgresqlobjectfactory.cpp \
-    postgresqlconnector/postgresqlconnector.cpp \
-    postgresqlconnector/postgresqltableconnector.cpp \
-    postgresqlconnector/postgresqlcatalogconnector.cpp
+    postgresqlconnector/postgresqltableconnector.cpp
 
