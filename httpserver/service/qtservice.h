@@ -40,7 +40,7 @@
 
 #ifndef QTSERVICE_H
 #define QTSERVICE_H
-
+#include <map>
 #include <QCoreApplication>
 
 #if defined(Q_OS_WIN)
@@ -119,7 +119,7 @@ public:
 
     Q_DECLARE_FLAGS(ServiceFlags, ServiceFlag)
 
-    QtService(const QStringList &, const QString &name);
+    QtService(const std::map<QString, QVariant>& args, const QString &name);
     virtual ~QtService();
 
     QString serviceName() const;
@@ -133,12 +133,13 @@ public:
     ServiceFlags serviceFlags() const;
     void setServiceFlags(ServiceFlags flags);
 
-    int exec(const QStringList &args);
+    int exec(const std::map<QString, QVariant>& args);
 
     void logMessage(const QString &message, MessageType type = Success,
                 int id = 0, uint category = 0, const QByteArray &data = QByteArray());
 
     static QtService *instance();
+    std::map<QString, QVariant> arguments() const;
 
 protected:
 

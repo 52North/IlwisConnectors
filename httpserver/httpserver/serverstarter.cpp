@@ -9,7 +9,7 @@
 #include <QDir>
 
 /** Name of this application */
-#define APPNAME "Ilwis-Objects"
+#define APPNAME "Ilwis-Objects minimal HTTP server"
 
 /** Publisher of this application */
 #define ORGANISATION "52north"
@@ -28,7 +28,7 @@ ServerStarter::~ServerStarter()
 
 void ServerStarter::start() {
     // Initialize the core application
-    _listener.reset(new HttpListener(new RequestMapper()));
+    _listener.reset(new HttpListener(arguments(), new RequestMapper()));
 
     qWarning("ServiceHelper: Service has started");
 }
@@ -46,7 +46,7 @@ void ServerStarter::stop() {
 }
 
 
-ServerStarter::ServerStarter(const QStringList &args)
+ServerStarter::ServerStarter(const std::map<QString, QVariant>& args)
     : QtService(args, APPNAME)
 {
     setServiceDescription(DESCRIPTION);
