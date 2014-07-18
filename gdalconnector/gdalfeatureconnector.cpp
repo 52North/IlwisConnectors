@@ -133,7 +133,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOp
     return true;
 }
 
-bool GdalFeatureConnector::loadData(IlwisObject* data){
+bool GdalFeatureConnector::loadData(IlwisObject* data, const LoadOptions &options){
 
     if(!GdalConnector::loadMetaData(data, PrepareOptions()))
         return false;
