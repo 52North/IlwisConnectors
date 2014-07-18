@@ -13,7 +13,7 @@ public:
 
     bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
     bool storeMetaData(Ilwis::IlwisObject *obj);
-    Ilwis::Grid *loadGridData(Ilwis::IlwisObject *) ;
+    bool loadData(Ilwis::IlwisObject *, const LoadOptions& options = LoadOptions()) ;
     bool storeBinaryData(Ilwis::IlwisObject *obj);
 
     Ilwis::IlwisObject *create() const;
@@ -30,6 +30,7 @@ private:
     bool storeMetaDataMapList(Ilwis::IlwisObject *obj);
     QString getGrfName(const IRasterCoverage &raster);
     bool setDataType(IlwisObject *data, const Ilwis::PrepareOptions &options);
+    void loadBlock(UPGrid &grid, QFile &file, quint32 blockIndex, quint32 fileBlock);
 
     template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& raster, const Size<>& sz) const{
         //TODO optimize this

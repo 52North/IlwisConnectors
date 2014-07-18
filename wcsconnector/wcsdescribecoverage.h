@@ -15,9 +15,10 @@ public:
 
 
 private:
+
     void parseCoverage(QXmlItem &item, std::map<QString, Ilwis::Resource> &rastercoverages) const;
-    QString valueOf(QXmlItem &item, const QString &xpathQuqery) const;
 };
+
 }
 }
 
