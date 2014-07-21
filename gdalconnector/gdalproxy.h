@@ -184,7 +184,7 @@ class GDALProxy {
         static void cplErrorHandler(CPLErr eErrClass, int err_no, const char *msg);
         static void cplDummyHandler(CPLErr, int, const char *);
 
-        QLibrary _libgdal, _libproj4, _libexpat;
+        QLibrary _libgdal;
         bool _isValid;
         static GDALProxy *_proxy;
         //next members are stored for efficiency
@@ -194,8 +194,7 @@ class GDALProxy {
 
         QHash<QString, GdalHandle*> _openedDatasets;
 
-        void loadLibraryConfig(std::map<quint32, QString> &order) const;
-public:
+ public:
         IGDALClose close;
         IGDALOpen open;
         IGDALAllRegister registerAll;
