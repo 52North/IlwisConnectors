@@ -375,7 +375,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
     return true;
 }
 
-bool FeatureConnector::loadData(Ilwis::IlwisObject *obj) {
+bool FeatureConnector::loadData(Ilwis::IlwisObject *obj, const LoadOptions &) {
     if ( obj == nullptr)
         return false;
 

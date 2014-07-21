@@ -14,7 +14,7 @@ public:
     bool storeMetaData(Ilwis::IlwisObject *obj);
     QString type() const;
     virtual IlwisObject *create() const;
-    bool loadData(IlwisObject *);
+    bool loadData(IlwisObject *, const LoadOptions& options = LoadOptions());
     bool storeBinaryData(IlwisObject* obj);
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());

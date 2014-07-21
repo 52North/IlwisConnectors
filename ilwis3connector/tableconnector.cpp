@@ -143,7 +143,7 @@ ColumnDefinition TableConnector::getKeyColumn() {
 
 }
 
-bool TableConnector::loadData(IlwisObject* data ) {
+bool TableConnector::loadData(IlwisObject* data , const LoadOptions &) {
     Locker lock(_mutex);
 
     Ilwis3::BinaryIlwis3Table tbl ;

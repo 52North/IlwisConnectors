@@ -41,6 +41,7 @@
 #include "QtService.h"
 #include "QtService_p.h"
 #include <QCoreApplication>
+#include <QVariant>
 #include <stdio.h>
 #include <QTimer>
 #include <QVector>
@@ -431,15 +432,15 @@ void QtServiceBasePrivate::startService()
 
 ServerThread *thread;
 
-int QtServiceBasePrivate::run( const QStringList &argList)
+int QtServiceBasePrivate::run()
 {
-    int argc = argList.size();
-    QVector<char *> argv(argc);
-    QList<QByteArray> argvData;
-    for (int i = 0; i < argc; ++i)
-        argvData.append(argList.at(i).toLocal8Bit());
-    for (int i = 0; i < argc; ++i)
-        argv[i] = argvData[i].data();
+//    int argc = argList.size();
+//    QVector<char *> argv(argc);
+//    QList<QByteArray> argvData;
+//    for (int i = 0; i < argc; ++i)
+//        argvData.append(argList.at(i).toLocal8Bit());
+//    for (int i = 0; i < argc; ++i)
+//        argv[i] = argvData[i].data();
 
     thread = new ServerThread(this);
     thread->start();
@@ -601,7 +602,7 @@ int QtServiceBasePrivate::run( const QStringList &argList)
 
     \sa exec(), start(), QtServiceController::install()
 */
-QtService::QtService(const QStringList& args, const QString &name)
+QtService::QtService(const std::map<QString, QVariant>& args, const QString &name)
 {
 #if defined(QtService_DEBUG)
     qInstallMsgHandler(QtServiceLogDebug);
@@ -730,11 +731,11 @@ QtService::ServiceFlags QtService::serviceFlags() const
 
     \sa QtServiceController
 */
-int QtService::exec(const QStringList& args)
+int QtService::exec(const std::map<QString, QVariant> &args)
 {
 
     d_ptr->args = args;
-    int ec = d_ptr->run(d_ptr->args);
+    int ec = d_ptr->run();
     if (ec == -1)
         qErrnoWarning("The service could not be executed.");
     return ec;
@@ -779,6 +780,11 @@ int QtService::exec(const QStringList& args)
 QtService *QtService::instance()
 {
     return QtServiceBasePrivate::instance;
+}
+
+std::map<QString, QVariant> QtService::arguments() const
+{
+    return d_ptr->args;
 }
 
 void QtService::start()

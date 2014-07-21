@@ -21,6 +21,7 @@ public:
 
 private:
     static std::unique_ptr<ServerStarter>_server;
+    quint16 _port;
 };
 }
 }

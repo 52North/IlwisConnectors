@@ -42,6 +42,7 @@
 #define QTSERVICE_P_H
 
 #include <QStringList>
+#include <map>
 #include "qtservice.h"
 
 class QtServiceControllerPrivate
@@ -65,14 +66,14 @@ public:
     QString serviceDescription;
     QtServiceController::StartupType startupType;
     QtService::ServiceFlags serviceFlags;
-    QStringList args;
+    std::map<QString, QVariant> args;
 
     static class QtService *instance;
 
     QtServiceController controller;
 
     void startService();
-    int run(const QStringList &argList);
+    int run();
     bool install(const QString &account, const QString &password);
 
     bool start();

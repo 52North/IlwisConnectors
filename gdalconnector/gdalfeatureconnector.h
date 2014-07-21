@@ -16,7 +16,7 @@ public:
     GdalFeatureConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 
     bool loadMetaData(IlwisObject* data, const PrepareOptions &options);
-    bool loadData(IlwisObject* data);
+    bool loadData(IlwisObject* data, const Ilwis::LoadOptions &options);
     bool store(IlwisObject *obj, int);
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());

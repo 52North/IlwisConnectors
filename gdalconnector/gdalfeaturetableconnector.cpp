@@ -45,7 +45,7 @@ bool GdalFeatureTableConnector::storeMetaData(Ilwis::IlwisObject *obj){
     return true;
 }
 
-bool GdalFeatureTableConnector::loadData(IlwisObject * data){
+bool GdalFeatureTableConnector::loadData(IlwisObject * data, const LoadOptions &){
     if(!GdalConnector::loadMetaData(data, PrepareOptions())) // ??
         return false;
 

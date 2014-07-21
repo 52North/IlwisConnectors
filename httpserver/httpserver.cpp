@@ -40,6 +40,12 @@ HTTPServer::~HTTPServer()
 
 OperationImplementation::State HTTPServer::prepare(ExecutionContext *ctx, const SymbolTable& symTable) {
 
+    bool ok;
+    int port = _expression.parm(0).value().toLong(&ok);
+    if ( !ok || port < 1024 || port > 49151){
+        ERROR2(ERR_INVALID_PROPERTY_FOR_2, TR("port number"), "http server");
+    }
+    _port = port;
     return OperationImplementation::sPREPARED;
 }
 
@@ -49,14 +55,10 @@ bool HTTPServer::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
-    QString appLoc = "myserver"; //qApp->applicationFilePath();
-    QStringList args;
-    args.append(appLoc);
+    std::map<QString, QVariant> arguments;
+    arguments["port"] = _port;
     if ( _server)
-        _server->exec(args);
-
-    std::chrono::milliseconds dura( 5000000 ); // just for the testing, server must keep running
-    ::std::this_thread::sleep_for(dura);
+        _server->exec(arguments);
 
     return true;
 }

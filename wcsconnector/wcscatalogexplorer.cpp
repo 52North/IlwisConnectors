@@ -54,12 +54,13 @@ std::vector<Resource> WcsCatalogExplorer::loadItems()
     gcparser.parse(rastercoverages);
 
     QString ids ;
-    for(const auto& resource : rastercoverages){
-        if ( ids != "")
-            ids += ",";
-        ids += resource.second.name();
+//    for(const auto& resource : rastercoverages){
+//        if ( ids != "")
+//            ids += ",";
+//        ids += resource.second.name();
 
-    }
+//    }
+    ids = rastercoverages.begin()->second.name();
     QUrlQuery query(serviceUrl);
     WcsResponse *dcresponse = Wcs.getDescribeCoverage(query,ids);
     WcsDescribeCoverage dcparser(dcresponse, serviceUrl);

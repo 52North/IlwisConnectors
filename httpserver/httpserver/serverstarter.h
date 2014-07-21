@@ -22,7 +22,7 @@ class ServerStarter : public QtService
 public:
 
     /** Constructor */
-    ServerStarter(const QStringList& args = QStringList());
+    ServerStarter(const std::map<QString, QVariant> &args = std::map<QString, QVariant>());
     ~ServerStarter();
 
 protected:

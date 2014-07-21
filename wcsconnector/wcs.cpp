@@ -48,13 +48,8 @@ WcsResponse *WebCoverageService::performRequest(QUrlQuery query, QString request
     WcsUtils::lowerCaseKeys(query);
     query.removeQueryItem("request");
     query.addQueryItem("request", request);
-    if (request == "GetCapabilities") {
-        query.removeQueryItem("acceptversions");
-        query.addQueryItem("acceptversions", "1.1.0");
-    } else {
-        query.removeQueryItem("version");
-        query.addQueryItem("version", "1.1.0");
-    }
+    query.removeQueryItem("version");
+    query.addQueryItem("version", "1.0.0");
     if ( request == "DescribeCoverage"){
         query.addQueryItem("identifiers", id);
     }
