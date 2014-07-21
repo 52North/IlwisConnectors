@@ -215,9 +215,13 @@ quint64 GDALItems::addCsy(GdalHandle* handle, const QString &path, const QUrl& u
                 if ( def._epsg != sUNDEF){
                     return mastercatalog()->name2id("code=" + def._epsg);
                 }else {
-                    Resource res("code=proj4:" + sproj4, itCOORDSYSTEM);
+                    Resource res("code=proj4:" + sproj4, itCONVENTIONALCOORDSYSTEM);
                     QFileInfo inf(path);
-                    res.name(inf.baseName());
+                    res.name(inf.fileName());
+                    if ( inf.exists()){
+                        res.setUrl(QUrl::fromLocalFile(path), true);
+                        res.setUrl(QUrl::fromLocalFile(path));
+                    }
                     mastercatalog()->addItems({res});
                     //Proj4Parameters::add2lookup(res.name(),sproj4,0);
                     return res.id();
