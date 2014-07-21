@@ -115,7 +115,6 @@ QString Ilwis3CatalogExplorer::provider() const
 }
 
 QFileInfo Ilwis3CatalogExplorer::toLocalFile(const QUrl &datasource) const{
-    //TODO for non-file based systems
     return QFileInfo(datasource.toLocalFile());
 }
 
