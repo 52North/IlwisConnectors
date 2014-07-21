@@ -42,7 +42,8 @@ HEADERS += \
     postgresqlconnector/postgresqlobjectfactory.h \
     postgresqlconnector/postgresqlfeatureconnector.h \
     postgresqlconnector/postgresqltableconnector.h \
-    postgresqlconnector/postgresqlcatalogexplorer.h
+    postgresqlconnector/postgresqlcatalogexplorer.h \
+    postgresqlconnector/postgresqldatabaseutil.h
 
 SOURCES += \
     postgresqlconnector/postgresqlconnector.cpp \

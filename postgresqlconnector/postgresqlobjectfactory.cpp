@@ -17,6 +17,7 @@
 #include "connectorfactory.h"
 
 #include "postgresqlconnector.h"
+#include "postgresqltableconnector.h"
 #include "postgresqlobjectfactory.h"
 
 using namespace Ilwis;
@@ -29,8 +30,8 @@ PostgresqlObjectFactory::PostgresqlObjectFactory() : IlwisObjectFactory("IlwisOb
 
 bool PostgresqlObjectFactory::canUse(const Resource &resource) const
 {
-    if ( resource.url().scheme() != "ilwis:postgresql")
-        return false; // can't use anything marked as internal
+    if ( resource.url().scheme() != "postgresql")
+        return false; // can't use anything other than pg connection
 
     IlwisTypes type = resource.ilwisType() ;
 //    if ( type & itDOMAIN)
@@ -41,10 +42,10 @@ bool PostgresqlObjectFactory::canUse(const Resource &resource) const
 //        return true;
 //    else if ( type & itGEOREF)
 //        return true;
+//    else if ( type & itFEATURE)
+//        return true;
 //    else
-    if ( type & itFEATURE)
-        return true;
-    else if ( type & itTABLE)
+    if ( type & itTABLE)
         return true;
     return false;
 }
@@ -52,16 +53,22 @@ bool PostgresqlObjectFactory::canUse(const Resource &resource) const
 IlwisObject *PostgresqlObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    PostgresqlConnector *connector = factory->createFromResource<PostgresqlConnector>(resource, "postgresql", options);
-
-   if(!connector) {
+    PostgresqlConnector *connector;
+    IlwisTypes type = resource.ilwisType();
+    if (type & itTABLE) {
+        connector = factory->createFromResource<PostgresqlTableConnector>(resource, "postgresql", options);
+    }
+//    else if(type & itFEATURE) {
+//          connector = factory->createFromResource<PostgresqlFeatureConnector>(resource, "postgresql", options);
+//    }
+    else {
        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
        return 0;
-   }
-   IlwisObject *object = createObject(connector);
-   if ( object)
+    }
+    IlwisObject *object = createObject(connector);
+    if ( object)
        return object;
 
-   delete connector;
-   return 0;
+    delete connector;
+    return 0;
 }

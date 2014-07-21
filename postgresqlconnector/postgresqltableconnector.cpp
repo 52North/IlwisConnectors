@@ -35,6 +35,8 @@ ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &reso
 
 bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
+    qDebug() << "PostgresqlTableConnector::loadMetaData()";
+
     return PostgresqlConnector::loadMetaData(data, options);
 }
 

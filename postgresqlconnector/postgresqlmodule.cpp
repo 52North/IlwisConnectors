@@ -56,7 +56,5 @@ void PostgresqlModule::prepare()
     if (!cfactory)
         return ;
 
-    cfactory->addCreator(itFEATURE, "postgresql", PostgresqlFeatureConnector::create);
     cfactory->addCreator(itTABLE, "postgresql", PostgresqlTableConnector::create);
-    //IlwisObject::addTypeFunction(PGFeatureConnector::ilwisType);
 }
