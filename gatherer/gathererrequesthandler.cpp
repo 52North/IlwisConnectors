@@ -175,6 +175,9 @@ QString GathererRequestHandler::buildQuery(const QString fields, const QString& 
     QString endTime = request.getParameter("endtime");
     QString envelope = request.getParameter("envelope");
     QStringList coords = envelope.split(",");
+    if ( coords.size() != 4)
+        return sUNDEF;
+
     LatLon c1(coords[0], coords[1]);
     LatLon c2(coords[2], coords[3]);
     std::vector<QString> queryParts;
@@ -238,6 +241,8 @@ void GathererRequestHandler::doSelection(const HttpRequest &request, const QStri
     if (doQuery(query,db, results)) {
         QString xml = packResults(results);
         response.write(xml.toLocal8Bit());
+    } else {
+        writeMessage("Error", "No valid database response", response);
     }
     db.close();
 
