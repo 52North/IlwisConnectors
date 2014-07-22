@@ -82,6 +82,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
         gcoverage->coordinateSystem()->envelope(gcoverage->envelope());
         gcoverage->georeference(grf);
         grf->size(sz);
+        grf->compute();
         gcoverage->size(sz);
 
         double vminRaster=rUNDEF, vmaxRaster=rUNDEF;
