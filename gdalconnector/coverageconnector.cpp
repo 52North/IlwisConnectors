@@ -46,10 +46,18 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOptio
     QFileInfo fileinf = containerConnector()->toLocalFile(source());
     ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", QUrl::fromLocalFile(fileinf.absoluteFilePath()));
     if(!csy.isValid()) {
-        QString resource = QString("code=csy:unknown");
-        if (!csy.prepare(resource)) {
-            kernel()->issues()->log(TR("Fallback to 'unknown' failed, corrupt system files defintion"));
-            return false;
+        // special handling for envi as the csy's are stored under the .hdr extension
+        QString basepath = fileinf.absolutePath() + "/" + fileinf.baseName();
+        QFileInfo enviinf = QString(basepath + ".hdr").toLower();
+        if ( enviinf.exists()){
+            csy = setObject<ICoordinateSystem>("coordinatesystem", QUrl::fromLocalFile(enviinf.absoluteFilePath()));
+        }
+        if (!csy.isValid()){
+            QString resource = QString("code=csy:unknown");
+            if (!csy.prepare(resource)) {
+                kernel()->issues()->log(TR("Fallback to 'unknown' failed, corrupt system files defintion"));
+                return false;
+            }
         }
     }
     coverage->coordinateSystem(csy);
