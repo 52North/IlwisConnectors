@@ -80,6 +80,10 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
         _odf->setKeyValue("Ilwis","Type", "Table");
     if ( (obj->ilwisType() & itGEOREF))
         _odf->setKeyValue("Ilwis","Type", "GeoRef");
+    if ( (obj->ilwisType() & itCOORDSYSTEM))
+        _odf->setKeyValue("Ilwis","Type", "CoordSystem");
+    if ( (obj->ilwisType() & itDOMAIN))
+        _odf->setKeyValue("Ilwis","Type", "Domain");
 
     //TODO: other types
     return true;
