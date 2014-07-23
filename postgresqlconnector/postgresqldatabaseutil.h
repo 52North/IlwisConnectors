@@ -3,6 +3,7 @@
 
 #include <QSqlDatabase>
 
+#include "kernel.h"
 #include "resource.h"
 
 namespace Ilwis {
@@ -12,6 +13,7 @@ namespace Postgresql {
 class PostgresqlDatabaseUtil {
 
 public:
+
     static QSqlDatabase connectionFromResource(const Resource resource, QString connectionname="") {
 
         QUrl url = resource.url();
@@ -20,13 +22,32 @@ public:
         }
         QSqlDatabase db = QSqlDatabase::addDatabase("QPSQL", connectionname);
 
-        db.setHostName(url.host());
-        db.setDatabaseName(url.path().remove('/'));
-        db.setPort(url.port());
+        qint64 port = url.port();
+        QString host = url.host();
+        QString path = url.path().remove('/');
+        validateNotNullOrEmpty("Host", host);
+        validateNotNullOrEmpty("Path", path);
+        validateNotNullOrEmpty("Port", port);
 
-        db.setUserName(resource["pg.user"].toString());
-        db.setPassword(resource["pg.password"].toString());
+        db.setHostName(host);
+        db.setDatabaseName(path);
+        db.setPort(port);
+
+        QString username = resource["pg.user"].toString();
+        QString password = resource["pg.password"].toString();
+        validateNotNullOrEmpty("Username", username);
+        validateNotNullOrEmpty("Password", password);
+
+        db.setUserName(username);
+        db.setPassword(password);
         return db;
+    }
+
+private:
+    static void validateNotNullOrEmpty(QString parameter, QVariant value) {
+        if (value.isNull() || !value.isValid()) {
+            WARN1("Property '%1' is null or empty.", parameter);
+        }
     }
 };
 
