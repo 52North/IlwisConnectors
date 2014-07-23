@@ -11,10 +11,12 @@
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "basetable.h"
-#include "databasetable.h"
+#include "flattable.h"
 
+#include "postgresqldatabaseutil.h"
 #include "postgresqlconnector.h"
 #include "postgresqltableconnector.h"
+#include "postgresqltableloader.h"
 
 using namespace Ilwis;
 using namespace Postgresql;
@@ -25,7 +27,8 @@ PostgresqlTableConnector::PostgresqlTableConnector(const Ilwis::Resource &resour
 
 IlwisObject *PostgresqlTableConnector::create() const
 {
-    return new DatabaseTable(_resource);
+    qDebug() << "PostgresqlTableConnector::create()";
+    return new FlatTable(_resource);
 }
 
 ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options)
@@ -36,21 +39,36 @@ ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &reso
 bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
     qDebug() << "PostgresqlTableConnector::loadMetaData()";
+    if ( !PostgresqlConnector::loadMetaData(data, options)) {
+        return false;
+    }
 
-    return PostgresqlConnector::loadMetaData(data, options);
+    QUrl url = source().url();
+    ITable *table = (ITable *)data;
+    PostgresqlTableLoader loader;
+    loader.loadMetadata(table,source());
+    table->ptr()->name(url.path());
+
+    // TODO feature count, further metadata.
+
+
+    return true;
 }
 
 bool PostgresqlTableConnector::storeMetaData(Ilwis::IlwisObject *obj)
 {
+    qDebug() << "PostgresqlTableConnector::storeMetaData()";
     return false;
 }
 
 bool PostgresqlTableConnector::loadBinaryData(IlwisObject *data)
 {
+    qDebug() << "PostgresqlTableConnector::loadBinaryData()";
     return false;
 }
 
 bool PostgresqlTableConnector::storeBinaryData(IlwisObject *obj)
 {
+    qDebug() << "PostgresqlTableConnector::storeBinaryData()";
     return false;
 }
