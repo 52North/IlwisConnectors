@@ -558,6 +558,8 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
         int digits = stats.significantDigits();
         RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - digits));
         qint32 delta = stats[NumericStatistics::pDELTA];
+        QString range = QString("%1:%2").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]);
+         _odf->setKeyValue("BaseMap","MinMax",range);
         if ( delta >= 0 && delta < 256 &&  digits == 0){
            _odf->setKeyValue("MapStore","Type","Byte");
         } else if ( conv.storeType() == itUINT8){
