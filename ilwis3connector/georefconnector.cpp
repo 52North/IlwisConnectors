@@ -35,13 +35,13 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *GeorefConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+ConnectorInterface *GeorefConnector::create(const Resource &resource, bool load, const IOOptions &options) {
     return new GeorefConnector(resource, load, options);
 
 }
 
 
-GeorefConnector::GeorefConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options) {
+GeorefConnector::GeorefConnector(const Resource &resource, bool load, const IOOptions &options) : Ilwis3Connector(resource, load, options) {
 
 }
 
@@ -145,7 +145,7 @@ bool GeorefConnector::loadGeorefTiepoints(const IniFile& odf, GeoReference *grf)
     return true;
 }
 
-bool GeorefConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool GeorefConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     Ilwis3Connector::loadMetaData(data, options);
     IniFile *odf = _odf.data();

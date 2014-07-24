@@ -30,7 +30,7 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load, const IOOptions &options) {
     return new RasterCoverageConnector(resource, load, options);
 
 }
@@ -39,10 +39,10 @@ Ilwis::IlwisObject *RasterCoverageConnector::create() const{
     return new RasterCoverage(_resource);
 }
 
-RasterCoverageConnector::RasterCoverageConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : CoverageConnector(resource,load, options){
+RasterCoverageConnector::RasterCoverageConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : CoverageConnector(resource,load, options){
 }
 
-bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
+bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
 
     if(!CoverageConnector::loadMetaData(data, options))
         return false;
@@ -155,7 +155,7 @@ inline double RasterCoverageConnector::value(char *block, int index) const{
     return v;
 }
 
-bool RasterCoverageConnector::loadData(IlwisObject* data, const LoadOptions& options ){
+bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& options ){
     auto layerHandle = gdal()->getRasterBand(_handle->handle(), 1);
     if (!layerHandle) {
         ERROR2(ERR_COULD_NOT_LOAD_2, "GDAL","layer");

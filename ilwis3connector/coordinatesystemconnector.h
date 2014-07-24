@@ -6,14 +6,14 @@ namespace Ilwis3{
 class CoordinateSystemConnector : public Ilwis3Connector
 {
 public:
-    CoordinateSystemConnector(const Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
-    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
+    CoordinateSystemConnector(const Resource &resource, bool load=true,const IOOptions& options=IOOptions());
+    bool loadMetaData(IlwisObject *data, const IOOptions &options);
     bool storeMetaData(IlwisObject *data);
 
     static bool canUse(const Ilwis::Resource &resource, const UPCatalogConnector &container);
 
     IlwisObject *create() const;
-    static ConnectorInterface *create(const Resource &resource, bool load=true, const Ilwis::PrepareOptions &options=PrepareOptions());
+    static ConnectorInterface *create(const Resource &resource, bool load=true, const Ilwis::IOOptions &options=IOOptions());
 
 private:
     GeodeticDatum *getDatum(QString& ellipsoid);

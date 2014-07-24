@@ -9,11 +9,11 @@ namespace Gdal {
 class GDALCONNECTORSHARED_EXPORT GdalConnector : public IlwisObjectConnector
 {
 public:
-    GdalConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    GdalConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     virtual ~GdalConnector();
     static IlwisTypes ilwisType(const QString &name);
 
-    bool loadMetaData(IlwisObject* data,const PrepareOptions&);
+    bool loadMetaData(IlwisObject* data,const IOOptions&);
 
     QString provider() const;
     void format(const QString&);

@@ -25,12 +25,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *CoordinateSystemConnector::create(const Resource &resource,bool load,const PrepareOptions& options) {
+ConnectorInterface *CoordinateSystemConnector::create(const Resource &resource,bool load,const IOOptions& options) {
     return new CoordinateSystemConnector(resource, load, options);
 
 }
 
-CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
+CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, bool load, const IOOptions &options) : Ilwis3Connector(resource, load, options)
 {
     QString type = _odf->value("CoordSystem","Type");
 }
@@ -45,7 +45,7 @@ IlwisObject *CoordinateSystemConnector::create() const {
     return object;
 }
 
-bool CoordinateSystemConnector::loadMetaData(IlwisObject* data, const PrepareOptions& options)
+bool CoordinateSystemConnector::loadMetaData(IlwisObject* data, const IOOptions& options)
 {
     Ilwis3Connector::loadMetaData(data, options);
     CoordinateSystem *csy = static_cast<CoordinateSystem *>(data);

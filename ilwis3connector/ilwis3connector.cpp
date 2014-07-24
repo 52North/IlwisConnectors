@@ -22,7 +22,7 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-Ilwis3Connector::Ilwis3Connector(const Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource, load, options)
+Ilwis3Connector::Ilwis3Connector(const Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource, load, options)
 {
     QUrl fullname = resolve(resource);
     IniFile *odf = new IniFile();
@@ -33,7 +33,7 @@ Ilwis3Connector::Ilwis3Connector(const Resource &resource, bool load, const Prep
         _resource.setId(resource.id());
 }
 
-bool Ilwis3Connector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool Ilwis3Connector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     QFileInfo inf = _resource.url().toLocalFile();
     if ( inf.exists()) {

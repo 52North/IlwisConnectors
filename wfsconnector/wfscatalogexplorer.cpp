@@ -34,12 +34,12 @@ using namespace Wfs;
 
 REGISTER_CATALOGEXPLORER(WfsCatalogExplorer)
 
-CatalogExplorer *WfsCatalogExplorer::create(const Resource &resource, const PrepareOptions &options)
+CatalogExplorer *WfsCatalogExplorer::create(const Resource &resource, const IOOptions &options)
 {
     return new WfsCatalogExplorer(resource, options);
 }
 
-WfsCatalogExplorer::WfsCatalogExplorer(const Resource &resource, const PrepareOptions &options) : CatalogExplorer(resource,options)
+WfsCatalogExplorer::WfsCatalogExplorer(const Resource &resource, const IOOptions &options) : CatalogExplorer(resource,options)
 {
 }
 

@@ -6,15 +6,15 @@ namespace Ilwis{
 
         class GdalFeatureTableConnector : public GdalConnector{
             public:
-                GdalFeatureTableConnector(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
+                GdalFeatureTableConnector(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
 
                 IlwisObject *create() const;
-                static ConnectorInterface *create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
+                static ConnectorInterface *create(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
 
-                bool loadMetaData(IlwisObject* data,const PrepareOptions&);
+                bool loadMetaData(IlwisObject* data,const IOOptions&);
                 bool storeMetaData(Ilwis::IlwisObject *obj);
 
-                bool loadData(IlwisObject *data, const LoadOptions& options = LoadOptions());
+                bool loadData(IlwisObject *data, const IOOptions& options = IOOptions());
                 bool storeBinaryData(IlwisObject* obj);
         private:
 

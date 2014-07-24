@@ -31,12 +31,12 @@ using namespace Wcs;
 
 REGISTER_CATALOGEXPLORER(WcsCatalogExplorer)
 
-CatalogExplorer *WcsCatalogExplorer::create(const Resource &resource, const PrepareOptions &options)
+CatalogExplorer *WcsCatalogExplorer::create(const Resource &resource, const IOOptions &options)
 {
     return new WcsCatalogExplorer(resource, options);
 }
 
-WcsCatalogExplorer::WcsCatalogExplorer(const Resource &resource, const PrepareOptions &options) : CatalogExplorer(resource,options)
+WcsCatalogExplorer::WcsCatalogExplorer(const Resource &resource, const IOOptions &options) : CatalogExplorer(resource,options)
 {
 }
 

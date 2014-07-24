@@ -39,17 +39,17 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *TableConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+ConnectorInterface *TableConnector::create(const Resource &resource, bool load, const IOOptions &options) {
     return new TableConnector(resource, load, options);
 
 }
 
-TableConnector::TableConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
+TableConnector::TableConnector(const Resource &resource, bool load, const IOOptions &options) : Ilwis3Connector(resource, load, options)
 {
    // _type = itTABLE;
 }
 
-bool TableConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool TableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     Locker lock(_mutex);
     _converters.clear();
@@ -143,7 +143,7 @@ ColumnDefinition TableConnector::getKeyColumn() {
 
 }
 
-bool TableConnector::loadData(IlwisObject* data , const LoadOptions &) {
+bool TableConnector::loadData(IlwisObject* data , const IOOptions &) {
     Locker lock(_mutex);
 
     Ilwis3::BinaryIlwis3Table tbl ;

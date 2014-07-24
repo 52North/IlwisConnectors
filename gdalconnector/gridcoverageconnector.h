@@ -8,12 +8,12 @@ class RasterCoverageConnector : public CoverageConnector
 {
 public:
 
-    RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
-    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
-    bool loadData(Ilwis::IlwisObject *data, const LoadOptions& options = LoadOptions()) ;
+    bool loadMetaData(IlwisObject *data, const IOOptions &options);
+    bool loadData(Ilwis::IlwisObject *data, const IOOptions& options = IOOptions()) ;
 
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     Ilwis::IlwisObject *create() const;
     bool store(IlwisObject *obj, int );
 

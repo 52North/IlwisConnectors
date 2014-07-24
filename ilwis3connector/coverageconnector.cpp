@@ -34,7 +34,7 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-CoverageConnector::CoverageConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
+CoverageConnector::CoverageConnector(const Resource &resource, bool load, const IOOptions &options) : Ilwis3Connector(resource, load, options)
 {
 }
 
@@ -61,7 +61,7 @@ bool CoverageConnector::getRawInfo(const QString& range, double& vmin, double& v
     return false;
 }
 
-ITable CoverageConnector::prepareAttributeTable(const QString& file, const QString& basemaptype,const PrepareOptions &options) const{
+ITable CoverageConnector::prepareAttributeTable(const QString& file, const QString& basemaptype,const IOOptions &options) const{
 
     ITable extTable;
     if ( file != sUNDEF) {
@@ -116,7 +116,7 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
 
 }
 
-bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOptions& options)
+bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& options)
 {
     Ilwis3Connector::loadMetaData(data, options);
 
@@ -355,7 +355,7 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     }
     return 0;
 }
-DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const PrepareOptions &options) const{
+DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const IOOptions &options) const{
     IDomain dom;
     if(!dom.prepare(odf->file(), options)) {
         ERROR2(ERR_NO_INITIALIZED_2,"domain",odf->file());

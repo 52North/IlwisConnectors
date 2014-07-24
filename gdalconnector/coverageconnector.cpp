@@ -30,11 +30,11 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-CoverageConnector::CoverageConnector(const Resource& resource, bool load, const PrepareOptions &options) : GdalConnector(resource,load, options)
+CoverageConnector::CoverageConnector(const Resource& resource, bool load, const IOOptions &options) : GdalConnector(resource,load, options)
 {
 }
 
-bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOptions& options){
+bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& options){
 
     if(!GdalConnector::loadMetaData(data, options))
         return false;

@@ -14,7 +14,7 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-GdalConnector::GdalConnector(const Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource,load, options), _internalPath(sUNDEF)
+GdalConnector::GdalConnector(const Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource,load, options), _internalPath(sUNDEF)
 {
     _handle = NULL;
     if ( resource.url().hasFragment())
@@ -62,7 +62,7 @@ IlwisTypes GdalConnector::ilwisType(const QString &name)
     return itUNKNOWN; //TODO: add table formats here
 }
 
-bool GdalConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
+bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
     if (data == nullptr)
         return false;
 

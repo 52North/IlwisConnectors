@@ -9,15 +9,15 @@ namespace Ilwis3{
 class RasterCoverageConnector : public CoverageConnector
 {
 public:
-    RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
-    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
+    bool loadMetaData(IlwisObject *data, const IOOptions &options);
     bool storeMetaData(Ilwis::IlwisObject *obj);
-    bool loadData(Ilwis::IlwisObject *, const LoadOptions& options = LoadOptions()) ;
+    bool loadData(Ilwis::IlwisObject *, const IOOptions& options = IOOptions()) ;
     bool storeBinaryData(Ilwis::IlwisObject *obj);
 
     Ilwis::IlwisObject *create() const;
-    static ConnectorInterface *create(const Ilwis::Resource &resource,bool load = true,const PrepareOptions& options=PrepareOptions());
+    static ConnectorInterface *create(const Ilwis::Resource &resource,bool load = true,const IOOptions& options=IOOptions());
 
     void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
 
@@ -26,10 +26,10 @@ private:
     //qint64 noconversionneeded(QFile &file, Ilwis::Grid *grid, int &count);
     double value(char *block, int index) const;
     void setStoreType(const QString &storeType);
-    bool loadMapList(IlwisObject *data, const Ilwis::PrepareOptions &options);
+    bool loadMapList(IlwisObject *data, const Ilwis::IOOptions &options);
     bool storeMetaDataMapList(Ilwis::IlwisObject *obj);
     QString getGrfName(const IRasterCoverage &raster);
-    bool setDataType(IlwisObject *data, const Ilwis::PrepareOptions &options);
+    bool setDataType(IlwisObject *data, const Ilwis::IOOptions &options);
     void loadBlock(UPGrid &grid, QFile &file, quint32 blockIndex, quint32 fileBlock);
 
     template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& raster, const Size<>& sz) const{

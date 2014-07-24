@@ -32,11 +32,11 @@ using namespace Ilwis3;
 
 REGISTER_CATALOGEXPLORER(Ilwis3CatalogExplorer)
 
-CatalogExplorer *Ilwis3CatalogExplorer::create(const Resource &resource,const PrepareOptions& options=PrepareOptions()) {
+CatalogExplorer *Ilwis3CatalogExplorer::create(const Resource &resource,const IOOptions& options=IOOptions()) {
         return new Ilwis3CatalogExplorer(resource, options);
 }
 
-Ilwis3CatalogExplorer::Ilwis3CatalogExplorer(const Resource &resource, const PrepareOptions &options) : FolderCatalogExplorer(resource, true, options)
+Ilwis3CatalogExplorer::Ilwis3CatalogExplorer(const Resource &resource, const IOOptions &options) : FolderCatalogExplorer(resource, true, options)
 {
 }
 

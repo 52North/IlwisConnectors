@@ -43,10 +43,10 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-GdalFeatureConnector::GdalFeatureConnector(const Resource &resource, bool load, const PrepareOptions &options) : CoverageConnector(resource,load, options){
+GdalFeatureConnector::GdalFeatureConnector(const Resource &resource, bool load, const IOOptions &options) : CoverageConnector(resource,load, options){
 }
 
-ConnectorInterface* GdalFeatureConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+ConnectorInterface* GdalFeatureConnector::create(const Resource &resource, bool load, const IOOptions &options) {
     return new GdalFeatureConnector(resource, load, options);
 }
 
@@ -72,7 +72,7 @@ IlwisTypes GdalFeatureConnector::translateOGRType(OGRwkbGeometryType type) const
     return ret;
 }
 
-bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOptions& options){
+bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& options){
 
     if(!CoverageConnector::loadMetaData(data, options))
         return false;
@@ -133,9 +133,9 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const PrepareOp
     return true;
 }
 
-bool GdalFeatureConnector::loadData(IlwisObject* data, const LoadOptions &options){
+bool GdalFeatureConnector::loadData(IlwisObject* data, const IOOptions &options){
 
-    if(!GdalConnector::loadMetaData(data, PrepareOptions()))
+    if(!GdalConnector::loadMetaData(data, IOOptions()))
         return false;
 
     bool ok = true;

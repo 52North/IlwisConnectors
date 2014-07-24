@@ -7,14 +7,14 @@ namespace Gdal{
 class CoordinateSystemConnector : public GdalConnector
 {
 public:
-    CoordinateSystemConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    CoordinateSystemConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
-    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
+    bool loadMetaData(IlwisObject *data, const IOOptions &options);
 
    // static bool canUse(const Ilwis::Resource &resource);
 
     IlwisObject *create() const;
-    static ConnectorInterface *create(const Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    static ConnectorInterface *create(const Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
 private:
     void setProjectionParameter(OGRSpatialReferenceH handle, const char *wkt, Projection::ProjectionParamValue parmType, IProjection &projection);

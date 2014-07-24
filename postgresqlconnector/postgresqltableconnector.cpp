@@ -18,7 +18,7 @@
 using namespace Ilwis;
 using namespace Postgresql;
 
-PostgresqlTableConnector::PostgresqlTableConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : PostgresqlConnector(resource, load,options)
+PostgresqlTableConnector::PostgresqlTableConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : PostgresqlConnector(resource, load,options)
 {
 }
 
@@ -27,12 +27,12 @@ IlwisObject *PostgresqlTableConnector::create() const
     return new DatabaseTable(_resource);
 }
 
-ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options)
+ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &resource, bool load,const IOOptions& options)
 {
     return new PostgresqlTableConnector(resource, load,options);
 }
 
-bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     return PostgresqlConnector::loadMetaData(data, options);
 }

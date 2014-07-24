@@ -25,7 +25,7 @@ GdalObjectFactory::GdalObjectFactory() : IlwisObjectFactory("IlwisObjectFactory"
 {
 }
 
-IlwisObject *GdalObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
+IlwisObject *GdalObjectFactory::create(const Resource &resource, const IOOptions &options) const
 {
 
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");

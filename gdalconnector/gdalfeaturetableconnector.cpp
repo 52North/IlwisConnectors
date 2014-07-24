@@ -17,9 +17,9 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-GdalFeatureTableConnector::GdalFeatureTableConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : GdalConnector(resource, load, options){}
+GdalFeatureTableConnector::GdalFeatureTableConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : GdalConnector(resource, load, options){}
 
-ConnectorInterface *GdalFeatureTableConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+ConnectorInterface *GdalFeatureTableConnector::create(const Resource &resource, bool load, const IOOptions &options) {
     return new GdalFeatureTableConnector(resource, load, options);
 
 }
@@ -29,7 +29,7 @@ IlwisObject* GdalFeatureTableConnector::create() const{
 }
 
 
-bool GdalFeatureTableConnector::loadMetaData(IlwisObject* data, const PrepareOptions& options){
+bool GdalFeatureTableConnector::loadMetaData(IlwisObject* data, const IOOptions& options){
     if(!GdalConnector::loadMetaData(data, options))
         return false;
 
@@ -45,8 +45,8 @@ bool GdalFeatureTableConnector::storeMetaData(Ilwis::IlwisObject *obj){
     return true;
 }
 
-bool GdalFeatureTableConnector::loadData(IlwisObject * data, const LoadOptions &){
-    if(!GdalConnector::loadMetaData(data, PrepareOptions())) // ??
+bool GdalFeatureTableConnector::loadData(IlwisObject * data, const IOOptions &){
+    if(!GdalConnector::loadMetaData(data, IOOptions())) // ??
         return false;
 
     Table *attTable = static_cast<Table *>(data);

@@ -24,16 +24,16 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *DomainConnector::create(const Resource& resource, bool load, const PrepareOptions &options) {
+ConnectorInterface *DomainConnector::create(const Resource& resource, bool load, const IOOptions &options) {
     return new DomainConnector(resource, load, options);
 
 }
 
-DomainConnector::DomainConnector(const Resource& resource, bool load, const PrepareOptions &options) : GdalConnector(resource,load, options)
+DomainConnector::DomainConnector(const Resource& resource, bool load, const IOOptions &options) : GdalConnector(resource,load, options)
 {
 }
 
-bool DomainConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
+bool DomainConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
     bool ret = true;
     if (!GdalConnector::loadMetaData(data, options))
         ret = false;

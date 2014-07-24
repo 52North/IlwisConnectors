@@ -20,16 +20,16 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *EllipsoidConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+ConnectorInterface *EllipsoidConnector::create(const Resource &resource, bool load, const IOOptions &options) {
     return new EllipsoidConnector(resource, load, options);
 
 }
 
-EllipsoidConnector::EllipsoidConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
+EllipsoidConnector::EllipsoidConnector(const Resource &resource, bool load, const IOOptions &options) : Ilwis3Connector(resource, load, options)
 {
 }
 
-bool EllipsoidConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool EllipsoidConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
 
     QString ell = _odf->value("CoordSystem","Ellipsoid");

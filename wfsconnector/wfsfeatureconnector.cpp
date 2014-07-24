@@ -36,11 +36,11 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-ConnectorInterface* WfsFeatureConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+ConnectorInterface* WfsFeatureConnector::create(const Resource &resource, bool load, const IOOptions &options) {
     return new WfsFeatureConnector(resource, load, options);
 }
 
-WfsFeatureConnector::WfsFeatureConnector(const Resource &resource, bool load, const Ilwis::PrepareOptions &options) :
+WfsFeatureConnector::WfsFeatureConnector(const Resource &resource, bool load, const Ilwis::IOOptions &options) :
     IlwisObjectConnector(resource,load, options) {
 }
 
@@ -49,7 +49,7 @@ Ilwis::IlwisObject* WfsFeatureConnector::create() const {
     return new FeatureCoverage(this->_resource);
 }
 
-bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const PrepareOptions&)
+bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const IOOptions&)
 {
     QUrl featureUrl = source().url(true);
     WebFeatureService wfs(featureUrl);
@@ -66,7 +66,7 @@ bool WfsFeatureConnector::loadData(IlwisObject *data)
 {
 
     // TODO: check how to avoid double loading metadata
-    if(!loadMetaData(data, PrepareOptions()))
+    if(!loadMetaData(data, IOOptions()))
         return false;
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
