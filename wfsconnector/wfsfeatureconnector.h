@@ -20,15 +20,15 @@ class WFSCONNECTORSHARED_EXPORT WfsFeatureConnector : public QObject, public Ilw
     Q_OBJECT
 
 public:
-    static ConnectorInterface *create(const Resource &resource, bool load=true, const PrepareOptions &options=PrepareOptions());
-    WfsFeatureConnector(const Resource &resource, bool load=true, const PrepareOptions &options=PrepareOptions());
+    static ConnectorInterface *create(const Resource &resource, bool load=true, const IOOptions &options=IOOptions());
+    WfsFeatureConnector(const Resource &resource, bool load=true, const IOOptions &options=IOOptions());
 
     QString provider() const;
     IlwisObject *create() const;
     static IlwisTypes ilwisType(const QString &name);
 
 protected:
-    bool loadMetaData(IlwisObject* data,const PrepareOptions&);
+    bool loadMetaData(IlwisObject* data,const IOOptions&);
     bool loadData(IlwisObject* data);
 
 private:

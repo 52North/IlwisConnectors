@@ -46,7 +46,7 @@ Ilwis3ObjectFactory::Ilwis3ObjectFactory() : IlwisObjectFactory("IlwisObjectFact
 {
 }
 
-IlwisObject *Ilwis3ObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
+IlwisObject *Ilwis3ObjectFactory::create(const Resource &resource, const IOOptions &options) const
 {
 
     //Ilwis3Connector *connector = ConnectorFactory::screate<Ilwis3Connector>(resource, "ilwis3");

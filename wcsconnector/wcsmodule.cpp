@@ -67,8 +67,7 @@ QString WCSModule::getVersion() const
     return "1.0";
 }
 
-void WCSModule::getOperations(QVector<ICommandInfo *> &) const{
-}
+
 
 
 

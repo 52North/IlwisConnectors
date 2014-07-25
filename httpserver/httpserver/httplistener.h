@@ -45,7 +45,7 @@ public:
       @param requestHandler Processes each received HTTP request, usually by dispatching to controller classes.
       @param parent Parent object.
     */
-    HttpListener(HttpRequestHandler* requestHandler);
+    HttpListener(const std::map<QString, QVariant> &args, HttpRequestHandler* requestHandler);
 
     /** Destructor */
     virtual ~HttpListener();

@@ -26,7 +26,7 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *CoordinateSystemConnector::create(const Resource &resource, bool load, const PrepareOptions &options){
+ConnectorInterface *CoordinateSystemConnector::create(const Resource &resource, bool load, const IOOptions &options){
     return new CoordinateSystemConnector(resource, load, options);
 }
 
@@ -37,14 +37,14 @@ IlwisObject *CoordinateSystemConnector::create() const{
     return object;
 }
 
-CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, bool load, const PrepareOptions &options) : GdalConnector(resource, load, options)
+CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, bool load, const IOOptions &options) : GdalConnector(resource, load, options)
 {
 
 }
 
 
 
-bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
+bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
 
     if (!GdalConnector::loadMetaData(data, options))
         return false;

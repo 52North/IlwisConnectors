@@ -22,7 +22,6 @@ public:
     QString getInterfaceVersion() const;
     QString getName() const;
     QString getVersion() const;
-    void getOperations(QVector<ICommandInfo *>& commands) const;
     void prepare();
 
     Q_PLUGIN_METADATA(IID "n52.ilwis.wcsconnector" FILE  "wcsconnector.json")

@@ -46,7 +46,7 @@ private:
     WfsParsingContext _context;
     QString _featureType;
 
-    void parseFeature(std::vector<QVariant> &record, ITable& table);
+    bool parseFeature(std::vector<QVariant> &record, ITable& table);
 
     QVariant fillStringColumn();
     QVariant fillDoubleColumn();
@@ -85,9 +85,9 @@ private:
     void initCrs(ICoordinateSystem &crs);
 
     QString gmlPosListToWktCoords(QString gmlPosList);
-    QString gmlPosListToWktPolygon(QString gmlPosList);
-    QString gmlPosListToWktLineString(QString gmlPosList);
-    QString gmlPosListToWktPoint(QString gmlPosList);
+    void gmlPosListToWktPolygon(QString &wkt, QString gmlPosList);
+    void gmlPosListToWktLineString(QString &wkt, QString gmlPosList);
+    void gmlPosListToWktPoint(QString &wkt, QString gmlPosList);
 };
 
 }

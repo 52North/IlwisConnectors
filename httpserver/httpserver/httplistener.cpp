@@ -12,7 +12,7 @@
 
 using namespace Ilwis;
 
-HttpListener::HttpListener(HttpRequestHandler* requestHandler)
+HttpListener::HttpListener(const std::map<QString, QVariant>& args, HttpRequestHandler* requestHandler)
     : QTcpServer(0), _requestHandler(requestHandler)
 {
     // Reqister type of socketDescriptor for signal/slot handling
@@ -20,7 +20,14 @@ HttpListener::HttpListener(HttpRequestHandler* requestHandler)
     // Create connection handler pool
     pool=new HttpConnectionHandlerPool(_requestHandler);
     // Start listening
-    int port=ilwisconfig("server-settings/port",8080);
+
+    int port;
+    auto iter =  args.find("port");
+    if ( iter == args.end())
+        port=ilwisconfig("server-settings/port",8080);
+    else
+        port = iter->second.toUInt();
+
     listen(QHostAddress::Any, port);
     if (!isListening()) {
         qCritical("HttpListener: Cannot bind on port %i: %s",port,qPrintable(errorString()));

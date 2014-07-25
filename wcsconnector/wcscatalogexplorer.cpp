@@ -31,12 +31,12 @@ using namespace Wcs;
 
 REGISTER_CATALOGEXPLORER(WcsCatalogExplorer)
 
-CatalogExplorer *WcsCatalogExplorer::create(const Resource &resource, const PrepareOptions &options)
+CatalogExplorer *WcsCatalogExplorer::create(const Resource &resource, const IOOptions &options)
 {
     return new WcsCatalogExplorer(resource, options);
 }
 
-WcsCatalogExplorer::WcsCatalogExplorer(const Resource &resource, const PrepareOptions &options) : CatalogExplorer(resource,options)
+WcsCatalogExplorer::WcsCatalogExplorer(const Resource &resource, const IOOptions &options) : CatalogExplorer(resource,options)
 {
 }
 
@@ -54,12 +54,13 @@ std::vector<Resource> WcsCatalogExplorer::loadItems()
     gcparser.parse(rastercoverages);
 
     QString ids ;
-    for(const auto& resource : rastercoverages){
-        if ( ids != "")
-            ids += ",";
-        ids += resource.second.name();
+//    for(const auto& resource : rastercoverages){
+//        if ( ids != "")
+//            ids += ",";
+//        ids += resource.second.name();
 
-    }
+//    }
+    ids = rastercoverages.begin()->second.name();
     QUrlQuery query(serviceUrl);
     WcsResponse *dcresponse = Wcs.getDescribeCoverage(query,ids);
     WcsDescribeCoverage dcparser(dcresponse, serviceUrl);

@@ -37,8 +37,8 @@ void WcsCapabilitiesParser::parse(std::map<QString, Resource>& resources) const
 //    }
 
 
-
-    UPXmlQuery& query = _parser->queryFromRoot("//wcs:Capabilities/wcs:Contents/wcs:CoverageSummary");
+    QString coveragequery = query("getcoverages");
+    UPXmlQuery& query = parser()->queryFromRoot(coveragequery);
     if (query->isValid()) {
         query->evaluateTo( &results);
         QXmlItem item(results.next());
@@ -60,18 +60,16 @@ void WcsCapabilitiesParser::parse(std::map<QString, Resource>& resources) const
 void WcsCapabilitiesParser::parseCoverage(QXmlItem &item, Resource &coverage) const
 {
     QString name;
-    UPXmlQuery& query = _parser->queryRelativeFrom(item, "./ows:Title/string()");
-    query->evaluateTo( &name);
-    coverage.name(name.trimmed(), false);
 
+    QString xpquery = query("getname");
+//    UPXmlQuery& query2 = parser()->queryRelativeFrom(item, "./ows:Abstract/string()");
+//    query2->evaluateTo( &name);
+//    coverage.setDescription(name.trimmed());
 
-    UPXmlQuery& query2 = _parser->queryRelativeFrom(item, "./ows:Abstract/string()");
-    query2->evaluateTo( &name);
-    coverage.setDescription(name.trimmed());
-
-    UPXmlQuery& query3 = _parser->queryRelativeFrom(item, "./wcs:Identifier/string()");
+    UPXmlQuery& query3 = parser()->queryRelativeFrom(item, xpquery);
     query3->evaluateTo( &name);
     coverage.code(name.trimmed());
+    coverage.name(coverage.code());
 }
 
 Coordinate WcsCapabilitiesParser::createCoordinateFromWgs84LatLon(QString latlon) const

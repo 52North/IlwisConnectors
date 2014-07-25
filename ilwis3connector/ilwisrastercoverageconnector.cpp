@@ -30,18 +30,18 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load, const IOOptions &options) {
     return new RasterCoverageConnector(resource, load, options);
 
 }
 
 
 
-RasterCoverageConnector::RasterCoverageConnector(const Resource &resource, bool load, const PrepareOptions &options) : CoverageConnector(resource, load, options),_storesize(1)
+RasterCoverageConnector::RasterCoverageConnector(const Resource &resource, bool load, const IOOptions &options) : CoverageConnector(resource, load, options),_storesize(1)
 {
 }
 
-bool RasterCoverageConnector::loadMapList(IlwisObject *data,const PrepareOptions& options) {
+bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& options) {
     Ilwis3Connector::loadMetaData(data, options);
 
     RasterCoverage *gcoverage = static_cast<RasterCoverage *>(data);
@@ -61,6 +61,8 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const PrepareOptions
 
     if (!ok || z < 0)
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Number of maps", gcoverage->name());
+
+    gcoverage->gridRef()->prepare(gcoverage, sz);
 
     for(int i = 0; i < z; ++i) {
         QString file = _odf->value("MapList",QString("Map%1").arg(i));
@@ -137,7 +139,7 @@ void RasterCoverageConnector::setStoreType(const QString& storeType) {
     _converter.storeType(_storetype);
 }
 
-bool RasterCoverageConnector::setDataType(IlwisObject *data, const PrepareOptions &options) {
+bool RasterCoverageConnector::setDataType(IlwisObject *data, const IOOptions &options) {
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
@@ -174,7 +176,7 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data, const PrepareOption
     return true;
 }
 
-bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     Locker lock(_mutex);
 
@@ -218,6 +220,8 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
     gcoverage->addBand(0, gcoverage->datadef(),0);
 
     setStoreType(storeType);
+
+    gcoverage->gridRef()->prepare(gcoverage, grf->size());
 
     gcoverage->georeference(grf);
     _dataType = gcoverage->datadef().range()->determineType();
@@ -287,61 +291,68 @@ qint64  RasterCoverageConnector::conversion(QFile& file, Grid *grid, int& count)
 
     return totalRead;
 }
+void RasterCoverageConnector::loadBlock(UPGrid& grid,QFile& file, quint32 blockIndex, quint32 fileBlock) {
+    qint64 blockSizeBytes = grid->blockSize(0) * _storesize;
+    quint64 seekPos = fileBlock * blockSizeBytes;
+    if (file.seek(seekPos)) {
+        QByteArray bytes = file.read(blockSizeBytes);
+        quint32 noItems = grid->blockSize(blockIndex);
+        vector<double> values(noItems);
+        for(quint32 i=0; i < noItems; ++i) {
+            double v = value(bytes.data(), i);
+            values[i] = _converter.isNeutral() ? v :_converter.raw2real(v);
+        }
+        grid->setBlockData(blockIndex, values, true);
+    }else
+        ERROR2(ERR_COULD_NOT_OPEN_READING_2,file.fileName(),TR("seek failed"));
 
-Grid* RasterCoverageConnector::loadGridData(IlwisObject* data)
+}
+
+bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &options)
 {
     Locker lock(_mutex);
 
     if ( _dataFiles.size() == 0) {
-        ERROR1(ERR_MISSING_DATA_FILE_1,_resource.name());
-        return 0;
+        return ERROR1(ERR_MISSING_DATA_FILE_1,_resource.name());
     }
-    int blockCount = 0;
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
-    Grid *grid = 0;
-    if ( grid == 0) {
-        Size<> sz = raster->size();
-        grid =new Grid(sz);
-    }
-    grid->prepare();
 
-    for(quint32 i=0; i < _dataFiles.size(); ++i) {
-        QString  datafile = _dataFiles[i].toLocalFile();
+    UPGrid& grid = raster->gridRef();
+    std::map<quint32, std::vector<quint32> > blocklimits = grid->calcBlockLimits(options);
+
+    for(const auto& layer : blocklimits){
+        QString  datafile = _dataFiles[layer.first].toLocalFile();
         if ( datafile.right(1) != "#") { // can happen, # is a special token in urls
             datafile += "#";
         }
         QFileInfo localfile =  this->containerConnector()->toLocalFile(QUrl::fromLocalFile(datafile));
         QFile file(localfile.absoluteFilePath());
         if ( !file.exists()){
-            ERROR1(ERR_MISSING_DATA_FILE_1,datafile);
-            return 0;
+            return ERROR1(ERR_MISSING_DATA_FILE_1,datafile);
         }
         if (!file.open(QIODevice::ReadOnly )) {
-            ERROR1(ERR_COULD_NOT_OPEN_READING_1,datafile);
-            return 0;
+            return ERROR1(ERR_COULD_NOT_OPEN_READING_1,datafile);
         }
 
-        int result = conversion(file, grid, blockCount);
+        for(const auto& index : layer.second) {
+            quint32 fileBlock = index - layer.first * grid->blocksPerBand();
+            loadBlock(grid, file, index, fileBlock );
+        }
 
         file.close();
-        if ( result == 0) {
-            delete grid;
-            return 0;
-        }
     }
     if ( raster->attributeTable().isValid()) {
         ITable tbl = raster->attributeTable();
         IDomain covdom;
         if (!covdom.prepare("count")){
-            return 0;
+            return false;
         }
-        //tbl->addColumn(COVERAGEKEYCOLUMN,covdom);
         for(quint32 i=0; i < tbl->recordCount() ; ++i) {
             tbl->setCell(COVERAGEKEYCOLUMN,i, QVariant(i));
         }
     }
     _binaryIsLoaded = true;
-    return grid;
+    return true;
 
 }
 
@@ -547,6 +558,8 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
         int digits = stats.significantDigits();
         RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - digits));
         qint32 delta = stats[NumericStatistics::pDELTA];
+        QString range = QString("%1:%2").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]);
+         _odf->setKeyValue("BaseMap","MinMax",range);
         if ( delta >= 0 && delta < 256 &&  digits == 0){
            _odf->setKeyValue("MapStore","Type","Byte");
         } else if ( conv.storeType() == itUINT8){

@@ -6,8 +6,8 @@ namespace Gdal{
 class GdalCatalogFileExplorer : public CatalogExplorer
 {
 public:
-    GdalCatalogFileExplorer(const Ilwis::Resource &resource,const PrepareOptions& options=PrepareOptions());
-    static Ilwis::CatalogExplorer *create(const Resource &resource,const PrepareOptions& options=PrepareOptions());
+    GdalCatalogFileExplorer(const Ilwis::Resource &resource,const IOOptions& options=IOOptions());
+    static Ilwis::CatalogExplorer *create(const Resource &resource,const IOOptions& options=IOOptions());
 
     bool canUse(const Resource& resource) const;
 

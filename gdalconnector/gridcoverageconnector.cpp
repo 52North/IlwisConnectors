@@ -30,16 +30,19 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load, const IOOptions &options) {
     return new RasterCoverageConnector(resource, load, options);
 
 }
 
-
-RasterCoverageConnector::RasterCoverageConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : CoverageConnector(resource,load, options){
+Ilwis::IlwisObject *RasterCoverageConnector::create() const{
+    return new RasterCoverage(_resource);
 }
 
-bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
+RasterCoverageConnector::RasterCoverageConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : CoverageConnector(resource,load, options){
+}
+
+bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
 
     if(!CoverageConnector::loadMetaData(data, options))
         return false;
@@ -71,10 +74,15 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
             if(!grf.prepare(_resource.url().toString()))
                 return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
         }
+
+        if (!gcoverage->gridRef()->prepare(gcoverage,sz))
+            return false;
+
         gcoverage->envelope(Envelope(cMin, cMax));
         gcoverage->coordinateSystem()->envelope(gcoverage->envelope());
         gcoverage->georeference(grf);
         grf->size(sz);
+        grf->compute();
         gcoverage->size(sz);
 
         double vminRaster=rUNDEF, vmaxRaster=rUNDEF;
@@ -100,7 +108,9 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptio
         gcoverage->datadef() = DataDefinition(gcoverage->datadef(0).domain(), new NumericRange(vminRaster, vmaxRaster,resolution));
         _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
 
+
         return true;
+
     }else{
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"non-RasterCoverage",_filename.toLocalFile());
     }
@@ -144,70 +154,64 @@ inline double RasterCoverageConnector::value(char *block, int index) const{
     }
     return v;
 }
-Grid *RasterCoverageConnector::loadGridData(IlwisObject* data){
+
+bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& options ){
     auto layerHandle = gdal()->getRasterBand(_handle->handle(), 1);
     if (!layerHandle) {
         ERROR2(ERR_COULD_NOT_LOAD_2, "GDAL","layer");
-        return 0;
+        return false;
     }
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
-    Grid *grid = 0;
-    if ( grid == 0) {
 
-        Size<> sz = raster->size();
-        grid =new Grid(sz);
-    }
-    grid->prepare();
+    UPGrid& grid = raster->gridRef();
+
     quint32 linesPerBlock = grid->maxLines();
     qint64 blockSizeBytes = grid->blockSize(0) * _typeSize;
     char *block = new char[blockSizeBytes];
-    int count = 0; // block count over all the layers
     quint64 totalLines =grid->size().ysize();
-    quint32 layer = 1;
-    while(layer <= raster->size().zsize()) {
+    std::map<quint32, std::vector<quint32> > blocklimits = grid->calcBlockLimits(options);
+
+    for(const auto& layer : blocklimits){
+        layerHandle = gdal()->getRasterBand(_handle->handle(), layer.first + 1);
         quint64 linesLeft = totalLines;
-        int gdalindex = 0; // count within one gdal layer
-        while(true) {
-            if ( block == 0) {
-                kernel()->issues()->log(TR("Corrupt or invalid data size when reading data(GDAL connector)"));
-                return 0;
-            }
-            if ( linesLeft > linesPerBlock)
-                gdal()->rasterIO(layerHandle,GF_Read,0,gdalindex * linesPerBlock,grid->size().xsize(), linesPerBlock,
-                                 block,grid->size().xsize(), linesPerBlock,_gdalValueType,0,0 );
-            else {
-                gdal()->rasterIO(layerHandle,GF_Read,0,gdalindex * linesPerBlock,grid->size().xsize(), linesLeft,
-                                 block,grid->size().xsize(), linesLeft,_gdalValueType,0,0 );
+        int gdalindex = 0; //
+        for(const auto& index : layer.second) {
+            loadBlock(layerHandle, index, gdalindex, linesPerBlock, linesLeft, block, grid);
 
-            }
-            quint32 noItems = grid->blockSize(count);
-             if ( noItems == iUNDEF)
-                return 0;
-            std::vector<double> values(noItems);
-            for(quint32 i=0; i < noItems; ++i) {
-                double v = value(block, i);
-                values[i] = std::isnan(v) ? rUNDEF : v;
-            }
-
-            grid->setBlockData(count, values, true);
-            ++count;
             ++gdalindex;
             if ( linesLeft < linesPerBlock )
                 break;
             linesLeft -= linesPerBlock;
         }
-        if ( ++layer < raster->size().zsize())
-            layerHandle = gdal()->getRasterBand(_handle->handle(), layer);
+
     }
 
     delete [] block;
     _binaryIsLoaded = true;
-    return grid;
+    return true;
 }
 
-Ilwis::IlwisObject *RasterCoverageConnector::create() const{
-    return new RasterCoverage(_resource);
+void RasterCoverageConnector::loadBlock(GDALRasterBandH bandhandle, quint32 index, quint32 gdalindex, quint32 linesPerBlock, quint64 linesLeft,char *block, UPGrid& grid) const{
+    if ( linesLeft > linesPerBlock)
+        gdal()->rasterIO(bandhandle,GF_Read,0,gdalindex * linesPerBlock,grid->size().xsize(), linesPerBlock,
+                         block,grid->size().xsize(), linesPerBlock,_gdalValueType,0,0 );
+    else {
+        gdal()->rasterIO(bandhandle,GF_Read,0,gdalindex * linesPerBlock,grid->size().xsize(), linesLeft,
+                         block,grid->size().xsize(), linesLeft,_gdalValueType,0,0 );
+
+    }
+    quint32 noItems = grid->blockSize(index);
+     if ( noItems == iUNDEF)
+        return ;
+    std::vector<double> values(noItems);
+    for(quint32 i=0; i < noItems; ++i) {
+        double v = value(block, i);
+        values[i] = std::isnan(v) ? rUNDEF : v;
+    }
+    grid->setBlockData(index, values, true);
 }
+
+
 
 bool RasterCoverageConnector::setGeotransform(RasterCoverage *raster,GDALDatasetH dataset) {
     if ( raster->georeference()->grfType<CornersGeoReference>()) {
@@ -257,7 +261,6 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
         }
         raster->datadef().domain(dom);
     }
-
     Size<> sz = raster->size();
     GDALDataType gdalType = ilwisType2GdalType(raster->datadef().range()->determineType());
     QString filename = constructOutputName(_driver);

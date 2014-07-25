@@ -8,13 +8,13 @@ namespace Ilwis3 {
 class Ilwis3CatalogExplorer : public FolderCatalogExplorer
 {
 public:
-    Ilwis3CatalogExplorer(const Ilwis::Resource &resource,const PrepareOptions& options=PrepareOptions());
+    Ilwis3CatalogExplorer(const Ilwis::Resource &resource,const IOOptions& options=IOOptions());
 
     std::vector<Resource> loadItems();
     bool canUse(const Resource& resource) const;
     QString provider() const;
 
-    static Ilwis::CatalogExplorer *create(const Ilwis::Resource &resource, const Ilwis::PrepareOptions &options);
+    static Ilwis::CatalogExplorer *create(const Ilwis::Resource &resource, const Ilwis::IOOptions &options);
     QFileInfo toLocalFile(const QUrl &datasource) const;
 private:
     void registerNames(const QString &name, QHash<QString, quint64> &names);

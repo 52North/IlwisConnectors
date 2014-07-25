@@ -11,7 +11,7 @@ namespace Ilwis3 {
 
 class ILWIS3CONNECTORSHARED_EXPORT Ilwis3Connector : public Ilwis::IlwisObjectConnector {
 public:
-    Ilwis3Connector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    Ilwis3Connector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     //static IlwisTypes type(const QString &name);
     static IlwisTypes ilwisType(const QString &name);
     static QString name2Code(const QString &name, const QString &type);
@@ -29,7 +29,7 @@ protected:
     bool willStore(const Ilwis::IlwisObject *obj) const;
     QUrl resolve(const Resource &resource) const;
     bool isSystemObject(const QString &filename);
-    bool loadMetaData(IlwisObject* data,const PrepareOptions&);
+    bool loadMetaData(IlwisObject* data,const IOOptions&);
     bool storeMetaData(const IlwisObject* data, IlwisTypes type) const;
     QString adjustPath(const QUrl& container, const QString& filename) const;
     QString unquote(const QString& name);

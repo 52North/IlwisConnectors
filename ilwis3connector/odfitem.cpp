@@ -269,9 +269,13 @@ QString ODFItem::findCsyName(const QString& path) const
                  QFileInfo infgrf(grf);
                  if ( !infgrf.exists()) {
                      QString grfpath = container().toLocalFile() + "/" + grf;
-                     IniFile ini;
-                     ini.setIniFile(grfpath);
-                     name = ini.value("GeoRef","CoordSystem");
+                     if ( grfpath != "none.grf"){
+                        IniFile ini;
+                        ini.setIniFile(grfpath);
+                        name = ini.value("GeoRef","CoordSystem");
+                     }else {
+                         name = "unknown.csy";
+                     }
                  }
              }
         }

@@ -6,7 +6,7 @@ namespace Gdal{
 class GdalCatalogExplorer : public CatalogExplorer
 {
 public:
-    GdalCatalogExplorer(const Ilwis::Resource &resource,const PrepareOptions& options=PrepareOptions());
+    GdalCatalogExplorer(const Ilwis::Resource &resource,const IOOptions& options=IOOptions());
 
     std::vector<Ilwis::Resource> loadItems();
     bool canUse(const Resource& resource) const;
@@ -16,7 +16,7 @@ public:
     QFileInfo toLocalFile(const QUrl &datasource) const;
 
 
-    static Ilwis::CatalogExplorer *create(const Resource &resource,const PrepareOptions& options=PrepareOptions());
+    static Ilwis::CatalogExplorer *create(const Resource &resource,const IOOptions& options=IOOptions());
 protected:
     IlwisTypes _type;
 

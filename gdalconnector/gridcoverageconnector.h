@@ -8,12 +8,12 @@ class RasterCoverageConnector : public CoverageConnector
 {
 public:
 
-    RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
-    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
-    Ilwis::Grid *loadGridData(Ilwis::IlwisObject *data) ;
+    bool loadMetaData(IlwisObject *data, const IOOptions &options);
+    bool loadData(Ilwis::IlwisObject *data, const IOOptions& options = IOOptions()) ;
 
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     Ilwis::IlwisObject *create() const;
     bool store(IlwisObject *obj, int );
 
@@ -46,7 +46,7 @@ private:
                 ++iter;
             });            
 
-          double y = iter.zchanged() ? iter.box().ylength()  : iter.position().y;
+            double y = iter.zchanged() ? iter.box().ylength()  : iter.position().y;
 
             if(iter == iter.end()){
                 y = iter.box().ylength();
@@ -65,6 +65,7 @@ private:
 
     bool loadDriver();
     DataDefinition createDataDef(double vmin, double vmax, double resolution);
+    void loadBlock(GDALRasterBandH bandhandle, quint32 index, quint32 gdalindex, quint32 linesPerBlock, quint64 linesLeft, char *block, Ilwis::UPGrid &grid) const;
 };
 }
 }

@@ -54,7 +54,7 @@ struct XYZ {
     double x,y,z;
 };
 
-ConnectorInterface *FeatureConnector::create(const Resource &resource, bool load,const PrepareOptions& options) {
+ConnectorInterface *FeatureConnector::create(const Resource &resource, bool load,const IOOptions& options) {
     return new FeatureConnector(resource, load, options);
 
 }
@@ -68,7 +68,7 @@ void FeatureConnector::calcStatics(const IlwisObject *obj, NumericStatistics::Pr
 {
 }
 
-FeatureConnector::FeatureConnector(const Resource &resource, bool load, const PrepareOptions &options) : CoverageConnector(resource, load, options)
+FeatureConnector::FeatureConnector(const Resource &resource, bool load, const IOOptions &options) : CoverageConnector(resource, load, options)
 {
 }
 
@@ -375,7 +375,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
     return true;
 }
 
-bool FeatureConnector::loadData(Ilwis::IlwisObject *obj) {
+bool FeatureConnector::loadData(Ilwis::IlwisObject *obj, const IOOptions &) {
     if ( obj == nullptr)
         return false;
 
@@ -413,7 +413,7 @@ bool FeatureConnector::loadData(Ilwis::IlwisObject *obj) {
     return ok;
 }
 
-bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj,const PrepareOptions& options)
+bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj,const IOOptions& options)
 {
     bool ok = CoverageConnector::loadMetaData(obj, options);
     if ( !ok)

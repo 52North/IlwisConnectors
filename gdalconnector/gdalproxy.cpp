@@ -5,13 +5,11 @@
 #include <functional>
 #include <QSqlQuery>
 #include <QSqlError>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
 #include "kernel.h"
 #include "errorobject.h"
 #include "ilwiscontext.h"
 #include "dataformat.h"
+#include "supportlibraryloader.h"
 #include "gdalproxy.h"
 #include "oshelper.h"
 
@@ -48,24 +46,16 @@ void* GdalHandle::handle(){
 
 GDALProxy::GDALProxy() {
     QFileInfo ilw = context()->ilwisFolder();
-    std::map<quint32, QString> order;
-    loadLibraryConfig(order);
-    QLibrary lib;
-    bool ok = order.size() > 0;
-    for(auto name : order){
-        QString path = name.second.indexOf("/") == -1 ? ilw.canonicalFilePath() + "/extensions/gdalconnector/" + name.second : name.second;
-        if ( name.first != 100000){
-            lib.setFileName(path);
-            ok &= lib.load();
-            if ( !ok)
-                break;
-        }else {
-            _libgdal.setFileName(path);
-            ok &= _libgdal.load();
-        }
-        if ( !ok){
-            ERROR2(ERR_COULD_NOT_LOAD_2, TR("name"), "gdal connector");
-        }
+    QString path = ilw.canonicalFilePath() + "/extensions/gdalconnector" ;
+    SupportLibraryLoader loader(path + "/resources/libraries.config");
+    QString gdallibname = loader.order2name(100000);
+    bool ok = false;
+    if ( gdallibname != sUNDEF){
+        _libgdal.setFileName(path + "/" + gdallibname);
+        ok = _libgdal.load();
+    }
+    if ( !ok){
+        ERROR2(ERR_COULD_NOT_LOAD_2, TR("name"), "gdal connector");
     }
     _isValid = ok;
 }
@@ -82,37 +72,7 @@ GDALProxy::~GDALProxy(){
 //    }
 }
 
-void GDALProxy::loadLibraryConfig(std::map<quint32, QString>& order) const{
 
-
-    QString operatingSystem = OSHelper::operatingSystem();
-    QString path = context()->ilwisFolder().canonicalFilePath() + "/extensions/gdalconnector/resources/libraries.config";
-    QFile file;
-    file.setFileName(path);
-    if (file.open(QIODevice::ReadOnly)) {
-        QString settings = file.readAll();
-        QJsonDocument doc = QJsonDocument::fromJson(settings.toUtf8());
-        if ( !doc.isNull()){
-            QJsonObject obj = doc.object();
-            QJsonValue osses = obj.value("OperatingSystem");
-            if ( osses.isArray()){
-                QJsonArray arrOsses = osses.toArray();
-                for(auto jvalue : arrOsses) {
-                    QJsonObject os = jvalue.toObject();
-                    if ( os["name"].toString() == operatingSystem){
-                        QJsonArray libraries = os["libraries"].toArray();
-                        for(auto oslibsvalue : libraries){
-                            QJsonObject osprops = oslibsvalue.toObject();
-                            order[osprops["order"].toDouble()] = osprops["library"].toString();
-                        }
-                        return;
-
-                    }
-                }
-            }
-        }
-    }
-}
 
 bool GDALProxy::prepare() {
     //GDAL Raster

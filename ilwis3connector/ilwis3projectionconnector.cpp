@@ -29,12 +29,12 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *ProjectionConnector::create(const Resource &resource, bool load,const PrepareOptions& options) {
+ConnectorInterface *ProjectionConnector::create(const Resource &resource, bool load,const IOOptions& options) {
     return new ProjectionConnector(resource, load, options);
 
 }
 
-ProjectionConnector::ProjectionConnector(const Resource &resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
+ProjectionConnector::ProjectionConnector(const Resource &resource, bool load, const IOOptions &options) : Ilwis3Connector(resource, load, options)
 {
     QString prj = _odf->value("CoordSystem", "Projection");
     if (prj != sUNDEF)  {
@@ -44,7 +44,7 @@ ProjectionConnector::ProjectionConnector(const Resource &resource, bool load, co
     }
 }
 
-bool ProjectionConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool ProjectionConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     if (_odf.isNull())
         return false;
