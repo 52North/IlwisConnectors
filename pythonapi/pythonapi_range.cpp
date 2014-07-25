@@ -16,6 +16,7 @@
 #include "pythonapi_pyobject.h"
 #include "pythonapi_range.h"
 #include "pythonapi_qvariant.h"
+#include "rangeiterator.h"
 
 #define BIGTIME 1e150
 
@@ -86,6 +87,10 @@ NumericRange::NumericRange(const NumericRange &vr) : NumericRange(vr.min(), vr.m
 {
 }
 
+NumericRange::NumericRange(Ilwis::NumericRange* nr){
+    _range.reset(nr);
+}
+
 NumericRange::~NumericRange(){
 
 }
@@ -135,6 +140,26 @@ void NumericRange::set(const NumericRange &vr)
     setResolution(vr.resolution());
     setMax(vr.max());
     setMin(vr.min());
+}
+
+NumericRangeIterator NumericRange::__iter__(){
+    return NumericRangeIterator(this);
+}
+
+NumericRangeIterator NumericRange::begin(){
+    Ilwis::NumericRange* ilwRng = static_cast<Ilwis::NumericRange*>(_range.get());
+    Ilwis::NumericRangeIterator* ilwIt = new Ilwis::NumericRangeIterator(Ilwis::begin(*ilwRng));
+    NumericRangeIterator pyIt(ilwIt);
+    pyIt.setRange(this);
+    return pyIt;
+}
+
+NumericRangeIterator NumericRange::end(){
+    Ilwis::NumericRange* ilwRng = static_cast<Ilwis::NumericRange*>(_range.get());
+    Ilwis::NumericRangeIterator* ilwIt = new Ilwis::NumericRangeIterator(Ilwis::end(*ilwRng));
+    NumericRangeIterator pyIt(ilwIt);
+    pyIt.setRange(this);
+    return pyIt;
 }
 
 void NumericRange::clear()
@@ -225,6 +250,28 @@ NumericItemRange *NumericItemRange::clone()
 {
     NumericItemRange* newRange = new NumericItemRange();
     newRange->_range.reset(static_cast<Ilwis::IntervalRange*>(this->_range.get()));
+    return newRange;
+}
+
+//------------------------------------------------------------
+IndexedItemRange::IndexedItemRange()
+{
+    _range.reset(new Ilwis::IndexedIdentifierRange());
+}
+
+void IndexedItemRange::add(PyObject *item){
+
+}
+
+qint32 IndexedItemRange::gotoIndex(qint32 index, qint32 step) const
+{
+    return static_cast<Ilwis::IndexedIdentifierRange*>(_range.get())->gotoIndex(index, step);
+}
+
+IndexedItemRange *IndexedItemRange::clone()
+{
+    IndexedItemRange* newRange = new IndexedItemRange();
+    newRange->_range.reset(static_cast<Ilwis::IndexedIdentifierRange*>(this->_range.get()));
     return newRange;
 }
 

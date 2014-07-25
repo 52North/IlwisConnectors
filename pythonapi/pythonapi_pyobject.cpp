@@ -371,4 +371,12 @@ namespace pythonapi {
         return PyUnicode_AsUTF8String(obj);
     }
 
+
+    //============================Memory========================================
+
+    char* PyMalloc(){
+        char *buf = (char *) PyMem_Malloc(BUFSIZ);
+        return buf;
+    }
+
 } // namespace pythonapi

@@ -12,6 +12,8 @@
 #include "pythonapi_domain.h"
 #include "pythonapi_range.h"
 
+#include <regex>
+
 using namespace pythonapi;
 
 DataDefinition::DataDefinition(): _ilwisDatadef(new Ilwis::DataDefinition()){
@@ -37,7 +39,10 @@ DataDefinition::~DataDefinition(){
 }
 
 std::string DataDefinition::__str__(){
-    return "Domain: " + this->domain()->__str__() + ", Range: " + this->range()->__str__();
+    if(std::regex_match(this->domain()->name(), std::regex("(_ANONYMOUS_)(.*)")))
+        return "Domain: " + this->domain()->type()+ ", Range: " + this->range()->__str__();
+    else
+        return "Domain name: " + this->domain()->name()+ ", Domain type: " + this->domain()->type()+ ", Range: " + this->range()->__str__();
 }
 
 bool DataDefinition::__bool__() const{

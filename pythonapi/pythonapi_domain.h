@@ -21,6 +21,7 @@ namespace pythonapi {
 
     class Domain : public IlwisObject{
     friend class DataDefinition;
+    friend class ColumDefinition;
     public:
         enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
 
@@ -34,6 +35,7 @@ namespace pythonapi {
         Domain parent() const;
         void setParent(const Domain& dom);
 
+        Range& getRange();
         std::string contains(PyObject* value) const;
         bool isCompatibleWith(const Domain& dom) const;
         void setRange(const Range& rng);
@@ -47,6 +49,7 @@ namespace pythonapi {
     class NumericDomain : public Domain{
         friend class Catalog;
         friend class DataDefinition;
+        friend class ColumDefinition;
     public:
         NumericDomain();
         NumericDomain(const std::string& resource);
@@ -59,6 +62,7 @@ namespace pythonapi {
 
     class ItemDomain : public Domain {
         friend class DataDefinition;
+        friend class ColumDefinition;
     public:
         ItemDomain();
         ItemDomain(const Range& rng);
@@ -78,6 +82,7 @@ namespace pythonapi {
 
     class ColorDomain : public Domain {
         friend class DataDefinition;
+        friend class ColumDefinition;
     public:
         ColorDomain();
         ColorDomain(const std::string& resource);
@@ -88,6 +93,7 @@ namespace pythonapi {
 
     class TextDomain : public Domain {
         friend class DataDefinition;
+        friend class ColumDefinition;
     public:
         TextDomain();
         TextDomain(const std::string& resource);
@@ -95,6 +101,7 @@ namespace pythonapi {
 
     class TimeDomain : public Domain{
         friend class DataDefinition;
+        friend class ColumDefinition;
         public:
             TimeDomain();
             TimeDomain(const std::string& resource);

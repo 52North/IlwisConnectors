@@ -263,11 +263,17 @@ RasterCoverage RasterCoverage::select(std::string selectionQ){
     geos::geom::Geometry *geom = Ilwis::GeometryHelper::fromWKT(selectGeom, this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
     if(geom){
         Ilwis::PixelIterator iterIn(this->ptr()->as<Ilwis::RasterCoverage>(), geom);
+        const geos::geom::Envelope *env = geom->getEnvelopeInternal();
+        Ilwis::Envelope envelope(Ilwis::Coordinate(env->getMinX(), env->getMinY()),Ilwis::Coordinate(env->getMaxX(), env->getMaxY()));
+        Ilwis::BoundingBox box = this->ptr()->as<Ilwis::RasterCoverage>()->georeference()->coord2Pixel(envelope);
+        QString grfcode = QString("code=georef:type=corners,csy=%1,envelope=%2,gridsize=%3,name=gorilla").arg(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem()->id()).arg(envelope.toString()).arg(box.size().toString());
+        Ilwis::IGeoReference grf(grfcode);
+
         Ilwis::IRasterCoverage map2;
         map2.prepare();
 
         map2->coordinateSystem(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
-        map2->georeference(this->ptr()->as<Ilwis::RasterCoverage>()->georeference());
+        map2->georeference(grf);
         map2->datadef() = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
 
         Ilwis::PixelIterator iterOut(map2, geom);
@@ -293,7 +299,7 @@ RasterCoverage RasterCoverage::select(Geometry& geom){
     return select(geom.toWKT());
 }
 
-void RasterCoverage::reprojectRaster(quint32 epsg){
+RasterCoverage* RasterCoverage::reprojectRaster(std::string newName, quint32 epsg, std::string interpol){
     CoordinateSystem* targetPyCsy = new CoordinateSystem("code=epsg:" + std::to_string(epsg));
     Ilwis::ICoordinateSystem targetIlwCsy = targetPyCsy->ptr()->as<Ilwis::CoordinateSystem>();
     Ilwis::IGeoReference georef = this->geoReference().ptr()->as<Ilwis::GeoReference>();
@@ -304,9 +310,22 @@ void RasterCoverage::reprojectRaster(quint32 epsg){
     Ilwis::Size<> sz = bo.size();
     std::string refStr = "code=georef:type=corners,csy=epsg:" + std::to_string(epsg) + ",envelope=" +
             env.toString().toStdString() + ",gridsize=" + std::to_string(sz.xsize()) + " " + std::to_string(sz.ysize()) +
-            ",name=" + this->name();
-    this->ptr()->as<Ilwis::RasterCoverage>()->envelope(env);
-    this->setGeoReference(refStr);
-    this->setCoordinateSystem(*targetPyCsy);
+            ",name=grf1";
+
+    GeoReference grf(refStr);
+    QString expr;
+    expr = expr.fromStdString(newName + "=resample(" + this->name() + ",grf1," + interpol  + ")");
+    Ilwis::ExecutionContext ctx;
+    Ilwis::SymbolTable syms;
+    Ilwis::commandhandler()->execute(expr,&ctx,syms);
+    QString path;
+    path = path.fromStdString("ilwis://internalcatalog/" + newName);
+    Ilwis::IRasterCoverage* raster = new Ilwis::IRasterCoverage(path);
+    return new RasterCoverage(raster);
+}
+
+RasterCoverage* RasterCoverage::clone(){
+    Ilwis::IRasterCoverage ilwRc = this->ptr()->as<Ilwis::RasterCoverage>()->clone();
+    return new RasterCoverage(&ilwRc);
 }
 

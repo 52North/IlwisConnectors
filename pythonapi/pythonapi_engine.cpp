@@ -165,3 +165,16 @@ std::string Engine::operationMetaData(const std::string &name){
     }
     return ret.toStdString();
 }
+
+PyObject* Engine::_catalogItems(){
+    Ilwis::ICatalog cat = Ilwis::context()->workingCatalog();
+    std::vector<Ilwis::Resource> resVec = cat->items();
+    PyObject* tup = newPyTuple(resVec.size());
+    int i = 0;
+    for(auto it = resVec.begin();it != resVec.end(); it++){
+        if (!setTupleItem(tup, i++, PyUnicodeFromString(it->name().toStdString().data()))){
+            throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of files").arg( it->name()));
+        }
+    }
+    return tup;
+}

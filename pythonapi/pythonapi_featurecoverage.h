@@ -26,10 +26,18 @@ namespace pythonapi {
         FeatureCoverage(std::string resource);
         FeatureIterator __iter__();
         IlwisTypes featureTypes() const;
+        void featureTypes(IlwisTypes type);
         unsigned int featureCount() const;
+        void setFeatureCount(IlwisTypes type, quint32 geomCnt, quint32 subGeomCnt, int index);
+        Feature newFeature(std::string& wkt, CoordinateSystem csy, bool load = true);
         Feature newFeature(Geometry& geometry);
+        Feature newFeatureFrom(Feature& feat, CoordinateSystem& csy);
+        void reprojectFeatures(CoordinateSystem& csy);
         static FeatureCoverage* toFeatureCoverage(Object *obj);
         PyObject* select(std::string spatialQuery);
+        quint32 maxIndex() const;
+        FeatureCoverage *clone();
+        IlwisTypes geometryType(const Geometry& geom);
     };
 }
 

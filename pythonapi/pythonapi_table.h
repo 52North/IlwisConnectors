@@ -2,6 +2,7 @@
 #define PYTHONAPI_TABLE_H
 
 #include "pythonapi_ilwisobject.h"
+#include "pythonapi_columndefinition.h"
 
 namespace Ilwis {
     class Table;
@@ -11,6 +12,7 @@ namespace Ilwis {
 typedef struct _object PyObject;
 
 namespace pythonapi {
+    class ColumnDefinition;
     class Table : public IlwisObject{
         friend class Coverage;
         friend class Catalog;
@@ -21,6 +23,7 @@ namespace pythonapi {
             quint32 columnCount() const;
             PyObject* columns() const;
             bool addColumn(const std::string& name, const std::string &domain);
+            bool addColumn(ColumnDefinition& coldef);
             qint32 columnIndex(const std::string& name) const;
             PyObject* column(const std::string& name) const;
             PyObject* column(quint32 columnIndex) const;
@@ -41,6 +44,13 @@ namespace pythonapi {
             void setCell(quint32 colIndex, quint32 rec, double value);
 
             static Table* toTable(Object* obj);
+
+            ColumnDefinition columndefinition(const std::string& name) const;
+            ColumnDefinition columndefinition(quint32 index) const;
+            void setColumnDefinition(ColumnDefinition& coldef);
+            void setColumnDefinition(const std::string& name, ColumnDefinition* coldef);
+            void setColumnDefinition(quint32 index, ColumnDefinition* coldef);
+
         private:
             Table(Ilwis::ITable* table);
     };

@@ -22,15 +22,6 @@ namespace pythonapi {
         char* argv[0];
         QCoreApplication app(argc, argv);
         bool ret = Ilwis::initIlwis();
-//        }else{
-//            QString local = config.absoluteFilePath();
-//            config.setFile(QDir(QCoreApplication::applicationDirPath()),QString("ilwisobjects.conf"));
-//            if (config.exists()){
-//                ret = Ilwis::initIlwis(config.absoluteFilePath());
-//            }else{
-//                throw ImportError(QString("None of the following configuration files exist: \n%1\n%2\n runtime directory for ILWIS is unknown!").arg(local,config.absoluteFilePath()).toStdString());
-//            }
-//        }
         pythonapi::logger = new pythonapi::QIssueLogger();
         pythonapi::connection = QObject::connect(Ilwis::kernel()->issues().data(),SIGNAL(ilwiserrormessage(QString)),pythonapi::logger,SLOT(ilwiserrormessage(QString)));
         return ret;

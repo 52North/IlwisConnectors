@@ -80,6 +80,9 @@ class PixelIterator{
         PixelIterator end();
         Py_buffer* asBuffer();
         RasterCoverage* raster();
+
+        void copyValues(PixelIterator& sourceIt);
+
     protected:
         Ilwis::PixelIterator& ptr() const;
         RasterCoverage* _coverage;

@@ -117,6 +117,9 @@ namespace pythonapi {
     //====================unicode========================
     PyObject* PyUnicodeAsUTF8(PyObject* obj);
 
+    //===================Memory==========================
+    char* PyMalloc();
+
 } // namespace pythonapi
 
 #endif // PYTHONAPI_PYOBJECT_H
