@@ -52,7 +52,7 @@ bool SpreadSheetConnectorsObjectFactory::canUse(const Resource &resource) const
     return false;
 }
 
-IlwisObject *SpreadSheetConnectorsObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
+IlwisObject *SpreadSheetConnectorsObjectFactory::create(const Resource &resource, const IOOptions &options) const
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     IlwisObjectConnector *connector = factory->createFromResource<IlwisObjectConnector>(resource, "spreadsheet", options);

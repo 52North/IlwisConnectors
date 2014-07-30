@@ -6,13 +6,13 @@ namespace Postgresql {
 class PostgresqlFeatureConnector : public PostgresqlConnector
 {
 public:
-    PostgresqlFeatureConnector(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
+    PostgresqlFeatureConnector(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
 
 
     IlwisObject *create() const;
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
 
-    bool loadMetaData(IlwisObject* data,const PrepareOptions&);
+    bool loadMetaData(IlwisObject* data,const IOOptions&);
     bool storeMetaData(Ilwis::IlwisObject *obj);
 
     bool loadBinaryData(IlwisObject *data);

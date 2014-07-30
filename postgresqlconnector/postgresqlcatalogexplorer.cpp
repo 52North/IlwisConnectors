@@ -20,12 +20,12 @@ using namespace Postgresql;
 
 REGISTER_CATALOGEXPLORER(PostgresqlCatalogExplorer)
 
-CatalogExplorer *PostgresqlCatalogExplorer::create(const Resource &resource, const PrepareOptions &options)
+CatalogExplorer *PostgresqlCatalogExplorer::create(const Resource &resource, const IOOptions &options)
 {
     return new PostgresqlCatalogExplorer(resource,  options);
 }
 
-PostgresqlCatalogExplorer::PostgresqlCatalogExplorer(const Resource &resource, const PrepareOptions &options) : CatalogExplorer(resource, options)
+PostgresqlCatalogExplorer::PostgresqlCatalogExplorer(const Resource &resource, const IOOptions &options) : CatalogExplorer(resource, options)
 {
 }
 

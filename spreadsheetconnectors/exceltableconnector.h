@@ -8,8 +8,8 @@ namespace SpreadSheetConnectors {
 class ExcelTableConnector : public IlwisObjectConnector
 {
 public:
-    ExcelTableConnector(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
-    bool loadMetaData(IlwisObject* data, const PrepareOptions&options);
+    ExcelTableConnector(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
+    bool loadMetaData(IlwisObject* data, const IOOptions&options);
     bool storeMetaData(Ilwis::IlwisObject *obj);
     QString type() const;
     virtual IlwisObject *create() const;
@@ -17,7 +17,7 @@ public:
     bool storeBinaryData(IlwisObject* obj);
     QString provider() const;
 
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
 };
 }
 }

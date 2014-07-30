@@ -20,7 +20,7 @@
 using namespace Ilwis;
 using namespace Postgresql;
 
-PostgresqlFeatureConnector::PostgresqlFeatureConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : PostgresqlConnector(resource, load,options)
+PostgresqlFeatureConnector::PostgresqlFeatureConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : PostgresqlConnector(resource, load,options)
 {
 }
 
@@ -29,12 +29,12 @@ IlwisObject *PostgresqlFeatureConnector::create() const
     return new FlatTable(_resource);
 }
 
-ConnectorInterface *PostgresqlFeatureConnector::create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options)
+ConnectorInterface *PostgresqlFeatureConnector::create(const Ilwis::Resource &resource, bool load,const IOOptions& options)
 {
     return new PostgresqlFeatureConnector(resource, load,options);
 }
 
-bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
 
     qDebug() << "PostgresqlFeatureConnector::loadMetaData()";

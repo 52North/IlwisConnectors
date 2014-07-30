@@ -24,12 +24,12 @@
 using namespace Ilwis;
 using namespace SpreadSheetConnectors;
 
-ExcelTableConnector::ExcelTableConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource, load, options)
+ExcelTableConnector::ExcelTableConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource, load, options)
 {
 
 }
 
-bool ExcelTableConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool ExcelTableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
 
     unsigned int worksheet_index;
