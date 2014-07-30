@@ -11,7 +11,7 @@
 using namespace Ilwis;
 using namespace Postgresql;
 
-PostgresqlConnector::PostgresqlConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource,load,options)
+PostgresqlConnector::PostgresqlConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource,load,options)
 {
 }
 
@@ -19,7 +19,7 @@ PostgresqlConnector::~PostgresqlConnector()
 {
 }
 
-bool PostgresqlConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool PostgresqlConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
 //    if (data == nullptr)
 //        return false;

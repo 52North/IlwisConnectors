@@ -30,18 +30,18 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load, const PrepareOptions &options) {
+ConnectorInterface *RasterCoverageConnector::create(const Resource &resource, bool load, const IOOptions &options) {
     return new RasterCoverageConnector(resource, load, options);
 
 }
 
 
 
-RasterCoverageConnector::RasterCoverageConnector(const Resource &resource, bool load, const PrepareOptions &options) : CoverageConnector(resource, load, options),_storesize(1)
+RasterCoverageConnector::RasterCoverageConnector(const Resource &resource, bool load, const IOOptions &options) : CoverageConnector(resource, load, options),_storesize(1)
 {
 }
 
-bool RasterCoverageConnector::loadMapList(IlwisObject *data,const PrepareOptions& options) {
+bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& options) {
     Ilwis3Connector::loadMetaData(data, options);
 
     RasterCoverage *gcoverage = static_cast<RasterCoverage *>(data);
@@ -139,7 +139,7 @@ void RasterCoverageConnector::setStoreType(const QString& storeType) {
     _converter.storeType(_storetype);
 }
 
-bool RasterCoverageConnector::setDataType(IlwisObject *data, const PrepareOptions &options) {
+bool RasterCoverageConnector::setDataType(IlwisObject *data, const IOOptions &options) {
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
@@ -176,7 +176,7 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data, const PrepareOption
     return true;
 }
 
-bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     Locker lock(_mutex);
 
@@ -308,7 +308,7 @@ void RasterCoverageConnector::loadBlock(UPGrid& grid,QFile& file, quint32 blockI
 
 }
 
-bool RasterCoverageConnector::loadData(IlwisObject* data, const LoadOptions &options)
+bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &options)
 {
     Locker lock(_mutex);
 
@@ -558,6 +558,8 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
         int digits = stats.significantDigits();
         RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - digits));
         qint32 delta = stats[NumericStatistics::pDELTA];
+        QString range = QString("%1:%2").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]);
+         _odf->setKeyValue("BaseMap","MinMax",range);
         if ( delta >= 0 && delta < 256 &&  digits == 0){
            _odf->setKeyValue("MapStore","Type","Byte");
         } else if ( conv.storeType() == itUINT8){

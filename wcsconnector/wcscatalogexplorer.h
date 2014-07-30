@@ -10,10 +10,10 @@ class WcsCatalogExplorer : public CatalogExplorer
 {
 public:
 
-    WcsCatalogExplorer(const Resource &resource, const PrepareOptions &options=PrepareOptions());
+    WcsCatalogExplorer(const Resource &resource, const IOOptions &options=IOOptions());
     ~WcsCatalogExplorer();
 
-    static Ilwis::CatalogExplorer *create(const Resource &resource,const PrepareOptions& options=PrepareOptions());
+    static Ilwis::CatalogExplorer *create(const Resource &resource,const IOOptions& options=IOOptions());
 
     virtual std::vector<Resource> loadItems();
 

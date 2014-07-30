@@ -15,10 +15,15 @@
 #include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
 
 #include "geos/geom/Geometry.h"
+#include "geos/geom/CoordinateFilter.h"
+
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/featureiterator.h"
+#include "csytransform.h"
+#include "geometryhelper.h"
 
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_error.h"
@@ -52,12 +57,31 @@ IlwisTypes FeatureCoverage::featureTypes() const
     return this->ptr()->as<Ilwis::FeatureCoverage>()->featureTypes();
 }
 
+void FeatureCoverage::featureTypes(IlwisTypes type)
+{
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->featureTypes(type);
+}
+
 unsigned int FeatureCoverage::featureCount() const{
     return this->ptr()->as<Ilwis::FeatureCoverage>()->featureCount();
 }
 
+void FeatureCoverage::setFeatureCount(IlwisTypes type, quint32 geomCnt, quint32 subGeomCnt, int index){
+    this->ptr()->as<Ilwis::FeatureCoverage>()->setFeatureCount(type, geomCnt, subGeomCnt, index);
+}
+
+Feature FeatureCoverage::newFeature(std::string& wkt, CoordinateSystem csy, bool load){
+    QString qWkt;
+    qWkt = qWkt.fromStdString(wkt);
+    return Feature(this->ptr()->as<Ilwis::FeatureCoverage>()->newFeature(qWkt, csy.ptr()->as<Ilwis::CoordinateSystem>(), load),this);
+}
+
 Feature FeatureCoverage::newFeature(Geometry &geometry){
     return Feature(this->ptr()->as<Ilwis::FeatureCoverage>()->newFeature(geometry.ptr().get()->clone()),this);
+}
+
+Feature FeatureCoverage::newFeatureFrom(Feature& feat, CoordinateSystem& csy){
+    return Feature(this->ptr()->as<Ilwis::FeatureCoverage>()->newFeatureFrom(feat.ptr().get()->clone(), csy.ptr()->as<Ilwis::CoordinateSystem>()),this);
 }
 
 FeatureCoverage *FeatureCoverage::toFeatureCoverage(Object *obj){
@@ -76,3 +100,35 @@ PyObject* FeatureCoverage::select(std::string spatialQuery){
     return pyTup;
 }
 
+void FeatureCoverage::reprojectFeatures(CoordinateSystem& csy){
+    Ilwis::IFeatureCoverage fc = this->ptr()->as<Ilwis::FeatureCoverage>();
+    Ilwis::ICoordinateSystem ilwCsy = csy.ptr()->as<Ilwis::CoordinateSystem>();
+    for(const auto &feat : fc ){
+        for(int i=0; i < feat->trackSize(); ++i){
+              Ilwis::UPGeometry& geom = feat->geometry(i);
+              if ( ilwCsy.isValid() && !ilwCsy->isEqual(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>().ptr())){
+                  Ilwis::CsyTransform trans(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>(), ilwCsy);
+                  geom->apply_rw(&trans);
+                  geom->geometryChangedAction();
+              }
+              Ilwis::GeometryHelper::setCoordinateSystem(geom.get(), ilwCsy.ptr());
+        }
+    }
+    Ilwis::ICoordinateSystem oldCsy = coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>();
+    fc->coordinateSystem(ilwCsy);
+    Ilwis::Envelope newEnv = oldCsy->convertEnvelope(ilwCsy, fc->envelope());
+    fc->envelope(newEnv);
+}
+
+quint32 FeatureCoverage::maxIndex() const{
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->maxIndex();
+}
+
+FeatureCoverage *FeatureCoverage::clone(){
+    Ilwis::IFeatureCoverage ilwFc = this->ptr()->as<Ilwis::FeatureCoverage>()->clone();
+    return new FeatureCoverage(&ilwFc);
+}
+
+IlwisTypes FeatureCoverage::geometryType(const Geometry& geom){
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->geometryType(geom.ptr().get());
+}

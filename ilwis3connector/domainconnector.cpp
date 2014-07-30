@@ -32,16 +32,16 @@
 using namespace Ilwis;
 using namespace Ilwis3;
 
-ConnectorInterface *DomainConnector::create(const Resource& resource, bool load, const PrepareOptions &options) {
+ConnectorInterface *DomainConnector::create(const Resource& resource, bool load, const IOOptions &options) {
     return new DomainConnector(resource, load, options);
 
 }
 
-DomainConnector::DomainConnector(const Resource& resource, bool load, const PrepareOptions &options) : Ilwis3Connector(resource, load, options)
+DomainConnector::DomainConnector(const Resource& resource, bool load, const IOOptions &options) : Ilwis3Connector(resource, load, options)
 {
 }
 
-bool DomainConnector::loadMetaData(IlwisObject* data, const PrepareOptions& options)
+bool DomainConnector::loadMetaData(IlwisObject* data, const IOOptions& options)
 {
     Ilwis3Connector::loadMetaData(data, options);
 

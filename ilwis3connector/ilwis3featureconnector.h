@@ -17,13 +17,13 @@ class BinaryIlwis3Table;
 class FeatureConnector : public CoverageConnector
 {
 public:
-    FeatureConnector(const Ilwis::Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
-    bool loadMetaData(Ilwis::IlwisObject *data, const PrepareOptions &options);
-    bool loadData(Ilwis::IlwisObject *obj, const LoadOptions& options = LoadOptions());
+    FeatureConnector(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
+    bool loadMetaData(Ilwis::IlwisObject *data, const IOOptions &options);
+    bool loadData(Ilwis::IlwisObject *obj, const IOOptions& options = IOOptions());
     bool storeMetaData(IlwisObject *obj) ;
     bool storeBinaryData(IlwisObject *obj);
 
-    static ConnectorInterface *create(const Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
+    static ConnectorInterface *create(const Resource &resource, bool load,const IOOptions& options=IOOptions());
     Ilwis::IlwisObject *create() const;
     void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
 

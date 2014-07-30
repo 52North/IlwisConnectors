@@ -24,15 +24,15 @@
 using namespace Ilwis;
 using namespace Gdal;
 
-ConnectorInterface *GeorefConnector::create(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) {
+ConnectorInterface *GeorefConnector::create(const Ilwis::Resource &resource, bool load, const IOOptions &options) {
     return new GeorefConnector(resource,load, options);
 }
 
-GeorefConnector::GeorefConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : GdalConnector(resource, load, options)
+GeorefConnector::GeorefConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : GdalConnector(resource, load, options)
 {
 }
 
-bool GeorefConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
+bool GeorefConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
     if(!GdalConnector::loadMetaData(data, options))
         return false;
 

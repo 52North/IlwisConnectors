@@ -6,11 +6,11 @@ namespace Gdal{
 class DomainConnector : public GdalConnector
 {
 public:
-    DomainConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    DomainConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
-    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
+    bool loadMetaData(IlwisObject *data, const IOOptions &options);
 
-    static ConnectorInterface *create(const Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    static ConnectorInterface *create(const Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     IlwisObject *create() const;
 private:
     bool handleThematicDomains(IlwisObject *);

@@ -38,7 +38,9 @@ HEADERS += \
     pythonapi/pythonapi_coordinatesystem.h \
     pythonapi/pythonapi_catalog.h \
     pythonapi/pythonapi_datadefinition.h \
-    pythonapi/pythonapi_rangeiterator.h
+    pythonapi/pythonapi_rangeiterator.h \
+    pythonapi/pythonapi_columndefinition.h \
+    pythonapi/pythonapi_domainitem.h
 
 
 SOURCES += \
@@ -65,7 +67,9 @@ SOURCES += \
     pythonapi/pythonapi_coordinatesystem.cpp \
     pythonapi/pythonapi_catalog.cpp \
     pythonapi/pythonapi_datadefinition.cpp \
-    pythonapi/pythonapi_rangeiterator.cpp
+    pythonapi/pythonapi_rangeiterator.cpp \
+    pythonapi/pythonapi_columndefinition.cpp \
+    pythonapi/pythonapi_domainitem.cpp
 
 
 OTHER_FILES += \

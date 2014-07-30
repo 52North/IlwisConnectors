@@ -21,6 +21,7 @@
 
 #include "pythonapi_feature.h"
 #include "pythonapi_featurecoverage.h"
+#include "pythonapi_columndefinition.h"
 
 #include "pythonapi_qvariant.h"
 #include <QVariant>
@@ -150,6 +151,20 @@ Geometry* Feature::geometry(int index){
 
 void Feature::setGeometry(Geometry &geometry, int index){
     this->ptr()->set(geometry.ptr()->clone(), index);
+}
+
+ColumnDefinition Feature::columndefinition(const std::string& name, bool coverages) const{
+    QString qName;
+    qName = qName.fromStdString(name);
+    Ilwis::ColumnDefinition* ilwDef = new Ilwis::ColumnDefinition(this->ptr()->columndefinition(qName, coverages));
+    ColumnDefinition* pyDef = new ColumnDefinition(ilwDef);
+    return *pyDef;
+}
+
+ColumnDefinition Feature::columndefinition(quint32 index, bool coverages) const{
+    Ilwis::ColumnDefinition* ilwDef = new Ilwis::ColumnDefinition(this->ptr()->columndefinition(index, coverages));
+    ColumnDefinition* pyDef = new ColumnDefinition(ilwDef);
+    return *pyDef;
 }
 
 std::unique_ptr<Ilwis::FeatureInterface> &Feature::ptr() const{

@@ -12,6 +12,11 @@
 %}
 
 %{
+#include "kernel.h"
+#include "ilwisdata.h"
+#include "../../IlwisCore/core/util/range.h"
+#include "itemrange.h"
+
 #include "pythonapi_pyobject.h"
 #include "pythonapi_error.h"
 #include "pythonapi_extension.h"
@@ -34,6 +39,9 @@
 #include "pythonapi_catalog.h"
 #include "pythonapi_domain.h"
 #include "pythonapi_datadefinition.h"
+#include "pythonapi_columndefinition.h"
+#include "pythonapi_domainitem.h"
+#include "pythonapi_rangeiterator.h"
 %}
 
 %include "pythonapi_qtGNUTypedefs.h"
@@ -125,6 +133,10 @@ def object_cast(obj):
         else:
             raise IlwisException("no operation given!")
         return object_cast(obj)
+
+    @staticmethod
+    def catalogItems():
+        return sorted(Engine__catalogItems(), key = str.lower)
 %}
 }
 
@@ -147,6 +159,7 @@ def object_cast(obj):
 %template(Box) pythonapi::BoxTemplate<Ilwis::Location<qint32, false>, pythonapi::PixelTemplate<qint32>, quint32>;
 %template(Envelope) pythonapi::BoxTemplate<Ilwis::Coordinate, pythonapi::Coordinate, double>;
 %template(NumericStatistics) pythonapi::ContainerStatistics<double>;
+
 
 %extend pythonapi::SizeTemplate<quint32> {
 %insert("python") %{
@@ -250,6 +263,16 @@ def object_cast(obj):
 %include "pythonapi_range.h"
 
 %include "pythonapi_datadefinition.h"
+
+%include "pythonapi_columndefinition.h"
+
+%include "pythonapi_rangeiterator.h"
+
+%include "pythonapi_domainitem.h"
+
+%template(NumericRangeIterator) pythonapi::RangeIterator<double, pythonapi::NumericRange, double, Ilwis::NumericRange>;
+//%template(ItemRangeIterator) pythonapi::RangeIterator<pythonapi::DomainItem, pythonapi::ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange>;
+
 
 // declaring the Const for Python side xUNDEF declarations
 %pythoncode %{

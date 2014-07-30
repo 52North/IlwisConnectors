@@ -28,7 +28,8 @@ namespace pythonapi{
             ELLIPSOID = itELLIPSOID,
             CATALOG = itCATALOG,
             CONTINUOUSCOLOR = itCONTINUOUSCOLOR,
-            PALETTECOLOR = itPALETTECOLOR
+            PALETTECOLOR = itPALETTECOLOR,
+            VALUERANGE = itVALUERANGE
         };
     };
 }

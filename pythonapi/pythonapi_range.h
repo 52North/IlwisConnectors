@@ -4,22 +4,26 @@
 #include "pythonapi_object.h"
 #include<string>
 #include<map>
+#include "pythonapi_rangeiterator.h"
 
 namespace Ilwis {
 class Range;
+class NumericRange;
 }
 
 typedef struct _object PyObject;
 
 namespace pythonapi {
 
-
 class Range: public Object{
-public:
     friend class Domain;
     friend class DataDefinition;
     friend class ItemDomain;
+    template<typename OutputType, typename RangeType, typename IlwOutput,  typename IlwRange>
+    friend class RangeIterator;
+    friend class Interval;
 
+public:
     bool __bool__() const;
     std::string __str__();
     IlwisTypes ilwisType();
@@ -41,9 +45,11 @@ private:
 };
 
 class NumericRange : public Range {
+
 public:
     NumericRange(double mi, double ma, double resolution = 0);
     NumericRange(const NumericRange &vr);
+    NumericRange(Ilwis::NumericRange* nr);
     ~NumericRange();
 
     bool contains(double v, bool inclusive = true) const;
@@ -57,6 +63,11 @@ public:
     double resolution() const ;
 
     void set(const NumericRange& vr);
+
+    pythonapi::NumericRangeIterator __iter__();
+    pythonapi::NumericRangeIterator begin();
+    pythonapi::NumericRangeIterator end();
+
     void clear();
 };
 
@@ -76,6 +87,14 @@ public:
     double index(double);
     qint32 gotoIndex(qint32 index, qint32 step) const;
     NumericItemRange* clone();
+};
+
+class IndexedItemRange : public ItemRange{
+public:
+    IndexedItemRange();
+    void add(PyObject* item);
+    qint32 gotoIndex(qint32 index, qint32 step) const;
+    IndexedItemRange* clone();
 };
 
 class NamedItemRange : public ItemRange {

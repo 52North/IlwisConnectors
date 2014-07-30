@@ -28,7 +28,7 @@ WfsObjectFactory::WfsObjectFactory() : IlwisObjectFactory("IlwisObjectFactory","
 {
 }
 
-IlwisObject *WfsObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
+IlwisObject *WfsObjectFactory::create(const Resource &resource, const IOOptions &options) const
 {
      const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
      WfsFeatureConnector *connector = factory->createFromResource<WfsFeatureConnector>(resource, "wfs");

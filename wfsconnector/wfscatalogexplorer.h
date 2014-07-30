@@ -11,10 +11,10 @@ class WFSCONNECTORSHARED_EXPORT WfsCatalogExplorer : public CatalogExplorer
 {
 public:
 
-    WfsCatalogExplorer(const Resource &resource, const PrepareOptions &options=PrepareOptions());
+    WfsCatalogExplorer(const Resource &resource, const IOOptions &options=IOOptions());
     ~WfsCatalogExplorer();
 
-    static Ilwis::CatalogExplorer *create(const Resource &resource,const PrepareOptions& options=PrepareOptions());
+    static Ilwis::CatalogExplorer *create(const Resource &resource,const IOOptions& options=IOOptions());
 
     virtual std::vector<Resource> loadItems();
 

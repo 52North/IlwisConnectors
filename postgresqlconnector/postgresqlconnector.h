@@ -7,10 +7,10 @@ namespace Postgresql {
 class PostgresqlConnector : public IlwisObjectConnector
 {
 public:
-    PostgresqlConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    PostgresqlConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     virtual ~PostgresqlConnector();
 
-    virtual bool loadMetaData(IlwisObject* data,const PrepareOptions&);
+    bool loadMetaData(IlwisObject* data,const IOOptions&);
 
     QString provider() const;
 

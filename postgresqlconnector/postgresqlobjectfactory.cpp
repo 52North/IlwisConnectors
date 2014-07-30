@@ -51,7 +51,7 @@ bool PostgresqlObjectFactory::canUse(const Resource &resource) const
     return false;
 }
 
-IlwisObject *PostgresqlObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
+IlwisObject *PostgresqlObjectFactory::create(const Resource &resource, const IOOptions &options) const
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     PostgresqlConnector *connector = factory->createFromResource<PostgresqlConnector>(resource, "postgresql", options);

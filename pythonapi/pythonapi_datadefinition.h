@@ -18,6 +18,7 @@ class Range;
 class DataDefinition{
 
     friend class RasterCoverage;
+    friend class ColumnDefinition;
 
 public:
     DataDefinition();

@@ -93,6 +93,14 @@ try:
                 fc.attributeTable().columns()
             )
 
+        def testColumnDefinition(self):
+            fc = FeatureCoverage("rainfall.shp")
+            for feat in fc:
+                coldef = feat.columndefinition(1)
+                print(coldef)
+                coldef2 = feat.columndefinition("MARCH")
+                print(coldef2)
+
     #@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
         def setUp(self):
@@ -354,8 +362,9 @@ try:
 
         def test_IssueLogger(self):
             disconnectIssueLogger()
-            fc = FeatureCoverage(workingDir + "/noneexistentDir/nonexistent.file")
-            self.assertFalse(bool(fc))
+            with self.assertRaises(IlwisException, msg="Error message cascade"):
+                 fc = FeatureCoverage(workingDir + "/noneexistentDir/nonexistent.file")
+            #self.assertFalse(bool(fc))
             connectIssueLogger()
 
         def test_ilwisTypes(self):
@@ -944,10 +953,15 @@ try:
             pix1 = Pixel(740, 650, 0)
             pix2 = Pixel(300, 400, 0)
 
-            self.assertEqual(rcSel.pix2value(pix1), rc.pix2value(pix1))
+            coord = rc.geoReference().pixel2Coord(pix1)
+            pixSel = rcSel.geoReference().coord2Pixel(coord)
+
+            pixSel.setY(int(pixSel.y)+1)
+
+            self.assertEqual(rcSel.pix2value(pixSel), rc.pix2value(pix1))
             self.assertNotEqual(rcSel.pix2value(pix2), rc.pix2value(pix2))
 
-            rcSel.setOutputConnection(workingDir + rasterDir + "/avg_n000302", "map", "ilwis3")
+            rcSel.setOutputConnection(workingDir + rasterDir + "/aa_select_n000302", "map", "ilwis3")
             rcSel.store()
 
         #@ut.skip("temporarily")
@@ -1424,8 +1438,8 @@ try:
 
         def test_containement(self):
             interrange = NumericItemRange()
-            interrange.add(("sealevel", 40.0, 100.0, 5.0))
-            interrange.add(("dijks", 101.0, 151.0, 1.0))
+            interrange.add(("sealevel", 40.0, 100.0))
+            interrange.add(("dijks", 100.0, 151.0))
 
             childdom = ItemDomain(interrange)
 
@@ -1480,8 +1494,8 @@ try:
     class TestThematicDomain(ut.TestCase):
         def test_containement(self):
             tr = ThematicRange()
-            tr.add(("hound", "3.1", "Fierce doggy"))
-            tr.add(("greyhound", "0.32", "the fast one"))
+            tr.add("hound", "3.1", "Fierce doggy")
+            tr.add("greyhound", "0.32", "the fast one")
 
             td = ItemDomain(tr)
 
@@ -1612,6 +1626,22 @@ try:
             colDom.setRange(col)
             self.assertEqual(colDom.containsColor(color3), "cSELF")
 
+        def test_colorCYMKA(self):
+            color1 = Color(ColorModel.cmCYMKA, (1.0, 0.2, 0.16, 0.6, 0.5))
+            color2 = Color(ColorModel.cmCYMKA, (0.9, 0.7, 0.5, 0.9, 0.9))
+            color3 = Color(ColorModel.cmCYMKA, (0.77, 0.5, 0.4, 0.7, 0.6))
+
+            col = ContinousColorRange(color1, color2, ColorModel.cmCYMKA)
+            self.assertTrue(col.isValid())
+
+            col.defaultColorModel(ColorModel.cmCYMKA)
+            self.assertEqual(col.defaultColorModel(), ColorModel.cmCYMKA)
+
+            colDom = ColorDomain("testdomain")
+            colDom.setRange(col)
+            self.assertEqual(colDom.containsColor(color3), "cSELF")
+
+
     #@ut.skip("temporarily")
     class TestTimeDomain(ut.TestCase):
         def test_containement(self):
@@ -1620,19 +1650,34 @@ try:
             self.assertEqual(td.contains(date(2014, 5, 17)), "cSELF")
             self.assertEqual(td.contains(date(2014, 1, 17)), "cNONE")
 
+        def test_parent(self):
+            ti = TimeInterval(date(2014, 2, 17), date(2016, 2, 17))
+            td = TimeDomain(ti)
+
             date1 = date(2014, 2, 17) - timedelta(365)
             date2 = date(2016, 2, 17) + timedelta(365)
             tip = TimeInterval(date1, date2)
             tdp = TimeDomain(tip)
-
             td.setParent(tdp)
+
             td.setStrict(False)
             self.assertEqual(td.contains(date(2013, 5, 17)), "cPARENT")
 
+        def test_begin_end(self):
+            date1 = date(2014, 2, 17) - timedelta(365)
+            date2 = date(2016, 2, 17) + timedelta(365)
+            tip = TimeInterval(date1, date2)
+            self.assertEqual(str(tip.begin()), "2013-02-17 00:00:00")
+            self.assertEqual(str(tip.end()), "2017-02-16 00:00:00")
+
+            tip.begin(date(2011, 6, 23))
+            tip.end(date(2015, 2, 10))
+            self.assertEqual(str(tip.begin()), "2011-06-23 00:00:00")
+            self.assertEqual(str(tip.end()), "2015-02-10 00:00:00")
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest=None, verbosity=2)
+        ut.main(defaultTest='TestColorDomain', verbosity=2)
 
 except ImportError as e:
     print(e)

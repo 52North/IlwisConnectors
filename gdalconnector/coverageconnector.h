@@ -10,8 +10,8 @@ namespace Gdal {
 class CoverageConnector : public GdalConnector
 {
 public:
-    CoverageConnector(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
-    bool loadMetaData(Ilwis::IlwisObject *data, const PrepareOptions &options);
+    CoverageConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
+    bool loadMetaData(Ilwis::IlwisObject *data, const IOOptions &options);
 
 protected:
     bool store(IlwisObject *obj, IlwisTypes type);

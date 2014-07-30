@@ -69,7 +69,9 @@ namespace pythonapi {
 
         RasterCoverage select(std::string selectionQ);
         RasterCoverage select(Geometry& geom);
-        void reprojectRaster(quint32 epsg);
+        RasterCoverage* reprojectRaster(std::string newName, quint32 epsg, std::string interpol);
+
+        RasterCoverage* clone();
     };
 
 }

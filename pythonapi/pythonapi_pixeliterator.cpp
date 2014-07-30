@@ -180,6 +180,13 @@ RasterCoverage* PixelIterator::raster(){
     return _coverage;
 }
 
+void PixelIterator::copyValues(PixelIterator& sourceIt){
+    while(sourceIt != sourceIt.end()){
+        this->__setitem__(sourceIt.__int__(), sourceIt.__float__());
+        sourceIt.__next__();
+    }
+}
+
 Ilwis::PixelIterator& PixelIterator::ptr() const{
     if (!this->__bool__())
         throw InvalidObject("use of invalid PixelIterator (ptr)");

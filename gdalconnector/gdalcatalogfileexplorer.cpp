@@ -29,12 +29,12 @@ using namespace Gdal;
 
 REGISTER_CATALOGEXPLORER(GdalCatalogFileExplorer)
 
-Ilwis::CatalogExplorer *GdalCatalogFileExplorer::create(const Resource &resource, const PrepareOptions &options)
+Ilwis::CatalogExplorer *GdalCatalogFileExplorer::create(const Resource &resource, const IOOptions &options)
 {
     return new GdalCatalogFileExplorer(resource, options);
 }
 
-GdalCatalogFileExplorer::GdalCatalogFileExplorer(const Ilwis::Resource &resource, const PrepareOptions &options) : CatalogExplorer(resource, options)
+GdalCatalogFileExplorer::GdalCatalogFileExplorer(const Ilwis::Resource &resource, const IOOptions &options) : CatalogExplorer(resource, options)
 {
 }
 std::vector<Ilwis::Resource> GdalCatalogFileExplorer::loadItems()

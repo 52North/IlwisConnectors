@@ -6,6 +6,7 @@
 #include "../../IlwisCore/core/ilwisobjects/domain/datadefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
+#include "../../IlwisCore/core/ilwisobjects/table/basetable.h"
 
 #include "pythonapi_table.h"
 
@@ -13,6 +14,7 @@
 #include "pythonapi_feature.h"
 #include "pythonapi_qvariant.h"
 #include "pythonapi_error.h"
+#include "pythonapi_columndefinition.h"
 
 namespace pythonapi {
 
@@ -39,6 +41,11 @@ namespace pythonapi {
 
     bool Table::addColumn(const std::string& name, const std::string& domain){
         return this->ptr()->as<Ilwis::Table>()->addColumn(QString::fromStdString(name),QString::fromStdString(domain));
+    }
+
+    bool Table::addColumn(ColumnDefinition& coldef){
+        Ilwis::ColumnDefinition* ilwDef = coldef.ptr().get();
+        return this->ptr()->as<Ilwis::Table>()->addColumn(*ilwDef);
     }
 
     PyObject* Table::columns() const{
@@ -138,5 +145,37 @@ namespace pythonapi {
             throw InvalidObject("cast to Table not possible");
         return ptr;
     }
+
+    ColumnDefinition Table::columndefinition(const std::string& name) const{
+        QString qName;
+        qName = qName.fromStdString(name);
+        Ilwis::ColumnDefinition* coldef = new Ilwis::ColumnDefinition(this->ptr()->as<Ilwis::Table>()->columndefinition(qName));
+        return ColumnDefinition(coldef);
+    }
+
+    ColumnDefinition Table::columndefinition(quint32 index) const{
+        Ilwis::ColumnDefinition* coldef = new Ilwis::ColumnDefinition(this->ptr()->as<Ilwis::Table>()->columndefinition(index));
+        return ColumnDefinition(coldef);
+    }
+
+    void Table::setColumnDefinition(ColumnDefinition& coldef){
+        Ilwis::ColumnDefinition* ilwDef = coldef.ptr().get();
+        this->ptr()->as<Ilwis::Table>()->columndefinition(*ilwDef);
+    }
+
+    void Table::setColumnDefinition(const std::string &name, ColumnDefinition* coldef){
+        QString qName;
+        qName = qName.fromStdString(name);
+        Ilwis::ColumnDefinition& ilwdef = this->ptr()->as<Ilwis::Table>()->columndefinitionRef(qName);
+        Ilwis::ColumnDefinition* newDef = coldef->ptr().get();
+        ilwdef = Ilwis::ColumnDefinition(*newDef, ilwdef.columnindex());
+    }
+
+    void Table::setColumnDefinition(quint32 index, ColumnDefinition *coldef){
+        Ilwis::ColumnDefinition& ilwdef = this->ptr()->as<Ilwis::Table>()->columndefinitionRef(index);
+        Ilwis::ColumnDefinition* newDef = coldef->ptr().get();
+        ilwdef = Ilwis::ColumnDefinition(*newDef, ilwdef.columnindex());
+    }
+
 
 } // namespace pythonapi

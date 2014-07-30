@@ -61,6 +61,11 @@ void Domain::setParent(const Domain &dom){
     this->ptr()->as<Ilwis::Domain>()->setParent(dom.ptr()->as<Ilwis::Domain>());
 }
 
+Range& Domain::getRange(){
+    Range* retRan = new Range(this->ptr()->as<Ilwis::Domain>()->range().data());
+    return *retRan;
+}
+
 std::string Domain::contains(PyObject* value) const{
     std::unique_ptr<QVariant> var(PyObject2QVariant(value));
     Domain::Containement dc = (Domain::Containement)this->ptr()->as<Ilwis::Domain>()->contains(*var);

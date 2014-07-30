@@ -84,6 +84,12 @@ bool FeatureIterator::__bool__() const{
     return (this->_coverage && this->_coverage->__bool__() && (bool)this->_ilwisFeatureIterator);
 }
 
+//FeatureIterator FeatureIterator::end(){
+//    FeatureIterator newIter = FeatureIterator(*this);
+//    newIter._ilwisFeatureIterator.reset(new Ilwis::FeatureIterator(newIter.ptr().end()));
+//    return newIter;
+//}
+
 Ilwis::FeatureIterator& FeatureIterator::ptr() const{
     if (!this->__bool__())
         throw InvalidObject("use of invalid FeatureIterator (ptr)");

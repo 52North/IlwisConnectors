@@ -1,26 +1,68 @@
 #ifndef PYTHONAPI_RANGEITERATOR_H
 #define PYTHONAPI_RANGEITERATOR_H
 
-//#include "pythonapi_qtGNUTypedefs.h"
-//#include <memory>
+#include "pythonapi_qtGNUTypedefs.h"
+#include <memory>
 
-//namespace Ilwis{
-//    template<typename OutputType, typename RangeType> class RangeIterator;
-//}
+namespace Ilwis{
+    template<typename OutputType, typename RangeType> class RangeIterator;
+    class NumericRange;
+}
 
-//namespace pythonapi{
+namespace pythonapi{
 
-//    class Range;
+    class Range;
+    class NumericRange;
 
-//template<typename OutputType, typename RangeType> class RangeIterator{
-//public:
-//    RangeIterator(Range* rng);
+    template< class T >
+    struct TypeIsDouble
+    {
+        static const bool value = false;
+    };
 
-//protected:
-//    Ilwis::RangeIterator<OutputType, RangeType>& ptr() const;
-//    std::shared_ptr<Ilwis::RangeIterator<OutputType, RangeType>> _ilwisRangeIterator;
-//};
+    template<>
+    struct TypeIsDouble< double >
+    {
+        static const bool value = true;
+    };
 
-//}
+template<typename OutputType, typename RangeType, typename IlwOutput, typename IlwRange> class RangeIterator{
+public:
+    RangeIterator(Range* rng);
+    RangeIterator(const RangeIterator& iter);
+    RangeIterator(Ilwis::RangeIterator<IlwOutput, IlwRange>* iter);
+
+    bool __bool__() const;
+    std::string __str__();
+    RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>* __iter__();
+    OutputType __next__();
+    OutputType __float__();
+    OutputType __getitem__(quint32 pos);
+
+    RangeIterator<OutputType, RangeType, IlwOutput, IlwRange> __radd__(int n);
+    RangeIterator<OutputType, RangeType, IlwOutput, IlwRange> operator+(int n);
+    RangeIterator<OutputType, RangeType, IlwOutput,  IlwRange> operator+=(int n);
+    RangeIterator<OutputType, RangeType, IlwOutput, IlwRange> operator-(int n);
+    RangeIterator<OutputType, RangeType, IlwOutput, IlwRange> operator-=(int n);
+
+    bool operator==(const RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>& other);
+    bool operator!=(const RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>& other);
+    bool operator>(const RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>& other);
+    bool operator>=(const RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>& other);
+    bool operator<(const RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>& other);
+    bool operator<=(const RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>& other);
+
+    void setRange(Range* rng);
+
+protected:
+    Ilwis::RangeIterator<IlwOutput, IlwRange>& ptr() const;
+    std::shared_ptr<Ilwis::RangeIterator<IlwOutput, IlwRange>> _ilwisRangeIterator;
+    std::shared_ptr<Ilwis::RangeIterator<IlwOutput, IlwRange>> _end;
+    Range* _rng;
+
+};
+
+typedef RangeIterator<double, NumericRange, double, Ilwis::NumericRange> NumericRangeIterator;
+}
 
 #endif // PYTHONAPI_RANGEITERATOR_H
