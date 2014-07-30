@@ -75,19 +75,21 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
         resourceId.append(tablename);
         //qDebug() << "create new resource: " << resourceId;
 
-        QUrl url(resourceId);
-        Resource table(source());
-        table.name(tablename);
-        table.setUrl(url, true);
-        table.setUrl(url);
-
+        IlwisTypes mainType;
+        IlwisTypes extTypes;
         if ( hasGeometry) {
-            table.setIlwisType(itFEATURE);
-            IlwisTypes extTypes = itTABLE; // | itGEOREF;
-            table.setExtendedType(extTypes);
+            mainType = itFEATURE;
+            extTypes = itTABLE; // | itGEOREF;
         } else {
-            table.setIlwisType(itTABLE);
+            mainType = itTABLE;
         }
+
+        QUrl url(resourceId);
+        Resource table(url, mainType);
+        table.setExtendedType(extTypes);
+        table.addProperty("pg.user", source()["pg.user"]);
+        table.addProperty("pg.password", source()["pg.password"]);
+        table.addProperty("pg.schema", source()["pg.schema"]);
 
         resources.push_back(table);
     }

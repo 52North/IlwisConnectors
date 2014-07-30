@@ -24,7 +24,7 @@ public:
 
         qint64 port = url.port();
         QString host = url.host();
-        QString path = url.path().remove('/');
+        QString path = url.path().split('/',QString::SkipEmptyParts).at(0);
         validateNotNullOrEmpty("Host", host);
         validateNotNullOrEmpty("Path", path);
         validateNotNullOrEmpty("Port", port);

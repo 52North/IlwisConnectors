@@ -18,6 +18,7 @@
 
 #include "postgresqlconnector.h"
 #include "postgresqltableconnector.h"
+#include "postgresqlfeatureconnector.h"
 #include "postgresqlobjectfactory.h"
 
 using namespace Ilwis;
@@ -42,10 +43,10 @@ bool PostgresqlObjectFactory::canUse(const Resource &resource) const
 //        return true;
 //    else if ( type & itGEOREF)
 //        return true;
-//    else if ( type & itFEATURE)
-//        return true;
 //    else
-    if ( type & itTABLE)
+    if ( type & itFEATURE)
+        return true;
+    else if ( type & itTABLE)
         return true;
     return false;
 }
@@ -53,15 +54,15 @@ bool PostgresqlObjectFactory::canUse(const Resource &resource) const
 IlwisObject *PostgresqlObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    PostgresqlConnector *connector;
-    IlwisTypes type = resource.ilwisType();
-    if (type & itTABLE) {
-        connector = factory->createFromResource<PostgresqlTableConnector>(resource, "postgresql", options);
-    }
+    PostgresqlConnector *connector = factory->createFromResource<PostgresqlConnector>(resource, "postgresql", options);
+//    IlwisTypes type = resource.ilwisType();
+//    if (type & itTABLE) {
+//        connector = factory->createFromResource<PostgresqlTableConnector>(resource, "postgresql", options);
+//    }
 //    else if(type & itFEATURE) {
 //          connector = factory->createFromResource<PostgresqlFeatureConnector>(resource, "postgresql", options);
 //    }
-    else {
+    if ( !connector) {
        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
        return 0;
     }

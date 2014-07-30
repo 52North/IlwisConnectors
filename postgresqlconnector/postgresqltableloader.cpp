@@ -26,7 +26,9 @@ PostgresqlTableLoader::PostgresqlTableLoader()
 void PostgresqlTableLoader::loadMetadata(ITable *table, Resource resource) const
 {
     qDebug() << "PostgresqlTableLoader::loadMetadata()";
-    QString qTablename = resource.url().path().replace("/", ".");
+    QStringList pathElements = resource.url().path().split("/");
+    QString qTablename(pathElements.at(1)); // skip db-name
+    qTablename.append(".").append(pathElements.at(2));
 
     QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(resource);
     if ( !db.open()) {
