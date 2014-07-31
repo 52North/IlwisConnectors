@@ -19,6 +19,7 @@ namespace Ilwis{
     template<class CrdType> class Box;
     template<typename T> class Size;
     class PixelIterator;
+    class IOOptions;
    // template<typename DataType> class ContainerStatistics;
 }
 
@@ -28,7 +29,6 @@ namespace pythonapi {
  * only the previously instanciated types (currently only Pixel, PixelD, Envelope, Box, Size and SizeD) can be used.
  */
     class Coordinate;
-
     template<class CrdType> class PixelTemplate{
         template<class IlwisType, class PyType, typename T> friend class BoxTemplate;
         template<typename T> friend class SizeTemplate;
@@ -72,6 +72,7 @@ namespace pythonapi {
         template<typename T> friend class SizeTemplate;
         friend class RasterCoverage;
         friend class GeoReference;
+        friend class CoordinateSystem;
         public:
             Coordinate(double x, double y);
             Coordinate(double x, double y, double z);
@@ -105,7 +106,7 @@ namespace pythonapi {
         friend class RasterCoverage;
         friend class GeoReference;
         public:
-            SizeTemplate(T xsize, T ysize, T zsize=1);
+            SizeTemplate(T xSizeT, T ySizeT, T zSizeT=1);
             SizeTemplate(const SizeTemplate<quint32>& size);
             SizeTemplate(const SizeTemplate<double>& size);
 
@@ -270,6 +271,23 @@ namespace pythonapi {
     };
 
     typedef ContainerStatistics< double > NumericStatistics;
+
+//-----------------------------------------------------------------------------------------------------------------
+    class IOOptions{
+        friend class IlwisObject;
+    public:
+        IOOptions();
+        IOOptions(const std::string& key, PyObject* value);
+        IOOptions(Ilwis::IOOptions* ilwIOOp);
+        bool contains(const std::string& option);
+        quint32 size();
+        PyObject* __getitem__(const std::string& option);
+        IOOptions& addOption(const std::string& key, PyObject* value);
+
+    protected:
+        std::shared_ptr<Ilwis::IOOptions> _data;
+        Ilwis::IOOptions& ptr() const;
+    };
 
 
 } // namespace pythonapi

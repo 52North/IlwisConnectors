@@ -16,7 +16,7 @@ namespace Ilwis {
 }
 
 namespace pythonapi{
-
+    class Domain;
     class Coverage : public IlwisObject{
         public:
             enum AttributeType{atCOVERAGE, atINDEX};
@@ -30,9 +30,14 @@ namespace pythonapi{
             PyObject *attributes();
             Table attributeTable(AttributeType attType=atCOVERAGE);
             void setTable(Table& tbl, AttributeType attType=atCOVERAGE);
+            bool hasAttributes(AttributeType attType=atCOVERAGE) const;
             CoordinateSystem coordinateSystem();
             void setCoordinateSystem(const CoordinateSystem &cs);
             pythonapi::Envelope envelope();
+            void setEnvelope(const pythonapi::Envelope& env);
+            void indexDomain(const Domain& dom);
+            PyObject* indexValues();
+            PyObject* value(const std::string& colName, quint32 itemid, qint32 layerIndex = -1);
     };
 
 }

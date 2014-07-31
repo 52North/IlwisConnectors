@@ -43,8 +43,8 @@ namespace pythonapi{
         IlwisTypes ilwisType();
         Geometry* geometry(int index = 0);
         void setGeometry(Geometry &geometry, int index = COVERAGEATRIB);
-        pythonapi::ColumnDefinition columndefinition(const std::string& name, bool coverages=true) const;
-        pythonapi::ColumnDefinition columndefinition(quint32 index, bool coverages=true) const;
+        pythonapi::ColumnDefinition columnDefinition(const std::string& name, bool coverages=true) const;
+        pythonapi::ColumnDefinition columnDefinition(quint32 index, bool coverages=true) const;
 
     private:
         PyObject* attribute(std::string name, const QVariant& defaultValue, int index = COVERAGEATRIB);

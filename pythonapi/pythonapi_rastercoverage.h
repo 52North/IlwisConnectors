@@ -72,6 +72,8 @@ namespace pythonapi {
         RasterCoverage* reprojectRaster(std::string newName, quint32 epsg, std::string interpol);
 
         RasterCoverage* clone();
+
+        pythonapi::Envelope envelope();
     };
 
 }

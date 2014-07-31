@@ -15,12 +15,12 @@ IlwisObject::IlwisObject(Ilwis::IIlwisObject *object): _ilwisObject(std::shared_
 IlwisObject::~IlwisObject(){
 }
 
-void IlwisObject::setInputConnection(const std::string& url, const std::string& format, const std::string& fnamespace){
-    (*this->ptr())->connectTo(QUrl(url.c_str()), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmINPUT);
+void IlwisObject::setInputConnection(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
+    (*this->ptr())->connectTo(QUrl(url.c_str()), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmINPUT, options.ptr());
 }
 
-void IlwisObject::setOutputConnection(const std::string& url, const std::string& format, const std::string& fnamespace){
-    (*this->ptr())->connectTo(QUrl(url.c_str()), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmOUTPUT);
+void IlwisObject::setOutputConnection(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
+    (*this->ptr())->connectTo(QUrl(url.c_str()), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
 }
 
 void IlwisObject::store(int storeMode){

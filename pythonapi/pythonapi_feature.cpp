@@ -153,7 +153,7 @@ void Feature::setGeometry(Geometry &geometry, int index){
     this->ptr()->set(geometry.ptr()->clone(), index);
 }
 
-ColumnDefinition Feature::columndefinition(const std::string& name, bool coverages) const{
+ColumnDefinition Feature::columnDefinition(const std::string& name, bool coverages) const{
     QString qName;
     qName = qName.fromStdString(name);
     Ilwis::ColumnDefinition* ilwDef = new Ilwis::ColumnDefinition(this->ptr()->columndefinition(qName, coverages));
@@ -161,7 +161,7 @@ ColumnDefinition Feature::columndefinition(const std::string& name, bool coverag
     return *pyDef;
 }
 
-ColumnDefinition Feature::columndefinition(quint32 index, bool coverages) const{
+ColumnDefinition Feature::columnDefinition(quint32 index, bool coverages) const{
     Ilwis::ColumnDefinition* ilwDef = new Ilwis::ColumnDefinition(this->ptr()->columndefinition(index, coverages));
     ColumnDefinition* pyDef = new ColumnDefinition(ilwDef);
     return *pyDef;

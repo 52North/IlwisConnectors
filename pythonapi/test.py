@@ -93,13 +93,40 @@ try:
                 fc.attributeTable().columns()
             )
 
-        def testColumnDefinition(self):
+        def test_ColumnDefinition(self):
             fc = FeatureCoverage("rainfall.shp")
             for feat in fc:
-                coldef = feat.columndefinition(1)
-                print(coldef)
-                coldef2 = feat.columndefinition("MARCH")
-                print(coldef2)
+                coldef = feat.columnDefinition(1)
+                coldef2 = feat.columnDefinition("MARCH")
+
+            tab = fc.attributeTable()
+            self.assertEqual(str(tab.columnDefinition(1)), str(coldef))
+            self.assertEqual(str(tab.columnDefinition("MARCH")), str(coldef2))
+
+            numRan = NumericRange(0.0, 500.0)
+            numDom = NumericDomain()
+            numDom.setRange(numRan)
+            datDef = DataDefinition(numDom)
+            colDef = ColumnDefinition("MARCHc", datDef, 3)
+
+            tab.setColumnDefinition(3, colDef)
+            self.assertNotEqual(str(tab.columnDefinition(3)), str(coldef2))
+
+            colDef2 = ColumnDefinition("JANUARYc", datDef, 1)
+            tab.setColumnDefinition("JANUARY", colDef2)
+            self.assertNotEqual(str(tab.columnDefinition(1)), str(coldef))
+
+        def test_newColumn(self):
+            tab = Table("rainfall.shp")
+            before = tab.columnCount()
+
+            txtDom = TextDomain()
+            datdef = DataDefinition(txtDom)
+            coldef = ColumnDefinition("testText", datdef, tab.columnCount())
+            tab.addColumn(coldef)
+            self.assertEqual(tab.columnCount(), before+1)
+            tab.setCell(tab.columnCount()-1, 1, "new Cell")
+            self.assertEqual(tab.cell(tab.columnCount()-1, 1), "new Cell")
 
     #@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
@@ -1109,6 +1136,31 @@ try:
             rc = RasterCoverage("landuse.mpr")
             pixIt = rc.band(0)
 
+        def test_reprojectRaster(self):
+            rc = RasterCoverage("n000302.mpr")
+
+            targetCsy = CoordinateSystem("code=epsg:2050")
+
+            sourceGeoref = rc.geoReference()
+            sourceCsy = rc.coordinateSystem()
+            sourceEnv = rc.envelope()
+
+            targetEnv = sourceCsy.convertEnvelope(targetCsy, sourceEnv)
+
+            bo = sourceGeoref.envelope2Box(targetEnv)
+            sz = bo.size()
+
+            newGeoRefStr = ("code=georef:type=corners,csy=epsg:2050,envelope=" +
+                        str(targetEnv) + ",gridsize=" + str(sz.xsize) + " " + str(sz.ysize) +
+                        ",name=grf1")
+
+            targetGeoRef = GeoReference(newGeoRefStr)
+            rcReproj = Engine.do("resample", rc.name(), targetGeoRef.name(), "bilinear")
+            self.assertTrue(bool(rcReproj))
+
+            rcReproj2 = rc.reprojectRaster("newraster", 2050, "bilinear")
+            self.assertTrue(bool(rcReproj2))
+
     #@ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
         def setUp(self):
@@ -1615,10 +1667,12 @@ try:
             color2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
             color3 = Color(ColorModel.cmRGBA, (230.0, 60.0, 50.0, 240.0))
 
-            col = ContinousColorRange(color1, color2, ColorModel.cmRGBA)
-            self.assertTrue(col.isValid())
+            col = ContinousColorRange(color1, color2)
+            self.assertTrue(bool(col))
 
             col2 = col.clone()
+            self.assertTrue(bool(col2))
+
             col.defaultColorModel(ColorModel.cmRGBA)
             self.assertEqual(col.defaultColorModel(), ColorModel.cmRGBA)
 
@@ -1627,15 +1681,36 @@ try:
             self.assertEqual(colDom.containsColor(color3), "cSELF")
 
         def test_colorCYMKA(self):
-            color1 = Color(ColorModel.cmCYMKA, (1.0, 0.2, 0.16, 0.6, 0.5))
-            color2 = Color(ColorModel.cmCYMKA, (0.9, 0.7, 0.5, 0.9, 0.9))
-            color3 = Color(ColorModel.cmCYMKA, (0.77, 0.5, 0.4, 0.7, 0.6))
+            color1 = Color(ColorModel.cmCYMKA, (0.6, 0.2, 0.16, 0.6, 1.0))
+            color2 = Color(ColorModel.cmCYMKA, (0.9, 0.7, 0.5, 0.9, 1.0))
+            color3 = Color(ColorModel.cmCYMKA, (0.77, 0.5, 0.4, 0.7, 1.0))
 
-            col = ContinousColorRange(color1, color2, ColorModel.cmCYMKA)
-            self.assertTrue(col.isValid())
+            col = ContinousColorRange(color1, color2)
+            self.assertTrue(bool(col))
+
+            col2 = col.clone()
+            self.assertTrue(bool(col2))
 
             col.defaultColorModel(ColorModel.cmCYMKA)
             self.assertEqual(col.defaultColorModel(), ColorModel.cmCYMKA)
+
+            colDom = ColorDomain("testdomain")
+            colDom.setRange(col)
+            self.assertEqual(colDom.containsColor(color3), "cSELF")
+
+        def test_colorHSLA(self):
+            color1 = Color(ColorModel.cmHSLA, (100.0, 0.2, 0.16, 1.0))
+            color2 = Color(ColorModel.cmHSLA, (300.0, 0.7, 0.5, 1.0))
+            color3 = Color(ColorModel.cmHSLA, (177.0, 0.5, 0.4, 1.0))
+
+            col = ContinousColorRange(color1, color2)
+            self.assertTrue(bool(col))
+
+            col2 = col.clone()
+            self.assertTrue(bool(col2))
+
+            col.defaultColorModel(ColorModel.cmHSLA)
+            self.assertEqual(col.defaultColorModel(), ColorModel.cmHSLA)
 
             colDom = ColorDomain("testdomain")
             colDom.setRange(col)
@@ -1677,7 +1752,7 @@ try:
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest='TestColorDomain', verbosity=2)
+        ut.main(defaultTest='TestTable', verbosity=2)
 
 except ImportError as e:
     print(e)

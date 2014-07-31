@@ -329,3 +329,6 @@ RasterCoverage* RasterCoverage::clone(){
     return new RasterCoverage(&ilwRc);
 }
 
+Envelope RasterCoverage::envelope(){
+    return Envelope(this->ptr()->as<Ilwis::RasterCoverage>()->envelope());
+}

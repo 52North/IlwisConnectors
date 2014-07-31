@@ -450,7 +450,6 @@ ColorModel ColorRange::defaultColorModel() const
     int enumVal = static_cast<const Ilwis::ColorRange*>(_range.get())->defaultColorModel();
     ColorModel colormodel = static_cast<ColorModel>(enumVal);
     return colormodel;
-
 }
 
 void ColorRange::defaultColorModel(ColorModel m)
@@ -494,11 +493,8 @@ Color ColorRange::toColor(quint64 clrint, ColorModel clrModel){
     Ilwis::ColorRange::ColorModel ilwModel = static_cast<Ilwis::ColorRange::ColorModel>(clrModel);
     QColor ilwCol = Ilwis::ColorRange::toColor(clrint, ilwModel);
 
-    ColorRange* colRan = new ColorRange();
-
     std::string colStr = (Ilwis::ColorRange::toString(ilwCol, ilwModel)).toStdString();
-    Color result = colRan->toColor(PyBuildString(colStr),clrModel);
-    delete colRan;
+    Color result = ColorRange::toColor(PyBuildString(colStr),clrModel);
     return result;
 }
 
@@ -544,12 +540,11 @@ ContinousColorRange::ContinousColorRange()
     _range.reset(new Ilwis::ContinousColorRange());
 }
 
-ContinousColorRange::ContinousColorRange(const Color &clr1, const Color &clr2, ColorModel colormodel)
+ContinousColorRange::ContinousColorRange(const Color &clr1, const Color &clr2)
 {
     QString color1 = QString::fromStdString(clr1.toString());
     QString color2 = QString::fromStdString(clr2.toString());
-    int clmd = colormodel;
-    Ilwis::ColorRange::ColorModel ilwColor = static_cast<Ilwis::ColorRange::ColorModel>(clmd);
+    Ilwis::ColorRange::ColorModel ilwColor = static_cast<Ilwis::ColorRange::ColorModel>(clr1.getColorModel());
 
     QColor col1 = Ilwis::ContinousColorRange::toColor(QVariant(color1), ilwColor);
     QColor col2 = Ilwis::ContinousColorRange::toColor(QVariant(color2), ilwColor);
@@ -558,7 +553,7 @@ ContinousColorRange::ContinousColorRange(const Color &clr1, const Color &clr2, C
 
 
 
-std::string ContinousColorRange::toString() const
+std::string ContinousColorRange::__str__() const
 {
     QString colors = static_cast<Ilwis::ContinousColorRange*>(_range.get())->toString();
     return colors.toStdString();
@@ -566,7 +561,7 @@ std::string ContinousColorRange::toString() const
 
 
 
-bool ContinousColorRange::isValid() const
+bool ContinousColorRange::__bool__() const
 {
     bool yesno = _range.get()->isValid();
     return yesno;

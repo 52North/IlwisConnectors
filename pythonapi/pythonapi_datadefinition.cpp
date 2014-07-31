@@ -23,7 +23,7 @@ DataDefinition::DataDefinition(Ilwis::DataDefinition* datdef) : _ilwisDatadef(ne
 }
 
 DataDefinition::DataDefinition(const Domain& dm, Range* rng){
-    if(dm.__bool__() && rng->__bool__()){
+    if(dm.__bool__() && rng){
         this->_ilwisDatadef.reset(new Ilwis::DataDefinition(dm.ptr()->as<Ilwis::Domain>(), rng->_range->clone()));
     } else if(dm.__bool__()){
         this->_ilwisDatadef.reset(new Ilwis::DataDefinition(dm.ptr()->as<Ilwis::Domain>()));
@@ -41,8 +41,12 @@ DataDefinition::~DataDefinition(){
 std::string DataDefinition::__str__(){
     if(std::regex_match(this->domain()->name(), std::regex("(_ANONYMOUS_)(.*)")))
         return "Domain: " + this->domain()->type()+ ", Range: " + this->range()->__str__();
-    else
+    else if (domain() && range())
         return "Domain name: " + this->domain()->name()+ ", Domain type: " + this->domain()->type()+ ", Range: " + this->range()->__str__();
+    else if (domain() && domain()->__bool__())
+        return "Domain name: " + this->domain()->name()+ ", Domain type: " + this->domain()->type();
+    else
+        throw InvalidObject("use of invalid Domain or Range");
 }
 
 bool DataDefinition::__bool__() const{
@@ -83,12 +87,16 @@ Ilwis::DataDefinition& DataDefinition::ptr() const{
 }
 
 Range* DataDefinition::range() const{
-    Range* pyRan = new Range(this->ptr().range()->clone());
-    return pyRan;
+    if(this->ptr().range()){
+        return new Range(this->ptr().range()->clone());
+    }else
+        return NULL;
 }
 
 Domain* DataDefinition::domain() const{
     Ilwis::IDomain ilwDom = (this->ptr().domain());
-    Domain* pyDom = new Domain(&ilwDom);
-    return pyDom;
+    if(ilwDom.isValid()){
+        return new Domain(&ilwDom);
+    }else
+        return NULL;
 }

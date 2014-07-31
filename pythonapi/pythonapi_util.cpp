@@ -14,9 +14,11 @@
 #include "../../IlwisCore/core/util/box.h"
 #include "../../IlwisCore/core/util/location.h"
 #include "../../IlwisCore/core/util/containerstatistics.h"
+#include "../../IlwisCore/core/iooptions.h"
 
 
 #include "pythonapi_util.h"
+#include "pythonapi_qvariant.h"
 
 namespace pythonapi {
 
@@ -191,8 +193,8 @@ namespace pythonapi {
 
     //=========================SIZE=============================
 
-    template<typename T> SizeTemplate<T>::SizeTemplate(T xsize, T ysize, T zsize):
-        _data(new Ilwis::Size<T>(xsize,ysize,zsize)){
+    template<typename T> SizeTemplate<T>::SizeTemplate(T xSizeT, T ySizeT, T zSizeT):
+        _data(new Ilwis::Size<T>(xSizeT,ySizeT,zSizeT)){
     }
 
     template<typename T> SizeTemplate<T>::SizeTemplate(const Ilwis::Size<T>& size):
@@ -375,7 +377,55 @@ namespace pythonapi {
     template class BoxTemplate<Ilwis::Coordinate, Coordinate, double>;
     template class BoxTemplate<Ilwis::Location<qint32, false>, Pixel, quint32>;
 
-    //==============ContainerStatistics====================================
+    //==============IOOptions====================================
+
+    IOOptions::IOOptions(): _data(new Ilwis::IOOptions())
+    {
+    }
+
+    IOOptions::IOOptions(const std::string &key, PyObject* value)
+    {
+        QString qstr;
+        qstr = qstr.fromStdString(key);
+        QVariant* qvar = PyObject2QVariant(value);
+        _data.reset(new Ilwis::IOOptions(qstr, *qvar));
+    }
+
+    IOOptions::IOOptions(Ilwis::IOOptions* ilwIOOp) : _data(ilwIOOp)
+    {
+
+    }
+
+    bool IOOptions::contains(const std::string &option){
+        QString qstr;
+        qstr = qstr.fromStdString(option);
+        return this->ptr().contains(qstr);
+    }
+
+    quint32 IOOptions::size(){
+        return this->ptr().size();
+    }
+
+    PyObject* IOOptions::__getitem__(const std::string &option){
+        QString qstr;
+        qstr = qstr.fromStdString(option);
+        QVariant qvar = this->ptr().operator [](qstr);
+        return QVariant2PyObject(qvar);
+    }
+
+    IOOptions& IOOptions::addOption(const std::string &key, PyObject *value){
+        QString qstr;
+        qstr = qstr.fromStdString(key);
+        QVariant* qvar = PyObject2QVariant(value);
+        Ilwis::IOOptions::Option op(qstr, *qvar);
+        Ilwis::IOOptions ilwIO = this->ptr().operator <<(op);
+        IOOptions* pyIO = new IOOptions(&ilwIO);
+        return *pyIO;
+    }
+
+    Ilwis::IOOptions& IOOptions::ptr() const{
+        return (*this->_data);
+    }
 
 
 } // namespace pythonapi
