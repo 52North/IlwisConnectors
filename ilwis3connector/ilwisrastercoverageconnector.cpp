@@ -112,7 +112,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
     gcoverage->size(sz);
     gcoverage->coordinateSystem(mp->coordinateSystem());
     gcoverage->envelope(mp->envelope());
-    _dataType = mp->datadef().range()->determineType();
+    _dataType = mp->datadef().range()->valueType();
 
     return true;
 
@@ -224,7 +224,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
     gcoverage->gridRef()->prepare(gcoverage, grf->size());
 
     gcoverage->georeference(grf);
-    _dataType = gcoverage->datadef().range()->determineType();
+    _dataType = gcoverage->datadef().range()->valueType();
 
     return true;
 
