@@ -11,8 +11,9 @@
 #include "spreadsheetconnectorsobjectfactory.h"
 #include "connectorinterface.h"
 #include "ilwiscontext.h"
+#include "spreadsheettableconnector.h"
 #include "spreadsheetconnectorsmodule.h"
-#include "exceltableconnector.h"
+
 
 using namespace Ilwis;
 using namespace SpreadSheetConnectors;
@@ -51,6 +52,8 @@ void SpreadSheetConnectorsModule::prepare()
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (!cfactory)
         return ;
-    cfactory->addCreator(itTABLE ,"spreadsheet", ExcelTableConnector::create);
+    cfactory->addCreator(itTABLE,"spreadsheets",SpreadSheetTableConnector::create);
+
+    cfactory->addCreator("spreadsheet","spreadsheets",SpreadSheetTableConnector::create);
 
 }

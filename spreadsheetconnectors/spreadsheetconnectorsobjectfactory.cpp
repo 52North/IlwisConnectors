@@ -15,6 +15,7 @@
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "connectorfactory.h"
+#include "spreadsheettableconnector.h"
 #include "spreadsheetconnectorsobjectfactory.h"
 
 using namespace Ilwis;
@@ -37,25 +38,25 @@ bool SpreadSheetConnectorsObjectFactory::canUse(const Resource &resource) const
     if ( filename == "")
         return false;
 
-    auto testFunc = [&](const QFileInfo& inf) -> bool {
-        QString ext = inf.suffix().toLower();
-        return  ext == "xls" || ext == "sdo";
-    };
-
     QFileInfo info(resource.container().toLocalFile()); // possible case that the container is a gdal catalog
-    if (info.isFile() && testFunc(info)) // for the moment a gdal catalog has to be another file
+    if (info.isFile() && SpreadSheetTableConnector::knownSuffix(info.suffix()))
         return true;
     else {
         QFileInfo info (resource.toLocalFile());
-        return testFunc(info);
+        return SpreadSheetTableConnector::knownSuffix(info.suffix());
     }
     return false;
 }
 
-IlwisObject *SpreadSheetConnectorsObjectFactory::create(const Resource &resource, const PrepareOptions &options) const
+IlwisObject *SpreadSheetConnectorsObjectFactory::create(const Resource &resource, const IOOptions &options) const
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    IlwisObjectConnector *connector = factory->createFromResource<IlwisObjectConnector>(resource, "spreadsheet", options);
+    QFileInfo inf(resource.toLocalFile());
+    QFileInfo container(inf.absolutePath());
+    IlwisObjectConnector *connector = 0;
+
+    if ( SpreadSheetTableConnector::knownSuffix(inf.suffix()) || SpreadSheetTableConnector::knownSuffix(container.suffix()))
+        connector = factory->createFromResource<IlwisObjectConnector>(resource, "spreadsheets", options);
 
    if(!connector) {
        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
@@ -69,8 +70,5 @@ IlwisObject *SpreadSheetConnectorsObjectFactory::create(const Resource &resource
    return 0;
 }
 
-IlwisObject *SpreadSheetConnectorsObjectFactory::createTable(const Resource& resource){
-
-}
 
 
