@@ -22,6 +22,8 @@
 #include "gdalconnector.h"
 #include "coordinatesystemconnector.h"
 #include "coverageconnector.h"
+#include "itemrange.h"
+#include "colorrange.h"
 #include "gridcoverageconnector.h"
 #include "attributerecord.h"
 #include "feature.h"
