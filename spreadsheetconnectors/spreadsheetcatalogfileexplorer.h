@@ -8,8 +8,8 @@ class SpreadSheetCatalogFileExplorer : public CatalogExplorer
 public:
     SpreadSheetCatalogFileExplorer();
 
-    SpreadSheetCatalogFileExplorer(const Ilwis::Resource &resource,const PrepareOptions& options=PrepareOptions());
-    static Ilwis::CatalogExplorer *create(const Resource &resource,const PrepareOptions& options=PrepareOptions());
+    SpreadSheetCatalogFileExplorer(const Ilwis::Resource &resource,const IOOptions& options=IOOptions());
+    static Ilwis::CatalogExplorer *create(const Resource &resource,const IOOptions& options=IOOptions());
 
     bool canUse(const Resource& resource) const;
 
