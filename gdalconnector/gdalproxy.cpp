@@ -103,7 +103,17 @@ bool GDALProxy::prepare() {
     getMetaData = add<IGDALGetMetadata>("GDALGetMetadata");
     minValue = add<IGDALRasValue>("GDALGetRasterMinimum");
     maxValue = add<IGDALRasValue>("GDALGetRasterMaximum");
+    setUndefinedValue = add<IGDALSetRasterNoDataValue>("GDALSetRasterNoDataValue");
+    getUndefinedValue = add<IGDALGetRasterNoDataValue>("GDALGetRasterNoDataValue");
     colorInterpretation = add<IGDALGetRasterColorInterpretation>("GDALGetRasterColorInterpretation");
+    setColorInterpretation = add<IGDALSetRasterColorInterpretation>("GDALSetRasterColorInterpretation");
+    getColorPaletteEntry = add<IGDALGetColorEntry>("GDALGetColorEntry");
+    setColorPaletteEntry = add<IGDALSetColorEntry>("GDALSetColorEntry");
+    setColorPalette = add<IGDALSetRasterColorTable>("GDALSetRasterColorTable");
+    createColorPalette = add<IGDALCreateColorTable>("GDALCreateColorTable");
+    getColorPalette = add<IGDALGetRasterColorTable>("GDALGetRasterColorTable");
+    getColorPaletteSize = add<IGDALGetColorEntryCount>("GDALGetColorEntryCount");
+    getPaletteColorInterpretation = add<IGDALGetPaletteInterpretation>("GDALGetPaletteInterpretation");
     //Open Spatial Reference
     importFromEpsg = add<IOSRImportFromEPSG>("OSRImportFromEPSG");
     exportToPrettyWkt = add<IOSRExportToPrettyWkt>("OSRExportToPrettyWkt");
