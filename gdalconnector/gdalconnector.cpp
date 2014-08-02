@@ -114,6 +114,8 @@ GDALDataType GdalConnector::ilwisType2GdalType(IlwisTypes tp) {
     switch(tp) {
     case itINT8:
     case itUINT8:
+    case itCONTINUOUSCOLOR:
+    case itPALETTECOLOR:
         return GDT_Byte;
     case itINT16:
         return GDT_Int16;
