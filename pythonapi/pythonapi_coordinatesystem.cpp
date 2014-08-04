@@ -53,6 +53,18 @@ std::string CoordinateSystem::toProj4() const{
     }
 }
 
+Envelope CoordinateSystem::convertEnvelope(const CoordinateSystem& pyCsy, const Envelope& pyEnv){
+    Ilwis::ICoordinateSystem ilwCsy = pyCsy.ptr()->as<Ilwis::CoordinateSystem>();
+    Ilwis::Envelope ilwEnv = pyEnv.data();
+    return Envelope(this->ptr()->as<Ilwis::CoordinateSystem>()->convertEnvelope(ilwCsy, ilwEnv));
+}
+
+Coordinate CoordinateSystem::coord2coord(const CoordinateSystem &pyCsy, const Coordinate &pyCoord){
+    Ilwis::ICoordinateSystem ilwCsy = pyCsy.ptr()->as<Ilwis::CoordinateSystem>();
+    Ilwis::Coordinate ilwCoord = pyCoord.data();
+    return Coordinate(this->ptr()->as<Ilwis::CoordinateSystem>()->coord2coord(ilwCsy, ilwCoord));
+}
+
 CoordinateSystem *CoordinateSystem::toCoordinateSystem(Object *obj){
     CoordinateSystem* ptr = dynamic_cast<CoordinateSystem*>(obj);
     if(!ptr)

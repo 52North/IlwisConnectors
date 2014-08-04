@@ -112,6 +112,11 @@ bool PixelIterator::zChanged(){
     return this->ptr().zchanged();
 }
 
+PixelIterator* PixelIterator::__set__(const PixelIterator& otherIt){
+    this->ptr() = otherIt.ptr();
+    return this;
+}
+
 PixelIterator& PixelIterator::__getitem__(const Pixel &vox){
     this->ptr()[vox.data()];
     return (*this);
@@ -178,13 +183,6 @@ PixelIterator PixelIterator::end(){
 
 RasterCoverage* PixelIterator::raster(){
     return _coverage;
-}
-
-void PixelIterator::copyValues(PixelIterator& sourceIt){
-    while(sourceIt != sourceIt.end()){
-        this->__setitem__(sourceIt.__int__(), sourceIt.__float__());
-        sourceIt.__next__();
-    }
 }
 
 Ilwis::PixelIterator& PixelIterator::ptr() const{

@@ -2,6 +2,7 @@
 #include <QSqlError>
 #include <QFile>
 #include <QDir>
+#include <QColor>
 
 #include "kernel.h"
 #include "raster.h"
@@ -21,6 +22,10 @@
 #include "ilwisobjectconnector.h"
 #include "gdalconnector.h"
 #include "coverageconnector.h"
+#include "domainitem.h"
+#include "itemrange.h"
+#include "coloritem.h"
+#include "colorrange.h"
 #include "gridcoverageconnector.h"
 #include "geodeticdatum.h"
 #include "projection.h"
@@ -42,78 +47,228 @@ Ilwis::IlwisObject *RasterCoverageConnector::create() const{
 RasterCoverageConnector::RasterCoverageConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : CoverageConnector(resource,load, options){
 }
 
+
 bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
 
     if(!CoverageConnector::loadMetaData(data, options))
         return false;
 
-    auto *gcoverage = static_cast<RasterCoverage *>(data);
+    auto *raster = static_cast<RasterCoverage *>(data);
 
     if (_handle->type() == GdalHandle::etGDALDatasetH){
         Coordinate cMin, cMax;
-        Size<> sz(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
-        IGeoReference grf;
+        Size<> rastersize(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
+
+        auto layerHandle = gdal()->getRasterBand(_handle->handle(), 1);
+        GDALColorInterp colorType = gdal()->colorInterpretation(layerHandle);
+        bool ok = false;
+        if ( colorType >= 3 && colorType <= 12){
+            raster->size(Size<>(rastersize.xsize(), rastersize.ysize(), rastersize.zsize() / 3));
+            ok = handleColorCase(rastersize, raster,colorType);
+        }else if (colorType == 2){ // color palette
+            ok = handlePaletteCase(rastersize, raster);
+        }else if( colorType <=1){ // no colors + grayscale which equals image domain
+            raster->size(rastersize);
+            ok = handleNumericCase(rastersize, raster);
+        }
+
+        if (!ok)
+            return false;
+
+
+        IGeoReference georeference;
         double geosys[6];
         CPLErr err = gdal()->getGeotransform(_handle->handle(), geosys) ;
         if ( err != CE_None) {
             cMin = Coordinate( 0, 0 );
-            cMax = Coordinate( sz.xsize() - 1, sz.ysize() - 1);
-            if(!grf.prepare("code=georef:undetermined"))
-                return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
-            grf->coordinateSystem(gcoverage->coordinateSystem()); // the grf.prepare() for internal ilwis georeferences (among others "undetermined") does not autmatically set its csy
+            cMax = Coordinate( rastersize.xsize() - 1, rastersize.ysize() - 1);
+            if(!georeference.prepare("code=georef:undetermined"))
+                return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",raster->name() );
+            georeference->coordinateSystem(raster->coordinateSystem()); // the grf.prepare() for internal ilwis georeferences (among others "undetermined") does not autmatically set its csy
         } else {
             double a1 = geosys[0];
             double b1 = geosys[3];
             double a2 = geosys[1];
             double b2 = geosys[5];
             Coordinate crdLeftup( a1 , b1);
-            Coordinate crdRightDown(a1 + sz.xsize() * a2, b1 + sz.ysize() * b2 ) ;
+            Coordinate crdRightDown(a1 + rastersize.xsize() * a2, b1 + rastersize.ysize() * b2 ) ;
             cMin = Coordinate( min(crdLeftup.x, crdRightDown.x), min(crdLeftup.y, crdRightDown.y));
             cMax = Coordinate( max(crdLeftup.x, crdRightDown.x), max(crdLeftup.y, crdRightDown.y));
 
-            if(!grf.prepare(_resource.url().toString()))
-                return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",gcoverage->name() );
+            if(!georeference.prepare(_resource.url().toString()))
+                return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",raster->name() );
         }
 
-        if (!gcoverage->gridRef()->prepare(gcoverage,sz))
-            return false;
+        georeference->size(rastersize);
+        georeference->compute();
 
-        gcoverage->envelope(Envelope(cMin, cMax));
-        gcoverage->coordinateSystem()->envelope(gcoverage->envelope());
-        gcoverage->georeference(grf);
-        grf->size(sz);
-        grf->compute();
-        gcoverage->size(sz);
-
-        double vminRaster=rUNDEF, vmaxRaster=rUNDEF;
-        double resolution= 0;
-        for(int i =0 ; i < sz.zsize(); ++i){
-            auto layerHandle = gdal()->getRasterBand(_handle->handle(), i+1);
-            if (!layerHandle) {
-                return ERROR2(ERR_COULD_NOT_LOAD_2, gcoverage->name(),"layer");
-            }
-            //TODO colors. all tools are there but unclear how much the effort is worth
-            // GDALColorInterp value = gdal()->colorInterpretation(layerHandle);
-
-            int ok;
-            _gdalValueType = gdal()->rasterDataType(layerHandle);
-            resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
-            auto vmin = gdal()->minValue(layerHandle, &ok);
-            auto vmax = gdal()->maxValue(layerHandle, &ok);
-            vminRaster = Ilwis::min(vmin, vminRaster);
-            vmaxRaster = Ilwis::max(vmax, vmaxRaster);
-            gcoverage->datadef(i) = createDataDef(vmin, vmax, resolution);
-
-        }
-        gcoverage->datadef() = DataDefinition(gcoverage->datadef(0).domain(), new NumericRange(vminRaster, vmaxRaster,resolution));
-        _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
-
+        raster->envelope(Envelope(cMin, cMax));
+        raster->coordinateSystem()->envelope(raster->envelope());
+        raster->georeference(georeference);
+        //if (!raster->gridRef()->prepare(raster,rastersize))
+        //    return false;
 
         return true;
 
     }else{
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"non-RasterCoverage",_filename.toLocalFile());
     }
+}
+
+bool RasterCoverageConnector::handlePaletteCase(Size<> &rastersize, RasterCoverage* raster) {
+
+    auto layerHandle = gdal()->getRasterBand(_handle->handle(), 1);
+    auto paletteHandle = gdal()->getColorPalette(layerHandle);
+    ColorPalette *palette = new ColorPalette();
+
+    if (!paletteHandle)
+        return false;
+    int count = gdal()->getColorPaletteSize(paletteHandle);
+    if ( count == 0)
+        return false;
+    ColorRangeBase::ColorModel model;
+    GDALPaletteInterp colorType = gdal()->getPaletteColorInterpretation(paletteHandle);
+    for(int i = 0; i < count; ++i){
+
+        GDALColorEntry *entry = gdal()->getColorPaletteEntry(paletteHandle, i);
+        if ( !entry)
+            continue;
+        QColor clr;
+        switch ( colorType){
+        case GPI_RGB:
+            clr.setRgb(entry->c1, entry->c2, entry->c3);
+            model = ColorRangeBase::cmRGBA;
+            break;
+        case GPI_HLS:
+            clr.setHsl(entry->c1, entry->c2, entry->c3); break;
+            model = ColorRangeBase::cmHSLA;
+            break;
+        case GPI_CMYK:
+            clr.setCmyk(entry->c1, entry->c2, entry->c3, entry->c4);
+            model = ColorRangeBase::cmCYMKA;
+            break;
+        case GPI_Gray:
+            clr.setRgb(entry->c1, entry->c1, entry->c1);
+            model = ColorRangeBase::cmGREYSCALE;
+        }
+        clr.setAlpha(entry->c4);
+        palette->add(new ColorItem(clr));
+
+    }
+    palette->defaultColorModel(model);
+
+    _typeSize = 1;
+    _gdalValueType = gdal()->rasterDataType(layerHandle);
+    raster->datadef() = DataDefinition(IDomain("colorpalette"), reinterpret_cast<Range *>(palette));
+
+    return true;
+}
+
+bool RasterCoverageConnector::handleColorCase(Size<> &rastersize, RasterCoverage* raster, GDALColorInterp colorType){
+
+
+    if ( colorType >= 3 && colorType <=5)
+        _colorModel = ColorRangeBase::cmRGBA;
+    else if ( colorType >= 7 && colorType <= 9)
+        _colorModel = ColorRangeBase::cmHSLA;
+    else
+        _colorModel = ColorRangeBase::cmCYMKA;
+
+     for(int layer =1 ; layer < rastersize.zsize(); ++layer){
+         auto layerHandle = gdal()->getRasterBand(_handle->handle(), 1);
+        GDALColorInterp ctype = gdal()->colorInterpretation(layerHandle);
+        if ( ctype == GCI_AlphaBand){
+            _hasTransparency = true;
+            break;
+        }
+
+     }
+    quint32 noOfComponents = _hasTransparency ? 4 : 3;
+    std::map<int, int> vminRasterAll, vmaxRasterAll;
+    for(int layer =0 ; layer < rastersize.zsize(); layer+=noOfComponents){
+        std::map<int, int> vminRaster;
+        std::map<int, int> vmaxRaster;
+        for(int component = 0; component < noOfComponents; ++component){
+            auto layerHandle = gdal()->getRasterBand(_handle->handle(), layer + component + 1);
+            if (!layerHandle) {
+                return ERROR2(ERR_COULD_NOT_LOAD_2, raster->name(),"layer");
+            }
+            GDALColorInterp ctype = gdal()->colorInterpretation(layerHandle);
+
+            int ok;
+            _gdalValueType = gdal()->rasterDataType(layerHandle);
+            auto vmin = gdal()->minValue(layerHandle, &ok);
+            auto vmax = gdal()->maxValue(layerHandle, &ok);
+            vminRaster[ctype] = Ilwis::min(vmin, component == 0 ? 1000 : vminRaster[ctype]);
+            vmaxRaster[ctype] = Ilwis::max(vmax, component == 0 ? -1000 : vmaxRaster[ctype]);
+
+        }
+        raster->datadef(layer / noOfComponents) = createDataDefColor(vminRaster, vmaxRaster);
+        for(auto component =  vminRaster.begin(); component != vminRaster.end(); ++component)
+            vminRasterAll[component->first] = std::min(component == vminRasterAll.begin() ? 1000 : vminRasterAll[component->first], vminRaster[component->first]);
+        for(auto component =  vmaxRaster.begin(); component != vmaxRaster.end(); ++component)
+            vmaxRasterAll[component->first] = std::max(component == vmaxRasterAll.begin() ? -1000 : vmaxRasterAll[component->first], vmaxRaster[component->first]);
+
+    }
+
+    raster->datadef() = createDataDefColor(vminRasterAll, vmaxRasterAll);
+
+    return true;
+}
+
+DataDefinition RasterCoverageConnector::createDataDefColor(std::map<int, int>& vminRaster, std::map<int, int>& vmaxRaster){
+    QColor clrMin, clrMax;
+    switch(_colorModel){
+        case ColorRangeBase::cmRGBA:
+        clrMin = QColor(vminRaster[GCI_RedBand],vminRaster[GCI_GreenBand], vminRaster[GCI_BlueBand]);
+        clrMax = QColor(vmaxRaster[GCI_RedBand],vmaxRaster[GCI_GreenBand], vmaxRaster[GCI_BlueBand]);
+        if ( _hasTransparency)
+            clrMin.setAlpha(vminRaster[GCI_AlphaBand]);
+        break;
+    case ColorRangeBase::cmHSLA:
+        clrMin.setHsl(vminRaster[GCI_HueBand],vminRaster[GCI_SaturationBand], vminRaster[GCI_LightnessBand]);
+        clrMin.setHsl(vmaxRaster[GCI_HueBand],vmaxRaster[GCI_SaturationBand], vmaxRaster[GCI_LightnessBand]);
+        if ( _hasTransparency)
+            clrMin.setAlpha(vminRaster[GCI_AlphaBand]);
+        break;
+    case ColorRangeBase::cmCYMKA:
+        break;
+    default:
+        break;
+
+    }
+    Range *colorRange = new ContinousColorRange( clrMin, clrMax, _colorModel);
+    _typeSize = 1;
+    _gdalValueType = GDT_Byte;
+    return DataDefinition(IDomain("color"), colorRange);
+
+}
+
+bool RasterCoverageConnector::handleNumericCase(const Size<> &rastersize, RasterCoverage* raster) {
+
+    double vminRaster=rUNDEF, vmaxRaster=rUNDEF;
+    double resolution= 0;
+    for(int i =0 ; i < rastersize.zsize(); ++i){
+        auto layerHandle = gdal()->getRasterBand(_handle->handle(), i+1);
+        if (!layerHandle) {
+            return ERROR2(ERR_COULD_NOT_LOAD_2, raster->name(),"layer");
+        }
+
+        int ok;
+        _gdalValueType = gdal()->rasterDataType(layerHandle);
+        resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
+        auto vmin = gdal()->minValue(layerHandle, &ok);
+        auto vmax = gdal()->maxValue(layerHandle, &ok);
+        vminRaster = Ilwis::min(vmin, vminRaster);
+        vmaxRaster = Ilwis::max(vmax, vmaxRaster);
+        raster->datadef(i) = createDataDef(vmin, vmax, resolution);
+
+    }
+    raster->datadef() = DataDefinition(raster->datadef(0).domain(), new NumericRange(vminRaster, vmaxRaster,resolution));
+    _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
+
+    return true;
+
 }
 
 DataDefinition RasterCoverageConnector::createDataDef(double vmin, double vmax, double resolution){
@@ -155,6 +310,50 @@ inline double RasterCoverageConnector::value(char *block, int index) const{
     return v;
 }
 
+void RasterCoverageConnector::setColorValues(GDALColorInterp colorType, std::vector<double>& values, quint32 noItems, char *block) const
+{
+    for(quint32 i=0; i < noItems; ++i) {
+        quint64 colorpart= value(block, i);
+        switch (colorType){
+        case GCI_RedBand:
+        case GCI_HueBand:
+            values[i] = ( colorpart << 16) | ( _hasTransparency ? 0 : 0xFF000000); break;
+        case GCI_GreenBand:
+        case GCI_SaturationBand:
+            values[i] = ((quint32)values[i]) | ( colorpart << 8);break;
+        case GCI_BlueBand:
+        case GCI_LightnessBand:
+            values[i] = ((quint32)values[i]) | colorpart;
+        case GCI_AlphaBand:
+             values[i] = ((quint32)values[i]) | ( colorpart << 24);break;
+        default:
+            //TODO other cases but without proper data a bit hard to do
+            break;
+        }
+    }
+}
+
+void RasterCoverageConnector::readData(UPGrid& grid, GDALRasterBandH layerHandle, int inLayerBlockIndex, quint32 linesPerBlock, char *block, quint64 linesLeft) const
+{
+    if ( linesLeft > linesPerBlock)
+        gdal()->rasterIO(layerHandle,GF_Read,0,inLayerBlockIndex * linesPerBlock,grid->size().xsize(), linesPerBlock,
+                         block,grid->size().xsize(), linesPerBlock,_gdalValueType,0,0 );
+    else {
+        gdal()->rasterIO(layerHandle,GF_Read,0,inLayerBlockIndex * linesPerBlock,grid->size().xsize(), linesLeft,
+                         block,grid->size().xsize(), linesLeft,_gdalValueType,0,0 );
+    }
+}
+
+bool RasterCoverageConnector::moveIndexes(quint32& linesPerBlock, quint64& linesLeft, int& inLayerBlockIndex)
+{
+    ++inLayerBlockIndex;
+    if ( linesLeft < linesPerBlock )
+        return false;
+    linesLeft -= linesPerBlock;
+
+    return true;
+}
+
 bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& options ){
     auto layerHandle = gdal()->getRasterBand(_handle->handle(), 1);
     if (!layerHandle) {
@@ -172,18 +371,25 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& optio
     std::map<quint32, std::vector<quint32> > blocklimits = grid->calcBlockLimits(options);
 
     for(const auto& layer : blocklimits){
-        layerHandle = gdal()->getRasterBand(_handle->handle(), layer.first + 1);
-        quint64 linesLeft = totalLines;
-        int gdalindex = 0; //
-        for(const auto& index : layer.second) {
-            loadBlock(layerHandle, index, gdalindex, linesPerBlock, linesLeft, block, grid);
+        quint64 linesLeft = std::min((quint64)grid->maxLines(), totalLines - grid->maxLines() * layer.second[0]);
+        if ( _colorModel == ColorRangeBase::cmNONE || raster->datadef().domain()->valueType() == itPALETTECOLOR){ // palette entries are just integers so we can use the numeric read for it
+            layerHandle = gdal()->getRasterBand(_handle->handle(), layer.first + 1);
+            int inLayerBlockIndex = layer.second[0] % grid->blocksPerBand(); //
+            for(const auto& index : layer.second) {
+                loadNumericBlock(layerHandle, index, inLayerBlockIndex, linesPerBlock, linesLeft, block, grid);
 
-            ++gdalindex;
-            if ( linesLeft < linesPerBlock )
-                break;
-            linesLeft -= linesPerBlock;
+                if(!moveIndexes(linesPerBlock, linesLeft, inLayerBlockIndex))
+                    break;
+            }
+        }else { // continous colorcase, combining 3/4 (gdal)layers into one
+            int inLayerBlockIndex = layer.second[0] % grid->blocksPerBand(); //
+            for(const auto& index : layer.second) {
+                loadColorBlock(layer.first,index,inLayerBlockIndex,linesPerBlock,linesLeft,block,grid);
+
+                if(!moveIndexes(linesPerBlock, linesLeft, inLayerBlockIndex)) // ensures that the administration with respect how much needs to be done is inorder
+                    break;
+            }
         }
-
     }
 
     delete [] block;
@@ -191,15 +397,27 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& optio
     return true;
 }
 
-void RasterCoverageConnector::loadBlock(GDALRasterBandH bandhandle, quint32 index, quint32 gdalindex, quint32 linesPerBlock, quint64 linesLeft,char *block, UPGrid& grid) const{
-    if ( linesLeft > linesPerBlock)
-        gdal()->rasterIO(bandhandle,GF_Read,0,gdalindex * linesPerBlock,grid->size().xsize(), linesPerBlock,
-                         block,grid->size().xsize(), linesPerBlock,_gdalValueType,0,0 );
-    else {
-        gdal()->rasterIO(bandhandle,GF_Read,0,gdalindex * linesPerBlock,grid->size().xsize(), linesLeft,
-                         block,grid->size().xsize(), linesLeft,_gdalValueType,0,0 );
+void RasterCoverageConnector::loadColorBlock(quint32 ilwisLayer, quint32 index, quint32 inLayerBlockIndex, quint32 linesPerBlock, quint64 linesLeft,char *block, UPGrid& grid) const{
+    std::vector<double> values;
+    // ilwis color layers consist of 3 or 4 gdal layers
+    quint32 noOfComponents = _hasTransparency ? 4 : 3; // do we have a transparency layer?
+    for( int component = 0; component < noOfComponents ; ++component){
+        auto layerHandle = gdal()->getRasterBand(_handle->handle(), noOfComponents * ilwisLayer + component + 1);
+        GDALColorInterp colorType = gdal()->colorInterpretation(layerHandle);
+        readData(grid, layerHandle, inLayerBlockIndex, linesPerBlock, block, linesLeft);
 
+        quint32 noItems = grid->blockSize(index);
+        if ( noItems == iUNDEF)
+            return ;
+        if ( values.size() == 0)
+            values.resize(noItems);
+        setColorValues(colorType, values, noItems, block);
     }
+    grid->setBlockData(index, values, true);
+}
+
+void RasterCoverageConnector::loadNumericBlock(GDALRasterBandH layerHandle, quint32 index, quint32 inLayerBlockIndex, quint32 linesPerBlock, quint64 linesLeft,char *block, UPGrid& grid) const{
+    readData(grid, layerHandle, inLayerBlockIndex, linesPerBlock, block, linesLeft);
     quint32 noItems = grid->blockSize(index);
      if ( noItems == iUNDEF)
         return ;
@@ -247,6 +465,8 @@ bool RasterCoverageConnector::loadDriver()
     return true;
 }
 
+
+
 bool RasterCoverageConnector::store(IlwisObject *obj, int )
 {
     if(!loadDriver())
@@ -254,7 +474,7 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
 
-    if ( raster->datadef().domain()->ilwisType() != itNUMERICDOMAIN){
+    if (! hasType(raster->datadef().domain()->ilwisType(),itNUMERICDOMAIN | itCOLORDOMAIN)){
         IDomain dom;
         if(!dom.prepare("code=value")) { //TODO:  for the moment only value maps in gdal
             return ERROR1(ERR_NO_INITIALIZED_1,obj->name());
@@ -262,10 +482,17 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
         raster->datadef().domain(dom);
     }
     Size<> sz = raster->size();
-    GDALDataType gdalType = ilwisType2GdalType(raster->datadef().range()->determineType());
+    GDALDataType gdalType = ilwisType2GdalType(raster->datadef().range()->valueType());
     QString filename = constructOutputName(_driver);
+    bool isColorMap = raster->datadef().domain()->ilwisType() == itCOLORDOMAIN;
+    bool ispaletteMap = raster->datadef().domain()->valueType() == itPALETTECOLOR;
 
-    GDALDatasetH dataset = gdal()->create( _driver, filename.toLocal8Bit(), sz.xsize(), sz.ysize(), sz.zsize(), gdalType, 0 );
+    GDALDatasetH dataset = 0;
+    if ( ispaletteMap && format() == "GTiff"){
+        char *options[] = {"PHOTOMETRIC=PALETTE", NULL};
+        dataset = gdal()->create( _driver, filename.toLocal8Bit(), sz.xsize(), sz.ysize(),  sz.zsize(), gdalType, options );
+    }else
+        dataset = gdal()->create( _driver, filename.toLocal8Bit(), sz.xsize(), sz.ysize(),  isColorMap ?  sz.zsize() * 3 : sz.zsize(), gdalType, 0 );
     if ( dataset == 0) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data set",_filename.toLocalFile());
     }
@@ -276,28 +503,107 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
     if (!ok)
         return false;
 
-    switch(gdalType) {
-    case GDT_Byte:
-        ok = save<quint8>(raster, dataset,gdalType);break;
-    case GDT_UInt16:
-        ok = save<quint16>(raster, dataset,gdalType);break;
-    case GDT_Int16:
-        ok = save<qint16>(raster, dataset,gdalType);break;
-    case GDT_Int32:
-        ok = save<qint32>(raster, dataset,gdalType);break;
-    case GDT_UInt32:
-        ok = save<quint32>(raster, dataset,gdalType);break;
-    case GDT_Float32:
-        ok = save<float>(raster, dataset,gdalType);break;
-    case GDT_Float64:
-        ok = save<double>(raster, dataset,gdalType);break;
-    default:
-        ok= ERROR1(ERR_NO_INITIALIZED_1, "gdal Data type");
+    if ( isColorMap ){
+        ok = storeColorRaster(raster, dataset)    ;
+    } else {
+        switch(gdalType) {
+        case GDT_Byte:
+            ok = save<quint8>(raster, dataset,gdalType);break;
+        case GDT_UInt16:
+            ok = save<quint16>(raster, dataset,gdalType);break;
+        case GDT_Int16:
+            ok = save<qint16>(raster, dataset,gdalType);break;
+        case GDT_Int32:
+            ok = save<qint32>(raster, dataset,gdalType);break;
+        case GDT_UInt32:
+            ok = save<quint32>(raster, dataset,gdalType);break;
+        case GDT_Float32:
+            ok = save<float>(raster, dataset,gdalType);break;
+        case GDT_Float64:
+            ok = save<double>(raster, dataset,gdalType);break;
+        default:
+            ok= ERROR1(ERR_NO_INITIALIZED_1, "gdal Data type");
+        }
     }
 
     gdal()->close(dataset);
 
     return ok;
+}
+
+bool RasterCoverageConnector::storeColorRaster(RasterCoverage *raster, GDALDatasetH dataset){
+    bool ok = true;
+    IlwisTypes tp = raster->datadef().domain()->valueType();
+    if (tp == itCONTINUOUSCOLOR){
+        quint32 gdalLayer = 1;
+
+        for(int band = 0; band < raster->size().zsize() && ok; ++band){
+            ok = saveByteBand(raster,dataset,gdalLayer++, band, GCI_RedBand);
+            ok &= saveByteBand(raster,dataset,gdalLayer++, band, GCI_GreenBand);
+            ok &= saveByteBand(raster,dataset,gdalLayer++, band, GCI_BlueBand);
+        }
+    } else { // palette case
+        GDALColorTableH hpalette = gdal()->createColorPalette(GPI_RGB);
+        if (!hpalette)
+            return false;
+        RangeIterator<QColor, ColorPalette> iter(raster->datadef().range<>().data());
+        while(iter.isValid()){
+            GDALColorEntry entry;
+            QColor clr = *iter;
+            entry.c1 = clr.red();
+            entry.c2 = clr.green();
+            entry.c3 = clr.blue();
+            entry.c4 = clr.alpha();
+            gdal()->setColorPaletteEntry(hpalette,iter.current(), &entry);
+            ++iter;
+        }
+        GDALRasterBandH hband = gdal()->getRasterBand(dataset,1);
+        if ( gdal()->setColorPalette(hband, hpalette) != CE_None){
+            const char *err = gdal()->getLastErrorMsg();
+            return false;
+        }
+        ok = save<quint8>(raster, dataset,GDT_Byte);
+    }
+    return ok;
+}
+
+bool RasterCoverageConnector::saveByteBand(RasterCoverage *raster, GDALDatasetH dataset,int gdallayerindex, int band, GDALColorInterp colorType){
+    quint32 columns = raster->size().xsize();
+    PixelIterator iter = raster->band(band);
+    std::vector<unsigned char> data(columns);
+    GDALRasterBandH hband = gdal()->getRasterBand(dataset,gdallayerindex);
+    if (!hband) {
+        return ERROR1(ERR_NO_INITIALIZED_1,"raster band");
+    }
+    if ( gdal()->setColorInterpretation(hband,colorType) != CE_None) // not supported by this format
+        return ERROR2(ERR_OPERATION_NOTSUPPORTED2,"Color"," this format");
+    auto endPosition =  iter.end();
+    while(iter != endPosition) {
+        for_each(data.begin(), data.end(), [&](unsigned char& v){
+           quint32 component = (quint32)*iter;
+            switch(colorType){
+            case GCI_RedBand:
+                v = (0x00FF0000 & component) >> 16;break;
+            case GCI_GreenBand:
+                v =(0x0000FF00 & component) >> 8;break;
+            case GCI_BlueBand:
+                v = 0x00000000FF & component;break;
+            default:
+                break;
+            }
+            ++iter;
+        });
+
+        double y = iter.zchanged() ? iter.box().ylength()  : iter.position().y;
+
+        if(iter == endPosition){
+            y = iter.box().ylength();
+        }
+
+        gdal()->rasterIO(hband, GF_Write, 0, y - 1, columns, 1, (void *)&data[0],columns,1, GDT_Byte,0,0 );
+
+    }
+    return true;
 }
 
 bool RasterCoverageConnector::setSRS(Coverage *raster, GDALDatasetH dataset) const

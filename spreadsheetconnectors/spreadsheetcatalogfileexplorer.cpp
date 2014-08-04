@@ -26,12 +26,12 @@ using namespace SpreadSheetConnectors;
 
 REGISTER_CATALOGEXPLORER(SpreadSheetCatalogFileExplorer)
 
-Ilwis::CatalogExplorer *SpreadSheetCatalogFileExplorer::create(const Resource &resource, const PrepareOptions &options)
+Ilwis::CatalogExplorer *SpreadSheetCatalogFileExplorer::create(const Resource &resource, const IOOptions &options)
 {
     return new SpreadSheetCatalogFileExplorer(resource, options);
 }
 
-SpreadSheetCatalogFileExplorer::SpreadSheetCatalogFileExplorer(const Ilwis::Resource &resource, const PrepareOptions &options) : CatalogExplorer(resource, options)
+SpreadSheetCatalogFileExplorer::SpreadSheetCatalogFileExplorer(const Ilwis::Resource &resource, const IOOptions &options) : CatalogExplorer(resource, options)
 {
 }
 std::vector<Ilwis::Resource> SpreadSheetCatalogFileExplorer::loadItems()
@@ -63,8 +63,8 @@ bool SpreadSheetCatalogFileExplorer::canUse(const Resource &resource) const
     if (resource.url().scheme() == "ilwis")
         return false;
     QFileInfo fileInfo(resource.url().toLocalFile());
-    if ( fileInfo.isFile()) { // must be a file and extension must be supported by gdal
-        if ( fileInfo.suffix().toLower() == "xls" || fileInfo.suffix().toLower() == "sdo")
+    if ( fileInfo.isFile()) { // must be a file
+        if ( fileInfo.suffix().toLower() == "xls" || fileInfo.suffix().toLower() == "ods" || fileInfo.suffix() == "xslx")
         return true;
     }
     return false;

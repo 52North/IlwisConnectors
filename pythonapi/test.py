@@ -93,13 +93,40 @@ try:
                 fc.attributeTable().columns()
             )
 
-        def testColumnDefinition(self):
+        def test_ColumnDefinition(self):
             fc = FeatureCoverage("rainfall.shp")
             for feat in fc:
-                coldef = feat.columndefinition(1)
-                print(coldef)
-                coldef2 = feat.columndefinition("MARCH")
-                print(coldef2)
+                coldef = feat.columnDefinition(1)
+                coldef2 = feat.columnDefinition("MARCH")
+
+            tab = fc.attributeTable()
+            self.assertEqual(str(tab.columnDefinition(1)), str(coldef))
+            self.assertEqual(str(tab.columnDefinition("MARCH")), str(coldef2))
+
+            numRan = NumericRange(0.0, 500.0)
+            numDom = NumericDomain()
+            numDom.setRange(numRan)
+            datDef = DataDefinition(numDom)
+            colDef = ColumnDefinition("MARCHc", datDef, 3)
+
+            tab.setColumnDefinition(3, colDef)
+            self.assertNotEqual(str(tab.columnDefinition(3)), str(coldef2))
+
+            colDef2 = ColumnDefinition("JANUARYc", datDef, 1)
+            tab.setColumnDefinition("JANUARY", colDef2)
+            self.assertNotEqual(str(tab.columnDefinition(1)), str(coldef))
+
+        def test_newColumn(self):
+            tab = Table("rainfall.shp")
+            before = tab.columnCount()
+
+            txtDom = TextDomain()
+            datdef = DataDefinition(txtDom)
+            coldef = ColumnDefinition("testText", datdef, tab.columnCount())
+            tab.addColumn(coldef)
+            self.assertEqual(tab.columnCount(), before+1)
+            tab.setCell(tab.columnCount()-1, 1, "new Cell")
+            self.assertEqual(tab.cell(tab.columnCount()-1, 1), "new Cell")
 
     #@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
@@ -715,6 +742,8 @@ try:
             fc.setCoordinateSystem(cs1)
             self.assertEqual(fc.coordinateSystem().name(), "myProj4CSY",
                              msg="could not alter FeatureCoverage's CoordinateSystem")
+            self.assertEqual(cs1.toProj4(),
+                             "+proj=utm +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +zone=35")
 
         def test_EPSG(self):
             cs2 = CoordinateSystem("code=epsg:23035")
@@ -728,6 +757,14 @@ try:
             cs2 = CoordinateSystem("code=epsg:23035")
             self.assertTrue(cs1 == cs2)
             self.assertFalse(cs1 != cs2)
+
+        def test_envelope(self):
+            rc = RasterCoverage("n000302.mpr")
+            env = rc.envelope()
+            csyNew = CoordinateSystem("code=epsg:2050")
+            newEnv = rc.coordinateSystem().convertEnvelope(csyNew, env)
+
+            self.assertNotEqual(str(env), str(newEnv))
 
     #@ut.skip("temporarily")
     class TestGeoReference(ut.TestCase):
@@ -1108,6 +1145,31 @@ try:
         def test_band(self):
             rc = RasterCoverage("landuse.mpr")
             pixIt = rc.band(0)
+
+        def test_reprojectRaster(self):
+            rc = RasterCoverage("n000302.mpr")
+
+            targetCsy = CoordinateSystem("code=epsg:2050")
+
+            sourceGeoref = rc.geoReference()
+            sourceCsy = rc.coordinateSystem()
+            sourceEnv = rc.envelope()
+
+            targetEnv = sourceCsy.convertEnvelope(targetCsy, sourceEnv)
+
+            bo = sourceGeoref.envelope2Box(targetEnv)
+            sz = bo.size()
+
+            newGeoRefStr = ("code=georef:type=corners,csy=epsg:2050,envelope=" +
+                        str(targetEnv) + ",gridsize=" + str(sz.xsize) + " " + str(sz.ysize) +
+                        ",name=grf1")
+
+            targetGeoRef = GeoReference(newGeoRefStr)
+            rcReproj = Engine.do("resample", rc.name(), targetGeoRef.name(), "bilinear")
+            self.assertTrue(bool(rcReproj))
+
+            rcReproj2 = rc.reprojectRaster("newraster", 2050, "bilinear")
+            self.assertTrue(bool(rcReproj2))
 
     #@ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
@@ -1615,10 +1677,12 @@ try:
             color2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
             color3 = Color(ColorModel.cmRGBA, (230.0, 60.0, 50.0, 240.0))
 
-            col = ContinousColorRange(color1, color2, ColorModel.cmRGBA)
-            self.assertTrue(col.isValid())
+            col = ContinousColorRange(color1, color2)
+            self.assertTrue(bool(col))
 
             col2 = col.clone()
+            self.assertTrue(bool(col2))
+
             col.defaultColorModel(ColorModel.cmRGBA)
             self.assertEqual(col.defaultColorModel(), ColorModel.cmRGBA)
 
@@ -1627,15 +1691,36 @@ try:
             self.assertEqual(colDom.containsColor(color3), "cSELF")
 
         def test_colorCYMKA(self):
-            color1 = Color(ColorModel.cmCYMKA, (1.0, 0.2, 0.16, 0.6, 0.5))
-            color2 = Color(ColorModel.cmCYMKA, (0.9, 0.7, 0.5, 0.9, 0.9))
-            color3 = Color(ColorModel.cmCYMKA, (0.77, 0.5, 0.4, 0.7, 0.6))
+            color1 = Color(ColorModel.cmCYMKA, (0.6, 0.2, 0.16, 0.6, 1.0))
+            color2 = Color(ColorModel.cmCYMKA, (0.9, 0.7, 0.5, 0.9, 1.0))
+            color3 = Color(ColorModel.cmCYMKA, (0.77, 0.5, 0.4, 0.7, 1.0))
 
-            col = ContinousColorRange(color1, color2, ColorModel.cmCYMKA)
-            self.assertTrue(col.isValid())
+            col = ContinousColorRange(color1, color2)
+            self.assertTrue(bool(col))
+
+            col2 = col.clone()
+            self.assertTrue(bool(col2))
 
             col.defaultColorModel(ColorModel.cmCYMKA)
             self.assertEqual(col.defaultColorModel(), ColorModel.cmCYMKA)
+
+            colDom = ColorDomain("testdomain")
+            colDom.setRange(col)
+            self.assertEqual(colDom.containsColor(color3), "cSELF")
+
+        def test_colorHSLA(self):
+            color1 = Color(ColorModel.cmHSLA, (100.0, 0.2, 0.16, 1.0))
+            color2 = Color(ColorModel.cmHSLA, (300.0, 0.7, 0.5, 1.0))
+            color3 = Color(ColorModel.cmHSLA, (177.0, 0.5, 0.4, 1.0))
+
+            col = ContinousColorRange(color1, color2)
+            self.assertTrue(bool(col))
+
+            col2 = col.clone()
+            self.assertTrue(bool(col2))
+
+            col.defaultColorModel(ColorModel.cmHSLA)
+            self.assertEqual(col.defaultColorModel(), ColorModel.cmHSLA)
 
             colDom = ColorDomain("testdomain")
             colDom.setRange(col)
@@ -1675,9 +1760,207 @@ try:
             self.assertEqual(str(tip.begin()), "2011-06-23 00:00:00")
             self.assertEqual(str(tip.end()), "2015-02-10 00:00:00")
 
+    class TestDataDefinition(ut.TestCase):
+        def setUp(self):
+            try:
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir + rasterDir)
+                connectIssueLogger()
+            except IlwisException:
+                self.skipTest("could not set working directory!")
+
+        def test_datdefNumeric(self):
+            numRan = NumericRange(23.0, 3453.4, 0.2)
+            numDom = NumericDomain()
+            numDom.setRange(numRan)
+            datdef1 = DataDefinition(numDom, numRan)
+            datdef2 = DataDefinition(numDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(numRan.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(numRan), str(datdef1.range()))
+            self.assertEqual(str(numDom), str(datdef1.domain()))
+            self.assertEqual(str(numRan), str(datdef2.range()))
+            self.assertEqual(str(numDom), str(datdef2.domain()))
+
+            numRanDiff = NumericRange(1.0, 200.0)
+            numDomDiff = NumericDomain()
+            numDomDiff.setRange(numRan)
+            datdef3 = DataDefinition(numDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(numRanDiff)
+            datdef1.domain(numDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
+        def test_datdefThem(self):
+            themRan = ThematicRange()
+            themRan.add("Sea", "SE", "Area covered by the sea")
+            themRan.add("Sand", "SA", "Area covered by sand")
+            itemDom = ItemDomain(themRan)
+            datdef1 = DataDefinition(itemDom, themRan)
+            datdef2 = DataDefinition(itemDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(themRan.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(themRan), str(datdef1.range()))
+            self.assertEqual(str(itemDom), str(datdef1.domain()))
+            self.assertEqual(str(themRan), str(datdef2.range()))
+            self.assertEqual(str(itemDom), str(datdef2.domain()))
+
+            themRanDiff = ThematicRange()
+            themRanDiff.add("Blabla", "BB", "Two Blas")
+            themRanDiff.add("Blablabla", "BBB", "Three Blas")
+            itemDomDiff = ItemDomain(themRanDiff)
+            datdef3 = DataDefinition(itemDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(themRanDiff)
+            datdef1.domain(itemDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
+        def test_datdefIdent(self):
+            identRan = NamedItemRange()
+            identRan.add("Perth")
+            identRan.add("Darwin")
+            itemDom = ItemDomain(identRan)
+            datdef1 = DataDefinition(itemDom, identRan)
+            datdef2 = DataDefinition(itemDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(identRan.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(identRan), str(datdef1.range()))
+            self.assertEqual(str(itemDom), str(datdef1.domain()))
+            self.assertEqual(str(identRan), str(datdef2.range()))
+            self.assertEqual(str(itemDom), str(datdef2.domain()))
+
+            identRanDiff = NamedItemRange()
+            identRanDiff.add("Berlin")
+            identRanDiff.add("Hamburg")
+            itemDomDiff = ItemDomain(identRanDiff)
+            datdef3 = DataDefinition(itemDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(identRanDiff)
+            datdef1.domain(itemDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
+        def test_datdefInterval(self):
+            interrange = NumericItemRange()
+            interrange.add(("sealevel", 40.0, 100.0))
+            interrange.add(("dijks", 100.0, 151.0))
+            itemDom = ItemDomain(interrange)
+            datdef1 = DataDefinition(itemDom, interrange)
+            datdef2 = DataDefinition(itemDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(interrange.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(interrange), str(datdef1.range()))
+            self.assertEqual(str(itemDom), str(datdef1.domain()))
+            self.assertEqual(str(interrange), str(datdef2.range()))
+            self.assertEqual(str(itemDom), str(datdef2.domain()))
+
+            interRanDiff = NumericItemRange()
+            interRanDiff.add(("low", 0.0, 50.0))
+            interRanDiff.add(("high", 50.0, 250.0))
+            itemDomDiff = ItemDomain(interRanDiff)
+            datdef3 = DataDefinition(itemDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(interRanDiff)
+            datdef1.domain(itemDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
+        def test_datdefTime(self):
+            interval = TimeInterval(date(2014, 2, 17), date(2016, 2, 17))
+            timeDom = TimeDomain(interval)
+            datdef1 = DataDefinition(timeDom, interval)
+            datdef2 = DataDefinition(timeDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(interval.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(interval), str(datdef1.range()))
+            self.assertEqual(str(timeDom), str(datdef1.domain()))
+            self.assertEqual(str(interval), str(datdef2.range()))
+            self.assertEqual(str(timeDom), str(datdef2.domain()))
+
+            intervalDiff = TimeInterval(date(2012, 8, 17), date(2013, 7, 10))
+            timeDomDiff = TimeDomain(intervalDiff)
+            datdef3 = DataDefinition(timeDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(intervalDiff)
+            datdef1.domain(timeDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
+        def test_datdefColor(self):
+            color1 = Color(ColorModel.cmRGBA, (220.0, 20.0, 30.0, 200.0))
+            color2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
+            col = ContinousColorRange(color1, color2)
+            colDom = ColorDomain()
+            colDom.setRange(col)
+
+            datdef1 = DataDefinition(colDom, col)
+            datdef2 = DataDefinition(colDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(col.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(col), str(datdef1.range()))
+            self.assertEqual(str(colDom), str(datdef1.domain()))
+            self.assertEqual(str(col), str(datdef2.range()))
+            self.assertEqual(str(colDom), str(datdef2.domain()))
+
+            color3 = Color(ColorModel.cmRGBA, (130.0, 0.0, 10.0, 100.0))
+            color4 = Color(ColorModel.cmRGBA, (230.0, 60.0, 50.0, 240.0))
+            colDiff = ContinousColorRange(color3, color4)
+            colDomDiff = ColorDomain()
+            colDomDiff.setRange(colDiff)
+            datdef3 = DataDefinition(colDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(colDiff)
+            datdef1.domain(colDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest='TestColorDomain', verbosity=2)
+        ut.main(defaultTest='TestCoordinateSystem', verbosity=2)
 
 except ImportError as e:
     print(e)

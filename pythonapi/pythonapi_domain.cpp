@@ -338,6 +338,10 @@ PyObject *ItemDomain::item(int index, bool labelOnly)
 
 ColorDomain::ColorDomain()
 {
+    Ilwis::IColorDomain coldom;
+    coldom.prepare();
+    if (coldom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(coldom));
 }
 
 ColorDomain::ColorDomain(const std::string &resource)
@@ -353,13 +357,13 @@ IlwisTypes ColorDomain::ilwisType() const
 }
 
 std::string ColorDomain::containsColor(const Color &value) const{
-    ColorRange* pyHelper = new ColorRange();
-    Ilwis::ContinousColorRange* ilwHelper = new Ilwis::ContinousColorRange();
-    std::string pyCol = pyHelper->toString(value, value.getColorModel());
+    ColorRange pyHelper = ColorRange();
+    Ilwis::ContinousColorRange ilwHelper = Ilwis::ContinousColorRange();
+    std::string pyCol = pyHelper.toString(value, value.getColorModel());
 
     Ilwis::ColorRange::ColorModel ilwMod = static_cast<Ilwis::ColorRange::ColorModel>(value.getColorModel());
 
-    QColor ilwCol = ilwHelper->toColor(QString::fromStdString(pyCol), ilwMod);
+    QColor ilwCol = ilwHelper.toColor(QString::fromStdString(pyCol), ilwMod);
     Domain::Containement dc = (Domain::Containement)this->ptr()->as<Ilwis::ColorDomain>()->contains(ilwCol);
     switch(dc){
     case 1: return "cSELF";
@@ -378,6 +382,10 @@ std::string ColorDomain::containsColor(const Color &value) const{
 
 TextDomain::TextDomain()
 {
+    Ilwis::ITextDomain txtdom;
+    txtdom.prepare();
+    if (txtdom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(txtdom));
 }
 
 TextDomain::TextDomain(const std::string &resource)
@@ -392,6 +400,10 @@ TextDomain::TextDomain(const std::string &resource)
 //---------------------------------------------------------------------------------------------
 TimeDomain::TimeDomain()
 {
+    Ilwis::ITimeDomain timedom;
+    timedom.prepare();
+    if (timedom.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(timedom));
 }
 
 TimeDomain::TimeDomain(const std::string& resource)

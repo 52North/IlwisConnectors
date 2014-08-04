@@ -22,6 +22,7 @@ namespace pythonapi {
     class Domain : public IlwisObject{
     friend class DataDefinition;
     friend class ColumDefinition;
+    friend class Coverage;
     public:
         enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
 

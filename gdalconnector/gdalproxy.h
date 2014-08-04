@@ -38,6 +38,18 @@ typedef char ** (*IGDALGetMetadata)(GDALMajorObjectH , const char *);
 typedef double (*IGDALRasValue)(GDALRasterBandH, int * );
 typedef GDALColorInterp (*IGDALGetRasterColorInterpretation)(GDALRasterBandH);
 
+typedef void (*IGDALSetColorEntry)(GDALColorTableH,int,const GDALColorEntry * );
+typedef GDALColorEntry *(*IGDALGetColorEntry)(GDALColorTableH,int );
+typedef CPLErr (*IGDALSetRasterColorTable)(	GDALRasterBandH,GDALColorTableH );
+typedef GDALColorTableH (*IGDALGetRasterColorTable)(GDALRasterBandH);
+typedef GDALColorTableH (*IGDALCreateColorTable)(GDALPaletteInterp);
+typedef int (*IGDALGetColorEntryCount)(GDALColorTableH);
+typedef GDALPaletteInterp (*IGDALGetPaletteInterpretation)(GDALColorTableH) 	;
+typedef  CPLErr (*IGDALSetRasterColorInterpretation)(GDALRasterBandH,GDALColorInterp)	;
+
+typedef CPLErr (*IGDALSetRasterNoDataValue)(GDALRasterBandH ,double);
+typedef double (*IGDALGetRasterNoDataValue)(GDALRasterBandH ,int * );
+
 typedef OGRErr (*IOSRImportFromWkt )(OGRSpatialReferenceH, char **) ;
 typedef OGRErr (*IOSRSetWellKnownGeogCS )(OGRSpatialReferenceH, char *) ;
 typedef int (*IOSRIsProjectedFunc )(OGRSpatialReferenceH) ;
@@ -204,6 +216,9 @@ class GDALProxy {
         IGDALGetSize layerCount;
         IGDALRasValue minValue;
         IGDALRasValue maxValue;
+        IGDALSetRasterNoDataValue setUndefinedValue;
+        IGDALGetRasterNoDataValue getUndefinedValue;
+
         IGDALGetRasterBand getRasterBand;
         IGDALCreate create;
         IGDALGetRasterDataType rasterDataType;
@@ -222,6 +237,15 @@ class GDALProxy {
         IGDALGetMetadataItem getMetaDataItem;
         IGDALGetMetadata getMetaData;
         IGDALGetRasterColorInterpretation colorInterpretation;
+        IGDALSetRasterColorInterpretation setColorInterpretation;
+        IGDALSetColorEntry setColorPaletteEntry;
+        IGDALGetColorEntry getColorPaletteEntry;
+        IGDALSetRasterColorTable setColorPalette;
+        IGDALGetRasterColorTable getColorPalette;
+        IGDALCreateColorTable createColorPalette;
+        IGDALGetColorEntryCount getColorPaletteSize;
+        IGDALGetPaletteInterpretation getPaletteColorInterpretation;
+
         //Open Spatial Reference
         IOSRNewSpatialReference newSpatialRef;
         IOSRImportFromWkt importFromWkt;

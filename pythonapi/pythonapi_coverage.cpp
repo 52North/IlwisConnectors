@@ -2,13 +2,16 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/domain.h"
 
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
 
+#include "pythonapi_domain.h"
 #include "pythonapi_coverage.h"
 #include "pythonapi_pyobject.h"
 #include "pythonapi_util.h"
+#include "pythonapi_qvariant.h"
 
 using namespace pythonapi;
 
@@ -54,6 +57,10 @@ void Coverage::setTable(Table& tbl, AttributeType attType){
     this->ptr()->as<Ilwis::Coverage>()->attributeTable(ilwTab, (Ilwis::Coverage::AttributeType)attType);
 }
 
+bool Coverage::hasAttributes(AttributeType attType) const{
+    return this->ptr()->as<Ilwis::Coverage>()->hasAttributes((Ilwis::Coverage::AttributeType)attType);
+}
+
 CoordinateSystem Coverage::coordinateSystem(){
     return CoordinateSystem(new Ilwis::ICoordinateSystem(this->ptr()->as<Ilwis::Coverage>()->coordinateSystem()));
 }
@@ -65,3 +72,28 @@ void Coverage::setCoordinateSystem(const CoordinateSystem &cs){
 Envelope Coverage::envelope(){
     return Envelope(this->ptr()->as<Ilwis::Coverage>()->envelope());
 }
+
+void Coverage::setEnvelope(const Envelope &env){
+    this->ptr()->as<Ilwis::Coverage>()->envelope(env.data());
+}
+
+void Coverage::indexDomain(const Domain &dom){
+    this->ptr()->as<Ilwis::Coverage>()->indexDomain(Ilwis::IDomain(dom.ptr()->as<Ilwis::Domain>()));
+}
+
+PyObject* Coverage::indexValues(){
+    std::vector<QVariant> ilwVal = this->ptr()->as<Ilwis::Coverage>()->indexValues();
+    PyObject* tup = newPyTuple(ilwVal.size());
+    for(int i = 0; i < ilwVal.size(); i++){
+        PyObject* actVal = QVariant2PyObject(ilwVal[i]);
+        setTupleItem(tup, i, actVal);
+    }
+    return tup;
+}
+
+PyObject* Coverage::value(const std::string &colName, quint32 itemid, qint32 layerIndex){
+    QString qStr;
+    QVariant qVar = this->ptr()->as<Ilwis::Coverage>()->value(qStr.fromStdString(colName), itemid, layerIndex);
+    return QVariant2PyObject(qVar);
+}
+

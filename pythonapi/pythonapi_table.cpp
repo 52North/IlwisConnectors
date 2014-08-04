@@ -146,14 +146,14 @@ namespace pythonapi {
         return ptr;
     }
 
-    ColumnDefinition Table::columndefinition(const std::string& name) const{
+    ColumnDefinition Table::columnDefinition(const std::string& name) const{
         QString qName;
         qName = qName.fromStdString(name);
         Ilwis::ColumnDefinition* coldef = new Ilwis::ColumnDefinition(this->ptr()->as<Ilwis::Table>()->columndefinition(qName));
         return ColumnDefinition(coldef);
     }
 
-    ColumnDefinition Table::columndefinition(quint32 index) const{
+    ColumnDefinition Table::columnDefinition(quint32 index) const{
         Ilwis::ColumnDefinition* coldef = new Ilwis::ColumnDefinition(this->ptr()->as<Ilwis::Table>()->columndefinition(index));
         return ColumnDefinition(coldef);
     }

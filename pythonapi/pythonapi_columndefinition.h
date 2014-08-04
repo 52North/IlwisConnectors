@@ -22,7 +22,7 @@ public:
     ColumnDefinition(const std::string& name, const DataDefinition& coldef, quint64 colindex);
     ColumnDefinition(Ilwis::ColumnDefinition*);
     ColumnDefinition(const ColumnDefinition& coldef);
-//    ColumnDefinition(const std::string& nm, const Domain &dom, quint64 colindex=0);
+    ColumnDefinition(const std::string& nm, const Domain &dom, quint64 colindex);
     ~ColumnDefinition();
 
     DataDefinition &datadef();

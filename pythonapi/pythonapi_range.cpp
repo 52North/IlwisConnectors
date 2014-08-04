@@ -450,7 +450,6 @@ ColorModel ColorRange::defaultColorModel() const
     int enumVal = static_cast<const Ilwis::ColorRange*>(_range.get())->defaultColorModel();
     ColorModel colormodel = static_cast<ColorModel>(enumVal);
     return colormodel;
-
 }
 
 void ColorRange::defaultColorModel(ColorModel m)
@@ -494,11 +493,8 @@ Color ColorRange::toColor(quint64 clrint, ColorModel clrModel){
     Ilwis::ColorRange::ColorModel ilwModel = static_cast<Ilwis::ColorRange::ColorModel>(clrModel);
     QColor ilwCol = Ilwis::ColorRange::toColor(clrint, ilwModel);
 
-    ColorRange* colRan = new ColorRange();
-
     std::string colStr = (Ilwis::ColorRange::toString(ilwCol, ilwModel)).toStdString();
-    Color result = colRan->toColor(PyBuildString(colStr),clrModel);
-    delete colRan;
+    Color result = ColorRange::toColor(PyBuildString(colStr),clrModel);
     return result;
 }
 
@@ -544,34 +540,16 @@ ContinousColorRange::ContinousColorRange()
     _range.reset(new Ilwis::ContinousColorRange());
 }
 
-ContinousColorRange::ContinousColorRange(const Color &clr1, const Color &clr2, ColorModel colormodel)
+ContinousColorRange::ContinousColorRange(const Color &clr1, const Color &clr2)
 {
     QString color1 = QString::fromStdString(clr1.toString());
     QString color2 = QString::fromStdString(clr2.toString());
-    int clmd = colormodel;
-    Ilwis::ColorRange::ColorModel ilwColor = static_cast<Ilwis::ColorRange::ColorModel>(clmd);
+    Ilwis::ColorRange::ColorModel ilwColor = static_cast<Ilwis::ColorRange::ColorModel>(clr1.getColorModel());
 
     QColor col1 = Ilwis::ContinousColorRange::toColor(QVariant(color1), ilwColor);
     QColor col2 = Ilwis::ContinousColorRange::toColor(QVariant(color2), ilwColor);
      _range.reset(new Ilwis::ContinousColorRange(col1, col2, ilwColor));
 }
-
-
-
-std::string ContinousColorRange::toString() const
-{
-    QString colors = static_cast<Ilwis::ContinousColorRange*>(_range.get())->toString();
-    return colors.toStdString();
-}
-
-
-
-bool ContinousColorRange::isValid() const
-{
-    bool yesno = _range.get()->isValid();
-    return yesno;
-}
-
 
 ContinousColorRange *ContinousColorRange::clone() const
 {
@@ -646,14 +624,15 @@ TimeInterval::TimeInterval(const PyObject* beg, const PyObject* end, std::string
     delete qvar;
 }
 
-std::string TimeInterval::toString(bool local, IlwisTypes tp) const{
-    return (static_cast<Ilwis::TimeInterval*>(_range.get())->toString(local, tp)).toStdString();
-}
+//std::string TimeInterval::__str__(){
+//    QString begin = static_cast<Ilwis::TimeInterval*>(_range.get())->begin().toString();
+//    QString end = static_cast<Ilwis::TimeInterval*>(_range.get())->end().toString();
+//    return "Start: " + begin.toStdString() + ", End: " + end.toStdString();
+//}
 
 bool TimeInterval::contains(const std::string &value, bool inclusive) const
 {
     return static_cast<Ilwis::TimeInterval*>(_range.get())->contains(QString::fromStdString(value));
-
 }
 
 bool TimeInterval::contains(const PyObject* value, bool inclusive) const

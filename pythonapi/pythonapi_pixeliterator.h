@@ -63,6 +63,8 @@ class PixelIterator{
         bool xChanged();
         bool yChanged();
         bool zChanged();
+
+        PixelIterator* __set__(const PixelIterator& ohterIt);
         PixelIterator& __getitem__(const Pixel& vox);
         double __getitem__(quint32 linearPosition);
         void __setitem__(quint32 linearPosition, double value);
@@ -80,8 +82,6 @@ class PixelIterator{
         PixelIterator end();
         Py_buffer* asBuffer();
         RasterCoverage* raster();
-
-        void copyValues(PixelIterator& sourceIt);
 
     protected:
         Ilwis::PixelIterator& ptr() const;

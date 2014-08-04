@@ -215,10 +215,12 @@ class Engine(_object):
 
     if _newclass:setWorkingCatalog = staticmethod(setWorkingCatalog)
     __swig_getmethods__["setWorkingCatalog"] = lambda x: setWorkingCatalog
-    def getLocation(self):
-        """getLocation(Engine self) -> std::string"""
-        return _ilwisobjects.Engine_getLocation(self)
+    def getLocation():
+        """getLocation() -> std::string"""
+        return _ilwisobjects.Engine_getLocation()
 
+    if _newclass:getLocation = staticmethod(getLocation)
+    __swig_getmethods__["getLocation"] = lambda x: getLocation
     def operations(self, filter="*"):
         """
         operations(Engine self, std::string const & filter="*") -> PyObject
@@ -276,6 +278,10 @@ def Engine_setWorkingCatalog(*args):
   """Engine_setWorkingCatalog(std::string const & location)"""
   return _ilwisobjects.Engine_setWorkingCatalog(*args)
 
+def Engine_getLocation():
+  """Engine_getLocation() -> std::string"""
+  return _ilwisobjects.Engine_getLocation()
+
 def Engine__catalogItems():
   """Engine__catalogItems() -> PyObject *"""
   return _ilwisobjects.Engine__catalogItems()
@@ -299,6 +305,8 @@ class IlwisObject(Object):
     __del__ = lambda self : None;
     def setInputConnection(self, *args):
         """
+        setInputConnection(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="", 
+            IOOptions options=pythonapi::IOOptions())
         setInputConnection(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="")
         setInputConnection(IlwisObject self, std::string const & url, std::string const & format="")
         setInputConnection(IlwisObject self, std::string const & url)
@@ -307,6 +315,8 @@ class IlwisObject(Object):
 
     def setOutputConnection(self, *args):
         """
+        setOutputConnection(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="", 
+            IOOptions options=pythonapi::IOOptions())
         setOutputConnection(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="")
         setOutputConnection(IlwisObject self, std::string const & url, std::string const & format="")
         setOutputConnection(IlwisObject self, std::string const & url)
@@ -392,12 +402,6 @@ class CoordinateSystem(IlwisObject):
         """__ne__(CoordinateSystem self, CoordinateSystem csy) -> bool"""
         return _ilwisobjects.CoordinateSystem___ne__(self, *args)
 
-    def toCoordinateSystem(*args):
-        """toCoordinateSystem(Object obj) -> CoordinateSystem"""
-        return _ilwisobjects.CoordinateSystem_toCoordinateSystem(*args)
-
-    if _newclass:toCoordinateSystem = staticmethod(toCoordinateSystem)
-    __swig_getmethods__["toCoordinateSystem"] = lambda x: toCoordinateSystem
     def toWKT(self, spaces=0):
         """
         toWKT(CoordinateSystem self, quint32 spaces=0) -> std::string
@@ -409,6 +413,20 @@ class CoordinateSystem(IlwisObject):
         """toProj4(CoordinateSystem self) -> std::string"""
         return _ilwisobjects.CoordinateSystem_toProj4(self)
 
+    def convertEnvelope(self, *args):
+        """convertEnvelope(CoordinateSystem self, CoordinateSystem pyCsy, Envelope pyEnv) -> Envelope"""
+        return _ilwisobjects.CoordinateSystem_convertEnvelope(self, *args)
+
+    def coord2coord(self, *args):
+        """coord2coord(CoordinateSystem self, CoordinateSystem pyCsy, Coordinate pyCoord) -> Coordinate"""
+        return _ilwisobjects.CoordinateSystem_coord2coord(self, *args)
+
+    def toCoordinateSystem(*args):
+        """toCoordinateSystem(Object obj) -> CoordinateSystem"""
+        return _ilwisobjects.CoordinateSystem_toCoordinateSystem(*args)
+
+    if _newclass:toCoordinateSystem = staticmethod(toCoordinateSystem)
+    __swig_getmethods__["toCoordinateSystem"] = lambda x: toCoordinateSystem
     __swig_destroy__ = _ilwisobjects.delete_CoordinateSystem
     __del__ = lambda self : None;
 CoordinateSystem_swigregister = _ilwisobjects.CoordinateSystem_swigregister
@@ -499,12 +517,12 @@ class Table(IlwisObject):
 
     if _newclass:toTable = staticmethod(toTable)
     __swig_getmethods__["toTable"] = lambda x: toTable
-    def columndefinition(self, *args):
+    def columnDefinition(self, *args):
         """
-        columndefinition(Table self, std::string const & name) -> ColumnDefinition
-        columndefinition(Table self, quint32 index) -> ColumnDefinition
+        columnDefinition(Table self, std::string const & name) -> ColumnDefinition
+        columnDefinition(Table self, quint32 index) -> ColumnDefinition
         """
-        return _ilwisobjects.Table_columndefinition(self, *args)
+        return _ilwisobjects.Table_columnDefinition(self, *args)
 
     def setColumnDefinition(self, *args):
         """
@@ -563,6 +581,13 @@ class Coverage(IlwisObject):
         """
         return _ilwisobjects.Coverage_setTable(self, *args)
 
+    def hasAttributes(self, *args):
+        """
+        hasAttributes(Coverage self, pythonapi::Coverage::AttributeType attType=atCOVERAGE) -> bool
+        hasAttributes(Coverage self) -> bool
+        """
+        return _ilwisobjects.Coverage_hasAttributes(self, *args)
+
     def coordinateSystem(self):
         """coordinateSystem(Coverage self) -> CoordinateSystem"""
         return _ilwisobjects.Coverage_coordinateSystem(self)
@@ -574,6 +599,25 @@ class Coverage(IlwisObject):
     def envelope(self):
         """envelope(Coverage self) -> Envelope"""
         return _ilwisobjects.Coverage_envelope(self)
+
+    def setEnvelope(self, *args):
+        """setEnvelope(Coverage self, Envelope env)"""
+        return _ilwisobjects.Coverage_setEnvelope(self, *args)
+
+    def indexDomain(self, *args):
+        """indexDomain(Coverage self, Domain dom)"""
+        return _ilwisobjects.Coverage_indexDomain(self, *args)
+
+    def indexValues(self):
+        """indexValues(Coverage self) -> PyObject *"""
+        return _ilwisobjects.Coverage_indexValues(self)
+
+    def value(self, *args):
+        """
+        value(Coverage self, std::string const & colName, quint32 itemid, qint32 layerIndex=-1) -> PyObject
+        value(Coverage self, std::string const & colName, quint32 itemid) -> PyObject *
+        """
+        return _ilwisobjects.Coverage_value(self, *args)
 
 Coverage_swigregister = _ilwisobjects.Coverage_swigregister
 Coverage_swigregister(Coverage)
@@ -694,6 +738,43 @@ class PropertySets(_object):
     __del__ = lambda self : None;
 PropertySets_swigregister = _ilwisobjects.PropertySets_swigregister
 PropertySets_swigregister(PropertySets)
+
+class IOOptions(_object):
+    """Proxy of C++ pythonapi::IOOptions class"""
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, IOOptions, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, IOOptions, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        """
+        __init__(pythonapi::IOOptions self) -> IOOptions
+        __init__(pythonapi::IOOptions self, std::string const & key, PyObject * value) -> IOOptions
+        __init__(pythonapi::IOOptions self, Ilwis::IOOptions * ilwIOOp) -> IOOptions
+        """
+        this = _ilwisobjects.new_IOOptions(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def contains(self, *args):
+        """contains(IOOptions self, std::string const & option) -> bool"""
+        return _ilwisobjects.IOOptions_contains(self, *args)
+
+    def size(self):
+        """size(IOOptions self) -> quint32"""
+        return _ilwisobjects.IOOptions_size(self)
+
+    def __getitem__(self, *args):
+        """__getitem__(IOOptions self, std::string const & option) -> PyObject *"""
+        return _ilwisobjects.IOOptions___getitem__(self, *args)
+
+    def addOption(self, *args):
+        """addOption(IOOptions self, std::string const & key, PyObject * value) -> IOOptions"""
+        return _ilwisobjects.IOOptions_addOption(self, *args)
+
+    __swig_destroy__ = _ilwisobjects.delete_IOOptions
+    __del__ = lambda self : None;
+IOOptions_swigregister = _ilwisobjects.IOOptions_swigregister
+IOOptions_swigregister(IOOptions)
 
 class Pixel(_object):
     """Proxy of C++ pythonapi::PixelTemplate<(qint32)> class"""
@@ -874,8 +955,8 @@ class Size(_object):
     __repr__ = _swig_repr
     def __init__(self, *args): 
         """
-        __init__(pythonapi::SizeTemplate<(quint32)> self, unsigned int xsize, unsigned int ysize, unsigned int zsize=1) -> Size
-        __init__(pythonapi::SizeTemplate<(quint32)> self, unsigned int xsize, unsigned int ysize) -> Size
+        __init__(pythonapi::SizeTemplate<(quint32)> self, unsigned int xSizeT, unsigned int ySizeT, unsigned int zSizeT=1) -> Size
+        __init__(pythonapi::SizeTemplate<(quint32)> self, unsigned int xSizeT, unsigned int ySizeT) -> Size
         __init__(pythonapi::SizeTemplate<(quint32)> self, Size size) -> Size
         __init__(pythonapi::SizeTemplate<(quint32)> self, SizeD size) -> Size
         """
@@ -971,8 +1052,8 @@ class SizeD(_object):
     __repr__ = _swig_repr
     def __init__(self, *args): 
         """
-        __init__(pythonapi::SizeTemplate<(double)> self, double xsize, double ysize, double zsize=1) -> SizeD
-        __init__(pythonapi::SizeTemplate<(double)> self, double xsize, double ysize) -> SizeD
+        __init__(pythonapi::SizeTemplate<(double)> self, double xSizeT, double ySizeT, double zSizeT=1) -> SizeD
+        __init__(pythonapi::SizeTemplate<(double)> self, double xSizeT, double ySizeT) -> SizeD
         __init__(pythonapi::SizeTemplate<(double)> self, Size size) -> SizeD
         __init__(pythonapi::SizeTemplate<(double)> self, SizeD size) -> SizeD
         """
@@ -1474,14 +1555,14 @@ class Feature(Object):
         """
         return _ilwisobjects.Feature_setGeometry(self, *args)
 
-    def columndefinition(self, *args):
+    def columnDefinition(self, *args):
         """
-        columndefinition(Feature self, std::string const & name, bool coverages=True) -> ColumnDefinition
-        columndefinition(Feature self, std::string const & name) -> ColumnDefinition
-        columndefinition(Feature self, quint32 index, bool coverages=True) -> ColumnDefinition
-        columndefinition(Feature self, quint32 index) -> ColumnDefinition
+        columnDefinition(Feature self, std::string const & name, bool coverages=True) -> ColumnDefinition
+        columnDefinition(Feature self, std::string const & name) -> ColumnDefinition
+        columnDefinition(Feature self, quint32 index, bool coverages=True) -> ColumnDefinition
+        columnDefinition(Feature self, quint32 index) -> ColumnDefinition
         """
-        return _ilwisobjects.Feature_columndefinition(self, *args)
+        return _ilwisobjects.Feature_columnDefinition(self, *args)
 
     __swig_destroy__ = _ilwisobjects.delete_Feature
     __del__ = lambda self : None;
@@ -1728,6 +1809,10 @@ class PixelIterator(_object):
         """zChanged(PixelIterator self) -> bool"""
         return _ilwisobjects.PixelIterator_zChanged(self)
 
+    def __set__(self, *args):
+        """__set__(PixelIterator self, PixelIterator ohterIt) -> PixelIterator"""
+        return _ilwisobjects.PixelIterator___set__(self, *args)
+
     def __getitem__(self, *args):
         """
         __getitem__(PixelIterator self, Pixel vox) -> PixelIterator
@@ -1786,10 +1871,6 @@ class PixelIterator(_object):
     def raster(self):
         """raster(PixelIterator self) -> RasterCoverage"""
         return _ilwisobjects.PixelIterator_raster(self)
-
-    def copyValues(self, *args):
-        """copyValues(PixelIterator self, PixelIterator sourceIt)"""
-        return _ilwisobjects.PixelIterator_copyValues(self, *args)
 
 PixelIterator_swigregister = _ilwisobjects.PixelIterator_swigregister
 PixelIterator_swigregister(PixelIterator)
@@ -1982,12 +2063,9 @@ class RasterCoverage(Coverage):
         """setGeoReference(RasterCoverage self, GeoReference gr)"""
         return _ilwisobjects.RasterCoverage_setGeoReference(self, *args)
 
-    def datadef(self, *args):
-        """
-        datadef(RasterCoverage self, quint32 layer=WHOLE_RASTER) -> DataDefinition
-        datadef(RasterCoverage self) -> DataDefinition
-        """
-        return _ilwisobjects.RasterCoverage_datadef(self, *args)
+    def datadef(self):
+        """datadef(RasterCoverage self) -> DataDefinition"""
+        return _ilwisobjects.RasterCoverage_datadef(self)
 
     def setDataDef(self, *args):
         """
@@ -2041,9 +2119,12 @@ class RasterCoverage(Coverage):
         """clone(RasterCoverage self) -> RasterCoverage"""
         return _ilwisobjects.RasterCoverage_clone(self)
 
+    def envelope(self):
+        """envelope(RasterCoverage self) -> Envelope"""
+        return _ilwisobjects.RasterCoverage_envelope(self)
+
 RasterCoverage_swigregister = _ilwisobjects.RasterCoverage_swigregister
 RasterCoverage_swigregister(RasterCoverage)
-WHOLE_RASTER = cvar.WHOLE_RASTER
 
 def RasterCoverage_toRasterCoverage(*args):
   """RasterCoverage_toRasterCoverage(Object obj) -> RasterCoverage"""
@@ -2659,10 +2740,6 @@ class Color(_object):
         this = _ilwisobjects.new_Color(*args)
         try: self.this.append(this)
         except: self.this = this
-    def readColor(self, *args):
-        """readColor(Color self, pythonapi::ColorModel type, PyObject * obj)"""
-        return _ilwisobjects.Color_readColor(self, *args)
-
     def getItem(self, *args):
         """getItem(Color self, std::string key) -> double"""
         return _ilwisobjects.Color_getItem(self, *args)
@@ -2745,20 +2822,11 @@ class ContinousColorRange(ColorRange):
     def __init__(self, *args): 
         """
         __init__(pythonapi::ContinousColorRange self) -> ContinousColorRange
-        __init__(pythonapi::ContinousColorRange self, Color clr1, Color clr2, pythonapi::ColorModel colormodel=ColorModel::cmRGBA) -> ContinousColorRange
         __init__(pythonapi::ContinousColorRange self, Color clr1, Color clr2) -> ContinousColorRange
         """
         this = _ilwisobjects.new_ContinousColorRange(*args)
         try: self.this.append(this)
         except: self.this = this
-    def toString(self):
-        """toString(ContinousColorRange self) -> std::string"""
-        return _ilwisobjects.ContinousColorRange_toString(self)
-
-    def isValid(self):
-        """isValid(ContinousColorRange self) -> bool"""
-        return _ilwisobjects.ContinousColorRange_isValid(self)
-
     def clone(self):
         """clone(ContinousColorRange self) -> ContinousColorRange"""
         return _ilwisobjects.ContinousColorRange_clone(self)
@@ -2833,10 +2901,6 @@ class TimeInterval(NumericRange):
         end(TimeInterval self, PyObject const * t)
         """
         return _ilwisobjects.TimeInterval_end(self, *args)
-
-    def toString(self, *args):
-        """toString(TimeInterval self, bool local, IlwisTypes arg3) -> std::string"""
-        return _ilwisobjects.TimeInterval_toString(self, *args)
 
     def contains(self, *args):
         """
@@ -2931,6 +2995,7 @@ class ColumnDefinition(_object):
         __init__(pythonapi::ColumnDefinition self, std::string const & name, DataDefinition coldef, quint64 colindex) -> ColumnDefinition
         __init__(pythonapi::ColumnDefinition self, Ilwis::ColumnDefinition * arg2) -> ColumnDefinition
         __init__(pythonapi::ColumnDefinition self, ColumnDefinition coldef) -> ColumnDefinition
+        __init__(pythonapi::ColumnDefinition self, std::string const & nm, Domain dom, quint64 colindex) -> ColumnDefinition
         """
         this = _ilwisobjects.new_ColumnDefinition(*args)
         try: self.this.append(this)

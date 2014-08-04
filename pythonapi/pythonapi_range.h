@@ -127,11 +127,11 @@ class Color{
 public:
     Color();
     Color(ColorModel type, PyObject* obj);
-    void readColor(ColorModel type, PyObject* obj);
     double getItem(std::string key) const;
     ColorModel getColorModel() const;
     std::string toString() const;
 private:
+    void readColor(ColorModel type, PyObject* obj);
     ColorModel _type = ColorModel::cmRGBA;
     PyObject* _colorVal;
 };
@@ -158,9 +158,7 @@ private:
 class ContinousColorRange : public ColorRange{
 public:
     ContinousColorRange();
-    ContinousColorRange(const Color& clr1, const Color& clr2, ColorModel colormodel=ColorModel::cmRGBA);
-    std::string toString() const;
-    bool isValid() const;
+    ContinousColorRange(const Color& clr1, const Color& clr2);
     ContinousColorRange *clone() const;
     PyObject* ensure(const PyObject *v, bool inclusive = true) const;
     bool containsVar(const PyObject *v, bool inclusive = true) const;
@@ -180,7 +178,7 @@ public:
     void begin(const PyObject* t) ;
     void end(const PyObject* t);
     //Duration getStep() const { return _step;}
-    std::string toString(bool local, IlwisTypes) const;
+//    std::string __str__();
     bool contains(const std::string& value, bool inclusive = true) const;
     bool contains(const PyObject* value, bool inclusive = true) const;
 

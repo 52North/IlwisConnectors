@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "pythonapi_object.h"
+#include "pythonapi_util.h"
 
 namespace Ilwis {
     class IlwisObject;
@@ -29,8 +30,8 @@ namespace pythonapi {
     public:
         virtual ~IlwisObject();
 
-        void setInputConnection( const std::string& url,  const std::string& format  = "",  const std::string& fnamespace = "");
-        void setOutputConnection( const std::string& url,  const std::string& format  = "",  const std::string& fnamespace = "");
+        void setInputConnection( const std::string& url,  const std::string& format  = "",  const std::string& fnamespace = "", const pythonapi::IOOptions& options = pythonapi::IOOptions());
+        void setOutputConnection( const std::string& url,  const std::string& format  = "",  const std::string& fnamespace = "", const pythonapi::IOOptions& options = pythonapi::IOOptions());
         void store(int storeMode = smMETADATA | smBINARYDATA);
         bool __bool__() const;
         std::string __str__();

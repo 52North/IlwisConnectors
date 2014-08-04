@@ -29,7 +29,7 @@ public:
     std::string __str__();
     bool __bool__() const;
     void range(const Range &rng);
-    void domain(Domain* dm);
+    void domain(const Domain &dm);
     bool isCompatibleWith(const DataDefinition& datdef);
     DataDefinition* merge(const DataDefinition& datdef1, const DataDefinition& datdef2);
     DataDefinition* __set__(const DataDefinition& datdef);

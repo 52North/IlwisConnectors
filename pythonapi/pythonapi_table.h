@@ -45,8 +45,8 @@ namespace pythonapi {
 
             static Table* toTable(Object* obj);
 
-            ColumnDefinition columndefinition(const std::string& name) const;
-            ColumnDefinition columndefinition(quint32 index) const;
+            ColumnDefinition columnDefinition(const std::string& name) const;
+            ColumnDefinition columnDefinition(quint32 index) const;
             void setColumnDefinition(ColumnDefinition& coldef);
             void setColumnDefinition(const std::string& name, ColumnDefinition* coldef);
             void setColumnDefinition(quint32 index, ColumnDefinition* coldef);
