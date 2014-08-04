@@ -13,10 +13,10 @@ public:
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
 
     bool loadMetaData(IlwisObject* data,const IOOptions&);
-    bool storeMetaData(Ilwis::IlwisObject *obj);
 
-    bool loadBinaryData(IlwisObject *data);
-    bool storeBinaryData(IlwisObject* obj);
+    bool loadData(IlwisObject *data);
+    bool store(Ilwis::IlwisObject *data);
+
 };
 }
 }

@@ -48,20 +48,19 @@ bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions &
     return loader.loadMetadata(table,source());
 }
 
-bool PostgresqlTableConnector::storeMetaData(Ilwis::IlwisObject *obj)
+bool PostgresqlTableConnector::store(Ilwis::IlwisObject *data)
 {
-    qDebug() << "PostgresqlTableConnector::storeMetaData()";
+    qDebug() << "PostgresqlTableConnector::store()";
+
+
+
+
     return false;
 }
 
-bool PostgresqlTableConnector::loadBinaryData(IlwisObject *data)
+bool PostgresqlTableConnector::loadData(IlwisObject *data)
 {
-    qDebug() << "PostgresqlTableConnector::loadBinaryData()";
+    qDebug() << "PostgresqlTableConnector::loadData()";
     return false;
 }
 
-bool PostgresqlTableConnector::storeBinaryData(IlwisObject *obj)
-{
-    qDebug() << "PostgresqlTableConnector::storeBinaryData()";
-    return false;
-}
