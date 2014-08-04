@@ -7,6 +7,7 @@
 
 namespace Ilwis {
 namespace SpreadSheetConnectors {
+
 class SpreadSheetConnectorsModule : public Module
 {
 public:

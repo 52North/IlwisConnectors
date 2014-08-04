@@ -25,9 +25,17 @@ private:
     GDALDataType _gdalValueType;
     int _typeSize;
     GDALDriverH _driver;
+    ColorRangeBase::ColorModel _colorModel = ColorRangeBase::cmNONE;
+    bool _hasTransparency = false;
+
 
     double value(char *block, int index) const;
     bool setGeotransform(RasterCoverage *raster, GDALDatasetH dataset);
+    void setColorValues(GDALColorInterp colorType, std::vector<double> &values, quint32 noItems, char *block) const;
+    void readData(UPGrid& grid, GDALRasterBandH layerHandle, int gdalindex, quint32 linesPerBlock, char *block, quint64 linesLeft) const;
+
+    bool saveByteBand(RasterCoverage *prasterCoverage, GDALDatasetH dataset, int gdalindex, int band, GDALColorInterp colorType);
+
 
     template<typename DT> bool save(RasterCoverage *prasterCoverage, GDALDatasetH dataset,GDALDataType gdaltype){
         quint32 columns = prasterCoverage->size().xsize();
@@ -65,7 +73,15 @@ private:
 
     bool loadDriver();
     DataDefinition createDataDef(double vmin, double vmax, double resolution);
-    void loadBlock(GDALRasterBandH bandhandle, quint32 index, quint32 gdalindex, quint32 linesPerBlock, quint64 linesLeft, char *block, Ilwis::UPGrid &grid) const;
+    DataDefinition createDataDefColor(std::map<int, int> &vminRaster, std::map<int, int> &vmaxRaster);
+    void loadNumericBlock(GDALRasterBandH bandhandle, quint32 index, quint32 gdalindex, quint32 linesPerBlock, quint64 linesLeft, char *block, Ilwis::UPGrid &grid) const;
+    void loadColorBlock(quint32 ilwisLayer, quint32 index, quint32 gdalindex, quint32 linesPerBlock, quint64 linesLeft, char *block, UPGrid &grid) const;
+    bool handleNumericCase(const Size<> &rastersize, RasterCoverage *raster);
+    bool handleColorCase(Size<> &rastersize, RasterCoverage *raster, GDALColorInterp colorType);
+    bool handlePaletteCase(Size<> &rastersize, RasterCoverage *raster);
+
+    bool moveIndexes(quint32 &linesPerBlock, quint64 &linesLeft, int &gdalindex);
+    bool storeColorRaster(RasterCoverage *raster, GDALDatasetH dataset);
 };
 }
 }
