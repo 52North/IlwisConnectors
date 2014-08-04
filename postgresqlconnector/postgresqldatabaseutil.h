@@ -79,7 +79,10 @@ public:
      */
     static QString tablenameFromResource(const Resource resource) {
         QStringList pathElements = resource.url().path().split("/", QString::SkipEmptyParts);
-        return pathElements.at(2); // skip db and schema
+
+        return pathElements.size() == 2
+                ? pathElements.at(1) // schema omitted
+                : pathElements.at(2); // skip db and schema
     }
 
     /**
@@ -90,8 +93,16 @@ public:
      */
     static QString qTableFromTableResource(const Resource resource) {
         QStringList pathElements = resource.url().path().split("/", QString::SkipEmptyParts);
-        QString schema(pathElements.at(1)); // skip db name
-        return schema.append(".").append(pathElements.at(2));
+        if (pathElements.size() == 2) {
+            QString schema("public");
+            QString tablename(pathElements.at(1)); // skip db name
+            return  schema.append(".").append(tablename);
+        } else {
+            QString schema(pathElements.at(1)); // skip db name
+            QString tablename = pathElements.at(2);
+            return schema.append(".").append(tablename);
+        }
+
     }
 
     static QString getInternalNameFrom(QString name, quint64 id) {
