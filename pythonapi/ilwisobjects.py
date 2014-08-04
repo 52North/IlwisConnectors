@@ -1809,6 +1809,10 @@ class PixelIterator(_object):
         """zChanged(PixelIterator self) -> bool"""
         return _ilwisobjects.PixelIterator_zChanged(self)
 
+    def __set__(self, *args):
+        """__set__(PixelIterator self, PixelIterator ohterIt) -> PixelIterator"""
+        return _ilwisobjects.PixelIterator___set__(self, *args)
+
     def __getitem__(self, *args):
         """
         __getitem__(PixelIterator self, Pixel vox) -> PixelIterator
@@ -1867,10 +1871,6 @@ class PixelIterator(_object):
     def raster(self):
         """raster(PixelIterator self) -> RasterCoverage"""
         return _ilwisobjects.PixelIterator_raster(self)
-
-    def copyValues(self, *args):
-        """copyValues(PixelIterator self, PixelIterator sourceIt)"""
-        return _ilwisobjects.PixelIterator_copyValues(self, *args)
 
 PixelIterator_swigregister = _ilwisobjects.PixelIterator_swigregister
 PixelIterator_swigregister(PixelIterator)
@@ -2063,12 +2063,9 @@ class RasterCoverage(Coverage):
         """setGeoReference(RasterCoverage self, GeoReference gr)"""
         return _ilwisobjects.RasterCoverage_setGeoReference(self, *args)
 
-    def datadef(self, *args):
-        """
-        datadef(RasterCoverage self, quint32 layer=WHOLE_RASTER) -> DataDefinition
-        datadef(RasterCoverage self) -> DataDefinition
-        """
-        return _ilwisobjects.RasterCoverage_datadef(self, *args)
+    def datadef(self):
+        """datadef(RasterCoverage self) -> DataDefinition"""
+        return _ilwisobjects.RasterCoverage_datadef(self)
 
     def setDataDef(self, *args):
         """
@@ -2128,7 +2125,6 @@ class RasterCoverage(Coverage):
 
 RasterCoverage_swigregister = _ilwisobjects.RasterCoverage_swigregister
 RasterCoverage_swigregister(RasterCoverage)
-WHOLE_RASTER = cvar.WHOLE_RASTER
 
 def RasterCoverage_toRasterCoverage(*args):
   """RasterCoverage_toRasterCoverage(Object obj) -> RasterCoverage"""
@@ -2831,14 +2827,6 @@ class ContinousColorRange(ColorRange):
         this = _ilwisobjects.new_ContinousColorRange(*args)
         try: self.this.append(this)
         except: self.this = this
-    def __str__(self):
-        """__str__(ContinousColorRange self) -> std::string"""
-        return _ilwisobjects.ContinousColorRange___str__(self)
-
-    def __bool__(self):
-        """__bool__(ContinousColorRange self) -> bool"""
-        return _ilwisobjects.ContinousColorRange___bool__(self)
-
     def clone(self):
         """clone(ContinousColorRange self) -> ContinousColorRange"""
         return _ilwisobjects.ContinousColorRange_clone(self)
@@ -2913,10 +2901,6 @@ class TimeInterval(NumericRange):
         end(TimeInterval self, PyObject const * t)
         """
         return _ilwisobjects.TimeInterval_end(self, *args)
-
-    def toString(self, *args):
-        """toString(TimeInterval self, bool local, IlwisTypes arg3) -> std::string"""
-        return _ilwisobjects.TimeInterval_toString(self, *args)
 
     def contains(self, *args):
         """
@@ -3011,8 +2995,7 @@ class ColumnDefinition(_object):
         __init__(pythonapi::ColumnDefinition self, std::string const & name, DataDefinition coldef, quint64 colindex) -> ColumnDefinition
         __init__(pythonapi::ColumnDefinition self, Ilwis::ColumnDefinition * arg2) -> ColumnDefinition
         __init__(pythonapi::ColumnDefinition self, ColumnDefinition coldef) -> ColumnDefinition
-        __init__(pythonapi::ColumnDefinition self, std::string const & nm, Domain dom, quint64 colindex=0) -> ColumnDefinition
-        __init__(pythonapi::ColumnDefinition self, std::string const & nm, Domain dom) -> ColumnDefinition
+        __init__(pythonapi::ColumnDefinition self, std::string const & nm, Domain dom, quint64 colindex) -> ColumnDefinition
         """
         this = _ilwisobjects.new_ColumnDefinition(*args)
         try: self.this.append(this)

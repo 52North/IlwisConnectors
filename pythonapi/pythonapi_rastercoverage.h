@@ -13,8 +13,6 @@ namespace Ilwis {
 
 namespace pythonapi {
 
-    const quint32 WHOLE_RASTER = 200000;
-
     class DataDefinition;
     class Domain;
 
@@ -53,7 +51,7 @@ namespace pythonapi {
         GeoReference geoReference();
         void setGeoReference(const GeoReference& gr);
 
-        DataDefinition& datadef(quint32 layer = WHOLE_RASTER) const;
+        DataDefinition& datadef() const;
         void setDataDef(DataDefinition* datdef);
         void setDataDef(Domain& dm);
 

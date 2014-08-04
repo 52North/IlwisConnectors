@@ -21279,6 +21279,47 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_PixelIterator___set__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::PixelIterator *arg1 = (pythonapi::PixelIterator *) 0 ;
+  pythonapi::PixelIterator *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::PixelIterator *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:PixelIterator___set__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__PixelIterator, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PixelIterator___set__" "', argument " "1"" of type '" "pythonapi::PixelIterator *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::PixelIterator * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__PixelIterator,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PixelIterator___set__" "', argument " "2"" of type '" "pythonapi::PixelIterator const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "PixelIterator___set__" "', argument " "2"" of type '" "pythonapi::PixelIterator const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::PixelIterator * >(argp2);
+  {
+    try {
+      result = (pythonapi::PixelIterator *)(arg1)->__set__((pythonapi::PixelIterator const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__PixelIterator, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_PixelIterator___getitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::PixelIterator *arg1 = (pythonapi::PixelIterator *) 0 ;
@@ -21895,46 +21936,6 @@ SWIGINTERN PyObject *_wrap_PixelIterator_raster(PyObject *SWIGUNUSEDPARM(self), 
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_PixelIterator_copyValues(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::PixelIterator *arg1 = (pythonapi::PixelIterator *) 0 ;
-  pythonapi::PixelIterator *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:PixelIterator_copyValues",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__PixelIterator, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PixelIterator_copyValues" "', argument " "1"" of type '" "pythonapi::PixelIterator *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::PixelIterator * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__PixelIterator,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PixelIterator_copyValues" "', argument " "2"" of type '" "pythonapi::PixelIterator &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "PixelIterator_copyValues" "', argument " "2"" of type '" "pythonapi::PixelIterator &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::PixelIterator * >(argp2);
-  {
-    try {
-      (arg1)->copyValues(*arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -22745,20 +22746,6 @@ SWIGINTERN PyObject *GeoReference_swigregister(PyObject *SWIGUNUSEDPARM(self), P
   SWIG_TypeNewClientData(SWIGTYPE_p_pythonapi__GeoReference, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
-
-SWIGINTERN int Swig_var_WHOLE_RASTER_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable WHOLE_RASTER is read-only.");
-  return 1;
-}
-
-
-SWIGINTERN PyObject *Swig_var_WHOLE_RASTER_get(void) {
-  PyObject *pyobj = 0;
-  
-  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(pythonapi::WHOLE_RASTER));
-  return pyobj;
-}
-
 
 SWIGINTERN PyObject *_wrap_new_RasterCoverage__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
@@ -23889,45 +23876,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RasterCoverage_datadef__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
-  quint32 arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  unsigned int val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  pythonapi::DataDefinition *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:RasterCoverage_datadef",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_datadef" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
-  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RasterCoverage_datadef" "', argument " "2"" of type '" "quint32""'");
-  } 
-  arg2 = static_cast< quint32 >(val2);
-  {
-    try {
-      result = (pythonapi::DataDefinition *) &((pythonapi::RasterCoverage const *)arg1)->datadef(arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RasterCoverage_datadef__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_RasterCoverage_datadef(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
   void *argp1 = 0 ;
@@ -23953,50 +23902,6 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_datadef__SWIG_1(PyObject *SWIGUNUSEDPA
   return resultobj;
 fail:
   return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RasterCoverage_datadef(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[3];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_RasterCoverage_datadef__SWIG_1(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_RasterCoverage_datadef__SWIG_0(self, args);
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'RasterCoverage_datadef'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::RasterCoverage::datadef(quint32) const\n"
-    "    pythonapi::RasterCoverage::datadef() const\n");
-  return 0;
 }
 
 
@@ -29800,64 +29705,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_ContinousColorRange___str__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::ContinousColorRange *arg1 = (pythonapi::ContinousColorRange *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:ContinousColorRange___str__",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContinousColorRange, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ContinousColorRange___str__" "', argument " "1"" of type '" "pythonapi::ContinousColorRange const *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::ContinousColorRange * >(argp1);
-  {
-    try {
-      result = ((pythonapi::ContinousColorRange const *)arg1)->__str__();
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_ContinousColorRange___bool__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::ContinousColorRange *arg1 = (pythonapi::ContinousColorRange *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  bool result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:ContinousColorRange___bool__",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ContinousColorRange, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ContinousColorRange___bool__" "', argument " "1"" of type '" "pythonapi::ContinousColorRange const *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::ContinousColorRange * >(argp1);
-  {
-    try {
-      result = (bool)((pythonapi::ContinousColorRange const *)arg1)->__bool__();
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_ContinousColorRange_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::ContinousColorRange *arg1 = (pythonapi::ContinousColorRange *) 0 ;
@@ -30922,53 +30769,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_TimeInterval_toString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::TimeInterval *arg1 = (pythonapi::TimeInterval *) 0 ;
-  bool arg2 ;
-  IlwisTypes arg3 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  bool val2 ;
-  int ecode2 = 0 ;
-  unsigned long long val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:TimeInterval_toString",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__TimeInterval, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeInterval_toString" "', argument " "1"" of type '" "pythonapi::TimeInterval const *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::TimeInterval * >(argp1);
-  ecode2 = SWIG_AsVal_bool(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeInterval_toString" "', argument " "2"" of type '" "bool""'");
-  } 
-  arg2 = static_cast< bool >(val2);
-  ecode3 = SWIG_AsVal_unsigned_SS_long_SS_long(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "TimeInterval_toString" "', argument " "3"" of type '" "IlwisTypes""'");
-  } 
-  arg3 = static_cast< IlwisTypes >(val3);
-  {
-    try {
-      result = ((pythonapi::TimeInterval const *)arg1)->toString(arg2,arg3);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_TimeInterval_contains__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::TimeInterval *arg1 = (pythonapi::TimeInterval *) 0 ;
@@ -31665,7 +31465,7 @@ fail:
 SWIGINTERN PyObject *_wrap_DataDefinition_domain__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::DataDefinition *arg1 = (pythonapi::DataDefinition *) 0 ;
-  pythonapi::Domain *arg2 = (pythonapi::Domain *) 0 ;
+  pythonapi::Domain *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -31679,14 +31479,17 @@ SWIGINTERN PyObject *_wrap_DataDefinition_domain__SWIG_0(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataDefinition_domain" "', argument " "1"" of type '" "pythonapi::DataDefinition *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_pythonapi__Domain, 0 |  0 );
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Domain,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataDefinition_domain" "', argument " "2"" of type '" "pythonapi::Domain *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataDefinition_domain" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataDefinition_domain" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
   }
   arg2 = reinterpret_cast< pythonapi::Domain * >(argp2);
   {
     try {
-      (arg1)->domain(arg2);
+      (arg1)->domain((pythonapi::Domain const &)*arg2);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -31959,8 +31762,7 @@ SWIGINTERN PyObject *_wrap_DataDefinition_domain(PyObject *self, PyObject *args)
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__DataDefinition, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Domain, 0);
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__Domain, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
         return _wrap_DataDefinition_domain__SWIG_0(self, args);
@@ -31971,7 +31773,7 @@ SWIGINTERN PyObject *_wrap_DataDefinition_domain(PyObject *self, PyObject *args)
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'DataDefinition_domain'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::DataDefinition::domain(pythonapi::Domain *)\n"
+    "    pythonapi::DataDefinition::domain(pythonapi::Domain const &)\n"
     "    pythonapi::DataDefinition::domain() const\n");
   return 0;
 }
@@ -32220,54 +32022,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_ColumnDefinition__SWIG_6(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  std::string *arg1 = 0 ;
-  pythonapi::Domain *arg2 = 0 ;
-  int res1 = SWIG_OLDOBJ ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  pythonapi::ColumnDefinition *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:new_ColumnDefinition",&obj0,&obj1)) SWIG_fail;
-  {
-    std::string *ptr = (std::string *)0;
-    res1 = SWIG_AsPtr_std_string(obj0, &ptr);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_ColumnDefinition" "', argument " "1"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_ColumnDefinition" "', argument " "1"" of type '" "std::string const &""'"); 
-    }
-    arg1 = ptr;
-  }
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Domain,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_ColumnDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_ColumnDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::Domain * >(argp2);
-  {
-    try {
-      result = (pythonapi::ColumnDefinition *)new pythonapi::ColumnDefinition((std::string const &)*arg1,(pythonapi::Domain const &)*arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__ColumnDefinition, SWIG_POINTER_NEW |  0 );
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_new_ColumnDefinition(PyObject *self, PyObject *args) {
   int argc;
   PyObject *argv[4];
@@ -32312,15 +32066,21 @@ SWIGINTERN PyObject *_wrap_new_ColumnDefinition(PyObject *self, PyObject *args) 
       }
     }
   }
-  if (argc == 2) {
+  if (argc == 3) {
     int _v;
     int res = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
     _v = SWIG_CheckState(res);
     if (_v) {
-      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__Domain, 0);
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__DataDefinition, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_new_ColumnDefinition__SWIG_6(self, args);
+        {
+          int res = SWIG_AsVal_unsigned_SS_long_SS_long(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_new_ColumnDefinition__SWIG_2(self, args);
+        }
       }
     }
   }
@@ -32342,24 +32102,6 @@ SWIGINTERN PyObject *_wrap_new_ColumnDefinition(PyObject *self, PyObject *args) 
       }
     }
   }
-  if (argc == 3) {
-    int _v;
-    int res = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__DataDefinition, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_unsigned_SS_long_SS_long(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_new_ColumnDefinition__SWIG_2(self, args);
-        }
-      }
-    }
-  }
   
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_ColumnDefinition'.\n"
@@ -32369,8 +32111,7 @@ fail:
     "    pythonapi::ColumnDefinition::ColumnDefinition(std::string const &,pythonapi::DataDefinition const &,quint64)\n"
     "    pythonapi::ColumnDefinition::ColumnDefinition(Ilwis::ColumnDefinition *)\n"
     "    pythonapi::ColumnDefinition::ColumnDefinition(pythonapi::ColumnDefinition const &)\n"
-    "    pythonapi::ColumnDefinition::ColumnDefinition(std::string const &,pythonapi::Domain const &,quint64)\n"
-    "    pythonapi::ColumnDefinition::ColumnDefinition(std::string const &,pythonapi::Domain const &)\n");
+    "    pythonapi::ColumnDefinition::ColumnDefinition(std::string const &,pythonapi::Domain const &,quint64)\n");
   return 0;
 }
 
@@ -35753,6 +35494,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"PixelIterator_xChanged", _wrap_PixelIterator_xChanged, METH_VARARGS, (char *)"PixelIterator_xChanged(PixelIterator self) -> bool"},
 	 { (char *)"PixelIterator_yChanged", _wrap_PixelIterator_yChanged, METH_VARARGS, (char *)"PixelIterator_yChanged(PixelIterator self) -> bool"},
 	 { (char *)"PixelIterator_zChanged", _wrap_PixelIterator_zChanged, METH_VARARGS, (char *)"PixelIterator_zChanged(PixelIterator self) -> bool"},
+	 { (char *)"PixelIterator___set__", _wrap_PixelIterator___set__, METH_VARARGS, (char *)"PixelIterator___set__(PixelIterator self, PixelIterator ohterIt) -> PixelIterator"},
 	 { (char *)"PixelIterator___getitem__", _wrap_PixelIterator___getitem__, METH_VARARGS, (char *)"\n"
 		"__getitem__(Pixel vox) -> PixelIterator\n"
 		"PixelIterator___getitem__(PixelIterator self, quint32 linearPosition) -> double\n"
@@ -35770,7 +35512,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"PixelIterator_end", _wrap_PixelIterator_end, METH_VARARGS, (char *)"PixelIterator_end(PixelIterator self) -> PixelIterator"},
 	 { (char *)"PixelIterator_asBuffer", _wrap_PixelIterator_asBuffer, METH_VARARGS, (char *)"PixelIterator_asBuffer(PixelIterator self) -> Py_buffer *"},
 	 { (char *)"PixelIterator_raster", _wrap_PixelIterator_raster, METH_VARARGS, (char *)"PixelIterator_raster(PixelIterator self) -> RasterCoverage"},
-	 { (char *)"PixelIterator_copyValues", _wrap_PixelIterator_copyValues, METH_VARARGS, (char *)"PixelIterator_copyValues(PixelIterator self, PixelIterator sourceIt)"},
 	 { (char *)"PixelIterator_swigregister", PixelIterator_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_GeoReference", _wrap_new_GeoReference, METH_VARARGS, (char *)"new_GeoReference(std::string const & resource) -> GeoReference"},
 	 { (char *)"GeoReference_toGeoReference", _wrap_GeoReference_toGeoReference, METH_VARARGS, (char *)"GeoReference_toGeoReference(Object obj) -> GeoReference"},
@@ -35834,10 +35575,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"RasterCoverage_unloadBinary", _wrap_RasterCoverage_unloadBinary, METH_VARARGS, (char *)"RasterCoverage_unloadBinary(RasterCoverage self)"},
 	 { (char *)"RasterCoverage_geoReference", _wrap_RasterCoverage_geoReference, METH_VARARGS, (char *)"RasterCoverage_geoReference(RasterCoverage self) -> GeoReference"},
 	 { (char *)"RasterCoverage_setGeoReference", _wrap_RasterCoverage_setGeoReference, METH_VARARGS, (char *)"RasterCoverage_setGeoReference(RasterCoverage self, GeoReference gr)"},
-	 { (char *)"RasterCoverage_datadef", _wrap_RasterCoverage_datadef, METH_VARARGS, (char *)"\n"
-		"datadef(quint32 layer=WHOLE_RASTER) -> DataDefinition\n"
-		"RasterCoverage_datadef(RasterCoverage self) -> DataDefinition\n"
-		""},
+	 { (char *)"RasterCoverage_datadef", _wrap_RasterCoverage_datadef, METH_VARARGS, (char *)"RasterCoverage_datadef(RasterCoverage self) -> DataDefinition"},
 	 { (char *)"RasterCoverage_setDataDef", _wrap_RasterCoverage_setDataDef, METH_VARARGS, (char *)"\n"
 		"setDataDef(DataDefinition datdef)\n"
 		"RasterCoverage_setDataDef(RasterCoverage self, Domain dm)\n"
@@ -36037,8 +35775,6 @@ static PyMethodDef SwigMethods[] = {
 		"ContinousColorRange()\n"
 		"new_ContinousColorRange(Color clr1, Color clr2) -> ContinousColorRange\n"
 		""},
-	 { (char *)"ContinousColorRange___str__", _wrap_ContinousColorRange___str__, METH_VARARGS, (char *)"ContinousColorRange___str__(ContinousColorRange self) -> std::string"},
-	 { (char *)"ContinousColorRange___bool__", _wrap_ContinousColorRange___bool__, METH_VARARGS, (char *)"ContinousColorRange___bool__(ContinousColorRange self) -> bool"},
 	 { (char *)"ContinousColorRange_clone", _wrap_ContinousColorRange_clone, METH_VARARGS, (char *)"ContinousColorRange_clone(ContinousColorRange self) -> ContinousColorRange"},
 	 { (char *)"ContinousColorRange_ensure", _wrap_ContinousColorRange_ensure, METH_VARARGS, (char *)"\n"
 		"ensure(PyObject const * v, bool inclusive=True) -> PyObject\n"
@@ -36074,7 +35810,6 @@ static PyMethodDef SwigMethods[] = {
 		"end() -> PyObject\n"
 		"TimeInterval_end(TimeInterval self, PyObject const * t)\n"
 		""},
-	 { (char *)"TimeInterval_toString", _wrap_TimeInterval_toString, METH_VARARGS, (char *)"TimeInterval_toString(TimeInterval self, bool local, IlwisTypes arg3) -> std::string"},
 	 { (char *)"TimeInterval_contains", _wrap_TimeInterval_contains, METH_VARARGS, (char *)"\n"
 		"contains(std::string const & value, bool inclusive=True) -> bool\n"
 		"contains(std::string const & value) -> bool\n"
@@ -36113,8 +35848,7 @@ static PyMethodDef SwigMethods[] = {
 		"ColumnDefinition(std::string const & name, DataDefinition coldef, quint64 colindex)\n"
 		"ColumnDefinition(Ilwis::ColumnDefinition * arg2)\n"
 		"ColumnDefinition(ColumnDefinition coldef)\n"
-		"ColumnDefinition(std::string const & nm, Domain dom, quint64 colindex=0)\n"
-		"new_ColumnDefinition(std::string const & nm, Domain dom) -> ColumnDefinition\n"
+		"new_ColumnDefinition(std::string const & nm, Domain dom, quint64 colindex) -> ColumnDefinition\n"
 		""},
 	 { (char *)"delete_ColumnDefinition", _wrap_delete_ColumnDefinition, METH_VARARGS, (char *)"delete_ColumnDefinition(ColumnDefinition self)"},
 	 { (char *)"ColumnDefinition_datadef", _wrap_ColumnDefinition_datadef, METH_VARARGS, (char *)"ColumnDefinition_datadef(ColumnDefinition self) -> DataDefinition"},
@@ -37538,7 +37272,6 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "Flow_fYZX",SWIG_From_int(static_cast< int >(pythonapi::FlowVal::fYZX)));
   SWIG_Python_SetConstant(d, "Flow_fZXY",SWIG_From_int(static_cast< int >(pythonapi::FlowVal::fZXY)));
   SWIG_Python_SetConstant(d, "Flow_fZYX",SWIG_From_int(static_cast< int >(pythonapi::FlowVal::fZYX)));
-  SWIG_addvarlink(SWIG_globals(),(char*)"WHOLE_RASTER",Swig_var_WHOLE_RASTER_get, Swig_var_WHOLE_RASTER_set);
   SWIG_Python_SetConstant(d, "Domain_cSELF",SWIG_From_int(static_cast< int >(pythonapi::Domain::cSELF)));
   SWIG_Python_SetConstant(d, "Domain_cPARENT",SWIG_From_int(static_cast< int >(pythonapi::Domain::cPARENT)));
   SWIG_Python_SetConstant(d, "Domain_cDECLARED",SWIG_From_int(static_cast< int >(pythonapi::Domain::cDECLARED)));

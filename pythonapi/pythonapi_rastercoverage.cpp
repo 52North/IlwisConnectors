@@ -215,8 +215,8 @@ void RasterCoverage::setGeoReference(const GeoReference& gr){
     this->ptr()->as<Ilwis::RasterCoverage>()->georeference(gr.ptr()->as<Ilwis::GeoReference>());
 }
 
-DataDefinition& RasterCoverage::datadef(quint32 layer) const{
-    Ilwis::DataDefinition ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef(layer);
+DataDefinition& RasterCoverage::datadef() const{
+    Ilwis::DataDefinition ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
     DataDefinition* pydef = new DataDefinition(&ilwdef);
     return *pydef;
 }
@@ -255,7 +255,7 @@ PixelIterator RasterCoverage::band(PyObject* pyTrackIndex){
 
 void RasterCoverage::addBand(PyObject* pyTrackIndex, PixelIterator* pyIter){
     std::unique_ptr<QVariant> ilwTrackIndex(PyObject2QVariant(pyTrackIndex));
-    this->ptr()->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex, pyIter->ptr());
+    this->_ilwisObject->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex, pyIter->ptr());
 }
 
 RasterCoverage RasterCoverage::select(std::string selectionQ){

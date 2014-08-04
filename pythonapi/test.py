@@ -742,6 +742,8 @@ try:
             fc.setCoordinateSystem(cs1)
             self.assertEqual(fc.coordinateSystem().name(), "myProj4CSY",
                              msg="could not alter FeatureCoverage's CoordinateSystem")
+            self.assertEqual(cs1.toProj4(),
+                             "+proj=utm +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +zone=35")
 
         def test_EPSG(self):
             cs2 = CoordinateSystem("code=epsg:23035")
@@ -755,6 +757,14 @@ try:
             cs2 = CoordinateSystem("code=epsg:23035")
             self.assertTrue(cs1 == cs2)
             self.assertFalse(cs1 != cs2)
+
+        def test_envelope(self):
+            rc = RasterCoverage("n000302.mpr")
+            env = rc.envelope()
+            csyNew = CoordinateSystem("code=epsg:2050")
+            newEnv = rc.coordinateSystem().convertEnvelope(csyNew, env)
+
+            self.assertNotEqual(str(env), str(newEnv))
 
     #@ut.skip("temporarily")
     class TestGeoReference(ut.TestCase):
@@ -1750,9 +1760,207 @@ try:
             self.assertEqual(str(tip.begin()), "2011-06-23 00:00:00")
             self.assertEqual(str(tip.end()), "2015-02-10 00:00:00")
 
+    class TestDataDefinition(ut.TestCase):
+        def setUp(self):
+            try:
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir + rasterDir)
+                connectIssueLogger()
+            except IlwisException:
+                self.skipTest("could not set working directory!")
+
+        def test_datdefNumeric(self):
+            numRan = NumericRange(23.0, 3453.4, 0.2)
+            numDom = NumericDomain()
+            numDom.setRange(numRan)
+            datdef1 = DataDefinition(numDom, numRan)
+            datdef2 = DataDefinition(numDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(numRan.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(numRan), str(datdef1.range()))
+            self.assertEqual(str(numDom), str(datdef1.domain()))
+            self.assertEqual(str(numRan), str(datdef2.range()))
+            self.assertEqual(str(numDom), str(datdef2.domain()))
+
+            numRanDiff = NumericRange(1.0, 200.0)
+            numDomDiff = NumericDomain()
+            numDomDiff.setRange(numRan)
+            datdef3 = DataDefinition(numDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(numRanDiff)
+            datdef1.domain(numDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
+        def test_datdefThem(self):
+            themRan = ThematicRange()
+            themRan.add("Sea", "SE", "Area covered by the sea")
+            themRan.add("Sand", "SA", "Area covered by sand")
+            itemDom = ItemDomain(themRan)
+            datdef1 = DataDefinition(itemDom, themRan)
+            datdef2 = DataDefinition(itemDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(themRan.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(themRan), str(datdef1.range()))
+            self.assertEqual(str(itemDom), str(datdef1.domain()))
+            self.assertEqual(str(themRan), str(datdef2.range()))
+            self.assertEqual(str(itemDom), str(datdef2.domain()))
+
+            themRanDiff = ThematicRange()
+            themRanDiff.add("Blabla", "BB", "Two Blas")
+            themRanDiff.add("Blablabla", "BBB", "Three Blas")
+            itemDomDiff = ItemDomain(themRanDiff)
+            datdef3 = DataDefinition(itemDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(themRanDiff)
+            datdef1.domain(itemDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
+        def test_datdefIdent(self):
+            identRan = NamedItemRange()
+            identRan.add("Perth")
+            identRan.add("Darwin")
+            itemDom = ItemDomain(identRan)
+            datdef1 = DataDefinition(itemDom, identRan)
+            datdef2 = DataDefinition(itemDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(identRan.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(identRan), str(datdef1.range()))
+            self.assertEqual(str(itemDom), str(datdef1.domain()))
+            self.assertEqual(str(identRan), str(datdef2.range()))
+            self.assertEqual(str(itemDom), str(datdef2.domain()))
+
+            identRanDiff = NamedItemRange()
+            identRanDiff.add("Berlin")
+            identRanDiff.add("Hamburg")
+            itemDomDiff = ItemDomain(identRanDiff)
+            datdef3 = DataDefinition(itemDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(identRanDiff)
+            datdef1.domain(itemDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
+        def test_datdefInterval(self):
+            interrange = NumericItemRange()
+            interrange.add(("sealevel", 40.0, 100.0))
+            interrange.add(("dijks", 100.0, 151.0))
+            itemDom = ItemDomain(interrange)
+            datdef1 = DataDefinition(itemDom, interrange)
+            datdef2 = DataDefinition(itemDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(interrange.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(interrange), str(datdef1.range()))
+            self.assertEqual(str(itemDom), str(datdef1.domain()))
+            self.assertEqual(str(interrange), str(datdef2.range()))
+            self.assertEqual(str(itemDom), str(datdef2.domain()))
+
+            interRanDiff = NumericItemRange()
+            interRanDiff.add(("low", 0.0, 50.0))
+            interRanDiff.add(("high", 50.0, 250.0))
+            itemDomDiff = ItemDomain(interRanDiff)
+            datdef3 = DataDefinition(itemDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(interRanDiff)
+            datdef1.domain(itemDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
+        def test_datdefTime(self):
+            interval = TimeInterval(date(2014, 2, 17), date(2016, 2, 17))
+            timeDom = TimeDomain(interval)
+            datdef1 = DataDefinition(timeDom, interval)
+            datdef2 = DataDefinition(timeDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(interval.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(interval), str(datdef1.range()))
+            self.assertEqual(str(timeDom), str(datdef1.domain()))
+            self.assertEqual(str(interval), str(datdef2.range()))
+            self.assertEqual(str(timeDom), str(datdef2.domain()))
+
+            intervalDiff = TimeInterval(date(2012, 8, 17), date(2013, 7, 10))
+            timeDomDiff = TimeDomain(intervalDiff)
+            datdef3 = DataDefinition(timeDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(intervalDiff)
+            datdef1.domain(timeDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
+        def test_datdefColor(self):
+            color1 = Color(ColorModel.cmRGBA, (220.0, 20.0, 30.0, 200.0))
+            color2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
+            col = ContinousColorRange(color1, color2)
+            colDom = ColorDomain()
+            colDom.setRange(col)
+
+            datdef1 = DataDefinition(colDom, col)
+            datdef2 = DataDefinition(colDom)
+
+            self.assertEqual(str(datdef1), str(datdef2))
+
+            self.assertTrue(bool(datdef1))
+            self.assertTrue(bool(datdef2))
+            self.assertTrue(bool(datdef2.range()))
+
+            self.assertEqual(col.ilwisType(), datdef1.range().ilwisType())
+            self.assertEqual(str(col), str(datdef1.range()))
+            self.assertEqual(str(colDom), str(datdef1.domain()))
+            self.assertEqual(str(col), str(datdef2.range()))
+            self.assertEqual(str(colDom), str(datdef2.domain()))
+
+            color3 = Color(ColorModel.cmRGBA, (130.0, 0.0, 10.0, 100.0))
+            color4 = Color(ColorModel.cmRGBA, (230.0, 60.0, 50.0, 240.0))
+            colDiff = ContinousColorRange(color3, color4)
+            colDomDiff = ColorDomain()
+            colDomDiff.setRange(colDiff)
+            datdef3 = DataDefinition(colDomDiff)
+            datdef2 = datdef3
+            self.assertEqual(str(datdef3), str(datdef2))
+
+            datdef1.range(colDiff)
+            datdef1.domain(colDomDiff)
+            self.assertEqual(str(datdef1), str(datdef3))
+
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest='TestTable', verbosity=2)
+        ut.main(defaultTest='TestCoordinateSystem', verbosity=2)
 
 except ImportError as e:
     print(e)

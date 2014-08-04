@@ -159,8 +159,6 @@ class ContinousColorRange : public ColorRange{
 public:
     ContinousColorRange();
     ContinousColorRange(const Color& clr1, const Color& clr2);
-    std::string __str__() const;
-    bool __bool__() const;
     ContinousColorRange *clone() const;
     PyObject* ensure(const PyObject *v, bool inclusive = true) const;
     bool containsVar(const PyObject *v, bool inclusive = true) const;
@@ -180,7 +178,7 @@ public:
     void begin(const PyObject* t) ;
     void end(const PyObject* t);
     //Duration getStep() const { return _step;}
-    std::string toString(bool local, IlwisTypes) const;
+//    std::string __str__();
     bool contains(const std::string& value, bool inclusive = true) const;
     bool contains(const PyObject* value, bool inclusive = true) const;
 

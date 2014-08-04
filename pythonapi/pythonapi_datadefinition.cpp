@@ -57,9 +57,8 @@ void DataDefinition::range(const Range &rng){
     this->ptr().range(rng._range.get());
 }
 
-void DataDefinition::domain(Domain* dm){
-    this->ptr().domain(dm->ptr()->as<Ilwis::Domain>());
-    delete dm;
+void DataDefinition::domain(const Domain &dm){
+    this->ptr().domain(dm.ptr()->as<Ilwis::Domain>());
 }
 
 bool DataDefinition::isCompatibleWith(const DataDefinition& datdef){
@@ -80,12 +79,6 @@ DataDefinition* DataDefinition::__set__(const DataDefinition& def){
     return this;
 }
 
-Ilwis::DataDefinition& DataDefinition::ptr() const{
-    if (!this->__bool__())
-        throw InvalidObject("use of invalid DataDefinition(ptr)");
-    return (*this->_ilwisDatadef);
-}
-
 Range* DataDefinition::range() const{
     if(this->ptr().range()){
         return new Range(this->ptr().range()->clone());
@@ -99,4 +92,10 @@ Domain* DataDefinition::domain() const{
         return new Domain(&ilwDom);
     }else
         return NULL;
+}
+
+Ilwis::DataDefinition& DataDefinition::ptr() const{
+    if (!this->__bool__())
+        throw InvalidObject("use of invalid DataDefinition(ptr)");
+    return (*this->_ilwisDatadef);
 }

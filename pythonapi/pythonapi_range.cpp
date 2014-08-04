@@ -551,23 +551,6 @@ ContinousColorRange::ContinousColorRange(const Color &clr1, const Color &clr2)
      _range.reset(new Ilwis::ContinousColorRange(col1, col2, ilwColor));
 }
 
-
-
-std::string ContinousColorRange::__str__() const
-{
-    QString colors = static_cast<Ilwis::ContinousColorRange*>(_range.get())->toString();
-    return colors.toStdString();
-}
-
-
-
-bool ContinousColorRange::__bool__() const
-{
-    bool yesno = _range.get()->isValid();
-    return yesno;
-}
-
-
 ContinousColorRange *ContinousColorRange::clone() const
 {
     ContinousColorRange* colRa = new ContinousColorRange();
@@ -641,14 +624,15 @@ TimeInterval::TimeInterval(const PyObject* beg, const PyObject* end, std::string
     delete qvar;
 }
 
-std::string TimeInterval::toString(bool local, IlwisTypes tp) const{
-    return (static_cast<Ilwis::TimeInterval*>(_range.get())->toString(local, tp)).toStdString();
-}
+//std::string TimeInterval::__str__(){
+//    QString begin = static_cast<Ilwis::TimeInterval*>(_range.get())->begin().toString();
+//    QString end = static_cast<Ilwis::TimeInterval*>(_range.get())->end().toString();
+//    return "Start: " + begin.toStdString() + ", End: " + end.toStdString();
+//}
 
 bool TimeInterval::contains(const std::string &value, bool inclusive) const
 {
     return static_cast<Ilwis::TimeInterval*>(_range.get())->contains(QString::fromStdString(value));
-
 }
 
 bool TimeInterval::contains(const PyObject* value, bool inclusive) const
