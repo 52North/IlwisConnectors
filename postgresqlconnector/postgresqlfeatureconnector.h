@@ -2,6 +2,9 @@
 #define POSTGRESQLFEATURECONNECTOR_H
 
 namespace Ilwis {
+
+class FeatureCoverage;
+
 namespace Postgresql {
 class PostgresqlFeatureConnector : public PostgresqlConnector
 {
@@ -17,6 +20,10 @@ public:
 
     bool loadBinaryData(IlwisObject *data);
     bool storeBinaryData(IlwisObject* obj);
+private:
+    bool prepareTableForFeatureCoverage(FeatureCoverage *fcoverage) const;
+    void setFeatureCount(FeatureCoverage *fcoverage) const;
+    void setEnvelope(FeatureCoverage *fcoverage) const;
 };
 }
 }

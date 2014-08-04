@@ -10,7 +10,7 @@ class PostgresqlTableLoader
 public:
     PostgresqlTableLoader();
 
-    void loadMetadata(ITable *table, Resource resource) const;
+    bool loadMetadata(Ilwis::Table *table, Resource resource) const;
 
 private:
     bool createColumnDefinition(Table *table, QSqlQuery *query) const;

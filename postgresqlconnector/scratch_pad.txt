@@ -1,9 +1,10 @@
+Doing
+- load table metadata
+  - differentiate feature tables from plain tables
+  - load
 
-- review status and clean dead code
-  - pgmodule + pgobjectfactory
 - list findings
-  - module loading Q_PLUGIN_METADATA
-  - restructure to new design (connector vs catalog)
+- module loading Q_PLUGIN_METADATA
   -
 
 Questions

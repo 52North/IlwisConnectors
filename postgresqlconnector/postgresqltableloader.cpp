@@ -23,19 +23,14 @@ PostgresqlTableLoader::PostgresqlTableLoader()
 {
 }
 
-void PostgresqlTableLoader::loadMetadata(ITable *table, Resource resource) const
+bool PostgresqlTableLoader::loadMetadata(Table *table, Resource resource) const
 {
     qDebug() << "PostgresqlTableLoader::loadMetadata()";
-    QStringList pathElements = resource.url().path().split("/");
-    QString qTablename(pathElements.at(1)); // skip db-name
-    qTablename.append(".").append(pathElements.at(2));
 
-    QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(resource);
-    if ( !db.open()) {
-        QString error = db.lastError().text();
-        QString connection = resource.url(true).toString();
-        ERROR2("Cannot establish connection to %1 (%2)", connection, error);
-        return;
+    QString rawTablename(PostgresqlDatabaseUtil::tablenameFromResource(resource));
+    QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(resource,"loadTableMetadata");
+    if ( !db.isOpen()) {
+        return false;
     }
 
     QString sqlBuilder;
@@ -44,21 +39,23 @@ void PostgresqlTableLoader::loadMetadata(ITable *table, Resource resource) const
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(" information_schema.columns ");
     sqlBuilder.append(" WHERE ");
-    sqlBuilder.append(" table_name='").append(qTablename).append("';");
+    sqlBuilder.append(" table_name='").append(rawTablename).append("';");
     qDebug() << "SQL: " << sqlBuilder;
     QSqlQuery query = db.exec(sqlBuilder);
 
     while (query.next()) {
         QString columnName = query.value(0).toString();
-        if ( !createColumnDefinition(table->ptr(), &query)) {
+        if ( !createColumnDefinition(table, &query)) {
             if ( !query.isValid()) {
                 WARN("no data record selected.");
             } else {
-                DEBUG2("Ignore column '%1%' in table '%2'", columnName, qTablename);
+                DEBUG2("Ignore column '%1' in table '%2'", columnName, rawTablename);
             }
         }
     }
 
+    db.close();
+    return table->isValid();
 }
 
 bool PostgresqlTableLoader::createColumnDefinition(Table *table, QSqlQuery *query) const
@@ -89,8 +86,12 @@ bool PostgresqlTableLoader::createColumnDefinition(Table *table, QSqlQuery *quer
         domain = domain;
     } else if (udtName == "bool") {
         domain.prepare("boolean", itBOOL);
+    } else if (udtName == "geometry") {
+        // table describes features
+        table->addColumn(FEATUREIDCOLUMN, "count");
+        return true;
     } else {
-        DEBUG1("No domain handle for db type '%1')", udtName);
+        MESSAGE1("No domain handle for db type '%1')", udtName);
         return false;
     }
 

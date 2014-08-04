@@ -32,11 +32,8 @@ PostgresqlCatalogExplorer::PostgresqlCatalogExplorer(const Resource &resource, c
 std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
 {
     std::vector<Resource> resources;
-    QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(source());
-    if ( !db.open()) {
-        QString error = db.lastError().text();
-        QString connection = source().url(true).toString();
-        ERROR2("Cannot establish connection to %1 (%2)", connection, error);
+    QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(source(), "exploreItems");
+    if ( !db.isOpen()) {
         return resources;
     }
 
@@ -56,7 +53,7 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
     sqlBuilder.append(" geom.typname = 'geometry' ");
     sqlBuilder.append(" GROUP BY ");
     sqlBuilder.append(" meta.tablename;");
-    //qDebug() << "SQL: " << sqlBuilder;
+    qDebug() << "SQL: " << sqlBuilder;
     QSqlQuery query = db.exec(sqlBuilder);
 
     QString parentDatasourceNormalized = source().url().toString();
@@ -73,12 +70,12 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
         resourceId.append(schema);
         resourceId.append("/");
         resourceId.append(tablename);
-        //qDebug() << "create new resource: " << resourceId;
+        qDebug() << "create new resource: " << resourceId;
 
         IlwisTypes mainType;
         IlwisTypes extTypes;
         if ( hasGeometry) {
-            mainType = itFEATURE;
+            mainType = itCOVERAGE;
             extTypes = itTABLE; // | itGEOREF;
         } else {
             mainType = itTABLE;

@@ -43,11 +43,9 @@ bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions &
         return false;
     }
 
-    QUrl url = source().url();
-    ITable *table = (ITable *)data;
+    Table *table = static_cast<Table *>(data);
     PostgresqlTableLoader loader;
     loader.loadMetadata(table,source());
-    table->ptr()->name(url.path());
 
     // TODO feature count, further metadata.
 
