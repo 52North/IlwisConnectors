@@ -45,12 +45,7 @@ bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions &
 
     Table *table = static_cast<Table *>(data);
     PostgresqlTableLoader loader;
-    loader.loadMetadata(table,source());
-
-    // TODO feature count, further metadata.
-
-
-    return true;
+    return loader.loadMetadata(table,source());
 }
 
 bool PostgresqlTableConnector::storeMetaData(Ilwis::IlwisObject *obj)
