@@ -16,13 +16,19 @@ class PostgresqlDatabaseUtil {
 public:
 
     /**
-     * @brief connectionFromResource creates a named database connection. Logs a
-     * warning if expected user credentials are missing or empty.
+     * @brief openForResource creates a named database connection.
+     *
+     * Creates a named database connection. The connection is being opened by default. Logs a warning
+     * if expected user credentials are missing or empty. Database can be retrieved by
+     * \code{.cpp}
+     *  QSqlDatabase::database("connectionname");
+     * \endcode
+     * A connectionname can be empty, then the default connection is being used.
      * @param resource the resource containing user credentials ('pg.user' and 'pg.password').
      * @param connectionname the name of the connection.
      * @return a database connection setup with the given user credentials.
      */
-    static QSqlDatabase connectionFromResource(const Resource resource, QString connectionname="", bool open=true) {
+    static QSqlDatabase openForResource(const Resource resource, QString connectionname="", bool open=true) {
 
         QUrl url = resource.url();
         if (connectionname.isEmpty()) {
@@ -39,6 +45,7 @@ public:
             return db;
         }
 
+        qDebug() << "add pg database connection" << connectionname;
         db = QSqlDatabase::addDatabase("QPSQL", connectionname);
 
         qint64 port = url.port();
@@ -68,7 +75,6 @@ public:
             }
         }
         return db;
-
     }
 
     /**
@@ -122,14 +128,14 @@ public:
         sqlBuilder.append(" udt_name = 'geometry' ;");
         qDebug() << "SQL: " << sqlBuilder;
 
-        QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(resource);
+        QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(resource,"tmp");
         QSqlQuery query = db.exec(sqlBuilder);
 
         while (query.next()) {
             columns.push_back(query.value(0).toString());
         }
 
-        db.close();
+        QSqlDatabase::removeDatabase("tmp");
     }
 
 private:

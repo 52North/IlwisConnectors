@@ -44,16 +44,15 @@ bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions &
     }
 
     Table *table = static_cast<Table *>(data);
-    PostgresqlTableLoader loader;
-    return loader.loadMetadata(table,source());
+    PostgresqlTableLoader loader(source());
+    return loader.loadMetadata(table);
 }
 
 bool PostgresqlTableConnector::store(Ilwis::IlwisObject *data)
 {
     qDebug() << "PostgresqlTableConnector::store()";
 
-
-
+    // TODO store data back to table
 
     return false;
 }
@@ -61,6 +60,8 @@ bool PostgresqlTableConnector::store(Ilwis::IlwisObject *data)
 bool PostgresqlTableConnector::loadData(IlwisObject *data)
 {
     qDebug() << "PostgresqlTableConnector::loadData()";
-    return false;
+    Table *table = static_cast<Table *>(data);
+    PostgresqlTableLoader loader(source());
+    return loader.loadTableData(table);
 }
 

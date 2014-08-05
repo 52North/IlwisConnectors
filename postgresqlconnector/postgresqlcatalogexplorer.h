@@ -9,6 +9,7 @@ class PostgresqlCatalogExplorer : public CatalogExplorer
 {
 public:
     PostgresqlCatalogExplorer(const Resource &resource, const IOOptions &options=IOOptions());
+    ~PostgresqlCatalogExplorer();
 
     static CatalogExplorer *create(const Resource &resource,const IOOptions& options=IOOptions());
 

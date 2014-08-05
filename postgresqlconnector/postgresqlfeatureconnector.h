@@ -10,16 +10,16 @@ class PostgresqlFeatureConnector : public PostgresqlConnector
 {
 public:
     PostgresqlFeatureConnector(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
+    ~PostgresqlFeatureConnector();
 
 
     IlwisObject *create() const;
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
 
     bool loadMetaData(IlwisObject* data,const IOOptions&);
-    bool storeMetaData(Ilwis::IlwisObject *obj);
+    bool loadData(IlwisObject *data);
+    bool store(IlwisObject* data);
 
-    bool loadBinaryData(IlwisObject *data);
-    bool storeBinaryData(IlwisObject* obj);
 private:
     bool prepareTableForFeatureCoverage(FeatureCoverage *fcoverage) const;
     void setFeatureCount(FeatureCoverage *fcoverage) const;

@@ -20,19 +20,21 @@
 using namespace Ilwis;
 using namespace Postgresql;
 
-PostgresqlTableLoader::PostgresqlTableLoader()
+PostgresqlTableLoader::PostgresqlTableLoader(Resource resource): _resource(resource)
 {
+    PostgresqlDatabaseUtil::openForResource(_resource,"tableloader");
 }
 
-bool PostgresqlTableLoader::loadMetadata(Table *table, Resource resource) const
+PostgresqlTableLoader::~PostgresqlTableLoader()
+{
+    QSqlDatabase::removeDatabase("tableloader");
+}
+
+bool PostgresqlTableLoader::loadMetadata(Table *table) const
 {
     qDebug() << "PostgresqlTableLoader::loadMetadata()";
 
-    QString rawTablename(PostgresqlDatabaseUtil::tablenameFromResource(resource));
-    QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(resource,"loadTableMetadata");
-    if ( !db.isOpen()) {
-        return false;
-    }
+    QString rawTablename(PostgresqlDatabaseUtil::tablenameFromResource(_resource));
 
     QString sqlBuilder;
     sqlBuilder.append("SELECT ");
@@ -42,6 +44,8 @@ bool PostgresqlTableLoader::loadMetadata(Table *table, Resource resource) const
     sqlBuilder.append(" WHERE ");
     sqlBuilder.append(" table_name='").append(rawTablename).append("';");
     qDebug() << "SQL: " << sqlBuilder;
+
+    QSqlDatabase db = QSqlDatabase::database("tableloader");
     QSqlQuery query = db.exec(sqlBuilder);
 
     while (query.next()) {
@@ -55,33 +59,32 @@ bool PostgresqlTableLoader::loadMetadata(Table *table, Resource resource) const
         }
     }
 
-    db.close();
     return table->isValid();
 }
 
-bool PostgresqlTableLoader::loadData(Table *table, Resource resource)
+QSqlQuery PostgresqlTableLoader::selectAll() const
 {
-    QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(resource, "loadData");
-    if ( !db.isOpen()) {
-        return false;
-    }
-
     QString sqlBuilder;
     sqlBuilder.append("SELECT ");
     sqlBuilder.append(" * ");
     sqlBuilder.append(" FROM ");
-    sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(resource));
+    sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
     qDebug() << "SQL: " << sqlBuilder;
-    QSqlQuery query = db.exec(sqlBuilder);
+
+    QSqlDatabase db = QSqlDatabase::database("tableloader");
+    return db.exec(sqlBuilder);
+}
+
+bool PostgresqlTableLoader::loadTableData(Table *table) const
+{
+    QSqlQuery query = selectAll();
+    QSqlRecord recordDef = query.record();
 
     quint64 count = 0;
-
-    QSqlRecord recordDef = query.record();
     while (query.next()) {
         std::vector<QVariant> record(table->columnCount());
         for (int i = 0; i < table->columnCount(); i++) {
             ColumnDefinition& coldef = table->columndefinitionRef(i);
-
 
             if ( coldef.name() == QString(FEATUREIDCOLUMN) ) {
                 continue; // auto filled column
@@ -94,6 +97,13 @@ bool PostgresqlTableLoader::loadData(Table *table, Resource resource)
                 continue;
             }
 
+            QStringList geometryNames;
+            PostgresqlDatabaseUtil::geometryColumnNames(_resource,geometryNames);
+
+            if (geometryNames.contains(coldef.name())) {
+                continue; // TODO geometry column is loaded differently
+            }
+
             qint64 fieldIdx = recordDef.indexOf(coldef.name());
             record[i] = query.value(fieldIdx);
 
@@ -102,6 +112,11 @@ bool PostgresqlTableLoader::loadData(Table *table, Resource resource)
     }
 
     return true;
+}
+
+bool PostgresqlTableLoader::loadFeatureCoverageData(FeatureCoverage *fcoverage) const
+{
+    return false;
 }
 
 bool PostgresqlTableLoader::createColumnDefinition(Table *table, QSqlQuery *query) const

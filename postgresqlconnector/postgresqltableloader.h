@@ -2,19 +2,28 @@
 #define POSTGRESQLTABLELOADER_H
 
 namespace Ilwis {
+
+class Resource;
+class FeatureCoverage;
+
 namespace Postgresql {
 
 
 class PostgresqlTableLoader
 {
 public:
-    PostgresqlTableLoader();
+    PostgresqlTableLoader(Resource resource);
+    ~PostgresqlTableLoader();
 
-    bool loadMetadata(Table *table, Resource resource) const;
+    bool loadMetadata(Table *table) const;
 
-    bool loadData(Table *table, Resource resource);
+    bool loadTableData(Table *table) const;
+    bool loadFeatureCoverageData(FeatureCoverage *fcoverage) const;
 
 private:
+    Resource _resource;
+
+    QSqlQuery selectAll() const;
     bool createColumnDefinition(Table *table, QSqlQuery *query) const;
 };
 

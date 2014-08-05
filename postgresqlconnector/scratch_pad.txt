@@ -8,4 +8,5 @@ Doing
   -
 
 Questions
+- explorers are created and then checked if they can use a given resource => make this static as constructor may create state based on a resource which is not intended to be used by the checked resource
 - pgconnector does provide itFEATURE, itTABLE, but omits provision of tDOMAIN, itCOORDSYSTEM, itRASTER, itGEOREF for now

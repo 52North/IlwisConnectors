@@ -27,16 +27,19 @@ CatalogExplorer *PostgresqlCatalogExplorer::create(const Resource &resource, con
 
 PostgresqlCatalogExplorer::PostgresqlCatalogExplorer(const Resource &resource, const IOOptions &options) : CatalogExplorer(resource, options)
 {
+    if (canUse(resource)) {
+        // TODO discuss this workaround
+        PostgresqlDatabaseUtil::openForResource(source(), "exploreitems");
+    }
+}
+
+PostgresqlCatalogExplorer::~PostgresqlCatalogExplorer()
+{
+    QSqlDatabase::removeDatabase("exploreitems");
 }
 
 std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
 {
-    std::vector<Resource> resources;
-    QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(source(), "exploreItems");
-    if ( !db.isOpen()) {
-        return resources;
-    }
-
     QString schema("public");
     if (source().hasProperty("pg.schema")) {
         schema = source()["pg.schema"].toString();
@@ -54,12 +57,16 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
     sqlBuilder.append(" GROUP BY ");
     sqlBuilder.append(" meta.tablename;");
     qDebug() << "SQL: " << sqlBuilder;
+
+    std::vector<Resource> resources;
+    QSqlDatabase db = QSqlDatabase::database("exploreitems");
     QSqlQuery query = db.exec(sqlBuilder);
 
     QString parentDatasourceNormalized = source().url().toString();
     parentDatasourceNormalized = !parentDatasourceNormalized.endsWith("/")
             ? parentDatasourceNormalized.append("/")
             : parentDatasourceNormalized;
+
     while (query.next()) {
         QString tablename = query.value(0).toString();
         bool hasGeometry = query.value(1).toBool();
@@ -91,7 +98,6 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
         resources.push_back(table);
     }
 
-    db.close();
     return resources;
 }
 

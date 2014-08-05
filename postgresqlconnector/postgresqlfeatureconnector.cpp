@@ -28,6 +28,12 @@ using namespace Postgresql;
 
 PostgresqlFeatureConnector::PostgresqlFeatureConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : PostgresqlConnector(resource, load,options)
 {
+    PostgresqlDatabaseUtil::openForResource(source(),"featureconnector");
+}
+
+PostgresqlFeatureConnector::~PostgresqlFeatureConnector()
+{
+    QSqlDatabase::removeDatabase("featureconnector");
 }
 
 IlwisObject *PostgresqlFeatureConnector::create() const
@@ -57,20 +63,14 @@ bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions
         return false;
     }
 
-    QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(source());
-    if ( !db.isOpen()) {
-        return false;
-    }
-
     ITable table = fcoverage->attributeTable();
     if (sizeof(table->column(FEATUREIDCOLUMN)) != 0) {
         setFeatureCount(fcoverage);
         setEnvelope(fcoverage);
     }
 
-    // TODO further metadata.
+    // TODO further metadata?!
 
-    db.close();
     return true;
 }
 
@@ -90,7 +90,7 @@ void PostgresqlFeatureConnector::setFeatureCount(FeatureCoverage *fcoverage) con
     sqlBuilder.append(";");
     qDebug() << "SQL: " << sqlBuilder;
 
-    QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(source());
+    QSqlDatabase db = QSqlDatabase::database("featureconnector");
     QSqlQuery query = db.exec(sqlBuilder);
 
     if (query.next()) {
@@ -120,7 +120,7 @@ void PostgresqlFeatureConnector::setEnvelope(FeatureCoverage *fcoverage) const
         sqlBuilder.append(";");
         qDebug() << "SQL: " << sqlBuilder;
 
-        QSqlDatabase db = PostgresqlDatabaseUtil::connectionFromResource(source());
+        QSqlDatabase db = QSqlDatabase::database("featureconnector");
         QSqlQuery query = db.exec(sqlBuilder);
 
         if (query.next()) {
@@ -150,8 +150,8 @@ bool PostgresqlFeatureConnector::prepareTableForFeatureCoverage(FeatureCoverage 
         return false;
     }
 
-    PostgresqlTableLoader loader;
-    if ( !loader.loadMetadata(featureTable.ptr(), source())) {
+    PostgresqlTableLoader loader(source());
+    if ( !loader.loadMetadata(featureTable.ptr())) {
         ERROR1("Could not load table metadata for table '%1'", featureTable->name());
         return false;
     }
@@ -160,17 +160,16 @@ bool PostgresqlFeatureConnector::prepareTableForFeatureCoverage(FeatureCoverage 
     return true;
 }
 
-bool PostgresqlFeatureConnector::storeMetaData(Ilwis::IlwisObject *obj)
+bool PostgresqlFeatureConnector::loadData(IlwisObject *data)
 {
+    qDebug() << "PostgresqlFeatureConnector::loadData()";
+
     return false;
 }
 
-bool PostgresqlFeatureConnector::loadBinaryData(IlwisObject *data)
+bool PostgresqlFeatureConnector::store(IlwisObject *data)
 {
-    return false;
-}
+    qDebug() << "PostgresqlFeatureConnector::store()";
 
-bool PostgresqlFeatureConnector::storeBinaryData(IlwisObject *obj)
-{
     return false;
 }
