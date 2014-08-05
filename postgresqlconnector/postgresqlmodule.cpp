@@ -48,6 +48,8 @@ QString PostgresqlModule::getVersion() const
 
 void PostgresqlModule::prepare()
 {
+    qDebug() << "preparing postgresql module ...";
+
     PostgresqlObjectFactory *factory = new PostgresqlObjectFactory();
     factory->prepare();
     kernel()->addFactory(factory);
