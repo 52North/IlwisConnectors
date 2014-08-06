@@ -135,7 +135,7 @@ public:
             columns.push_back(query.value(0).toString());
         }
 
-        QSqlDatabase::removeDatabase("tmp");
+        db.close();
     }
 
 private:
