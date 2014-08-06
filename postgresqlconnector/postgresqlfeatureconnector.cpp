@@ -38,11 +38,13 @@ PostgresqlFeatureConnector::~PostgresqlFeatureConnector()
 
 IlwisObject *PostgresqlFeatureConnector::create() const
 {
+    qDebug() << "PostgresqlTableConnector::create() -> FeatureCoverage";
     return new FeatureCoverage(_resource);
 }
 
 ConnectorInterface *PostgresqlFeatureConnector::create(const Ilwis::Resource &resource, bool load,const IOOptions& options)
 {
+    qDebug() << "PostgresqlTableConnector::create() -> connector instance";
     return new PostgresqlFeatureConnector(resource, load,options);
 }
 
@@ -50,10 +52,6 @@ bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions
 {
 
     qDebug() << "PostgresqlFeatureConnector::loadMetaData()";
-
-    if ( !PostgresqlConnector::loadMetaData(data, options)) {
-        return false;
-    }
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     fcoverage->setFeatureCount(itFEATURE, 0,0);

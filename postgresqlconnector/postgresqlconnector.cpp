@@ -19,14 +19,6 @@ PostgresqlConnector::~PostgresqlConnector()
 {
 }
 
-bool PostgresqlConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
-{
-//    if (data == nullptr)
-//        return false;
-//    return false;
-    return true;
-}
-
 QString PostgresqlConnector::provider() const
 {
     return "postgresql";

@@ -126,7 +126,7 @@ public:
         sqlBuilder.append(" table_name = '").append(tablename).append("' ");
         sqlBuilder.append(" AND ");
         sqlBuilder.append(" udt_name = 'geometry' ;");
-        qDebug() << "SQL: " << sqlBuilder;
+        //qDebug() << "SQL: " << sqlBuilder;
 
         QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(resource,"tmp");
         QSqlQuery query = db.exec(sqlBuilder);
@@ -135,7 +135,7 @@ public:
             columns.push_back(query.value(0).toString());
         }
 
-        db.close();
+        db.close(); // util class has to close after each select
     }
 
 private:

@@ -27,22 +27,19 @@ PostgresqlTableConnector::PostgresqlTableConnector(const Ilwis::Resource &resour
 
 IlwisObject *PostgresqlTableConnector::create() const
 {
-    qDebug() << "PostgresqlTableConnector::create()";
+    qDebug() << "PostgresqlTableConnector::create() -> FlatTable";
     return new FlatTable(_resource);
 }
 
 ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &resource, bool load,const IOOptions& options)
 {
-    return new PostgresqlTableConnector(resource, load,options);
+    qDebug() << "PostgresqlTableConnector::create() -> connector instance";
+    return new PostgresqlTableConnector(resource, load, options);
 }
 
 bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     qDebug() << "PostgresqlTableConnector::loadMetaData()";
-    if ( !PostgresqlConnector::loadMetaData(data, options)) {
-        return false;
-    }
-
     Table *table = static_cast<Table *>(data);
     PostgresqlTableLoader loader(source());
     return loader.loadMetadata(table);
@@ -57,11 +54,14 @@ bool PostgresqlTableConnector::store(Ilwis::IlwisObject *data)
     return false;
 }
 
-bool PostgresqlTableConnector::loadData(IlwisObject *data)
+bool PostgresqlTableConnector::loadData(IlwisObject *data,const IOOptions &)
 {
     qDebug() << "PostgresqlTableConnector::loadData()";
     Table *table = static_cast<Table *>(data);
     PostgresqlTableLoader loader(source());
+    if ( !loader.loadMetadata(table)) {
+        return false;
+    }
     return loader.loadTableData(table);
 }
 
