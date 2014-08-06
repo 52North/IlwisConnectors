@@ -77,7 +77,7 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
         resourceId.append(schema);
         resourceId.append("/");
         resourceId.append(tablename);
-        qDebug() << "create new resource: " << resourceId;
+        //qDebug() << "create new resource: " << resourceId;
 
         IlwisTypes mainType;
         IlwisTypes extTypes;

@@ -1,6 +1,5 @@
 
 #include <QSqlError>
-#include <QSqlRecord>
 #include <QSqlDatabase>
 
 #include "kernel.h"
@@ -8,10 +7,14 @@
 #include "ilwistypes.h"
 #include "resource.h"
 #include "domain.h"
+#include "geometries.h"
 #include "numericdomain.h"
 #include "textdomain.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
+#include "feature.h"
+#include "coverage.h"
+#include "featurecoverage.h"
 #include "table.h"
 
 #include "postgresqltableloader.h"
@@ -75,49 +78,28 @@ QSqlQuery PostgresqlTableLoader::selectAll() const
     return db.exec(sqlBuilder);
 }
 
-bool PostgresqlTableLoader::loadTableData(Table *table) const
+bool PostgresqlTableLoader::loadData(Table *table) const
 {
     QSqlQuery query = selectAll();
-    QSqlRecord recordDef = query.record();
 
     quint64 count = 0;
     while (query.next()) {
         std::vector<QVariant> record(table->columnCount());
         for (int i = 0; i < table->columnCount(); i++) {
             ColumnDefinition& coldef = table->columndefinitionRef(i);
-
-            if ( coldef.name() == QString(FEATUREIDCOLUMN) ) {
-                continue; // auto filled column
-            }
-
             DataDefinition& datadef = coldef.datadef();
             if( !datadef.domain().isValid()) {
                 WARN2(ERR_NO_INITIALIZED_2, "domain", coldef.name());
                 record[i] = QVariant(); // empty
                 continue;
             }
-
-            QStringList geometryNames;
-            PostgresqlDatabaseUtil::geometryColumnNames(_resource,geometryNames);
-
-            if (geometryNames.contains(coldef.name())) {
-                continue; // TODO geometry column is loaded differently
-            }
-
-            qint64 fieldIdx = recordDef.indexOf(coldef.name());
-            record[i] = query.value(fieldIdx);
-
+            record[i] = query.value(coldef.name());
         }
         table->record(count++, record);
     }
-
     return true;
 }
 
-bool PostgresqlTableLoader::loadFeatureCoverageData(FeatureCoverage *fcoverage) const
-{
-    return false;
-}
 
 bool PostgresqlTableLoader::createColumnDefinition(Table *table, QSqlQuery *query) const
 {

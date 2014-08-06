@@ -16,9 +16,7 @@ public:
     ~PostgresqlTableLoader();
 
     bool loadMetadata(Table *table) const;
-
-    bool loadTableData(Table *table) const;
-    bool loadFeatureCoverageData(FeatureCoverage *fcoverage) const;
+    bool loadData(Table *table) const;
 
 private:
     Resource _resource;

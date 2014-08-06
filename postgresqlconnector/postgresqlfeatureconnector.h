@@ -20,10 +20,6 @@ public:
     bool loadData(IlwisObject *data);
     bool store(IlwisObject* data);
 
-private:
-    bool prepareTableForFeatureCoverage(FeatureCoverage *fcoverage) const;
-    void setFeatureCount(FeatureCoverage *fcoverage) const;
-    void setSpatialMetadata(FeatureCoverage *fcoverage) const;
 };
 }
 }

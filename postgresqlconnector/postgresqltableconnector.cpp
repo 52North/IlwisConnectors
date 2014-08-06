@@ -1,5 +1,4 @@
-#include <QSqlQuery>
-#include <QSqlError>
+
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "connectorinterface.h"
@@ -62,6 +61,6 @@ bool PostgresqlTableConnector::loadData(IlwisObject *data,const IOOptions &)
     if ( !loader.loadMetadata(table)) {
         return false;
     }
-    return loader.loadTableData(table);
+    return loader.loadData(table);
 }
 
