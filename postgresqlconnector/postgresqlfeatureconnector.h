@@ -23,7 +23,7 @@ public:
 private:
     bool prepareTableForFeatureCoverage(FeatureCoverage *fcoverage) const;
     void setFeatureCount(FeatureCoverage *fcoverage) const;
-    void setEnvelope(FeatureCoverage *fcoverage) const;
+    void setSpatialMetadata(FeatureCoverage *fcoverage) const;
 };
 }
 }

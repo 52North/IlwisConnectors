@@ -43,7 +43,7 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
     sqlBuilder.append(" information_schema.columns ");
     sqlBuilder.append(" WHERE ");
     sqlBuilder.append(" table_name='").append(rawTablename).append("';");
-    qDebug() << "SQL: " << sqlBuilder;
+    //qDebug() << "SQL: " << sqlBuilder;
 
     QSqlDatabase db = QSqlDatabase::database("tableloader");
     QSqlQuery query = db.exec(sqlBuilder);
@@ -69,7 +69,7 @@ QSqlQuery PostgresqlTableLoader::selectAll() const
     sqlBuilder.append(" * ");
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
-    qDebug() << "SQL: " << sqlBuilder;
+    //qDebug() << "SQL: " << sqlBuilder;
 
     QSqlDatabase db = QSqlDatabase::database("tableloader");
     return db.exec(sqlBuilder);

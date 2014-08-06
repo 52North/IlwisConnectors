@@ -56,7 +56,7 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
     sqlBuilder.append(" geom.typname = 'geometry' ");
     sqlBuilder.append(" GROUP BY ");
     sqlBuilder.append(" meta.tablename;");
-    qDebug() << "SQL: " << sqlBuilder;
+    //qDebug() << "SQL: " << sqlBuilder;
 
     std::vector<Resource> resources;
     QSqlDatabase db = QSqlDatabase::database("exploreitems");

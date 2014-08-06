@@ -1,4 +1,5 @@
 #include <QSqlDatabase>
+#include <QSqlRecord>
 #include <QSqlQuery>
 #include <QSqlError>
 
@@ -50,7 +51,6 @@ ConnectorInterface *PostgresqlFeatureConnector::create(const Ilwis::Resource &re
 
 bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
-
     qDebug() << "PostgresqlFeatureConnector::loadMetaData()";
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
@@ -64,7 +64,7 @@ bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions
     ITable table = fcoverage->attributeTable();
     if (sizeof(table->column(FEATUREIDCOLUMN)) != 0) {
         setFeatureCount(fcoverage);
-        setEnvelope(fcoverage);
+        setSpatialMetadata(fcoverage);
     }
 
     // TODO further metadata?!
@@ -86,7 +86,7 @@ void PostgresqlFeatureConnector::setFeatureCount(FeatureCoverage *fcoverage) con
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(qTablename);
     sqlBuilder.append(";");
-    qDebug() << "SQL: " << sqlBuilder;
+    //qDebug() << "SQL: " << sqlBuilder;
 
     QSqlDatabase db = QSqlDatabase::database("featureconnector");
     QSqlQuery query = db.exec(sqlBuilder);
@@ -98,33 +98,74 @@ void PostgresqlFeatureConnector::setFeatureCount(FeatureCoverage *fcoverage) con
     }
 }
 
-void PostgresqlFeatureConnector::setEnvelope(FeatureCoverage *fcoverage) const
+void PostgresqlFeatureConnector::setSpatialMetadata(FeatureCoverage *fcoverage) const
 {
-    qDebug() << "PostgresqlFeatureConnector::setEnvelope()";
+    qDebug() << "PostgresqlFeatureConnector::setSpatialMetadata()";
 
     QStringList geometryColumns;
     QString qTablename = PostgresqlDatabaseUtil::qTableFromTableResource(source());
     PostgresqlDatabaseUtil::geometryColumnNames(source(), geometryColumns);
 
     if (geometryColumns.size() > 0) {
-        QString sqlBuilder;
-        sqlBuilder.append("SELECT ");
-        // TODO adjust select for multiple geom columns
-        sqlBuilder.append("st_extent( ");
-        sqlBuilder.append(geometryColumns.at(0));
-        sqlBuilder.append(" ) ");
-        sqlBuilder.append(" FROM ");
-        sqlBuilder.append(qTablename);
-        sqlBuilder.append(";");
-        qDebug() << "SQL: " << sqlBuilder;
+
+        Envelope bbox;
+        ICoordinateSystem crs;
 
         QSqlDatabase db = QSqlDatabase::database("featureconnector");
-        QSqlQuery query = db.exec(sqlBuilder);
+        foreach (QString geomColumn, geometryColumns) {
+            QString sqlBuilder;
+            sqlBuilder.append("SELECT ");
+            sqlBuilder.append("st_extent( ").append(geomColumn).append(" ) ");
+            sqlBuilder.append(" FROM ");
+            sqlBuilder.append(qTablename);
+            sqlBuilder.append(";");
+            //qDebug() << "SQL: " << sqlBuilder;
 
-        if (query.next()) {
-            Envelope bbox(query.value(0).toString());
-            fcoverage->envelope(bbox);
+            QSqlQuery envelopeQuery = db.exec(sqlBuilder);
+
+            if (envelopeQuery.next()) {
+                Envelope envelope(envelopeQuery.value(0).toString());
+                bbox += envelope;
+            }
+
+
+            // first valid srid found is being considered as "main" crs.
+            //
+            // note that if multiple geom columns do exist, the geometries
+            // have to be transformed to the "main" one when actual data is
+            // loaded
+
+            if ( !crs.isValid()) {
+                sqlBuilder.clear();
+                sqlBuilder.append("SELECT ");
+                sqlBuilder.append(" st_srid( ").append(geomColumn).append(" ) AS srid, ");
+                sqlBuilder.append(" st_srid( ").append(geomColumn).append(" ) is not null AS isset ");
+                sqlBuilder.append(" FROM ");
+                sqlBuilder.append(qTablename);
+                sqlBuilder.append(" limit 1 ");
+                sqlBuilder.append(";");
+                //qDebug() << "SQL: " << sqlBuilder;
+
+                QSqlQuery sridQuery = db.exec(sqlBuilder);
+                QSqlRecord record = sridQuery.record();
+                int sridIdx = record.indexOf("srid");
+                int hasSridIdx = record.indexOf("isset");
+
+                if (sridQuery.next()) {
+                    if (sridQuery.value(hasSridIdx).toBool()) {
+                        QString srid = sridQuery.value(sridIdx).toString();
+                        QString code = QString("code=epsg:%1").arg(srid);
+                        if (crs.prepare(code, itCONVENTIONALCOORDSYSTEM)) {
+                            fcoverage->coordinateSystem(crs);
+                        } else {
+                            ERROR1("Could not prepare crs with %1.", code);
+                        }
+                    }
+                }
+
+            }
         }
+        fcoverage->envelope(bbox);
     }
 }
 
