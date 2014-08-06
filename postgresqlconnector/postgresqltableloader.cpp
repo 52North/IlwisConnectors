@@ -140,11 +140,11 @@ bool PostgresqlTableLoader::createColumnDefinition(Table *table, QSqlQuery *quer
     } else if (udtName.startsWith("float")) {
         INumericDomain ndomain;
         ndomain.prepare("value");
-        domain = domain;
+        domain = ndomain;
     } else if (udtName.startsWith("int")) {
         INumericDomain ndomain;
         ndomain.prepare("integer");
-        domain = domain;
+        domain = ndomain;
     } else if (udtName == "bool") {
         domain.prepare("boolean", itBOOL);
     } else if (udtName == "geometry") {
