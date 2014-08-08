@@ -1,6 +1,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QList>
 
 #include "kernel.h"
 #include "ilwisdata.h"
@@ -11,6 +12,7 @@
 #include "basetable.h"
 #include "flattable.h"
 #include "featurecoverage.h"
+#include "geometryhelper.h"
 
 #include "postgresqlfeaturecoverageloader.h"
 #include "postgresqltableloader.h"
@@ -65,11 +67,20 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
     return true;
 }
 
-QSqlQuery PostgresqlFeatureCoverageLoader::selectGeometries(const QStringList geometryNames) const
+QSqlQuery PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeometryColumn> metaGeometry) const
 {
+    QString columns;
+    std::for_each(metaGeometry.begin(), metaGeometry.end(), [&columns](MetaGeometryColumn meta) {
+        //columns.append(" ST_ASeWKB(");
+        columns.append(" ST_AsText(");
+        columns.append(meta.geomColumn).append(") AS ");
+        columns.append(meta.geomColumn).append(",");
+    });
+    columns = columns.left(columns.size() - 1);
+
     QString sqlBuilder;
     sqlBuilder.append("SELECT ");
-    sqlBuilder.append(geometryNames.join(","));
+    sqlBuilder.append(columns);
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
     qDebug() << "SQL: " << sqlBuilder;
@@ -89,43 +100,83 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
 
     }
 
-    QStringList geometryNames;
-    PostgresqlDatabaseUtil::geometryColumnNames(_resource,geometryNames);
-    QSqlQuery query = selectGeometries(geometryNames);
+    QList<MetaGeometryColumn> metaGeometries;
+    PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource,metaGeometries);
+    QSqlQuery query = selectGeometries(metaGeometries);
 
     while (query.next()) {
-        foreach (QString colName, geometryNames) {
-            QVariant variant = query.value(colName);
+        if (metaGeometries.size() > 0) {
+            MetaGeometryColumn meta = metaGeometries.at(0);
+            geos::geom::Geometry *geom = createGeometry(query,meta);
+            fcoverage->newFeature(geom,false);
 
+            // TODO how to add further geometries to the feature (according to the trackindex)?
         }
     }
 
+    return true;
 
 }
+
+geos::geom::Geometry* PostgresqlFeatureCoverageLoader::createGeometry(QSqlQuery &query, MetaGeometryColumn &meta) const
+{
+    ICoordinateSystem crs = meta.crs;
+
+    // postgis wkb is different from ogc wkb
+    // => select ewkb, but this seems to be slower than selecting wkt
+    //ByteArray wkbBytes = variant.toByteArray();
+    QVariant variant = query.value(meta.geomColumn);
+    QString wkt = variant.toString();
+    return GeometryHelper::fromWKT(wkt,crs);
+}
+
 
 void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage) const
 {
     qDebug() << "PostgresqlFeatureCoverageLoader::setFeatureCount()";
 
-    QString qTablename = PostgresqlDatabaseUtil::qTableFromTableResource(_resource);
+    QList<MetaGeometryColumn> metaGeometries;
+    PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, metaGeometries);
 
-    QString sqlBuilder;
-    sqlBuilder.append("SELECT ");
-    sqlBuilder.append(" count( ");
-    sqlBuilder.append("*");
-    sqlBuilder.append(" )");
-    sqlBuilder.append(" FROM ");
-    sqlBuilder.append(qTablename);
-    sqlBuilder.append(";");
-    //qDebug() << "SQL: " << sqlBuilder;
+    foreach (MetaGeometryColumn meta, metaGeometries) {
+        //select distinct st_geometrytype(geom), count
+        //    from public.tl_2010_us_rails,
+        //    ( select count(*) from public.tl_2010_us_rails where not st_isEmpty(geom))
+        //     AS count;
 
-    QSqlDatabase db = QSqlDatabase::database("featureconnector");
-    QSqlQuery query = db.exec(sqlBuilder);
+        QString sqlBuilder;
+        sqlBuilder.append("SELECT  ");
+        sqlBuilder.append(" count( * )");
+        sqlBuilder.append(" AS count ");
+        sqlBuilder.append(" FROM ");
+        sqlBuilder.append(" (SELECT ");
+        sqlBuilder.append(" * ");
+        sqlBuilder.append(" FROM ");
+        sqlBuilder.append(meta.qtablename());
+        sqlBuilder.append(" WHERE NOT ");
+        sqlBuilder.append(" ST_isEmpty( ");
+        sqlBuilder.append(meta.geomColumn);
+        sqlBuilder.append(" ) ");
+        sqlBuilder.append(" ) AS not_null ;");
+        qDebug() << "SQL: " << sqlBuilder;
 
-    if (query.next()) {
-        IlwisTypes types = itFEATURE;
-        qint32 featureCount = query.value(0).toInt();
-        fcoverage->setFeatureCount(types, featureCount, 0);
+        QSqlDatabase db = QSqlDatabase::database("featureconnector");
+        QSqlQuery query = db.exec(sqlBuilder);
+
+
+        // TODO Consider multiple geometries for each feature which might have
+        // different geometry types as well! Shall we stretch the count for
+        // features having multiple geometries, though the feature is the same
+        // (is it really the same by definition?)
+
+
+        if (query.next()) {
+            IlwisTypes types = meta.geomType;
+            int count = query.value("count").toInt();
+            if (count > 0) {
+                fcoverage->setFeatureCount(types, count, 0);
+            }
+        }
     }
 }
 
@@ -133,67 +184,51 @@ void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcover
 {
     qDebug() << "PostgresqlFeatureCoverageLoader::setSpatialMetadata()";
 
-    QStringList geometryColumns;
-    QString qTablename = PostgresqlDatabaseUtil::qTableFromTableResource(_resource);
-    PostgresqlDatabaseUtil::geometryColumnNames(_resource, geometryColumns);
+    QList<MetaGeometryColumn> metaGeometries;
+    PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, metaGeometries);
 
-    if (geometryColumns.size() > 0) {
+    Envelope bbox;
+    ICoordinateSystem crs;
 
-        Envelope bbox;
-        ICoordinateSystem crs;
+    QSqlDatabase db = QSqlDatabase::database("featureconnector");
+    foreach (MetaGeometryColumn meta, metaGeometries) {
+        QString sqlBuilder;
+        sqlBuilder.append("SELECT ");
+        sqlBuilder.append("st_extent( ");
+        sqlBuilder.append(meta.geomColumn);
+        sqlBuilder.append(" ) ");
+        sqlBuilder.append(" FROM ");
+        sqlBuilder.append(meta.qtablename());
+        sqlBuilder.append(";");
+        qDebug() << "SQL: " << sqlBuilder;
 
-        QSqlDatabase db = QSqlDatabase::database("featureconnector");
-        foreach (QString geomColumn, geometryColumns) {
-            QString sqlBuilder;
-            sqlBuilder.append("SELECT ");
-            sqlBuilder.append("st_extent( ").append(geomColumn).append(" ) ");
-            sqlBuilder.append(" FROM ");
-            sqlBuilder.append(qTablename);
-            sqlBuilder.append(";");
-            //qDebug() << "SQL: " << sqlBuilder;
+        QSqlQuery envelopeQuery = db.exec(sqlBuilder);
 
-            QSqlQuery envelopeQuery = db.exec(sqlBuilder);
+        if (envelopeQuery.next()) {
 
-            if (envelopeQuery.next()) {
-                Envelope envelope(envelopeQuery.value(0).toString());
+            // TODO check with Martin how to handle multiple
+            // geometries for one entity
+            QString envString = envelopeQuery.value(0).toString();
+            if ( !envString.isEmpty()) {
+                Envelope envelope(envString);
                 bbox += envelope;
             }
+        }
 
+        if ( !crs.isValid() && meta.crs.isValid()) {
             // first valid srid found is being considered as "main" crs.
             //
-            // note that if multiple geom columns do exist, the geometries
-            // have to be transformed to the "main" one when actual data is
-            // loaded
-
-            if ( !crs.isValid()) {
-                sqlBuilder.clear();
-                sqlBuilder.append("SELECT ");
-                sqlBuilder.append(" st_srid( ").append(geomColumn).append(" ) AS srid, ");
-                sqlBuilder.append(" st_srid( ").append(geomColumn).append(" ) is not null AS isset ");
-                sqlBuilder.append(" FROM ");
-                sqlBuilder.append(qTablename);
-                sqlBuilder.append(" limit 1 ");
-                sqlBuilder.append(";");
-                //qDebug() << "SQL: " << sqlBuilder;
-
-                QSqlQuery sridQuery = db.exec(sqlBuilder);
-
-                if (sridQuery.next()) {
-                    if (sridQuery.value("isset").toBool()) {
-                        QString srid = sridQuery.value("srid").toString();
-                        QString code = QString("code=epsg:%1").arg(srid);
-                        if (crs.prepare(code, itCONVENTIONALCOORDSYSTEM)) {
-                            fcoverage->coordinateSystem(crs);
-                        } else {
-                            ERROR1("Could not prepare crs with %1.", code);
-                        }
-                    }
-                }
-            }
+            // note: if multiple geom columns do exist, the geometries have
+            // to be transformed to the "main" one when actual data is loaded
+            crs = meta.crs;
         }
+
+        fcoverage->coordinateSystem(crs);
         fcoverage->envelope(bbox);
     }
 }
+
+
 
 
 

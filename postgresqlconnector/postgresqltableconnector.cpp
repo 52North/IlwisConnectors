@@ -36,7 +36,7 @@ ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &reso
     return new PostgresqlTableConnector(resource, load, options);
 }
 
-bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
+bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions&)
 {
     qDebug() << "PostgresqlTableConnector::loadMetaData()";
     Table *table = static_cast<Table *>(data);
@@ -53,7 +53,7 @@ bool PostgresqlTableConnector::store(Ilwis::IlwisObject *data)
     return false;
 }
 
-bool PostgresqlTableConnector::loadData(IlwisObject *data,const IOOptions &)
+bool PostgresqlTableConnector::loadData(IlwisObject *data,const IOOptions&)
 {
     qDebug() << "PostgresqlTableConnector::loadData()";
     Table *table = static_cast<Table *>(data);

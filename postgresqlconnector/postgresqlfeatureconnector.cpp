@@ -50,7 +50,7 @@ ConnectorInterface *PostgresqlFeatureConnector::create(const Ilwis::Resource &re
     return new PostgresqlFeatureConnector(resource, load,options);
 }
 
-bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
+bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions &)
 {
     qDebug() << "PostgresqlFeatureConnector::loadMetaData()";
 
@@ -64,17 +64,21 @@ bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions
         return false;
     }
 
-
     // TODO further metadata?!
 
     return true;
 }
 
-bool PostgresqlFeatureConnector::loadData(IlwisObject *data)
+bool PostgresqlFeatureConnector::loadData(IlwisObject *data, const IOOptions&)
 {
     qDebug() << "PostgresqlFeatureConnector::loadData()";
 
-    return false;
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
+    if ( !loadMetaData(fcoverage)) {
+        return false;
+    }
+    PostgresqlFeatureCoverageLoader loader(source());
+    return loader.loadData(fcoverage);
 }
 
 bool PostgresqlFeatureConnector::store(IlwisObject *data)

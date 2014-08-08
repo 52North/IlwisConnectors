@@ -49,18 +49,28 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
     //qDebug() << "SQL: " << sqlBuilder;
 
     QSqlDatabase db = QSqlDatabase::database("tableloader");
-    QSqlQuery query = db.exec(sqlBuilder);
+    QSqlQuery columnTypesQuery = db.exec(sqlBuilder);
 
-    while (query.next()) {
-        QString columnName = query.value(0).toString();
-        if ( !createColumnDefinition(table, &query)) {
-            if ( !query.isValid()) {
+    while (columnTypesQuery.next()) {
+        QString columnName = columnTypesQuery.value(0).toString();
+        if ( !createColumnDefinition(table, &columnTypesQuery)) {
+            if ( !columnTypesQuery.isValid()) {
                 WARN("no data record selected.");
             } else {
                 DEBUG2("Ignore column '%1' in table '%2'", columnName, rawTablename);
             }
         }
     }
+
+    sqlBuilder.clear();
+    sqlBuilder.append("SELECT ");
+    sqlBuilder.append(" count ( * ) ");
+    sqlBuilder.append(" FROM ");
+    sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
+    sqlBuilder.append(";");
+
+    QSqlQuery countQuery = db.exec(sqlBuilder);
+    table->recordCount(countQuery.value(0).toInt());
 
     return table->isValid();
 }
@@ -87,6 +97,9 @@ bool PostgresqlTableLoader::loadData(Table *table) const
         std::vector<QVariant> record(table->columnCount());
         for (int i = 0; i < table->columnCount(); i++) {
             ColumnDefinition& coldef = table->columndefinitionRef(i);
+            if (coldef.name() == FEATUREIDCOLUMN) {
+                continue; // if coverage table
+            }
             DataDefinition& datadef = coldef.datadef();
             if( !datadef.domain().isValid()) {
                 WARN2(ERR_NO_INITIALIZED_2, "domain", coldef.name());

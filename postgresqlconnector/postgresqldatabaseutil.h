@@ -4,13 +4,31 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QList>
 
 #include "kernel.h"
 #include "resource.h"
+#include "geometries.h"
+#include "coordinatesystem.h"
 
 namespace Ilwis {
+
 namespace Postgresql {
 
+struct MetaGeometryColumn {
+    QString catalog;
+    QString schema = "public";
+    QString tableName;
+    QString geomColumn;
+    int dimension;
+    ICoordinateSystem crs;
+    IlwisTypes geomType;
+    QString qtablename() {
+        QString qtablename = QString(schema);
+        qtablename.append(".").append(tableName);
+        return qtablename;
+    }
+};
 
 class PostgresqlDatabaseUtil {
 
@@ -116,27 +134,69 @@ public:
         return QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id);
     }
 
-    static void geometryColumnNames(const Resource resource, QStringList &columns) {
-        QString tablename = PostgresqlDatabaseUtil::tablenameFromResource(resource);
+    static void getMetaForGeometryColumns(const Resource resource, QList<MetaGeometryColumn> &columns) {
+        QString qtablename = qTableFromTableResource(resource);
         QString sqlBuilder;
-        sqlBuilder.append("SELECT");
-        sqlBuilder.append(" column_name ");
+        sqlBuilder.append("SELECT ");
+        sqlBuilder.append(" * ");
         sqlBuilder.append(" FROM ");
-        sqlBuilder.append(" information_schema.columns ");
-        sqlBuilder.append(" WHERE ");
-        sqlBuilder.append(" table_name = '").append(tablename).append("' ");
-        sqlBuilder.append(" AND ");
-        sqlBuilder.append(" udt_name = 'geometry' ;");
+        sqlBuilder.append(" geometry_columns ");
+        if ( !qtablename.isEmpty()) {
+            QStringList parts = qtablename.split(".");
+            QString schema;
+            QString table;
+            if (parts.size() == 1) {
+                schema = "public";
+                table = parts.at(0);
+            } else {
+                schema = parts.at(0);
+                table = parts.at(1);
+            }
+            sqlBuilder.append(" WHERE ");
+            sqlBuilder.append(" f_table_schema = '").append(schema).append("' ");
+            sqlBuilder.append(" AND ");
+            sqlBuilder.append(" f_table_name = '").append(table).append("' ");
+        }
+        sqlBuilder.append(" ;");
         //qDebug() << "SQL: " << sqlBuilder;
 
         QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(resource,"tmp");
         QSqlQuery query = db.exec(sqlBuilder);
 
         while (query.next()) {
-            columns.push_back(query.value(0).toString());
+            MetaGeometryColumn meta;
+            meta.catalog = query.value("f_table_catalog").toString();
+            meta.schema = query.value("f_table_schema").toString();
+            meta.tableName = query.value("f_table_name").toString();
+            meta.geomColumn = query.value("f_geometry_column").toString();
+            meta.dimension = query.value("coord_dimension").toInt();
+
+            ICoordinateSystem crs;
+            QString srid = QString::number(query.value("srid").toInt());
+            prepareCoordinateSystem(srid, crs);
+            meta.crs = crs;
+
+            IlwisTypes ilwisType;
+            QString geomType = query.value("type").toString();
+            if (geomType.contains("LINE", Qt::CaseInsensitive) ) {
+                ilwisType = itLINE;
+            } else if (geomType.contains("POINT", Qt::CaseInsensitive) ) {
+                ilwisType = itPOINT;
+            } else if (geomType.contains("POLYGON", Qt::CaseInsensitive) ) {
+                ilwisType = itPOLYGON;
+            }
+            meta.geomType = ilwisType;
+            columns.push_back(meta);
         }
 
         db.close(); // util class has to close after each select
+    }
+
+    static void prepareCoordinateSystem(QString srid, ICoordinateSystem &crs) {
+        QString code = QString("code=epsg:%1").arg(srid);
+        if ( !crs.prepare(code, itCONVENTIONALCOORDSYSTEM)) {
+            ERROR1("Could not prepare crs with %1.", code);
+        }
     }
 
 private:

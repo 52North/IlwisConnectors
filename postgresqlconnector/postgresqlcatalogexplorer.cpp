@@ -93,7 +93,9 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
         table.setExtendedType(extTypes);
         table.addProperty("pg.user", source()["pg.user"]);
         table.addProperty("pg.password", source()["pg.password"]);
-        table.addProperty("pg.schema", source()["pg.schema"]);
+        table.addProperty("pg.schema", source().hasProperty("pg.schema")
+                          ? source()["pg.schema"]
+                          : "public");
 
         resources.push_back(table);
     }
