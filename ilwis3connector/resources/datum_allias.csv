@@ -70,8 +70,8 @@ European 1950 (ED 50),North West Europe,DEUR-A
 European 1950 (ED 50),Portugal Spain,DEUR-D
 European 1950 (ED 50),Tunisia,DEUR-T
 European 1979 (ED 79),Mean,DEUR-M
-European Terrestrial Reference System (ETRS 89),,D
-GUX 1 Astro,,D
+European Terrestrial Reference System (ETRS 89),,DERTS
+GUX 1 Astro,,DDOB
 Gan 1970,,DGAA
 Geodetic Datum 1949,,DGEO
 Guam 1963,,DGUA
@@ -82,8 +82,8 @@ Hjorsey 1955,,DHJO
 Hong Kong 1963,,DHKD
 Hu-Tzu-Shan,,DHTN
 Hungarian Datum 1972 (HD72),,D
-ISTS 061 Astro 1968,,D
-ISTS 073 Astro 1969,,D
+ISTS 061 Astro 1968,,DISG
+ISTS 073 Astro 1969,,DIST
 Indian (Bangladesh),,DIND-B
 Indian (India Nepal),Nepal,DIND-I
 Indian (Pakistan),,DIND-P
@@ -118,51 +118,54 @@ Nahrwan,Oman,DNAH-A
 Nahrwan,Saudi Arabia,DNAH-C
 Nahrwan,United Arab Emirates,DNAH-B
 Naparima BWI,,D
-North American 1927 (NAD 27),Alaska,DNAS-D
-North American 1927 (NAD 27),Alaska Aleutian East,D
-North American 1927 (NAD 27),Alaska Aleutian West,D
-North American 1927 (NAD 27),Bahamas,D
-North American 1927 (NAD 27),Bahamas San Salvador,D
-North American 1927 (NAD 27),Canada,D
-North American 1927 (NAD 27),Canada East,D
-North American 1927 (NAD 27),Canada Middle,D
-North American 1927 (NAD 27),Canada North,D
-North American 1927 (NAD 27),Canada West,D
-North American 1927 (NAD 27),Canada Yukon,D
-North American 1927 (NAD 27),Canal Zone,D
-North American 1927 (NAD 27),Caribean,D
+North American 1927 (NAD 27),Alaska,DNAS-A
+North American 1927 (NAD 27),Alaska Aleutian East,DNAS-V
+North American 1927 (NAD 27),Alaska Aleutian West,DNAS-W
+North American 1927 (NAD 27),Bahamas,DNAS-Q
+North American 1927 (NAD 27),San Salvador,DNAS-R
+North American 1927 (NAD 27),Canada,DNAS-E
+North American 1927 (NAD 27),Canada East,DNAS-G
+North American 1927 (NAD 27),Canada Middle,DNAS-H
+North American 1927 (NAD 27),Canada North,DNAS-I
+North American 1927 (NAD 27),Canada West,DNAS-F
+North American 1927 (NAD 27),Canada Yukon,DNAS-J
+North American 1927 (NAD 27),Canal Zone,DNAS-O
+North American 1927 (NAD 27),Caribean,DNAS-P
 North American 1927 (NAD 27),Central America,D
-North American 1927 (NAD 27),Conus,D
-North American 1927 (NAD 27),Conus East,D
-North American 1927 (NAD 27),Conus West,D
-North American 1927 (NAD 27),Cuba,D
-North American 1927 (NAD 27),Greenland,D
-North American 1927 (NAD 27),Mexico,D
-North American 1983 (NAD 83),Alaska,D
-North American 1983 (NAD 83),Alaska Aleutian,D
-North American 1983 (NAD 83),Canada,D
-North American 1983 (NAD 83),Central America,D
-North American 1983 (NAD 83),Conus,D
-North American 1983 (NAD 83),Hawaii,D
-North American 1983 (NAD 83),Mexico,D
-North Sahara 1959,,D
+North American 1927 (NAD 27),Conus,DNAS-C
+North American 1927 (NAD 27),,DNAS-C
+North American 1927 (NAD 27),Conus East,DNAS-A
+North American 1927 (NAD 27),Conus West,DNAS-B
+North American 1927 (NAD 27),Cuba,DNAS-T
+North American 1927 (NAD 27),Greenland,DNAS-U
+North American 1927 (NAD 27),Mexico,DDNAS-L
+North American 1983 (NAD 83),Alaska,DNAR-A
+North American 1983 (NAD 83),Alaska Aleutian,DNAR-E
+North American 1983 (NAD 83),Canada,DNAR-B
+North American 1983 (NAD 83),Central America,DNAR-D
+North American 1983 (NAD 83),Conus,DNAR-C
+North American 1983 (NAD 83),,DNAR-C
+North American 1983 (NAD 83),Hawaii,DNAR-H
+North American 1983 (NAD 83),Mexico,DNAR-D
+North Sahara 1959,,DNSD
 Observatorio Meteorologico 1939,,D
-Old Egyptian 1907,,D
-Old Hawaiian,Hawaii,D
-Old Hawaiian,Kauai,D
-Old Hawaiian,Maui,D
-Old Hawaiian,Mean,D
-Old Hawaiian,Oahu,D
+Old Egyptian 1907,,DOEG
+Old Hawaiian,Hawaii,DOHA-A
+Old Hawaiian,Kauai,DOHA-B
+Old Hawaiian,Maui,DOHA-C
+Old Hawaiian,Mean,DOHA-M
+Old Hawaiian,Oahu,DOHA-D
 Oman,,D
-Ordnance Survey Great Britain 1936,England,D
+Ordnance Survey Great Britain 1936,England,DOGB-A
 Ordnance Survey Great Britain 1936,England Wales,D
-Ordnance Survey Great Britain 1936,Mean,D
-Ordnance Survey Great Britain 1936,Scotland,D
-Ordnance Survey Great Britain 1936,Wales,D
-Pico de las Nieves,,D
-Pitcairn Astro 1967,,D
-Point 58,,D
-Pointe Noire 1948,,D
+Ordnance Survey Great Britain 1936,Mean,DOGB-M
+Ordnance Survey Great Britain 1936,,DOGB-M
+Ordnance Survey Great Britain 1936,Scotland,DOGB-C
+Ordnance Survey Great Britain 1936,Wales,DOGB-D
+Pico de las Nieves,,DPLN
+Pitcairn Astro 1967,,DPIT
+Point 58,,DPTB
+Pointe Noire 1948,,DPTN
 Potsdam (Rauenburg),,D
 Provisional South American 1956,Bolivia,DPRP-A
 Provisional South American 1956,Chile North,DPRP-B
