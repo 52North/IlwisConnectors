@@ -243,6 +243,7 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
 
 
 IlwisObject *GeorefConnector::createGeoreference(const IniFile &odf) const{
+    //todo georefFACTOR
     QString type = odf.value("GeoRef","Type");
     if ( type == "GeoRefCorners"){
         return GeoReference::create("corners", _resource);
