@@ -411,7 +411,7 @@ bool QtServiceController::start(const QStringList &){
     \sa QtServiceBase::processCommand()
 */
 
-#include "QtService.moc"
+//#include "QtService.moc"
 
 QtService *QtServiceBasePrivate::instance = 0;
 
