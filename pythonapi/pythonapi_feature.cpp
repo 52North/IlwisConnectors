@@ -17,7 +17,9 @@
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
 #include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
 
+#include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/geometryhelper.h"
 
 #include "pythonapi_feature.h"
 #include "pythonapi_featurecoverage.h"
@@ -62,11 +64,11 @@ PyObject* Feature::__getitem__(quint32 colIndex){
     return QVariant2PyObject(ret);
 }
 
-PyObject* Feature::attribute(std::string name,const QVariant& defaultValue, int index){
+PyObject* Feature::attribute(std::string name,const QVariant& defaultValue, const QVariant& index){
     if (!defaultValue.isNull()){
         QVariant ret =  this->ptr()->cell(QString::fromStdString(name),index,false);
         if (!ret.isValid())
-            throw std::out_of_range(QString("No attribute '%1' at index '%2' found").arg(name.c_str()).arg(index).toStdString());
+            throw std::out_of_range(QString("No attribute '%1' at index '%2' found").arg(name.c_str()).arg(index.toString()).toStdString());
         return QVariant2PyObject(ret);
     }else{
         QVariant var = this->ptr()->cell(QString::fromStdString(name),index,false);
@@ -91,29 +93,33 @@ PyObject* Feature::attribute(std::string name,const QVariant& defaultValue, int 
                 }
             }
         }
-        throw std::out_of_range(QString("No attribute '%1' at index '%2' found").arg(name.c_str()).arg(index).toStdString());
+        throw std::out_of_range(QString("No attribute '%1' at index '%2' found").arg(name.c_str()).arg(index.toString()).toStdString());
     }
 }
 
-PyObject* Feature::attribute(std::string name, qint64 defaultValue, int index){
-    return this->attribute(name,QVariant(defaultValue),index);
+PyObject* Feature::attribute(std::string name, qint64 defaultValue, PyObject* index){
+    QVariant* ilwTrackIndex = checkIndex(index);
+    return this->attribute(name,QVariant(defaultValue),*ilwTrackIndex);
 }
 
-PyObject* Feature::attribute(std::string name, double defaultValue, int index){
-    return this->attribute(name,QVariant(defaultValue),index);
+PyObject* Feature::attribute(std::string name, double defaultValue, PyObject* index){
+    QVariant* ilwTrackIndex = checkIndex(index);
+    return this->attribute(name,QVariant(defaultValue),*ilwTrackIndex);
 }
 
-PyObject* Feature::attribute(std::string name, std::string defaultValue, int index){
-    return this->attribute(name,QVariant(QString::fromStdString(defaultValue)),index);
+PyObject* Feature::attribute(std::string name, std::string defaultValue, PyObject* index){
+    QVariant* ilwTrackIndex = checkIndex(index);
+    return this->attribute(name,QVariant(QString::fromStdString(defaultValue)),*ilwTrackIndex);
 }
 
 void Feature::__setitem__(std::string name, const PyObject* value){
     this->setAttribute(name,value);
 }
 
-void Feature::setAttribute(std::string name, const PyObject* value, int index){
+void Feature::setAttribute(std::string name, const PyObject* value, PyObject* index){
+    QVariant* ilwTrackIndex = checkIndex(index);
     QVariant* v = PyObject2QVariant(value);
-    this->ptr()->setCell(QString::fromStdString(name), *v , index);
+    this->ptr()->setCell(QString::fromStdString(name), *v , *ilwTrackIndex);
     delete v;
 }
 
@@ -121,42 +127,64 @@ void Feature::__setitem__(std::string name, qint64 value){
     this->setAttribute(name,value);
 }
 
-void Feature::setAttribute(std::string name, qint64 value, int index){
-    this->ptr()->setCell(QString::fromStdString(name), QVariant(value), index);
+void Feature::setAttribute(std::string name, qint64 value, PyObject* index){
+    QVariant* ilwTrackIndex = checkIndex(index);
+    this->ptr()->setCell(QString::fromStdString(name), QVariant(value), *ilwTrackIndex);
 }
 
 void Feature::__setitem__(std::string name,double value){
     this->setAttribute(name,value);
 }
 
-void Feature::setAttribute(std::string name, double value, int index){
-    this->ptr()->setCell(QString::fromStdString(name), QVariant(value), index);
+void Feature::setAttribute(std::string name, double value, PyObject* index){
+    QVariant* ilwTrackIndex = checkIndex(index);
+    this->ptr()->setCell(QString::fromStdString(name), QVariant(value), *ilwTrackIndex);
 }
 
 void Feature::__setitem__(std::string name,std::string value){
     this->setAttribute(name,value);
 }
 
-void Feature::setAttribute(std::string name, std::string value, int index){
-    this->ptr()->setCell(QString::fromStdString(name), QVariant(value.c_str()), index);
+void Feature::setAttribute(std::string name, std::string value, PyObject* index){
+    QVariant* ilwTrackIndex = checkIndex(index);
+    this->ptr()->setCell(QString::fromStdString(name), QVariant(value.c_str()), *ilwTrackIndex);
 }
 
 IlwisTypes Feature::ilwisType(){
     return itFEATURE;
 }
 
-Geometry* Feature::geometry(int index){
+Geometry* Feature::geometry(PyObject* index){
+    if( PyIsNone(index) || index == NULL)
+        index = PyLongFromLongLong(COVERAGEATRIB);
     return new Geometry(this, index);
 }
 
-void Feature::setGeometry(Geometry &geometry, int index){
-    this->ptr()->set(geometry.ptr()->clone(), index);
+void Feature::setGeometry(Geometry &geometry, PyObject* index){
+    QVariant* ilwTrackIndex = checkIndex(index);
+    this->ptr()->set(geometry.ptr()->clone(), *ilwTrackIndex);
+}
+
+void Feature::addGeometry(Geometry &geometry, PyObject* index){
+    QVariant* ilwTrackIndex = checkIndex(index);
+    this->ptr()->add(geometry.ptr()->clone(), *ilwTrackIndex);
+}
+
+void Feature::removeGeometry(PyObject *index){
+    QVariant* ilwTrackIndex = checkIndex(index);
+    this->ptr()->remove(*ilwTrackIndex);
+}
+
+quint64 Feature::featureId() const{
+    return this->ptr()->featureid();
+}
+
+quint32 Feature::trackSize() const{
+    return this->ptr()->trackSize();
 }
 
 ColumnDefinition Feature::columnDefinition(const std::string& name, bool coverages) const{
-    QString qName;
-    qName = qName.fromStdString(name);
-    Ilwis::ColumnDefinition* ilwDef = new Ilwis::ColumnDefinition(this->ptr()->columndefinition(qName, coverages));
+    Ilwis::ColumnDefinition* ilwDef = new Ilwis::ColumnDefinition(this->ptr()->columndefinition(QString::fromStdString(name), coverages));
     ColumnDefinition* pyDef = new ColumnDefinition(ilwDef);
     return *pyDef;
 }
@@ -165,6 +193,18 @@ ColumnDefinition Feature::columnDefinition(quint32 index, bool coverages) const{
     Ilwis::ColumnDefinition* ilwDef = new Ilwis::ColumnDefinition(this->ptr()->columndefinition(index, coverages));
     ColumnDefinition* pyDef = new ColumnDefinition(ilwDef);
     return *pyDef;
+}
+
+PyObject* Feature::trackIndexValue(quint32 index){
+    QVariant qvar = this->ptr()->trackIndexValue(index);
+    return QVariant2PyObject(qvar);
+}
+
+QVariant* Feature::checkIndex(PyObject *obj){
+    if( PyIsNone(obj) || obj == NULL)
+        return new QVariant(COVERAGEATRIB);
+    else
+        return PyObject2QVariant(obj);
 }
 
 std::unique_ptr<Ilwis::FeatureInterface> &Feature::ptr() const{

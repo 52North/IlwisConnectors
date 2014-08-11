@@ -22,7 +22,7 @@ namespace pythonapi {
         friend class PixelIterator;
     public:
         Geometry(std::string wkt, const CoordinateSystem &csy);
-        Geometry(Feature* feature, int index);
+        Geometry(Feature* feature, PyObject* index);
         ~Geometry();
 
         bool __bool__() const ;
@@ -70,7 +70,7 @@ namespace pythonapi {
 
         //_standalone == false
         std::unique_ptr<Feature> _feature;
-        int _index;
+        QVariant _index;
 
         //_standalone == true
         std::unique_ptr<geos::geom::Geometry> _ilwisGeometry;

@@ -120,6 +120,8 @@ namespace pythonapi {
     //===================Memory==========================
     char* PyMalloc();
 
+    bool PyIsNone(PyObject* obj);
+
 } // namespace pythonapi
 
 #endif // PYTHONAPI_PYOBJECT_H

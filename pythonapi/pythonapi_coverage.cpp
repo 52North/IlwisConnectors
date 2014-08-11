@@ -12,6 +12,7 @@
 #include "pythonapi_pyobject.h"
 #include "pythonapi_util.h"
 #include "pythonapi_qvariant.h"
+#include "pythonapi_columndefinition.h"
 
 using namespace pythonapi;
 
@@ -23,6 +24,16 @@ Coverage::Coverage(Ilwis::ICoverage *coverage):IlwisObject(new Ilwis::IIlwisObje
 
 bool Coverage::addAttribute(const std::string& name, const std::string& domain){
     return this->ptr()->as<Ilwis::Coverage>()->attributeTable()->addColumn(QString::fromStdString(name),QString::fromStdString(domain));
+}
+
+bool Coverage::addAttribute(const std::string& name, const Domain& domain){
+    Ilwis::IDomain ilwDom = domain.ptr()->as<Ilwis::Domain>();
+    return this->ptr()->as<Ilwis::Coverage>()->attributeTable()->addColumn(QString::fromStdString(name), ilwDom);
+}
+
+bool Coverage::addAttribute( const ColumnDefinition& def){
+    Ilwis::ColumnDefinition* ilwColdef = def.ptr().get();
+    return this->ptr()->as<Ilwis::Coverage>()->attributeTable()->addColumn(*ilwColdef);
 }
 
 quint32 Coverage::attributeCount(){
@@ -85,15 +96,14 @@ PyObject* Coverage::indexValues(){
     std::vector<QVariant> ilwVal = this->ptr()->as<Ilwis::Coverage>()->indexValues();
     PyObject* tup = newPyTuple(ilwVal.size());
     for(int i = 0; i < ilwVal.size(); i++){
-        PyObject* actVal = QVariant2PyObject(ilwVal[i]);
-        setTupleItem(tup, i, actVal);
+            PyObject* actVal = QVariant2PyObject(ilwVal[i]);
+            setTupleItem(tup, i, actVal);
     }
     return tup;
 }
 
 PyObject* Coverage::value(const std::string &colName, quint32 itemid, qint32 layerIndex){
-    QString qStr;
-    QVariant qVar = this->ptr()->as<Ilwis::Coverage>()->value(qStr.fromStdString(colName), itemid, layerIndex);
+    QVariant qVar = this->ptr()->as<Ilwis::Coverage>()->value(QString::fromStdString(colName), itemid, layerIndex);
     return QVariant2PyObject(qVar);
 }
 

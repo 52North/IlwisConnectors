@@ -30,6 +30,8 @@
 #include "pythonapi_geometry.h"
 #include "pythonapi_feature.h"
 #include "pythonapi_error.h"
+#include "pythonapi_pyobject.h"
+#include "pythonapi_qvariant.h"
 
 namespace pythonapi{
 
@@ -50,11 +52,12 @@ Geometry::Geometry(geos::geom::Geometry* geometry, const Ilwis::ICoordinateSyste
     Ilwis::GeometryHelper::setCoordinateSystem(this->_ilwisGeometry.get(),csy.ptr());
 }
 
-Geometry::Geometry(Feature* feature, int index):
+Geometry::Geometry(Feature* feature, PyObject* index):
     _standalone(false),
     _feature(feature),
-    _index(index),
     _ilwisGeometry(nullptr){
+    QVariant* qIndex = PyObject2QVariant(index);
+    _index = *qIndex;
 }
 
 Geometry::~Geometry(){

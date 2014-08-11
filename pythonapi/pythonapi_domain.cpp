@@ -15,6 +15,7 @@
 #include "coloritem.h"
 #include "textdomain.h"
 #include "range.h"
+#include "coloritem.h"
 
 #include "pythonapi_pyobject.h"
 #include "pythonapi_range.h"
@@ -280,6 +281,15 @@ void ItemDomain::addItem(PyObject* item)
         this->ptr()->as<Ilwis::NamedIdDomain>()->addItem(id);
     }
         break;
+//    case itPALETTECOLOR:{
+//        if ( CppTupleElementCount(item) > 0 && CppTupleElementCount(item) <=2 ){
+//            ColorPalette helper = ColorPalette();
+//            Color col = Color(CppTupleElement2String(item,0), PyTupleGetItem(item,1));
+//            QColor qCol = helper.colorToQColor(col);
+//            Ilwis::ColorItem* colitem = new Ilwis::ColorItem(qCol);
+//            this->ptr()->as<Ilwis::ItemDomain>()->add(colitem);
+//        }
+//    }
     default:
         break;
     }
@@ -297,7 +307,7 @@ PyObject *ItemDomain::item(int index, bool labelOnly)
             list = newPyTuple(1);
         else
             list = newPyTuple(4);
-        setTupleItem(list, 0, PyUnicodeFromString(numitem->name().toLatin1()));
+        setTupleItem(list, 0, PyUnicodeFromString(numitem->name().toUtf8()));
         if (!labelOnly){
             setTupleItem(list, 1, PyFloatFromDouble(numitem->range().min()));
             setTupleItem(list, 2, PyFloatFromDouble(numitem->range().max()));
@@ -313,10 +323,10 @@ PyObject *ItemDomain::item(int index, bool labelOnly)
             list = newPyTuple(1);
         else
             list = newPyTuple(3);
-        setTupleItem(list, 0, PyUnicodeFromString(titem->name().toLatin1()));
+        setTupleItem(list, 0, PyUnicodeFromString(titem->name().toUtf8()));
         if(!labelOnly){
-            setTupleItem(list, 1, PyUnicodeFromString(titem->code().toLatin1()));
-            setTupleItem(list, 2, PyUnicodeFromString(titem->description().toLatin1()));
+            setTupleItem(list, 1, PyUnicodeFromString(titem->code().toUtf8()));
+            setTupleItem(list, 2, PyUnicodeFromString(titem->description().toUtf8()));
         }
         return list;
     }
@@ -324,10 +334,18 @@ PyObject *ItemDomain::item(int index, bool labelOnly)
     case itINDEXEDITEM:
     case itNAMEDITEM:{
         PyObject* list = newPyTuple(1);
-        setTupleItem(list, 0, PyUnicodeFromString(domitem->name().toLatin1()));
+        setTupleItem(list, 0, PyUnicodeFromString(domitem->name().toUtf8()));
         return list;
     }
         break;
+//    case itPALETTECOLOR:{
+//        Ilwis::ColorPalette* colPal = new Ilwis::ColorPalette();
+//        colPal->add(domitem);
+//        PyObject* list = newPyTuple(1);
+//        setTupleItem(list, 0, PyUnicodeFromString(colPal->toString().toLatin1()));
+//        return list;
+//    }
+//        break;
     default:
         break;
     }
@@ -357,13 +375,8 @@ IlwisTypes ColorDomain::ilwisType() const
 }
 
 std::string ColorDomain::containsColor(const Color &value) const{
-    ColorRange pyHelper = ColorRange();
-    Ilwis::ContinousColorRange ilwHelper = Ilwis::ContinousColorRange();
-    std::string pyCol = pyHelper.toString(value, value.getColorModel());
-
-    Ilwis::ColorRange::ColorModel ilwMod = static_cast<Ilwis::ColorRange::ColorModel>(value.getColorModel());
-
-    QColor ilwCol = ilwHelper.toColor(QString::fromStdString(pyCol), ilwMod);
+    ColorRange helper = ColorRange();
+    QColor ilwCol = helper.colorToQColor(value);
     Domain::Containement dc = (Domain::Containement)this->ptr()->as<Ilwis::ColorDomain>()->contains(ilwCol);
     switch(dc){
     case 1: return "cSELF";
