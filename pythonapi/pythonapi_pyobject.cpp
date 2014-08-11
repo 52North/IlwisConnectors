@@ -379,4 +379,8 @@ namespace pythonapi {
         return buf;
     }
 
+    bool PyIsNone(PyObject* obj){
+        return obj == Py_None;
+    }
+
 } // namespace pythonapi

@@ -385,10 +385,8 @@ namespace pythonapi {
 
     IOOptions::IOOptions(const std::string &key, PyObject* value)
     {
-        QString qstr;
-        qstr = qstr.fromStdString(key);
         QVariant* qvar = PyObject2QVariant(value);
-        _data.reset(new Ilwis::IOOptions(qstr, *qvar));
+        _data.reset(new Ilwis::IOOptions(QString::fromStdString(key), *qvar));
     }
 
     IOOptions::IOOptions(Ilwis::IOOptions* ilwIOOp) : _data(ilwIOOp)
@@ -397,9 +395,7 @@ namespace pythonapi {
     }
 
     bool IOOptions::contains(const std::string &option){
-        QString qstr;
-        qstr = qstr.fromStdString(option);
-        return this->ptr().contains(qstr);
+        return this->ptr().contains(QString::fromStdString(option));
     }
 
     quint32 IOOptions::size(){
@@ -407,17 +403,13 @@ namespace pythonapi {
     }
 
     PyObject* IOOptions::__getitem__(const std::string &option){
-        QString qstr;
-        qstr = qstr.fromStdString(option);
-        QVariant qvar = this->ptr().operator [](qstr);
+        QVariant qvar = this->ptr().operator [](QString::fromStdString(option));
         return QVariant2PyObject(qvar);
     }
 
     IOOptions& IOOptions::addOption(const std::string &key, PyObject *value){
-        QString qstr;
-        qstr = qstr.fromStdString(key);
         QVariant* qvar = PyObject2QVariant(value);
-        Ilwis::IOOptions::Option op(qstr, *qvar);
+        Ilwis::IOOptions::Option op(QString::fromStdString(key), *qvar);
         Ilwis::IOOptions ilwIO = this->ptr().operator <<(op);
         IOOptions* pyIO = new IOOptions(&ilwIO);
         return *pyIO;

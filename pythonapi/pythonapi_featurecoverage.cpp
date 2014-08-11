@@ -42,7 +42,7 @@ FeatureCoverage::FeatureCoverage(){
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
 }
 
-FeatureCoverage::FeatureCoverage(std::string resource){
+FeatureCoverage::FeatureCoverage(const std::string& resource){
     Ilwis::IFeatureCoverage fc(QString::fromStdString(resource), itFEATURE);
     if (fc.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
@@ -70,17 +70,15 @@ void FeatureCoverage::setFeatureCount(IlwisTypes type, quint32 geomCnt, quint32 
     this->ptr()->as<Ilwis::FeatureCoverage>()->setFeatureCount(type, geomCnt, subGeomCnt, index);
 }
 
-Feature FeatureCoverage::newFeature(std::string& wkt, CoordinateSystem csy, bool load){
-    QString qWkt;
-    qWkt = qWkt.fromStdString(wkt);
-    return Feature(this->ptr()->as<Ilwis::FeatureCoverage>()->newFeature(qWkt, csy.ptr()->as<Ilwis::CoordinateSystem>(), load),this);
+Feature FeatureCoverage::newFeature(const std::string& wkt, const CoordinateSystem& csy, bool load){
+    return Feature(this->ptr()->as<Ilwis::FeatureCoverage>()->newFeature(QString::fromStdString(wkt), csy.ptr()->as<Ilwis::CoordinateSystem>(), load),this);
 }
 
-Feature FeatureCoverage::newFeature(Geometry &geometry){
+Feature FeatureCoverage::newFeature(const Geometry &geometry){
     return Feature(this->ptr()->as<Ilwis::FeatureCoverage>()->newFeature(geometry.ptr().get()->clone()),this);
 }
 
-Feature FeatureCoverage::newFeatureFrom(Feature& feat, CoordinateSystem& csy){
+Feature FeatureCoverage::newFeatureFrom(const Feature& feat, const CoordinateSystem& csy){
     return Feature(this->ptr()->as<Ilwis::FeatureCoverage>()->newFeatureFrom(feat.ptr().get()->clone(), csy.ptr()->as<Ilwis::CoordinateSystem>()),this);
 }
 
@@ -91,16 +89,16 @@ FeatureCoverage *FeatureCoverage::toFeatureCoverage(Object *obj){
     return ptr;
 }
 
-PyObject* FeatureCoverage::select(std::string spatialQuery){
+PyObject* FeatureCoverage::select(const std::string& spatialQuery){
     std::vector<quint32> vec = this->ptr()->as<Ilwis::FeatureCoverage>()->select(QString::fromStdString(spatialQuery));
     PyObject* pyTup = newPyTuple(vec.size());
     for(int i = 0; i < vec.size(); i++){
-        setTupleItem(pyTup, i, PyFloatFromDouble((double)vec[i]));
+        setTupleItem(pyTup, i, PyLongFromUnsignedLongLong(vec[i]));
     }
     return pyTup;
 }
 
-void FeatureCoverage::reprojectFeatures(CoordinateSystem& csy){
+void FeatureCoverage::reprojectFeatures(const CoordinateSystem& csy){
     Ilwis::IFeatureCoverage fc = this->ptr()->as<Ilwis::FeatureCoverage>();
     Ilwis::ICoordinateSystem ilwCsy = csy.ptr()->as<Ilwis::CoordinateSystem>();
     for(const auto &feat : fc ){

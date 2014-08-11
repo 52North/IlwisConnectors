@@ -74,9 +74,7 @@ IndexedIdentifier::IndexedIdentifier(){
 }
 
 IndexedIdentifier::IndexedIdentifier(const std::string& label, quint32 ind, qint32 cnt){
-    QString qStr;
-    qStr = qStr.fromStdString(label);
-    this->_ilwisItem.reset(new Ilwis::IndexedIdentifier(qStr, ind, cnt));
+    this->_ilwisItem.reset(new Ilwis::IndexedIdentifier(QString::fromStdString(label), ind, cnt));
 }
 
 IndexedIdentifier::IndexedIdentifier(Ilwis::DomainItem *ilwItem){
@@ -89,9 +87,7 @@ std::string IndexedIdentifier::prefix(){
 }
 
 void IndexedIdentifier::setPrefix(const std::string &name){
-    QString qStr;
-    qStr = qStr.fromStdString(name);
-    static_cast<Ilwis::IndexedIdentifier*>(this->ptr().get())->setPrefix(qStr);
+    static_cast<Ilwis::IndexedIdentifier*>(this->ptr().get())->setPrefix(QString::fromStdString(name));
 }
 
 bool IndexedIdentifier::operator==(IndexedIdentifier& item) const{
@@ -107,9 +103,7 @@ NamedIdentifier::NamedIdentifier(){
 }
 
 NamedIdentifier::NamedIdentifier(const std::string& name, quint32 rawvalue){
-    QString qStr;
-    qStr = qStr.fromStdString(name);
-    this->_ilwisItem.reset(new Ilwis::NamedIdentifier(qStr, rawvalue));
+    this->_ilwisItem.reset(new Ilwis::NamedIdentifier(QString::fromStdString(name), rawvalue));
 }
 
 NamedIdentifier::NamedIdentifier(Ilwis::DomainItem *ilwItem){
@@ -117,9 +111,7 @@ NamedIdentifier::NamedIdentifier(Ilwis::DomainItem *ilwItem){
 }
 
 void NamedIdentifier::setName(const std::string &name){
-    QString qStr;
-    qStr = qStr.fromStdString(name);
-    static_cast<Ilwis::NamedIdentifier*>(this->ptr().get())->setName(qStr);
+    static_cast<Ilwis::NamedIdentifier*>(this->ptr().get())->setName(QString::fromStdString(name));
 }
 
 bool NamedIdentifier::operator==(NamedIdentifier& item) const{
@@ -154,9 +146,7 @@ std::string ThematicItem::description(){
 }
 
 void ThematicItem::description(std::string& descr){
-    QString qStr;
-    qStr = qStr.fromStdString(descr);
-    static_cast<Ilwis::ThematicItem*>(this->ptr().get())->description(qStr);
+    static_cast<Ilwis::ThematicItem*>(this->ptr().get())->description(QString::fromStdString(descr));
 }
 
 std::string ThematicItem::code(){
@@ -165,9 +155,7 @@ std::string ThematicItem::code(){
 }
 
 void ThematicItem::code(std::string& code){
-    QString qStr;
-    qStr = qStr.fromStdString(code);
-    static_cast<Ilwis::ThematicItem*>(this->ptr().get())->code(qStr);
+    static_cast<Ilwis::ThematicItem*>(this->ptr().get())->code(QString::fromStdString(code));
 }
 
 
@@ -178,10 +166,8 @@ Interval::Interval(){
 }
 
 Interval::Interval(const std::string &label, NumericRange &nr){
-    QString qStr;
-    qStr = qStr.fromStdString(label);
     Ilwis::NumericRange* ilwNumRan = static_cast<Ilwis::NumericRange*>(nr._range.get());
-    _ilwisItem.reset(new Ilwis::Interval(qStr, *ilwNumRan));
+    _ilwisItem.reset(new Ilwis::Interval(QString::fromStdString(label), *ilwNumRan));
 }
 
 bool Interval::isOrdered() const{

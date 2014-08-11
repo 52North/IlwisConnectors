@@ -501,11 +501,14 @@ try:
             self.assertEqual(len(att), 16, msg="wrong number of attributes")
             g = Geometry("POINT(5.4 6 9.0)", fc.coordinateSystem())
             newfeature = fc.newFeature(g)
+            newfeature2 = fc.newFeature("POINT(5.4 6 9.0)", fc.coordinateSystem())
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
             for c in att:
                 newfeature[c] = "12"
+                newfeature2[c] = "42"
                 self.assertEqual(int(newfeature[c]), 12, msg="new value of feature attribute not correct!")
-            self.assertEqual(fc.featureCount(), 14, msg="new feature count wrong")
+                self.assertEqual(int(newfeature2[c]), 42, msg="new value of feature attribute not correct!")
+            self.assertEqual(fc.featureCount(), 15, msg="new feature count wrong")
 
             fc_invalid = FeatureCoverage("newFC")
             self.assertTrue(fc_invalid.isInternal())
@@ -982,9 +985,34 @@ try:
 
 
         # @ut.skip("temporarily")
-        def test_RasterSelection(self):
+        def test_RasterSelectionWKT(self):
             rc = RasterCoverage("n000302.mpr")
-            rcSel = rc.select("Polygon((495209 80832,927209 -999367, 1887209 -1282307,2184809 311232,495209 80832))")
+
+            rcSelWKT = rc.select("Polygon((495209 80832,927209 -999367, 1887209 -1282307,2184809 311232,495209 80832))")
+
+            self.assertTrue(bool(rcSelWKT))
+
+            pix1 = Pixel(740, 650, 0)
+            pix2 = Pixel(300, 400, 0)
+
+            coord = rc.geoReference().pixel2Coord(pix1)
+            pixSel = rcSelWKT.geoReference().coord2Pixel(coord)
+
+            pixSel.setY(int(pixSel.y)+1)
+
+            self.assertEqual(rcSelWKT.pix2value(pixSel), rc.pix2value(pix1))
+            self.assertNotEqual(rcSelWKT.pix2value(pix2), rc.pix2value(pix2))
+
+            rcSelWKT.setOutputConnection(workingDir + rasterDir + "/aa_select_n000302", "map", "ilwis3")
+            rcSelWKT.store()
+
+        def test_RasterSelectionGeom(self):
+            rc = RasterCoverage("n000302.mpr")
+
+            geom = Geometry("Polygon((495209 80832,927209 -999367, 1887209 -1282307,2184809 311232,495209 80832))", rc.coordinateSystem())
+
+            rcSel = rc.select(geom)
+
             self.assertTrue(bool(rcSel))
 
             pix1 = Pixel(740, 650, 0)
@@ -1007,11 +1035,12 @@ try:
             rc2 = RasterCoverage("small.mpr")
             rc3 = RasterCoverage("subkenya.mpr")
 
-            dat = rc.datadef(0)
+            dat = rc.datadef()
             self.assertTrue(bool(dat), msg="couldn't load datadefinition")
-            dat2 = rc3.datadef(0)
-            dat3 = rc3.datadef(0)
+            dat2 = rc3.datadef()
+            dat3 = rc3.datadef()
 
+            self.assertTrue(bool(dat2))
             self.assertTrue(dat.isCompatibleWith(dat2), msg="datadefinitions are not compatible")
             self.assertTrue(dat.isCompatibleWith(dat3), msg="datadefinition of submap is not compatible")
 
@@ -1726,6 +1755,29 @@ try:
             colDom.setRange(col)
             self.assertEqual(colDom.containsColor(color3), "cSELF")
 
+    class TestColorPalette(ut.TestCase):
+
+        def test_creation(self):
+            col1 = Color(ColorModel.cmRGBA, (220.0, 20.0, 30.0, 200.0))
+            col2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
+            col3 = Color(ColorModel.cmRGBA, (255.0, 80.0, 69.0, 240.0))
+
+            colPal = ColorPalette()
+            colPal.add(col1)
+            self.assertEqual(colPal.count(), 1)
+            colPal.add(col2)
+            self.assertEqual(colPal.count(), 2)
+            self.assertEqual(str(colPal.item(0)), 'RGBA(0.862745,0.0784314,0.117647,0.784314)')
+            name1 = colPal.itemByOrder(1).getName()
+            self.assertFalse(colPal.containsColor(col3))
+            colPal.add(col3)
+            self.assertTrue(colPal.containsColor(col3))
+            self.assertEqual(colPal.count(), 3)
+            #colPal.remove(name1)
+            colPal.clear()
+            self.assertEqual(colPal.count(), 0)
+            self.assertEqual(str(colPal.valueAt(1, colPal)), str(colPal.color(1)))
+
 
     #@ut.skip("temporarily")
     class TestTimeDomain(ut.TestCase):
@@ -1863,6 +1915,7 @@ try:
             datdef1.domain(itemDomDiff)
             self.assertEqual(str(datdef1), str(datdef3))
 
+        #@ut.skip("temporairly")
         def test_datdefInterval(self):
             interrange = NumericItemRange()
             interrange.add(("sealevel", 40.0, 100.0))
@@ -1958,9 +2011,73 @@ try:
             datdef1.domain(colDomDiff)
             self.assertEqual(str(datdef1), str(datdef3))
 
+    class TestIndexDomainRaster(ut.TestCase):
+        def setUp(self):
+            try:
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir + rasterDir)
+                connectIssueLogger()
+            except IlwisException:
+                self.skipTest("could not set working directory!")
+
+        def test_numericIndex(self):
+            rc = RasterCoverage("average_monthly_temperature.mpl")
+
+            rc2 = RasterCoverage()
+
+            numRan = NumericRange(0.0, 100.0)
+            numDom = NumericDomain()
+            numDom.setRange(numRan)
+            rc2.indexDomain(numDom)
+
+            band3 = rc.band(3)
+            band4 = rc.band(4)
+
+            rc2.addBand(0, band3)
+            rc2.addBand(1, band4)
+            self.assertEqual(str(rc2.indexValues()), "(0, 1)")
+
+            vals1 = []
+            for val1 in band3:
+                vals1.append(val1)
+
+            vals2 = []
+            rc2Band0 = rc2.band(0)
+            for val2 in rc2Band0:
+                vals2.append(val2)
+
+            self.assertTrue(vals1 == vals2)
+
+        def test_timeIndex(self):
+            rc = RasterCoverage("average_monthly_temperature.mpl")
+
+            rc2 = RasterCoverage()
+
+            interval = TimeInterval(date(2014, 2, 17), date(2016, 2, 17))
+            timeDom = TimeDomain(interval)
+            rc2.indexDomain(timeDom)
+
+            band3 = rc.band(3)
+            band4 = rc.band(4)
+
+            rc2.addBand(date(2015, 2, 17), band3)
+            rc2.addBand(date(2015, 3, 17), band4)
+            self.assertEqual(str(rc2.indexValues()), "(datetime.date(2015, 2, 17), datetime.date(2015, 3, 17))")
+
+            vals1 = []
+            for val1 in band3:
+                vals1.append(val1)
+
+            vals2 = []
+            rc2Band0 = rc2.band(date(2015, 2, 17))
+            for val2 in rc2Band0:
+                vals2.append(val2)
+
+            self.assertTrue(vals1 == vals2)
+
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest='TestCoordinateSystem', verbosity=2)
+        ut.main(defaultTest='TestColorPalette', verbosity=2)
 
 except ImportError as e:
     print(e)

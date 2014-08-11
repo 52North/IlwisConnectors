@@ -556,7 +556,11 @@ class Coverage(IlwisObject):
     __swig_destroy__ = _ilwisobjects.delete_Coverage
     __del__ = lambda self : None;
     def addAttribute(self, *args):
-        """addAttribute(Coverage self, std::string const & name, std::string const & domain) -> bool"""
+        """
+        addAttribute(Coverage self, std::string const & name, std::string const & domain) -> bool
+        addAttribute(Coverage self, std::string const & name, Domain domain) -> bool
+        addAttribute(Coverage self, ColumnDefinition domain) -> bool
+        """
         return _ilwisobjects.Coverage_addAttribute(self, *args)
 
     def attributeCount(self):
@@ -1330,7 +1334,7 @@ class Geometry(Object):
     def __init__(self, *args): 
         """
         __init__(pythonapi::Geometry self, std::string wkt, CoordinateSystem csy) -> Geometry
-        __init__(pythonapi::Geometry self, Feature feature, int index) -> Geometry
+        __init__(pythonapi::Geometry self, Feature feature, PyObject * index) -> Geometry
         """
         this = _ilwisobjects.new_Geometry(*args)
         try: self.this.append(this)
@@ -1506,11 +1510,11 @@ class Feature(Object):
 
     def attribute(self, *args):
         """
-        attribute(Feature self, std::string name, qint64 defaultValue, int index=COVERAGEATRIB) -> PyObject
+        attribute(Feature self, std::string name, qint64 defaultValue, PyObject * index=None) -> PyObject
         attribute(Feature self, std::string name, qint64 defaultValue) -> PyObject
-        attribute(Feature self, std::string name, double defaultValue, int index=COVERAGEATRIB) -> PyObject
+        attribute(Feature self, std::string name, double defaultValue, PyObject * index=None) -> PyObject
         attribute(Feature self, std::string name, double defaultValue) -> PyObject
-        attribute(Feature self, std::string name, std::string defaultValue, int index=COVERAGEATRIB) -> PyObject
+        attribute(Feature self, std::string name, std::string defaultValue, PyObject * index=None) -> PyObject
         attribute(Feature self, std::string name, std::string defaultValue) -> PyObject *
         """
         return _ilwisobjects.Feature_attribute(self, *args)
@@ -1526,13 +1530,13 @@ class Feature(Object):
 
     def setAttribute(self, *args):
         """
-        setAttribute(Feature self, std::string name, PyObject const * value, int index=COVERAGEATRIB)
+        setAttribute(Feature self, std::string name, PyObject const * value, PyObject * index=None)
         setAttribute(Feature self, std::string name, PyObject const * value)
-        setAttribute(Feature self, std::string name, qint64 value, int index=COVERAGEATRIB)
+        setAttribute(Feature self, std::string name, qint64 value, PyObject * index=None)
         setAttribute(Feature self, std::string name, qint64 value)
-        setAttribute(Feature self, std::string name, double value, int index=COVERAGEATRIB)
+        setAttribute(Feature self, std::string name, double value, PyObject * index=None)
         setAttribute(Feature self, std::string name, double value)
-        setAttribute(Feature self, std::string name, std::string value, int index=COVERAGEATRIB)
+        setAttribute(Feature self, std::string name, std::string value, PyObject * index=None)
         setAttribute(Feature self, std::string name, std::string value)
         """
         return _ilwisobjects.Feature_setAttribute(self, *args)
@@ -1541,19 +1545,38 @@ class Feature(Object):
         """ilwisType(Feature self) -> IlwisTypes"""
         return _ilwisobjects.Feature_ilwisType(self)
 
-    def geometry(self, index=0):
+    def geometry(self, index=None):
         """
-        geometry(Feature self, int index=0) -> Geometry
+        geometry(Feature self, PyObject * index=None) -> Geometry
         geometry(Feature self) -> Geometry
         """
         return _ilwisobjects.Feature_geometry(self, index)
 
     def setGeometry(self, *args):
         """
-        setGeometry(Feature self, Geometry geometry, int index=COVERAGEATRIB)
+        setGeometry(Feature self, Geometry geometry, PyObject * index=None)
         setGeometry(Feature self, Geometry geometry)
         """
         return _ilwisobjects.Feature_setGeometry(self, *args)
+
+    def addGeometry(self, *args):
+        """
+        addGeometry(Feature self, Geometry geometry, PyObject * index=None)
+        addGeometry(Feature self, Geometry geometry)
+        """
+        return _ilwisobjects.Feature_addGeometry(self, *args)
+
+    def removeGeometry(self, *args):
+        """removeGeometry(Feature self, PyObject * index)"""
+        return _ilwisobjects.Feature_removeGeometry(self, *args)
+
+    def featureId(self):
+        """featureId(Feature self) -> quint64"""
+        return _ilwisobjects.Feature_featureId(self)
+
+    def trackSize(self):
+        """trackSize(Feature self) -> quint32"""
+        return _ilwisobjects.Feature_trackSize(self)
 
     def columnDefinition(self, *args):
         """
@@ -1563,6 +1586,10 @@ class Feature(Object):
         columnDefinition(Feature self, quint32 index) -> ColumnDefinition
         """
         return _ilwisobjects.Feature_columnDefinition(self, *args)
+
+    def trackIndexValue(self, *args):
+        """trackIndexValue(Feature self, quint32 index) -> PyObject *"""
+        return _ilwisobjects.Feature_trackIndexValue(self, *args)
 
     __swig_destroy__ = _ilwisobjects.delete_Feature
     __del__ = lambda self : None;
@@ -1643,7 +1670,7 @@ class FeatureCoverage(Coverage):
     def __init__(self, *args): 
         """
         __init__(pythonapi::FeatureCoverage self) -> FeatureCoverage
-        __init__(pythonapi::FeatureCoverage self, std::string resource) -> FeatureCoverage
+        __init__(pythonapi::FeatureCoverage self, std::string const & resource) -> FeatureCoverage
         """
         this = _ilwisobjects.new_FeatureCoverage(*args)
         try: self.this.append(this)
@@ -1669,8 +1696,8 @@ class FeatureCoverage(Coverage):
 
     def newFeature(self, *args):
         """
-        newFeature(FeatureCoverage self, std::string & wkt, CoordinateSystem csy, bool load=True) -> Feature
-        newFeature(FeatureCoverage self, std::string & wkt, CoordinateSystem csy) -> Feature
+        newFeature(FeatureCoverage self, std::string const & wkt, CoordinateSystem csy, bool load=True) -> Feature
+        newFeature(FeatureCoverage self, std::string const & wkt, CoordinateSystem csy) -> Feature
         newFeature(FeatureCoverage self, Geometry geometry) -> Feature
         """
         return _ilwisobjects.FeatureCoverage_newFeature(self, *args)
@@ -1690,7 +1717,7 @@ class FeatureCoverage(Coverage):
     if _newclass:toFeatureCoverage = staticmethod(toFeatureCoverage)
     __swig_getmethods__["toFeatureCoverage"] = lambda x: toFeatureCoverage
     def select(self, *args):
-        """select(FeatureCoverage self, std::string spatialQuery) -> PyObject *"""
+        """select(FeatureCoverage self, std::string const & spatialQuery) -> PyObject *"""
         return _ilwisobjects.FeatureCoverage_select(self, *args)
 
     def maxIndex(self):
@@ -1943,10 +1970,6 @@ class GeoReference(IlwisObject):
     def isCompatible(self, *args):
         """isCompatible(GeoReference self, GeoReference other) -> bool"""
         return _ilwisobjects.GeoReference_isCompatible(self, *args)
-
-    def isValid(self):
-        """isValid(GeoReference self) -> bool"""
-        return _ilwisobjects.GeoReference_isValid(self)
 
     def compute(self):
         """compute(GeoReference self) -> bool"""
@@ -2554,7 +2577,7 @@ class ItemRange(Range):
         return _ilwisobjects.ItemRange_add(self, *args)
 
     def count(self):
-        """count(ItemRange self)"""
+        """count(ItemRange self) -> quint32"""
         return _ilwisobjects.ItemRange_count(self)
 
     def remove(self, *args):
@@ -2735,7 +2758,10 @@ class Color(_object):
     def __init__(self, *args): 
         """
         __init__(pythonapi::Color self) -> Color
+        __init__(pythonapi::Color self, pythonapi::ColorModel type, PyObject * obj, std::string const & name="") -> Color
         __init__(pythonapi::Color self, pythonapi::ColorModel type, PyObject * obj) -> Color
+        __init__(pythonapi::Color self, std::string const & typeStr, PyObject * obj, std::string const & name="") -> Color
+        __init__(pythonapi::Color self, std::string const & typeStr, PyObject * obj) -> Color
         """
         this = _ilwisobjects.new_Color(*args)
         try: self.this.append(this)
@@ -2744,6 +2770,14 @@ class Color(_object):
         """getItem(Color self, std::string key) -> double"""
         return _ilwisobjects.Color_getItem(self, *args)
 
+    def setName(self, *args):
+        """setName(Color self, std::string const & name)"""
+        return _ilwisobjects.Color_setName(self, *args)
+
+    def getName(self):
+        """getName(Color self) -> std::string"""
+        return _ilwisobjects.Color_getName(self)
+
     def getColorModel(self):
         """getColorModel(Color self) -> pythonapi::ColorModel"""
         return _ilwisobjects.Color_getColorModel(self)
@@ -2751,6 +2785,10 @@ class Color(_object):
     def toString(self):
         """toString(Color self) -> std::string"""
         return _ilwisobjects.Color_toString(self)
+
+    def __str__(self):
+        """__str__(Color self) -> std::string"""
+        return _ilwisobjects.Color___str__(self)
 
     __swig_destroy__ = _ilwisobjects.delete_Color
     __del__ = lambda self : None;
@@ -2783,21 +2821,15 @@ class ColorRange(Range):
 
     def toColor(*args):
         """
+        toColor(quint64 clrint, pythonapi::ColorModel clrModel, std::string const & name="") -> Color
         toColor(quint64 clrint, pythonapi::ColorModel clrModel) -> Color
+        toColor(PyObject * arg1, pythonapi::ColorModel colortype, std::string const & name="") -> Color
         toColor(PyObject * arg1, pythonapi::ColorModel colortype) -> Color
         """
         return _ilwisobjects.ColorRange_toColor(*args)
 
     if _newclass:toColor = staticmethod(toColor)
     __swig_getmethods__["toColor"] = lambda x: toColor
-    def toString(self, *args):
-        """toString(ColorRange self, Color clr, pythonapi::ColorModel clrType) -> std::string"""
-        return _ilwisobjects.ColorRange_toString(self, *args)
-
-    def stringToColorModel(self, *args):
-        """stringToColorModel(ColorRange self, std::string clrmd) -> pythonapi::ColorModel"""
-        return _ilwisobjects.ColorRange_stringToColorModel(self, *args)
-
     __swig_destroy__ = _ilwisobjects.delete_ColorRange
     __del__ = lambda self : None;
 ColorRange_swigregister = _ilwisobjects.ColorRange_swigregister
@@ -2805,7 +2837,9 @@ ColorRange_swigregister(ColorRange)
 
 def ColorRange_toColor(*args):
   """
+    toColor(quint64 clrint, pythonapi::ColorModel clrModel, std::string const & name="") -> Color
     toColor(quint64 clrint, pythonapi::ColorModel clrModel) -> Color
+    toColor(PyObject * arg1, pythonapi::ColorModel colortype, std::string const & name="") -> Color
     ColorRange_toColor(PyObject * arg1, pythonapi::ColorModel colortype) -> Color
     """
   return _ilwisobjects.ColorRange_toColor(*args)
@@ -2867,6 +2901,81 @@ class ContinousColorRange(ColorRange):
     __del__ = lambda self : None;
 ContinousColorRange_swigregister = _ilwisobjects.ContinousColorRange_swigregister
 ContinousColorRange_swigregister(ContinousColorRange)
+
+class ColorPalette(ItemRange,ColorRange):
+    """Proxy of C++ pythonapi::ColorPalette class"""
+    __swig_setmethods__ = {}
+    for _s in [ItemRange,ColorRange]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, ColorPalette, name, value)
+    __swig_getmethods__ = {}
+    for _s in [ItemRange,ColorRange]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, ColorPalette, name)
+    __repr__ = _swig_repr
+    def __init__(self): 
+        """__init__(pythonapi::ColorPalette self) -> ColorPalette"""
+        this = _ilwisobjects.new_ColorPalette()
+        try: self.this.append(this)
+        except: self.this = this
+    def item(self, *args):
+        """
+        item(ColorPalette self, quint32 raw) -> Color
+        item(ColorPalette self, std::string const & name) -> Color
+        """
+        return _ilwisobjects.ColorPalette_item(self, *args)
+
+    def itemByOrder(self, *args):
+        """itemByOrder(ColorPalette self, quint32 index) -> Color"""
+        return _ilwisobjects.ColorPalette_itemByOrder(self, *args)
+
+    def color(self, *args):
+        """color(ColorPalette self, int index) -> Color"""
+        return _ilwisobjects.ColorPalette_color(self, *args)
+
+    def add(self, *args):
+        """add(ColorPalette self, Color pyColor)"""
+        return _ilwisobjects.ColorPalette_add(self, *args)
+
+    def remove(self, *args):
+        """remove(ColorPalette self, std::string const & name)"""
+        return _ilwisobjects.ColorPalette_remove(self, *args)
+
+    def clear(self):
+        """clear(ColorPalette self)"""
+        return _ilwisobjects.ColorPalette_clear(self)
+
+    def containsColor(self, *args):
+        """
+        containsColor(ColorPalette self, Color clr, bool inclusive=True) -> bool
+        containsColor(ColorPalette self, Color clr) -> bool
+        """
+        return _ilwisobjects.ColorPalette_containsColor(self, *args)
+
+    def containsRange(self, *args):
+        """
+        containsRange(ColorPalette self, ColorRange v, bool inclusive=True) -> bool
+        containsRange(ColorPalette self, ColorRange v) -> bool
+        """
+        return _ilwisobjects.ColorPalette_containsRange(self, *args)
+
+    def count(self):
+        """count(ColorPalette self) -> quint32"""
+        return _ilwisobjects.ColorPalette_count(self)
+
+    def valueAt(self, *args):
+        """
+        valueAt(ColorPalette self, quint32 index, ColorRange rng) -> Color
+        valueAt(ColorPalette self, quint32 index, ItemRange rng) -> Color
+        """
+        return _ilwisobjects.ColorPalette_valueAt(self, *args)
+
+    def gotoIndex(self, *args):
+        """gotoIndex(ColorPalette self, qint32 index, qint32 step) -> qint32"""
+        return _ilwisobjects.ColorPalette_gotoIndex(self, *args)
+
+    __swig_destroy__ = _ilwisobjects.delete_ColorPalette
+    __del__ = lambda self : None;
+ColorPalette_swigregister = _ilwisobjects.ColorPalette_swigregister
+ColorPalette_swigregister(ColorPalette)
 
 class TimeInterval(NumericRange):
     """Proxy of C++ pythonapi::TimeInterval class"""
