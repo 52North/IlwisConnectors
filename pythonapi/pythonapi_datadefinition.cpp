@@ -54,7 +54,7 @@ bool DataDefinition::__bool__() const{
 }
 
 void DataDefinition::range(const Range &rng){
-    this->ptr().range(rng._range.get());
+    this->ptr().range(rng._range->clone());
 }
 
 void DataDefinition::domain(const Domain &dm){

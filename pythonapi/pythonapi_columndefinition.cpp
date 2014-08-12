@@ -29,10 +29,8 @@ ColumnDefinition::ColumnDefinition(const ColumnDefinition& coldef, quint32 index
 }
 
 ColumnDefinition::ColumnDefinition(const std::string& name, const DataDefinition& coldef, quint64 colindex){
-    QString qName;
-    qName = qName.fromStdString(name);
     if(coldef.__bool__())
-        _ilwisColDef.reset(new Ilwis::ColumnDefinition(qName, coldef.ptr(), colindex));
+        _ilwisColDef.reset(new Ilwis::ColumnDefinition(QString::fromStdString(name), coldef.ptr(), colindex));
 }
 
 ColumnDefinition::ColumnDefinition(Ilwis::ColumnDefinition* colDef){
@@ -50,10 +48,8 @@ ColumnDefinition::ColumnDefinition(const ColumnDefinition& coldef){
 }
 
 ColumnDefinition::ColumnDefinition(const std::string& name, const Domain &dom, quint64 colindex){
-    QString qName;
-    qName = qName.fromStdString(name);
     DataDefinition datdef = DataDefinition(dom);
-    _ilwisColDef.reset(new Ilwis::ColumnDefinition(qName, datdef.ptr(), colindex));
+    _ilwisColDef.reset(new Ilwis::ColumnDefinition(QString::fromStdString(name), datdef.ptr(), colindex));
 }
 
 ColumnDefinition::~ColumnDefinition(){

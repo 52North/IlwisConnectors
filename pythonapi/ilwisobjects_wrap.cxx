@@ -2958,76 +2958,78 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_Ilwis__PixelIterator swig_types[15]
 #define SWIGTYPE_p_Ilwis__Range swig_types[16]
 #define SWIGTYPE_p_Ilwis__RangeIteratorT_double_Ilwis__NumericRange_t swig_types[17]
-#define SWIGTYPE_p__object swig_types[18]
-#define SWIGTYPE_p_bufferinfo swig_types[19]
-#define SWIGTYPE_p_char swig_types[20]
-#define SWIGTYPE_p_geos__geom__Geometry swig_types[21]
-#define SWIGTYPE_p_int swig_types[22]
-#define SWIGTYPE_p_long_long swig_types[23]
-#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t swig_types[24]
-#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t swig_types[25]
-#define SWIGTYPE_p_pythonapi__Catalog swig_types[26]
-#define SWIGTYPE_p_pythonapi__Color swig_types[27]
-#define SWIGTYPE_p_pythonapi__ColorDomain swig_types[28]
-#define SWIGTYPE_p_pythonapi__ColorModelNS swig_types[29]
-#define SWIGTYPE_p_pythonapi__ColorModelNS__Value swig_types[30]
-#define SWIGTYPE_p_pythonapi__ColorRange swig_types[31]
-#define SWIGTYPE_p_pythonapi__ColumnDefinition swig_types[32]
-#define SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t swig_types[33]
-#define SWIGTYPE_p_pythonapi__ContinousColorRange swig_types[34]
-#define SWIGTYPE_p_pythonapi__Coordinate swig_types[35]
-#define SWIGTYPE_p_pythonapi__CoordinateSystem swig_types[36]
-#define SWIGTYPE_p_pythonapi__Coverage swig_types[37]
-#define SWIGTYPE_p_pythonapi__DataDefinition swig_types[38]
-#define SWIGTYPE_p_pythonapi__Domain swig_types[39]
-#define SWIGTYPE_p_pythonapi__DomainItem swig_types[40]
-#define SWIGTYPE_p_pythonapi__Engine swig_types[41]
-#define SWIGTYPE_p_pythonapi__Feature swig_types[42]
-#define SWIGTYPE_p_pythonapi__FeatureCoverage swig_types[43]
-#define SWIGTYPE_p_pythonapi__FeatureIterator swig_types[44]
-#define SWIGTYPE_p_pythonapi__FlowVal swig_types[45]
-#define SWIGTYPE_p_pythonapi__FlowVal__Value swig_types[46]
-#define SWIGTYPE_p_pythonapi__GeoReference swig_types[47]
-#define SWIGTYPE_p_pythonapi__Geometry swig_types[48]
-#define SWIGTYPE_p_pythonapi__IOOptions swig_types[49]
-#define SWIGTYPE_p_pythonapi__IlwisObject swig_types[50]
-#define SWIGTYPE_p_pythonapi__IndexedIdentifier swig_types[51]
-#define SWIGTYPE_p_pythonapi__IndexedItemRange swig_types[52]
-#define SWIGTYPE_p_pythonapi__Interval swig_types[53]
-#define SWIGTYPE_p_pythonapi__ItemDomain swig_types[54]
-#define SWIGTYPE_p_pythonapi__ItemRange swig_types[55]
-#define SWIGTYPE_p_pythonapi__NamedIdentifier swig_types[56]
-#define SWIGTYPE_p_pythonapi__NamedItemRange swig_types[57]
-#define SWIGTYPE_p_pythonapi__NumericDomain swig_types[58]
-#define SWIGTYPE_p_pythonapi__NumericItemRange swig_types[59]
-#define SWIGTYPE_p_pythonapi__NumericRange swig_types[60]
-#define SWIGTYPE_p_pythonapi__Object swig_types[61]
-#define SWIGTYPE_p_pythonapi__PixelIterator swig_types[62]
-#define SWIGTYPE_p_pythonapi__PixelTemplateT_double_t swig_types[63]
-#define SWIGTYPE_p_pythonapi__PixelTemplateT_int_t swig_types[64]
-#define SWIGTYPE_p_pythonapi__Properties swig_types[65]
-#define SWIGTYPE_p_pythonapi__Properties__Values swig_types[66]
-#define SWIGTYPE_p_pythonapi__Range swig_types[67]
-#define SWIGTYPE_p_pythonapi__RangeIteratorT_double_pythonapi__NumericRange_double_Ilwis__NumericRange_t swig_types[68]
-#define SWIGTYPE_p_pythonapi__RasterCoverage swig_types[69]
-#define SWIGTYPE_p_pythonapi__SizeTemplateT_double_t swig_types[70]
-#define SWIGTYPE_p_pythonapi__SizeTemplateT_unsigned_int_t swig_types[71]
-#define SWIGTYPE_p_pythonapi__Table swig_types[72]
-#define SWIGTYPE_p_pythonapi__TextDomain swig_types[73]
-#define SWIGTYPE_p_pythonapi__ThematicItem swig_types[74]
-#define SWIGTYPE_p_pythonapi__ThematicRange swig_types[75]
-#define SWIGTYPE_p_pythonapi__TimeDomain swig_types[76]
-#define SWIGTYPE_p_pythonapi__TimeInterval swig_types[77]
-#define SWIGTYPE_p_pythonapi__it swig_types[78]
-#define SWIGTYPE_p_short swig_types[79]
-#define SWIGTYPE_p_signed_char swig_types[80]
-#define SWIGTYPE_p_std__string swig_types[81]
-#define SWIGTYPE_p_unsigned_char swig_types[82]
-#define SWIGTYPE_p_unsigned_int swig_types[83]
-#define SWIGTYPE_p_unsigned_long_long swig_types[84]
-#define SWIGTYPE_p_unsigned_short swig_types[85]
-static swig_type_info *swig_types[87];
-static swig_module_info swig_module = {swig_types, 86, 0, 0, 0, 0};
+#define SWIGTYPE_p_QSharedPointerT_Ilwis__DomainItem_t swig_types[18]
+#define SWIGTYPE_p__object swig_types[19]
+#define SWIGTYPE_p_bufferinfo swig_types[20]
+#define SWIGTYPE_p_char swig_types[21]
+#define SWIGTYPE_p_geos__geom__Geometry swig_types[22]
+#define SWIGTYPE_p_int swig_types[23]
+#define SWIGTYPE_p_long_long swig_types[24]
+#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t swig_types[25]
+#define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t swig_types[26]
+#define SWIGTYPE_p_pythonapi__Catalog swig_types[27]
+#define SWIGTYPE_p_pythonapi__Color swig_types[28]
+#define SWIGTYPE_p_pythonapi__ColorDomain swig_types[29]
+#define SWIGTYPE_p_pythonapi__ColorModelNS swig_types[30]
+#define SWIGTYPE_p_pythonapi__ColorModelNS__Value swig_types[31]
+#define SWIGTYPE_p_pythonapi__ColorPalette swig_types[32]
+#define SWIGTYPE_p_pythonapi__ColorRange swig_types[33]
+#define SWIGTYPE_p_pythonapi__ColumnDefinition swig_types[34]
+#define SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t swig_types[35]
+#define SWIGTYPE_p_pythonapi__ContinousColorRange swig_types[36]
+#define SWIGTYPE_p_pythonapi__Coordinate swig_types[37]
+#define SWIGTYPE_p_pythonapi__CoordinateSystem swig_types[38]
+#define SWIGTYPE_p_pythonapi__Coverage swig_types[39]
+#define SWIGTYPE_p_pythonapi__DataDefinition swig_types[40]
+#define SWIGTYPE_p_pythonapi__Domain swig_types[41]
+#define SWIGTYPE_p_pythonapi__DomainItem swig_types[42]
+#define SWIGTYPE_p_pythonapi__Engine swig_types[43]
+#define SWIGTYPE_p_pythonapi__Feature swig_types[44]
+#define SWIGTYPE_p_pythonapi__FeatureCoverage swig_types[45]
+#define SWIGTYPE_p_pythonapi__FeatureIterator swig_types[46]
+#define SWIGTYPE_p_pythonapi__FlowVal swig_types[47]
+#define SWIGTYPE_p_pythonapi__FlowVal__Value swig_types[48]
+#define SWIGTYPE_p_pythonapi__GeoReference swig_types[49]
+#define SWIGTYPE_p_pythonapi__Geometry swig_types[50]
+#define SWIGTYPE_p_pythonapi__IOOptions swig_types[51]
+#define SWIGTYPE_p_pythonapi__IlwisObject swig_types[52]
+#define SWIGTYPE_p_pythonapi__IndexedIdentifier swig_types[53]
+#define SWIGTYPE_p_pythonapi__IndexedItemRange swig_types[54]
+#define SWIGTYPE_p_pythonapi__Interval swig_types[55]
+#define SWIGTYPE_p_pythonapi__ItemDomain swig_types[56]
+#define SWIGTYPE_p_pythonapi__ItemRange swig_types[57]
+#define SWIGTYPE_p_pythonapi__NamedIdentifier swig_types[58]
+#define SWIGTYPE_p_pythonapi__NamedItemRange swig_types[59]
+#define SWIGTYPE_p_pythonapi__NumericDomain swig_types[60]
+#define SWIGTYPE_p_pythonapi__NumericItemRange swig_types[61]
+#define SWIGTYPE_p_pythonapi__NumericRange swig_types[62]
+#define SWIGTYPE_p_pythonapi__Object swig_types[63]
+#define SWIGTYPE_p_pythonapi__PixelIterator swig_types[64]
+#define SWIGTYPE_p_pythonapi__PixelTemplateT_double_t swig_types[65]
+#define SWIGTYPE_p_pythonapi__PixelTemplateT_int_t swig_types[66]
+#define SWIGTYPE_p_pythonapi__Properties swig_types[67]
+#define SWIGTYPE_p_pythonapi__Properties__Values swig_types[68]
+#define SWIGTYPE_p_pythonapi__Range swig_types[69]
+#define SWIGTYPE_p_pythonapi__RangeIteratorT_double_pythonapi__NumericRange_double_Ilwis__NumericRange_t swig_types[70]
+#define SWIGTYPE_p_pythonapi__RasterCoverage swig_types[71]
+#define SWIGTYPE_p_pythonapi__SizeTemplateT_double_t swig_types[72]
+#define SWIGTYPE_p_pythonapi__SizeTemplateT_unsigned_int_t swig_types[73]
+#define SWIGTYPE_p_pythonapi__Table swig_types[74]
+#define SWIGTYPE_p_pythonapi__TextDomain swig_types[75]
+#define SWIGTYPE_p_pythonapi__ThematicItem swig_types[76]
+#define SWIGTYPE_p_pythonapi__ThematicRange swig_types[77]
+#define SWIGTYPE_p_pythonapi__TimeDomain swig_types[78]
+#define SWIGTYPE_p_pythonapi__TimeInterval swig_types[79]
+#define SWIGTYPE_p_pythonapi__it swig_types[80]
+#define SWIGTYPE_p_short swig_types[81]
+#define SWIGTYPE_p_signed_char swig_types[82]
+#define SWIGTYPE_p_std__string swig_types[83]
+#define SWIGTYPE_p_unsigned_char swig_types[84]
+#define SWIGTYPE_p_unsigned_int swig_types[85]
+#define SWIGTYPE_p_unsigned_long_long swig_types[86]
+#define SWIGTYPE_p_unsigned_short swig_types[87]
+static swig_type_info *swig_types[89];
+static swig_module_info swig_module = {swig_types, 88, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -8674,7 +8676,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Coverage_addAttribute(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Coverage_addAttribute__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
   std::string *arg2 = 0 ;
@@ -8732,6 +8734,172 @@ fail:
   if (SWIG_IsNewObj(res2)) delete arg2;
   if (SWIG_IsNewObj(res3)) delete arg3;
   return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Coverage_addAttribute__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
+  std::string *arg2 = 0 ;
+  pythonapi::Domain *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:Coverage_addAttribute",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_addAttribute" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Coverage_addAttribute" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_addAttribute" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__Domain,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Coverage_addAttribute" "', argument " "3"" of type '" "pythonapi::Domain const &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_addAttribute" "', argument " "3"" of type '" "pythonapi::Domain const &""'"); 
+  }
+  arg3 = reinterpret_cast< pythonapi::Domain * >(argp3);
+  {
+    try {
+      result = (bool)(arg1)->addAttribute((std::string const &)*arg2,(pythonapi::Domain const &)*arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Coverage_addAttribute__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
+  pythonapi::ColumnDefinition *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Coverage_addAttribute",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_addAttribute" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__ColumnDefinition,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Coverage_addAttribute" "', argument " "2"" of type '" "pythonapi::ColumnDefinition const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_addAttribute" "', argument " "2"" of type '" "pythonapi::ColumnDefinition const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::ColumnDefinition * >(argp2);
+  {
+    try {
+      result = (bool)(arg1)->addAttribute((pythonapi::ColumnDefinition const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Coverage_addAttribute(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__ColumnDefinition, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_Coverage_addAttribute__SWIG_2(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_pythonapi__Domain, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_Coverage_addAttribute__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_Coverage_addAttribute__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Coverage_addAttribute'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::Coverage::addAttribute(std::string const &,std::string const &)\n"
+    "    pythonapi::Coverage::addAttribute(std::string const &,pythonapi::Domain const &)\n"
+    "    pythonapi::Coverage::addAttribute(pythonapi::ColumnDefinition const &)\n");
+  return 0;
 }
 
 
@@ -15564,11 +15732,9 @@ fail:
 SWIGINTERN PyObject *_wrap_new_Geometry__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  int arg2 ;
+  PyObject *arg2 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   pythonapi::Geometry *result = 0 ;
@@ -15579,11 +15745,7 @@ SWIGINTERN PyObject *_wrap_new_Geometry__SWIG_1(PyObject *SWIGUNUSEDPARM(self), 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Geometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_Geometry" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
+  arg2 = obj1;
   {
     try {
       result = (pythonapi::Geometry *)new pythonapi::Geometry(arg1,arg2);
@@ -15615,10 +15777,7 @@ SWIGINTERN PyObject *_wrap_new_Geometry(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
+      _v = (argv[1] != 0);
       if (_v) {
         return _wrap_new_Geometry__SWIG_1(self, args);
       }
@@ -15641,7 +15800,7 @@ fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_Geometry'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    pythonapi::Geometry::Geometry(std::string,pythonapi::CoordinateSystem const &)\n"
-    "    pythonapi::Geometry::Geometry(pythonapi::Feature *,int)\n");
+    "    pythonapi::Geometry::Geometry(pythonapi::Feature *,PyObject *)\n");
   return 0;
 }
 
@@ -17276,13 +17435,11 @@ SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_0(PyObject *SWIGUNUSEDPARM(se
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
   qint64 arg3 ;
-  int arg4 ;
+  PyObject *arg4 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   long long val3 ;
   int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -17309,11 +17466,7 @@ SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_0(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_attribute" "', argument " "3"" of type '" "qint64""'");
   } 
   arg3 = static_cast< qint64 >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Feature_attribute" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
+  arg4 = obj3;
   {
     try {
       result = (PyObject *)(arg1)->attribute(arg2,arg3,arg4);
@@ -17383,13 +17536,11 @@ SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_2(PyObject *SWIGUNUSEDPARM(se
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
   double arg3 ;
-  int arg4 ;
+  PyObject *arg4 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   double val3 ;
   int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -17416,11 +17567,7 @@ SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_2(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_attribute" "', argument " "3"" of type '" "double""'");
   } 
   arg3 = static_cast< double >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Feature_attribute" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
+  arg4 = obj3;
   {
     try {
       result = (PyObject *)(arg1)->attribute(arg2,arg3,arg4);
@@ -17490,11 +17637,9 @@ SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_4(PyObject *SWIGUNUSEDPARM(se
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
   std::string arg3 ;
-  int arg4 ;
+  PyObject *arg4 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -17525,11 +17670,7 @@ SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_4(PyObject *SWIGUNUSEDPARM(se
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
   }
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Feature_attribute" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
+  arg4 = obj3;
   {
     try {
       result = (PyObject *)(arg1)->attribute(arg2,arg3,arg4);
@@ -17675,10 +17816,7 @@ SWIGINTERN PyObject *_wrap_Feature_attribute(PyObject *self, PyObject *args) {
           _v = SWIG_CheckState(res);
         }
         if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
+          _v = (argv[3] != 0);
           if (_v) {
             return _wrap_Feature_attribute__SWIG_0(self, args);
           }
@@ -17700,10 +17838,7 @@ SWIGINTERN PyObject *_wrap_Feature_attribute(PyObject *self, PyObject *args) {
           _v = SWIG_CheckState(res);
         }
         if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
+          _v = (argv[3] != 0);
           if (_v) {
             return _wrap_Feature_attribute__SWIG_2(self, args);
           }
@@ -17723,10 +17858,7 @@ SWIGINTERN PyObject *_wrap_Feature_attribute(PyObject *self, PyObject *args) {
         int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
         _v = SWIG_CheckState(res);
         if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
+          _v = (argv[3] != 0);
           if (_v) {
             return _wrap_Feature_attribute__SWIG_4(self, args);
           }
@@ -17738,11 +17870,11 @@ SWIGINTERN PyObject *_wrap_Feature_attribute(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_attribute'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Feature::attribute(std::string,qint64,int)\n"
+    "    pythonapi::Feature::attribute(std::string,qint64,PyObject *)\n"
     "    pythonapi::Feature::attribute(std::string,qint64)\n"
-    "    pythonapi::Feature::attribute(std::string,double,int)\n"
+    "    pythonapi::Feature::attribute(std::string,double,PyObject *)\n"
     "    pythonapi::Feature::attribute(std::string,double)\n"
-    "    pythonapi::Feature::attribute(std::string,std::string,int)\n"
+    "    pythonapi::Feature::attribute(std::string,std::string,PyObject *)\n"
     "    pythonapi::Feature::attribute(std::string,std::string)\n");
   return 0;
 }
@@ -17795,11 +17927,9 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_0(PyObject *SWIGUNUSEDPARM
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
   PyObject *arg3 = (PyObject *) 0 ;
-  int arg4 ;
+  PyObject *arg4 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -17821,11 +17951,7 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_0(PyObject *SWIGUNUSEDPARM
     if (SWIG_IsNewObj(res)) delete ptr;
   }
   arg3 = obj2;
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Feature_setAttribute" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
+  arg4 = obj3;
   {
     try {
       (arg1)->setAttribute(arg2,(PyObject const *)arg3,arg4);
@@ -17936,13 +18062,11 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_2(PyObject *SWIGUNUSEDPARM
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
   qint64 arg3 ;
-  int arg4 ;
+  PyObject *arg4 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   long long val3 ;
   int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -17968,11 +18092,7 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_2(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_setAttribute" "', argument " "3"" of type '" "qint64""'");
   } 
   arg3 = static_cast< qint64 >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Feature_setAttribute" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
+  arg4 = obj3;
   {
     try {
       (arg1)->setAttribute(arg2,arg3,arg4);
@@ -18089,13 +18209,11 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_4(PyObject *SWIGUNUSEDPARM
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
   double arg3 ;
-  int arg4 ;
+  PyObject *arg4 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   double val3 ;
   int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -18121,11 +18239,7 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_4(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_setAttribute" "', argument " "3"" of type '" "double""'");
   } 
   arg3 = static_cast< double >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Feature_setAttribute" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
+  arg4 = obj3;
   {
     try {
       (arg1)->setAttribute(arg2,arg3,arg4);
@@ -18337,11 +18451,9 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_6(PyObject *SWIGUNUSEDPARM
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
   std::string arg3 ;
-  int arg4 ;
+  PyObject *arg4 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -18371,11 +18483,7 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_6(PyObject *SWIGUNUSEDPARM
     arg3 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
   }
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Feature_setAttribute" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
+  arg4 = obj3;
   {
     try {
       (arg1)->setAttribute(arg2,arg3,arg4);
@@ -18536,10 +18644,7 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute(PyObject *self, PyObject *args) 
           _v = SWIG_CheckState(res);
         }
         if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
+          _v = (argv[3] != 0);
           if (_v) {
             return _wrap_Feature_setAttribute__SWIG_2(self, args);
           }
@@ -18561,10 +18666,7 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute(PyObject *self, PyObject *args) 
           _v = SWIG_CheckState(res);
         }
         if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
+          _v = (argv[3] != 0);
           if (_v) {
             return _wrap_Feature_setAttribute__SWIG_4(self, args);
           }
@@ -18584,10 +18686,7 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute(PyObject *self, PyObject *args) 
         int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
         _v = SWIG_CheckState(res);
         if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
+          _v = (argv[3] != 0);
           if (_v) {
             return _wrap_Feature_setAttribute__SWIG_6(self, args);
           }
@@ -18606,10 +18705,7 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute(PyObject *self, PyObject *args) 
       if (_v) {
         _v = (argv[2] != 0);
         if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
+          _v = (argv[3] != 0);
           if (_v) {
             return _wrap_Feature_setAttribute__SWIG_0(self, args);
           }
@@ -18621,13 +18717,13 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute(PyObject *self, PyObject *args) 
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_setAttribute'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Feature::setAttribute(std::string,PyObject const *,int)\n"
+    "    pythonapi::Feature::setAttribute(std::string,PyObject const *,PyObject *)\n"
     "    pythonapi::Feature::setAttribute(std::string,PyObject const *)\n"
-    "    pythonapi::Feature::setAttribute(std::string,qint64,int)\n"
+    "    pythonapi::Feature::setAttribute(std::string,qint64,PyObject *)\n"
     "    pythonapi::Feature::setAttribute(std::string,qint64)\n"
-    "    pythonapi::Feature::setAttribute(std::string,double,int)\n"
+    "    pythonapi::Feature::setAttribute(std::string,double,PyObject *)\n"
     "    pythonapi::Feature::setAttribute(std::string,double)\n"
-    "    pythonapi::Feature::setAttribute(std::string,std::string,int)\n"
+    "    pythonapi::Feature::setAttribute(std::string,std::string,PyObject *)\n"
     "    pythonapi::Feature::setAttribute(std::string,std::string)\n");
   return 0;
 }
@@ -18665,11 +18761,9 @@ fail:
 SWIGINTERN PyObject *_wrap_Feature_geometry__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  int arg2 ;
+  PyObject *arg2 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   pythonapi::Geometry *result = 0 ;
@@ -18680,11 +18774,7 @@ SWIGINTERN PyObject *_wrap_Feature_geometry__SWIG_0(PyObject *SWIGUNUSEDPARM(sel
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_geometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Feature_geometry" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
+  arg2 = obj1;
   {
     try {
       result = (pythonapi::Geometry *)(arg1)->geometry(arg2);
@@ -18754,10 +18844,7 @@ SWIGINTERN PyObject *_wrap_Feature_geometry(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
+      _v = (argv[1] != 0);
       if (_v) {
         return _wrap_Feature_geometry__SWIG_0(self, args);
       }
@@ -18767,7 +18854,7 @@ SWIGINTERN PyObject *_wrap_Feature_geometry(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_geometry'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Feature::geometry(int)\n"
+    "    pythonapi::Feature::geometry(PyObject *)\n"
     "    pythonapi::Feature::geometry()\n");
   return 0;
 }
@@ -18777,13 +18864,11 @@ SWIGINTERN PyObject *_wrap_Feature_setGeometry__SWIG_0(PyObject *SWIGUNUSEDPARM(
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   pythonapi::Geometry *arg2 = 0 ;
-  int arg3 ;
+  PyObject *arg3 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
   int res2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -18802,11 +18887,7 @@ SWIGINTERN PyObject *_wrap_Feature_setGeometry__SWIG_0(PyObject *SWIGUNUSEDPARM(
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_setGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
   }
   arg2 = reinterpret_cast< pythonapi::Geometry * >(argp2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_setGeometry" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
+  arg3 = obj2;
   {
     try {
       (arg1)->setGeometry(*arg2,arg3);
@@ -18896,10 +18977,7 @@ SWIGINTERN PyObject *_wrap_Feature_setGeometry(PyObject *self, PyObject *args) {
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Geometry, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        {
-          int res = SWIG_AsVal_int(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
+        _v = (argv[2] != 0);
         if (_v) {
           return _wrap_Feature_setGeometry__SWIG_0(self, args);
         }
@@ -18910,9 +18988,232 @@ SWIGINTERN PyObject *_wrap_Feature_setGeometry(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_setGeometry'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Feature::setGeometry(pythonapi::Geometry &,int)\n"
+    "    pythonapi::Feature::setGeometry(pythonapi::Geometry &,PyObject *)\n"
     "    pythonapi::Feature::setGeometry(pythonapi::Geometry &)\n");
   return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_addGeometry__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  pythonapi::Geometry *arg2 = 0 ;
+  PyObject *arg3 = (PyObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:Feature_addGeometry",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_addGeometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Geometry,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_addGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_addGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Geometry * >(argp2);
+  arg3 = obj2;
+  {
+    try {
+      (arg1)->addGeometry(*arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_addGeometry__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  pythonapi::Geometry *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_addGeometry",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_addGeometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Geometry,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_addGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_addGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Geometry * >(argp2);
+  {
+    try {
+      (arg1)->addGeometry(*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_addGeometry(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Geometry, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_Feature_addGeometry__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Geometry, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        _v = (argv[2] != 0);
+        if (_v) {
+          return _wrap_Feature_addGeometry__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_addGeometry'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::Feature::addGeometry(pythonapi::Geometry &,PyObject *)\n"
+    "    pythonapi::Feature::addGeometry(pythonapi::Geometry &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_removeGeometry(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  PyObject *arg2 = (PyObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_removeGeometry",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_removeGeometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  arg2 = obj1;
+  {
+    try {
+      (arg1)->removeGeometry(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_featureId(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  quint64 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Feature_featureId",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_featureId" "', argument " "1"" of type '" "pythonapi::Feature const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  {
+    try {
+      result = (quint64)((pythonapi::Feature const *)arg1)->featureId();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_trackSize(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Feature_trackSize",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_trackSize" "', argument " "1"" of type '" "pythonapi::Feature const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  {
+    try {
+      result = (quint32)((pythonapi::Feature const *)arg1)->trackSize();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
 }
 
 
@@ -19187,6 +19488,44 @@ fail:
     "    pythonapi::Feature::columnDefinition(quint32,bool) const\n"
     "    pythonapi::Feature::columnDefinition(quint32) const\n");
   return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_trackIndexValue(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  quint32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_trackIndexValue",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_trackIndexValue" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Feature_trackIndexValue" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  {
+    try {
+      result = (PyObject *)(arg1)->trackIndexValue(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = result;
+  return resultobj;
+fail:
+  return NULL;
 }
 
 
@@ -19721,31 +20060,36 @@ fail:
 
 SWIGINTERN PyObject *_wrap_new_FeatureCoverage__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  std::string arg1 ;
+  std::string *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
   PyObject * obj0 = 0 ;
   pythonapi::FeatureCoverage *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"O:new_FeatureCoverage",&obj0)) SWIG_fail;
   {
     std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj0, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "new_FeatureCoverage" "', argument " "1"" of type '" "std::string""'"); 
+    res1 = SWIG_AsPtr_std_string(obj0, &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_FeatureCoverage" "', argument " "1"" of type '" "std::string const &""'"); 
     }
-    arg1 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_FeatureCoverage" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
   }
   {
     try {
-      result = (pythonapi::FeatureCoverage *)new pythonapi::FeatureCoverage(arg1);
+      result = (pythonapi::FeatureCoverage *)new pythonapi::FeatureCoverage((std::string const &)*arg1);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__FeatureCoverage, SWIG_POINTER_NEW |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj;
 fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
   return NULL;
 }
 
@@ -19776,7 +20120,7 @@ fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_FeatureCoverage'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    pythonapi::FeatureCoverage::FeatureCoverage()\n"
-    "    pythonapi::FeatureCoverage::FeatureCoverage(std::string)\n");
+    "    pythonapi::FeatureCoverage::FeatureCoverage(std::string const &)\n");
   return 0;
 }
 
@@ -20017,13 +20361,12 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_newFeature__SWIG_0(PyObject *SWIGUNUS
   PyObject *resultobj = 0;
   pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
   std::string *arg2 = 0 ;
-  SwigValueWrapper< pythonapi::CoordinateSystem > arg3 ;
+  pythonapi::CoordinateSystem *arg3 = 0 ;
   bool arg4 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  void *argp3 ;
+  int res2 = SWIG_OLDOBJ ;
+  void *argp3 = 0 ;
   int res3 = 0 ;
   bool val4 ;
   int ecode4 = 0 ;
@@ -20039,27 +20382,25 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_newFeature__SWIG_0(PyObject *SWIGUNUS
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_newFeature" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_std__string,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "std::string &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "std::string &""'"); 
-  }
-  arg2 = reinterpret_cast< std::string * >(argp2);
   {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__CoordinateSystem,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "FeatureCoverage_newFeature" "', argument " "3"" of type '" "pythonapi::CoordinateSystem""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeature" "', argument " "3"" of type '" "pythonapi::CoordinateSystem""'");
-    } else {
-      pythonapi::CoordinateSystem * temp = reinterpret_cast< pythonapi::CoordinateSystem * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "std::string const &""'"); 
     }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
   }
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__CoordinateSystem,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "FeatureCoverage_newFeature" "', argument " "3"" of type '" "pythonapi::CoordinateSystem const &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeature" "', argument " "3"" of type '" "pythonapi::CoordinateSystem const &""'"); 
+  }
+  arg3 = reinterpret_cast< pythonapi::CoordinateSystem * >(argp3);
   ecode4 = SWIG_AsVal_bool(obj3, &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "FeatureCoverage_newFeature" "', argument " "4"" of type '" "bool""'");
@@ -20067,15 +20408,17 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_newFeature__SWIG_0(PyObject *SWIGUNUS
   arg4 = static_cast< bool >(val4);
   {
     try {
-      result = (arg1)->newFeature(*arg2,arg3,arg4);
+      result = (arg1)->newFeature((std::string const &)*arg2,(pythonapi::CoordinateSystem const &)*arg3,arg4);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj((new pythonapi::Feature(static_cast< const pythonapi::Feature& >(result))), SWIGTYPE_p_pythonapi__Feature, SWIG_POINTER_OWN |  0 );
+  if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
@@ -20084,12 +20427,11 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_newFeature__SWIG_1(PyObject *SWIGUNUS
   PyObject *resultobj = 0;
   pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
   std::string *arg2 = 0 ;
-  SwigValueWrapper< pythonapi::CoordinateSystem > arg3 ;
+  pythonapi::CoordinateSystem *arg3 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  void *argp3 ;
+  int res2 = SWIG_OLDOBJ ;
+  void *argp3 = 0 ;
   int res3 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
@@ -20102,38 +20444,38 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_newFeature__SWIG_1(PyObject *SWIGUNUS
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_newFeature" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_std__string,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "std::string &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "std::string &""'"); 
-  }
-  arg2 = reinterpret_cast< std::string * >(argp2);
   {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__CoordinateSystem,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "FeatureCoverage_newFeature" "', argument " "3"" of type '" "pythonapi::CoordinateSystem""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeature" "', argument " "3"" of type '" "pythonapi::CoordinateSystem""'");
-    } else {
-      pythonapi::CoordinateSystem * temp = reinterpret_cast< pythonapi::CoordinateSystem * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "std::string const &""'"); 
     }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
   }
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__CoordinateSystem,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "FeatureCoverage_newFeature" "', argument " "3"" of type '" "pythonapi::CoordinateSystem const &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeature" "', argument " "3"" of type '" "pythonapi::CoordinateSystem const &""'"); 
+  }
+  arg3 = reinterpret_cast< pythonapi::CoordinateSystem * >(argp3);
   {
     try {
-      result = (arg1)->newFeature(*arg2,arg3);
+      result = (arg1)->newFeature((std::string const &)*arg2,(pythonapi::CoordinateSystem const &)*arg3);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj((new pythonapi::Feature(static_cast< const pythonapi::Feature& >(result))), SWIGTYPE_p_pythonapi__Feature, SWIG_POINTER_OWN |  0 );
+  if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
@@ -20156,17 +20498,17 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_newFeature__SWIG_2(PyObject *SWIGUNUS
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_newFeature" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Geometry,  0 );
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Geometry,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "pythonapi::Geometry const &""'"); 
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeature" "', argument " "2"" of type '" "pythonapi::Geometry const &""'"); 
   }
   arg2 = reinterpret_cast< pythonapi::Geometry * >(argp2);
   {
     try {
-      result = (arg1)->newFeature(*arg2);
+      result = (arg1)->newFeature((pythonapi::Geometry const &)*arg2);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -20195,8 +20537,7 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_newFeature(PyObject *self, PyObject *
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__FeatureCoverage, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Geometry, 0);
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__Geometry, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
         return _wrap_FeatureCoverage_newFeature__SWIG_2(self, args);
@@ -20209,8 +20550,7 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_newFeature(PyObject *self, PyObject *
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__FeatureCoverage, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__string, 0);
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
         int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_pythonapi__CoordinateSystem, 0);
@@ -20227,8 +20567,7 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_newFeature(PyObject *self, PyObject *
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__FeatureCoverage, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__string, 0);
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
         int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_pythonapi__CoordinateSystem, 0);
@@ -20249,9 +20588,9 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_newFeature(PyObject *self, PyObject *
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'FeatureCoverage_newFeature'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::FeatureCoverage::newFeature(std::string &,pythonapi::CoordinateSystem,bool)\n"
-    "    pythonapi::FeatureCoverage::newFeature(std::string &,pythonapi::CoordinateSystem)\n"
-    "    pythonapi::FeatureCoverage::newFeature(pythonapi::Geometry &)\n");
+    "    pythonapi::FeatureCoverage::newFeature(std::string const &,pythonapi::CoordinateSystem const &,bool)\n"
+    "    pythonapi::FeatureCoverage::newFeature(std::string const &,pythonapi::CoordinateSystem const &)\n"
+    "    pythonapi::FeatureCoverage::newFeature(pythonapi::Geometry const &)\n");
   return 0;
 }
 
@@ -20278,25 +20617,25 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_newFeatureFrom(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_newFeatureFrom" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Feature,  0 );
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Feature,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_newFeatureFrom" "', argument " "2"" of type '" "pythonapi::Feature &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_newFeatureFrom" "', argument " "2"" of type '" "pythonapi::Feature const &""'"); 
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeatureFrom" "', argument " "2"" of type '" "pythonapi::Feature &""'"); 
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeatureFrom" "', argument " "2"" of type '" "pythonapi::Feature const &""'"); 
   }
   arg2 = reinterpret_cast< pythonapi::Feature * >(argp2);
-  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__CoordinateSystem,  0 );
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__CoordinateSystem,  0  | 0);
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "FeatureCoverage_newFeatureFrom" "', argument " "3"" of type '" "pythonapi::CoordinateSystem &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "FeatureCoverage_newFeatureFrom" "', argument " "3"" of type '" "pythonapi::CoordinateSystem const &""'"); 
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeatureFrom" "', argument " "3"" of type '" "pythonapi::CoordinateSystem &""'"); 
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_newFeatureFrom" "', argument " "3"" of type '" "pythonapi::CoordinateSystem const &""'"); 
   }
   arg3 = reinterpret_cast< pythonapi::CoordinateSystem * >(argp3);
   {
     try {
-      result = (arg1)->newFeatureFrom(*arg2,*arg3);
+      result = (arg1)->newFeatureFrom((pythonapi::Feature const &)*arg2,(pythonapi::CoordinateSystem const &)*arg3);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -20326,17 +20665,17 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_reprojectFeatures(PyObject *SWIGUNUSE
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_reprojectFeatures" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__CoordinateSystem,  0 );
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__CoordinateSystem,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_reprojectFeatures" "', argument " "2"" of type '" "pythonapi::CoordinateSystem &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_reprojectFeatures" "', argument " "2"" of type '" "pythonapi::CoordinateSystem const &""'"); 
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_reprojectFeatures" "', argument " "2"" of type '" "pythonapi::CoordinateSystem &""'"); 
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_reprojectFeatures" "', argument " "2"" of type '" "pythonapi::CoordinateSystem const &""'"); 
   }
   arg2 = reinterpret_cast< pythonapi::CoordinateSystem * >(argp2);
   {
     try {
-      (arg1)->reprojectFeatures(*arg2);
+      (arg1)->reprojectFeatures((pythonapi::CoordinateSystem const &)*arg2);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -20381,9 +20720,10 @@ fail:
 SWIGINTERN PyObject *_wrap_FeatureCoverage_select(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
-  std::string arg2 ;
+  std::string *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject *result = 0 ;
@@ -20396,24 +20736,28 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_select(PyObject *SWIGUNUSEDPARM(self)
   arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
   {
     std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "FeatureCoverage_select" "', argument " "2"" of type '" "std::string""'"); 
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_select" "', argument " "2"" of type '" "std::string const &""'"); 
     }
-    arg2 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_select" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
   }
   {
     try {
-      result = (PyObject *)(arg1)->select(arg2);
+      result = (PyObject *)(arg1)->select((std::string const &)*arg2);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
   resultobj = result;
+  if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
@@ -22613,35 +22957,6 @@ SWIGINTERN PyObject *_wrap_GeoReference_isCompatible(PyObject *SWIGUNUSEDPARM(se
   {
     try {
       result = (bool)((pythonapi::GeoReference const *)arg1)->isCompatible((pythonapi::GeoReference const &)*arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_GeoReference_isValid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::GeoReference *arg1 = (pythonapi::GeoReference *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  bool result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:GeoReference_isValid",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__GeoReference, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GeoReference_isValid" "', argument " "1"" of type '" "pythonapi::GeoReference const *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::GeoReference * >(argp1);
-  {
-    try {
-      result = (bool)((pythonapi::GeoReference const *)arg1)->isValid();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -27664,6 +27979,7 @@ SWIGINTERN PyObject *_wrap_ItemRange_count(PyObject *SWIGUNUSEDPARM(self), PyObj
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
+  quint32 result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:ItemRange_count",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ItemRange, 0 |  0 );
@@ -27673,13 +27989,13 @@ SWIGINTERN PyObject *_wrap_ItemRange_count(PyObject *SWIGUNUSEDPARM(self), PyObj
   arg1 = reinterpret_cast< pythonapi::ItemRange * >(argp1);
   {
     try {
-      (arg1)->count();
+      result = (quint32)(arg1)->count();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
-  resultobj = SWIG_Py_Void();
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -28958,6 +29274,54 @@ SWIGINTERN PyObject *_wrap_new_Color__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyO
   PyObject *resultobj = 0;
   pythonapi::ColorModel arg1 ;
   PyObject *arg2 = (PyObject *) 0 ;
+  std::string *arg3 = 0 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  int res3 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  pythonapi::Color *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:new_Color",&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_Color" "', argument " "1"" of type '" "pythonapi::ColorModel""'");
+  } 
+  arg1 = static_cast< pythonapi::ColorModel >(val1);
+  arg2 = obj1;
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "new_Color" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Color" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    try {
+      result = (pythonapi::Color *)new pythonapi::Color(arg1,arg2,(std::string const &)*arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__Color, SWIG_POINTER_NEW |  0 );
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_Color__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorModel arg1 ;
+  PyObject *arg2 = (PyObject *) 0 ;
   int val1 ;
   int ecode1 = 0 ;
   PyObject * obj0 = 0 ;
@@ -28986,14 +29350,108 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_new_Color__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::string *arg1 = 0 ;
+  PyObject *arg2 = (PyObject *) 0 ;
+  std::string *arg3 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  int res3 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  pythonapi::Color *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:new_Color",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(obj0, &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Color" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Color" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  arg2 = obj1;
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "new_Color" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Color" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    try {
+      result = (pythonapi::Color *)new pythonapi::Color((std::string const &)*arg1,arg2,(std::string const &)*arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__Color, SWIG_POINTER_NEW |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_Color__SWIG_4(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::string *arg1 = 0 ;
+  PyObject *arg2 = (PyObject *) 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::Color *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:new_Color",&obj0,&obj1)) SWIG_fail;
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(obj0, &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Color" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Color" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  arg2 = obj1;
+  {
+    try {
+      result = (pythonapi::Color *)new pythonapi::Color((std::string const &)*arg1,arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__Color, SWIG_POINTER_NEW |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_new_Color(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[3];
+  PyObject *argv[4];
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
   }
   if (argc == 0) {
@@ -29008,7 +29466,50 @@ SWIGINTERN PyObject *_wrap_new_Color(PyObject *self, PyObject *args) {
     if (_v) {
       _v = (argv[1] != 0);
       if (_v) {
-        return _wrap_new_Color__SWIG_1(self, args);
+        return _wrap_new_Color__SWIG_2(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    int res = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      _v = (argv[1] != 0);
+      if (_v) {
+        return _wrap_new_Color__SWIG_4(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_int(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      _v = (argv[1] != 0);
+      if (_v) {
+        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_new_Color__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    int res = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      _v = (argv[1] != 0);
+      if (_v) {
+        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_new_Color__SWIG_3(self, args);
+        }
       }
     }
   }
@@ -29017,7 +29518,10 @@ fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_Color'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    pythonapi::Color::Color()\n"
-    "    pythonapi::Color::Color(pythonapi::ColorModel,PyObject *)\n");
+    "    pythonapi::Color::Color(pythonapi::ColorModel,PyObject *,std::string const &)\n"
+    "    pythonapi::Color::Color(pythonapi::ColorModel,PyObject *)\n"
+    "    pythonapi::Color::Color(std::string const &,PyObject *,std::string const &)\n"
+    "    pythonapi::Color::Color(std::string const &,PyObject *)\n");
   return 0;
 }
 
@@ -29056,6 +29560,79 @@ SWIGINTERN PyObject *_wrap_Color_getItem(PyObject *SWIGUNUSEDPARM(self), PyObjec
     }
   }
   resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Color_setName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Color *arg1 = (pythonapi::Color *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Color_setName",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Color, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Color_setName" "', argument " "1"" of type '" "pythonapi::Color *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Color * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Color_setName" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Color_setName" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      (arg1)->setName((std::string const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Color_getName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Color *arg1 = (pythonapi::Color *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Color_getName",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Color, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Color_getName" "', argument " "1"" of type '" "pythonapi::Color *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Color * >(argp1);
+  {
+    try {
+      result = (arg1)->getName();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
   return resultobj;
 fail:
   return NULL;
@@ -29108,6 +29685,35 @@ SWIGINTERN PyObject *_wrap_Color_toString(PyObject *SWIGUNUSEDPARM(self), PyObje
   {
     try {
       result = ((pythonapi::Color const *)arg1)->toString();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Color___str__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Color *arg1 = (pythonapi::Color *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Color___str__",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Color, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Color___str__" "', argument " "1"" of type '" "pythonapi::Color *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Color * >(argp1);
+  {
+    try {
+      result = (arg1)->__str__();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -29366,6 +29972,60 @@ SWIGINTERN PyObject *_wrap_ColorRange_toColor__SWIG_0(PyObject *SWIGUNUSEDPARM(s
   PyObject *resultobj = 0;
   quint64 arg1 ;
   pythonapi::ColorModel arg2 ;
+  std::string *arg3 = 0 ;
+  unsigned long long val1 ;
+  int ecode1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  int res3 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  pythonapi::Color result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ColorRange_toColor",&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_unsigned_SS_long_SS_long(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "ColorRange_toColor" "', argument " "1"" of type '" "quint64""'");
+  } 
+  arg1 = static_cast< quint64 >(val1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ColorRange_toColor" "', argument " "2"" of type '" "pythonapi::ColorModel""'");
+  } 
+  arg2 = static_cast< pythonapi::ColorModel >(val2);
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ColorRange_toColor" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ColorRange_toColor" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    try {
+      result = pythonapi::ColorRange::toColor(arg1,arg2,(std::string const &)*arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Color(static_cast< const pythonapi::Color& >(result))), SWIGTYPE_p_pythonapi__Color, SWIG_POINTER_OWN |  0 );
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorRange_toColor__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  quint64 arg1 ;
+  pythonapi::ColorModel arg2 ;
   unsigned long long val1 ;
   int ecode1 = 0 ;
   int val2 ;
@@ -29400,7 +30060,55 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_ColorRange_toColor__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_ColorRange_toColor__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  PyObject *arg1 = (PyObject *) 0 ;
+  pythonapi::ColorModel arg2 ;
+  std::string *arg3 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  int res3 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  pythonapi::Color result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ColorRange_toColor",&obj0,&obj1,&obj2)) SWIG_fail;
+  arg1 = obj0;
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ColorRange_toColor" "', argument " "2"" of type '" "pythonapi::ColorModel""'");
+  } 
+  arg2 = static_cast< pythonapi::ColorModel >(val2);
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ColorRange_toColor" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ColorRange_toColor" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    try {
+      result = pythonapi::ColorRange::toColor(arg1,arg2,(std::string const &)*arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Color(static_cast< const pythonapi::Color& >(result))), SWIGTYPE_p_pythonapi__Color, SWIG_POINTER_OWN |  0 );
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorRange_toColor__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   PyObject *arg1 = (PyObject *) 0 ;
   pythonapi::ColorModel arg2 ;
@@ -29434,12 +30142,12 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ColorRange_toColor(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[3];
+  PyObject *argv[4];
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
   }
   if (argc == 2) {
@@ -29454,7 +30162,7 @@ SWIGINTERN PyObject *_wrap_ColorRange_toColor(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        return _wrap_ColorRange_toColor__SWIG_0(self, args);
+        return _wrap_ColorRange_toColor__SWIG_1(self, args);
       }
     }
   }
@@ -29467,7 +30175,44 @@ SWIGINTERN PyObject *_wrap_ColorRange_toColor(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        return _wrap_ColorRange_toColor__SWIG_1(self, args);
+        return _wrap_ColorRange_toColor__SWIG_3(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_unsigned_SS_long_SS_long(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_ColorRange_toColor__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    _v = (argv[0] != 0);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_ColorRange_toColor__SWIG_2(self, args);
+        }
       }
     }
   }
@@ -29475,99 +30220,11 @@ SWIGINTERN PyObject *_wrap_ColorRange_toColor(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'ColorRange_toColor'.\n"
     "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::ColorRange::toColor(quint64,pythonapi::ColorModel,std::string const &)\n"
     "    pythonapi::ColorRange::toColor(quint64,pythonapi::ColorModel)\n"
+    "    pythonapi::ColorRange::toColor(PyObject *,pythonapi::ColorModel,std::string const &)\n"
     "    pythonapi::ColorRange::toColor(PyObject *,pythonapi::ColorModel)\n");
   return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_ColorRange_toString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::ColorRange *arg1 = (pythonapi::ColorRange *) 0 ;
-  pythonapi::Color *arg2 = 0 ;
-  pythonapi::ColorModel arg3 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:ColorRange_toString",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorRange, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorRange_toString" "', argument " "1"" of type '" "pythonapi::ColorRange *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::ColorRange * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Color,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ColorRange_toString" "', argument " "2"" of type '" "pythonapi::Color const &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ColorRange_toString" "', argument " "2"" of type '" "pythonapi::Color const &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::Color * >(argp2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "ColorRange_toString" "', argument " "3"" of type '" "pythonapi::ColorModel""'");
-  } 
-  arg3 = static_cast< pythonapi::ColorModel >(val3);
-  {
-    try {
-      result = (arg1)->toString((pythonapi::Color const &)*arg2,arg3);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_ColorRange_stringToColorModel(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::ColorRange *arg1 = (pythonapi::ColorRange *) 0 ;
-  std::string arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  pythonapi::ColorModel result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:ColorRange_stringToColorModel",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorRange, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorRange_stringToColorModel" "', argument " "1"" of type '" "pythonapi::ColorRange *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::ColorRange * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "ColorRange_stringToColorModel" "', argument " "2"" of type '" "std::string""'"); 
-    }
-    arg2 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    try {
-      result = (pythonapi::ColorModel)(arg1)->stringToColorModel(arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
 }
 
 
@@ -30326,6 +30983,892 @@ SWIGINTERN PyObject *ContinousColorRange_swigregister(PyObject *SWIGUNUSEDPARM(s
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
   SWIG_TypeNewClientData(SWIGTYPE_p_pythonapi__ContinousColorRange, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_ColorPalette(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_ColorPalette")) SWIG_fail;
+  {
+    try {
+      result = (pythonapi::ColorPalette *)new pythonapi::ColorPalette();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__ColorPalette, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_item__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  quint32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::Color result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:ColorPalette_item",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_item" "', argument " "1"" of type '" "pythonapi::ColorPalette const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ColorPalette_item" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  {
+    try {
+      result = ((pythonapi::ColorPalette const *)arg1)->item(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Color(static_cast< const pythonapi::Color& >(result))), SWIGTYPE_p_pythonapi__Color, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_item__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::Color result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:ColorPalette_item",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_item" "', argument " "1"" of type '" "pythonapi::ColorPalette const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ColorPalette_item" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ColorPalette_item" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = ((pythonapi::ColorPalette const *)arg1)->item((std::string const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Color(static_cast< const pythonapi::Color& >(result))), SWIGTYPE_p_pythonapi__Color, SWIG_POINTER_OWN |  0 );
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_item(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__ColorPalette, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_ColorPalette_item__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__ColorPalette, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_ColorPalette_item__SWIG_1(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'ColorPalette_item'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::ColorPalette::item(quint32) const\n"
+    "    pythonapi::ColorPalette::item(std::string const &) const\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_itemByOrder(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  quint32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::Color result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:ColorPalette_itemByOrder",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_itemByOrder" "', argument " "1"" of type '" "pythonapi::ColorPalette const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ColorPalette_itemByOrder" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  {
+    try {
+      result = ((pythonapi::ColorPalette const *)arg1)->itemByOrder(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Color(static_cast< const pythonapi::Color& >(result))), SWIGTYPE_p_pythonapi__Color, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_color(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::Color result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:ColorPalette_color",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_color" "', argument " "1"" of type '" "pythonapi::ColorPalette *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ColorPalette_color" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  {
+    try {
+      result = (arg1)->color(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Color(static_cast< const pythonapi::Color& >(result))), SWIGTYPE_p_pythonapi__Color, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_add(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  pythonapi::Color *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:ColorPalette_add",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_add" "', argument " "1"" of type '" "pythonapi::ColorPalette *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Color,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ColorPalette_add" "', argument " "2"" of type '" "pythonapi::Color const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ColorPalette_add" "', argument " "2"" of type '" "pythonapi::Color const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Color * >(argp2);
+  {
+    try {
+      (arg1)->add((pythonapi::Color const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_remove(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:ColorPalette_remove",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_remove" "', argument " "1"" of type '" "pythonapi::ColorPalette *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ColorPalette_remove" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ColorPalette_remove" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      (arg1)->remove((std::string const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_clear(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:ColorPalette_clear",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_clear" "', argument " "1"" of type '" "pythonapi::ColorPalette *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  {
+    try {
+      (arg1)->clear();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_containsColor__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  pythonapi::Color *arg2 = 0 ;
+  bool arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  bool val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ColorPalette_containsColor",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_containsColor" "', argument " "1"" of type '" "pythonapi::ColorPalette const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Color,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ColorPalette_containsColor" "', argument " "2"" of type '" "pythonapi::Color const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ColorPalette_containsColor" "', argument " "2"" of type '" "pythonapi::Color const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Color * >(argp2);
+  ecode3 = SWIG_AsVal_bool(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "ColorPalette_containsColor" "', argument " "3"" of type '" "bool""'");
+  } 
+  arg3 = static_cast< bool >(val3);
+  {
+    try {
+      result = (bool)((pythonapi::ColorPalette const *)arg1)->containsColor((pythonapi::Color const &)*arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_containsColor__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  pythonapi::Color *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:ColorPalette_containsColor",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_containsColor" "', argument " "1"" of type '" "pythonapi::ColorPalette const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Color,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ColorPalette_containsColor" "', argument " "2"" of type '" "pythonapi::Color const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ColorPalette_containsColor" "', argument " "2"" of type '" "pythonapi::Color const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Color * >(argp2);
+  {
+    try {
+      result = (bool)((pythonapi::ColorPalette const *)arg1)->containsColor((pythonapi::Color const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_containsColor(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__ColorPalette, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__Color, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_ColorPalette_containsColor__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__ColorPalette, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__Color, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        {
+          int res = SWIG_AsVal_bool(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_ColorPalette_containsColor__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'ColorPalette_containsColor'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::ColorPalette::containsColor(pythonapi::Color const &,bool) const\n"
+    "    pythonapi::ColorPalette::containsColor(pythonapi::Color const &) const\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_containsRange__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  pythonapi::ColorRange *arg2 = (pythonapi::ColorRange *) 0 ;
+  bool arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  bool val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ColorPalette_containsRange",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_containsRange" "', argument " "1"" of type '" "pythonapi::ColorPalette const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_pythonapi__ColorRange, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ColorPalette_containsRange" "', argument " "2"" of type '" "pythonapi::ColorRange *""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::ColorRange * >(argp2);
+  ecode3 = SWIG_AsVal_bool(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "ColorPalette_containsRange" "', argument " "3"" of type '" "bool""'");
+  } 
+  arg3 = static_cast< bool >(val3);
+  {
+    try {
+      result = (bool)((pythonapi::ColorPalette const *)arg1)->containsRange(arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_containsRange__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  pythonapi::ColorRange *arg2 = (pythonapi::ColorRange *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:ColorPalette_containsRange",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_containsRange" "', argument " "1"" of type '" "pythonapi::ColorPalette const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_pythonapi__ColorRange, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ColorPalette_containsRange" "', argument " "2"" of type '" "pythonapi::ColorRange *""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::ColorRange * >(argp2);
+  {
+    try {
+      result = (bool)((pythonapi::ColorPalette const *)arg1)->containsRange(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_containsRange(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__ColorPalette, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__ColorRange, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_ColorPalette_containsRange__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__ColorPalette, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__ColorRange, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        {
+          int res = SWIG_AsVal_bool(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_ColorPalette_containsRange__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'ColorPalette_containsRange'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::ColorPalette::containsRange(pythonapi::ColorRange *,bool) const\n"
+    "    pythonapi::ColorPalette::containsRange(pythonapi::ColorRange *) const\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_count(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:ColorPalette_count",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_count" "', argument " "1"" of type '" "pythonapi::ColorPalette *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  {
+    try {
+      result = (quint32)(arg1)->count();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_valueAt__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  quint32 arg2 ;
+  pythonapi::ColorRange *arg3 = (pythonapi::ColorRange *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  pythonapi::Color result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ColorPalette_valueAt",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_valueAt" "', argument " "1"" of type '" "pythonapi::ColorPalette *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ColorPalette_valueAt" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_pythonapi__ColorRange, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ColorPalette_valueAt" "', argument " "3"" of type '" "pythonapi::ColorRange *""'"); 
+  }
+  arg3 = reinterpret_cast< pythonapi::ColorRange * >(argp3);
+  {
+    try {
+      result = (arg1)->valueAt(arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Color(static_cast< const pythonapi::Color& >(result))), SWIGTYPE_p_pythonapi__Color, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_valueAt__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  quint32 arg2 ;
+  pythonapi::ItemRange *arg3 = (pythonapi::ItemRange *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  pythonapi::Color result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ColorPalette_valueAt",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_valueAt" "', argument " "1"" of type '" "pythonapi::ColorPalette *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ColorPalette_valueAt" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_pythonapi__ItemRange, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ColorPalette_valueAt" "', argument " "3"" of type '" "pythonapi::ItemRange *""'"); 
+  }
+  arg3 = reinterpret_cast< pythonapi::ItemRange * >(argp3);
+  {
+    try {
+      result = (arg1)->valueAt(arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Color(static_cast< const pythonapi::Color& >(result))), SWIGTYPE_p_pythonapi__Color, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_valueAt(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__ColorPalette, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_pythonapi__ColorRange, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_ColorPalette_valueAt__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__ColorPalette, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_pythonapi__ItemRange, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_ColorPalette_valueAt__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'ColorPalette_valueAt'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::ColorPalette::valueAt(quint32,pythonapi::ColorRange *)\n"
+    "    pythonapi::ColorPalette::valueAt(quint32,pythonapi::ItemRange *)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_ColorPalette_gotoIndex(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  qint32 arg2 ;
+  qint32 arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  qint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ColorPalette_gotoIndex",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ColorPalette_gotoIndex" "', argument " "1"" of type '" "pythonapi::ColorPalette const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ColorPalette_gotoIndex" "', argument " "2"" of type '" "qint32""'");
+  } 
+  arg2 = static_cast< qint32 >(val2);
+  ecode3 = SWIG_AsVal_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "ColorPalette_gotoIndex" "', argument " "3"" of type '" "qint32""'");
+  } 
+  arg3 = static_cast< qint32 >(val3);
+  {
+    try {
+      result = (qint32)((pythonapi::ColorPalette const *)arg1)->gotoIndex(arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_ColorPalette(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::ColorPalette *arg1 = (pythonapi::ColorPalette *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_ColorPalette",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__ColorPalette, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_ColorPalette" "', argument " "1"" of type '" "pythonapi::ColorPalette *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::ColorPalette * >(argp1);
+  {
+    try {
+      delete arg1;
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *ColorPalette_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_pythonapi__ColorPalette, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
@@ -35128,7 +36671,11 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"delete_Table", _wrap_delete_Table, METH_VARARGS, (char *)"delete_Table(Table self)"},
 	 { (char *)"Table_swigregister", Table_swigregister, METH_VARARGS, NULL},
 	 { (char *)"delete_Coverage", _wrap_delete_Coverage, METH_VARARGS, (char *)"delete_Coverage(Coverage self)"},
-	 { (char *)"Coverage_addAttribute", _wrap_Coverage_addAttribute, METH_VARARGS, (char *)"Coverage_addAttribute(Coverage self, std::string const & name, std::string const & domain) -> bool"},
+	 { (char *)"Coverage_addAttribute", _wrap_Coverage_addAttribute, METH_VARARGS, (char *)"\n"
+		"addAttribute(std::string const & name, std::string const & domain) -> bool\n"
+		"addAttribute(std::string const & name, Domain domain) -> bool\n"
+		"Coverage_addAttribute(Coverage self, ColumnDefinition domain) -> bool\n"
+		""},
 	 { (char *)"Coverage_attributeCount", _wrap_Coverage_attributeCount, METH_VARARGS, (char *)"Coverage_attributeCount(Coverage self) -> quint32"},
 	 { (char *)"Coverage_attributes", _wrap_Coverage_attributes, METH_VARARGS, (char *)"Coverage_attributes(Coverage self) -> PyObject *"},
 	 { (char *)"Coverage_attributeTable", _wrap_Coverage_attributeTable, METH_VARARGS, (char *)"\n"
@@ -35341,7 +36888,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"NumericStatistics_swigregister", NumericStatistics_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_Geometry", _wrap_new_Geometry, METH_VARARGS, (char *)"\n"
 		"Geometry(std::string wkt, CoordinateSystem csy)\n"
-		"new_Geometry(Feature feature, int index) -> Geometry\n"
+		"new_Geometry(Feature feature, PyObject * index) -> Geometry\n"
 		""},
 	 { (char *)"delete_Geometry", _wrap_delete_Geometry, METH_VARARGS, (char *)"delete_Geometry(Geometry self)"},
 	 { (char *)"Geometry___bool__", _wrap_Geometry___bool__, METH_VARARGS, (char *)"Geometry___bool__(Geometry self) -> bool"},
@@ -35389,11 +36936,11 @@ static PyMethodDef SwigMethods[] = {
 		"Feature___getitem__(Feature self, quint32 colIndex) -> PyObject *\n"
 		""},
 	 { (char *)"Feature_attribute", _wrap_Feature_attribute, METH_VARARGS, (char *)"\n"
-		"attribute(std::string name, qint64 defaultValue, int index=COVERAGEATRIB) -> PyObject\n"
+		"attribute(std::string name, qint64 defaultValue, PyObject * index=None) -> PyObject\n"
 		"attribute(std::string name, qint64 defaultValue) -> PyObject\n"
-		"attribute(std::string name, double defaultValue, int index=COVERAGEATRIB) -> PyObject\n"
+		"attribute(std::string name, double defaultValue, PyObject * index=None) -> PyObject\n"
 		"attribute(std::string name, double defaultValue) -> PyObject\n"
-		"attribute(std::string name, std::string defaultValue, int index=COVERAGEATRIB) -> PyObject\n"
+		"attribute(std::string name, std::string defaultValue, PyObject * index=None) -> PyObject\n"
 		"Feature_attribute(Feature self, std::string name, std::string defaultValue) -> PyObject *\n"
 		""},
 	 { (char *)"Feature___setitem__", _wrap_Feature___setitem__, METH_VARARGS, (char *)"\n"
@@ -35403,30 +36950,38 @@ static PyMethodDef SwigMethods[] = {
 		"Feature___setitem__(Feature self, std::string name, std::string value)\n"
 		""},
 	 { (char *)"Feature_setAttribute", _wrap_Feature_setAttribute, METH_VARARGS, (char *)"\n"
-		"setAttribute(std::string name, PyObject const * value, int index=COVERAGEATRIB)\n"
+		"setAttribute(std::string name, PyObject const * value, PyObject * index=None)\n"
 		"setAttribute(std::string name, PyObject const * value)\n"
-		"setAttribute(std::string name, qint64 value, int index=COVERAGEATRIB)\n"
+		"setAttribute(std::string name, qint64 value, PyObject * index=None)\n"
 		"setAttribute(std::string name, qint64 value)\n"
-		"setAttribute(std::string name, double value, int index=COVERAGEATRIB)\n"
+		"setAttribute(std::string name, double value, PyObject * index=None)\n"
 		"setAttribute(std::string name, double value)\n"
-		"setAttribute(std::string name, std::string value, int index=COVERAGEATRIB)\n"
+		"setAttribute(std::string name, std::string value, PyObject * index=None)\n"
 		"Feature_setAttribute(Feature self, std::string name, std::string value)\n"
 		""},
 	 { (char *)"Feature_ilwisType", _wrap_Feature_ilwisType, METH_VARARGS, (char *)"Feature_ilwisType(Feature self) -> IlwisTypes"},
 	 { (char *)"Feature_geometry", _wrap_Feature_geometry, METH_VARARGS, (char *)"\n"
-		"geometry(int index=0) -> Geometry\n"
+		"geometry(PyObject * index=None) -> Geometry\n"
 		"Feature_geometry(Feature self) -> Geometry\n"
 		""},
 	 { (char *)"Feature_setGeometry", _wrap_Feature_setGeometry, METH_VARARGS, (char *)"\n"
-		"setGeometry(Geometry geometry, int index=COVERAGEATRIB)\n"
+		"setGeometry(Geometry geometry, PyObject * index=None)\n"
 		"Feature_setGeometry(Feature self, Geometry geometry)\n"
 		""},
+	 { (char *)"Feature_addGeometry", _wrap_Feature_addGeometry, METH_VARARGS, (char *)"\n"
+		"addGeometry(Geometry geometry, PyObject * index=None)\n"
+		"Feature_addGeometry(Feature self, Geometry geometry)\n"
+		""},
+	 { (char *)"Feature_removeGeometry", _wrap_Feature_removeGeometry, METH_VARARGS, (char *)"Feature_removeGeometry(Feature self, PyObject * index)"},
+	 { (char *)"Feature_featureId", _wrap_Feature_featureId, METH_VARARGS, (char *)"Feature_featureId(Feature self) -> quint64"},
+	 { (char *)"Feature_trackSize", _wrap_Feature_trackSize, METH_VARARGS, (char *)"Feature_trackSize(Feature self) -> quint32"},
 	 { (char *)"Feature_columnDefinition", _wrap_Feature_columnDefinition, METH_VARARGS, (char *)"\n"
 		"columnDefinition(std::string const & name, bool coverages=True) -> ColumnDefinition\n"
 		"columnDefinition(std::string const & name) -> ColumnDefinition\n"
 		"columnDefinition(quint32 index, bool coverages=True) -> ColumnDefinition\n"
 		"Feature_columnDefinition(Feature self, quint32 index) -> ColumnDefinition\n"
 		""},
+	 { (char *)"Feature_trackIndexValue", _wrap_Feature_trackIndexValue, METH_VARARGS, (char *)"Feature_trackIndexValue(Feature self, quint32 index) -> PyObject *"},
 	 { (char *)"delete_Feature", _wrap_delete_Feature, METH_VARARGS, (char *)"delete_Feature(Feature self)"},
 	 { (char *)"Feature_swigregister", Feature_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_FeatureIterator", _wrap_new_FeatureIterator, METH_VARARGS, (char *)"\n"
@@ -35447,7 +37002,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"FeatureIterator_swigregister", FeatureIterator_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_FeatureCoverage", _wrap_new_FeatureCoverage, METH_VARARGS, (char *)"\n"
 		"FeatureCoverage()\n"
-		"new_FeatureCoverage(std::string resource) -> FeatureCoverage\n"
+		"new_FeatureCoverage(std::string const & resource) -> FeatureCoverage\n"
 		""},
 	 { (char *)"FeatureCoverage___iter__", _wrap_FeatureCoverage___iter__, METH_VARARGS, (char *)"FeatureCoverage___iter__(FeatureCoverage self) -> FeatureIterator"},
 	 { (char *)"FeatureCoverage_featureTypes", _wrap_FeatureCoverage_featureTypes, METH_VARARGS, (char *)"\n"
@@ -35457,14 +37012,14 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"FeatureCoverage_featureCount", _wrap_FeatureCoverage_featureCount, METH_VARARGS, (char *)"FeatureCoverage_featureCount(FeatureCoverage self) -> unsigned int"},
 	 { (char *)"FeatureCoverage_setFeatureCount", _wrap_FeatureCoverage_setFeatureCount, METH_VARARGS, (char *)"FeatureCoverage_setFeatureCount(FeatureCoverage self, IlwisTypes type, quint32 geomCnt, quint32 subGeomCnt, int index)"},
 	 { (char *)"FeatureCoverage_newFeature", _wrap_FeatureCoverage_newFeature, METH_VARARGS, (char *)"\n"
-		"newFeature(std::string & wkt, CoordinateSystem csy, bool load=True) -> Feature\n"
-		"newFeature(std::string & wkt, CoordinateSystem csy) -> Feature\n"
+		"newFeature(std::string const & wkt, CoordinateSystem csy, bool load=True) -> Feature\n"
+		"newFeature(std::string const & wkt, CoordinateSystem csy) -> Feature\n"
 		"FeatureCoverage_newFeature(FeatureCoverage self, Geometry geometry) -> Feature\n"
 		""},
 	 { (char *)"FeatureCoverage_newFeatureFrom", _wrap_FeatureCoverage_newFeatureFrom, METH_VARARGS, (char *)"FeatureCoverage_newFeatureFrom(FeatureCoverage self, Feature feat, CoordinateSystem csy) -> Feature"},
 	 { (char *)"FeatureCoverage_reprojectFeatures", _wrap_FeatureCoverage_reprojectFeatures, METH_VARARGS, (char *)"FeatureCoverage_reprojectFeatures(FeatureCoverage self, CoordinateSystem csy)"},
 	 { (char *)"FeatureCoverage_toFeatureCoverage", _wrap_FeatureCoverage_toFeatureCoverage, METH_VARARGS, (char *)"FeatureCoverage_toFeatureCoverage(Object obj) -> FeatureCoverage"},
-	 { (char *)"FeatureCoverage_select", _wrap_FeatureCoverage_select, METH_VARARGS, (char *)"FeatureCoverage_select(FeatureCoverage self, std::string spatialQuery) -> PyObject *"},
+	 { (char *)"FeatureCoverage_select", _wrap_FeatureCoverage_select, METH_VARARGS, (char *)"FeatureCoverage_select(FeatureCoverage self, std::string const & spatialQuery) -> PyObject *"},
 	 { (char *)"FeatureCoverage_maxIndex", _wrap_FeatureCoverage_maxIndex, METH_VARARGS, (char *)"FeatureCoverage_maxIndex(FeatureCoverage self) -> quint32"},
 	 { (char *)"FeatureCoverage_clone", _wrap_FeatureCoverage_clone, METH_VARARGS, (char *)"FeatureCoverage_clone(FeatureCoverage self) -> FeatureCoverage"},
 	 { (char *)"FeatureCoverage_geometryType", _wrap_FeatureCoverage_geometryType, METH_VARARGS, (char *)"FeatureCoverage_geometryType(FeatureCoverage self, Geometry geom) -> IlwisTypes"},
@@ -35534,7 +37089,6 @@ static PyMethodDef SwigMethods[] = {
 		"GeoReference_centerOfPixel(GeoReference self, bool yesno)\n"
 		""},
 	 { (char *)"GeoReference_isCompatible", _wrap_GeoReference_isCompatible, METH_VARARGS, (char *)"GeoReference_isCompatible(GeoReference self, GeoReference other) -> bool"},
-	 { (char *)"GeoReference_isValid", _wrap_GeoReference_isValid, METH_VARARGS, (char *)"GeoReference_isValid(GeoReference self) -> bool"},
 	 { (char *)"GeoReference_compute", _wrap_GeoReference_compute, METH_VARARGS, (char *)"GeoReference_compute(GeoReference self) -> bool"},
 	 { (char *)"GeoReference_ilwisType", _wrap_GeoReference_ilwisType, METH_VARARGS, (char *)"GeoReference_ilwisType(GeoReference self) -> IlwisTypes"},
 	 { (char *)"delete_GeoReference", _wrap_delete_GeoReference, METH_VARARGS, (char *)"delete_GeoReference(GeoReference self)"},
@@ -35705,7 +37259,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"NumericRange_clear", _wrap_NumericRange_clear, METH_VARARGS, (char *)"NumericRange_clear(NumericRange self)"},
 	 { (char *)"NumericRange_swigregister", NumericRange_swigregister, METH_VARARGS, NULL},
 	 { (char *)"ItemRange_add", _wrap_ItemRange_add, METH_VARARGS, (char *)"ItemRange_add(ItemRange self, PyObject * dItem)"},
-	 { (char *)"ItemRange_count", _wrap_ItemRange_count, METH_VARARGS, (char *)"ItemRange_count(ItemRange self)"},
+	 { (char *)"ItemRange_count", _wrap_ItemRange_count, METH_VARARGS, (char *)"ItemRange_count(ItemRange self) -> quint32"},
 	 { (char *)"ItemRange_remove", _wrap_ItemRange_remove, METH_VARARGS, (char *)"ItemRange_remove(ItemRange self, std::string const & name)"},
 	 { (char *)"ItemRange_clear", _wrap_ItemRange_clear, METH_VARARGS, (char *)"ItemRange_clear(ItemRange self)"},
 	 { (char *)"delete_ItemRange", _wrap_delete_ItemRange, METH_VARARGS, (char *)"delete_ItemRange(ItemRange self)"},
@@ -35748,11 +37302,17 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"ColorModel_swigregister", ColorModel_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_Color", _wrap_new_Color, METH_VARARGS, (char *)"\n"
 		"Color()\n"
-		"new_Color(pythonapi::ColorModel type, PyObject * obj) -> Color\n"
+		"Color(pythonapi::ColorModel type, PyObject * obj, std::string const & name=\"\")\n"
+		"Color(pythonapi::ColorModel type, PyObject * obj)\n"
+		"Color(std::string const & typeStr, PyObject * obj, std::string const & name=\"\")\n"
+		"new_Color(std::string const & typeStr, PyObject * obj) -> Color\n"
 		""},
 	 { (char *)"Color_getItem", _wrap_Color_getItem, METH_VARARGS, (char *)"Color_getItem(Color self, std::string key) -> double"},
+	 { (char *)"Color_setName", _wrap_Color_setName, METH_VARARGS, (char *)"Color_setName(Color self, std::string const & name)"},
+	 { (char *)"Color_getName", _wrap_Color_getName, METH_VARARGS, (char *)"Color_getName(Color self) -> std::string"},
 	 { (char *)"Color_getColorModel", _wrap_Color_getColorModel, METH_VARARGS, (char *)"Color_getColorModel(Color self) -> pythonapi::ColorModel"},
 	 { (char *)"Color_toString", _wrap_Color_toString, METH_VARARGS, (char *)"Color_toString(Color self) -> std::string"},
+	 { (char *)"Color___str__", _wrap_Color___str__, METH_VARARGS, (char *)"Color___str__(Color self) -> std::string"},
 	 { (char *)"delete_Color", _wrap_delete_Color, METH_VARARGS, (char *)"delete_Color(Color self)"},
 	 { (char *)"Color_swigregister", Color_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_ColorRange", _wrap_new_ColorRange, METH_VARARGS, (char *)"\n"
@@ -35764,11 +37324,11 @@ static PyMethodDef SwigMethods[] = {
 		"ColorRange_defaultColorModel(ColorRange self, pythonapi::ColorModel m)\n"
 		""},
 	 { (char *)"ColorRange_toColor", _wrap_ColorRange_toColor, METH_VARARGS, (char *)"\n"
+		"toColor(quint64 clrint, pythonapi::ColorModel clrModel, std::string const & name=\"\") -> Color\n"
 		"toColor(quint64 clrint, pythonapi::ColorModel clrModel) -> Color\n"
+		"toColor(PyObject * arg1, pythonapi::ColorModel colortype, std::string const & name=\"\") -> Color\n"
 		"ColorRange_toColor(PyObject * arg1, pythonapi::ColorModel colortype) -> Color\n"
 		""},
-	 { (char *)"ColorRange_toString", _wrap_ColorRange_toString, METH_VARARGS, (char *)"ColorRange_toString(ColorRange self, Color clr, pythonapi::ColorModel clrType) -> std::string"},
-	 { (char *)"ColorRange_stringToColorModel", _wrap_ColorRange_stringToColorModel, METH_VARARGS, (char *)"ColorRange_stringToColorModel(ColorRange self, std::string clrmd) -> pythonapi::ColorModel"},
 	 { (char *)"delete_ColorRange", _wrap_delete_ColorRange, METH_VARARGS, (char *)"delete_ColorRange(ColorRange self)"},
 	 { (char *)"ColorRange_swigregister", ColorRange_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_ContinousColorRange", _wrap_new_ContinousColorRange, METH_VARARGS, (char *)"\n"
@@ -35795,6 +37355,32 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"ContinousColorRange_impliedValue", _wrap_ContinousColorRange_impliedValue, METH_VARARGS, (char *)"ContinousColorRange_impliedValue(ContinousColorRange self, PyObject const * v) -> Color"},
 	 { (char *)"delete_ContinousColorRange", _wrap_delete_ContinousColorRange, METH_VARARGS, (char *)"delete_ContinousColorRange(ContinousColorRange self)"},
 	 { (char *)"ContinousColorRange_swigregister", ContinousColorRange_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_ColorPalette", _wrap_new_ColorPalette, METH_VARARGS, (char *)"new_ColorPalette() -> ColorPalette"},
+	 { (char *)"ColorPalette_item", _wrap_ColorPalette_item, METH_VARARGS, (char *)"\n"
+		"item(quint32 raw) -> Color\n"
+		"ColorPalette_item(ColorPalette self, std::string const & name) -> Color\n"
+		""},
+	 { (char *)"ColorPalette_itemByOrder", _wrap_ColorPalette_itemByOrder, METH_VARARGS, (char *)"ColorPalette_itemByOrder(ColorPalette self, quint32 index) -> Color"},
+	 { (char *)"ColorPalette_color", _wrap_ColorPalette_color, METH_VARARGS, (char *)"ColorPalette_color(ColorPalette self, int index) -> Color"},
+	 { (char *)"ColorPalette_add", _wrap_ColorPalette_add, METH_VARARGS, (char *)"ColorPalette_add(ColorPalette self, Color pyColor)"},
+	 { (char *)"ColorPalette_remove", _wrap_ColorPalette_remove, METH_VARARGS, (char *)"ColorPalette_remove(ColorPalette self, std::string const & name)"},
+	 { (char *)"ColorPalette_clear", _wrap_ColorPalette_clear, METH_VARARGS, (char *)"ColorPalette_clear(ColorPalette self)"},
+	 { (char *)"ColorPalette_containsColor", _wrap_ColorPalette_containsColor, METH_VARARGS, (char *)"\n"
+		"containsColor(Color clr, bool inclusive=True) -> bool\n"
+		"ColorPalette_containsColor(ColorPalette self, Color clr) -> bool\n"
+		""},
+	 { (char *)"ColorPalette_containsRange", _wrap_ColorPalette_containsRange, METH_VARARGS, (char *)"\n"
+		"containsRange(ColorRange v, bool inclusive=True) -> bool\n"
+		"ColorPalette_containsRange(ColorPalette self, ColorRange v) -> bool\n"
+		""},
+	 { (char *)"ColorPalette_count", _wrap_ColorPalette_count, METH_VARARGS, (char *)"ColorPalette_count(ColorPalette self) -> quint32"},
+	 { (char *)"ColorPalette_valueAt", _wrap_ColorPalette_valueAt, METH_VARARGS, (char *)"\n"
+		"valueAt(quint32 index, ColorRange rng) -> Color\n"
+		"ColorPalette_valueAt(ColorPalette self, quint32 index, ItemRange rng) -> Color\n"
+		""},
+	 { (char *)"ColorPalette_gotoIndex", _wrap_ColorPalette_gotoIndex, METH_VARARGS, (char *)"ColorPalette_gotoIndex(ColorPalette self, qint32 index, qint32 step) -> qint32"},
+	 { (char *)"delete_ColorPalette", _wrap_delete_ColorPalette, METH_VARARGS, (char *)"delete_ColorPalette(ColorPalette self)"},
+	 { (char *)"ColorPalette_swigregister", ColorPalette_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_TimeInterval", _wrap_new_TimeInterval, METH_VARARGS, (char *)"\n"
 		"TimeInterval(IlwisTypes tp=itUNKNOWN)\n"
 		"TimeInterval()\n"
@@ -36039,6 +37625,9 @@ static void *_p_pythonapi__NamedItemRangeTo_p_pythonapi__ItemRange(void *x, int 
 static void *_p_pythonapi__ThematicRangeTo_p_pythonapi__ItemRange(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::ItemRange *)  ((pythonapi::ThematicRange *) x));
 }
+static void *_p_pythonapi__ColorPaletteTo_p_pythonapi__ItemRange(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((pythonapi::ItemRange *)  ((pythonapi::ColorPalette *) x));
+}
 static void *_p_pythonapi__ItemRangeTo_p_pythonapi__Range(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Range *)  ((pythonapi::ItemRange *) x));
 }
@@ -36056,6 +37645,9 @@ static void *_p_pythonapi__NumericRangeTo_p_pythonapi__Range(void *x, int *SWIGU
 }
 static void *_p_pythonapi__ThematicRangeTo_p_pythonapi__Range(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Range *) (pythonapi::ItemRange *) ((pythonapi::ThematicRange *) x));
+}
+static void *_p_pythonapi__ColorPaletteTo_p_pythonapi__Range(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((pythonapi::Range *) (pythonapi::ItemRange *) ((pythonapi::ColorPalette *) x));
 }
 static void *_p_pythonapi__TimeIntervalTo_p_pythonapi__Range(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Range *) (pythonapi::NumericRange *) ((pythonapi::TimeInterval *) x));
@@ -36132,6 +37724,9 @@ static void *_p_pythonapi__NumericRangeTo_p_pythonapi__Object(void *x, int *SWIG
 static void *_p_pythonapi__ThematicRangeTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Object *) (pythonapi::Range *)(pythonapi::ItemRange *) ((pythonapi::ThematicRange *) x));
 }
+static void *_p_pythonapi__ColorPaletteTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((pythonapi::Object *) (pythonapi::Range *)(pythonapi::ItemRange *) ((pythonapi::ColorPalette *) x));
+}
 static void *_p_pythonapi__RasterCoverageTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Object *) (pythonapi::IlwisObject *)(pythonapi::Coverage *) ((pythonapi::RasterCoverage *) x));
 }
@@ -36159,6 +37754,9 @@ static void *_p_pythonapi__GeometryTo_p_pythonapi__Object(void *x, int *SWIGUNUS
 static void *_p_pythonapi__IlwisObjectTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Object *)  ((pythonapi::IlwisObject *) x));
 }
+static void *_p_pythonapi__ColorPaletteTo_p_pythonapi__ColorRange(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((pythonapi::ColorRange *)  ((pythonapi::ColorPalette *) x));
+}
 static void *_p_pythonapi__ContinousColorRangeTo_p_pythonapi__ColorRange(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::ColorRange *)  ((pythonapi::ContinousColorRange *) x));
 }
@@ -36183,6 +37781,7 @@ static swig_type_info _swigt__p_Ilwis__NumericRange = {"_p_Ilwis__NumericRange",
 static swig_type_info _swigt__p_Ilwis__PixelIterator = {"_p_Ilwis__PixelIterator", "Ilwis::PixelIterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Ilwis__Range = {"_p_Ilwis__Range", "Ilwis::Range *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Ilwis__RangeIteratorT_double_Ilwis__NumericRange_t = {"_p_Ilwis__RangeIteratorT_double_Ilwis__NumericRange_t", "Ilwis::RangeIterator< double,Ilwis::NumericRange > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_QSharedPointerT_Ilwis__DomainItem_t = {"_p_QSharedPointerT_Ilwis__DomainItem_t", "QSharedPointer< Ilwis::DomainItem > *|Ilwis::SPDomainItem *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p__object = {"_p__object", "_object *|PyObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_bufferinfo = {"_p_bufferinfo", "bufferinfo *|Py_buffer *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
@@ -36196,6 +37795,7 @@ static swig_type_info _swigt__p_pythonapi__Color = {"_p_pythonapi__Color", "pyth
 static swig_type_info _swigt__p_pythonapi__ColorDomain = {"_p_pythonapi__ColorDomain", "pythonapi::ColorDomain *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__ColorModelNS = {"_p_pythonapi__ColorModelNS", "pythonapi::ColorModelNS *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__ColorModelNS__Value = {"_p_pythonapi__ColorModelNS__Value", "enum pythonapi::ColorModelNS::Value *|pythonapi::ColorModel *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_pythonapi__ColorPalette = {"_p_pythonapi__ColorPalette", "pythonapi::ColorPalette *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__ColorRange = {"_p_pythonapi__ColorRange", "pythonapi::ColorRange *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__ColumnDefinition = {"_p_pythonapi__ColumnDefinition", "pythonapi::ColumnDefinition *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__ContainerStatisticsT_double_t = {"_p_pythonapi__ContainerStatisticsT_double_t", "pythonapi::NumericStatistics *|pythonapi::ContainerStatistics< double > *", 0, 0, (void*)0, 0};
@@ -36271,6 +37871,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Ilwis__PixelIterator,
   &_swigt__p_Ilwis__Range,
   &_swigt__p_Ilwis__RangeIteratorT_double_Ilwis__NumericRange_t,
+  &_swigt__p_QSharedPointerT_Ilwis__DomainItem_t,
   &_swigt__p__object,
   &_swigt__p_bufferinfo,
   &_swigt__p_char,
@@ -36284,6 +37885,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_pythonapi__ColorDomain,
   &_swigt__p_pythonapi__ColorModelNS,
   &_swigt__p_pythonapi__ColorModelNS__Value,
+  &_swigt__p_pythonapi__ColorPalette,
   &_swigt__p_pythonapi__ColorRange,
   &_swigt__p_pythonapi__ColumnDefinition,
   &_swigt__p_pythonapi__ContainerStatisticsT_double_t,
@@ -36359,6 +37961,7 @@ static swig_cast_info _swigc__p_Ilwis__NumericRange[] = {  {&_swigt__p_Ilwis__Nu
 static swig_cast_info _swigc__p_Ilwis__PixelIterator[] = {  {&_swigt__p_Ilwis__PixelIterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Ilwis__Range[] = {  {&_swigt__p_Ilwis__Range, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Ilwis__RangeIteratorT_double_Ilwis__NumericRange_t[] = {  {&_swigt__p_Ilwis__RangeIteratorT_double_Ilwis__NumericRange_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_QSharedPointerT_Ilwis__DomainItem_t[] = {  {&_swigt__p_QSharedPointerT_Ilwis__DomainItem_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p__object[] = {  {&_swigt__p__object, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_bufferinfo[] = {  {&_swigt__p_bufferinfo, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
@@ -36372,7 +37975,8 @@ static swig_cast_info _swigc__p_pythonapi__Color[] = {  {&_swigt__p_pythonapi__C
 static swig_cast_info _swigc__p_pythonapi__ColorDomain[] = {  {&_swigt__p_pythonapi__ColorDomain, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__ColorModelNS[] = {  {&_swigt__p_pythonapi__ColorModelNS, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__ColorModelNS__Value[] = {  {&_swigt__p_pythonapi__ColorModelNS__Value, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_pythonapi__ColorRange[] = {  {&_swigt__p_pythonapi__ColorRange, 0, 0, 0},  {&_swigt__p_pythonapi__ContinousColorRange, _p_pythonapi__ContinousColorRangeTo_p_pythonapi__ColorRange, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_pythonapi__ColorPalette[] = {  {&_swigt__p_pythonapi__ColorPalette, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_pythonapi__ColorRange[] = {  {&_swigt__p_pythonapi__ColorPalette, _p_pythonapi__ColorPaletteTo_p_pythonapi__ColorRange, 0, 0},  {&_swigt__p_pythonapi__ColorRange, 0, 0, 0},  {&_swigt__p_pythonapi__ContinousColorRange, _p_pythonapi__ContinousColorRangeTo_p_pythonapi__ColorRange, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__ColumnDefinition[] = {  {&_swigt__p_pythonapi__ColumnDefinition, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__ContainerStatisticsT_double_t[] = {  {&_swigt__p_pythonapi__ContainerStatisticsT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__ContinousColorRange[] = {  {&_swigt__p_pythonapi__ContinousColorRange, 0, 0, 0},{0, 0, 0, 0}};
@@ -36396,19 +38000,19 @@ static swig_cast_info _swigc__p_pythonapi__IndexedIdentifier[] = {  {&_swigt__p_
 static swig_cast_info _swigc__p_pythonapi__IndexedItemRange[] = {  {&_swigt__p_pythonapi__IndexedItemRange, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__Interval[] = {  {&_swigt__p_pythonapi__Interval, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__ItemDomain[] = {  {&_swigt__p_pythonapi__ItemDomain, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_pythonapi__ItemRange[] = {  {&_swigt__p_pythonapi__ItemRange, 0, 0, 0},  {&_swigt__p_pythonapi__NumericItemRange, _p_pythonapi__NumericItemRangeTo_p_pythonapi__ItemRange, 0, 0},  {&_swigt__p_pythonapi__IndexedItemRange, _p_pythonapi__IndexedItemRangeTo_p_pythonapi__ItemRange, 0, 0},  {&_swigt__p_pythonapi__NamedItemRange, _p_pythonapi__NamedItemRangeTo_p_pythonapi__ItemRange, 0, 0},  {&_swigt__p_pythonapi__ThematicRange, _p_pythonapi__ThematicRangeTo_p_pythonapi__ItemRange, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_pythonapi__ItemRange[] = {  {&_swigt__p_pythonapi__ItemRange, 0, 0, 0},  {&_swigt__p_pythonapi__NumericItemRange, _p_pythonapi__NumericItemRangeTo_p_pythonapi__ItemRange, 0, 0},  {&_swigt__p_pythonapi__IndexedItemRange, _p_pythonapi__IndexedItemRangeTo_p_pythonapi__ItemRange, 0, 0},  {&_swigt__p_pythonapi__NamedItemRange, _p_pythonapi__NamedItemRangeTo_p_pythonapi__ItemRange, 0, 0},  {&_swigt__p_pythonapi__ThematicRange, _p_pythonapi__ThematicRangeTo_p_pythonapi__ItemRange, 0, 0},  {&_swigt__p_pythonapi__ColorPalette, _p_pythonapi__ColorPaletteTo_p_pythonapi__ItemRange, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__NamedIdentifier[] = {  {&_swigt__p_pythonapi__ThematicItem, _p_pythonapi__ThematicItemTo_p_pythonapi__NamedIdentifier, 0, 0},  {&_swigt__p_pythonapi__NamedIdentifier, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__NamedItemRange[] = {  {&_swigt__p_pythonapi__NamedItemRange, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__NumericDomain[] = {  {&_swigt__p_pythonapi__NumericDomain, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__NumericItemRange[] = {  {&_swigt__p_pythonapi__NumericItemRange, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__NumericRange[] = {  {&_swigt__p_pythonapi__NumericRange, 0, 0, 0},  {&_swigt__p_pythonapi__TimeInterval, _p_pythonapi__TimeIntervalTo_p_pythonapi__NumericRange, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_pythonapi__Object[] = {  {&_swigt__p_pythonapi__Catalog, _p_pythonapi__CatalogTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__DomainItem, _p_pythonapi__DomainItemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Feature, _p_pythonapi__FeatureTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Range, _p_pythonapi__RangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Interval, _p_pythonapi__IntervalTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TimeInterval, _p_pythonapi__TimeIntervalTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__GeoReference, _p_pythonapi__GeoReferenceTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ColorRange, _p_pythonapi__ColorRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ContinousColorRange, _p_pythonapi__ContinousColorRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TimeDomain, _p_pythonapi__TimeDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericDomain, _p_pythonapi__NumericDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ItemDomain, _p_pythonapi__ItemDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Domain, _p_pythonapi__DomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NamedIdentifier, _p_pythonapi__NamedIdentifierTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IndexedIdentifier, _p_pythonapi__IndexedIdentifierTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ThematicItem, _p_pythonapi__ThematicItemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ThematicRange, _p_pythonapi__ThematicRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericRange, _p_pythonapi__NumericRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ColorDomain, _p_pythonapi__ColorDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TextDomain, _p_pythonapi__TextDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Table, _p_pythonapi__TableTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__CoordinateSystem, _p_pythonapi__CoordinateSystemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__RasterCoverage, _p_pythonapi__RasterCoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__FeatureCoverage, _p_pythonapi__FeatureCoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Coverage, _p_pythonapi__CoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NamedItemRange, _p_pythonapi__NamedItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IndexedItemRange, _p_pythonapi__IndexedItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericItemRange, _p_pythonapi__NumericItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ItemRange, _p_pythonapi__ItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Object, 0, 0, 0},  {&_swigt__p_pythonapi__Geometry, _p_pythonapi__GeometryTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IlwisObject, _p_pythonapi__IlwisObjectTo_p_pythonapi__Object, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_pythonapi__Object[] = {  {&_swigt__p_pythonapi__Catalog, _p_pythonapi__CatalogTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__DomainItem, _p_pythonapi__DomainItemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Feature, _p_pythonapi__FeatureTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Range, _p_pythonapi__RangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Interval, _p_pythonapi__IntervalTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TimeInterval, _p_pythonapi__TimeIntervalTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__GeoReference, _p_pythonapi__GeoReferenceTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ColorRange, _p_pythonapi__ColorRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ContinousColorRange, _p_pythonapi__ContinousColorRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TimeDomain, _p_pythonapi__TimeDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericDomain, _p_pythonapi__NumericDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ItemDomain, _p_pythonapi__ItemDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Domain, _p_pythonapi__DomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NamedIdentifier, _p_pythonapi__NamedIdentifierTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IndexedIdentifier, _p_pythonapi__IndexedIdentifierTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ThematicItem, _p_pythonapi__ThematicItemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ThematicRange, _p_pythonapi__ThematicRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ColorPalette, _p_pythonapi__ColorPaletteTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericRange, _p_pythonapi__NumericRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ColorDomain, _p_pythonapi__ColorDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TextDomain, _p_pythonapi__TextDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Table, _p_pythonapi__TableTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__CoordinateSystem, _p_pythonapi__CoordinateSystemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__RasterCoverage, _p_pythonapi__RasterCoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__FeatureCoverage, _p_pythonapi__FeatureCoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Coverage, _p_pythonapi__CoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NamedItemRange, _p_pythonapi__NamedItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IndexedItemRange, _p_pythonapi__IndexedItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericItemRange, _p_pythonapi__NumericItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ItemRange, _p_pythonapi__ItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Object, 0, 0, 0},  {&_swigt__p_pythonapi__Geometry, _p_pythonapi__GeometryTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IlwisObject, _p_pythonapi__IlwisObjectTo_p_pythonapi__Object, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__PixelIterator[] = {  {&_swigt__p_pythonapi__PixelIterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__PixelTemplateT_double_t[] = {  {&_swigt__p_pythonapi__PixelTemplateT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__PixelTemplateT_int_t[] = {  {&_swigt__p_pythonapi__PixelTemplateT_int_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__Properties[] = {  {&_swigt__p_pythonapi__Properties, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__Properties__Values[] = {  {&_swigt__p_pythonapi__Properties__Values, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_pythonapi__Range[] = {  {&_swigt__p_pythonapi__Range, 0, 0, 0},  {&_swigt__p_pythonapi__ItemRange, _p_pythonapi__ItemRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__NumericItemRange, _p_pythonapi__NumericItemRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__IndexedItemRange, _p_pythonapi__IndexedItemRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__NamedItemRange, _p_pythonapi__NamedItemRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__ThematicRange, _p_pythonapi__ThematicRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__NumericRange, _p_pythonapi__NumericRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__TimeInterval, _p_pythonapi__TimeIntervalTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__ColorRange, _p_pythonapi__ColorRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__ContinousColorRange, _p_pythonapi__ContinousColorRangeTo_p_pythonapi__Range, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_pythonapi__Range[] = {  {&_swigt__p_pythonapi__Range, 0, 0, 0},  {&_swigt__p_pythonapi__ItemRange, _p_pythonapi__ItemRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__NumericItemRange, _p_pythonapi__NumericItemRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__IndexedItemRange, _p_pythonapi__IndexedItemRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__NamedItemRange, _p_pythonapi__NamedItemRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__ThematicRange, _p_pythonapi__ThematicRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__NumericRange, _p_pythonapi__NumericRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__ColorPalette, _p_pythonapi__ColorPaletteTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__TimeInterval, _p_pythonapi__TimeIntervalTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__ColorRange, _p_pythonapi__ColorRangeTo_p_pythonapi__Range, 0, 0},  {&_swigt__p_pythonapi__ContinousColorRange, _p_pythonapi__ContinousColorRangeTo_p_pythonapi__Range, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__RangeIteratorT_double_pythonapi__NumericRange_double_Ilwis__NumericRange_t[] = {  {&_swigt__p_pythonapi__RangeIteratorT_double_pythonapi__NumericRange_double_Ilwis__NumericRange_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__RasterCoverage[] = {  {&_swigt__p_pythonapi__RasterCoverage, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__SizeTemplateT_double_t[] = {  {&_swigt__p_pythonapi__SizeTemplateT_double_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -36447,6 +38051,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Ilwis__PixelIterator,
   _swigc__p_Ilwis__Range,
   _swigc__p_Ilwis__RangeIteratorT_double_Ilwis__NumericRange_t,
+  _swigc__p_QSharedPointerT_Ilwis__DomainItem_t,
   _swigc__p__object,
   _swigc__p_bufferinfo,
   _swigc__p_char,
@@ -36460,6 +38065,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_pythonapi__ColorDomain,
   _swigc__p_pythonapi__ColorModelNS,
   _swigc__p_pythonapi__ColorModelNS__Value,
+  _swigc__p_pythonapi__ColorPalette,
   _swigc__p_pythonapi__ColorRange,
   _swigc__p_pythonapi__ColumnDefinition,
   _swigc__p_pythonapi__ContainerStatisticsT_double_t,

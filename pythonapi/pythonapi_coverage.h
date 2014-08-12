@@ -17,6 +17,7 @@ namespace Ilwis {
 
 namespace pythonapi{
     class Domain;
+    class ColumnDefinition;
     class Coverage : public IlwisObject{
         public:
             enum AttributeType{atCOVERAGE, atINDEX};
@@ -26,6 +27,8 @@ namespace pythonapi{
         public:
             virtual ~Coverage(){}
             bool addAttribute(const std::string& name, const std::string& domain);
+            bool addAttribute(const std::string& name, const Domain& domain);
+            bool addAttribute(const ColumnDefinition& domain);
             quint32 attributeCount();
             PyObject *attributes();
             Table attributeTable(AttributeType attType=atCOVERAGE);

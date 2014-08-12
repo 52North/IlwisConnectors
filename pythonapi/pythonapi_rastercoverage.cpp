@@ -313,8 +313,8 @@ RasterCoverage* RasterCoverage::reprojectRaster(std::string newName, quint32 eps
             ",name=grf1";
 
     GeoReference grf(refStr);
-    QString expr;
-    expr = expr.fromStdString(newName + "=resample(" + this->name() + ",grf1," + interpol  + ")");
+    QString expr = QString::fromStdString(newName + "=resample(" + this->name() + ",grf1," + interpol  + ")");
+    //expr = expr.fromStdString(newName + "=resample(" + this->name() + ",grf1," + interpol  + ")");
     Ilwis::ExecutionContext ctx;
     Ilwis::SymbolTable syms;
     Ilwis::commandhandler()->execute(expr,&ctx,syms);
