@@ -83,9 +83,9 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
         IlwisTypes extTypes;
         if ( hasGeometry) {
             mainType = itCOVERAGE;
-            extTypes = itTABLE; // | itGEOREF;
+            extTypes = itFLATTABLE; // | itGEOREF;
         } else {
-            mainType = itTABLE;
+            mainType = itFLATTABLE;
         }
 
         QUrl url(resourceId);
