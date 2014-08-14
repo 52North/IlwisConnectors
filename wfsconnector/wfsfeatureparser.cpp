@@ -65,6 +65,8 @@ WfsParsingContext WfsFeatureParser::context() const
 
 void WfsFeatureParser::parseFeatureMembers()
 {
+    qDebug() << "WfsFeatureParser::parseFeatureMembers()";
+
     ITable table = _fcoverage->attributeTable();
     _featureType = table->name();
     _featureType = "target:" + _featureType;
@@ -98,7 +100,6 @@ void WfsFeatureParser::parseFeatureMembers()
 
 bool WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table)
 {
-    //qDebug() << "create new feature ...";
     bool continueReadingStream = true;
     QString geometryAttributeName = _context.geometryAtttributeName();
     for (int i = 0; i < table->columnCount(); i++) {

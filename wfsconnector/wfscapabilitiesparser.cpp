@@ -31,6 +31,8 @@ WfsCapabilitiesParser::~WfsCapabilitiesParser()
 
 void WfsCapabilitiesParser::parseFeatures(std::vector<Resource> &wfsFeatures)
 {
+    qDebug() << "WfsCapabilitiesParser::parseFeatures()";
+
     QXmlResultItems results;
     UPXmlQuery& query = _parser->queryFromRoot("//wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType");
 
