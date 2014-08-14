@@ -13,8 +13,12 @@
 #include "flattable.h"
 #include "featurecoverage.h"
 #include "geometryhelper.h"
+#include "connectorinterface.h"
+#include "ilwisobjectconnector.h"
 
+#include "postgresqlconnector.h"
 #include "postgresqlfeaturecoverageloader.h"
+#include "postgresqltableconnector.h"
 #include "postgresqltableloader.h"
 #include "postgresqldatabaseutil.h"
 
@@ -35,31 +39,15 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
 {
     qDebug() << "PostgresqlFeatureCoverageLoader::loadMetadata()";
 
-    QString name = fcoverage->name();
-    quint64 id = fcoverage->id();
-    QString schemaResource(PostgresqlDatabaseUtil::getInternalNameFrom(name, id));
-
     ITable featureTable;
-    Resource resource(schemaResource, itFLATTABLE);
-    if(!featureTable.prepare(resource)) {
-        ERROR1(ERR_NO_INITIALIZED_1, resource.name());
+    Resource tableResource = PostgresqlDatabaseUtil::copyWithPropertiesAndType(_resource,itFLATTABLE);
+    if(!featureTable.prepare(tableResource)) {
+        ERROR1(ERR_NO_INITIALIZED_1, tableResource.name() + "[itFLATTABLE]");
         return false;
     }
-
-    if ( !featureTable.isValid()) {
-        ERROR0(TR("Could not prepare feature table for database feature."));
-        return false;
-    }
-
-    PostgresqlTableLoader loader(_resource);
-    if ( !loader.loadMetadata(featureTable.ptr())) {
-        ERROR1("Could not load table metadata for table '%1'", featureTable->name());
-        return false;
-    }
-
 
     fcoverage->attributeTable(featureTable);
-    if (sizeof(featureTable->column(FEATUREIDCOLUMN)) != 0) {
+    if (featureTable->column(FEATUREIDCOLUMN).size() != 0) {
         setFeatureCount(fcoverage);
         setSpatialMetadata(fcoverage);
     }
@@ -71,7 +59,6 @@ QSqlQuery PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeom
 {
     QString columns;
     std::for_each(metaGeometry.begin(), metaGeometry.end(), [&columns](MetaGeometryColumn meta) {
-        //columns.append(" ST_ASeWKB(");
         columns.append(" ST_AsText(");
         columns.append(meta.geomColumn).append(") AS ");
         columns.append(meta.geomColumn).append(",");
@@ -93,11 +80,16 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
 {
     qDebug() << "PostgresqlFeatureCoverageLoader::loadData()";
 
-    PostgresqlTableLoader loader(_resource);
-    if ( !loader.loadData(fcoverage->attributeTable().ptr())) {
+    ITable table = fcoverage->attributeTable();
+    Resource tableResource = PostgresqlDatabaseUtil::copyWithPropertiesAndType(_resource,itFLATTABLE);
+    if ( !table.isValid()) {
+        table.prepare(tableResource);
+    }
 
-        // TODO handle exception message
-
+    PostgresqlTableLoader tableLoader(table->source());
+    if (!tableLoader.loadData(table.ptr())) {
+        ERROR1("Could not load table data for table '%1'", table->name());
+        return false;
     }
 
     QList<MetaGeometryColumn> metaGeometries;
@@ -115,7 +107,6 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
     }
 
     return true;
-
 }
 
 geos::geom::Geometry* PostgresqlFeatureCoverageLoader::createGeometry(QSqlQuery &query, MetaGeometryColumn &meta) const
@@ -125,6 +116,7 @@ geos::geom::Geometry* PostgresqlFeatureCoverageLoader::createGeometry(QSqlQuery 
     // postgis wkb is different from ogc wkb
     // => select ewkb, but this seems to be slower than selecting wkt
     //ByteArray wkbBytes = variant.toByteArray();
+
     QVariant variant = query.value(meta.geomColumn);
     QString wkt = variant.toString();
     return GeometryHelper::fromWKT(wkt,crs);
