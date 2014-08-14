@@ -46,7 +46,7 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
     sqlBuilder.append(" information_schema.columns ");
     sqlBuilder.append(" WHERE ");
     sqlBuilder.append(" table_name='").append(rawTablename).append("';");
-    //qDebug() << "SQL: " << sqlBuilder;
+    qDebug() << "SQL: " << sqlBuilder;
 
     QSqlDatabase db = QSqlDatabase::database("tableloader");
     QSqlQuery columnTypesQuery = db.exec(sqlBuilder);
@@ -62,27 +62,33 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
         }
     }
 
-    sqlBuilder.clear();
-    sqlBuilder.append("SELECT ");
-    sqlBuilder.append(" count ( * ) ");
-    sqlBuilder.append(" FROM ");
-    sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
-    sqlBuilder.append(";");
+//    sqlBuilder.clear();
+//    sqlBuilder.append("SELECT ");
+//    sqlBuilder.append(" count ( * ) ");
+//    sqlBuilder.append(" FROM ");
+//    sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
+//    sqlBuilder.append(";");
+//    qDebug() << "SQL: " << sqlBuilder;
 
-    QSqlQuery countQuery = db.exec(sqlBuilder);
-    table->recordCount(countQuery.value(0).toInt());
+//    QSqlQuery countQuery = db.exec(sqlBuilder);
+
+//    if (countQuery.next()) {
+//        table->recordCount(countQuery.value(0).toInt());
+//    } else {
+//        ERROR2("Could not execute query '%1' on '%2'", sqlBuilder, rawTablename);
+//    }
 
     return table->isValid();
 }
 
-QSqlQuery PostgresqlTableLoader::selectAll() const
+QSqlQuery PostgresqlTableLoader::select(QString columns) const
 {
     QString sqlBuilder;
     sqlBuilder.append("SELECT ");
-    sqlBuilder.append(" * ");
+    sqlBuilder.append(columns);
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
-    //qDebug() << "SQL: " << sqlBuilder;
+    qDebug() << "SQL: " << sqlBuilder;
 
     QSqlDatabase db = QSqlDatabase::database("tableloader");
     return db.exec(sqlBuilder);
@@ -90,7 +96,16 @@ QSqlQuery PostgresqlTableLoader::selectAll() const
 
 bool PostgresqlTableLoader::loadData(Table *table) const
 {
-    QSqlQuery query = selectAll();
+    QString allNonGeometryColumns;
+    for (int i = 0; i < table->columnCount(); i++) {
+        ColumnDefinition& coldef = table->columndefinitionRef(i);
+        if (coldef.name() == FEATUREIDCOLUMN) {
+            continue; // coverage-only attribute
+        }
+        allNonGeometryColumns.append(" ").append(coldef.name()).append(" ,");
+    }
+    allNonGeometryColumns = allNonGeometryColumns.left(allNonGeometryColumns.length() - 1);
+    QSqlQuery query = select(allNonGeometryColumns);
 
     quint64 count = 0;
     while (query.next()) {

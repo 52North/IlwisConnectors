@@ -21,7 +21,7 @@ public:
 private:
     Resource _resource;
 
-    QSqlQuery selectAll() const;
+    QSqlQuery select(QString columns) const;
     bool createColumnDefinition(Table *table, QSqlQuery *query) const;
 };
 
