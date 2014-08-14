@@ -477,7 +477,7 @@ bool GdalFeatureConnector::setDataSourceAndLayers(const IFeatureCoverage& featur
     bool ok = false;
     OGRSpatialReferenceH srs = createSRS(features->coordinateSystem());
     IlwisTypes types = features->featureTypes();
-    bool multipleoutputs = (types == (itPOINT | itLINE)) || (types == (itPOINT | itPOLYGON)) || (types == (itLINE | itPOLYGON));
+    bool multipleoutputs = (types == (itPOINT | itLINE)) || (types == (itPOINT | itPOLYGON)) || (types == (itLINE | itPOLYGON)) || (types == (itFEATURE));
     if ( multipleoutputs){
         if ((features->featureTypes() & itPOINT) != 0) {
             ok = createDataSourceAndLayers(itPOINT, "point", features, srs,fielddefs,datasources,validAttributes);

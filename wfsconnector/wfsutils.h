@@ -76,6 +76,40 @@ public:
         return coords;
     }
 
+    static IlwisTypes getGeometryType(const QString &gmlName)
+    {
+        if (isPolygonType(gmlName)) {
+            return itPOLYGON;
+        }
+        if (isLineStringType(gmlName)) {
+            return itLINE;
+        }
+        if (isPointType(gmlName)) {
+            return itPOINT;
+        }
+        return itUNKNOWN;
+    }
+
+    static bool isPolygonType(const QString &gmlName)
+    {
+        bool isPolygon = false;
+        isPolygon = isPolygon || gmlName.contains("Polygon");
+        isPolygon = isPolygon || gmlName.contains("Surface");
+        isPolygon = isPolygon || gmlName.contains("Ring");
+        return isPolygon;
+    }
+
+    static bool isLineStringType(const QString &gmlName)
+    {
+        return gmlName.contains("Line")
+                || gmlName.contains("Curve");
+    }
+
+    static bool isPointType(const QString &gmlName)
+    {
+        return gmlName.contains("Point");
+    }
+
 private:
     static void checkVersionCompatibility(QString kvpValueVersions) {
         QStringList versions = kvpValueVersions.split(",",QString::SkipEmptyParts);

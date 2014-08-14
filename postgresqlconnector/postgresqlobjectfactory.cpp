@@ -15,7 +15,10 @@
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "connectorfactory.h"
+
 #include "postgresqlconnector.h"
+#include "postgresqltableconnector.h"
+#include "postgresqlfeatureconnector.h"
 #include "postgresqlobjectfactory.h"
 
 using namespace Ilwis;
@@ -28,19 +31,20 @@ PostgresqlObjectFactory::PostgresqlObjectFactory() : IlwisObjectFactory("IlwisOb
 
 bool PostgresqlObjectFactory::canUse(const Resource &resource) const
 {
-    if ( resource.url().scheme() != "ilwis:postgresql") // can't use anything marked as internal
-        return false;
+    if ( resource.url().scheme() != "postgresql")
+        return false; // can't use anything other than pg connection
 
     IlwisTypes type = resource.ilwisType() ;
-    if ( type & itDOMAIN)
-        return true;
-    else if ( type & itCOORDSYSTEM)
-        return true;
-    else if ( type & itRASTER)
-        return true;
-    else if ( type & itGEOREF)
-        return true;
-    else if ( type & itFEATURE)
+//    if ( type & itDOMAIN)
+//        return true;
+//    else if ( type & itCOORDSYSTEM)
+//        return true;
+//    else if ( type & itRASTER)
+//        return true;
+//    else if ( type & itGEOREF)
+//        return true;
+//    else
+    if ( type & itFEATURE)
         return true;
     else if ( type & itTABLE)
         return true;
@@ -51,15 +55,14 @@ IlwisObject *PostgresqlObjectFactory::create(const Resource &resource, const IOO
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     PostgresqlConnector *connector = factory->createFromResource<PostgresqlConnector>(resource, "postgresql", options);
-
-   if(!connector) {
+    if ( !connector) {
        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
        return 0;
-   }
-   IlwisObject *object = createObject(connector);
-   if ( object)
+    }
+    IlwisObject *object = createObject(connector);
+    if ( object)
        return object;
 
-   delete connector;
-   return 0;
+    delete connector;
+    return 0;
 }

@@ -22,16 +22,13 @@ public:
 
     QString provider() const;
 
-
-
-
-
     /*
-     * following method(s) has to be implemented as defined pure
-     *
-     * However, they do not have any purpose in the WFS catalog connector
+     * does not have any purpose in the WFS catalog connector
      */
-    QFileInfo toLocalFile(const QUrl &datasource) const;
+    QFileInfo toLocalFile(const QUrl& ) const {
+        QFileInfo fileInfo;
+        return fileInfo;
+    }
 
 private:
 

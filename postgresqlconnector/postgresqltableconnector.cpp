@@ -1,5 +1,4 @@
-#include <QSqlQuery>
-#include <QSqlError>
+
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "connectorinterface.h"
@@ -11,9 +10,12 @@
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "basetable.h"
-#include "databasetable.h"
+#include "flattable.h"
+
+#include "postgresqldatabaseutil.h"
 #include "postgresqlconnector.h"
 #include "postgresqltableconnector.h"
+#include "postgresqltableloader.h"
 
 using namespace Ilwis;
 using namespace Postgresql;
@@ -24,30 +26,41 @@ PostgresqlTableConnector::PostgresqlTableConnector(const Ilwis::Resource &resour
 
 IlwisObject *PostgresqlTableConnector::create() const
 {
-    return new DatabaseTable(_resource);
+    qDebug() << "PostgresqlTableConnector::create() -> FlatTable";
+    return new FlatTable(_resource);
 }
 
 ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &resource, bool load,const IOOptions& options)
 {
-    return new PostgresqlTableConnector(resource, load,options);
+    qDebug() << "PostgresqlTableConnector::create() -> connector instance";
+    return new PostgresqlTableConnector(resource, load, options);
 }
 
-bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
+bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions&)
 {
-    return PostgresqlConnector::loadMetaData(data, options);
+    qDebug() << "PostgresqlTableConnector::loadMetaData()";
+    Table *table = static_cast<Table *>(data);
+    PostgresqlTableLoader loader(source());
+    return loader.loadMetadata(table);
 }
 
-bool PostgresqlTableConnector::storeMetaData(Ilwis::IlwisObject *obj)
+bool PostgresqlTableConnector::store(Ilwis::IlwisObject *data)
 {
+    qDebug() << "PostgresqlTableConnector::store()";
+
+    // TODO store data back to table
+
     return false;
 }
 
-bool PostgresqlTableConnector::loadBinaryData(IlwisObject *data)
+bool PostgresqlTableConnector::loadData(IlwisObject *data,const IOOptions&)
 {
-    return false;
+    qDebug() << "PostgresqlTableConnector::loadData()";
+    Table *table = static_cast<Table *>(data);
+    PostgresqlTableLoader loader(source());
+    if ( !loader.loadMetadata(table)) {
+        return false;
+    }
+    return loader.loadData(table);
 }
 
-bool PostgresqlTableConnector::storeBinaryData(IlwisObject *obj)
-{
-    return false;
-}
