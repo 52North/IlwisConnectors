@@ -120,6 +120,7 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcover
                         QString type = attributes.value("type").toString();
 
                         if (type.startsWith("gml")) {
+                            fcoverage->featureTypes(WfsUtils::getGeometryType(type));
                             context.setGeometryAtttributeName(name);
                         } else {
                             IDomain domain;
