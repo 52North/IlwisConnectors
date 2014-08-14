@@ -55,13 +55,6 @@ IlwisObject *PostgresqlObjectFactory::create(const Resource &resource, const IOO
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     PostgresqlConnector *connector = factory->createFromResource<PostgresqlConnector>(resource, "postgresql", options);
-//    IlwisTypes type = resource.ilwisType();
-//    if (type & itTABLE) {
-//        connector = factory->createFromResource<PostgresqlTableConnector>(resource, "postgresql", options);
-//    }
-//    else if(type & itFEATURE) {
-//          connector = factory->createFromResource<PostgresqlFeatureConnector>(resource, "postgresql", options);
-//    }
     if ( !connector) {
        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
        return 0;
