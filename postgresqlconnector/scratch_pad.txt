@@ -1,12 +1,16 @@
 Doing
-- load table metadata
-  - differentiate feature tables from plain tables
-  - load
+- check how to store things
+-
 
-- list findings
-- module loading Q_PLUGIN_METADATA
-  -
+findings list
+- how to avoid doubled metadata loading?
+- check if data is already loaded is not possible, as isDataLoaded is set by BaseTable before calling loadData
+
+TODOs
+- WFS Demo does not succeed (timeout server?, shp export not complete?)
+- do some query optimizations (check double metadata loading issue beforehand)
 
 Questions
 - explorers are created and then checked if they can use a given resource => make this static as constructor may create state based on a resource which is not intended to be used by the checked resource
-- pgconnector does provide itFEATURE, itTABLE, but omits provision of tDOMAIN, itCOORDSYSTEM, itRASTER, itGEOREF for now
+- how to add multiple geometries to one feature
+-
