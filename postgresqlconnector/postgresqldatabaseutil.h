@@ -97,6 +97,20 @@ public:
     }
 
     /**
+     * @brief copyResourceWithProperties copies a resource by also copying the database
+     * properties needed to access the database (user credentials, schema).
+     * @param resource the resource to copy
+     * @return a copied instance
+     */
+    static Resource copyWithPropertiesAndType(const Resource resource, IlwisTypes newType) {
+        Resource copy(resource.url(true), newType);
+        copy.addProperty("pg.user", resource["pg.user"].toString());
+        copy.addProperty("pg.password", resource["pg.password"].toString());
+        copy.addProperty("pg.schema", resource["pg.schema"].toString());
+        return copy;
+    }
+
+    /**
      * @brief tablenameFromResource extracts the raw tablename (without schema qualifier) from
      * a given resource, by parsing the appropriate parts from its URL.
      * @param resource the resource where to extract the raw tablename from.
