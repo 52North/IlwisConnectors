@@ -29,7 +29,7 @@ public:
 
 protected:
     bool loadMetaData(IlwisObject* data,const IOOptions&);
-    bool loadData(IlwisObject* data);
+    bool loadData(IlwisObject* data,const IOOptions&);
 
 private:
     WfsParsingContext _context;
