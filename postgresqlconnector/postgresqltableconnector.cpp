@@ -44,7 +44,7 @@ bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions&)
     return loader.loadMetadata(table);
 }
 
-bool PostgresqlTableConnector::store(Ilwis::IlwisObject *data)
+bool PostgresqlTableConnector::store(IlwisObject *data)
 {
     qDebug() << "PostgresqlTableConnector::store()";
 
