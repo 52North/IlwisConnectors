@@ -57,7 +57,7 @@ private:
     char *readCoordList(char *mem, long &count);
     char *moveTo(int row, const ColumnInfo &fld) const;
     bool check(quint32 row, quint32 col) const;
-    std::mutex _mutex;
+    std::recursive_mutex _mutex;
 
 };
 }

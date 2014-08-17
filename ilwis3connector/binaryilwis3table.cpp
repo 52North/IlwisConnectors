@@ -51,7 +51,7 @@ BinaryIlwis3Table::~BinaryIlwis3Table(){
 }
 
 bool BinaryIlwis3Table::load(const ODF& odf, const QString& prfix){
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
     if( _loaded)
         return true;
 
