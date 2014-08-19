@@ -56,7 +56,7 @@ Ilwis::OperationImplementation::State LaplaceFilter::prepare(ExecutionContext *c
         else {
             dom.prepare("value");
         }
-        _outputRaster->datadef() = DataDefinition(dom);
+        _outputRaster->datadefRef() = DataDefinition(dom);
 
 
         _sourcedepth =  hasType(_inputRaster->datadef().domain()->valueType(), (itCOLOR | itPALETTECOLOR)) ? 3 : 1;

@@ -97,7 +97,7 @@ bool OpenCVHelper::mat2Raster(const cv::Mat& cvRaster, PixelIterator& iter){
         copy2Raster<double>(cvRaster, iter, mmin, mmax);break;
     }
 
-    iter.raster()->datadef().range(new NumericRange(mmin, mmax, hasType(iter.raster()->datadef().domain()->valueType(), itINTEGER) ? 1 : 0));
+    iter.raster()->datadefRef().range(new NumericRange(mmin, mmax, hasType(iter.raster()->datadef().domain()->valueType(), itINTEGER) ? 1 : 0));
 
     return true;
 }
@@ -125,7 +125,7 @@ IRasterCoverage OpenCVHelper::mat2Raster(const cv::Mat& cvRaster, const IGeoRefe
         return IRasterCoverage();
 
     }
-    raster->datadef() = DataDefinition(dom);
+    raster->datadefRef() = DataDefinition(dom);
     PixelIterator iter(raster);
     if ( ! mat2Raster(cvRaster, iter))
         return IRasterCoverage();

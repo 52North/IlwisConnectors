@@ -159,7 +159,7 @@ bool RasterCoverageConnector::handlePaletteCase(Size<> &rastersize, RasterCovera
 
     _typeSize = 1;
     _gdalValueType = gdal()->rasterDataType(layerHandle);
-    raster->datadef() = DataDefinition(IDomain("colorpalette"), reinterpret_cast<Range *>(palette));
+    raster->datadefRef() = DataDefinition(IDomain("colorpalette"), reinterpret_cast<Range *>(palette));
 
     return true;
 }
@@ -203,7 +203,7 @@ bool RasterCoverageConnector::handleColorCase(Size<> &rastersize, RasterCoverage
             vmaxRaster[ctype] = Ilwis::max(vmax, component == 0 ? -1000 : vmaxRaster[ctype]);
 
         }
-        raster->datadef(layer / noOfComponents) = createDataDefColor(vminRaster, vmaxRaster);
+        raster->datadefRef(layer / noOfComponents) = createDataDefColor(vminRaster, vmaxRaster);
         for(auto component =  vminRaster.begin(); component != vminRaster.end(); ++component)
             vminRasterAll[component->first] = std::min(component == vminRasterAll.begin() ? 1000 : vminRasterAll[component->first], vminRaster[component->first]);
         for(auto component =  vmaxRaster.begin(); component != vmaxRaster.end(); ++component)
@@ -211,7 +211,7 @@ bool RasterCoverageConnector::handleColorCase(Size<> &rastersize, RasterCoverage
 
     }
 
-    raster->datadef() = createDataDefColor(vminRasterAll, vmaxRasterAll);
+    raster->datadefRef() = createDataDefColor(vminRasterAll, vmaxRasterAll);
 
     return true;
 }
@@ -261,10 +261,10 @@ bool RasterCoverageConnector::handleNumericCase(const Size<> &rastersize, Raster
         auto vmax = gdal()->maxValue(layerHandle, &ok);
         vminRaster = Ilwis::min(vmin, vminRaster);
         vmaxRaster = Ilwis::max(vmax, vmaxRaster);
-        raster->datadef(i) = createDataDef(vmin, vmax, resolution);
+        raster->datadefRef(i) = createDataDef(vmin, vmax, resolution);
 
     }
-    raster->datadef() = DataDefinition(raster->datadef(0).domain(), new NumericRange(vminRaster, vmaxRaster,resolution));
+    raster->datadefRef() = DataDefinition(raster->datadef(0).domain(), new NumericRange(vminRaster, vmaxRaster,resolution));
     _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
 
     return true;
@@ -479,7 +479,7 @@ bool RasterCoverageConnector::store(IlwisObject *obj, int )
         if(!dom.prepare("code=value")) { //TODO:  for the moment only value maps in gdal
             return ERROR1(ERR_NO_INITIALIZED_1,obj->name());
         }
-        raster->datadef().domain(dom);
+        raster->datadefRef().domain(dom);
     }
     Size<> sz = raster->size();
     GDALDataType gdalType = ilwisType2GdalType(raster->datadef().range()->valueType());

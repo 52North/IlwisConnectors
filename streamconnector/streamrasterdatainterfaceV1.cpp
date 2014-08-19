@@ -107,9 +107,9 @@ bool StreamRasterDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions
     raster->size(Size<>(xsize, ysize, zsize));
 
 
-    loadDataDefinition(raster->datadef(),_stream, options);
+    loadDataDefinition(raster->datadefRef(),_stream, options);
     for(int band = 0; band < raster->size().zsize(); ++band) {
-        loadDataDefinition(raster->datadef(band), _stream, options)    ;
+        loadDataDefinition(raster->datadefRef(band), _stream, options)    ;
     }
     quint64 type;
     QString version;

@@ -56,7 +56,7 @@ Ilwis::OperationImplementation::State ScharrFilter::prepare(ExecutionContext *ct
         else {
             dom.prepare("value");
         }
-        _outputRaster->datadef() = DataDefinition(dom);
+        _outputRaster->datadefRef() = DataDefinition(dom);
 
         int xorder = _expression.input<int>(1);
         OperationHelper::check([&] ()->bool {return (xorder >=0 || xorder <= 2);},

@@ -93,17 +93,17 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
     QString storeType = odf.value("MapStore","Type");
     setStoreType(storeType);
 
-    gcoverage->datadef().domain(mp->datadef().domain<>());
+    gcoverage->datadefRef().domain(mp->datadef().domain<>());
 
     double vmax,vmin,scale,offset;
     QString range = odf.value("BaseMap","Range");
     if ( range != sUNDEF ) {
         if( getRawInfo(range, vmin,vmax,scale,offset)) {
             if ( scale == 1.0) {
-                gcoverage->datadef().range(new NumericRange(vmin, vmax,1));
+                gcoverage->datadefRef().range(new NumericRange(vmin, vmax,1));
             }
             else {
-                gcoverage->datadef().range(new NumericRange(vmin, vmax));
+                gcoverage->datadefRef().range(new NumericRange(vmin, vmax));
             }
         }
     }
@@ -172,7 +172,7 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data, const IOOptions &op
         }
     }
 
-    raster->datadef() = def;
+    raster->datadefRef() = def;
     return true;
 }
 

@@ -25,7 +25,6 @@
 #include "columndefinition.h"
 #include "basetable.h"
 #include "flattable.h"
-#include "databasetable.h"
 #include "numericdomain.h"
 #include "ilwis3connector.h"
 #include "tableconnector.h"
@@ -72,10 +71,6 @@ bool TableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
         ColumnDefinition col = makeColumn(colName, index);
         tbl->addColumn(col);
 
-    }
-    if ( tbl->ilwisType() == itDATABASETABLE) {
-        DatabaseTable *dbtable = static_cast<DatabaseTable *>(tbl);
-        dbtable->setDatabase(kernel()->database());
     }
     tbl->recordCount(rows);
     return true;
