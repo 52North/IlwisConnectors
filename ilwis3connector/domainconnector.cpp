@@ -361,8 +361,10 @@ IlwisObject *DomainConnector::create() const
         return new NumericDomain(_resource);
     else if (type() == itITEMDOMAIN || type() == itDOMAIN) { // second case is for internal domains
         subtype =_odf->value("Domain", "Type");
-        if ( subtype == "DomainIdentifier" || subtype == "DomainUniqueID")
+        if ( subtype == "DomainUniqueID")
             return new ItemDomain<IndexedIdentifier>(_resource);
+        if ( subtype == "DomainIdentifier")
+            return new ItemDomain<NamedIdentifier>(_resource);
         if ( subtype == "DomainClass" || subtype == "DomainSort")
             return new ItemDomain<ThematicItem>(_resource);
         subtype = parseDomainInfo( _odf->value("BaseMap","DomainInfo"));

@@ -25,7 +25,6 @@
 #include "columndefinition.h"
 #include "basetable.h"
 #include "flattable.h"
-#include "databasetable.h"
 #include "numericdomain.h"
 #include "ilwis3connector.h"
 #include "tableconnector.h"
@@ -51,7 +50,7 @@ TableConnector::TableConnector(const Resource &resource, bool load, const IOOpti
 
 bool TableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
     _converters.clear();
     _selected.clear();
 
@@ -72,10 +71,6 @@ bool TableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
         ColumnDefinition col = makeColumn(colName, index);
         tbl->addColumn(col);
 
-    }
-    if ( tbl->ilwisType() == itDATABASETABLE) {
-        DatabaseTable *dbtable = static_cast<DatabaseTable *>(tbl);
-        dbtable->setDatabase(kernel()->database());
     }
     tbl->recordCount(rows);
     return true;
@@ -144,7 +139,7 @@ ColumnDefinition TableConnector::getKeyColumn() {
 }
 
 bool TableConnector::loadData(IlwisObject* data , const IOOptions &) {
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
 
     Ilwis3::BinaryIlwis3Table tbl ;
     if (!tbl.load(_odf)) // no table found?

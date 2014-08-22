@@ -93,17 +93,17 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
     QString storeType = odf.value("MapStore","Type");
     setStoreType(storeType);
 
-    gcoverage->datadef().domain(mp->datadef().domain<>());
+    gcoverage->datadefRef().domain(mp->datadef().domain<>());
 
     double vmax,vmin,scale,offset;
     QString range = odf.value("BaseMap","Range");
     if ( range != sUNDEF ) {
         if( getRawInfo(range, vmin,vmax,scale,offset)) {
             if ( scale == 1.0) {
-                gcoverage->datadef().range(new NumericRange(vmin, vmax,1));
+                gcoverage->datadefRef().range(new NumericRange(vmin, vmax,1));
             }
             else {
-                gcoverage->datadef().range(new NumericRange(vmin, vmax));
+                gcoverage->datadefRef().range(new NumericRange(vmin, vmax));
             }
         }
     }
@@ -172,13 +172,13 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data, const IOOptions &op
         }
     }
 
-    raster->datadef() = def;
+    raster->datadefRef() = def;
     return true;
 }
 
 bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
 
     QFileInfo inf(_resource.toLocalFile());
     if(!setDataType(data, options))
@@ -310,7 +310,7 @@ void RasterCoverageConnector::loadBlock(UPGrid& grid,QFile& file, quint32 blockI
 
 bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &options)
 {
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
 
     if ( _dataFiles.size() == 0) {
         return ERROR1(ERR_MISSING_DATA_FILE_1,_resource.name());
@@ -358,7 +358,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &optio
 
 bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
 {
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
 
     if ( obj == nullptr)
         return false;
@@ -512,7 +512,7 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
 }
 
 bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
 
     IRasterCoverage raster = mastercatalog()->get(obj->id());
     if (!raster.isValid())
