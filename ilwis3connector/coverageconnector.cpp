@@ -61,33 +61,27 @@ bool CoverageConnector::getRawInfo(const QString& range, double& vmin, double& v
     return false;
 }
 
-ITable CoverageConnector::prepareAttributeTable(const QString& file, const QString& basemaptype,const IOOptions &options) const{
+bool CoverageConnector::prepareAttributeTable(const QString& file, const QString& basemaptype, const IOOptions &options, AttributeTable attTable) const{
 
     ITable extTable;
     if ( file != sUNDEF) {
         QString newfile = filename2FullPath(file, this->_resource);
         if(!extTable.prepare(newfile)){
             kernel()->issues()->log(file,TR(ERR_NO_INITIALIZED_1).arg(file),IssueObject::itWarning);
-            return ITable();
+            return false;
         }
     }
 
     IDomain covdom;
     if (!covdom.prepare("count")){
-        return ITable();
+        return false;
     }
 
-    ITable attTable;
     if ( basemaptype != "Map" ) {
         QString name = _resource.name();
         int index = -1;
         if ( (index = name.indexOf(".")) != -1){
             name = name.left(index);
-        }
-        Resource resource(QUrl(QString("ilwis://internalcatalog/%1").arg(name)), itFLATTABLE);
-        if(!attTable.prepare(resource, options)) {
-            ERROR1(ERR_NO_INITIALIZED_1,resource.name());
-            return ITable();
         }
         if ( extTable.isValid()) {
             for(int i=0; i < extTable->columnCount(); ++i) {
@@ -101,18 +95,17 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
     if ( attTable->columnIndex(COVERAGEKEYCOLUMN) == iUNDEF) { // external tables might already have these
         DataDefinition def = determineDataDefintion(_odf, options);
         attTable->addColumn(ColumnDefinition(COVERAGEKEYCOLUMN,def, attTable->columnCount()));
-        //attTable->addColumn(FEATUREIDCOLUMN,covdom);
     }
 
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     if ( isNumeric) {
         IDomain featuredom;
         if (!featuredom.prepare("value")){
-            return ITable();
+            return false;
         }
         attTable->addColumn(FEATUREVALUECOLUMN,featuredom);
     }
-    return attTable;
+    return true;
 
 }
 
@@ -149,11 +142,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
     QString basemaptype = _odf->value("BaseMap", "Type");
     // feature coverages always have an attribute table; rasters might have
     if ( basemaptype != "Map" || attfile != sUNDEF) {
-        ITable attTable = prepareAttributeTable(attfile, basemaptype, options);
-        if (!attTable.isValid())
-            return false;
-
-        coverage->attributeTable(attTable);
+        prepareAttributeTable(attfile, basemaptype, options, coverage->attributeTable());
     }
 
     QString cbounds = _odf->value("BaseMap","CoordBounds");
@@ -208,6 +197,10 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
         QFileInfo csyinf(_csyName);
         if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
+            if (!csyinf.isAbsolute()){
+                _csyName = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + _csyName;
+            }
+
             QUrl url = QUrl::fromLocalFile(_csyName); // new attempt to create a suitable path;
             csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
             if(!csy->store(Ilwis::IlwisObject::smMETADATA)){ // fail, we default to unknown
