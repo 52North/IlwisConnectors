@@ -115,44 +115,42 @@ void GdalTableLoader::setColumnCallbacks(Table * attTable, OGRLayerH hLayer){
 
     for (int i = 0; i < attTable->columnCount(); i++){
         ColumnDefinition& coldef = attTable->columndefinitionRef(i);
-        if ( coldef.name() != QString(FEATUREIDCOLUMN) ){
-            DataDefinition& datadef = coldef.datadef();
-            if(datadef.domain().isValid()){
-                for (int j = 0; j < gdal()->getFieldCount(hLayerDef); j++){
-                    OGRFieldDefnH hFieldDefn = gdal()->getFieldDfn(hLayerDef, j);
-                    QString name = QString(gdal()->getFieldName(hFieldDefn));
-                    if (coldef.name().compare(name,Qt::CaseSensitive) == 0){
-                        IlwisTypes tp = datadef.domain()->valueType();
-                        if (tp & itSTRING){
-                            _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillStringColumn, j);
-                        }else if (tp & itINTEGER){
-                            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
-                            //creating the actual range as invalid to be adjusted in the fillers
-                            double min = r->min();
-                            r->min(r->max());
-                            r->max(min);
-                            datadef.range(r);
-                            _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillIntegerColumn, j);
-                        }else if (tp & itDOUBLE){
-                            //creating the actual range as invalid to be adjusted in the fillers
-                            NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
-                            double min = r->min();
-                            r->min(r->max());
-                            r->max(min);
-                            datadef.range(r);
-                            _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDoubleColumn, j);
-                        }else if (tp == itDATE){
-                            _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDateColumn, j);
-                        }else if (tp == itTIME){
-                            _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillTimeColumn, j);
-                        }else if (tp == itDATETIME){
-                            _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDateTimeColumn, j);
-                        }
+        DataDefinition& datadef = coldef.datadef();
+        if(datadef.domain().isValid()){
+            for (int j = 0; j < gdal()->getFieldCount(hLayerDef); j++){
+                OGRFieldDefnH hFieldDefn = gdal()->getFieldDfn(hLayerDef, j);
+                QString name = QString(gdal()->getFieldName(hFieldDefn));
+                if (coldef.name().compare(name,Qt::CaseSensitive) == 0){
+                    IlwisTypes tp = datadef.domain()->valueType();
+                    if (tp & itSTRING){
+                        _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillStringColumn, j);
+                    }else if (tp & itINTEGER){
+                        NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
+                        //creating the actual range as invalid to be adjusted in the fillers
+                        double min = r->min();
+                        r->min(r->max());
+                        r->max(min);
+                        datadef.range(r);
+                        _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillIntegerColumn, j);
+                    }else if (tp & itDOUBLE){
+                        //creating the actual range as invalid to be adjusted in the fillers
+                        NumericRange* r = static_cast<NumericRange*>(datadef.domain()->range<NumericRange>()->clone());
+                        double min = r->min();
+                        r->min(r->max());
+                        r->max(min);
+                        datadef.range(r);
+                        _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDoubleColumn, j);
+                    }else if (tp == itDATE){
+                        _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDateColumn, j);
+                    }else if (tp == itTIME){
+                        _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillTimeColumn, j);
+                    }else if (tp == itDATETIME){
+                        _columnFillers[i] = new FillerColumnDef(&GdalTableLoader::fillDateTimeColumn, j);
                     }
                 }
-            }else{
-                ERROR2(ERR_NO_INITIALIZED_2, "domain", coldef.name());
             }
+        }else{
+            ERROR2(ERR_NO_INITIALIZED_2, "domain", coldef.name());
         }
     }
 }
