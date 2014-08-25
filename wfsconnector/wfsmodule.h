@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QLibrary>
-#include "module.h"
 #include "kernel.h"
 
 
@@ -22,7 +21,7 @@ public:
     QString getInterfaceVersion() const;
     QString getName() const;
     QString getVersion() const;
-    void getOperations(QVector<ICommandInfo *>& commands) const;
+    void getOperations(QVector<ICommandInfo *>& ) const {}
     void prepare();
 
     Q_PLUGIN_METADATA(IID "n52.ilwis.wfsconnector" FILE  "wfsconnector.json")

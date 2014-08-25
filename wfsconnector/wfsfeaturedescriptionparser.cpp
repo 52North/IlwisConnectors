@@ -112,14 +112,13 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcover
                      * specific knowledge, e.g. namespaces
                      */
 
-                    table->addColumn(FEATUREIDCOLUMN, "count");
-
                     do {
                         QXmlStreamAttributes attributes = _parser->attributes();
                         QString name = attributes.value("name").toString();
                         QString type = attributes.value("type").toString();
 
                         if (type.startsWith("gml")) {
+                            fcoverage->featureTypes(WfsUtils::getGeometryType(type));
                             context.setGeometryAtttributeName(name);
                         } else {
                             IDomain domain;

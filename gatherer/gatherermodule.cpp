@@ -8,8 +8,8 @@
 #include "gatherermodule.h"
 #include "OperationExpression.h"
 #include "operationmetadata.h"
-#include "operation.h"
 #include "commandhandler.h"
+#include "operation.h"
 #include "gathererrequesthandler.h"
 #include "httpserver/requesthandlerfactory.h"
 

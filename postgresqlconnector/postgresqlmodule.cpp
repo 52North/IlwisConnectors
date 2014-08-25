@@ -8,26 +8,27 @@
 #include "ilwisobjectconnector.h"
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
-#include "postgresqlobjectfactory.h"
-#include "postgresqlconnector.h"
 #include "connectorinterface.h"
-#include "postgresqlcatalogconnector.h"
-#include "postgresqltableconnector.h"
 #include "catalogconnector.h"
 #include "ilwiscontext.h"
+
+#include "postgresqlobjectfactory.h"
+#include "postgresqlconnector.h"
+#include "postgresqlcatalogexplorer.h"
+#include "postgresqlfeatureconnector.h"
+#include "postgresqltableconnector.h"
 #include "postgresqlmodule.h"
 
 using namespace Ilwis;
 using namespace Postgresql;
 
-PostgresqlModule::PostgresqlModule(QObject *parent) : Module(parent, "PostgresqlModule", "iv40","1.0")
+PostgresqlModule::PostgresqlModule(QObject *parent) :
+    Module(parent, "PostgresqlModule", "iv40","1.0")
 {
-
 }
 
 PostgresqlModule::~PostgresqlModule()
 {
-
 }
 
 QString PostgresqlModule::getInterfaceVersion() const
@@ -37,7 +38,7 @@ QString PostgresqlModule::getInterfaceVersion() const
 
 QString PostgresqlModule::getName() const
 {
-    return "Postgressql plugin";
+    return "PostgreSQL plugin";
 }
 
 QString PostgresqlModule::getVersion() const
@@ -47,25 +48,16 @@ QString PostgresqlModule::getVersion() const
 
 void PostgresqlModule::prepare()
 {
-//    QString ilwisfolder = context()->ilwisFolder().absoluteFilePath();
-//    QString path = ilwisfolder + "/extensions/postgresqlconnector/libpq";
-//    QLibrary lib;
-//    lib.setFileName(path);
-//    if ( !lib.load()){
-//        ERROR2(ERR_COULD_NOT_LOAD_2,"libpq",lib.errorString());
-//    }
+    qDebug() << "preparing postgresql module ...";
 
     PostgresqlObjectFactory *factory = new PostgresqlObjectFactory();
     factory->prepare();
-    kernel()->addFactory(factory );
-
-//    CatalogConnectorFactory *catfact = kernel()->factory<CatalogConnectorFactory>("catalogconnectorfactory", "ilwis");
-//    if ( catfact)
-//        catfact->add(PostgresqlCatalogConnector::create);
+    kernel()->addFactory(factory);
 
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (!cfactory)
         return ;
 
-    cfactory->addCreator(itTABLE,"gdal", PostgresqlTableConnector::create);
+    cfactory->addCreator(itFLATTABLE, "postgresql", PostgresqlTableConnector::create);
+    cfactory->addCreator(itFEATURE, "postgresql", PostgresqlFeatureConnector::create);
 }

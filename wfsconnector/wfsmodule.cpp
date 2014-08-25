@@ -57,6 +57,8 @@ QString WfsModule::getInterfaceVersion() const
 
 void WfsModule::prepare()
 {
+    qDebug() << "preparing wfs module ...";
+
     WfsObjectFactory *factory = new WfsObjectFactory();
     factory->prepare();
     kernel()->addFactory(factory);
@@ -65,7 +67,6 @@ void WfsModule::prepare()
     if (!cfactory)
         return;
 
-    cfactory->addCreator(itCATALOG,"wfs", CatalogConnector::create);
     cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
     IlwisObject::addTypeFunction(WfsFeatureConnector::ilwisType);
 }
@@ -78,9 +79,5 @@ QString WfsModule::getName() const
 QString WfsModule::getVersion() const
 {
     return "1.0";
-}
-
-void WfsModule::getOperations(QVector<ICommandInfo *> &) const
-{
 }
 

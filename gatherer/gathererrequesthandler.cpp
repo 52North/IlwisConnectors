@@ -174,14 +174,19 @@ QString GathererRequestHandler::buildQuery(const QString fields, const QString& 
     QString beginTime = request.getParameter("begintime");
     QString endTime = request.getParameter("endtime");
     QString envelope = request.getParameter("envelope");
+
     QStringList coords = envelope.split(",");
-    if ( coords.size() != 4)
+    if ( envelope != "" && coords.size() != 4)
         return sUNDEF;
 
-    LatLon c1(coords[0], coords[1]);
-    LatLon c2(coords[2], coords[3]);
+    LatLon c1,c2;
+
+    if ( envelope != "") {
+        c1 = LatLon(coords[0], coords[1]);
+        c2 = LatLon(coords[2], coords[3]);
+    }
     std::vector<QString> queryParts;
-    QString query = "select " + fields + " from \"FieldData\" where";
+    QString query = "select " + fields + " from \"FieldData\" where ";
     query += " template = '" + classificationField + "'";
     if ( beginTime != "" && endTime != "")
         queryParts.push_back(" observationtime >= '" + beginTime + "' and observationtime <= '" + endTime + "'");

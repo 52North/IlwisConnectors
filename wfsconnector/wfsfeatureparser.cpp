@@ -109,9 +109,6 @@ bool WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table
         }
 
         ColumnDefinition& coldef = table->columndefinitionRef(i);
-        if ( coldef.name() == QString(FEATUREIDCOLUMN) ) {
-            continue; // auto filled column
-        }
 
         DataDefinition& datadef = coldef.datadef();
         if( !datadef.domain().isValid()) {
@@ -241,39 +238,19 @@ geos::geom::Geometry *WfsFeatureParser::parseFeatureGeometry()
     _parser->readNextStartElement();
 
     updateSrsInfo();
-    bool isMultiGeometry = _parser->name().contains("Multi");
-    if (isPolygonType()) {
+    QString gmlName = _parser->name();
+    bool isMultiGeometry = gmlName.contains("Multi");
+    if (WfsUtils::isPolygonType(gmlName)) {
         return createPolygon(isMultiGeometry);
-    } else if (isLineStringType()) {
+    } else if (WfsUtils::isLineStringType(gmlName)) {
         return createLineString(isMultiGeometry);
-    } else if (isPointType()) {
+    } else if (WfsUtils::isPointType(gmlName)) {
         return createPoint(isMultiGeometry);
     }
     return 0;
 }
 
-bool WfsFeatureParser::isPolygonType()
-{
-    QString elementName = _parser->name();
-    bool isPolygon = false;
-    isPolygon = isPolygon || elementName.contains("Polygon");
-    isPolygon = isPolygon || elementName.contains("Surface");
-    isPolygon = isPolygon || elementName.contains("Ring");
-    return isPolygon;
-}
 
-bool WfsFeatureParser::isLineStringType()
-{
-    QString elementName = _parser->name();
-    return elementName.contains("Line")
-            || elementName.contains("Curve");
-}
-
-bool WfsFeatureParser::isPointType()
-{
-    QString elementName = _parser->name();
-    return elementName.contains("Point");
-}
 
 geos::geom::Geometry *WfsFeatureParser::createPolygon(bool isMultiGeometry)
 {

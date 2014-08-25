@@ -9,6 +9,7 @@
 #include "domain.h"
 #include "coverage.h"
 #include "columndefinition.h"
+#include "record.h"
 #include "attributerecord.h"
 #include "feature.h"
 #include "featurecoverage.h"
@@ -74,9 +75,4 @@ QString WfsCatalogExplorer::provider() const
     return "wfs";
 }
 
-QFileInfo WfsCatalogExplorer::toLocalFile(const QUrl &datasource) const
-{
-    QFileInfo fileInfo;
-    return fileInfo;
-}
 
