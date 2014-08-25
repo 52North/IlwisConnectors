@@ -26,7 +26,7 @@ PixelIterator::PixelIterator(RasterCoverage *rc, const Box &b): _coverage(rc){
     }
 }
 
-PixelIterator::PixelIterator(RasterCoverage *rc, const Geometry& geom){
+PixelIterator::PixelIterator(RasterCoverage *rc, const Geometry& geom): _coverage(rc){
     if (rc && rc->__bool__() && geom.__bool__())
     {
         geos::geom::Geometry* geometry = geom.ptr().get();

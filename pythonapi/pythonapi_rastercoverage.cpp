@@ -289,7 +289,6 @@ RasterCoverage RasterCoverage::select(std::string selectionQ){
     }
     else{
         throw InvalidObject("Not a valid geometry description");
-        return NULL;
     }
 
     delete geom;

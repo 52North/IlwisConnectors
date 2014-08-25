@@ -631,7 +631,7 @@ try:
             self.assertEqual(f["DateTime"], datetime.datetime(2014, 2, 27))
 
             tup = ('12', datetime.datetime(2014, 2, 27, 0, 0), datetime.time(12, 42, 33, 120000),
-                   datetime.datetime(2014, 2, 27, 0, 0), Const.rUNDEF, 2.34e-31, 2866)
+                   datetime.datetime(2014, 2, 27, 0, 0), Const.rUNDEF, 2.34e-31, 3295)
             rec = fc.attributeTable().record(0)
             self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
             self.assertEqual(len(rec), len(fc.attributeTable().columns()))
@@ -652,19 +652,19 @@ try:
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setOutputConnection(workingDir + tempDir + "/countries_fromshp.shp", "ESRI Shapefile", "gdal")
-            #world.store()
+            world.store()
             # points
             world = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setOutputConnection(workingDir + tempDir + "/rainfall_fromshp.shp", "ESRI Shapefile", "gdal")
-            #world.store()
+            world.store()
             # lines
             world = FeatureCoverage("drainage.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setOutputConnection(workingDir + tempDir + "/drainage_fromshp.shp", "ESRI Shapefile", "gdal")
-            #world.store()
+            world.store()
 
         #@ut.skip("temporarily")
         def test_loadGDALstoreIlwis3(self):
@@ -674,14 +674,14 @@ try:
             self.assertFalse(world.isInternal())
             #            world.setCoordinateSystem(CoordinateSystem("countries.csy"))  # TODO use/copy shp files coordinate system instead
             world.setOutputConnection(workingDir + tempDir + "/countries_fromshp", "vectormap", "ilwis3")
-            #world.store()
+            world.store()
             # points
             world = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
             world.setOutputConnection(workingDir + tempDir + "/rainfall_fromshp", "vectormap", "ilwis3")
-            #world.store()
+            world.store()
             self.assertEqual("rainfall.shp", world.attributeTable().name())
             # lines
             world = FeatureCoverage("drainage.shp")
@@ -689,7 +689,7 @@ try:
             self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
             world.setOutputConnection(workingDir + tempDir + "/drainage_fromshp", "vectormap", "ilwis3")
-            # world.store()  # skiped until Ilwis3Connector can handle datetime format
+            #world.store()  # skiped until Ilwis3Connector can handle datetime format
 
             # def test_loadIlwis3storeIlwis3(self):
             #     # polygons
@@ -725,14 +725,13 @@ try:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_FromFile(self):
             csy = CoordinateSystem(workingDir + featureDir + "/Cochabamba.csy")
-            csy2 = CoordinateSystem(workingDir + featureDir + "/Cochabamba.csy")
-            #self.assertEqual("Cochabamba.csy", csy.name())
+            self.assertEqual("cochabamba.csy", csy.name())
             fc = FeatureCoverage("Rainfall.mpp")
             rainCsy = fc.coordinateSystem()
-            self.assertEqual(csy.ilwisID(), rainCsy.ilwisID())
+            #self.assertEqual(csy.ilwisID(), rainCsy.ilwisID())
             self.assertEqual(str(csy.envelope()), str(rainCsy.envelope()))
 
         #ut.skip("temporarily")
@@ -971,8 +970,8 @@ try:
             self.assertAlmostEqual(aa3.pix2value(pix), 96.0 * 0.201173, 1)
             aa4 = rc1 / rc2
             self.assertAlmostEqual(aa4.pix2value(pix), 96.0 / 0.201173, 1)
-            # aa5 = rc1 + rc2 / 3
-            # self.assertAlmostEqual(aa5.pix2value(pix), 96.0 + 0.1915 / 3, 1)
+            aa5 = rc1 + rc2 / 3
+            self.assertAlmostEqual(aa5.pix2value(pix), 96.0 + 0.1915 / 3, 1)
             aa5 = rc1 / 3 + rc2
             self.assertAlmostEqual(aa5.pix2value(pix), 96.0 / 3 + 0.201173, 1)
             aa6 = 2 * rc1 - rc2
@@ -1211,7 +1210,7 @@ try:
                 connectIssueLogger()
                 self.skipTest("could not set working directory!")
 
-        @ut.skip("temporarily")
+        #@ut.skip("temporarily")
         def test_claudio(self):
             distribution = FeatureCoverage(workingDir + exampleDir + "/freq.mpp")
             polygongrid = Engine.do("gridding", distribution.coordinateSystem(), Coordinate(26.5, 4.5), 1, 1, 15, 13)
@@ -1639,7 +1638,7 @@ try:
             self.assertEqual(td.theme(), "Hounds")
 
     #@ut.skip("temporarily")
-    class TestIdentifierDomain(ut.TestCase):
+    class TestNamedIdentifierDomain(ut.TestCase):
         def test_containement(self):
             nr = NamedItemRange()
             nr.add("Perth")
@@ -1698,6 +1697,67 @@ try:
 
             namedRange.setTheme("Australian Cities")
             self.assertEqual(namedRange.theme(), "Australian Cities")
+
+        #@ut.skip("temporarily")
+    # class TestIndexedIdentifierDomain(ut.TestCase):
+    #     def test_containement(self):
+    #         nr = IndexedItemRange()
+    #         nr.add(("Perth", 1))
+    #         nr.add(("Darwin", 2))
+    #
+    #         nchild = ItemDomain(nr)
+    #
+    #         nr.add(("Broome", 3))
+    #
+    #         nparent = ItemDomain(nr)
+    #         nchild.setParent(nparent)
+    #         nchild.setStrict(False)
+    #
+    #         self.assertEqual(nchild.contains("Perth"), "cSELF")
+    #         self.assertEqual(nchild.contains("Darwin"), "cSELF")
+    #         self.assertEqual(nchild.contains("Broome"), "cPARENT")
+    #         self.assertEqual(nchild.contains("Adelaide"), "cNONE")
+    #
+    #         nchild.setStrict(True)
+    #         self.assertEqual(nchild.contains("Broome"), "cNONE")
+    #
+    #     def test_parents(self):
+    #
+    #         nr = IndexedItemRange()
+    #         nr.add(("Perth", 1))
+    #         nr.add(("Darwin", 2))
+    #
+    #         nchild = ItemDomain(nr)
+    #
+    #         with self.assertRaises(IlwisException, msg="No parent domain found"):
+    #             nchild.parent()
+    #
+    #         nr.add(("Broome", 3))
+    #         nparent = ItemDomain(nr)
+    #         nchild.setParent(nparent)
+    #         self.assertTrue(nchild.parent())
+    #
+    #     def test_removeAndCount(self):
+    #         nr = IndexedItemRange()
+    #         nr.add(("Perth", 1))
+    #         nr.add(("Darwin", 2))
+    #
+    #         namedDom = ItemDomain(nr)
+    #         self.assertEqual(namedDom.count(), 2)
+    #         namedDom.removeItem("Perth")
+    #         self.assertEqual(namedDom.count(), 1)
+    #         namedDom.addItem(("Childers", 4))
+    #         self.assertEqual(namedDom.count(), 2)
+    #
+    #     def test_theme(self):
+    #         nr = IndexedItemRange()
+    #         nr.add(("Perth", 1))
+    #         nr.add(("Darwin", 2))
+    #
+    #         namedDom = ItemDomain(nr)
+    #
+    #         namedDom.setTheme("Australian Cities")
+    #         self.assertEqual(namedDom.theme(), "Australian Cities")
 
     #@ut.skip("temporarily")
     class TestColorDomain(ut.TestCase):
@@ -2077,7 +2137,7 @@ try:
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest='TestColorPalette', verbosity=2)
+        ut.main(defaultTest=None, verbosity=2)
 
 except ImportError as e:
     print(e)

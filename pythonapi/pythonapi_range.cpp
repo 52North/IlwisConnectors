@@ -262,6 +262,27 @@ IndexedItemRange::IndexedItemRange()
 }
 
 void IndexedItemRange::add(PyObject *item){
+    Ilwis::IndexedIdentifier* ident;
+    if(PyTupleCheckExact(item)){
+        if(CppTupleElementCount(item) >=1){
+            QString label = QString::fromStdString(CppTupleElement2String(item, 0));
+            if(CppTupleElementCount(item) >=2){
+                quint32 index = CppTupleElement2ulonglong(item, 1);
+                if(CppTupleElementCount(item) >=3){
+                    quint32 count = CppTupleElement2ulonglong(item, 1);
+                    ident = new Ilwis::IndexedIdentifier(label, index, count);
+                } else {
+                    ident = new Ilwis::IndexedIdentifier(label, index);
+                }
+            } else {
+                ident = new Ilwis::IndexedIdentifier(label);
+            }
+        }
+    } else if (PyUnicodeCheckExact(item)){
+        QString label = QString::fromStdString(CppString2stdString(item));
+        ident = new Ilwis::IndexedIdentifier(label);
+    }
+    static_cast<Ilwis::IndexedIdentifierRange*>(_range.get())->add(ident);
 
 }
 
