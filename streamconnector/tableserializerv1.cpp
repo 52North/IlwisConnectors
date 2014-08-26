@@ -2,14 +2,13 @@
 #include "version.h"
 #include "ilwisdata.h"
 #include "connectorinterface.h"
-#include "streamconnectorv1.h"
+#include "versionedserializer.h"
 #include "domain.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "connectorinterface.h"
-#include "streamconnectorv1.h"
-#include "streamtabledatainterfacev1.h"
+#include "tableserializerv1.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "versioneddatastreamfactory.h"
@@ -17,18 +16,18 @@
 using namespace Ilwis;
 using namespace Stream;
 
-DataInterface *StreamTableDataInterfaceV1::create(QDataStream& stream)
+VersionedSerializer *TableSerializerV1::create(QDataStream& stream)
 {
-    return new StreamTableDataInterfaceV1(stream);
+    return new TableSerializerV1(stream);
 }
 
-StreamTableDataInterfaceV1::StreamTableDataInterfaceV1(QDataStream& stream) : StreamConnectorV1(stream)
+TableSerializerV1::TableSerializerV1(QDataStream& stream) : VersionedSerializer(stream)
 {
 }
 
-bool StreamTableDataInterfaceV1::store(IlwisObject *obj, int options)
+bool TableSerializerV1::store(IlwisObject *obj, int options)
 {
-    if (!StreamConnectorV1::store(obj, options))
+    if (!VersionedSerializer::store(obj, options))
         return false;
     Table *tbl = static_cast<Table *>(obj);
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
@@ -83,9 +82,9 @@ bool StreamTableDataInterfaceV1::store(IlwisObject *obj, int options)
     return true;
 }
 
-bool StreamTableDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
+bool TableSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 {
-    if (!StreamConnectorV1::loadMetaData(obj, options))
+    if (!VersionedSerializer::loadMetaData(obj, options))
         return false;
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     if (!factory)

@@ -2,7 +2,7 @@
 #include "version.h"
 #include "ilwisdata.h"
 #include "connectorinterface.h"
-#include "streamconnectorv1.h"
+#include "versionedserializer.h"
 #include "domain.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
@@ -11,27 +11,27 @@
 #include "feature.h"
 #include "featurecoverage.h"
 #include "featureiterator.h"
-#include "streamcoveragedatainterfacev1.h"
+#include "coverageserializerv1.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "versioneddatastreamfactory.h"
-#include "streamfeaturedatainterfacev1.h"
+#include "featureserializerv1.h"
 
 using namespace Ilwis;
 using namespace Stream;
 
-DataInterface *StreamFeatureDataInterfaceV1::create(QDataStream& stream)
+VersionedSerializer *FeatureSerializerV1::create(QDataStream& stream)
 {
-    return new StreamFeatureDataInterfaceV1(stream);
+    return new FeatureSerializerV1(stream);
 }
 
-StreamFeatureDataInterfaceV1::StreamFeatureDataInterfaceV1(QDataStream &stream) : StreamCoverageDataInterfaceV1(stream)
+FeatureSerializerV1::FeatureSerializerV1(QDataStream &stream) : CoverageSerializerV1(stream)
 {
 }
 
-bool StreamFeatureDataInterfaceV1::store(IlwisObject *obj, int options)
+bool FeatureSerializerV1::store(IlwisObject *obj, int options)
 {
-    if (!StreamCoverageDataInterfaceV1::store(obj, options))
+    if (!CoverageSerializerV1::store(obj, options))
         return false;
 
     IFeatureCoverage fcoverage;
@@ -45,9 +45,9 @@ bool StreamFeatureDataInterfaceV1::store(IlwisObject *obj, int options)
     return true;
 }
 
-bool StreamFeatureDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
+bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 {
-    if (!StreamCoverageDataInterfaceV1::loadMetaData(obj, options))
+    if (!CoverageSerializerV1::loadMetaData(obj, options))
         return false;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
     quint32 featureCount;

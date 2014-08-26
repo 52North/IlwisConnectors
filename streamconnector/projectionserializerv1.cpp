@@ -8,24 +8,24 @@
 #include "abstractfactory.h"
 #include "projectionfactory.h"
 #include "connectorinterface.h"
-#include "streamconnectorv1.h"
-#include "streamprojectiondatainterfacev1.h"
+#include "versionedserializer.h"
+#include "projectionserializerv1.h"
 
 using namespace Ilwis;
 using namespace Stream;
 
-DataInterface *StreamProjectionDataInterfaceV1::create(QDataStream& stream)
+VersionedSerializer *ProjectionSerializerV1::create(QDataStream& stream)
 {
-    return new StreamProjectionDataInterfaceV1(stream);
+    return new ProjectionSerializerV1(stream);
 }
 
-StreamProjectionDataInterfaceV1::StreamProjectionDataInterfaceV1(QDataStream &stream) : StreamConnectorV1(stream)
+ProjectionSerializerV1::ProjectionSerializerV1(QDataStream &stream) : VersionedSerializer(stream)
 {
 }
 
-bool StreamProjectionDataInterfaceV1::store(IlwisObject *obj, int options)
+bool ProjectionSerializerV1::store(IlwisObject *obj, int options)
 {
-    if (!StreamConnectorV1::store(obj, options))
+    if (!VersionedSerializer::store(obj, options))
         return false;
     Projection *proj = static_cast<Projection *>(obj);
     QString proj4Def = proj->toProj4();
@@ -35,9 +35,9 @@ bool StreamProjectionDataInterfaceV1::store(IlwisObject *obj, int options)
 
 }
 
-bool StreamProjectionDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
+bool ProjectionSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 {
-    if (!StreamConnectorV1::loadMetaData(obj, options))
+    if (!VersionedSerializer::loadMetaData(obj, options))
         return false;
     const ProjectionFactory *factory =  kernel()->factory<ProjectionFactory>("ProjectionFactory","proj4");
     if ( !factory)

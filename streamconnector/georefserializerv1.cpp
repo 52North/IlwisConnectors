@@ -14,24 +14,24 @@
 #include "planarctpgeoreference.h"
 #include "undeterminedgeoreference.h"
 #include "connectorinterface.h"
-#include "streamconnectorv1.h"
+#include "versionedserializer.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "versioneddatastreamfactory.h"
-#include "streamcoveragedatainterfacev1.h"
-#include "streamgeorefdatainterfacev1.h"
+#include "coverageserializerv1.h"
+#include "georefserializerv1.h"
 
 using namespace Ilwis;
 using namespace Stream;
 
-StreamGeorefDataInterfaceV1::StreamGeorefDataInterfaceV1(QDataStream& stream) : StreamConnectorV1(stream)
+GeorefSerializerV1::GeorefSerializerV1(QDataStream& stream) : VersionedSerializer(stream)
 {
 }
 
 
-bool StreamGeorefDataInterfaceV1::store(IlwisObject *obj, int options)
+bool GeorefSerializerV1::store(IlwisObject *obj, int options)
 {
-    if (!StreamConnectorV1::store(obj, options))
+    if (!VersionedSerializer::store(obj, options))
         return false;
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     if (!factory)
@@ -69,9 +69,9 @@ bool StreamGeorefDataInterfaceV1::store(IlwisObject *obj, int options)
 
 }
 
-bool StreamGeorefDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
+bool GeorefSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 {
-    if (!StreamConnectorV1::loadMetaData(obj, options))
+    if (!VersionedSerializer::loadMetaData(obj, options))
         return false;
 
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
@@ -144,7 +144,7 @@ bool StreamGeorefDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions
 
 }
 
-DataInterface *StreamGeorefDataInterfaceV1::create(QDataStream &stream)
+VersionedSerializer *GeorefSerializerV1::create(QDataStream &stream)
 {
-    return new StreamGeorefDataInterfaceV1(stream);
+    return new GeorefSerializerV1(stream);
 }

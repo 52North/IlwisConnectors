@@ -10,26 +10,28 @@
 #include "factory.h"
 #include "abstractfactory.h"
 #include "connectorinterface.h"
-#include "streamconnectorv1.h"
+#include "ilwisobjectconnector.h"
+#include "streamconnector.h"
+#include "versionedserializer.h"
 #include "versioneddatastreamfactory.h"
-#include "streamcoordinatesystemdatainterfacev1.h"
+#include "coordinatesystemserializerv1.h"
 
 
 using namespace Ilwis;
 using namespace Stream;
 
-DataInterface *StreamCoordinateSystemDataInterfaceV1::create(QDataStream& stream)
+VersionedSerializer *CoordinateSystemSerializerV1::create( QDataStream& stream)
 {
-    return new StreamCoordinateSystemDataInterfaceV1(stream);
+    return new CoordinateSystemSerializerV1(stream);
 }
 
-StreamCoordinateSystemDataInterfaceV1::StreamCoordinateSystemDataInterfaceV1(QDataStream& stream) : StreamConnectorV1(stream)
+CoordinateSystemSerializerV1::CoordinateSystemSerializerV1(QDataStream& stream) : VersionedSerializer(stream)
 {
 }
 
-bool StreamCoordinateSystemDataInterfaceV1::store(IlwisObject *obj, int options)
+bool CoordinateSystemSerializerV1::store(IlwisObject *obj, int options)
 {
-    if (!StreamConnectorV1::store(obj, options))
+    if (!VersionedSerializer::store(obj, options))
         return false;
 
     CoordinateSystem *csy = static_cast<CoordinateSystem *>(obj);
@@ -63,9 +65,9 @@ bool StreamCoordinateSystemDataInterfaceV1::store(IlwisObject *obj, int options)
 
 }
 
-bool StreamCoordinateSystemDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
+bool CoordinateSystemSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 {
-    if (!StreamConnectorV1::loadMetaData(obj, options))
+    if (!VersionedSerializer::loadMetaData(obj, options))
         return false;
     CoordinateSystem *csy = static_cast<CoordinateSystem *>(obj);
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");

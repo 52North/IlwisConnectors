@@ -1,26 +1,29 @@
-#ifndef STREAMCONNECTORV1_H
-#define STREAMCONNECTORV1_H
+#ifndef VERSIONEDSERIALIZER_H
+#define VERSIONEDSERIALIZER_H
 
 namespace Ilwis {
 class DataDefinition;
 
 namespace Stream {
 
-class StreamConnectorV1 : public DataInterface
+class StreamConnector;
+
+class VersionedSerializer : public DataInterface
 {
 public:
-    StreamConnectorV1(QDataStream &stream);
+    VersionedSerializer(QDataStream &stream);
 
-    virtual ~StreamConnectorV1();
+    virtual ~VersionedSerializer();
 
     bool loadMetaData(IlwisObject*obj, const IOOptions & );
     bool loadData(IlwisObject*, const IOOptions& options = IOOptions()) { return false; }
     bool dataIsLoaded() const { return false; }
     bool store(IlwisObject *obj, int );
-    //DataInterface* clone() const { return 0;}
+    void connector(StreamConnector *streamconnector);
 
 protected:
     QDataStream& _stream;
+    StreamConnector *_streamconnector = 0;
 
     bool storeDataDefintion(const DataDefinition& def, QDataStream& stream,  int options) const;
     bool loadDataDefinition(DataDefinition& def, QDataStream& stream, const Ilwis::IOOptions &options);
