@@ -83,16 +83,6 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
     OGRLayerH hLayer = getLayerHandle();
 
     if ( hLayer) {
-        //attribute table
-        ITable attTable;
-        Resource resource(_filename, itFLATTABLE);
-        if(!attTable.prepare(resource)) {//will load whole meta data of the table
-            ERROR1(ERR_NO_INITIALIZED_1,resource.name());
-            return false;
-        }
-        attTable->addColumn(FEATUREIDCOLUMN,"count");
-        fcoverage->attributeTable(attTable);
-
         //feature types
         IlwisTypes type = translateOGRType(gdal()->getLayerGeometry(hLayer));
         if (type == itUNKNOWN){
@@ -110,6 +100,14 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
             featureCount += temp;
             fcoverage->setFeatureCount(type, featureCount,0); // subgeometries are not known at this level
         }
+        //attribute table
+        ITable attTable;
+        Resource resource(_filename, itFLATTABLE);
+        if(!attTable.prepare(resource)) {//will load whole meta data of the table
+            ERROR1(ERR_NO_INITIALIZED_1,resource.name());
+            return false;
+        }
+        fcoverage->attributeTable(attTable);
 
         //layer envelopes/extents
         Envelope bbox;
@@ -458,13 +456,10 @@ bool GdalFeatureConnector::setDataSourceAndLayers(const IFeatureCoverage& featur
 
     AttributeTable tbl = features->attributeTable();
     validAttributes.resize(tbl->columnCount(), false);
-    std::vector<OGRFieldDefnH> fielddefs(tbl->columnCount() - 1); // no feature_id in external table
+    std::vector<OGRFieldDefnH> fielddefs(tbl->columnCount());
 
     int index = 0;
     for(int i=0; i < tbl->columnCount(); ++i){
-        if ( tbl->columndefinition(i).name() == FEATUREIDCOLUMN ){
-            continue;
-        }
         OGRFieldType ogrtype = ilwisType2GdalFieldType(tbl->columndefinition(i).datadef().domain<>()->valueType());
         OGRFieldDefnH fieldef = gdal()->createAttributeDefintion(tbl->columndefinition(i).name().toLocal8Bit(),ogrtype);
         if ( fieldef == 0){

@@ -28,7 +28,7 @@ protected:
     QString _domainInfo;
     QString _csyName;
 private:
-    ITable prepareAttributeTable(const QString &file, const QString& basemaptype,const IOOptions &) const;
+    bool prepareAttributeTable(const QString &file, const QString& basemaptype,const IOOptions &, AttributeTable attTable) const;
 
 };
 }

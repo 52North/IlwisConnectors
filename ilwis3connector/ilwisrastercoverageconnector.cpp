@@ -224,7 +224,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
     gcoverage->gridRef()->prepare(gcoverage, grf->size());
 
     gcoverage->georeference(grf);
-    _dataType = gcoverage->datadef().range()->valueType();
+    _dataType = gcoverage->datadefRef().range()->valueType();
 
     return true;
 

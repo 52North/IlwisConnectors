@@ -394,6 +394,10 @@ class CoordinateSystem(IlwisObject):
         """envelope(CoordinateSystem self) -> Envelope"""
         return _ilwisobjects.CoordinateSystem_envelope(self)
 
+    def setEnvelope(self, *args):
+        """setEnvelope(CoordinateSystem self, Envelope env)"""
+        return _ilwisobjects.CoordinateSystem_setEnvelope(self, *args)
+
     def __eq__(self, *args):
         """__eq__(CoordinateSystem self, CoordinateSystem csy) -> bool"""
         return _ilwisobjects.CoordinateSystem___eq__(self, *args)
@@ -1748,12 +1752,12 @@ class Flow(_object):
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, Flow, name)
     __repr__ = _swig_repr
-    fXYZ = _ilwisobjects.Flow_fXYZ
-    fYXZ = _ilwisobjects.Flow_fYXZ
-    fXZY = _ilwisobjects.Flow_fXZY
-    fYZX = _ilwisobjects.Flow_fYZX
-    fZXY = _ilwisobjects.Flow_fZXY
-    fZYX = _ilwisobjects.Flow_fZYX
+    XYZ = _ilwisobjects.Flow_XYZ
+    YXZ = _ilwisobjects.Flow_YXZ
+    XZY = _ilwisobjects.Flow_XZY
+    YZX = _ilwisobjects.Flow_YZX
+    ZXY = _ilwisobjects.Flow_ZXY
+    ZYX = _ilwisobjects.Flow_ZYX
     def __init__(self): 
         """__init__(pythonapi::FlowVal self) -> Flow"""
         this = _ilwisobjects.new_Flow()
@@ -2962,10 +2966,7 @@ class ColorPalette(ItemRange,ColorRange):
         return _ilwisobjects.ColorPalette_count(self)
 
     def valueAt(self, *args):
-        """
-        valueAt(ColorPalette self, quint32 index, ColorRange rng) -> Color
-        valueAt(ColorPalette self, quint32 index, ItemRange rng) -> Color
-        """
+        """valueAt(ColorPalette self, quint32 index, ItemRange rng) -> Color"""
         return _ilwisobjects.ColorPalette_valueAt(self, *args)
 
     def gotoIndex(self, *args):

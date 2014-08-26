@@ -198,8 +198,6 @@ bool TableConnector::storeBinaryData(IlwisObject *obj)
 
     for(int i=0; i < tbl->columnCount(); ++i) {
         const ColumnDefinition& def = const_cast<Table *>(tbl)->columndefinitionRef(i);
-        if ( def.name() == FEATUREIDCOLUMN)
-            skip = i;
         ilw3tbl.addStoreDefinition(def.datadef());
     }
     quint32 reccount = _selected.size() > 0 ? _selected.size() :  tbl->recordCount();
@@ -256,8 +254,6 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
     _odf->setKeyValue("TableStore", "Data", dataFile);
     for(int i=0,index=1; i < tbl->columnCount(); ++i) {
         ColumnDefinition def = tbl->columndefinition(i);
-        if ( def.name() == FEATUREIDCOLUMN)
-            continue;
         IDomain dmColumn = def.datadef().domain<>();
         bool isOldSystem = true;
         QString domName = getDomainName(dmColumn, isOldSystem);

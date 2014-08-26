@@ -110,9 +110,6 @@ bool WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table
         }
 
         ColumnDefinition& coldef = table->columndefinitionRef(i);
-        if ( coldef.name() == QString(FEATUREIDCOLUMN) ) {
-            continue; // auto filled column
-        }
 
         DataDefinition& datadef = coldef.datadef();
         if( !datadef.domain().isValid()) {

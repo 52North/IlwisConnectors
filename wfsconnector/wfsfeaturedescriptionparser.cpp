@@ -116,8 +116,6 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcover
                      * specific knowledge, e.g. namespaces
                      */
 
-                    table->addColumn(FEATUREIDCOLUMN, "count");
-
                     do {
                         QXmlStreamAttributes attributes = _parser->attributes();
                         QString name = attributes.value("name").toString();

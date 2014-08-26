@@ -31,6 +31,11 @@ Envelope CoordinateSystem::envelope(){
     return Envelope(this->ptr()->as<Ilwis::CoordinateSystem>()->envelope());
 }
 
+void CoordinateSystem::setEnvelope(const Envelope& env){
+    Ilwis::Envelope ilwEnv = env.data();
+    this->ptr()->as<Ilwis::CoordinateSystem>()->envelope(ilwEnv);
+}
+
 bool CoordinateSystem::operator==(const CoordinateSystem &csy){
     return (this->ptr()->ptr()->ilwisType() == itCONVENTIONALCOORDSYSTEM) && this->ptr()->as<Ilwis::ConventionalCoordinateSystem>()->isEqual(csy.ptr()->ptr());
 }

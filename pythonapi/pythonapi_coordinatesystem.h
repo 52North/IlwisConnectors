@@ -10,7 +10,6 @@ namespace Ilwis{
 }
 
 namespace pythonapi {
-
     class CoordinateSystem : public pythonapi::IlwisObject{
         friend class Coverage;
         friend class Engine;
@@ -24,6 +23,7 @@ namespace pythonapi {
     public:
         CoordinateSystem(const std::string &resource);
         pythonapi::Envelope envelope();
+        void setEnvelope(const pythonapi::Envelope& env);
         bool operator==(const CoordinateSystem& csy);
         bool operator!=(const CoordinateSystem& csy);
 

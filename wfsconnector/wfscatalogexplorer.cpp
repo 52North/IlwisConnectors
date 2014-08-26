@@ -9,6 +9,7 @@
 #include "domain.h"
 #include "coverage.h"
 #include "columndefinition.h"
+#include "record.h"
 #include "attributerecord.h"
 #include "feature.h"
 #include "featurecoverage.h"
