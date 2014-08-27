@@ -53,9 +53,9 @@ bool TableSerializerV1::store(IlwisObject *obj, int options)
         for(int col = 0; col < tbl->columnCount(); ++col){
             switch (types[col]){
             case itUINT8:
-                _stream << record[col].toUInt();break;
+                _stream << record.cell(col).toUInt();break;
             case itINT8:
-                _stream << record[col].toInt();break;
+                _stream << record.cell(col).toInt();break;
             case itUINT32:
             case itINDEXEDITEM:
             case itTHEMATICITEM:
@@ -63,19 +63,19 @@ bool TableSerializerV1::store(IlwisObject *obj, int options)
             case itNUMERICITEM:
             case itPALETTECOLOR:
             case itCONTINUOUSCOLOR:
-                _stream << record[col].toUInt();break;
+                _stream << record.cell(col).toUInt();break;
             case itINT32:
-                _stream << record[col].toInt();break;
+                _stream << record.cell(col).toInt();break;
             case itUINT64:
-                _stream << record[col].toULongLong();break;
+                _stream << record.cell(col).toULongLong();break;
             case itINT64:
-                _stream << record[col].toLongLong();break;
+                _stream << record.cell(col).toLongLong();break;
             case itDOUBLE:
-                _stream << record[col].toDouble();break;
+                _stream << record.cell(col).toDouble();break;
             case itFLOAT:
-                _stream << record[col].toFloat();break;
+                _stream << record.cell(col).toFloat();break;
             case itSTRING:
-                _stream << record[col].toString();break;
+                _stream << record.cell(col).toString();break;
             }
         }
     }
