@@ -2,7 +2,7 @@
 #include "version.h"
 #include "ilwisdata.h"
 #include "connectorinterface.h"
-#include "streamconnectorv1.h"
+#include "versionedserializer.h"
 #include "domain.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
@@ -13,14 +13,16 @@
 #include "factory.h"
 #include "abstractfactory.h"
 #include "versioneddatastreamfactory.h"
-#include "streamcoveragedatainterfacev1.h"
+#include "ilwisobjectconnector.h"
+#include "streamconnector.h"
+#include "coverageserializerv1.h"
 #include "rawconverter.h"
-#include "streamrasterdatainterfacev1.h"
+#include "rasterserializerv1.h"
 
 using namespace Ilwis;
 using namespace Stream;
 
-StreamRasterDataInterfaceV1::StreamRasterDataInterfaceV1(QDataStream& stream) : StreamCoverageDataInterfaceV1(stream)
+RasterSerializerV1::RasterSerializerV1(QDataStream& stream) : CoverageSerializerV1(stream)
 {
 }
 
@@ -38,9 +40,9 @@ template<typename T> void loadBulk(const RawConverter& converter, QDataStream& s
     }
 }
 
-bool StreamRasterDataInterfaceV1::store(IlwisObject *obj, int options)
+bool RasterSerializerV1::store(IlwisObject *obj, int options)
 {
-    if (!StreamCoverageDataInterfaceV1::store(obj, options))
+    if (!CoverageSerializerV1::store(obj, options))
         return false;
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
 
@@ -69,7 +71,7 @@ bool StreamRasterDataInterfaceV1::store(IlwisObject *obj, int options)
     double scale = digits == 0 ? 0 : std::pow(10,-digits);
     RawConverter converter(stats[ContainerStatistics<double>::pMIN], stats[ContainerStatistics<double>::pMAX],scale);
     _stream << stats[ContainerStatistics<double>::pMIN] << stats[ContainerStatistics<double>::pMAX] << scale;
-
+    quint64 count = 0;
     IRasterCoverage rcoverage(raster);
     switch (converter.storeType()){
     case itUINT8:
@@ -83,17 +85,23 @@ bool StreamRasterDataInterfaceV1::store(IlwisObject *obj, int options)
             _stream << (qint64)v;
         break;
     default:
-        for(double v : rcoverage)
+        for(double v : rcoverage){
+            if ( count % STREAMBLOCKSIZE && _streamconnector->needFlush()){
+                _streamconnector->flush(false);
+
+            }
+            ++count;
             _stream << v;
+        }
         break;
     }
     return true;
 
 }
 
-bool StreamRasterDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
+bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 {
-    if (!StreamCoverageDataInterfaceV1::loadMetaData(obj, options))
+    if (!CoverageSerializerV1::loadMetaData(obj, options))
         return false;
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     if (!factory)
@@ -123,6 +131,15 @@ bool StreamRasterDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions
     grfstreamer->loadMetaData(georeference, options)    ;
     raster->georeference(georeference);
 
+
+
+    return true;
+}
+
+bool RasterSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
+{
+    RasterCoverage *raster = static_cast<RasterCoverage *>(data);
+
     double mmin,  mmax, mscale;
     _stream >> mmin >> mmax >> mscale;
 
@@ -150,11 +167,10 @@ bool StreamRasterDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions
             _stream >> v;
         break;
     }
-
     return true;
 }
 
-DataInterface *StreamRasterDataInterfaceV1::create(QDataStream &stream)
+VersionedSerializer *RasterSerializerV1::create(QDataStream &stream)
 {
-    return new StreamRasterDataInterfaceV1(stream);
+    return new RasterSerializerV1(stream);
 }

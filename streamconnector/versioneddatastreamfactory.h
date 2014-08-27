@@ -4,7 +4,7 @@
 namespace Ilwis {
 namespace Stream {
 
-typedef std::function<DataInterface *(QDataStream&)> CreateStreamIO;
+typedef std::function<VersionedSerializer *(QDataStream&)> CreateStreamIO;
 
 struct StreamerKey {
     StreamerKey(const QString& version, IlwisTypes tp) : _version(version) {
@@ -25,7 +25,7 @@ class VersionedDataStreamFactory : public AbstractFactory
 public:
     VersionedDataStreamFactory();
 
-    static DataInterface* create(const QString& version, IlwisTypes tp, QDataStream &stream);
+    static VersionedSerializer* create(const QString& version, IlwisTypes tp, QDataStream &stream);
     static void addCreator(const StreamerKey& key, CreateStreamIO streamer);
 
 private:

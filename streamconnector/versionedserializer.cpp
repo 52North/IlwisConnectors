@@ -2,27 +2,29 @@
 #include "ilwisdata.h"
 #include "version.h"
 #include "connectorinterface.h"
-#include "streamconnectorv1.h"
+#include "versionedserializer.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "domain.h"
 #include "datadefinition.h"
 #include "versioneddatastreamfactory.h"
-#include "streamcoveragedatainterfacev1.h"
+#include "ilwisobjectconnector.h"
+#include "streamconnector.h"
+//#include "streamcoveragedatainterfacev1.h"
 
 using namespace Ilwis;
 using namespace Stream;
 
-StreamConnectorV1::StreamConnectorV1( QDataStream& stream) : _stream(stream)
+VersionedSerializer::VersionedSerializer(QDataStream& stream) : _stream(stream)
 {
 }
 
-StreamConnectorV1::~StreamConnectorV1()
+VersionedSerializer::~VersionedSerializer()
 {
 
 }
 
-bool StreamConnectorV1::loadMetaData(IlwisObject *obj, const IOOptions &)
+bool VersionedSerializer::loadMetaData(IlwisObject *obj, const IOOptions &)
 {
     if ( obj->isReadOnly())
         return false;
@@ -46,7 +48,7 @@ bool StreamConnectorV1::loadMetaData(IlwisObject *obj, const IOOptions &)
 
 }
 
-bool StreamConnectorV1::store(IlwisObject *obj, int)
+bool VersionedSerializer::store(IlwisObject *obj, int)
 {
     double mtime = (double)obj->modifiedTime();
     double ctime = (double)obj->createTime();
@@ -55,7 +57,12 @@ bool StreamConnectorV1::store(IlwisObject *obj, int)
     return true;
 }
 
-bool StreamConnectorV1::storeDataDefintion(const DataDefinition &def, QDataStream &stream, int options) const
+void VersionedSerializer::connector(StreamConnector *streamconnector)
+{
+    _streamconnector = streamconnector;
+}
+
+bool VersionedSerializer::storeDataDefintion(const DataDefinition &def, QDataStream &stream, int options) const
 {
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     if (!factory)
@@ -70,7 +77,7 @@ bool StreamConnectorV1::storeDataDefintion(const DataDefinition &def, QDataStrea
     return true;
 }
 
-bool StreamConnectorV1::loadDataDefinition(DataDefinition &def, QDataStream &stream,const IOOptions &options)
+bool VersionedSerializer::loadDataDefinition(DataDefinition &def, QDataStream &stream,const IOOptions &options)
 {
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     if (!factory)
@@ -94,4 +101,6 @@ bool StreamConnectorV1::loadDataDefinition(DataDefinition &def, QDataStream &str
         range->load(_stream);
     }
     def = DataDefinition(dom,range);
+
+    return true;
 }

@@ -3,14 +3,14 @@
 
 namespace Ilwis {
 namespace Stream {
-class StreamCoordinateSystemDataInterfaceV1 : public StreamConnectorV1
+class CoordinateSystemSerializerV1 : public VersionedSerializer
 {
 public:
-    StreamCoordinateSystemDataInterfaceV1(QDataStream& stream);
+    CoordinateSystemSerializerV1(QDataStream& stream);
 
     bool store(IlwisObject *obj, int options);
     bool loadMetaData(IlwisObject*obj, const IOOptions & options);
-    static DataInterface *create(QDataStream &stream);
+    static VersionedSerializer *create(QDataStream &stream);
 };
 }
 }

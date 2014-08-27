@@ -2,7 +2,7 @@
 #include "version.h"
 #include "ilwisdata.h"
 #include "connectorinterface.h"
-#include "streamconnectorv1.h"
+#include "versionedserializer.h"
 #include "domain.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
@@ -10,7 +10,7 @@
 #include "basetable.h"
 #include "flattable.h"
 #include "coverage.h"
-#include "streamcoveragedatainterfacev1.h"
+#include "coverageserializerv1.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "versioneddatastreamfactory.h"
@@ -18,13 +18,13 @@
 using namespace Ilwis;
 using namespace Stream;
 
-StreamCoverageDataInterfaceV1::StreamCoverageDataInterfaceV1(QDataStream &stream) : StreamConnectorV1(stream){
+CoverageSerializerV1::CoverageSerializerV1(QDataStream &stream) : VersionedSerializer(stream){
 
 }
 
-bool StreamCoverageDataInterfaceV1::store(IlwisObject *obj, int options)
+bool CoverageSerializerV1::store(IlwisObject *obj, int options)
 {
-    if (!StreamConnectorV1::store(obj, options))
+    if (!VersionedSerializer::store(obj, options))
         return false;
 
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
@@ -64,9 +64,9 @@ bool StreamCoverageDataInterfaceV1::store(IlwisObject *obj, int options)
     return true;
 }
 
-bool StreamCoverageDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
+bool CoverageSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 {
-    if (!StreamConnectorV1::loadMetaData(obj, options))
+    if (!VersionedSerializer::loadMetaData(obj, options))
         return false;
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     Coverage *coverage = static_cast<Coverage *>(obj);
