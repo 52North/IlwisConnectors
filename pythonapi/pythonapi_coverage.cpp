@@ -43,13 +43,13 @@ quint32 Coverage::attributeCount(){
 PyObject* Coverage::attributes(){
     Ilwis::ITable tbl = (*this->ptr()).as<Ilwis::Coverage>()->attributeTable();
     int colCount = tbl->columnCount();
-    if (tbl->columndefinition(FEATUREIDCOLUMN).isValid())
+    if (tbl->columndefinition("feature_id").isValid())
         colCount--;//skip 'feature_id'
     int offset = 0;
     PyObject* list = newPyTuple(colCount);
     for(int i = 0; i < tbl->columnCount(); i++){
         QString name = tbl->columndefinition(i).name();
-        if (name != QString(FEATUREIDCOLUMN)){
+        if (name != QString("feature_id")){
             if (!setTupleItem(list, i-offset, PyUnicodeFromString(name.toStdString().data())))
                 throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of attributes").arg(tbl->columndefinition(i).name()));
         }else{
@@ -74,10 +74,6 @@ bool Coverage::hasAttributes(AttributeType attType) const{
 
 CoordinateSystem Coverage::coordinateSystem(){
     return CoordinateSystem(new Ilwis::ICoordinateSystem(this->ptr()->as<Ilwis::Coverage>()->coordinateSystem()));
-}
-
-void Coverage::setCoordinateSystem(const CoordinateSystem &cs){
-    this->ptr()->as<Ilwis::Coverage>()->coordinateSystem(cs.ptr()->as<Ilwis::CoordinateSystem>());
 }
 
 Envelope Coverage::envelope(){

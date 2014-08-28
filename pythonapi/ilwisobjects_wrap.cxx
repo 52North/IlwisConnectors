@@ -9395,46 +9395,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Coverage_setCoordinateSystem(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  pythonapi::CoordinateSystem *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Coverage_setCoordinateSystem",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_setCoordinateSystem" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__CoordinateSystem,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Coverage_setCoordinateSystem" "', argument " "2"" of type '" "pythonapi::CoordinateSystem const &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_setCoordinateSystem" "', argument " "2"" of type '" "pythonapi::CoordinateSystem const &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::CoordinateSystem * >(argp2);
-  {
-    try {
-      (arg1)->setCoordinateSystem((pythonapi::CoordinateSystem const &)*arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_Coverage_envelope(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
@@ -20901,6 +20861,46 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_FeatureCoverage_setCoordinateSystem(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  pythonapi::CoordinateSystem *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage_setCoordinateSystem",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_setCoordinateSystem" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__CoordinateSystem,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_setCoordinateSystem" "', argument " "2"" of type '" "pythonapi::CoordinateSystem const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_setCoordinateSystem" "', argument " "2"" of type '" "pythonapi::CoordinateSystem const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::CoordinateSystem * >(argp2);
+  {
+    try {
+      (arg1)->setCoordinateSystem((pythonapi::CoordinateSystem const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_delete_FeatureCoverage(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
@@ -24156,6 +24156,35 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_unloadBinary(PyObject *SWIGUNUSEDPARM(
     }
   }
   resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_coordinateSystem(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  SwigValueWrapper< pythonapi::CoordinateSystem > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_coordinateSystem",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_coordinateSystem" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  {
+    try {
+      result = (arg1)->coordinateSystem();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::CoordinateSystem(static_cast< const pythonapi::CoordinateSystem& >(result))), SWIGTYPE_p_pythonapi__CoordinateSystem, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -36625,7 +36654,6 @@ static PyMethodDef SwigMethods[] = {
 		"Coverage_hasAttributes(Coverage self) -> bool\n"
 		""},
 	 { (char *)"Coverage_coordinateSystem", _wrap_Coverage_coordinateSystem, METH_VARARGS, (char *)"Coverage_coordinateSystem(Coverage self) -> CoordinateSystem"},
-	 { (char *)"Coverage_setCoordinateSystem", _wrap_Coverage_setCoordinateSystem, METH_VARARGS, (char *)"Coverage_setCoordinateSystem(Coverage self, CoordinateSystem cs)"},
 	 { (char *)"Coverage_envelope", _wrap_Coverage_envelope, METH_VARARGS, (char *)"Coverage_envelope(Coverage self) -> Envelope"},
 	 { (char *)"Coverage_setEnvelope", _wrap_Coverage_setEnvelope, METH_VARARGS, (char *)"Coverage_setEnvelope(Coverage self, Envelope env)"},
 	 { (char *)"Coverage_indexDomain", _wrap_Coverage_indexDomain, METH_VARARGS, (char *)"Coverage_indexDomain(Coverage self, Domain dom)"},
@@ -36957,6 +36985,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"FeatureCoverage_maxIndex", _wrap_FeatureCoverage_maxIndex, METH_VARARGS, (char *)"FeatureCoverage_maxIndex(FeatureCoverage self) -> quint32"},
 	 { (char *)"FeatureCoverage_clone", _wrap_FeatureCoverage_clone, METH_VARARGS, (char *)"FeatureCoverage_clone(FeatureCoverage self) -> FeatureCoverage"},
 	 { (char *)"FeatureCoverage_geometryType", _wrap_FeatureCoverage_geometryType, METH_VARARGS, (char *)"FeatureCoverage_geometryType(FeatureCoverage self, Geometry geom) -> IlwisTypes"},
+	 { (char *)"FeatureCoverage_setCoordinateSystem", _wrap_FeatureCoverage_setCoordinateSystem, METH_VARARGS, (char *)"FeatureCoverage_setCoordinateSystem(FeatureCoverage self, CoordinateSystem cs)"},
 	 { (char *)"delete_FeatureCoverage", _wrap_delete_FeatureCoverage, METH_VARARGS, (char *)"delete_FeatureCoverage(FeatureCoverage self)"},
 	 { (char *)"FeatureCoverage_swigregister", FeatureCoverage_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_Flow", _wrap_new_Flow, METH_VARARGS, (char *)"new_Flow() -> Flow"},
@@ -37061,6 +37090,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"RasterCoverage_size", _wrap_RasterCoverage_size, METH_VARARGS, (char *)"RasterCoverage_size(RasterCoverage self) -> Size"},
 	 { (char *)"RasterCoverage_setSize", _wrap_RasterCoverage_setSize, METH_VARARGS, (char *)"RasterCoverage_setSize(RasterCoverage self, Size sz)"},
 	 { (char *)"RasterCoverage_unloadBinary", _wrap_RasterCoverage_unloadBinary, METH_VARARGS, (char *)"RasterCoverage_unloadBinary(RasterCoverage self)"},
+	 { (char *)"RasterCoverage_coordinateSystem", _wrap_RasterCoverage_coordinateSystem, METH_VARARGS, (char *)"RasterCoverage_coordinateSystem(RasterCoverage self) -> CoordinateSystem"},
 	 { (char *)"RasterCoverage_geoReference", _wrap_RasterCoverage_geoReference, METH_VARARGS, (char *)"RasterCoverage_geoReference(RasterCoverage self) -> GeoReference"},
 	 { (char *)"RasterCoverage_setGeoReference", _wrap_RasterCoverage_setGeoReference, METH_VARARGS, (char *)"RasterCoverage_setGeoReference(RasterCoverage self, GeoReference gr)"},
 	 { (char *)"RasterCoverage_datadef", _wrap_RasterCoverage_datadef, METH_VARARGS, (char *)"RasterCoverage_datadef(RasterCoverage self) -> DataDefinition"},

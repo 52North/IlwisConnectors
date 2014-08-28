@@ -130,3 +130,7 @@ FeatureCoverage *FeatureCoverage::clone(){
 IlwisTypes FeatureCoverage::geometryType(const Geometry& geom){
     return this->ptr()->as<Ilwis::FeatureCoverage>()->geometryType(geom.ptr().get());
 }
+
+void FeatureCoverage::setCoordinateSystem(const CoordinateSystem &cs){
+    this->ptr()->as<Ilwis::FeatureCoverage>()->coordinateSystem(cs.ptr()->as<Ilwis::CoordinateSystem>());
+}

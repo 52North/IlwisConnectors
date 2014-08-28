@@ -48,6 +48,8 @@ namespace pythonapi {
         void setSize(const Size& sz);
         void unloadBinary();
 
+        CoordinateSystem coordinateSystem();
+
         GeoReference geoReference();
         void setGeoReference(const GeoReference& gr);
 
