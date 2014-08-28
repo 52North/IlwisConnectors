@@ -4,14 +4,14 @@
 namespace Ilwis {
 namespace Stream {
 
-class StreamDomainDataInterfaceV1 : public StreamConnectorV1
+class DomainSerializerV1 : public VersionedSerializer
 {
 public:
-    StreamDomainDataInterfaceV1(QDataStream& stream);
+    DomainSerializerV1(QDataStream& stream);
 
     bool store(IlwisObject *obj, int options);
     bool loadMetaData(IlwisObject*obj, const IOOptions & );
-    static DataInterface *create(QDataStream &stream);
+    static VersionedSerializer *create(QDataStream &stream);
 };
 }
 }

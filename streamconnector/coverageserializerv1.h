@@ -5,10 +5,10 @@ namespace Ilwis {
 namespace Stream {
 
 
-class StreamCoverageDataInterfaceV1 : public StreamConnectorV1
+class CoverageSerializerV1 : public VersionedSerializer
 {
 public:
-    StreamCoverageDataInterfaceV1(QDataStream &stream);
+    CoverageSerializerV1(QDataStream &stream);
 
     bool store(IlwisObject *obj, int options);
     bool loadMetaData(IlwisObject*obj, const IOOptions & options);

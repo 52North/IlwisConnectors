@@ -4,14 +4,14 @@
 namespace Ilwis {
 namespace Stream {
 
-class StreamGeorefDataInterfaceV1 : public StreamConnectorV1
+class GeorefSerializerV1 : public VersionedSerializer
 {
 public:
-    StreamGeorefDataInterfaceV1(QDataStream &stream);
+    GeorefSerializerV1(QDataStream &stream);
 
     bool store(IlwisObject *obj, int options);
     bool loadMetaData(IlwisObject*obj, const IOOptions & options);
-    static DataInterface *create(QDataStream &stream);
+    static VersionedSerializer *create(QDataStream &stream);
 };
 }
 }

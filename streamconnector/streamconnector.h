@@ -4,6 +4,8 @@
 namespace Ilwis {
 namespace Stream {
 
+class VersionedSerializer;
+
 class StreamConnector : public IlwisObjectConnector
 {
 public:
@@ -11,17 +13,24 @@ public:
     virtual ~StreamConnector();
 
     bool loadMetaData(IlwisObject* data,const IOOptions&);
+    bool loadData(IlwisObject *data, const IOOptions &options);
 
     QString provider() const;
+    bool needFlush() const;
+    void flush(bool last);
     static ConnectorInterface *create(const Resource &resource, bool load, const IOOptions &options);
+
 private:
-    std::unique_ptr<DataInterface> _versionedConnector;
+    std::unique_ptr<VersionedSerializer> _versionedConnector;
     std::unique_ptr<QIODevice> _datasource;
+    QByteArray _bytes;
+
 
     bool store(IlwisObject *obj, int options);
     bool openSource(bool reading);
     IlwisObject *create() const;
 };
+
 }
 }
 

@@ -1,6 +1,10 @@
 #include "kernel.h"
 #include "abstractfactory.h"
 #include "connectorinterface.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "streamconnector.h"
+#include "versionedserializer.h"
 #include "versioneddatastreamfactory.h"
 
 
@@ -21,7 +25,7 @@ VersionedDataStreamFactory::VersionedDataStreamFactory() : AbstractFactory("Vers
 {
 }
 
-DataInterface *VersionedDataStreamFactory::create(const QString &version,IlwisTypes tp, QDataStream& stream)
+VersionedSerializer *VersionedDataStreamFactory::create(const QString &version,IlwisTypes tp, QDataStream& stream)
 {
     StreamerKey key(version, tp)    ;
 

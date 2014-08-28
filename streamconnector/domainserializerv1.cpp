@@ -2,29 +2,29 @@
 #include "version.h"
 #include "ilwisdata.h"
 #include "connectorinterface.h"
-#include "streamconnectorv1.h"
+#include "versionedserializer.h"
 #include "itemdomain.h"
-#include "streamdomaindatainterfacev1.h"
+#include "domainserializerv1.h"
 
 using namespace Ilwis;
 using namespace Stream;
 
-DataInterface *StreamDomainDataInterfaceV1::create(QDataStream& stream)
+VersionedSerializer *DomainSerializerV1::create(QDataStream& stream)
 {
-    return new StreamDomainDataInterfaceV1(stream);
+    return new DomainSerializerV1(stream);
 }
 
-StreamDomainDataInterfaceV1::StreamDomainDataInterfaceV1(QDataStream &stream) : StreamConnectorV1(stream)
+DomainSerializerV1::DomainSerializerV1(QDataStream &stream) : VersionedSerializer(stream)
 {
 }
 
-bool StreamDomainDataInterfaceV1::store(IlwisObject *obj, int options)
+bool DomainSerializerV1::store(IlwisObject *obj, int options)
 {
     Domain *dom = static_cast<Domain *>(obj);
     quint64 valueType = dom->valueType();
     _stream << valueType;
 
-    if (!StreamConnectorV1::store(obj, options))
+    if (!VersionedSerializer::store(obj, options))
         return false;
 
     if ( dom->ilwisType() == itITEMDOMAIN){
@@ -39,9 +39,9 @@ bool StreamDomainDataInterfaceV1::store(IlwisObject *obj, int options)
 
 }
 
-bool StreamDomainDataInterfaceV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
+bool DomainSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 {
-    if (!StreamConnectorV1::loadMetaData(obj, options))
+    if (!VersionedSerializer::loadMetaData(obj, options))
         return false;
 
 

@@ -6,14 +6,15 @@ namespace Stream {
 
 
 
-class StreamRasterDataInterfaceV1 : public StreamCoverageDataInterfaceV1
+class RasterSerializerV1 : public CoverageSerializerV1
 {
 public:
-    StreamRasterDataInterfaceV1(QDataStream& stream);
+    RasterSerializerV1(QDataStream& stream);
 
     bool store(IlwisObject *obj, int options);
     bool loadMetaData(IlwisObject*obj, const IOOptions & options);
-    static DataInterface *create(QDataStream &stream);
+    bool loadData(IlwisObject *data, const IOOptions &options);
+    static VersionedSerializer *create(QDataStream &stream);
 
 private:
 
