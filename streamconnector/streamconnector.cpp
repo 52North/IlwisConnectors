@@ -9,6 +9,14 @@
 #include "catalogconnector.h"
 #include "streamconnector.h"
 #include "versionedserializer.h"
+#include "domain.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "table.h"
+#include "coverage.h"
+#include "feature.h"
+#include "featurecoverage.h"
+#include "raster.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "versioneddatastreamfactory.h"
@@ -24,13 +32,23 @@ ConnectorInterface *StreamConnector::create(const Resource &resource, bool load,
 
 IlwisObject *StreamConnector::create() const
 {
-    return 0;
+    switch(_resource.ilwisType()){
+    case itFEATURE:
+        return new FeatureCoverage(_resource);
+    case itRASTER:
+        return new RasterCoverage(_resource);
+    default:
+        return 0;
+    }
 }
 
 
 StreamConnector::StreamConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource,load,options)
 {
-
+    QString url = resource.url().toString();
+    url.replace(0,7,"http:");
+    _resource.code("serialize");
+    _resource.setUrl(url, true);
 }
 
 StreamConnector::~StreamConnector()
@@ -95,7 +113,7 @@ bool StreamConnector::loadData(IlwisObject *data, const IOOptions &options){
 bool StreamConnector::openSource(bool reading){
     QUrl url = _resource.url(true);
     QString scheme = url.scheme();
-    if ( _resource.code() == "serialized"){
+    if ( _resource.code() == "serialized" || scheme == "remote"){
         _bytes.resize(STREAMBLOCKSIZE);
         _bytes.fill(0);
         QBuffer *buf = new QBuffer(&_bytes);
