@@ -206,6 +206,9 @@ RasterCoverage* RasterCoverage::toRasterCoverage(Object* obj){
     return ptr;
 }
 
+CoordinateSystem RasterCoverage::coordinateSystem(){
+    return CoordinateSystem(new Ilwis::ICoordinateSystem(this->ptr()->as<Ilwis::RasterCoverage>()->georeference()->coordinateSystem()));
+}
 
 GeoReference RasterCoverage::geoReference(){
     return GeoReference(new Ilwis::IGeoReference(this->ptr()->as<Ilwis::RasterCoverage>()->georeference()));
@@ -222,12 +225,12 @@ DataDefinition& RasterCoverage::datadef() const{
 }
 
 void RasterCoverage::setDataDef(DataDefinition* datdef){
-    Ilwis::DataDefinition& ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
+    Ilwis::DataDefinition& ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadefRef();
     ilwdef = datdef->ptr();
 }
 
 void RasterCoverage::setDataDef(Domain& dm){
-    Ilwis::DataDefinition& ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
+    Ilwis::DataDefinition& ilwdef = this->ptr()->as<Ilwis::RasterCoverage>()->datadefRef();
     DataDefinition* newDef = new DataDefinition(dm);
     ilwdef = newDef->ptr();
 }
@@ -274,7 +277,7 @@ RasterCoverage RasterCoverage::select(std::string selectionQ){
 
         map2->coordinateSystem(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
         map2->georeference(grf);
-        map2->datadef() = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
+        map2->datadefRef() = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
 
         Ilwis::PixelIterator iterOut(map2, geom);
 
@@ -303,6 +306,11 @@ RasterCoverage* RasterCoverage::reprojectRaster(std::string newName, quint32 eps
     Ilwis::ICoordinateSystem targetIlwCsy = targetPyCsy->ptr()->as<Ilwis::CoordinateSystem>();
     Ilwis::IGeoReference georef = this->geoReference().ptr()->as<Ilwis::GeoReference>();
     Ilwis::ICoordinateSystem sourceCsy = georef->coordinateSystem();
+    if(sourceCsy->name() == "unknown"){
+        this->geoReference().setCoordinateSystem(*targetPyCsy);
+        delete targetPyCsy;
+        return this;
+    }
     Ilwis::Envelope env  = this->ptr()->as<Ilwis::RasterCoverage>()->envelope();
     env = sourceCsy->convertEnvelope(targetIlwCsy, env);
     Ilwis::BoundingBox bo = georef->coord2Pixel(env);

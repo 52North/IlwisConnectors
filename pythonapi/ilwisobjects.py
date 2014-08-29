@@ -600,10 +600,6 @@ class Coverage(IlwisObject):
         """coordinateSystem(Coverage self) -> CoordinateSystem"""
         return _ilwisobjects.Coverage_coordinateSystem(self)
 
-    def setCoordinateSystem(self, *args):
-        """setCoordinateSystem(Coverage self, CoordinateSystem cs)"""
-        return _ilwisobjects.Coverage_setCoordinateSystem(self, *args)
-
     def envelope(self):
         """envelope(Coverage self) -> Envelope"""
         return _ilwisobjects.Coverage_envelope(self)
@@ -1736,6 +1732,10 @@ class FeatureCoverage(Coverage):
         """geometryType(FeatureCoverage self, Geometry geom) -> IlwisTypes"""
         return _ilwisobjects.FeatureCoverage_geometryType(self, *args)
 
+    def setCoordinateSystem(self, *args):
+        """setCoordinateSystem(FeatureCoverage self, CoordinateSystem cs)"""
+        return _ilwisobjects.FeatureCoverage_setCoordinateSystem(self, *args)
+
     __swig_destroy__ = _ilwisobjects.delete_FeatureCoverage
     __del__ = lambda self : None;
 FeatureCoverage_swigregister = _ilwisobjects.FeatureCoverage_swigregister
@@ -2081,6 +2081,10 @@ class RasterCoverage(Coverage):
     def unloadBinary(self):
         """unloadBinary(RasterCoverage self)"""
         return _ilwisobjects.RasterCoverage_unloadBinary(self)
+
+    def coordinateSystem(self):
+        """coordinateSystem(RasterCoverage self) -> CoordinateSystem"""
+        return _ilwisobjects.RasterCoverage_coordinateSystem(self)
 
     def geoReference(self):
         """geoReference(RasterCoverage self) -> GeoReference"""

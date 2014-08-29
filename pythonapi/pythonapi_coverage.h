@@ -35,7 +35,6 @@ namespace pythonapi{
             void setTable(Table& tbl, AttributeType attType=atCOVERAGE);
             bool hasAttributes(AttributeType attType=atCOVERAGE) const;
             CoordinateSystem coordinateSystem();
-            void setCoordinateSystem(const CoordinateSystem &cs);
             pythonapi::Envelope envelope();
             void setEnvelope(const pythonapi::Envelope& env);
             void indexDomain(const Domain& dom);

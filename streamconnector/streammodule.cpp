@@ -60,6 +60,7 @@ void StreamModule::prepare()
     factory->prepare();
     kernel()->addFactory(factory );
 
+
     VersionedDataStreamFactory *versionFactory = new VersionedDataStreamFactory();
     kernel()->addFactory(versionFactory);
 
@@ -77,6 +78,10 @@ void StreamModule::prepare()
     if (!cfactory)
         return ;
 
+    //inputconnectors
+    cfactory->addCreator(itILWISOBJECT  ,"stream", StreamConnector::create);
+
+    //outputconnectors
     cfactory->addCreator("featurecoverage","stream",StreamConnector::create);
     cfactory->addCreator("rastercoverage","stream",StreamConnector::create);
 

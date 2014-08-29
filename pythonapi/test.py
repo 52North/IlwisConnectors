@@ -36,7 +36,7 @@ try:
             self.assertEqual(t.name(), "rainfall.shp")
             self.assertEqual(
                 ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
-                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
+                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT'),
                 t.columns()
             )
             self.assertEqual(Const.iUNDEF, t.columnIndex("unknownColumn"))
@@ -89,7 +89,7 @@ try:
             self.assertFalse(fc.isInternal(), msg="created a new table object with that name!!")
             self.assertEqual(
                 ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
-                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'feature_id'),
+                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT'),
                 fc.attributeTable().columns()
             )
 
@@ -389,9 +389,8 @@ try:
 
         def test_IssueLogger(self):
             disconnectIssueLogger()
-            with self.assertRaises(IlwisException, msg="Error message cascade"):
-                 fc = FeatureCoverage(workingDir + "/noneexistentDir/nonexistent.file")
-            #self.assertFalse(bool(fc))
+            fc = FeatureCoverage(workingDir + "/noneexistentDir/nonexistent.file")
+            self.assertFalse(bool(fc))
             connectIssueLogger()
 
         def test_ilwisTypes(self):
@@ -631,7 +630,7 @@ try:
             self.assertEqual(f["DateTime"], datetime.datetime(2014, 2, 27))
 
             tup = ('12', datetime.datetime(2014, 2, 27, 0, 0), datetime.time(12, 42, 33, 120000),
-                   datetime.datetime(2014, 2, 27, 0, 0), Const.rUNDEF, 2.34e-31, 3295)
+                   datetime.datetime(2014, 2, 27, 0, 0), Const.rUNDEF, 2.34e-31)
             rec = fc.attributeTable().record(0)
             self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
             self.assertEqual(len(rec), len(fc.attributeTable().columns()))
@@ -2071,6 +2070,7 @@ try:
             datdef1.domain(colDomDiff)
             self.assertEqual(str(datdef1), str(datdef3))
 
+    #@ut.skip("temporarily")
     class TestIndexDomainRaster(ut.TestCase):
         def setUp(self):
             try:

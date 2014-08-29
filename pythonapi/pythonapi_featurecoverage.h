@@ -38,6 +38,7 @@ namespace pythonapi {
         quint32 maxIndex() const;
         FeatureCoverage *clone();
         IlwisTypes geometryType(const Geometry& geom);
+        void setCoordinateSystem(const CoordinateSystem &cs);
     };
 }
 

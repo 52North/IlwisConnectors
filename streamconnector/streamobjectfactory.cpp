@@ -28,22 +28,22 @@ StreamObjectFactory::StreamObjectFactory() : IlwisObjectFactory("IlwisObjectFact
 
 bool StreamObjectFactory::canUse(const Resource &resource) const
 {
-//    if ( resource.url().scheme() == "ilwis") // can't use anything marked as internal
-//        return false;
+    if ( resource.url().scheme() != "remote") // can't use anything marked as internal
+        return false;
 
-//    IlwisTypes type = resource.ilwisType() ;
-//    if ( type & itDOMAIN)
-//        return true;
-//    else if ( type & itCOORDSYSTEM)
-//        return true;
-//    else if ( type & itRASTER)
-//        return true;
-//    else if ( type & itGEOREF)
-//        return true;
-//    else if ( type & itFEATURE)
-//        return true;
-//    else if ( type & itTABLE)
-//        return true;
+    IlwisTypes type = resource.ilwisType() ;
+    if ( type & itDOMAIN)
+        return true;
+    else if ( type & itCOORDSYSTEM)
+        return true;
+    else if ( type & itRASTER)
+        return true;
+    else if ( type & itGEOREF)
+        return true;
+    else if ( type & itFEATURE)
+        return true;
+    else if ( type & itTABLE)
+        return true;
     return false;
 }
 
