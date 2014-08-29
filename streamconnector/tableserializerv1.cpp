@@ -52,6 +52,7 @@ bool TableSerializerV1::store(IlwisObject *obj, int options)
         auto record = tbl->record(rec);
         _stream << record.itemid();
         for(int col = 0; col < tbl->columnCount(); ++col){
+
             switch (types[col]){
             case itUINT8:
                 _stream << record.cell(col).toUInt();break;
@@ -138,6 +139,8 @@ bool TableSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 
     for(quint32 rec = 0; rec < recordCount; ++rec){
         std::vector<QVariant> record(columnCount);
+        quint64 itemid;
+        _stream >> itemid;
         for(int col = 0; col < columnCount; ++col){
             switch(types[col]){
             case itUINT8:
@@ -176,6 +179,7 @@ bool TableSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
             }
         }
         tbl->record(NEW_RECORD,record);
+       // tbl->recordRef(tbl->recordCount() - 1).itemid(itemid);
     }
     return true;
 }
