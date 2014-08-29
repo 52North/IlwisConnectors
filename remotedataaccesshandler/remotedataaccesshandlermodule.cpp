@@ -44,7 +44,7 @@ void RemoteDataAccessHandlerModule::finalizePreparation()
 {
     HTTP::HTTPRequestHandlerFactory *factory = kernel()->factory<HTTP::HTTPRequestHandlerFactory>("ilwis::HTTPRequestHandlerFactory");
     if ( factory){
-        factory->addHandler("/remotedataaccess", RemoteDataAccessRequestHandler::create);
+        factory->addHandler("/dataaccess", RemoteDataAccessRequestHandler::create);
     }
 }
 
