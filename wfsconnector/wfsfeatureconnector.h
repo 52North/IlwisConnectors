@@ -15,7 +15,7 @@
 namespace Ilwis {
 namespace Wfs {
 
-class WFSCONNECTORSHARED_EXPORT WfsFeatureConnector : public QObject, public IlwisObjectConnector
+class WFSCONNECTORSHARED_EXPORT WfsFeatureConnector : public IlwisObjectConnector
 {
     Q_OBJECT
 
