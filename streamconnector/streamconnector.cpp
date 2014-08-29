@@ -19,6 +19,7 @@
 #include "raster.h"
 #include "factory.h"
 #include "abstractfactory.h"
+#include "downloadmanager.h"
 #include "versioneddatastreamfactory.h"
 
 
@@ -45,9 +46,10 @@ IlwisObject *StreamConnector::create() const
 
 StreamConnector::StreamConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource,load,options)
 {
-    QString url = resource.url().toString();
+    QString url =  resource.url().toString();
     url.replace(0,7,"http:");
     _resource.code("serialized");
+
     _resource.setUrl(url, true);
 }
 
@@ -56,31 +58,11 @@ StreamConnector::~StreamConnector()
 
 }
 
-bool StreamConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
+bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options)
 {
-    if (!openSource(true))
-        return false;
-    QDataStream stream(_datasource.get());
-    quint64 type;
-    stream >> type;
-    QString version;
-    stream >> version;
+    DownloadManager manager(_resource);
+    return manager.loadMetaData(object,options);
 
-
-    VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
-    if (factory){
-        _versionedConnector.reset( factory->create(version,type,stream));
-    }
-
-    if (!_versionedConnector)
-        return false;
-    _versionedConnector->connector(this);
-    bool ok =  _versionedConnector->loadMetaData(data, options);
-
-    _datasource->close();
-    _versionedConnector.reset(0);
-
-    return ok;
 
 }
 
@@ -180,11 +162,6 @@ void StreamConnector::flush(bool last)
     if ( _resource.url().scheme() == "file") // we dont flush with files; OS does this
         return;
     QBuffer *buf = static_cast<QBuffer *>(_datasource.get());
-    QFile file("d:/temp/dump.bin");
-    if ( file.open(QIODevice::WriteOnly)) {
-        file.write(buf->data(),buf->data().size());
-        file.close();
-    }
     emit dataAvailable(buf,true);
 
 }
