@@ -49,7 +49,8 @@ HEADERS += \
     streamconnector/ellipsoidserializerv1.h \
     streamconnector/domainserializerv1.h \
     streamconnector/coverageserializerv1.h \
-    streamconnector/coordinatesystemserializerv1.h
+    streamconnector/coordinatesystemserializerv1.h \
+    streamconnector/downloadmanager.h    
 
 SOURCES += \
     streamconnector/streammodule.cpp \
@@ -66,7 +67,8 @@ SOURCES += \
     streamconnector/domainserializerv1.cpp \
     streamconnector/coverageserializerv1.cpp \
     streamconnector/coordinatesystemserializerv1.cpp \
-    streamconnector/versioneddatastreamfactory.cpp
+    streamconnector/versioneddatastreamfactory.cpp \
+    streamconnector/downloadmanager.cpp
 
 
 
