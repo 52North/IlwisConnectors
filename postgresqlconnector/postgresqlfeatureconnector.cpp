@@ -71,10 +71,10 @@ bool PostgresqlFeatureConnector::loadData(IlwisObject *data, const IOOptions& op
     qDebug() << "PostgresqlFeatureConnector::loadData()";
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
-    if ( !loadMetaData(fcoverage)) {
-        ERROR1(ERR_NO_INITIALIZED_1, source().name());
-        return false;
-    }
+//    if ( !loadMetaData(fcoverage)) {
+//        ERROR1(ERR_NO_INITIALIZED_1, source().name());
+//        return false;
+//    }
     PostgresqlFeatureCoverageLoader loader(source());
     return loader.loadData(fcoverage);
 }
@@ -82,6 +82,10 @@ bool PostgresqlFeatureConnector::loadData(IlwisObject *data, const IOOptions& op
 bool PostgresqlFeatureConnector::store(IlwisObject *data)
 {
     qDebug() << "PostgresqlFeatureConnector::store()";
+
+    // TODO store data back to table
+
+    // store features
 
     return false;
 }
