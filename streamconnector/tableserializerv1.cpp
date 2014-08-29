@@ -50,6 +50,7 @@ bool TableSerializerV1::store(IlwisObject *obj, int options)
     }
     for(int rec = 0; rec < tbl->recordCount(); ++rec){
         auto record = tbl->record(rec);
+        _stream << record.itemid();
         for(int col = 0; col < tbl->columnCount(); ++col){
             switch (types[col]){
             case itUINT8:
