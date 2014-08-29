@@ -47,7 +47,7 @@ StreamConnector::StreamConnector(const Ilwis::Resource &resource, bool load, con
 {
     QString url = resource.url().toString();
     url.replace(0,7,"http:");
-    _resource.code("serialize");
+    _resource.code("serialized");
     _resource.setUrl(url, true);
 }
 
@@ -180,6 +180,11 @@ void StreamConnector::flush(bool last)
     if ( _resource.url().scheme() == "file") // we dont flush with files; OS does this
         return;
     QBuffer *buf = static_cast<QBuffer *>(_datasource.get());
+    QFile file("d:/temp/dump.bin");
+    if ( file.open(QIODevice::WriteOnly)) {
+        file.write(buf->data(),buf->data().size());
+        file.close();
+    }
     emit dataAvailable(buf,true);
 
 }
