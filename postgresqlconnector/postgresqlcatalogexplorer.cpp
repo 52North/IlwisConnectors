@@ -1,6 +1,4 @@
 #include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
 
 #include "kernel.h"
 #include "resource.h"
@@ -27,10 +25,6 @@ CatalogExplorer *PostgresqlCatalogExplorer::create(const Resource &resource, con
 
 PostgresqlCatalogExplorer::PostgresqlCatalogExplorer(const Resource &resource, const IOOptions &options) : CatalogExplorer(resource, options)
 {
-    if (canUse(resource)) {
-        // TODO discuss this workaround
-        PostgresqlDatabaseUtil::openForResource(source(), "exploreitems");
-    }
 }
 
 PostgresqlCatalogExplorer::~PostgresqlCatalogExplorer()
@@ -40,6 +34,8 @@ PostgresqlCatalogExplorer::~PostgresqlCatalogExplorer()
 
 std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
 {
+    qDebug() << "PostgresqlCatalogExplorer::loadItems()";
+
     QString schema("public");
     if (source().hasProperty("pg.schema")) {
         schema = source()["pg.schema"].toString();
@@ -59,6 +55,7 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
     //qDebug() << "SQL: " << sqlBuilder;
 
     std::vector<Resource> resources;
+    PostgresqlDatabaseUtil::openForResource(source(), "exploreitems");
     QSqlDatabase db = QSqlDatabase::database("exploreitems");
     QSqlQuery query = db.exec(sqlBuilder);
 
@@ -109,7 +106,8 @@ bool PostgresqlCatalogExplorer::canUse(const Resource &resource) const
         return false;
     if (resource.url().scheme() != "postgresql")
         return false;
-    return true;
+    QString dbName = resource.url().path();
+    return dbName.length() != 0;
 }
 
 QString PostgresqlCatalogExplorer::provider() const
