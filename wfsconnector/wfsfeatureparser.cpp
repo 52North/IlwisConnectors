@@ -486,15 +486,30 @@ QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList)
     QStringList coords = gmlPosList.split(" ");
     if (_context.srsDimension() == 2) {
         for (int i = 0; i < coords.size() - 1; i++) {
-            wktCoords.append(coords.at(i)).append(" ");
-            wktCoords.append(coords.at(++i)).append(" ");
+            QString first = coords.at(i);
+            QString second = coords.at(++i);
+            if (!WfsUtils::swapAxes(_fcoverage->source(), _fcoverage->coordinateSystem())) {
+                wktCoords.append(first).append(" ");
+                wktCoords.append(second).append(" ");
+            } else {
+                wktCoords.append(second).append(" ");
+                wktCoords.append(first).append(" ");
+            }
             wktCoords.append(", ");
         }
     } else if (_context.srsDimension() == 3) {
         for (int i = 0; i < coords.size() - 2; i++) {
-            wktCoords.append(coords.at(i)).append(" ");
-            wktCoords.append(coords.at(++i)).append(" ");
-            wktCoords.append(coords.at(++i));
+            QString first = coords.at(i);
+            QString second = coords.at(++i);
+            QString third = coords.at(++i);
+            if (!WfsUtils::swapAxes(_fcoverage->source(), _fcoverage->coordinateSystem())) {
+                wktCoords.append(first).append(" ");
+                wktCoords.append(second).append(" ");
+            } else {
+                wktCoords.append(second).append(" ");
+                wktCoords.append(first).append(" ");
+            }
+            wktCoords.append(third);
             wktCoords.append(", ");
         }
     }

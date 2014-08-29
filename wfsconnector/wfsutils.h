@@ -1,6 +1,8 @@
 #ifndef WFSUTILS_H
 #define WFSUTILS_H
 
+#include <QCoreApplication>
+
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "symboltable.h"
@@ -109,6 +111,50 @@ public:
     {
         return gmlName.contains("Point");
     }
+
+    static bool swapAxes(const Resource resource, const ICoordinateSystem crs)
+    {
+        bool latLonOrder = isDefinedAsLatLonAxesOrder(crs);
+        bool forceXY = isForcedXYOrder(resource);
+        return latLonOrder && forceXY;
+    }
+
+    static bool isForcedXYOrder(const Resource resource)
+    {
+        return !(resource.hasProperty("forceXY")
+                 && resource["forceXY"].toBool());
+    }
+
+    static bool isDefinedAsLatLonAxesOrder(ICoordinateSystem crs)
+    {
+        /*
+         * Definition taken from
+         *
+         * http://www.geotoolkit.org/modules/referencing/supported-codes.html
+         *
+         * download file and use extract_epsgCodes_with_forcedXY.py to extract
+         */
+
+        QString path = QCoreApplication::applicationDirPath();
+        QFile file(path+"/+resources/codes_with_latlon_order.txt");
+//        if ( !file->open(QIODevice::ReadOnly)) {
+//            QFileInfo fileInfo(file);
+//            ERROR1("Could not open file '%1'! Please check, if file is deployed before execution!",fileInfo.absoluteFilePath());
+//        }
+
+        bool isLatLon = false;
+        QTextStream in(&file);
+        while ( !in.atEnd() ) {
+            QString line = in.readLine();
+            if (crs->code().compare(line, Qt::CaseInsensitive) == 0) {
+                isLatLon = true;
+                break;
+            }
+        }
+        file.close();
+        return isLatLon;
+    }
+
 
 private:
     static void checkVersionCompatibility(QString kvpValueVersions) {
