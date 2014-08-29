@@ -12,7 +12,7 @@ public:
     StreamConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     virtual ~StreamConnector();
 
-    bool loadMetaData(IlwisObject* data,const IOOptions&);
+    bool loadMetaData(IlwisObject* object, const IOOptions&);
     bool loadData(IlwisObject *data, const IOOptions &options);
 
     QString provider() const;
