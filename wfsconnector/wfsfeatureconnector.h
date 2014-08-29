@@ -1,8 +1,6 @@
 #ifndef WFSFEATURECONNECTOR_H
 #define WFSFEATURECONNECTOR_H
 
-#include <QObject>
-
 #include "wfsconnector_global.h"
 
 #include "kernel.h"
@@ -15,10 +13,8 @@
 namespace Ilwis {
 namespace Wfs {
 
-class WFSCONNECTORSHARED_EXPORT WfsFeatureConnector : public QObject, public IlwisObjectConnector
+class WFSCONNECTORSHARED_EXPORT WfsFeatureConnector : public IlwisObjectConnector
 {
-    Q_OBJECT
-
 public:
     static ConnectorInterface *create(const Resource &resource, bool load=true, const IOOptions &options=IOOptions());
     WfsFeatureConnector(const Resource &resource, bool load=true, const IOOptions &options=IOOptions());
