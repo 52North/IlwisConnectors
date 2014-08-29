@@ -99,9 +99,6 @@ bool PostgresqlTableLoader::loadData(Table *table) const
     QString allNonGeometryColumns;
     for (int i = 0; i < table->columnCount(); i++) {
         ColumnDefinition& coldef = table->columndefinitionRef(i);
-        if (coldef.name() == FEATUREIDCOLUMN) {
-            continue; // coverage-only attribute
-        }
         allNonGeometryColumns.append(" ").append(coldef.name()).append(" ,");
     }
     allNonGeometryColumns = allNonGeometryColumns.left(allNonGeometryColumns.length() - 1);
@@ -112,9 +109,6 @@ bool PostgresqlTableLoader::loadData(Table *table) const
         std::vector<QVariant> record(table->columnCount());
         for (int i = 0; i < table->columnCount(); i++) {
             ColumnDefinition& coldef = table->columndefinitionRef(i);
-            if (coldef.name() == FEATUREIDCOLUMN) {
-                continue; // if coverage table
-            }
             DataDefinition& datadef = coldef.datadef();
             if( !datadef.domain().isValid()) {
                 WARN2(ERR_NO_INITIALIZED_2, "domain", coldef.name());
@@ -158,9 +152,7 @@ bool PostgresqlTableLoader::createColumnDefinition(Table *table, QSqlQuery *quer
     } else if (udtName == "bool") {
         domain.prepare("boolean", itBOOL);
     } else if (udtName == "geometry") {
-        // table describes features
-        table->addColumn(FEATUREIDCOLUMN, "count");
-        return true;
+        return true; // handled automatically
     } else {
         MESSAGE1("No domain handle for db type '%1')", udtName);
         return false;
