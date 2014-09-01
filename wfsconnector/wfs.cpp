@@ -56,6 +56,7 @@ WfsResponse *WebFeatureService::performRequest(QUrlQuery query, QString wfsReque
         query.removeQueryItem("version");
         query.addQueryItem("version", "1.1.0");
     }
+    QString ss = _resource.toString();
     QUrl wfsUrl = _resource;
     wfsUrl.setQuery(query);
 
