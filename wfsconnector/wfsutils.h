@@ -136,11 +136,12 @@ public:
          */
 
         QString path = QCoreApplication::applicationDirPath();
-        QFile file(path+"/+resources/codes_with_latlon_order.txt");
-//        if ( !file->open(QIODevice::ReadOnly)) {
-//            QFileInfo fileInfo(file);
-//            ERROR1("Could not open file '%1'! Please check, if file is deployed before execution!",fileInfo.absoluteFilePath());
-//        }
+        QFile file(path+"/wfsconnector/resources/codes_with_latlon_order.txt");
+        if ( !file.exists() || !file.open(QIODevice::ReadOnly)) {
+            QFileInfo fileInfo(file);
+            ERROR1("Could not open file '%1'! Please check, if file is deployed before execution!",fileInfo.absoluteFilePath());
+            return false;
+        }
 
         bool isLatLon = false;
         QTextStream in(&file);
