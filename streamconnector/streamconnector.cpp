@@ -136,6 +136,7 @@ bool StreamConnector::store(IlwisObject *obj, int options){
 
     if (!_versionedConnector)
         return false;
+    _versionedConnector->connector(this);
     bool ok = _versionedConnector->store(obj, options);
 
     flush(true);
