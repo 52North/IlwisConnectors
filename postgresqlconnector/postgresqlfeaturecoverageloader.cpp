@@ -47,11 +47,8 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
     }
 
     fcoverage->attributeTable(featureTable);
-    if (featureTable->column(FEATUREIDCOLUMN).size() != 0) {
-        setFeatureCount(fcoverage);
-        setSpatialMetadata(fcoverage);
-    }
-
+    setFeatureCount(fcoverage);
+    setSpatialMetadata(fcoverage);
     return true;
 }
 
