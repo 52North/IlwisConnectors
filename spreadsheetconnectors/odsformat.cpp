@@ -110,6 +110,9 @@ void ODSFormat::cellValue(quint32 col, quint32 row, const QVariant &value, bool 
 
 quint32 ODSFormat::rowCount() const
 {
+    if ( _rows->size() == 0)
+        return _currentSheet->CalcRowCount();
+
     return _rows->size();
 }
 

@@ -97,7 +97,7 @@ bool SpreadSheetTableConnector::loadMetaData(IlwisObject *data, const Ilwis::IOO
     }
     std::vector<ColInfo> columnType(_spreadsheet->columnCount());
 
-    int rowCount = std::min(_spreadsheet->rowCount(), (quint32)20);
+    int rowCount = _spreadsheet->rowCount();
     for(int row = 0; row < rowCount; ++row){
         if (! _spreadsheet->isRowValid( row))
             continue;
@@ -117,6 +117,10 @@ bool SpreadSheetTableConnector::loadMetaData(IlwisObject *data, const Ilwis::IOO
     }
 
     Table * tbl = static_cast<Table *>(data);
+
+    if(ok)
+        rowCount -= 1;
+    tbl->recordCount(rowCount);
     setColumnDefinitions(tbl,columnType);
 
     return true;
