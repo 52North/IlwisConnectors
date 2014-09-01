@@ -16,6 +16,7 @@ try:
     featureDir = "/feature"
     rasterDir = "/raster"
     integrationDir = "/integration"
+    spreadDir = "/spread"
 
     import unittest as ut
 
@@ -2135,9 +2136,39 @@ try:
 
             self.assertTrue(vals1 == vals2)
 
+    class TestSpreadsheet(ut.TestCase):
+        def setUp(self):
+            try:
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir + spreadDir)
+                connectIssueLogger()
+            except IlwisException:
+                self.skipTest("could not set working directory!")
+
+        def test_columns(self):
+            opt = IOOptions("headerline", 0)
+            tab = Table("simpleTest1.xlsx", opt)
+            self.assertEqual(tab.columns(), ('column1', 'column2', 'column3'))
+            self.assertEqual(tab.columnCount(), 3)
+            self.assertEqual(tab.column(0), tab.column("column1"))
+            self.assertEqual(tab.column(0), ('cell11', 'cell21'))
+            self.assertEqual(tab.columnIndex("column3"), 2)
+
+        def test_records(self):
+            opt = IOOptions("headerline", 0)
+            tab = Table("simpleLibre.ods", opt)
+            self.assertEqual(tab.record(1), ('cell21', 'cell22', 345.3))
+            self.assertEqual(tab.recordCount(), 3)
+
+        def test_access(self):
+            opt = IOOptions("headerline", 0)
+            tab = Table("simpleTest1.xlsx", opt)
+
+
+
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest=None, verbosity=2)
+        ut.main(defaultTest='TestSpreadsheet', verbosity=2)
 
 except ImportError as e:
     print(e)

@@ -144,25 +144,25 @@ void NumericRange::set(const NumericRange &vr)
     setMin(vr.min());
 }
 
-NumericRangeIterator NumericRange::__iter__(){
-    return NumericRangeIterator(this);
-}
+//NumericRangeIterator NumericRange::__iter__(){
+//    return NumericRangeIterator(this);
+//}
 
-NumericRangeIterator NumericRange::begin(){
-    Ilwis::NumericRange* ilwRng = static_cast<Ilwis::NumericRange*>(_range.get());
-    Ilwis::NumericRangeIterator* ilwIt = new Ilwis::NumericRangeIterator(Ilwis::begin(*ilwRng));
-    NumericRangeIterator pyIt(ilwIt);
-    pyIt.setRange(this);
-    return pyIt;
-}
+//NumericRangeIterator NumericRange::begin(){
+//    Ilwis::NumericRange* ilwRng = static_cast<Ilwis::NumericRange*>(_range.get());
+//    Ilwis::NumericRangeIterator* ilwIt = new Ilwis::NumericRangeIterator(Ilwis::begin(*ilwRng));
+//    NumericRangeIterator pyIt(ilwIt);
+//    pyIt.setRange(this);
+//    return pyIt;
+//}
 
-NumericRangeIterator NumericRange::end(){
-    Ilwis::NumericRange* ilwRng = static_cast<Ilwis::NumericRange*>(_range.get());
-    Ilwis::NumericRangeIterator* ilwIt = new Ilwis::NumericRangeIterator(Ilwis::end(*ilwRng));
-    NumericRangeIterator pyIt(ilwIt);
-    pyIt.setRange(this);
-    return pyIt;
-}
+//NumericRangeIterator NumericRange::end(){
+//    Ilwis::NumericRange* ilwRng = static_cast<Ilwis::NumericRange*>(_range.get());
+//    Ilwis::NumericRangeIterator* ilwIt = new Ilwis::NumericRangeIterator(Ilwis::end(*ilwRng));
+//    NumericRangeIterator pyIt(ilwIt);
+//    pyIt.setRange(this);
+//    return pyIt;
+//}
 
 void NumericRange::clear()
 {
@@ -183,6 +183,10 @@ quint32 ItemRange::count()
 void ItemRange::clear()
 {
     static_cast<Ilwis::ItemRange*>(_range.get())->clear();
+}
+
+ItemRangeIterator ItemRange::__iter__(){
+    return ItemRangeIterator(this);
 }
 
 //------------------------------------------------------------
@@ -312,6 +316,16 @@ void NamedItemRange::add(PyObject *item)
 
 }
 
+PyObject* NamedItemRange::listAll(){
+    int entries = this->count();
+    PyObject* list = newPyList(entries);
+    for(int i=0; i < entries; i++){
+        Ilwis::DomainItem* item = static_cast<Ilwis::NamedIdentifierRange*>(_range.get())->item(i).data();
+        setListItem(list, i, PyBuildString(static_cast<Ilwis::NamedIdentifier*>(item)->name().toStdString()));
+    }
+    return list;
+}
+
 qint32 NamedItemRange::gotoIndex(qint32 index, qint32 step) const
 {
     return static_cast<Ilwis::NamedIdentifierRange*>(_range.get())->gotoIndex(index, step);
@@ -364,6 +378,22 @@ void ThematicRange::add(PyObject *item)
         Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description});
         static_cast<Ilwis::ItemRange*>(_range.get())->add(titem);
     }
+}
+
+PyObject* ThematicRange::listAll(){
+    int entries = this->count();
+    PyObject* list = newPyList(entries);
+    for(int i=0; i < entries; i++){
+        Ilwis::DomainItem* item = static_cast<Ilwis::ThematicRange*>(_range.get())->item(i).data();
+
+        PyObject* tuple = newPyTuple(3);
+        setTupleItem(tuple, 0, PyBuildString(static_cast<Ilwis::ThematicItem*>(item)->name().toStdString()));
+        setTupleItem(tuple, 1, PyBuildString(static_cast<Ilwis::ThematicItem*>(item)->code().toStdString()));
+        setTupleItem(tuple, 2, PyBuildString(static_cast<Ilwis::ThematicItem*>(item)->description().toStdString()));
+
+        setListItem(list, i, tuple);
+    }
+    return list;
 }
 
 ThematicRange *ThematicRange::clone()

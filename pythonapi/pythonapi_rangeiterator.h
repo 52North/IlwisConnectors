@@ -7,12 +7,15 @@
 namespace Ilwis{
     template<typename OutputType, typename RangeType> class RangeIterator;
     class NumericRange;
+    class ItemRange;
 }
 
 namespace pythonapi{
 
     class Range;
     class NumericRange;
+    class DomainItem;
+    class ItemRange;
 
     template< class T >
     struct TypeIsDouble
@@ -36,7 +39,7 @@ public:
     std::string __str__();
     RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>* __iter__();
     OutputType __next__();
-    OutputType __float__();
+    OutputType current();
     OutputType __getitem__(quint32 pos);
 
     RangeIterator<OutputType, RangeType, IlwOutput, IlwRange> __radd__(int n);
@@ -62,7 +65,8 @@ protected:
 
 };
 
-typedef RangeIterator<double, NumericRange, double, Ilwis::NumericRange> NumericRangeIterator;
+//typedef RangeIterator<double, NumericRange, double, Ilwis::NumericRange> NumericRangeIterator;
+typedef RangeIterator<DomainItem, ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange> ItemRangeIterator;
 }
 
 #endif // PYTHONAPI_RANGEITERATOR_H

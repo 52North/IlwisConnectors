@@ -440,192 +440,6 @@ def CoordinateSystem_toCoordinateSystem(*args):
   """CoordinateSystem_toCoordinateSystem(Object obj) -> CoordinateSystem"""
   return _ilwisobjects.CoordinateSystem_toCoordinateSystem(*args)
 
-class Table(IlwisObject):
-    """Proxy of C++ pythonapi::Table class"""
-    __swig_setmethods__ = {}
-    for _s in [IlwisObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Table, name, value)
-    __swig_getmethods__ = {}
-    for _s in [IlwisObject]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
-    __getattr__ = lambda self, name: _swig_getattr(self, Table, name)
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        """
-        __init__(pythonapi::Table self) -> Table
-        __init__(pythonapi::Table self, std::string resource) -> Table
-        """
-        this = _ilwisobjects.new_Table(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def columnCount(self):
-        """columnCount(Table self) -> quint32"""
-        return _ilwisobjects.Table_columnCount(self)
-
-    def columns(self):
-        """columns(Table self) -> PyObject *"""
-        return _ilwisobjects.Table_columns(self)
-
-    def addColumn(self, *args):
-        """
-        addColumn(Table self, std::string const & name, std::string const & domain) -> bool
-        addColumn(Table self, ColumnDefinition coldef) -> bool
-        """
-        return _ilwisobjects.Table_addColumn(self, *args)
-
-    def columnIndex(self, *args):
-        """columnIndex(Table self, std::string const & name) -> qint32"""
-        return _ilwisobjects.Table_columnIndex(self, *args)
-
-    def column(self, *args):
-        """
-        column(Table self, std::string const & name) -> PyObject
-        column(Table self, quint32 columnIndex) -> PyObject *
-        """
-        return _ilwisobjects.Table_column(self, *args)
-
-    def recordCount(self):
-        """recordCount(Table self) -> quint32"""
-        return _ilwisobjects.Table_recordCount(self)
-
-    def select(self, *args):
-        """select(Table self, std::string const & conditions) -> PyObject *"""
-        return _ilwisobjects.Table_select(self, *args)
-
-    def record(self, *args):
-        """record(Table self, quint32 rec) -> PyObject *"""
-        return _ilwisobjects.Table_record(self, *args)
-
-    def cell(self, *args):
-        """
-        cell(Table self, std::string const & name, quint32 rec) -> PyObject
-        cell(Table self, quint32 colIndex, quint32 rec) -> PyObject *
-        """
-        return _ilwisobjects.Table_cell(self, *args)
-
-    def setCell(self, *args):
-        """
-        setCell(Table self, std::string const & name, quint32 rec, PyObject const * value)
-        setCell(Table self, quint32 colIndex, quint32 rec, PyObject const * value)
-        setCell(Table self, std::string const & name, quint32 rec, qint64 value)
-        setCell(Table self, quint32 colIndex, quint32 rec, qint64 value)
-        setCell(Table self, std::string const & name, quint32 rec, std::string value)
-        setCell(Table self, quint32 colIndex, quint32 rec, std::string value)
-        setCell(Table self, std::string const & name, quint32 rec, double value)
-        setCell(Table self, quint32 colIndex, quint32 rec, double value)
-        """
-        return _ilwisobjects.Table_setCell(self, *args)
-
-    def toTable(*args):
-        """toTable(Object obj) -> Table"""
-        return _ilwisobjects.Table_toTable(*args)
-
-    if _newclass:toTable = staticmethod(toTable)
-    __swig_getmethods__["toTable"] = lambda x: toTable
-    def columnDefinition(self, *args):
-        """
-        columnDefinition(Table self, std::string const & name) -> ColumnDefinition
-        columnDefinition(Table self, quint32 index) -> ColumnDefinition
-        """
-        return _ilwisobjects.Table_columnDefinition(self, *args)
-
-    def setColumnDefinition(self, *args):
-        """
-        setColumnDefinition(Table self, ColumnDefinition coldef)
-        setColumnDefinition(Table self, std::string const & name, ColumnDefinition coldef)
-        setColumnDefinition(Table self, quint32 index, ColumnDefinition coldef)
-        """
-        return _ilwisobjects.Table_setColumnDefinition(self, *args)
-
-    __swig_destroy__ = _ilwisobjects.delete_Table
-    __del__ = lambda self : None;
-Table_swigregister = _ilwisobjects.Table_swigregister
-Table_swigregister(Table)
-
-def Table_toTable(*args):
-  """Table_toTable(Object obj) -> Table"""
-  return _ilwisobjects.Table_toTable(*args)
-
-class Coverage(IlwisObject):
-    """Proxy of C++ pythonapi::Coverage class"""
-    __swig_setmethods__ = {}
-    for _s in [IlwisObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Coverage, name, value)
-    __swig_getmethods__ = {}
-    for _s in [IlwisObject]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
-    __getattr__ = lambda self, name: _swig_getattr(self, Coverage, name)
-    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
-    __repr__ = _swig_repr
-    atCOVERAGE = _ilwisobjects.Coverage_atCOVERAGE
-    atINDEX = _ilwisobjects.Coverage_atINDEX
-    __swig_destroy__ = _ilwisobjects.delete_Coverage
-    __del__ = lambda self : None;
-    def addAttribute(self, *args):
-        """
-        addAttribute(Coverage self, std::string const & name, std::string const & domain) -> bool
-        addAttribute(Coverage self, std::string const & name, Domain domain) -> bool
-        addAttribute(Coverage self, ColumnDefinition domain) -> bool
-        """
-        return _ilwisobjects.Coverage_addAttribute(self, *args)
-
-    def attributeCount(self):
-        """attributeCount(Coverage self) -> quint32"""
-        return _ilwisobjects.Coverage_attributeCount(self)
-
-    def attributes(self):
-        """attributes(Coverage self) -> PyObject *"""
-        return _ilwisobjects.Coverage_attributes(self)
-
-    def attributeTable(self, *args):
-        """
-        attributeTable(Coverage self, pythonapi::Coverage::AttributeType attType=atCOVERAGE) -> Table
-        attributeTable(Coverage self) -> Table
-        """
-        return _ilwisobjects.Coverage_attributeTable(self, *args)
-
-    def setTable(self, *args):
-        """
-        setTable(Coverage self, Table tbl, pythonapi::Coverage::AttributeType attType=atCOVERAGE)
-        setTable(Coverage self, Table tbl)
-        """
-        return _ilwisobjects.Coverage_setTable(self, *args)
-
-    def hasAttributes(self, *args):
-        """
-        hasAttributes(Coverage self, pythonapi::Coverage::AttributeType attType=atCOVERAGE) -> bool
-        hasAttributes(Coverage self) -> bool
-        """
-        return _ilwisobjects.Coverage_hasAttributes(self, *args)
-
-    def coordinateSystem(self):
-        """coordinateSystem(Coverage self) -> CoordinateSystem"""
-        return _ilwisobjects.Coverage_coordinateSystem(self)
-
-    def envelope(self):
-        """envelope(Coverage self) -> Envelope"""
-        return _ilwisobjects.Coverage_envelope(self)
-
-    def setEnvelope(self, *args):
-        """setEnvelope(Coverage self, Envelope env)"""
-        return _ilwisobjects.Coverage_setEnvelope(self, *args)
-
-    def indexDomain(self, *args):
-        """indexDomain(Coverage self, Domain dom)"""
-        return _ilwisobjects.Coverage_indexDomain(self, *args)
-
-    def indexValues(self):
-        """indexValues(Coverage self) -> PyObject *"""
-        return _ilwisobjects.Coverage_indexValues(self)
-
-    def value(self, *args):
-        """
-        value(Coverage self, std::string const & colName, quint32 itemid, qint32 layerIndex=-1) -> PyObject
-        value(Coverage self, std::string const & colName, quint32 itemid) -> PyObject *
-        """
-        return _ilwisobjects.Coverage_value(self, *args)
-
-Coverage_swigregister = _ilwisobjects.Coverage_swigregister
-Coverage_swigregister(Coverage)
-
 class Coordinate(_object):
     """Proxy of C++ pythonapi::Coordinate class"""
     __swig_setmethods__ = {}
@@ -1321,6 +1135,193 @@ class NumericStatistics(_object):
     __del__ = lambda self : None;
 NumericStatistics_swigregister = _ilwisobjects.NumericStatistics_swigregister
 NumericStatistics_swigregister(NumericStatistics)
+
+class Table(IlwisObject):
+    """Proxy of C++ pythonapi::Table class"""
+    __swig_setmethods__ = {}
+    for _s in [IlwisObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Table, name, value)
+    __swig_getmethods__ = {}
+    for _s in [IlwisObject]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, Table, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        """
+        __init__(pythonapi::Table self) -> Table
+        __init__(pythonapi::Table self, std::string resource, IOOptions opt=pythonapi::IOOptions()) -> Table
+        __init__(pythonapi::Table self, std::string resource) -> Table
+        """
+        this = _ilwisobjects.new_Table(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def columnCount(self):
+        """columnCount(Table self) -> quint32"""
+        return _ilwisobjects.Table_columnCount(self)
+
+    def columns(self):
+        """columns(Table self) -> PyObject *"""
+        return _ilwisobjects.Table_columns(self)
+
+    def addColumn(self, *args):
+        """
+        addColumn(Table self, std::string const & name, std::string const & domain) -> bool
+        addColumn(Table self, ColumnDefinition coldef) -> bool
+        """
+        return _ilwisobjects.Table_addColumn(self, *args)
+
+    def columnIndex(self, *args):
+        """columnIndex(Table self, std::string const & name) -> qint32"""
+        return _ilwisobjects.Table_columnIndex(self, *args)
+
+    def column(self, *args):
+        """
+        column(Table self, std::string const & name) -> PyObject
+        column(Table self, quint32 columnIndex) -> PyObject *
+        """
+        return _ilwisobjects.Table_column(self, *args)
+
+    def recordCount(self):
+        """recordCount(Table self) -> quint32"""
+        return _ilwisobjects.Table_recordCount(self)
+
+    def select(self, *args):
+        """select(Table self, std::string const & conditions) -> PyObject *"""
+        return _ilwisobjects.Table_select(self, *args)
+
+    def record(self, *args):
+        """record(Table self, quint32 rec) -> PyObject *"""
+        return _ilwisobjects.Table_record(self, *args)
+
+    def cell(self, *args):
+        """
+        cell(Table self, std::string const & name, quint32 rec) -> PyObject
+        cell(Table self, quint32 colIndex, quint32 rec) -> PyObject *
+        """
+        return _ilwisobjects.Table_cell(self, *args)
+
+    def setCell(self, *args):
+        """
+        setCell(Table self, std::string const & name, quint32 rec, PyObject const * value)
+        setCell(Table self, quint32 colIndex, quint32 rec, PyObject const * value)
+        setCell(Table self, std::string const & name, quint32 rec, qint64 value)
+        setCell(Table self, quint32 colIndex, quint32 rec, qint64 value)
+        setCell(Table self, std::string const & name, quint32 rec, std::string value)
+        setCell(Table self, quint32 colIndex, quint32 rec, std::string value)
+        setCell(Table self, std::string const & name, quint32 rec, double value)
+        setCell(Table self, quint32 colIndex, quint32 rec, double value)
+        """
+        return _ilwisobjects.Table_setCell(self, *args)
+
+    def toTable(*args):
+        """toTable(Object obj) -> Table"""
+        return _ilwisobjects.Table_toTable(*args)
+
+    if _newclass:toTable = staticmethod(toTable)
+    __swig_getmethods__["toTable"] = lambda x: toTable
+    def columnDefinition(self, *args):
+        """
+        columnDefinition(Table self, std::string const & name) -> ColumnDefinition
+        columnDefinition(Table self, quint32 index) -> ColumnDefinition
+        """
+        return _ilwisobjects.Table_columnDefinition(self, *args)
+
+    def setColumnDefinition(self, *args):
+        """
+        setColumnDefinition(Table self, ColumnDefinition coldef)
+        setColumnDefinition(Table self, std::string const & name, ColumnDefinition coldef)
+        setColumnDefinition(Table self, quint32 index, ColumnDefinition coldef)
+        """
+        return _ilwisobjects.Table_setColumnDefinition(self, *args)
+
+    __swig_destroy__ = _ilwisobjects.delete_Table
+    __del__ = lambda self : None;
+Table_swigregister = _ilwisobjects.Table_swigregister
+Table_swigregister(Table)
+
+def Table_toTable(*args):
+  """Table_toTable(Object obj) -> Table"""
+  return _ilwisobjects.Table_toTable(*args)
+
+class Coverage(IlwisObject):
+    """Proxy of C++ pythonapi::Coverage class"""
+    __swig_setmethods__ = {}
+    for _s in [IlwisObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Coverage, name, value)
+    __swig_getmethods__ = {}
+    for _s in [IlwisObject]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, Coverage, name)
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    atCOVERAGE = _ilwisobjects.Coverage_atCOVERAGE
+    atINDEX = _ilwisobjects.Coverage_atINDEX
+    __swig_destroy__ = _ilwisobjects.delete_Coverage
+    __del__ = lambda self : None;
+    def addAttribute(self, *args):
+        """
+        addAttribute(Coverage self, std::string const & name, std::string const & domain) -> bool
+        addAttribute(Coverage self, std::string const & name, Domain domain) -> bool
+        addAttribute(Coverage self, ColumnDefinition domain) -> bool
+        """
+        return _ilwisobjects.Coverage_addAttribute(self, *args)
+
+    def attributeCount(self):
+        """attributeCount(Coverage self) -> quint32"""
+        return _ilwisobjects.Coverage_attributeCount(self)
+
+    def attributes(self):
+        """attributes(Coverage self) -> PyObject *"""
+        return _ilwisobjects.Coverage_attributes(self)
+
+    def attributeTable(self, *args):
+        """
+        attributeTable(Coverage self, pythonapi::Coverage::AttributeType attType=atCOVERAGE) -> Table
+        attributeTable(Coverage self) -> Table
+        """
+        return _ilwisobjects.Coverage_attributeTable(self, *args)
+
+    def setTable(self, *args):
+        """
+        setTable(Coverage self, Table tbl, pythonapi::Coverage::AttributeType attType=atCOVERAGE)
+        setTable(Coverage self, Table tbl)
+        """
+        return _ilwisobjects.Coverage_setTable(self, *args)
+
+    def hasAttributes(self, *args):
+        """
+        hasAttributes(Coverage self, pythonapi::Coverage::AttributeType attType=atCOVERAGE) -> bool
+        hasAttributes(Coverage self) -> bool
+        """
+        return _ilwisobjects.Coverage_hasAttributes(self, *args)
+
+    def coordinateSystem(self):
+        """coordinateSystem(Coverage self) -> CoordinateSystem"""
+        return _ilwisobjects.Coverage_coordinateSystem(self)
+
+    def envelope(self):
+        """envelope(Coverage self) -> Envelope"""
+        return _ilwisobjects.Coverage_envelope(self)
+
+    def setEnvelope(self, *args):
+        """setEnvelope(Coverage self, Envelope env)"""
+        return _ilwisobjects.Coverage_setEnvelope(self, *args)
+
+    def indexDomain(self, *args):
+        """indexDomain(Coverage self, Domain dom)"""
+        return _ilwisobjects.Coverage_indexDomain(self, *args)
+
+    def indexValues(self):
+        """indexValues(Coverage self) -> PyObject *"""
+        return _ilwisobjects.Coverage_indexValues(self)
+
+    def value(self, *args):
+        """
+        value(Coverage self, std::string const & colName, quint32 itemid, qint32 layerIndex=-1) -> PyObject
+        value(Coverage self, std::string const & colName, quint32 itemid) -> PyObject *
+        """
+        return _ilwisobjects.Coverage_value(self, *args)
+
+Coverage_swigregister = _ilwisobjects.Coverage_swigregister
+Coverage_swigregister(Coverage)
 
 class Geometry(Object):
     """Proxy of C++ pythonapi::Geometry class"""
@@ -2440,6 +2441,99 @@ class TimeDomain(Domain):
 TimeDomain_swigregister = _ilwisobjects.TimeDomain_swigregister
 TimeDomain_swigregister(TimeDomain)
 
+class ItemRangeIterator(_object):
+    """Proxy of C++ pythonapi::RangeIterator<(pythonapi::DomainItem,pythonapi::ItemRange,Ilwis::SPDomainItem,Ilwis::ItemRange)> class"""
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, ItemRangeIterator, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, ItemRangeIterator, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        """
+        __init__(pythonapi::RangeIterator<(pythonapi::DomainItem,pythonapi::ItemRange,Ilwis::SPDomainItem,Ilwis::ItemRange)> self, Range rng) -> ItemRangeIterator
+        __init__(pythonapi::RangeIterator<(pythonapi::DomainItem,pythonapi::ItemRange,Ilwis::SPDomainItem,Ilwis::ItemRange)> self, ItemRangeIterator iter) -> ItemRangeIterator
+        __init__(pythonapi::RangeIterator<(pythonapi::DomainItem,pythonapi::ItemRange,Ilwis::SPDomainItem,Ilwis::ItemRange)> self, Ilwis::RangeIterator< Ilwis::SPDomainItem,Ilwis::ItemRange > * iter) -> ItemRangeIterator
+        """
+        this = _ilwisobjects.new_ItemRangeIterator(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def __bool__(self):
+        """__bool__(ItemRangeIterator self) -> bool"""
+        return _ilwisobjects.ItemRangeIterator___bool__(self)
+
+    def __str__(self):
+        """__str__(ItemRangeIterator self) -> std::string"""
+        return _ilwisobjects.ItemRangeIterator___str__(self)
+
+    def __iter__(self):
+        """__iter__(ItemRangeIterator self) -> ItemRangeIterator"""
+        return _ilwisobjects.ItemRangeIterator___iter__(self)
+
+    def __next__(self):
+        """__next__(ItemRangeIterator self) -> DomainItem"""
+        return _ilwisobjects.ItemRangeIterator___next__(self)
+
+    def current(self):
+        """current(ItemRangeIterator self) -> DomainItem"""
+        return _ilwisobjects.ItemRangeIterator_current(self)
+
+    def __getitem__(self, *args):
+        """__getitem__(ItemRangeIterator self, quint32 pos) -> DomainItem"""
+        return _ilwisobjects.ItemRangeIterator___getitem__(self, *args)
+
+    def __radd__(self, *args):
+        """__radd__(ItemRangeIterator self, int n) -> ItemRangeIterator"""
+        return _ilwisobjects.ItemRangeIterator___radd__(self, *args)
+
+    def __add__(self, *args):
+        """__add__(ItemRangeIterator self, int n) -> ItemRangeIterator"""
+        return _ilwisobjects.ItemRangeIterator___add__(self, *args)
+
+    def __iadd__(self, *args):
+        """__iadd__(ItemRangeIterator self, int n) -> ItemRangeIterator"""
+        return _ilwisobjects.ItemRangeIterator___iadd__(self, *args)
+
+    def __sub__(self, *args):
+        """__sub__(ItemRangeIterator self, int n) -> ItemRangeIterator"""
+        return _ilwisobjects.ItemRangeIterator___sub__(self, *args)
+
+    def __isub__(self, *args):
+        """__isub__(ItemRangeIterator self, int n) -> ItemRangeIterator"""
+        return _ilwisobjects.ItemRangeIterator___isub__(self, *args)
+
+    def __eq__(self, *args):
+        """__eq__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
+        return _ilwisobjects.ItemRangeIterator___eq__(self, *args)
+
+    def __ne__(self, *args):
+        """__ne__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
+        return _ilwisobjects.ItemRangeIterator___ne__(self, *args)
+
+    def __gt__(self, *args):
+        """__gt__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
+        return _ilwisobjects.ItemRangeIterator___gt__(self, *args)
+
+    def __ge__(self, *args):
+        """__ge__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
+        return _ilwisobjects.ItemRangeIterator___ge__(self, *args)
+
+    def __lt__(self, *args):
+        """__lt__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
+        return _ilwisobjects.ItemRangeIterator___lt__(self, *args)
+
+    def __le__(self, *args):
+        """__le__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
+        return _ilwisobjects.ItemRangeIterator___le__(self, *args)
+
+    def setRange(self, *args):
+        """setRange(ItemRangeIterator self, Range rng)"""
+        return _ilwisobjects.ItemRangeIterator_setRange(self, *args)
+
+    __swig_destroy__ = _ilwisobjects.delete_ItemRangeIterator
+    __del__ = lambda self : None;
+ItemRangeIterator_swigregister = _ilwisobjects.ItemRangeIterator_swigregister
+ItemRangeIterator_swigregister(ItemRangeIterator)
+
 class Range(Object):
     """Proxy of C++ pythonapi::Range class"""
     __swig_setmethods__ = {}
@@ -2551,18 +2645,6 @@ class NumericRange(Range):
         """set(NumericRange self, NumericRange vr)"""
         return _ilwisobjects.NumericRange_set(self, *args)
 
-    def __iter__(self):
-        """__iter__(NumericRange self) -> NumericRangeIterator"""
-        return _ilwisobjects.NumericRange___iter__(self)
-
-    def begin(self):
-        """begin(NumericRange self) -> NumericRangeIterator"""
-        return _ilwisobjects.NumericRange_begin(self)
-
-    def end(self):
-        """end(NumericRange self) -> NumericRangeIterator"""
-        return _ilwisobjects.NumericRange_end(self)
-
     def clear(self):
         """clear(NumericRange self)"""
         return _ilwisobjects.NumericRange_clear(self)
@@ -2595,6 +2677,10 @@ class ItemRange(Range):
     def clear(self):
         """clear(ItemRange self)"""
         return _ilwisobjects.ItemRange_clear(self)
+
+    def __iter__(self):
+        """__iter__(ItemRange self) -> ItemRangeIterator"""
+        return _ilwisobjects.ItemRange___iter__(self)
 
     __swig_destroy__ = _ilwisobjects.delete_ItemRange
     __del__ = lambda self : None;
@@ -2689,6 +2775,10 @@ class NamedItemRange(ItemRange):
         """add(NamedItemRange self, PyObject * item)"""
         return _ilwisobjects.NamedItemRange_add(self, *args)
 
+    def listAll(self):
+        """listAll(NamedItemRange self) -> PyObject *"""
+        return _ilwisobjects.NamedItemRange_listAll(self)
+
     def gotoIndex(self, *args):
         """gotoIndex(NamedItemRange self, qint32 index, qint32 step) -> qint32"""
         return _ilwisobjects.NamedItemRange_gotoIndex(self, *args)
@@ -2724,6 +2814,10 @@ class ThematicRange(ItemRange):
         add(ThematicRange self, PyObject * item)
         """
         return _ilwisobjects.ThematicRange_add(self, *args)
+
+    def listAll(self):
+        """listAll(ThematicRange self) -> PyObject *"""
+        return _ilwisobjects.ThematicRange_listAll(self)
 
     def clone(self):
         """clone(ThematicRange self) -> ThematicRange"""
@@ -3331,99 +3425,6 @@ class Interval(DomainItem):
 Interval_swigregister = _ilwisobjects.Interval_swigregister
 Interval_swigregister(Interval)
 
-class NumericRangeIterator(_object):
-    """Proxy of C++ pythonapi::RangeIterator<(double,pythonapi::NumericRange,double,Ilwis::NumericRange)> class"""
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, NumericRangeIterator, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, NumericRangeIterator, name)
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        """
-        __init__(pythonapi::RangeIterator<(double,pythonapi::NumericRange,double,Ilwis::NumericRange)> self, Range rng) -> NumericRangeIterator
-        __init__(pythonapi::RangeIterator<(double,pythonapi::NumericRange,double,Ilwis::NumericRange)> self, NumericRangeIterator iter) -> NumericRangeIterator
-        __init__(pythonapi::RangeIterator<(double,pythonapi::NumericRange,double,Ilwis::NumericRange)> self, Ilwis::RangeIterator< double,Ilwis::NumericRange > * iter) -> NumericRangeIterator
-        """
-        this = _ilwisobjects.new_NumericRangeIterator(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def __bool__(self):
-        """__bool__(NumericRangeIterator self) -> bool"""
-        return _ilwisobjects.NumericRangeIterator___bool__(self)
-
-    def __str__(self):
-        """__str__(NumericRangeIterator self) -> std::string"""
-        return _ilwisobjects.NumericRangeIterator___str__(self)
-
-    def __iter__(self):
-        """__iter__(NumericRangeIterator self) -> NumericRangeIterator"""
-        return _ilwisobjects.NumericRangeIterator___iter__(self)
-
-    def __next__(self):
-        """__next__(NumericRangeIterator self) -> double"""
-        return _ilwisobjects.NumericRangeIterator___next__(self)
-
-    def __float__(self):
-        """__float__(NumericRangeIterator self) -> double"""
-        return _ilwisobjects.NumericRangeIterator___float__(self)
-
-    def __getitem__(self, *args):
-        """__getitem__(NumericRangeIterator self, quint32 pos) -> double"""
-        return _ilwisobjects.NumericRangeIterator___getitem__(self, *args)
-
-    def __radd__(self, *args):
-        """__radd__(NumericRangeIterator self, int n) -> NumericRangeIterator"""
-        return _ilwisobjects.NumericRangeIterator___radd__(self, *args)
-
-    def __add__(self, *args):
-        """__add__(NumericRangeIterator self, int n) -> NumericRangeIterator"""
-        return _ilwisobjects.NumericRangeIterator___add__(self, *args)
-
-    def __iadd__(self, *args):
-        """__iadd__(NumericRangeIterator self, int n) -> NumericRangeIterator"""
-        return _ilwisobjects.NumericRangeIterator___iadd__(self, *args)
-
-    def __sub__(self, *args):
-        """__sub__(NumericRangeIterator self, int n) -> NumericRangeIterator"""
-        return _ilwisobjects.NumericRangeIterator___sub__(self, *args)
-
-    def __isub__(self, *args):
-        """__isub__(NumericRangeIterator self, int n) -> NumericRangeIterator"""
-        return _ilwisobjects.NumericRangeIterator___isub__(self, *args)
-
-    def __eq__(self, *args):
-        """__eq__(NumericRangeIterator self, NumericRangeIterator other) -> bool"""
-        return _ilwisobjects.NumericRangeIterator___eq__(self, *args)
-
-    def __ne__(self, *args):
-        """__ne__(NumericRangeIterator self, NumericRangeIterator other) -> bool"""
-        return _ilwisobjects.NumericRangeIterator___ne__(self, *args)
-
-    def __gt__(self, *args):
-        """__gt__(NumericRangeIterator self, NumericRangeIterator other) -> bool"""
-        return _ilwisobjects.NumericRangeIterator___gt__(self, *args)
-
-    def __ge__(self, *args):
-        """__ge__(NumericRangeIterator self, NumericRangeIterator other) -> bool"""
-        return _ilwisobjects.NumericRangeIterator___ge__(self, *args)
-
-    def __lt__(self, *args):
-        """__lt__(NumericRangeIterator self, NumericRangeIterator other) -> bool"""
-        return _ilwisobjects.NumericRangeIterator___lt__(self, *args)
-
-    def __le__(self, *args):
-        """__le__(NumericRangeIterator self, NumericRangeIterator other) -> bool"""
-        return _ilwisobjects.NumericRangeIterator___le__(self, *args)
-
-    def setRange(self, *args):
-        """setRange(NumericRangeIterator self, Range rng)"""
-        return _ilwisobjects.NumericRangeIterator_setRange(self, *args)
-
-    __swig_destroy__ = _ilwisobjects.delete_NumericRangeIterator
-    __del__ = lambda self : None;
-NumericRangeIterator_swigregister = _ilwisobjects.NumericRangeIterator_swigregister
-NumericRangeIterator_swigregister(NumericRangeIterator)
-
 class ReadOnly(type):
   @property
   def sUNDEF(cls):
@@ -3436,7 +3437,7 @@ class ReadOnly(type):
     return 2147483645
   @property
   def rUNDEF(cls):
-    return -1e308
+    return -1e+308
   @property
   def flUNDEF(cls):
     return 1e38
