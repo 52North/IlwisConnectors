@@ -60,7 +60,7 @@ StreamConnector::~StreamConnector()
 
 bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options)
 {
-    DownloadManager manager(_resource);
+    DownloadManager manager(_resource, _manager);
     return manager.loadMetaData(object,options);
 
 

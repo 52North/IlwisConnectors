@@ -1,6 +1,8 @@
 #ifndef StreamConnector_H
 #define StreamConnector_H
 
+#include <QNetworkAccessManager>
+
 namespace Ilwis {
 namespace Stream {
 
@@ -24,6 +26,7 @@ private:
     std::unique_ptr<VersionedSerializer> _versionedConnector;
     std::unique_ptr<QIODevice> _datasource;
     QByteArray _bytes;
+    QNetworkAccessManager _manager;
 
 
     bool store(IlwisObject *obj, int options);
