@@ -18,7 +18,7 @@
 using namespace Ilwis;
 using namespace Stream;
 
-DownloadManager::DownloadManager(const Resource& resource) : _resource(resource)
+DownloadManager::DownloadManager(const Resource& resource,QNetworkAccessManager& manager) : _resource(resource), _manager(manager)
 {
 }
 
@@ -38,7 +38,10 @@ bool DownloadManager::loadMetaData(IlwisObject *object, const IOOptions &options
     connect(reply, &QNetworkReply::finished, this, &DownloadManager::finished);
 
     QEventLoop loop; // waits for request to complete
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
+
+    delete reply;
 
     return true;
 }
@@ -69,12 +72,6 @@ void DownloadManager::error(QNetworkReply::NetworkError code)
 
 void DownloadManager::finished()
 {
-    if (QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender())) {
-        _bytes.append(reply->readAll());
-        reply->deleteLater();
-
-
-    }
     QBuffer buf(&_bytes);
     buf.open(QIODevice::ReadWrite);
     QDataStream stream(&buf);
@@ -91,5 +88,7 @@ void DownloadManager::finished()
     if (!_versionedConnector)
         return ;
     _versionedConnector->loadMetaData(_object, IOOptions());
+
+    buf.close();
 }
 
