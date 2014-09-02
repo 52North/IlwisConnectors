@@ -73,6 +73,7 @@ void SpreadSheetTableConnector::setColumnDefinitions(Table * tbl, const std::vec
         } else if ( hasType(inf._type,itSTRING)) {
             coldef = ColumnDefinition(colname,DataDefinition({"text"}), _validColumnCount);
         }else{
+            count++;
             continue;
         }
         _validColumns[count++] = true;
