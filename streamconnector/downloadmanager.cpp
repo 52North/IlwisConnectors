@@ -22,6 +22,27 @@ DownloadManager::DownloadManager(const Resource& resource,QNetworkAccessManager&
 {
 }
 
+bool DownloadManager::loadData(IlwisObject *object, const IOOptions &options){
+    QUrl url = _resource.url(true);
+    _object = object;
+    QNetworkRequest request(url);
+
+    QNetworkReply *reply = _manager.get(request);
+
+    connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readReady);
+    connect(reply, &QNetworkReply::downloadProgress, this, &DownloadManager::downloadProgress);
+    connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &DownloadManager::error);
+    connect(reply, &QNetworkReply::finished, this, &DownloadManager::finishedData);
+
+    QEventLoop loop; // waits for request to complete
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    delete reply;
+
+    return true;
+}
+
 bool DownloadManager::loadMetaData(IlwisObject *object, const IOOptions &options)
 {
     QUrl url = _resource.url(true);
@@ -35,7 +56,7 @@ bool DownloadManager::loadMetaData(IlwisObject *object, const IOOptions &options
     connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readReady);
     connect(reply, &QNetworkReply::downloadProgress, this, &DownloadManager::downloadProgress);
     connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &DownloadManager::error);
-    connect(reply, &QNetworkReply::finished, this, &DownloadManager::finished);
+    connect(reply, &QNetworkReply::finished, this, &DownloadManager::finishedMetadata);
 
     QEventLoop loop; // waits for request to complete
     connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
@@ -70,7 +91,28 @@ void DownloadManager::error(QNetworkReply::NetworkError code)
     }
 }
 
-void DownloadManager::finished()
+void DownloadManager::finishedData()
+{
+    QBuffer buf(&_bytes);
+    buf.open(QIODevice::ReadWrite);
+    QDataStream stream(&buf);
+    quint64 type;
+    stream >> type;
+    QString version;
+    stream >> version;
+
+    VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+    if (factory){
+        _versionedConnector.reset( factory->create(version,type,stream));
+    }
+
+    if (!_versionedConnector)
+        return ;
+    _versionedConnector->loadData(_object, IOOptions());
+
+    buf.close();
+}
+void DownloadManager::finishedMetadata()
 {
     QBuffer buf(&_bytes);
     buf.open(QIODevice::ReadWrite);
