@@ -66,6 +66,42 @@ bool RasterSerializerV1::store(IlwisObject *obj, int options)
     if(!grfstreamer->store(raster->georeference().ptr(), options))
         return false;
 
+//    NumericStatistics& stats = raster->statistics(ContainerStatistics<double>::pBASIC);
+//    qint16 digits = stats.significantDigits();
+//    double scale = digits == 0 ? 0 : std::pow(10,-digits);
+//    RawConverter converter(stats[ContainerStatistics<double>::pMIN], stats[ContainerStatistics<double>::pMAX],scale);
+//    _stream << stats[ContainerStatistics<double>::pMIN] << stats[ContainerStatistics<double>::pMAX] << scale;
+//    quint64 count = 0;
+//    IRasterCoverage rcoverage(raster);
+//    switch (converter.storeType()){
+//    case itUINT8:
+//        storeBulk<quint8>(converter, _stream, rcoverage); break;
+//    case itINT16:
+//        storeBulk<qint16>(converter, _stream, rcoverage); break;
+//    case itINT32:
+//        storeBulk<qint32>(converter, _stream, rcoverage); break;
+//    case itINT64:
+//        for(double v : rcoverage)
+//            _stream << (qint64)v;
+//        break;
+//    default:
+//        for(double v : rcoverage){
+//            if ( count % STREAMBLOCKSIZE && _streamconnector->needFlush()){
+//                _streamconnector->flush(false);
+
+//            }
+//            ++count;
+//            _stream << v;
+//        }
+//        break;
+//    }
+    return true;
+
+}
+
+bool RasterSerializerV1::storeData(IlwisObject *obj, int )
+{
+     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
     NumericStatistics& stats = raster->statistics(ContainerStatistics<double>::pBASIC);
     qint16 digits = stats.significantDigits();
     double scale = digits == 0 ? 0 : std::pow(10,-digits);
@@ -96,7 +132,6 @@ bool RasterSerializerV1::store(IlwisObject *obj, int options)
         break;
     }
     return true;
-
 }
 
 bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
