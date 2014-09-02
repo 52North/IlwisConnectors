@@ -19,6 +19,7 @@ public:
     bool loadData(IlwisObject*, const IOOptions& options = IOOptions()) { return false; }
     bool dataIsLoaded() const { return false; }
     bool store(IlwisObject *obj, int );
+    virtual bool storeData(IlwisObject *obj, int ) { return true;} // not mandatory to implement this, so empty is ok
     void connector(StreamConnector *streamconnector);
 
 protected:
