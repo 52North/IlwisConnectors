@@ -46,11 +46,6 @@ IlwisObject *StreamConnector::create() const
 
 StreamConnector::StreamConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource,load,options)
 {
-    QString url =  resource.url().toString();
-    url.replace(0,7,"http:");
-    _resource.code("serialized");
-
-    _resource.setUrl(url, true);
 }
 
 StreamConnector::~StreamConnector()
@@ -94,8 +89,9 @@ bool StreamConnector::loadData(IlwisObject *data, const IOOptions &options){
 
 bool StreamConnector::openSource(bool reading){
     QUrl url = _resource.url(true);
-    QString scheme = url.scheme();
-    if ( _resource.code() == "serialized" || scheme == "remote"){
+    QUrlQuery query(url);
+    if ( query.queryItemValue("service") != "ilwisobjects") // can't use anything marked as internal
+    {
         _bytes.resize(STREAMBLOCKSIZE);
         _bytes.fill(0);
         QBuffer *buf = new QBuffer(&_bytes);
@@ -104,7 +100,8 @@ bool StreamConnector::openSource(bool reading){
         _datasource.reset(buf);
         return true;
     }
-    else if ( scheme == "file"){
+    QString scheme = url.scheme();
+    if ( scheme == "file"){
         QString filename = url.toLocalFile();
         QFile *file = new QFile(filename);
 
