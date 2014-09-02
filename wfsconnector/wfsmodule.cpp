@@ -67,8 +67,10 @@ void WfsModule::prepare()
     if (!cfactory)
         return;
 
+
+    cfactory->addCreator(itCATALOG, "wfs", CatalogConnector::create);
     cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
-    IlwisObject::addTypeFunction(WfsFeatureConnector::ilwisType);
+//    IlwisObject::addTypeFunction(WfsFeatureConnector::ilwisType);
 }
 
 QString WfsModule::getName() const
