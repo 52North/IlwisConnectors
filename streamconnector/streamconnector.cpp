@@ -90,7 +90,7 @@ bool StreamConnector::loadData(IlwisObject *data, const IOOptions &options){
 bool StreamConnector::openSource(bool reading){
     QUrl url = _resource.url(true);
     QUrlQuery query(url);
-    if ( query.queryItemValue("service") != "ilwisobjects") // can't use anything marked as internal
+    if ( query.queryItemValue("service") == "ilwisobjects") // can't use anything marked as internal
     {
         _bytes.resize(STREAMBLOCKSIZE);
         _bytes.fill(0);
@@ -134,7 +134,11 @@ bool StreamConnector::store(IlwisObject *obj, int options){
     if (!_versionedConnector)
         return false;
     _versionedConnector->connector(this);
-    bool ok = _versionedConnector->store(obj, options);
+    bool ok;
+    if ( options != IlwisObject::smBINARYDATA)
+        ok = _versionedConnector->store(obj, options);
+    else
+        ok = _versionedConnector->storeData(obj, options);
 
     flush(true);
 
