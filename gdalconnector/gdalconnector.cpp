@@ -73,7 +73,7 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
         return ERROR1(ERR_MISSING_DATA_FILE_1,"Gdal reading");
     }
 
-    QFileInfo fileinf = containerConnector()->toLocalFile(_filename);
+    QFileInfo fileinf (_filename.toLocalFile());
     _handle = gdal()->openFile(fileinf, data->id(), GA_ReadOnly,false); // no messages here
     if (!_handle){ // could be a container based object
         QString code = source().code();
@@ -152,7 +152,7 @@ OGRFieldType GdalConnector::ilwisType2GdalFieldType(IlwisTypes tp) {
 QString GdalConnector::constructOutputName(GDALDriverH hdriver) const
 {
     const char *cext = gdal()->getMetaDataItem(hdriver,GDAL_DMD_EXTENSION,NULL);
-    QFileInfo fileinfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(source());
+    QFileInfo fileinfo =source().toLocalFile();
     QString filename = fileinfo.absoluteFilePath();
     if ( cext != 0 ) {
         QString ext(cext);

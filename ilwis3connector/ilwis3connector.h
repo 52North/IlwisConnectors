@@ -40,7 +40,7 @@ protected:
     QString noExt(const QString& name);
     QString filename2FullPath(const QString &name, const Resource &owner=Resource()) const;
 
-    static IniFile *makeIni(const Resource& res,const UPCatalogConnector &container, IlwisTypes type);
+    static IniFile *makeIni(const Resource& res, IlwisTypes type);
     static QString suffix(IlwisTypes type) ;
 
     mutable ODF _odf;

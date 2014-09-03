@@ -325,7 +325,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &optio
         if ( datafile.right(1) != "#") { // can happen, # is a special token in urls
             datafile += "#";
         }
-        QFileInfo localfile =  this->containerConnector()->toLocalFile(QUrl::fromLocalFile(datafile));
+        QFileInfo localfile(datafile);
         QFile file(localfile.absoluteFilePath());
         if ( !file.exists()){
             return ERROR1(ERR_MISSING_DATA_FILE_1,datafile);
@@ -419,8 +419,8 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
         }
     }
     ITable attTable = raster->attributeTable();
-    if ( attTable.isValid()) {
-        attTable->store({"storemode",IlwisObject::smBINARYDATA});
+    if ( attTable.isValid() && attTable->isValid()) {
+         attTable->store({"storemode",IlwisObject::smBINARYDATA});
     }
     return ok;
 
@@ -475,7 +475,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         gcMap->store({"storemode",IlwisObject::smBINARYDATA | IlwisObject::smMETADATA});
     }
 
-    _odf->store("mpl", containerConnector()->toLocalFile(source()));
+    _odf->store("mpl",source().toLocalFile());
     return true;
 }
 
@@ -588,7 +588,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     _odf->setKeyValue("MapStore","SwapBytes","No");
     _odf->setKeyValue("MapStore","UseAs","No");
 
-    _odf->store("mpr", containerConnector()->toLocalFile(source()));
+    _odf->store("mpr", source().toLocalFile());
 
 
     return true;

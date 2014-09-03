@@ -332,7 +332,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
 
     }
     _odf->setKeyValue("TableStore", "StoreTime", Time::now().toString());
-    _odf->store("tbt", containerConnector()->toLocalFile(source()));
+    _odf->store("tbt", source().toLocalFile());
     return true;
 }
 

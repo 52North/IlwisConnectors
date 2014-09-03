@@ -43,7 +43,7 @@ std::vector<Ilwis::Resource> SpreadSheetCatalogExplorer::loadItems()
         }else {
             Resource res(file, itCATALOG);
             resources.push_back(res);
-            for (int worksheet_index = 0; sheetCount < sheetCount;
+            for (int worksheet_index = 0; worksheet_index < sheetCount;
                  worksheet_index++)
             {
                 QString sheetName = spreadsheet.spreadsheet()->sheetName(worksheet_index);
