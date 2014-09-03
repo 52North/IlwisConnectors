@@ -22,7 +22,7 @@ CoverageSerializerV1::CoverageSerializerV1(QDataStream &stream) : VersionedSeria
 
 }
 
-bool CoverageSerializerV1::store(IlwisObject *obj, int options)
+bool CoverageSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 {
     if (!VersionedSerializer::store(obj, options))
         return false;

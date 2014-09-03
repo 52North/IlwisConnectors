@@ -65,9 +65,9 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
     return true;
 }
 
-bool CoverageConnector::store(IlwisObject *obj, IlwisTypes type)
+bool CoverageConnector::store(IlwisObject *obj, const IOOptions &options)
 {
-    return GdalConnector::store(obj, type);
+    return GdalConnector::store(obj, options);
 }
 
 OGRSpatialReferenceH CoverageConnector::createSRS(const ICoordinateSystem& coordsystem) const{

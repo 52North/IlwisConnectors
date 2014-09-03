@@ -23,7 +23,7 @@ ProjectionSerializerV1::ProjectionSerializerV1(QDataStream &stream) : VersionedS
 {
 }
 
-bool ProjectionSerializerV1::store(IlwisObject *obj, int options)
+bool ProjectionSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 {
     if (!VersionedSerializer::store(obj, options))
         return false;

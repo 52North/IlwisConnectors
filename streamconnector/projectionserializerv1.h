@@ -9,7 +9,7 @@ class ProjectionSerializerV1 : public VersionedSerializer
 public:
     ProjectionSerializerV1(QDataStream& stream);
 
-    bool store(IlwisObject *obj, int options);
+    bool store(IlwisObject *obj,const IOOptions& options = IOOptions());
     bool loadMetaData(IlwisObject*obj, const IOOptions & options);
     static VersionedSerializer *create(QDataStream &stream);
 };

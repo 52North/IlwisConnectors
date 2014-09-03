@@ -29,7 +29,7 @@ private:
     QNetworkAccessManager _manager;
 
 
-    bool store(IlwisObject *obj, int options);
+    bool store(IlwisObject *obj,const IOOptions& options = IOOptions());
     bool openSource(bool reading);
     IlwisObject *create() const;
 };

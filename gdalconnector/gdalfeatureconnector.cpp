@@ -663,7 +663,7 @@ bool GdalFeatureConnector::loadDriver()
     return true;
 }
 
-bool GdalFeatureConnector::store(IlwisObject *obj, int )
+bool GdalFeatureConnector::store(IlwisObject *obj, const IOOptions&   )
 {
 
     if (!loadDriver())

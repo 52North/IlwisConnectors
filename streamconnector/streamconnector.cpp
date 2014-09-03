@@ -55,36 +55,16 @@ StreamConnector::~StreamConnector()
 
 bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options)
 {
+
     DownloadManager manager(_resource, _manager);
     return manager.loadMetaData(object,options);
 
 
 }
 
-bool StreamConnector::loadData(IlwisObject *data, const IOOptions &options){
-    if (!openSource(true))
-        return false;
-    QDataStream stream(_datasource.get());
-    quint64 type;
-    stream >> type;
-    QString version;
-    stream >> version;
-
-
-    VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
-    if (factory){
-        _versionedConnector.reset( factory->create(version,type,stream));
-    }
-
-    if (!_versionedConnector)
-        return false;
-
-    bool ok =  _versionedConnector->loadData(data, options);
-
-    _datasource->close();
-    _versionedConnector.reset(0);
-
-    return ok;
+bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
+    DownloadManager manager(_resource, _manager);
+    return manager.loadData(object,options);
 }
 
 bool StreamConnector::openSource(bool reading){
@@ -120,7 +100,7 @@ bool StreamConnector::openSource(bool reading){
 }
 
 
-bool StreamConnector::store(IlwisObject *obj, int options){
+bool StreamConnector::store(IlwisObject *obj, const IOOptions &options){
     if (!openSource(false))
         return false;
     QDataStream stream(_datasource.get());
@@ -135,7 +115,8 @@ bool StreamConnector::store(IlwisObject *obj, int options){
         return false;
     _versionedConnector->connector(this);
     bool ok;
-    if ( options != IlwisObject::smBINARYDATA)
+    int storemode = options["storemode"].toInt();
+    if ( storemode != IlwisObject::smBINARYDATA)
         ok = _versionedConnector->store(obj, options);
     else
         ok = _versionedConnector->storeData(obj, options);

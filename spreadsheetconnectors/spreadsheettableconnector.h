@@ -18,7 +18,7 @@ public:
     QString type() const;
     virtual IlwisObject *create() const;
     bool loadData(IlwisObject *, const Ilwis::IOOptions &options = IOOptions());
-    bool store(IlwisObject *object, int);
+    bool store(IlwisObject *object, const IOOptions& options = IOOptions());
     QString provider() const;
     const std::unique_ptr<SpreadSheet>& spreadsheet() const;
     bool isValid() const;

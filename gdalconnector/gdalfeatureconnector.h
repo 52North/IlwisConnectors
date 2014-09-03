@@ -17,7 +17,7 @@ public:
 
     bool loadMetaData(IlwisObject* data, const IOOptions &options);
     bool loadData(IlwisObject* data, const Ilwis::IOOptions &options);
-    bool store(IlwisObject *obj, int);
+    bool store(IlwisObject *obj,const IOOptions& options = IOOptions());
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     Ilwis::IlwisObject *create() const;
