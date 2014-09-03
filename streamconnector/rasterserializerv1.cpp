@@ -101,11 +101,14 @@ bool RasterSerializerV1::store(IlwisObject *obj, int options)
 
 bool RasterSerializerV1::storeData(IlwisObject *obj, int )
 {
-     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
+    _stream << itRASTER;
+    _stream << Version::IlwisVersion;
+    RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
     NumericStatistics& stats = raster->statistics(ContainerStatistics<double>::pBASIC);
     qint16 digits = stats.significantDigits();
     double scale = digits == 0 ? 0 : std::pow(10,-digits);
     RawConverter converter(stats[ContainerStatistics<double>::pMIN], stats[ContainerStatistics<double>::pMAX],scale);
+
     _stream << stats[ContainerStatistics<double>::pMIN] << stats[ContainerStatistics<double>::pMAX] << scale;
     quint64 count = 0;
     IRasterCoverage rcoverage(raster);
