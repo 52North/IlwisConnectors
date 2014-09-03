@@ -102,6 +102,8 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
 
 bool PostgresqlCatalogExplorer::canUse(const Resource &resource) const
 {
+    if ( resource.ilwisType() != itCATALOG)
+        return false;
     if (resource.url().scheme() != "postgresql")
         return false;
     QString dbName = resource.url().path();

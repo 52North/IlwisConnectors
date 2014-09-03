@@ -30,12 +30,10 @@ using namespace Postgresql;
 
 PostgresqlFeatureConnector::PostgresqlFeatureConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : PostgresqlConnector(resource, load,options)
 {
-    PostgresqlDatabaseUtil::openForResource(source(),"featureconnector");
 }
 
 PostgresqlFeatureConnector::~PostgresqlFeatureConnector()
 {
-    QSqlDatabase::removeDatabase("featureconnector");
 }
 
 IlwisObject *PostgresqlFeatureConnector::create() const

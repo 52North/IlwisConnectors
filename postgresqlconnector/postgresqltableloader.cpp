@@ -25,7 +25,6 @@ using namespace Postgresql;
 
 PostgresqlTableLoader::PostgresqlTableLoader(Resource resource): _resource(resource)
 {
-    PostgresqlDatabaseUtil::openForResource(_resource,"tableloader");
 }
 
 PostgresqlTableLoader::~PostgresqlTableLoader()
@@ -48,6 +47,7 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
     sqlBuilder.append(" table_name='").append(rawTablename).append("';");
     qDebug() << "SQL: " << sqlBuilder;
 
+    PostgresqlDatabaseUtil::openForResource(_resource, "tableloader");
     QSqlDatabase db = QSqlDatabase::database("tableloader");
     QSqlQuery columnTypesQuery = db.exec(sqlBuilder);
 
@@ -61,23 +61,6 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
             }
         }
     }
-
-//    sqlBuilder.clear();
-//    sqlBuilder.append("SELECT ");
-//    sqlBuilder.append(" count ( * ) ");
-//    sqlBuilder.append(" FROM ");
-//    sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
-//    sqlBuilder.append(";");
-//    qDebug() << "SQL: " << sqlBuilder;
-
-//    QSqlQuery countQuery = db.exec(sqlBuilder);
-
-//    if (countQuery.next()) {
-//        table->recordCount(countQuery.value(0).toInt());
-//    } else {
-//        ERROR2("Could not execute query '%1' on '%2'", sqlBuilder, rawTablename);
-//    }
-
     return table->isValid();
 }
 
@@ -90,6 +73,7 @@ QSqlQuery PostgresqlTableLoader::select(QString columns) const
     sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
     qDebug() << "SQL: " << sqlBuilder;
 
+    PostgresqlDatabaseUtil::openForResource(_resource,"tableloader");
     QSqlDatabase db = QSqlDatabase::database("tableloader");
     return db.exec(sqlBuilder);
 }

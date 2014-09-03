@@ -32,7 +32,7 @@ IlwisObject *PostgresqlTableConnector::create() const
 
 ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &resource, bool load,const IOOptions& options)
 {
-    qDebug() << "PostgresqlTableConnector::create() -> connector instance";
+    //qDebug() << "PostgresqlTableConnector::create() -> connector instance";
     return new PostgresqlTableConnector(resource, load, options);
 }
 
