@@ -20,7 +20,7 @@ EllipsoidSerializerV1::EllipsoidSerializerV1(QDataStream& stream) : VersionedSer
 {
 }
 
-bool EllipsoidSerializerV1::store(IlwisObject *obj, int options)
+bool EllipsoidSerializerV1::store(IlwisObject *obj,const IOOptions& options)
 {
     if (!VersionedSerializer::store(obj, options))
         return false;

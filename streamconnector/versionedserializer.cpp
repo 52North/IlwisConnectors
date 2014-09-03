@@ -48,7 +48,7 @@ bool VersionedSerializer::loadMetaData(IlwisObject *obj, const IOOptions &)
 
 }
 
-bool VersionedSerializer::store(IlwisObject *obj, int)
+bool VersionedSerializer::store(IlwisObject *obj, const IOOptions &options)
 {
     double mtime = (double)obj->modifiedTime();
     double ctime = (double)obj->createTime();
@@ -62,7 +62,7 @@ void VersionedSerializer::connector(StreamConnector *streamconnector)
     _streamconnector = streamconnector;
 }
 
-bool VersionedSerializer::storeDataDefintion(const DataDefinition &def, QDataStream &stream, int options) const
+bool VersionedSerializer::storeDataDefintion(const DataDefinition &def, QDataStream &stream, const IOOptions &options) const
 {
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     if (!factory)

@@ -208,12 +208,13 @@ QString Ilwis3Connector::unquote(const QString &name) const
 
 }
 
-bool Ilwis3Connector::store(IlwisObject *obj, int storemode)
+bool Ilwis3Connector::store(IlwisObject *obj, const IOOptions &options)
 {
     if(!willStore(obj))
         return false;
 
     bool ok = true;
+    int storemode = options["storemode"].toInt();
     if ( storemode & IlwisObject::smMETADATA)
         ok &= storeMetaData(obj);
     if ( ok && storemode & IlwisObject::smBINARYDATA)

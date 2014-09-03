@@ -25,7 +25,7 @@ TableSerializerV1::TableSerializerV1(QDataStream& stream) : VersionedSerializer(
 {
 }
 
-bool TableSerializerV1::store(IlwisObject *obj, int options)
+bool TableSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 {
     if (!VersionedSerializer::store(obj, options))
         return false;

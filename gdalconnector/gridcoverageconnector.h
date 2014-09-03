@@ -15,7 +15,7 @@ public:
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     Ilwis::IlwisObject *create() const;
-    bool store(IlwisObject *obj, int );
+    bool store(IlwisObject *obj,const IOOptions& options = IOOptions());
 
     bool setSRS(Coverage *raster, GDALDatasetH dataset) const;
     void reportError(GDALDatasetH dataset) const;

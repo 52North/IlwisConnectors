@@ -40,7 +40,7 @@ template<typename T> void loadBulk(const RawConverter& converter, QDataStream& s
     }
 }
 
-bool RasterSerializerV1::store(IlwisObject *obj, int options)
+bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 {
     if (!CoverageSerializerV1::store(obj, options))
         return false;
@@ -99,7 +99,7 @@ bool RasterSerializerV1::store(IlwisObject *obj, int options)
 
 }
 
-bool RasterSerializerV1::storeData(IlwisObject *obj, int )
+bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions & )
 {
     _stream << itRASTER;
     _stream << Version::IlwisVersion;
@@ -201,8 +201,9 @@ bool RasterSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
         break;
     }
     default:
-        for(double v : rcoverage)
+        for(double& v : rcoverage){
             _stream >> v;
+        }
         break;
     }
     return true;
