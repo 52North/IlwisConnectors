@@ -28,21 +28,24 @@ class DownloadManager : public QObject
 {
     Q_OBJECT
 public:
-    DownloadManager(const Ilwis::Resource &resource);
+    DownloadManager(const Ilwis::Resource &resource, QNetworkAccessManager &manager);
     bool loadMetaData(IlwisObject *object, const IOOptions &options);
+    bool loadData(IlwisObject *object, const IOOptions &options);
 
+public slots:
 protected slots:
     void readReady();
     void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
     void error(QNetworkReply::NetworkError code);
-    void finished();
+    void finishedMetadata();
+    void finishedData();
 
 private:
-    QNetworkAccessManager _manager;
+    Resource _resource;
+    QNetworkAccessManager& _manager;
     std::unique_ptr<VersionedSerializer> _versionedConnector;
     QByteArray _bytes;
     IlwisObject *_object;
-    Resource _resource;
 };
 }
 }

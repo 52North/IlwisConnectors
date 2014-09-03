@@ -420,7 +420,7 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
     }
     ITable attTable = raster->attributeTable();
     if ( attTable.isValid()) {
-        attTable->store(IlwisObject::smBINARYDATA);
+        attTable->store({"storemode",IlwisObject::smBINARYDATA});
     }
     return ok;
 
@@ -472,7 +472,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         QString path = _odf->file().left(index);
         QUrl url = makeUrl( path + "/" + mapName);
         gcMap->connectTo(url, "map", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
-        gcMap->store(IlwisObject::smBINARYDATA | IlwisObject::smMETADATA);
+        gcMap->store({"storemode",IlwisObject::smBINARYDATA | IlwisObject::smMETADATA});
     }
 
     _odf->store("mpl", containerConnector()->toLocalFile(source()));
@@ -504,7 +504,7 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
         grf->name(localName);
         QUrl url = makeUrl( _odf->file(), localName, itGEOREF);
         grf->connectTo(url, "georef", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
-        grf->store(IlwisObject::smMETADATA);
+        grf->store({"storemode", IlwisObject::smMETADATA});
         localName = url.toLocalFile();
     }
 

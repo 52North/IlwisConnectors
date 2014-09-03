@@ -18,7 +18,7 @@ DomainSerializerV1::DomainSerializerV1(QDataStream &stream) : VersionedSerialize
 {
 }
 
-bool DomainSerializerV1::store(IlwisObject *obj, int options)
+bool DomainSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 {
     Domain *dom = static_cast<Domain *>(obj);
     quint64 valueType = dom->valueType();

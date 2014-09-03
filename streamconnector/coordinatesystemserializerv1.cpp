@@ -29,7 +29,7 @@ CoordinateSystemSerializerV1::CoordinateSystemSerializerV1(QDataStream& stream) 
 {
 }
 
-bool CoordinateSystemSerializerV1::store(IlwisObject *obj, int options)
+bool CoordinateSystemSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 {
     if (!VersionedSerializer::store(obj, options))
         return false;

@@ -175,7 +175,7 @@ bool SpreadSheetTableConnector::loadData(IlwisObject *object, const IOOptions &o
 
 }
 
-bool SpreadSheetTableConnector::store(IlwisObject *object, int ){
+bool SpreadSheetTableConnector::store(IlwisObject *object, const IOOptions &options ){
     _spreadsheet->openSheet(_resource.toLocalFile(), false);
     if (!_spreadsheet->isValid())
         return false;

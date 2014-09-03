@@ -23,7 +23,7 @@ public:
     virtual bool storeMetaData(IlwisObject* )  { return false; }
     QString unquote(const QString &name) const;
 
-    bool store(IlwisObject *, int storemode);
+    bool store(IlwisObject *, const IOOptions& options = IOOptions());
 
 protected:
     bool willStore(const Ilwis::IlwisObject *obj) const;

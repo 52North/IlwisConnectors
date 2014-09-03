@@ -467,7 +467,7 @@ bool RasterCoverageConnector::loadDriver()
 
 
 
-bool RasterCoverageConnector::store(IlwisObject *obj, int )
+bool RasterCoverageConnector::store(IlwisObject *obj, const IOOptions & )
 {
     if(!loadDriver())
         return false;
