@@ -90,7 +90,7 @@ bool StreamConnector::loadData(IlwisObject *data, const IOOptions &options){
 bool StreamConnector::openSource(bool reading){
     QUrl url = _resource.url(true);
     QUrlQuery query(url);
-    if ( query.queryItemValue("service") == "ilwisobjects") // can't use anything marked as internal
+    if ( query.queryItemValue("service") == "ilwisobjects" || _resource.hasProperty("remote")) // can't use anything marked as internal
     {
         _bytes.resize(STREAMBLOCKSIZE);
         _bytes.fill(0);
