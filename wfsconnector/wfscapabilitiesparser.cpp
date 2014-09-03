@@ -56,7 +56,6 @@ QString WfsCapabilitiesParser::valueOf(QXmlItem &item, const QString& xpathQuqer
     UPXmlQuery& query = _parser->queryRelativeFrom(item, xpathQuqery);
     query->evaluateTo(&value);
     value = value.trimmed();
-
     return value;
 }
 
@@ -78,6 +77,9 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) co
     feature.addProperty("coordinatesystem", srs);
     feature.addProperty("envelope.ll", llText);
     feature.addProperty("envelope.ur", urText);
+
+    // override if datasource has forced XY axes order
+    feature.addProperty("forceXY", false);
 }
 
 void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl& rawUrl, QUrl& normalizedUrl) const

@@ -60,4 +60,5 @@ void PostgresqlModule::prepare()
 
     cfactory->addCreator(itFLATTABLE, "postgresql", PostgresqlTableConnector::create);
     cfactory->addCreator(itFEATURE, "postgresql", PostgresqlFeatureConnector::create);
+    cfactory->addCreator(itCATALOG, "postgresql", PostgresqlFeatureConnector::create);
 }

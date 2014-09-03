@@ -136,7 +136,7 @@ public:
          */
 
         QString path = QCoreApplication::applicationDirPath();
-        QFile file(path+"/wfsconnector/resources/codes_with_latlon_order.txt");
+        QFile file(path+"/extensions/wfsconnector/resources/codes_with_latlon_order.txt");
         if ( !file.exists() || !file.open(QIODevice::ReadOnly)) {
             QFileInfo fileInfo(file);
             ERROR1("Could not open file '%1'! Please check, if file is deployed before execution!",fileInfo.absoluteFilePath());
