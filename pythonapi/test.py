@@ -1529,11 +1529,11 @@ try:
         def test_containement(self):
             interrange = NumericItemRange()
             interrange.add(("sealevel", 40.0, 100.0))
-            interrange.add(("dijks", 100.0, 151.0))
+            interrange.add(("dijks", 101.0, 151.0))
 
             childdom = ItemDomain(interrange)
 
-            interrange.add(("by the sea", 151.0, 181.0, 5.0))
+            interrange.add(("by the sea", 152.0, 181.0, 5.0))
             parentdom = ItemDomain(interrange)
 
             childdom.setParent(parentdom)
@@ -2168,7 +2168,7 @@ try:
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest='TestSpreadsheet', verbosity=2)
+        ut.main(defaultTest=None, verbosity=2)
 
 except ImportError as e:
     print(e)

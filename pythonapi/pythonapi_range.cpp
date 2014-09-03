@@ -242,6 +242,21 @@ void NumericItemRange::add(PyObject *item)
     }
 }
 
+PyObject* NumericItemRange::listAll(){
+    int entries = this->count();
+    PyObject* list = newPyList(entries);
+    for(int i=0; i < entries; i++){
+        Ilwis::DomainItem* item = static_cast<Ilwis::IntervalRange*>(_range.get())->item(i).data();
+
+        PyObject* tuple = newPyTuple(2);
+        setTupleItem(tuple, 0, PyBuildString(static_cast<Ilwis::Interval*>(item)->name().toStdString()));
+        setTupleItem(tuple, 1, PyBuildString(static_cast<Ilwis::Interval*>(item)->range().toString().toStdString()));
+
+        setListItem(list, i, tuple);
+    }
+    return list;
+}
+
 double NumericItemRange::index(double v)
 {
     return static_cast<Ilwis::IntervalRange*>(_range.get())->index(v);
@@ -352,9 +367,9 @@ void ThematicRange::add(std::string name, std::string id, std::string descr){
     if(label == sUNDEF)
         return;
     if(id != "")
-        QString code = QString::fromStdString(id);
+        code = QString::fromStdString(id);
     if(descr != "")
-        QString description = QString::fromStdString(descr);
+        description = QString::fromStdString(descr);
 
     Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description});
     static_cast<Ilwis::ItemRange*>(_range.get())->add(titem);

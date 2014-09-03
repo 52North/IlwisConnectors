@@ -2709,6 +2709,10 @@ class NumericItemRange(ItemRange):
         """
         return _ilwisobjects.NumericItemRange_add(self, *args)
 
+    def listAll(self):
+        """listAll(NumericItemRange self) -> PyObject *"""
+        return _ilwisobjects.NumericItemRange_listAll(self)
+
     def index(self, *args):
         """index(NumericItemRange self, double arg2) -> double"""
         return _ilwisobjects.NumericItemRange_index(self, *args)
