@@ -209,7 +209,11 @@ void IniFile::store(const QString& ext, const QFileInfo& file )
     QString path = file.absoluteFilePath();
 
     if ( ext != "" && file.suffix() != ext ) {
-        path = file.absolutePath() + "/" + file.baseName() + "." + ext;
+        QString exts = "mprmpamppmpsdomtbtgrfcsympl";
+        if ( exts.indexOf(file.suffix()) != -1)
+            path = file.absolutePath() + "/" + file.baseName() + "." + ext;
+        else
+            path = file.absolutePath() + "/" + file.fileName() + "." + ext;
     }
     QFile fileIni(path);
 
