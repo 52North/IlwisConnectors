@@ -162,8 +162,8 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
     std::unique_ptr<DataInterface> grfstreamer(factory->create(version, itGEOREF,_stream));
     if ( !grfstreamer)
         return false;
-    GeoReference *georeference = new GeoReference();
-    grfstreamer->loadMetaData(georeference, options)    ;
+    IGeoReference georeference (type);
+    grfstreamer->loadMetaData(georeference.ptr(), options)    ;
     raster->georeference(georeference);
 
 
@@ -175,15 +175,20 @@ bool RasterSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
 {
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
+    int startBlock = 0;
     double mmin,  mmax, mscale;
     quint32 layer, minline, maxline;
     _stream >> mmin >> mmax >> mscale;
     _stream >> layer >> minline >> maxline;
     std::vector<quint32> blockList;
-
-    int startBlock = layer * raster->grid()->blocksPerBand();
-    for(quint32 startline = minline, count=0; startline < maxline; startline += raster->grid()->maxLines(), ++count ){
-        blockList.push_back(startBlock + count);
+    if ( layer == iUNDEF || minline == iUNDEF || maxline == iUNDEF){
+        for(int i=0; i < raster->grid()->blocks(); ++i)
+            blockList.push_back(i);
+    }else {
+        startBlock = layer * raster->grid()->blocksPerBand();
+        for(quint32 startline = minline, count=0; startline < maxline; startline += raster->grid()->maxLines(), ++count ){
+            blockList.push_back(startBlock + count);
+        }
     }
 
     RawConverter converter(mmin, mmax, mscale);

@@ -183,7 +183,13 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
     // create a suitable filepath
     if ( csy->code() != "unknown"){
         _csyName = Resource::toLocalFile(csy->source().url(),true, "csy");
-        if ( _csyName == sUNDEF || _csyName == "") {
+        if ( csy->isInternalObject()){
+            QString csyFile = Resource::toLocalFile(source().url(),false, "csy");
+            int index = csy->source().url().toString().lastIndexOf("/");
+            QString name = csy->source().url().toString().mid(index + 1);
+            _csyName =  QFileInfo(csyFile).absolutePath() + "/" + name;
+        }
+        else if ( _csyName == sUNDEF || _csyName == "") {
             QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
             QString name = csy->name();
             if ( !csy->isAnonymous()) {

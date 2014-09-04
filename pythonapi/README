@@ -8,9 +8,9 @@ TIP 2: Sometimes if you describe a folder location it is important if the slash 
 
 --1-- Python
 
-Download the 32bit version of Python 3.3.3 from this source:
+Download the 32bit version of Python 3.3.5 from this source:
 
-http://www.python.org/ftp/python/3.3.3/python-3.3.3.msi
+http://www.python.org/ftp/python/3.3.5/python-3.3.5.msi
 
 During install procedure you can choose to add the installation directory to the PATH environment
 which allows to execute the Python33.exe from every folder.
@@ -44,7 +44,7 @@ The prepare_PATH scripts can be used in bash like this ". ./prepare_PATH.sh" or 
 or in cmd like this "prepare_PATH.bat" to only set the PATH environment separately for the session.
 For permanent setup you might add those pathes to the systems environment variables.
 
-The Qt library  requires the qt.conf file to be found in the executable path, which in this case is the path to the Python33.exe. Within that config file the Prefix (folder) for Qt dynamic plugin loading is set to
+The Qt library requires the qt.conf file to be found in the executable path, which in this case is the path to the Python33.exe. Within that config file the Prefix (folder) for Qt dynamic plugin loading is set to
 
 Prefix = <yourPathToQt>\
 
@@ -56,10 +56,10 @@ Plugins = <plugins sub-dir>
 --3--  ILWIS environment
 
 During runtime our ilwiscore.dll loads some configuration files from the ILWIS directory,
-which should be specified in the file "ilwisobjects.conf" like this:
+which should be specified in the file "ilwislocation.config" like this:
 ilwisDir=<yourPathToIlwis>/
 
-The config file "ilwisobjects.conf" can be in the current directory
+The config file "ilwislocation.config" can be in the current directory
 or in the directory of the executable (<yourPathToPython.exe>/).
 
 The ILWIS directory will also contain a subdirectory log containing the log files of the last session.
