@@ -17,7 +17,7 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-WfsCapabilitiesParser::WfsCapabilitiesParser(WfsResponse *response, QUrl wfsUrl): _url(wfsUrl)
+WfsCapabilitiesParser::WfsCapabilitiesParser(WfsResponse *response, const Resource wfsResource): _wfsResource(wfsResource)
 {
     _parser = new XPathParser(response->device());
     _parser->addNamespaceMapping("wfs", "http://www.opengis.net/wfs");
@@ -76,8 +76,12 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) co
     feature.addProperty("envelope.ll", llText);
     feature.addProperty("envelope.ur", urText);
 
-    // override if datasource has forced XY axes order
-    feature.addProperty("forceXY", false);
+    if (_wfsResource.hasProperty("forceXY")) {
+        // override if forced XY axes order
+        feature.addProperty("forceXY", _wfsResource["forceXY"].toBool());
+    } else {
+        feature.addProperty("forceXY", false);
+    }
 }
 
 void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl& rawUrl, QUrl& normalizedUrl) const
@@ -87,8 +91,8 @@ void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl
     query.addQueryItem("version", "1.1.0");
     query.addQueryItem("request", "GetFeature");
     query.addQueryItem("typeName", featureName);
-    rawUrl = _url; // copy
+    rawUrl = _wfsResource.url(); // copy
     rawUrl.setQuery(query);
-    normalizedUrl = _url.toString(QUrl::RemoveQuery) + "/" + featureName;
+    normalizedUrl = _wfsResource.url().toString(QUrl::RemoveQuery) + "/" + featureName;
 }
 

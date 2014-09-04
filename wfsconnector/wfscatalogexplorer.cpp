@@ -53,7 +53,7 @@ std::vector<Resource> WfsCatalogExplorer::loadItems()
     QUrl serviceUrl = source().url();
     WebFeatureService wfs(serviceUrl);
     WfsResponse *response = wfs.getCapabilities();
-    WfsCapabilitiesParser parser(response, serviceUrl);
+    WfsCapabilitiesParser parser(response, source());
 
     std::vector<Resource> wfsFeatures;
     parser.parseFeatures(wfsFeatures);
