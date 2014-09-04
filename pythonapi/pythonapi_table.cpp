@@ -25,8 +25,8 @@ namespace pythonapi {
         delete table;
     }
 
-    Table::Table(std::string resource){
-        Ilwis::ITable t(QString::fromStdString(resource), itTABLE);
+    Table::Table(std::string resource, const IOOptions& opt){
+        Ilwis::ITable t(QString::fromStdString(resource), itTABLE, opt.ptr());
         if (t.isValid())
             this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(t));
     }

@@ -203,7 +203,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
             QUrl url = QUrl::fromLocalFile(_csyName); // new attempt to create a suitable path;
             csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
-            if(!csy->store(Ilwis::IlwisObject::smMETADATA)){ // fail, we default to unknown
+            if(!csy->store({"storemode",Ilwis::IlwisObject::smMETADATA})){ // fail, we default to unknown
                 _csyName = "Unknown.csy";
                 WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
             } else {
@@ -295,7 +295,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             _odf->setKeyValue("BaseMap","Domain",_domainName);
             QUrl url = makeUrl(_odf->file(),_domainName);
             iddom->connectTo(url,"domain","ilwis3", IlwisObject::cmOUTPUT);
-            iddom->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
+            iddom->store({"storemode",Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA});
             itemCount = iddom->count();
         }
     }

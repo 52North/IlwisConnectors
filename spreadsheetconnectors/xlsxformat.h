@@ -18,6 +18,7 @@ public:
     virtual bool openSheet(const QString& spreadsheetPath, bool isLoading=true);
     virtual QVariant cellValue(quint32 col, quint32 row) const;
     virtual void cellValue(quint32 col, quint32 row, const QVariant& value, bool newRow = false);
+    virtual quint32 rowCountRaw() const;
     virtual quint32 rowCount() const;
     virtual quint32 columnCount();
     virtual IlwisTypes cellValueType(quint32 col, quint32 row) const;

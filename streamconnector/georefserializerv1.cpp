@@ -29,7 +29,7 @@ GeorefSerializerV1::GeorefSerializerV1(QDataStream& stream) : VersionedSerialize
 }
 
 
-bool GeorefSerializerV1::store(IlwisObject *obj, int options)
+bool GeorefSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 {
     if (!VersionedSerializer::store(obj, options))
         return false;

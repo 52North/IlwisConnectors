@@ -46,11 +46,6 @@ IlwisObject *StreamConnector::create() const
 
 StreamConnector::StreamConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource,load,options)
 {
-    QString url =  resource.url().toString();
-    url.replace(0,7,"http:");
-    _resource.code("serialized");
-
-    _resource.setUrl(url, true);
 }
 
 StreamConnector::~StreamConnector()
@@ -60,42 +55,23 @@ StreamConnector::~StreamConnector()
 
 bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options)
 {
-    DownloadManager manager(_resource);
+
+    DownloadManager manager(_resource, _manager);
     return manager.loadMetaData(object,options);
 
 
 }
 
-bool StreamConnector::loadData(IlwisObject *data, const IOOptions &options){
-    if (!openSource(true))
-        return false;
-    QDataStream stream(_datasource.get());
-    quint64 type;
-    stream >> type;
-    QString version;
-    stream >> version;
-
-
-    VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
-    if (factory){
-        _versionedConnector.reset( factory->create(version,type,stream));
-    }
-
-    if (!_versionedConnector)
-        return false;
-
-    bool ok =  _versionedConnector->loadData(data, options);
-
-    _datasource->close();
-    _versionedConnector.reset(0);
-
-    return ok;
+bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
+    DownloadManager manager(_resource, _manager);
+    return manager.loadData(object,options);
 }
 
 bool StreamConnector::openSource(bool reading){
     QUrl url = _resource.url(true);
-    QString scheme = url.scheme();
-    if ( _resource.code() == "serialized" || scheme == "remote"){
+    QUrlQuery query(url);
+    if ( query.queryItemValue("service") == "ilwisobjects") // can't use anything marked as internal
+    {
         _bytes.resize(STREAMBLOCKSIZE);
         _bytes.fill(0);
         QBuffer *buf = new QBuffer(&_bytes);
@@ -104,7 +80,8 @@ bool StreamConnector::openSource(bool reading){
         _datasource.reset(buf);
         return true;
     }
-    else if ( scheme == "file"){
+    QString scheme = url.scheme();
+    if ( scheme == "file"){
         QString filename = url.toLocalFile();
         QFile *file = new QFile(filename);
 
@@ -123,7 +100,7 @@ bool StreamConnector::openSource(bool reading){
 }
 
 
-bool StreamConnector::store(IlwisObject *obj, int options){
+bool StreamConnector::store(IlwisObject *obj, const IOOptions &options){
     if (!openSource(false))
         return false;
     QDataStream stream(_datasource.get());
@@ -137,7 +114,12 @@ bool StreamConnector::store(IlwisObject *obj, int options){
     if (!_versionedConnector)
         return false;
     _versionedConnector->connector(this);
-    bool ok = _versionedConnector->store(obj, options);
+    bool ok;
+    int storemode = options["storemode"].toInt();
+    if ( storemode != IlwisObject::smBINARYDATA)
+        ok = _versionedConnector->store(obj, options);
+    else
+        ok = _versionedConnector->storeData(obj, options);
 
     flush(true);
 

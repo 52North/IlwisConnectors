@@ -126,7 +126,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
 //        fcoverage->coordinateSystem()->envelope(bbox);
     }
 
-    gdal()->closeFile(containerConnector()->toLocalFile(source()).absoluteFilePath(), data->id());
+    gdal()->closeFile(source().toLocalFile(), data->id());
 
     return true;
 }
@@ -183,7 +183,7 @@ bool GdalFeatureConnector::loadData(IlwisObject* data, const IOOptions &options)
         }
         fcoverage->envelope(bbox);
     }
-    gdal()->closeFile(containerConnector()->toLocalFile(source()).absoluteFilePath(), data->id());
+    gdal()->closeFile(source().toLocalFile(), data->id());
     _binaryIsLoaded = ok;
     return ok;
 }
@@ -438,7 +438,7 @@ bool GdalFeatureConnector::createDataSourceAndLayers(IlwisTypes types,
                                                      std::vector<SourceHandles>& datasources,
                                                      std::vector<bool>& validAttributes ){
 
-    QFileInfo fileinfo = containerConnector(IlwisObject::cmOUTPUT)->toLocalFile(source());
+    QFileInfo fileinfo = source().toLocalFile();
     int typeIndex  = ilwisType2Index(types);
     AttributeTable tbl = features->attributeTable();
     datasources[typeIndex]._source =  createFileBasedDataSource(postfix, fileinfo);
@@ -663,7 +663,7 @@ bool GdalFeatureConnector::loadDriver()
     return true;
 }
 
-bool GdalFeatureConnector::store(IlwisObject *obj, int )
+bool GdalFeatureConnector::store(IlwisObject *obj, const IOOptions&   )
 {
 
     if (!loadDriver())

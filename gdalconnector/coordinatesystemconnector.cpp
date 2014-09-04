@@ -82,11 +82,26 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const IOOptions 
                 }
             }
             QString ellipsoidName(gdal()->getAttributeValue(srshandle,"SPHEROID",0));
+            char *wkt = new char[10000];
+            gdal()->exportToPrettyWkt(srshandle,&wkt,TRUE);
             IEllipsoid ellipsoid;
             if ( (ellipsoidName.compare("unnamed",Qt::CaseInsensitive) != 0) && (ellipsoidName.compare("unknown",Qt::CaseInsensitive) != 0)) {
                 ellipsoid.prepare("code=wkt:" + ellipsoidName);
                 if ( ellipsoid.isValid())
                     csyp->setEllipsoid(ellipsoid);
+            }else {
+                QString axis(gdal()->getAttributeValue(srshandle,"SPHEROID",1));
+                QString flat(gdal()->getAttributeValue(srshandle,"SPHEROID",2));
+                bool ok1, ok2;
+                double laxis = axis.toDouble(&ok1);
+                double flattening = flat.toDouble(&ok2);
+                if ( ok1 && ok2){
+                    ellipsoid.prepare();
+                    ellipsoid->name("unnamend");
+                    ellipsoid->setEllipsoid(laxis, 1.0/flattening);
+                    csyp->setEllipsoid(ellipsoid);
+                }
+
             }
             Envelope env = gdal()->envelope(_handle, 0);
             if ( env.isValid() && !env.isNull()){
@@ -98,7 +113,7 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const IOOptions 
         ret = ERROR2(ERR_INVALID_PROPERTY_FOR_2,"OGRSpatialReference",data->name());
     }
     gdal()->releaseSrsHandle(_handle, srshandle, data->name());
-    QFileInfo fileinf = containerConnector()->toLocalFile(source());
+    QFileInfo fileinf(source().toLocalFile());
     gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
     return ret;
 }

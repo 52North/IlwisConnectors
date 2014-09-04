@@ -144,12 +144,6 @@ def object_cast(obj):
 
 %include "pythonapi_coordinatesystem.h"
 
-%include "pythonapi_table.h"
-
-%include "pythonapi_coverage.h"
-
-%include "pythonapi_object.h"
-
 %include "pythonapi_util.h"
 
 %template(Pixel) pythonapi::PixelTemplate<qint32>;
@@ -159,6 +153,12 @@ def object_cast(obj):
 %template(Box) pythonapi::BoxTemplate<Ilwis::Location<qint32, false>, pythonapi::PixelTemplate<qint32>, quint32>;
 %template(Envelope) pythonapi::BoxTemplate<Ilwis::Coordinate, pythonapi::Coordinate, double>;
 %template(NumericStatistics) pythonapi::ContainerStatistics<double>;
+
+%include "pythonapi_table.h"
+
+%include "pythonapi_coverage.h"
+
+%include "pythonapi_object.h"
 
 
 %extend pythonapi::SizeTemplate<quint32> {
@@ -260,18 +260,18 @@ def object_cast(obj):
 
 %include "pythonapi_domain.h"
 
+%include "pythonapi_rangeiterator.h"
+
+//%template(NumericRangeIterator) pythonapi::RangeIterator<double, pythonapi::NumericRange, double, Ilwis::NumericRange>;
+%template(ItemRangeIterator) pythonapi::RangeIterator<pythonapi::DomainItem, pythonapi::ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange>;
+
 %include "pythonapi_range.h"
 
 %include "pythonapi_datadefinition.h"
 
 %include "pythonapi_columndefinition.h"
 
-%include "pythonapi_rangeiterator.h"
-
 %include "pythonapi_domainitem.h"
-
-%template(NumericRangeIterator) pythonapi::RangeIterator<double, pythonapi::NumericRange, double, Ilwis::NumericRange>;
-//%template(ItemRangeIterator) pythonapi::RangeIterator<pythonapi::DomainItem, pythonapi::ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange>;
 
 
 // declaring the Const for Python side xUNDEF declarations
@@ -288,7 +288,7 @@ def object_cast(obj):
             return 2147483645
           @property
           def rUNDEF(cls):
-            return -1e308
+            return -1e+308
           @property
           def flUNDEF(cls):
             return 1e38

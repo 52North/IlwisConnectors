@@ -275,6 +275,7 @@ namespace pythonapi {
 //-----------------------------------------------------------------------------------------------------------------
     class IOOptions{
         friend class IlwisObject;
+        friend class Table;
     public:
         IOOptions();
         IOOptions(const std::string& key, PyObject* value);

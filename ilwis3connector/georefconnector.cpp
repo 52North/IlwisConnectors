@@ -72,7 +72,7 @@ bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
         QString name = odf.value("GeoRefSubMap","GeoRef");
         QUrl resource = mastercatalog()->name2url(name, itGEOREF);
         IniFile odf;
-        odf.setIniFile(containerConnector()->toLocalFile(resource));
+        odf.setIniFile(resource.toLocalFile());
         bool ok = loadGeoref(odf,data);
         if (!ok)
             return false;
@@ -197,7 +197,7 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
          _odf->setKeyValue("GeoRefSmpl", "b1", QString::number(support[0]));
          _odf->setKeyValue("GeoRefSmpl", "b2", QString::number(support[1]));
 
-         _odf->store("grf", containerConnector()->toLocalFile(source()));
+         _odf->store("grf", source().toLocalFile());
         return true;
 
     }
@@ -259,7 +259,7 @@ IlwisObject *GeorefConnector::createGeoreference(const IniFile &odf) const{
         auto name = _odf->value("GeoRefSubMap","GeoRef");
         QUrl resource = mastercatalog()->name2url(name, itGEOREF);
         IniFile odf;
-        odf.setIniFile(containerConnector()->toLocalFile(resource));
+        odf.setIniFile(resource.toLocalFile());
         return createGeoreference(odf);
     }
     return 0;
