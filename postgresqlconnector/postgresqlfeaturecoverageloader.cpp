@@ -51,7 +51,7 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
     return true;
 }
 
-QSqlQuery PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeometryColumn> metaGeometry) const
+QString PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeometryColumn> metaGeometry) const
 {
     QString columns;
     std::for_each(metaGeometry.begin(), metaGeometry.end(), [&columns](MetaGeometryColumn meta) {
@@ -67,10 +67,7 @@ QSqlQuery PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeom
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
     qDebug() << "SQL: " << sqlBuilder;
-
-    PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
-    QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
-    return db.exec(sqlBuilder);
+    return sqlBuilder;
 }
 
 bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
@@ -91,7 +88,9 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
 
     QList<MetaGeometryColumn> metaGeometries;
     PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource,metaGeometries);
-    QSqlQuery query = selectGeometries(metaGeometries);
+    PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
+    QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
+    QSqlQuery query = db.exec(selectGeometries(metaGeometries));
 
     while (query.next()) {
         if (metaGeometries.size() > 0) {
@@ -103,6 +102,7 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
         }
     }
 
+    db.close();
     return true;
 }
 
@@ -127,6 +127,8 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
     QList<MetaGeometryColumn> metaGeometries;
     PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, metaGeometries);
 
+    PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
+    QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
     foreach (MetaGeometryColumn meta, metaGeometries) {
         //select distinct st_geometrytype(geom), count
         //    from public.tl_2010_us_rails,
@@ -149,8 +151,6 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
         sqlBuilder.append(" ) AS not_null ;");
         qDebug() << "SQL: " << sqlBuilder;
 
-        PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
-        QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
         QSqlQuery query = db.exec(sqlBuilder);
 
 
@@ -168,6 +168,7 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
             }
         }
     }
+    db.close();
 }
 
 void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcoverage) const
@@ -217,6 +218,7 @@ void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcover
         fcoverage->coordinateSystem(crs);
         fcoverage->envelope(bbox);
     }
+    db.close();
 }
 
 

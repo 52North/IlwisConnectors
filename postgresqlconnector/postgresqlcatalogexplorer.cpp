@@ -97,6 +97,7 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
         resources.push_back(table);
     }
 
+    db.close();
     return resources;
 }
 

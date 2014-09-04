@@ -44,7 +44,6 @@ IlwisObject *PostgresqlFeatureConnector::create() const
 
 ConnectorInterface *PostgresqlFeatureConnector::create(const Ilwis::Resource &resource, bool load,const IOOptions& options)
 {
-    qDebug() << "PostgresqlTableConnector::create() -> connector instance";
     return new PostgresqlFeatureConnector(resource, load,options);
 }
 
