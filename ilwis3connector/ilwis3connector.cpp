@@ -68,7 +68,7 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
         return false;
     }
 
-    _odf.reset(makeIni(_resource, containerConnector(),type));
+    _odf.reset(makeIni(_resource, type));
 
     _odf->setKeyValue("Ilwis","Description", obj->description());
     _odf->setKeyValue("Ilwis","Time", obj->createTime().toString());
@@ -227,7 +227,7 @@ bool Ilwis3Connector::willStore(const Ilwis::IlwisObject *obj) const
 {
     if ( !obj->hasChanged()) { // objects that have not changed and that are linked to a still existing source need no save
         QUrl source = obj->source().url();
-        QFileInfo info = containerConnector()->toLocalFile(source);
+        QFileInfo info(source.toLocalFile());
         if ( info.exists()){
             return false;
         }
@@ -370,7 +370,7 @@ QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& 
     return sUNDEF;
 }
 
-IniFile *Ilwis3Connector::makeIni(const Resource &resource, const UPCatalogConnector &container, IlwisTypes type)
+IniFile *Ilwis3Connector::makeIni(const Resource &resource, IlwisTypes type)
 {
     QString name = resource.url().toLocalFile();
     QString ext = suffix(type);
@@ -387,11 +387,11 @@ IniFile *Ilwis3Connector::makeIni(const Resource &resource, const UPCatalogConne
 }
 
 QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name, IlwisTypes type) {
-    QString fileurl = path;
-    if ( fileurl == "")
-        fileurl = _resource.url().toString();
+    QString file = path;
+    if ( file == "")
+        file = _resource.url().toString();
     //TODO: container pathing here; grf uses local path
-    QFileInfo inf = containerConnector()->toLocalFile(fileurl);
+    QFileInfo inf(file);
     QString localpath = inf.absolutePath();
     QString filename =  localpath + "/" + (name != sUNDEF ? name : inf.baseName());
     if ( type != itUNKNOWN){

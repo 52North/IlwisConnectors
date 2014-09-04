@@ -73,6 +73,7 @@ void SpreadSheetTableConnector::setColumnDefinitions(Table * tbl, const std::vec
         } else if ( hasType(inf._type,itSTRING)) {
             coldef = ColumnDefinition(colname,DataDefinition({"text"}), _validColumnCount);
         }else{
+            count++;
             continue;
         }
         _validColumns[count++] = true;
@@ -99,8 +100,10 @@ bool SpreadSheetTableConnector::loadMetaData(IlwisObject *data, const Ilwis::IOO
 
     int rowCount = _spreadsheet->rowCount();
     for(int row = 0; row < rowCount; ++row){
-        if (! _spreadsheet->isRowValid( row))
-            continue;
+        if (! _spreadsheet->isRowValid( row)){
+            rowCount = row;
+            break;
+        }
 
         int columnCount = _spreadsheet->columnCount();
         for( int col = 0; col < columnCount; ++col){
@@ -120,6 +123,7 @@ bool SpreadSheetTableConnector::loadMetaData(IlwisObject *data, const Ilwis::IOO
 
     if(ok)
         rowCount -= 1;
+
     tbl->recordCount(rowCount);
     setColumnDefinitions(tbl,columnType);
 
@@ -132,7 +136,6 @@ bool SpreadSheetTableConnector::loadData(IlwisObject *object, const IOOptions &o
     if (!_spreadsheet->isValid())
         return false;
 
-
     int rowShift = _headerline != iUNDEF ? 1 : 0;
 
     std::vector<std::vector<QVariant>> data(_spreadsheet->rowCount() - rowShift);
@@ -143,7 +146,7 @@ bool SpreadSheetTableConnector::loadData(IlwisObject *object, const IOOptions &o
 
     for(int row = 0; row < _spreadsheet->rowCount(); ++row){
         if (! _spreadsheet->isRowValid( row))
-            continue;
+            break;
 
         // skip the row that contains the header
         if ( row == _headerline)

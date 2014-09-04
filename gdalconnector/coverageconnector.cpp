@@ -43,7 +43,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
     if ( coverage == nullptr)
         return false;
 
-    QFileInfo fileinf = containerConnector()->toLocalFile(source());
+    QFileInfo fileinf = source().toLocalFile();
     ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", QUrl::fromLocalFile(fileinf.absoluteFilePath()));
     if(!csy.isValid()) {
         // special handling for envi as the csy's are stored under the .hdr extension

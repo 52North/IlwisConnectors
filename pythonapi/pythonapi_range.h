@@ -88,6 +88,7 @@ public:
     NumericItemRange();
     void add(std::string name, double min, double max, double resolution=0);
     void add(PyObject *item);
+    PyObject* listAll();
     double index(double);
     qint32 gotoIndex(qint32 index, qint32 step) const;
     NumericItemRange* clone();

@@ -19,6 +19,7 @@ public:
     bool openSheet(const QString& spreadsheetPath, bool isLoading=true);
     QVariant cellValue(quint32 col, quint32 row) const;
     void cellValue(quint32 col, quint32 row, const QVariant& value, bool newRow = false);
+    quint32 rowCountRaw() const;
     quint32 rowCount() const;
     quint32 columnCount();
     IlwisTypes cellValueType(quint32 col, quint32 row) const;

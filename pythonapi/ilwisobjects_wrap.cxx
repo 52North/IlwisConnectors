@@ -29267,6 +29267,35 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_NumericItemRange_listAll(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::NumericItemRange *arg1 = (pythonapi::NumericItemRange *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:NumericItemRange_listAll",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__NumericItemRange, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NumericItemRange_listAll" "', argument " "1"" of type '" "pythonapi::NumericItemRange *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::NumericItemRange * >(argp1);
+  {
+    try {
+      result = (PyObject *)(arg1)->listAll();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = result;
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_NumericItemRange_index(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::NumericItemRange *arg1 = (pythonapi::NumericItemRange *) 0 ;
@@ -37314,6 +37343,7 @@ static PyMethodDef SwigMethods[] = {
 		"add(std::string name, double min, double max)\n"
 		"NumericItemRange_add(NumericItemRange self, PyObject * item)\n"
 		""},
+	 { (char *)"NumericItemRange_listAll", _wrap_NumericItemRange_listAll, METH_VARARGS, (char *)"NumericItemRange_listAll(NumericItemRange self) -> PyObject *"},
 	 { (char *)"NumericItemRange_index", _wrap_NumericItemRange_index, METH_VARARGS, (char *)"NumericItemRange_index(NumericItemRange self, double arg2) -> double"},
 	 { (char *)"NumericItemRange_gotoIndex", _wrap_NumericItemRange_gotoIndex, METH_VARARGS, (char *)"NumericItemRange_gotoIndex(NumericItemRange self, qint32 index, qint32 step) -> qint32"},
 	 { (char *)"NumericItemRange_clone", _wrap_NumericItemRange_clone, METH_VARARGS, (char *)"NumericItemRange_clone(NumericItemRange self) -> NumericItemRange"},
