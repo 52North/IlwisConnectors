@@ -176,7 +176,15 @@ bool RasterSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
     double mmin,  mmax, mscale;
+    quint32 layer, minline, maxline;
     _stream >> mmin >> mmax >> mscale;
+    _stream >> layer >> minline >> maxline;
+    std::vector<quint32> blockList;
+
+    int startBlock = layer * raster->grid()->blocksPerBand();
+    for(quint32 startline = minline, count=0; startline < maxline; startline += raster->grid()->maxLines(), ++count ){
+        blockList.push_back(startBlock + count);
+    }
 
     RawConverter converter(mmin, mmax, mscale);
 
@@ -189,19 +197,17 @@ bool RasterSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
     case itINT32:
         loadBulk<qint32>(converter, _stream, rcoverage); break;
     case itINT64:{
-        qint64 value;
-        for(double &v : rcoverage){
-            _stream >> value;
-            v = value;
-        }
-
-        break;
-    }
     default:
-        for(double& v : rcoverage){
-            _stream >> v;
+            for(int i = 0; i < blockList.size(); ++i) {
+                quint64 noOfPixels = raster->grid()->blockSize(blockList[i]);
+                std::vector<double> values(noOfPixels);
+                for(int j = 0; j < noOfPixels; ++j){
+                    _stream >> values[j];
+                }
+                raster->gridRef()->setBlockData(blockList[i], values, true);
+            }
+            break;
         }
-        break;
     }
     return true;
 }
