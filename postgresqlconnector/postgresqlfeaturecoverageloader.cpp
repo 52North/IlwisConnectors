@@ -27,7 +27,6 @@ using namespace Postgresql;
 
 PostgresqlFeatureCoverageLoader::PostgresqlFeatureCoverageLoader(const Resource resource): _resource(resource)
 {
-    PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
 }
 
 PostgresqlFeatureCoverageLoader::~PostgresqlFeatureCoverageLoader()
@@ -47,11 +46,8 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
     }
 
     fcoverage->attributeTable(featureTable);
-    if (featureTable->column(FEATUREIDCOLUMN).size() != 0) {
-        setFeatureCount(fcoverage);
-        setSpatialMetadata(fcoverage);
-    }
-
+    setFeatureCount(fcoverage);
+    setSpatialMetadata(fcoverage);
     return true;
 }
 
@@ -72,6 +68,7 @@ QSqlQuery PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeom
     sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
     qDebug() << "SQL: " << sqlBuilder;
 
+    PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
     QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
     return db.exec(sqlBuilder);
 }
@@ -152,7 +149,8 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
         sqlBuilder.append(" ) AS not_null ;");
         qDebug() << "SQL: " << sqlBuilder;
 
-        QSqlDatabase db = QSqlDatabase::database("featureconnector");
+        PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
+        QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
         QSqlQuery query = db.exec(sqlBuilder);
 
 
@@ -182,7 +180,8 @@ void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcover
     Envelope bbox;
     ICoordinateSystem crs;
 
-    QSqlDatabase db = QSqlDatabase::database("featureconnector");
+    PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
+    QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
     foreach (MetaGeometryColumn meta, metaGeometries) {
         QString sqlBuilder;
         sqlBuilder.append("SELECT ");

@@ -65,6 +65,8 @@ WfsParsingContext WfsFeatureParser::context() const
 
 void WfsFeatureParser::parseFeatureMembers()
 {
+    qDebug() << "WfsFeatureParser::parseFeatureMembers()";
+
     ITable table = _fcoverage->attributeTable();
     _featureType = table->name();
     _featureType = "target:" + _featureType;
@@ -98,7 +100,6 @@ void WfsFeatureParser::parseFeatureMembers()
 
 bool WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table)
 {
-    //qDebug() << "create new feature ...";
     bool continueReadingStream = true;
     QString geometryAttributeName = _context.geometryAtttributeName();
     for (int i = 0; i < table->columnCount(); i++) {
@@ -361,6 +362,11 @@ void WfsFeatureParser::initCrs(ICoordinateSystem &crs) {
     if ( !crs.prepare(geomCrsCode, itCONVENTIONALCOORDSYSTEM)) {
         ERROR1("Could not prepare crs with code=%1.",_context.srsName());
     }
+    _swapAxesNeededToAlignInternXYOrder = WfsUtils::swapAxes(_fcoverage->source(), crs);
+    if (_swapAxesNeededToAlignInternXYOrder) {
+        DEBUG0("XY axes order used internally. OGC respects lat/lon order, though.");
+        DEBUG1("Will swap axes order for CRS '%1'.", _context.srsName());
+    }
 }
 
 geos::geom::Point *WfsFeatureParser::parsePoint(bool &ok)
@@ -486,15 +492,30 @@ QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList)
     QStringList coords = gmlPosList.split(" ");
     if (_context.srsDimension() == 2) {
         for (int i = 0; i < coords.size() - 1; i++) {
-            wktCoords.append(coords.at(i)).append(" ");
-            wktCoords.append(coords.at(++i)).append(" ");
+            QString first = coords.at(i);
+            QString second = coords.at(++i);
+            if (!_swapAxesNeededToAlignInternXYOrder) {
+                wktCoords.append(first).append(" ");
+                wktCoords.append(second).append(" ");
+            } else {
+                wktCoords.append(second).append(" ");
+                wktCoords.append(first).append(" ");
+            }
             wktCoords.append(", ");
         }
     } else if (_context.srsDimension() == 3) {
         for (int i = 0; i < coords.size() - 2; i++) {
-            wktCoords.append(coords.at(i)).append(" ");
-            wktCoords.append(coords.at(++i)).append(" ");
-            wktCoords.append(coords.at(++i));
+            QString first = coords.at(i);
+            QString second = coords.at(++i);
+            QString third = coords.at(++i);
+            if (!_swapAxesNeededToAlignInternXYOrder) {
+                wktCoords.append(first).append(" ");
+                wktCoords.append(second).append(" ");
+            } else {
+                wktCoords.append(second).append(" ");
+                wktCoords.append(first).append(" ");
+            }
+            wktCoords.append(third);
             wktCoords.append(", ");
         }
     }

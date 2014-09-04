@@ -48,6 +48,8 @@ WfsFeatureDescriptionParser::~WfsFeatureDescriptionParser()
 
 bool WfsFeatureDescriptionParser::parseMetadata(FeatureCoverage *fcoverage, WfsParsingContext &context)
 {
+    qDebug() << "WfsFeatureDescriptionParser::parseMetadata()";
+
     QString name = fcoverage->name();
     quint64 id = fcoverage->id();
     QString schemaResource = WfsUtils::getInternalNameFrom(name, id);
@@ -85,6 +87,8 @@ bool WfsFeatureDescriptionParser::parseMetadata(FeatureCoverage *fcoverage, WfsP
 
 void WfsFeatureDescriptionParser::parseNamespaces(WfsParsingContext &context)
 {
+    qDebug() << "WfsFeatureDescriptionParser::parseNamespaces()";
+
     for (QXmlStreamAttribute attribute : _parser->attributes()) {
         QString name = attribute.name().toString();
         QString value = attribute.value().toString();
