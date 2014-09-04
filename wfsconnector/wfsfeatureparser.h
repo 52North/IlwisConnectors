@@ -44,6 +44,7 @@ private:
     XmlStreamParser *_parser;
     FeatureCoverage *_fcoverage;
     WfsParsingContext _context;
+    bool _swapAxesNeededToAlignInternXYOrder = false;
     QString _featureType;
 
     bool parseFeature(std::vector<QVariant> &record, ITable& table);

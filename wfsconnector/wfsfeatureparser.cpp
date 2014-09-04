@@ -362,6 +362,11 @@ void WfsFeatureParser::initCrs(ICoordinateSystem &crs) {
     if ( !crs.prepare(geomCrsCode, itCONVENTIONALCOORDSYSTEM)) {
         ERROR1("Could not prepare crs with code=%1.",_context.srsName());
     }
+    _swapAxesNeededToAlignInternXYOrder = WfsUtils::swapAxes(_fcoverage->source(), crs);
+    if (_swapAxesNeededToAlignInternXYOrder) {
+        DEBUG0("XY axes order used internally. OGC respects lat/lon order, though.");
+        DEBUG1("Will swap axes order for CRS '%1'.", _context.srsName());
+    }
 }
 
 geos::geom::Point *WfsFeatureParser::parsePoint(bool &ok)
@@ -489,7 +494,7 @@ QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList)
         for (int i = 0; i < coords.size() - 1; i++) {
             QString first = coords.at(i);
             QString second = coords.at(++i);
-            if (!WfsUtils::swapAxes(_fcoverage->source(), _fcoverage->coordinateSystem())) {
+            if (!_swapAxesNeededToAlignInternXYOrder) {
                 wktCoords.append(first).append(" ");
                 wktCoords.append(second).append(" ");
             } else {
@@ -503,7 +508,7 @@ QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList)
             QString first = coords.at(i);
             QString second = coords.at(++i);
             QString third = coords.at(++i);
-            if (!WfsUtils::swapAxes(_fcoverage->source(), _fcoverage->coordinateSystem())) {
+            if (!_swapAxesNeededToAlignInternXYOrder) {
                 wktCoords.append(first).append(" ");
                 wktCoords.append(second).append(" ");
             } else {

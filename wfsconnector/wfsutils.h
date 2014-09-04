@@ -127,33 +127,16 @@ public:
 
     static bool isDefinedAsLatLonAxesOrder(ICoordinateSystem crs)
     {
-        /*
-         * Definition taken from
-         *
-         * http://www.geotoolkit.org/modules/referencing/supported-codes.html
-         *
-         * download file and use extract_epsgCodes_with_forcedXY.py to extract
-         */
+        QString sqlBuilder;
+        sqlBuilder.append("SELECT code FROM epsgcodeswithlatlonaxesorder ");
+        sqlBuilder.append(" WHERE code='");
+        sqlBuilder.append(crs->code());
+        sqlBuilder.append("' ;");
 
-        QString path = QCoreApplication::applicationDirPath();
-        QFile file(path+"/extensions/wfsconnector/resources/codes_with_latlon_order.txt");
-        if ( !file.exists() || !file.open(QIODevice::ReadOnly)) {
-            QFileInfo fileInfo(file);
-            ERROR1("Could not open file '%1'! Please check, if file is deployed before execution!",fileInfo.absoluteFilePath());
-            return false;
-        }
-
-        bool isLatLon = false;
-        QTextStream in(&file);
-        while ( !in.atEnd() ) {
-            QString line = in.readLine();
-            if (crs->code().compare(line, Qt::CaseInsensitive) == 0) {
-                isLatLon = true;
-                break;
-            }
-        }
-        file.close();
-        return isLatLon;
+        QSqlQuery query(kernel()->database());
+        query.exec(sqlBuilder);
+        // exact one or no match
+        return query.next();
     }
 
 
