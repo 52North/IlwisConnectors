@@ -21,7 +21,7 @@ private:
 
     void setFeatureCount(FeatureCoverage *fcoverage) const;
     void setSpatialMetadata(FeatureCoverage *fcoverage) const;
-    QSqlQuery selectGeometries(const QList<MetaGeometryColumn> metaGeometry) const;
+    QString selectGeometries(const QList<MetaGeometryColumn> metaGeometry) const;
     geos::geom::Geometry* createGeometry(QSqlQuery &query, MetaGeometryColumn &meta) const;
 };
 

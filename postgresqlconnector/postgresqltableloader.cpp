@@ -61,10 +61,11 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
             }
         }
     }
+    db.close();
     return table->isValid();
 }
 
-QSqlQuery PostgresqlTableLoader::select(QString columns) const
+QString PostgresqlTableLoader::select(QString columns) const
 {
     QString sqlBuilder;
     sqlBuilder.append("SELECT ");
@@ -72,10 +73,7 @@ QSqlQuery PostgresqlTableLoader::select(QString columns) const
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
     qDebug() << "SQL: " << sqlBuilder;
-
-    PostgresqlDatabaseUtil::openForResource(_resource,"tableloader");
-    QSqlDatabase db = QSqlDatabase::database("tableloader");
-    return db.exec(sqlBuilder);
+    return sqlBuilder;
 }
 
 bool PostgresqlTableLoader::loadData(Table *table) const
@@ -86,7 +84,9 @@ bool PostgresqlTableLoader::loadData(Table *table) const
         allNonGeometryColumns.append(" ").append(coldef.name()).append(" ,");
     }
     allNonGeometryColumns = allNonGeometryColumns.left(allNonGeometryColumns.length() - 1);
-    QSqlQuery query = select(allNonGeometryColumns);
+    PostgresqlDatabaseUtil::openForResource(_resource,"tableloader");
+    QSqlDatabase db = QSqlDatabase::database("tableloader");
+    QSqlQuery query = db.exec(select(allNonGeometryColumns));
 
     quint64 count = 0;
     while (query.next()) {
@@ -103,6 +103,7 @@ bool PostgresqlTableLoader::loadData(Table *table) const
         }
         table->record(count++, record);
     }
+    db.close();
     return true;
 }
 
