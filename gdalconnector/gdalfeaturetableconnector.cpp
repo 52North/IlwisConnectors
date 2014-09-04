@@ -76,7 +76,7 @@ bool GdalFeatureTableConnector::loadData(IlwisObject * data, const IOOptions &){
             ok = false;
         }
     }
-    gdal()->closeFile(containerConnector()->toLocalFile(_filename).absoluteFilePath(), data->id());
+    gdal()->closeFile(_filename.toLocalFile(), data->id());
     return ok;
 }
 

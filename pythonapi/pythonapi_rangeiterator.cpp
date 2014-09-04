@@ -41,7 +41,7 @@ RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__bool__() const{
 
 template<typename OutputType, typename RangeType, typename IlwOutput, typename IlwRange> std::string
 RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__str__(){
-    return "RangeIterator at value: " + std::to_string(__float__()) + " of Range: " + _rng->__str__();
+    return "RangeIterator at value: " + current().__str__() + " of Range: " + _rng->__str__();
 }
 
 
@@ -56,7 +56,8 @@ RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__next__(){
     if (iter.isValid()){
         IlwOutput t = (*iter);
         ++iter;
-        return t;
+        DomainItem tempDI(t.data());
+        return tempDI;
 
 //        OutputType o = t;
 //        DomainItem tempDI;
@@ -71,13 +72,13 @@ RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__next__(){
 }
 
 template<typename OutputType, typename RangeType, typename IlwOutput, typename IlwRange> OutputType
-RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__float__(){
-    return (*this->ptr());
+RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::current(){
+    return DomainItem((*this->ptr()).data());
 }
 
 template<typename OutputType, typename RangeType, typename IlwOutput, typename IlwRange> OutputType
 RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__getitem__(quint32 pos){
-    return this->ptr()[pos];
+    return DomainItem(this->ptr()[pos].data());
 }
 
 template<typename OutputType, typename RangeType, typename IlwOutput, typename IlwRange> RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>
@@ -158,8 +159,8 @@ RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::ptr() const{
     return (*this->_ilwisRangeIterator);
 }
 
-template class RangeIterator<double, NumericRange, double, Ilwis::NumericRange>;
-//template class RangeIterator<DomainItem, ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange>;
+//template class RangeIterator<double, NumericRange, double, Ilwis::NumericRange>;
+template class RangeIterator<DomainItem, ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange>;
 
 
 }

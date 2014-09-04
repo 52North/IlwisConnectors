@@ -43,7 +43,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
     if ( coverage == nullptr)
         return false;
 
-    QFileInfo fileinf = containerConnector()->toLocalFile(source());
+    QFileInfo fileinf = source().toLocalFile();
     ICoordinateSystem csy = setObject<ICoordinateSystem>("coordinatesystem", QUrl::fromLocalFile(fileinf.absoluteFilePath()));
     if(!csy.isValid()) {
         // special handling for envi as the csy's are stored under the .hdr extension
@@ -65,9 +65,9 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
     return true;
 }
 
-bool CoverageConnector::store(IlwisObject *obj, IlwisTypes type)
+bool CoverageConnector::store(IlwisObject *obj, const IOOptions &options)
 {
-    return GdalConnector::store(obj, type);
+    return GdalConnector::store(obj, options);
 }
 
 OGRSpatialReferenceH CoverageConnector::createSRS(const ICoordinateSystem& coordsystem) const{

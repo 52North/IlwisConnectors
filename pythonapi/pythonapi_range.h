@@ -67,9 +67,9 @@ public:
 
     void set(const NumericRange& vr);
 
-    pythonapi::NumericRangeIterator __iter__();
-    pythonapi::NumericRangeIterator begin();
-    pythonapi::NumericRangeIterator end();
+//    pythonapi::NumericRangeIterator __iter__();
+//    pythonapi::NumericRangeIterator begin();
+//    pythonapi::NumericRangeIterator end();
 
     void clear();
 };
@@ -80,6 +80,7 @@ public:
     quint32 count();
     void remove(const std::string& name);
     void clear();
+    ItemRangeIterator __iter__();
 };
 
 class NumericItemRange : public ItemRange{
@@ -87,6 +88,7 @@ public:
     NumericItemRange();
     void add(std::string name, double min, double max, double resolution=0);
     void add(PyObject *item);
+    PyObject* listAll();
     double index(double);
     qint32 gotoIndex(qint32 index, qint32 step) const;
     NumericItemRange* clone();
@@ -104,6 +106,7 @@ class NamedItemRange : public ItemRange {
 public:
     NamedItemRange();
     void add(PyObject *item);
+    PyObject* listAll();
     qint32 gotoIndex(qint32 index, qint32 step) const;
     NamedItemRange* clone();
 };
@@ -113,6 +116,7 @@ public:
     ThematicRange();
     void add(std::string name, std::string id="", std::string descr="");
     void add(PyObject *item);
+    PyObject* listAll();
     ThematicRange* clone();
 };
 

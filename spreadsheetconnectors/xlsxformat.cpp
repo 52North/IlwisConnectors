@@ -70,12 +70,27 @@ void XLSXFormat::cellValue(quint32 col, quint32 row, const QVariant &value, bool
     _xlsxdocument->write(row + 1, col + 1,value);
 }
 
-quint32 XLSXFormat::rowCount() const
+quint32 XLSXFormat::rowCountRaw() const
 {
     if (! _xlsxdocument)
         return iUNDEF;
     QXlsx::CellRange range = _xlsxdocument->dimension();
+
     return range.rowCount();
+}
+
+quint32 XLSXFormat::rowCount() const
+{
+    int rowCount = -1;
+    quint32 raw = rowCountRaw();
+    for(int row = 0; row < raw; ++row){
+        if (! isCellValid(0, row)){
+            rowCount = row;
+            break;
+        }
+    }
+
+    return rowCount != -1 ? rowCount : raw;
 }
 
 quint32 XLSXFormat::columnCount()
@@ -98,7 +113,7 @@ bool XLSXFormat::isValid() const
 
 bool XLSXFormat::isRowValid(quint32 rowIndex) const
 {
-    return rowIndex < rowCount();
+    return rowIndex < rowCount() && isCellValid(0, rowIndex);
 }
 
 bool XLSXFormat::isCellValid(quint32 columnIndex, quint32 rowIndex) const

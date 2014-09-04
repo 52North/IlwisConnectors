@@ -27,9 +27,16 @@ bool XLSFormat::openSheet(const QString &spreadsheetPath, bool loading)
     if (!loading)
         return false;
 
+    QString sheetName=sUNDEF, excelfile;
+
+    QFileInfo xlsfile(spreadsheetPath);
+    if ( xlsfile.suffix() != "xls"){
     int index  = spreadsheetPath.lastIndexOf("/");
-    QString sheetName = spreadsheetPath.mid(index + 1);
-    QString excelfile = spreadsheetPath.left(index);
+        sheetName = spreadsheetPath.mid(index + 1);
+        excelfile = spreadsheetPath.left(index);
+    }else {
+        excelfile = spreadsheetPath;
+    }
     if ( _handle)
         freexl_close(_handle);
 
@@ -38,27 +45,31 @@ bool XLSFormat::openSheet(const QString &spreadsheetPath, bool loading)
     {
         return ERROR1(ERR_COULD_NOT_OPEN_READING_1, excelfile);
     }
-    unsigned int max_worksheet;
-    ret = freexl_get_info (_handle, FREEXL_BIFF_SHEET_COUNT, &max_worksheet);
-    if (ret != FREEXL_OK)
-    {
-        return ERROR2(ERR_NOT_FOUND2, TR("workseehts"),excelfile);
-    }
-    QString wsName;
-    for (_currentSheet = 0; _currentSheet < max_worksheet;
-         _currentSheet++)
-    {
-        const char *utf8_worksheet_name;
-        freexl_get_worksheet_name (_handle,_currentSheet, &utf8_worksheet_name);
-        wsName = QString(utf8_worksheet_name);
-        if ( wsName.toLower() == sheetName.toLower())
-            break;
-    }
-    if ( _currentSheet == max_worksheet){
-        _currentSheet = iUNDEF;
-        return ERROR3(ERR_INVALID_PROPERTY_IN_4,"worksheet name", excelfile, wsName);
-    }
-    freexl_select_active_worksheet (_handle, _currentSheet);
+    if ( sheetName != sUNDEF){
+        unsigned int max_worksheet;
+        ret = freexl_get_info (_handle, FREEXL_BIFF_SHEET_COUNT, &max_worksheet);
+        if (ret != FREEXL_OK)
+        {
+            return ERROR2(ERR_NOT_FOUND2, TR("workseehts"),excelfile);
+        }
+        QString wsName;
+        for (_currentSheet = 0; _currentSheet < max_worksheet;
+             _currentSheet++)
+        {
+            const char *utf8_worksheet_name;
+            freexl_get_worksheet_name (_handle,_currentSheet, &utf8_worksheet_name);
+            wsName = QString(utf8_worksheet_name);
+            if ( wsName.toLower() == sheetName.toLower())
+                break;
+        }
+        if ( _currentSheet == max_worksheet){
+            _currentSheet = iUNDEF;
+            return ERROR3(ERR_INVALID_PROPERTY_IN_4,"worksheet name", excelfile, wsName);
+        }
+        freexl_select_active_worksheet (_handle, _currentSheet);
+    }else
+        _currentSheet = 0;
+
     return true;
 }
 

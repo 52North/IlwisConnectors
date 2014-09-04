@@ -29,7 +29,7 @@ FeatureSerializerV1::FeatureSerializerV1(QDataStream &stream) : CoverageSerializ
 {
 }
 
-bool FeatureSerializerV1::store(IlwisObject *obj, int options)
+bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 {
     if (!CoverageSerializerV1::store(obj, options))
         return false;

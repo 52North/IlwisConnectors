@@ -18,7 +18,7 @@ namespace pythonapi {
         friend class Catalog;
         public:
             Table();
-            Table(std::string resource);
+            Table(std::string resource, const IOOptions& opt = IOOptions());
 
             quint32 columnCount() const;
             PyObject* columns() const;

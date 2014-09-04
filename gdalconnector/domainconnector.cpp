@@ -50,7 +50,7 @@ bool DomainConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
             ret = handleThematicDomains(data);
         }
     }
-    QFileInfo fileinf = containerConnector()->toLocalFile(source());
+    QFileInfo fileinf (source().toLocalFile());
     gdal()->closeFile(fileinf.absoluteFilePath(), data->id());
     return ret;
 

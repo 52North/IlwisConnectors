@@ -108,9 +108,26 @@ void ODSFormat::cellValue(quint32 col, quint32 row, const QVariant &value, bool 
     }
 }
 
+quint32 ODSFormat::rowCountRaw() const
+{
+    if ( _rows->size() == 0)
+        return _currentSheet->CalcRowCount();
+
+    return _rows->size();
+}
+
 quint32 ODSFormat::rowCount() const
 {
-    return _rows->size();
+    int rowCount = -1;
+    quint32 raw = rowCountRaw();
+    for(int row = 0; row < raw; ++row){
+        if (! isCellValid(0, row)){
+            rowCount = row;
+            break;
+        }
+    }
+
+    return rowCount != -1 ? rowCount : raw;
 }
 
 quint32 ODSFormat::columnCount()
@@ -152,7 +169,7 @@ bool ODSFormat::isValid() const
 
 bool ODSFormat::isRowValid(quint32 rowIndex) const
 {
-    return rowIndex < _rows->size() && _rows->at(rowIndex) != 0;
+    return rowIndex < _rows->size() && _rows->at(rowIndex);
 }
 
 bool ODSFormat::isCellValid(quint32 columnIndex, quint32 rowIndex) const

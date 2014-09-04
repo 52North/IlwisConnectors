@@ -325,7 +325,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &optio
         if ( datafile.right(1) != "#") { // can happen, # is a special token in urls
             datafile += "#";
         }
-        QFileInfo localfile =  this->containerConnector()->toLocalFile(QUrl::fromLocalFile(datafile));
+        QFileInfo localfile(datafile);
         QFile file(localfile.absoluteFilePath());
         if ( !file.exists()){
             return ERROR1(ERR_MISSING_DATA_FILE_1,datafile);
@@ -419,8 +419,8 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
         }
     }
     ITable attTable = raster->attributeTable();
-    if ( attTable.isValid()) {
-        attTable->store(IlwisObject::smBINARYDATA);
+    if ( attTable.isValid() && attTable->isValid()) {
+         attTable->store({"storemode",IlwisObject::smBINARYDATA});
     }
     return ok;
 
@@ -472,10 +472,10 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         QString path = _odf->file().left(index);
         QUrl url = makeUrl( path + "/" + mapName);
         gcMap->connectTo(url, "map", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
-        gcMap->store(IlwisObject::smBINARYDATA | IlwisObject::smMETADATA);
+        gcMap->store({"storemode",IlwisObject::smBINARYDATA | IlwisObject::smMETADATA});
     }
 
-    _odf->store("mpl", containerConnector()->toLocalFile(source()));
+    _odf->store("mpl",source().toLocalFile());
     return true;
 }
 
@@ -504,7 +504,7 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
         grf->name(localName);
         QUrl url = makeUrl( _odf->file(), localName, itGEOREF);
         grf->connectTo(url, "georef", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
-        grf->store(IlwisObject::smMETADATA);
+        grf->store({"storemode", IlwisObject::smMETADATA});
         localName = url.toLocalFile();
     }
 
@@ -588,7 +588,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     _odf->setKeyValue("MapStore","SwapBytes","No");
     _odf->setKeyValue("MapStore","UseAs","No");
 
-    _odf->store("mpr", containerConnector()->toLocalFile(source()));
+    _odf->store("mpr", source().toLocalFile());
 
 
     return true;

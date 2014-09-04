@@ -14,7 +14,7 @@ public:
     bool loadMetaData(Ilwis::IlwisObject *data, const IOOptions &options);
 
 protected:
-    bool store(IlwisObject *obj, IlwisTypes type);
+    bool store(IlwisObject *obj, const IOOptions& options = IOOptions());
 
     OGRSpatialReferenceH createSRS(const ICoordinateSystem &coordsystem) const;
 private:

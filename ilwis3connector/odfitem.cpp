@@ -335,7 +335,7 @@ IlwisTypes ODFItem::findCsyType(const QString& path) const
             path = container().toLocalFile() + "/" + path;
         else{
             QFileInfo inf (_csyname);
-            path = QUrl::fromLocalFile(inf.absoluteFilePath()).toString();
+            path = inf.absoluteFilePath();
         }
 
         if(!csy.setIniFile(path)){
