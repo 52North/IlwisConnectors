@@ -166,7 +166,13 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
             QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
             QString name = grf->coordinateSystem()->name();
             if ( !grf->coordinateSystem()->isAnonymous()) {
-                name = name.replace(QRegExp("[/ .'\"]"),"_");
+                int index = name.indexOf(".csy");
+                if ( index != -1){
+                    name = QFileInfo(name).baseName();
+                    name = name.replace(QRegExp("[/ .'\"]"),"_");
+                    name += ".csy";
+                }else
+                    name = name.replace(QRegExp("[/ .'\"]"),"_");
             }
             localPath = path + name;
         }
