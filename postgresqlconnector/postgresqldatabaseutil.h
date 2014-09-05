@@ -54,7 +54,33 @@ public:
             connectionname = resource.url().toString();
         }
 
-        QSqlDatabase db = QSqlDatabase::database(connectionname);
+        QSqlDatabase db;
+        if (QSqlDatabase::contains(connectionname)) {
+            db = QSqlDatabase::database(connectionname);
+        } else {
+            qDebug() << "add pg database connection" << connectionname;
+            db = QSqlDatabase::addDatabase("QPSQL", connectionname);
+
+            qint64 port = url.port();
+            QString host = url.host();
+            QString path = url.path().split('/',QString::SkipEmptyParts).at(0);
+            validateNotNullOrEmpty("Host", host);
+            validateNotNullOrEmpty("Path", path);
+            validateNotNullOrEmpty("Port", port);
+
+            db.setHostName(host);
+            db.setDatabaseName(path);
+            db.setPort(port);
+
+            QString username = resource["pg.user"].toString();
+            QString password = resource["pg.password"].toString();
+            validateNotNullOrEmpty("Username", username);
+            validateNotNullOrEmpty("Password", password);
+
+            db.setUserName(username);
+            db.setPassword(password);
+        }
+
         if (db.isValid()) {
             if (open && !db.isOpen()) {
                 QString error = db.lastError().text();
@@ -63,28 +89,6 @@ public:
             }
             return db;
         }
-
-        qDebug() << "add pg database connection" << connectionname;
-        db = QSqlDatabase::addDatabase("QPSQL", connectionname);
-
-        qint64 port = url.port();
-        QString host = url.host();
-        QString path = url.path().split('/',QString::SkipEmptyParts).at(0);
-        validateNotNullOrEmpty("Host", host);
-        validateNotNullOrEmpty("Path", path);
-        validateNotNullOrEmpty("Port", port);
-
-        db.setHostName(host);
-        db.setDatabaseName(path);
-        db.setPort(port);
-
-        QString username = resource["pg.user"].toString();
-        QString password = resource["pg.password"].toString();
-        validateNotNullOrEmpty("Username", username);
-        validateNotNullOrEmpty("Password", password);
-
-        db.setUserName(username);
-        db.setPassword(password);
 
         if (open) {
             if ( !db.open()) {

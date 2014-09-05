@@ -84,8 +84,8 @@ bool PostgresqlTableLoader::loadData(Table *table) const
         allNonGeometryColumns.append(" ").append(coldef.name()).append(" ,");
     }
     allNonGeometryColumns = allNonGeometryColumns.left(allNonGeometryColumns.length() - 1);
-    PostgresqlDatabaseUtil::openForResource(_resource,"tableloader");
-    QSqlDatabase db = QSqlDatabase::database("tableloader");
+    PostgresqlDatabaseUtil::openForResource(_resource,"tableloader.loadData");
+    QSqlDatabase db = QSqlDatabase::database("tableloader.loadData");
     QSqlQuery query = db.exec(select(allNonGeometryColumns));
 
     quint64 count = 0;
