@@ -35,6 +35,8 @@ public:
     RangeIterator(const RangeIterator& iter);
     RangeIterator(Ilwis::RangeIterator<IlwOutput, IlwRange>* iter);
 
+    ~RangeIterator();
+
     bool __bool__() const;
     std::string __str__();
     RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>* __iter__();
@@ -65,8 +67,8 @@ protected:
 
 };
 
-//typedef RangeIterator<double, NumericRange, double, Ilwis::NumericRange> NumericRangeIterator;
-typedef RangeIterator<DomainItem, ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange> ItemRangeIterator;
+typedef RangeIterator<double, NumericRange, double, Ilwis::NumericRange> NumericRangeIterator;
+//typedef RangeIterator<DomainItem, ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange> ItemRangeIterator;
 }
 
 #endif // PYTHONAPI_RANGEITERATOR_H

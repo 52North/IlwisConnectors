@@ -22,8 +22,8 @@
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/featureiterator.h"
-#include "csytransform.h"
-#include "geometryhelper.h"
+#include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/csytransform.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/geometryhelper.h"
 
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_error.h"

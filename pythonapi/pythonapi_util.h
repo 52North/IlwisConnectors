@@ -73,6 +73,7 @@ namespace pythonapi {
         friend class RasterCoverage;
         friend class GeoReference;
         friend class CoordinateSystem;
+        friend class VertexIterator;
         public:
             Coordinate(double x, double y);
             Coordinate(double x, double y, double z);
@@ -279,7 +280,7 @@ namespace pythonapi {
     public:
         IOOptions();
         IOOptions(const std::string& key, PyObject* value);
-        IOOptions(Ilwis::IOOptions* ilwIOOp);
+
         bool contains(const std::string& option);
         quint32 size();
         PyObject* __getitem__(const std::string& option);
@@ -288,9 +289,40 @@ namespace pythonapi {
     protected:
         std::shared_ptr<Ilwis::IOOptions> _data;
         Ilwis::IOOptions& ptr() const;
+        IOOptions(Ilwis::IOOptions* ilwIOOp);
     };
 
+//------------------------------------------------------------------------------------------------------------------
+#ifdef SWIG
+    %rename(ColorModel) ColorModelNS;
+#endif
 
+    struct ColorModelNS{
+        enum Value{cmNONE, cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
+    };
+
+    typedef ColorModelNS::Value ColorModel;
+
+    class Color{
+    public:
+        Color();
+        Color(ColorModel type, PyObject* obj, const std::string& name = "");
+        Color(const std::string& typeStr, PyObject* obj, const std::string& name = "");
+        double getItem(std::string key) const;
+
+        void setName(const std::string& name);
+        std::string getName();
+
+        ColorModel getColorModel() const;
+        std::string toString() const;
+        std::string __str__();
+    private:
+        void readColor(ColorModel type, PyObject* obj);
+        ColorModel stringToModel(const std::string& type);
+        ColorModel _type = ColorModel::cmRGBA;
+        PyObject* _colorVal;
+        std::string _name = "";
+    };
 } // namespace pythonapi
 
 #endif // PYTHONAPI_UTIL_H

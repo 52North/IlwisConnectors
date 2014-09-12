@@ -714,6 +714,35 @@ try:
             #     world.setConnection(workingDir+tempDir+"/drainage_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             #     world.store()
 
+        def test_vertexiterator(self):
+            fc = FeatureCoverage("drainage.shp")
+            
+            for feat in fc:
+                baseIt = VertexIterator(feat.geometry())
+                beginIt = baseIt.begin()
+                endIt = baseIt.end()
+
+                self.assertTrue(beginIt < endIt)
+                self.assertTrue(beginIt <= endIt)
+                self.assertFalse(beginIt > endIt)
+                self.assertFalse(beginIt >= endIt)
+
+                listA = []
+                while beginIt != endIt:
+                    listA.append(beginIt.current())
+                    beginIt += 1
+
+                self.assertTrue(beginIt == endIt)
+
+                vertIt = iter(feat)
+                listB = []
+                for vert in vertIt:
+                    listB.append(vert)
+
+            self.assertEqual(listB == listA)
+
+
+
     #@ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
@@ -809,7 +838,7 @@ try:
             self.assertEqual("536 478 536 478", str(
                 gr.envelope2Box(Envelope(Coordinate(-319195.47, 784540.64), Coordinate(-319990.248000, 784032.506500)))
             ))
-            gr.centerOfPixel(False)
+            gr.setCenterOfPixel(False)
             self.assertFalse(gr.centerOfPixel())
             self.assertEqual("536 478 536 478", str(
                 gr.envelope2Box(Envelope(Coordinate(-319195.47, 784540.64), Coordinate(-319990.248000, 784032.506500)))
@@ -1533,6 +1562,8 @@ try:
 
             childdom = ItemDomain(interrange)
 
+            self.assertEqual(interrange.listAll(), [('sealevel', '40.000 100.000'), ('dijks', '101.0 151.0')])
+
             interrange.add(("by the sea", 152.0, 181.0, 5.0))
             parentdom = ItemDomain(interrange)
 
@@ -1586,6 +1617,8 @@ try:
             tr = ThematicRange()
             tr.add("hound", "3.1", "Fierce doggy")
             tr.add("greyhound", "0.32", "the fast one")
+
+            self.assertEqual(tr.listAll(), [("hound", "3.1", "Fierce doggy"), ("greyhound", "0.32", "the fast one")])
 
             td = ItemDomain(tr)
 
@@ -1644,6 +1677,8 @@ try:
             nr.add("Perth")
             nr.add("Darwin")
 
+            self.assertEqual(nr.listAll(), ['Perth', 'Darwin'])
+
             nchild = ItemDomain(nr)
 
             nr.add("Broome")
@@ -1698,7 +1733,7 @@ try:
             namedRange.setTheme("Australian Cities")
             self.assertEqual(namedRange.theme(), "Australian Cities")
 
-        #@ut.skip("temporarily")
+    # #@ut.skip("temporarily")
     # class TestIndexedIdentifierDomain(ut.TestCase):
     #     def test_containement(self):
     #         nr = IndexedItemRange()
@@ -1817,7 +1852,7 @@ try:
 
     class TestColorPalette(ut.TestCase):
 
-        def test_creation(self):
+        def test_range(self):
             col1 = Color(ColorModel.cmRGBA, (220.0, 20.0, 30.0, 200.0))
             col2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
             col3 = Color(ColorModel.cmRGBA, (255.0, 80.0, 69.0, 240.0))
@@ -1833,7 +1868,10 @@ try:
             colPal.add(col3)
             self.assertTrue(colPal.containsColor(col3))
             self.assertEqual(colPal.count(), 3)
-            #colPal.remove(name1)
+            colPal.remove(name1)
+            self.assertEqual(colPal.count(), 2)
+            self.assertEqual(str(colPal.color(1)), 'RGBA(1,0.313725,0.270588,0.941176)')
+
             colPal.clear()
             self.assertEqual(colPal.count(), 0)
             self.assertEqual(str(colPal.valueAt(1, colPal)), str(colPal.color(1)))
@@ -2151,7 +2189,7 @@ try:
             self.assertEqual(tab.columns(), ('column1', 'column2', 'column3'))
             self.assertEqual(tab.columnCount(), 3)
             self.assertEqual(tab.column(0), tab.column("column1"))
-            self.assertEqual(tab.column(0), ('cell11', 'cell21'))
+            self.assertEqual(tab.column(0), ('cell11', 'cell21', 'cell31', 'cell41'))
             self.assertEqual(tab.columnIndex("column3"), 2)
 
         def test_records(self):
@@ -2168,7 +2206,7 @@ try:
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest=None, verbosity=2)
+        ut.main(defaultTest='TestFeature', verbosity=2)
 
 except ImportError as e:
     print(e)

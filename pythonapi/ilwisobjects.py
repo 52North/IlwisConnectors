@@ -325,7 +325,7 @@ class IlwisObject(Object):
 
     def store(self, *args):
         """
-        store(IlwisObject self, int storeMode=pythonapi::IlwisObject::smMETADATA|pythonapi::IlwisObject::smBINARYDATA)
+        store(IlwisObject self, IOOptions opt=IOOptions())
         store(IlwisObject self)
         """
         return _ilwisobjects.IlwisObject_store(self, *args)
@@ -568,7 +568,6 @@ class IOOptions(_object):
         """
         __init__(pythonapi::IOOptions self) -> IOOptions
         __init__(pythonapi::IOOptions self, std::string const & key, PyObject * value) -> IOOptions
-        __init__(pythonapi::IOOptions self, Ilwis::IOOptions * ilwIOOp) -> IOOptions
         """
         this = _ilwisobjects.new_IOOptions(*args)
         try: self.this.append(this)
@@ -593,6 +592,75 @@ class IOOptions(_object):
     __del__ = lambda self : None;
 IOOptions_swigregister = _ilwisobjects.IOOptions_swigregister
 IOOptions_swigregister(IOOptions)
+
+class ColorModel(_object):
+    """Proxy of C++ pythonapi::ColorModelNS class"""
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, ColorModel, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, ColorModel, name)
+    __repr__ = _swig_repr
+    cmNONE = _ilwisobjects.ColorModel_cmNONE
+    cmRGBA = _ilwisobjects.ColorModel_cmRGBA
+    cmHSLA = _ilwisobjects.ColorModel_cmHSLA
+    cmCYMKA = _ilwisobjects.ColorModel_cmCYMKA
+    cmGREYSCALE = _ilwisobjects.ColorModel_cmGREYSCALE
+    def __init__(self): 
+        """__init__(pythonapi::ColorModelNS self) -> ColorModel"""
+        this = _ilwisobjects.new_ColorModel()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _ilwisobjects.delete_ColorModel
+    __del__ = lambda self : None;
+ColorModel_swigregister = _ilwisobjects.ColorModel_swigregister
+ColorModel_swigregister(ColorModel)
+
+class Color(_object):
+    """Proxy of C++ pythonapi::Color class"""
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Color, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, Color, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        """
+        __init__(pythonapi::Color self) -> Color
+        __init__(pythonapi::Color self, pythonapi::ColorModel type, PyObject * obj, std::string const & name="") -> Color
+        __init__(pythonapi::Color self, pythonapi::ColorModel type, PyObject * obj) -> Color
+        __init__(pythonapi::Color self, std::string const & typeStr, PyObject * obj, std::string const & name="") -> Color
+        __init__(pythonapi::Color self, std::string const & typeStr, PyObject * obj) -> Color
+        """
+        this = _ilwisobjects.new_Color(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def getItem(self, *args):
+        """getItem(Color self, std::string key) -> double"""
+        return _ilwisobjects.Color_getItem(self, *args)
+
+    def setName(self, *args):
+        """setName(Color self, std::string const & name)"""
+        return _ilwisobjects.Color_setName(self, *args)
+
+    def getName(self):
+        """getName(Color self) -> std::string"""
+        return _ilwisobjects.Color_getName(self)
+
+    def getColorModel(self):
+        """getColorModel(Color self) -> pythonapi::ColorModel"""
+        return _ilwisobjects.Color_getColorModel(self)
+
+    def toString(self):
+        """toString(Color self) -> std::string"""
+        return _ilwisobjects.Color_toString(self)
+
+    def __str__(self):
+        """__str__(Color self) -> std::string"""
+        return _ilwisobjects.Color___str__(self)
+
+    __swig_destroy__ = _ilwisobjects.delete_Color
+    __del__ = lambda self : None;
+Color_swigregister = _ilwisobjects.Color_swigregister
+Color_swigregister(Color)
 
 class Pixel(_object):
     """Proxy of C++ pythonapi::PixelTemplate<(qint32)> class"""
@@ -1382,6 +1450,10 @@ class Geometry(Object):
         """envelope(Geometry self) -> Envelope"""
         return _ilwisobjects.Geometry_envelope(self)
 
+    def __iter__(self):
+        """__iter__(Geometry self) -> VertexIterator"""
+        return _ilwisobjects.Geometry___iter__(self)
+
     def isSimple(self):
         """isSimple(Geometry self) -> bool"""
         return _ilwisobjects.Geometry_isSimple(self)
@@ -1498,6 +1570,10 @@ class Feature(Object):
         """__str__(Feature self) -> std::string"""
         return _ilwisobjects.Feature___str__(self)
 
+    def __iter__(self):
+        """__iter__(Feature self) -> VertexIterator"""
+        return _ilwisobjects.Feature___iter__(self)
+
     def id(self):
         """id(Feature self) -> quint64"""
         return _ilwisobjects.Feature_id(self)
@@ -1591,6 +1667,14 @@ class Feature(Object):
     def trackIndexValue(self, *args):
         """trackIndexValue(Feature self, quint32 index) -> PyObject *"""
         return _ilwisobjects.Feature_trackIndexValue(self, *args)
+
+    def begin(self):
+        """begin(Feature self) -> VertexIterator"""
+        return _ilwisobjects.Feature_begin(self)
+
+    def end(self):
+        """end(Feature self) -> VertexIterator"""
+        return _ilwisobjects.Feature_end(self)
 
     __swig_destroy__ = _ilwisobjects.delete_Feature
     __del__ = lambda self : None;
@@ -1958,19 +2042,21 @@ class GeoReference(IlwisObject):
         """pixelSize(GeoReference self) -> double"""
         return _ilwisobjects.GeoReference_pixelSize(self)
 
-    def size(self, *args):
-        """
-        size(GeoReference self) -> Size
-        size(GeoReference self, Size sz)
-        """
-        return _ilwisobjects.GeoReference_size(self, *args)
+    def size(self):
+        """size(GeoReference self) -> Size"""
+        return _ilwisobjects.GeoReference_size(self)
 
-    def centerOfPixel(self, *args):
-        """
-        centerOfPixel(GeoReference self) -> bool
-        centerOfPixel(GeoReference self, bool yesno)
-        """
-        return _ilwisobjects.GeoReference_centerOfPixel(self, *args)
+    def setSize(self, *args):
+        """setSize(GeoReference self, Size sz)"""
+        return _ilwisobjects.GeoReference_setSize(self, *args)
+
+    def centerOfPixel(self):
+        """centerOfPixel(GeoReference self) -> bool"""
+        return _ilwisobjects.GeoReference_centerOfPixel(self)
+
+    def setCenterOfPixel(self, *args):
+        """setCenterOfPixel(GeoReference self, bool yesno)"""
+        return _ilwisobjects.GeoReference_setCenterOfPixel(self, *args)
 
     def isCompatible(self, *args):
         """isCompatible(GeoReference self, GeoReference other) -> bool"""
@@ -2441,99 +2527,6 @@ class TimeDomain(Domain):
 TimeDomain_swigregister = _ilwisobjects.TimeDomain_swigregister
 TimeDomain_swigregister(TimeDomain)
 
-class ItemRangeIterator(_object):
-    """Proxy of C++ pythonapi::RangeIterator<(pythonapi::DomainItem,pythonapi::ItemRange,Ilwis::SPDomainItem,Ilwis::ItemRange)> class"""
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, ItemRangeIterator, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, ItemRangeIterator, name)
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        """
-        __init__(pythonapi::RangeIterator<(pythonapi::DomainItem,pythonapi::ItemRange,Ilwis::SPDomainItem,Ilwis::ItemRange)> self, Range rng) -> ItemRangeIterator
-        __init__(pythonapi::RangeIterator<(pythonapi::DomainItem,pythonapi::ItemRange,Ilwis::SPDomainItem,Ilwis::ItemRange)> self, ItemRangeIterator iter) -> ItemRangeIterator
-        __init__(pythonapi::RangeIterator<(pythonapi::DomainItem,pythonapi::ItemRange,Ilwis::SPDomainItem,Ilwis::ItemRange)> self, Ilwis::RangeIterator< Ilwis::SPDomainItem,Ilwis::ItemRange > * iter) -> ItemRangeIterator
-        """
-        this = _ilwisobjects.new_ItemRangeIterator(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def __bool__(self):
-        """__bool__(ItemRangeIterator self) -> bool"""
-        return _ilwisobjects.ItemRangeIterator___bool__(self)
-
-    def __str__(self):
-        """__str__(ItemRangeIterator self) -> std::string"""
-        return _ilwisobjects.ItemRangeIterator___str__(self)
-
-    def __iter__(self):
-        """__iter__(ItemRangeIterator self) -> ItemRangeIterator"""
-        return _ilwisobjects.ItemRangeIterator___iter__(self)
-
-    def __next__(self):
-        """__next__(ItemRangeIterator self) -> DomainItem"""
-        return _ilwisobjects.ItemRangeIterator___next__(self)
-
-    def current(self):
-        """current(ItemRangeIterator self) -> DomainItem"""
-        return _ilwisobjects.ItemRangeIterator_current(self)
-
-    def __getitem__(self, *args):
-        """__getitem__(ItemRangeIterator self, quint32 pos) -> DomainItem"""
-        return _ilwisobjects.ItemRangeIterator___getitem__(self, *args)
-
-    def __radd__(self, *args):
-        """__radd__(ItemRangeIterator self, int n) -> ItemRangeIterator"""
-        return _ilwisobjects.ItemRangeIterator___radd__(self, *args)
-
-    def __add__(self, *args):
-        """__add__(ItemRangeIterator self, int n) -> ItemRangeIterator"""
-        return _ilwisobjects.ItemRangeIterator___add__(self, *args)
-
-    def __iadd__(self, *args):
-        """__iadd__(ItemRangeIterator self, int n) -> ItemRangeIterator"""
-        return _ilwisobjects.ItemRangeIterator___iadd__(self, *args)
-
-    def __sub__(self, *args):
-        """__sub__(ItemRangeIterator self, int n) -> ItemRangeIterator"""
-        return _ilwisobjects.ItemRangeIterator___sub__(self, *args)
-
-    def __isub__(self, *args):
-        """__isub__(ItemRangeIterator self, int n) -> ItemRangeIterator"""
-        return _ilwisobjects.ItemRangeIterator___isub__(self, *args)
-
-    def __eq__(self, *args):
-        """__eq__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
-        return _ilwisobjects.ItemRangeIterator___eq__(self, *args)
-
-    def __ne__(self, *args):
-        """__ne__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
-        return _ilwisobjects.ItemRangeIterator___ne__(self, *args)
-
-    def __gt__(self, *args):
-        """__gt__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
-        return _ilwisobjects.ItemRangeIterator___gt__(self, *args)
-
-    def __ge__(self, *args):
-        """__ge__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
-        return _ilwisobjects.ItemRangeIterator___ge__(self, *args)
-
-    def __lt__(self, *args):
-        """__lt__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
-        return _ilwisobjects.ItemRangeIterator___lt__(self, *args)
-
-    def __le__(self, *args):
-        """__le__(ItemRangeIterator self, ItemRangeIterator other) -> bool"""
-        return _ilwisobjects.ItemRangeIterator___le__(self, *args)
-
-    def setRange(self, *args):
-        """setRange(ItemRangeIterator self, Range rng)"""
-        return _ilwisobjects.ItemRangeIterator_setRange(self, *args)
-
-    __swig_destroy__ = _ilwisobjects.delete_ItemRangeIterator
-    __del__ = lambda self : None;
-ItemRangeIterator_swigregister = _ilwisobjects.ItemRangeIterator_swigregister
-ItemRangeIterator_swigregister(ItemRangeIterator)
-
 class Range(Object):
     """Proxy of C++ pythonapi::Range class"""
     __swig_setmethods__ = {}
@@ -2600,6 +2593,7 @@ class NumericRange(Range):
         __init__(pythonapi::NumericRange self, double mi, double ma) -> NumericRange
         __init__(pythonapi::NumericRange self, NumericRange vr) -> NumericRange
         __init__(pythonapi::NumericRange self, Ilwis::NumericRange * nr) -> NumericRange
+        __init__(pythonapi::NumericRange self) -> NumericRange
         """
         this = _ilwisobjects.new_NumericRange(*args)
         try: self.this.append(this)
@@ -2645,6 +2639,18 @@ class NumericRange(Range):
         """set(NumericRange self, NumericRange vr)"""
         return _ilwisobjects.NumericRange_set(self, *args)
 
+    def __iter__(self):
+        """__iter__(NumericRange self) -> pythonapi::NumericRangeIterator"""
+        return _ilwisobjects.NumericRange___iter__(self)
+
+    def begin(self):
+        """begin(NumericRange self) -> pythonapi::NumericRangeIterator"""
+        return _ilwisobjects.NumericRange_begin(self)
+
+    def end(self):
+        """end(NumericRange self) -> pythonapi::NumericRangeIterator"""
+        return _ilwisobjects.NumericRange_end(self)
+
     def clear(self):
         """clear(NumericRange self)"""
         return _ilwisobjects.NumericRange_clear(self)
@@ -2677,10 +2683,6 @@ class ItemRange(Range):
     def clear(self):
         """clear(ItemRange self)"""
         return _ilwisobjects.ItemRange_clear(self)
-
-    def __iter__(self):
-        """__iter__(ItemRange self) -> ItemRangeIterator"""
-        return _ilwisobjects.ItemRange___iter__(self)
 
     __swig_destroy__ = _ilwisobjects.delete_ItemRange
     __del__ = lambda self : None;
@@ -2832,75 +2834,6 @@ class ThematicRange(ItemRange):
 ThematicRange_swigregister = _ilwisobjects.ThematicRange_swigregister
 ThematicRange_swigregister(ThematicRange)
 
-class ColorModel(_object):
-    """Proxy of C++ pythonapi::ColorModelNS class"""
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, ColorModel, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, ColorModel, name)
-    __repr__ = _swig_repr
-    cmNONE = _ilwisobjects.ColorModel_cmNONE
-    cmRGBA = _ilwisobjects.ColorModel_cmRGBA
-    cmHSLA = _ilwisobjects.ColorModel_cmHSLA
-    cmCYMKA = _ilwisobjects.ColorModel_cmCYMKA
-    cmGREYSCALE = _ilwisobjects.ColorModel_cmGREYSCALE
-    def __init__(self): 
-        """__init__(pythonapi::ColorModelNS self) -> ColorModel"""
-        this = _ilwisobjects.new_ColorModel()
-        try: self.this.append(this)
-        except: self.this = this
-    __swig_destroy__ = _ilwisobjects.delete_ColorModel
-    __del__ = lambda self : None;
-ColorModel_swigregister = _ilwisobjects.ColorModel_swigregister
-ColorModel_swigregister(ColorModel)
-
-class Color(_object):
-    """Proxy of C++ pythonapi::Color class"""
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Color, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Color, name)
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        """
-        __init__(pythonapi::Color self) -> Color
-        __init__(pythonapi::Color self, pythonapi::ColorModel type, PyObject * obj, std::string const & name="") -> Color
-        __init__(pythonapi::Color self, pythonapi::ColorModel type, PyObject * obj) -> Color
-        __init__(pythonapi::Color self, std::string const & typeStr, PyObject * obj, std::string const & name="") -> Color
-        __init__(pythonapi::Color self, std::string const & typeStr, PyObject * obj) -> Color
-        """
-        this = _ilwisobjects.new_Color(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def getItem(self, *args):
-        """getItem(Color self, std::string key) -> double"""
-        return _ilwisobjects.Color_getItem(self, *args)
-
-    def setName(self, *args):
-        """setName(Color self, std::string const & name)"""
-        return _ilwisobjects.Color_setName(self, *args)
-
-    def getName(self):
-        """getName(Color self) -> std::string"""
-        return _ilwisobjects.Color_getName(self)
-
-    def getColorModel(self):
-        """getColorModel(Color self) -> pythonapi::ColorModel"""
-        return _ilwisobjects.Color_getColorModel(self)
-
-    def toString(self):
-        """toString(Color self) -> std::string"""
-        return _ilwisobjects.Color_toString(self)
-
-    def __str__(self):
-        """__str__(Color self) -> std::string"""
-        return _ilwisobjects.Color___str__(self)
-
-    __swig_destroy__ = _ilwisobjects.delete_Color
-    __del__ = lambda self : None;
-Color_swigregister = _ilwisobjects.Color_swigregister
-Color_swigregister(Color)
-
 class ColorRange(Range):
     """Proxy of C++ pythonapi::ColorRange class"""
     __swig_setmethods__ = {}
@@ -2929,8 +2862,8 @@ class ColorRange(Range):
         """
         toColor(quint64 clrint, pythonapi::ColorModel clrModel, std::string const & name="") -> Color
         toColor(quint64 clrint, pythonapi::ColorModel clrModel) -> Color
-        toColor(PyObject * arg1, pythonapi::ColorModel colortype, std::string const & name="") -> Color
-        toColor(PyObject * arg1, pythonapi::ColorModel colortype) -> Color
+        toColor(PyObject * v, pythonapi::ColorModel colortype, std::string const & name="") -> Color
+        toColor(PyObject * v, pythonapi::ColorModel colortype) -> Color
         """
         return _ilwisobjects.ColorRange_toColor(*args)
 
@@ -2945,8 +2878,8 @@ def ColorRange_toColor(*args):
   """
     toColor(quint64 clrint, pythonapi::ColorModel clrModel, std::string const & name="") -> Color
     toColor(quint64 clrint, pythonapi::ColorModel clrModel) -> Color
-    toColor(PyObject * arg1, pythonapi::ColorModel colortype, std::string const & name="") -> Color
-    ColorRange_toColor(PyObject * arg1, pythonapi::ColorModel colortype) -> Color
+    toColor(PyObject * v, pythonapi::ColorModel colortype, std::string const & name="") -> Color
+    ColorRange_toColor(PyObject * v, pythonapi::ColorModel colortype) -> Color
     """
   return _ilwisobjects.ColorRange_toColor(*args)
 
@@ -3124,12 +3057,8 @@ class TimeInterval(NumericRange):
         return _ilwisobjects.TimeInterval_contains(self, *args)
 
     def clone(self):
-        """clone(TimeInterval self) -> Ilwis::Range *"""
+        """clone(TimeInterval self) -> TimeInterval"""
         return _ilwisobjects.TimeInterval_clone(self)
-
-    def isValid(self):
-        """isValid(TimeInterval self) -> bool"""
-        return _ilwisobjects.TimeInterval_isValid(self)
 
     __swig_destroy__ = _ilwisobjects.delete_TimeInterval
     __del__ = lambda self : None;
@@ -3148,7 +3077,6 @@ class DataDefinition(_object):
     def __init__(self, *args): 
         """
         __init__(pythonapi::DataDefinition self) -> DataDefinition
-        __init__(pythonapi::DataDefinition self, Ilwis::DataDefinition * datdef) -> DataDefinition
         __init__(pythonapi::DataDefinition self, Domain dm, Range rng=None) -> DataDefinition
         __init__(pythonapi::DataDefinition self, Domain dm) -> DataDefinition
         __init__(pythonapi::DataDefinition self, DataDefinition datdef) -> DataDefinition
@@ -3204,8 +3132,7 @@ class ColumnDefinition(_object):
         """
         __init__(pythonapi::ColumnDefinition self) -> ColumnDefinition
         __init__(pythonapi::ColumnDefinition self, ColumnDefinition coldef, quint32 index) -> ColumnDefinition
-        __init__(pythonapi::ColumnDefinition self, std::string const & name, DataDefinition coldef, quint64 colindex) -> ColumnDefinition
-        __init__(pythonapi::ColumnDefinition self, Ilwis::ColumnDefinition * arg2) -> ColumnDefinition
+        __init__(pythonapi::ColumnDefinition self, std::string const & name, DataDefinition datdef, quint64 colindex) -> ColumnDefinition
         __init__(pythonapi::ColumnDefinition self, ColumnDefinition coldef) -> ColumnDefinition
         __init__(pythonapi::ColumnDefinition self, std::string const & nm, Domain dom, quint64 colindex) -> ColumnDefinition
         """
@@ -3428,6 +3355,115 @@ class Interval(DomainItem):
     __del__ = lambda self : None;
 Interval_swigregister = _ilwisobjects.Interval_swigregister
 Interval_swigregister(Interval)
+
+class VertexIterator(_object):
+    """Proxy of C++ pythonapi::VertexIterator class"""
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, VertexIterator, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, VertexIterator, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        """
+        __init__(pythonapi::VertexIterator self) -> VertexIterator
+        __init__(pythonapi::VertexIterator self, Geometry geom) -> VertexIterator
+        __init__(pythonapi::VertexIterator self, std::string const & wkt) -> VertexIterator
+        """
+        this = _ilwisobjects.new_VertexIterator(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def __bool__(self):
+        """__bool__(VertexIterator self) -> bool"""
+        return _ilwisobjects.VertexIterator___bool__(self)
+
+    def __str__(self):
+        """__str__(VertexIterator self) -> std::string"""
+        return _ilwisobjects.VertexIterator___str__(self)
+
+    def __iter__(self):
+        """__iter__(VertexIterator self) -> VertexIterator"""
+        return _ilwisobjects.VertexIterator___iter__(self)
+
+    def __next__(self):
+        """__next__(VertexIterator self) -> Coordinate"""
+        return _ilwisobjects.VertexIterator___next__(self)
+
+    def __add__(self, *args):
+        """__add__(VertexIterator self, int n) -> VertexIterator"""
+        return _ilwisobjects.VertexIterator___add__(self, *args)
+
+    def __radd__(self, *args):
+        """__radd__(VertexIterator self, int n) -> VertexIterator"""
+        return _ilwisobjects.VertexIterator___radd__(self, *args)
+
+    def __iadd__(self, *args):
+        """__iadd__(VertexIterator self, int n) -> VertexIterator"""
+        return _ilwisobjects.VertexIterator___iadd__(self, *args)
+
+    def __sub__(self, *args):
+        """__sub__(VertexIterator self, int n) -> VertexIterator"""
+        return _ilwisobjects.VertexIterator___sub__(self, *args)
+
+    def __rsub__(self, *args):
+        """__rsub__(VertexIterator self, int n) -> VertexIterator"""
+        return _ilwisobjects.VertexIterator___rsub__(self, *args)
+
+    def __isub__(self, *args):
+        """__isub__(VertexIterator self, int n) -> VertexIterator"""
+        return _ilwisobjects.VertexIterator___isub__(self, *args)
+
+    def __getitem__(self, *args):
+        """__getitem__(VertexIterator self, quint32 linearpos) -> Coordinate"""
+        return _ilwisobjects.VertexIterator___getitem__(self, *args)
+
+    def current(self):
+        """current(VertexIterator self) -> Coordinate"""
+        return _ilwisobjects.VertexIterator_current(self)
+
+    def __eq__(self, *args):
+        """__eq__(VertexIterator self, VertexIterator other) -> bool"""
+        return _ilwisobjects.VertexIterator___eq__(self, *args)
+
+    def __ne__(self, *args):
+        """__ne__(VertexIterator self, VertexIterator other) -> bool"""
+        return _ilwisobjects.VertexIterator___ne__(self, *args)
+
+    def __lt__(self, *args):
+        """__lt__(VertexIterator self, VertexIterator other) -> bool"""
+        return _ilwisobjects.VertexIterator___lt__(self, *args)
+
+    def __gt__(self, *args):
+        """__gt__(VertexIterator self, VertexIterator other) -> bool"""
+        return _ilwisobjects.VertexIterator___gt__(self, *args)
+
+    def __le__(self, *args):
+        """__le__(VertexIterator self, VertexIterator other) -> bool"""
+        return _ilwisobjects.VertexIterator___le__(self, *args)
+
+    def __ge__(self, *args):
+        """__ge__(VertexIterator self, VertexIterator other) -> bool"""
+        return _ilwisobjects.VertexIterator___ge__(self, *args)
+
+    def nextSubGeometry(self):
+        """nextSubGeometry(VertexIterator self) -> bool"""
+        return _ilwisobjects.VertexIterator_nextSubGeometry(self)
+
+    def isInteriorVertex(self):
+        """isInteriorVertex(VertexIterator self) -> bool"""
+        return _ilwisobjects.VertexIterator_isInteriorVertex(self)
+
+    def begin(self):
+        """begin(VertexIterator self) -> VertexIterator"""
+        return _ilwisobjects.VertexIterator_begin(self)
+
+    def end(self):
+        """end(VertexIterator self) -> VertexIterator"""
+        return _ilwisobjects.VertexIterator_end(self)
+
+    __swig_destroy__ = _ilwisobjects.delete_VertexIterator
+    __del__ = lambda self : None;
+VertexIterator_swigregister = _ilwisobjects.VertexIterator_swigregister
+VertexIterator_swigregister(VertexIterator)
 
 class ReadOnly(type):
   @property

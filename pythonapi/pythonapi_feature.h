@@ -26,6 +26,7 @@ namespace pythonapi{
     public:
         bool __bool__() const;
         std::string __str__();
+        VertexIterator __iter__();
         quint64 id();
         PyObject* __getitem__(std::string name);
         PyObject* __getitem__(quint32 colIndex);
@@ -50,6 +51,9 @@ namespace pythonapi{
         pythonapi::ColumnDefinition columnDefinition(const std::string& name, bool coverages=true) const;
         pythonapi::ColumnDefinition columnDefinition(quint32 index, bool coverages=true) const;
         PyObject* trackIndexValue(quint32 index);
+
+        VertexIterator begin();
+        VertexIterator end();
 
     private:
         PyObject* attribute(std::string name, const QVariant& defaultValue, const QVariant& index = COVERAGEATRIB);
