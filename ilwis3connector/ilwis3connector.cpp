@@ -292,6 +292,8 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
 }
 
 QString Ilwis3Connector::suffix(IlwisTypes type) {
+    if ( type == (itRASTER | itCOLLECTION))
+        return "mpl";
     if ( type == itRASTER)
         return "mpr";
     if ( type == itPOLYGON)
@@ -375,7 +377,7 @@ IniFile *Ilwis3Connector::makeIni(const Resource &resource, IlwisTypes type)
     QString name = resource.url().toLocalFile();
     QString ext = suffix(type);
     int index = name.lastIndexOf(".");
-    if ( index != -1){
+    if ( index != -1 && index > name.size() - 5){
         name = name.left(index);
     }
     name += "." + ext;
