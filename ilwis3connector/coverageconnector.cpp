@@ -5,6 +5,7 @@
 #include "kernel.h"
 #include "raster.h"
 #include "module.h"
+#include "featurecoverage.h"
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
@@ -61,20 +62,15 @@ bool CoverageConnector::getRawInfo(const QString& range, double& vmin, double& v
     return false;
 }
 
-bool CoverageConnector::prepareAttributeTable(const QString& file, const QString& basemaptype, const IOOptions &options, AttributeTable attTable) const{
+ITable CoverageConnector::prepareAttributeTable(const QString& file, const QString& basemaptype, const IOOptions &options) const{
 
-    ITable extTable;
+    ITable attTable;
     if ( file != sUNDEF) {
         QString newfile = filename2FullPath(file, this->_resource);
-        if(!extTable.prepare(newfile)){
+        if(!attTable.prepare(newfile)){
             kernel()->issues()->log(file,TR(ERR_NO_INITIALIZED_1).arg(file),IssueObject::itWarning);
-            return false;
+            return attTable;
         }
-    }
-
-    IDomain covdom;
-    if (!covdom.prepare("count")){
-        return false;
     }
 
     if ( basemaptype != "Map" ) {
@@ -83,29 +79,20 @@ bool CoverageConnector::prepareAttributeTable(const QString& file, const QString
         if ( (index = name.indexOf(".")) != -1){
             name = name.left(index);
         }
-        if ( extTable.isValid()) {
-            for(int i=0; i < extTable->columnCount(); ++i) {
-                attTable->addColumn(extTable->columndefinition(i));
-            }
-            attTable->recordCount(extTable->recordCount());
-        }
-    } else {
-        attTable = extTable;
     }
-    if ( attTable->columnIndex(COVERAGEKEYCOLUMN) == iUNDEF) { // external tables might already have these
+    if ( !attTable.isValid())
+        attTable.prepare();
+
+    bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
+    if ( isNumeric){
+        IDomain featuredom("value");
+        attTable->addColumn(FEATUREVALUECOLUMN,featuredom);
+    }
+    else if ( attTable->columnIndex(COVERAGEKEYCOLUMN) == iUNDEF) { // external tables might already have these
         DataDefinition def = determineDataDefintion(_odf, options);
         attTable->addColumn(ColumnDefinition(COVERAGEKEYCOLUMN,def, attTable->columnCount()));
     }
-
-    bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-    if ( isNumeric) {
-        IDomain featuredom;
-        if (!featuredom.prepare("value")){
-            return false;
-        }
-        attTable->addColumn(FEATUREVALUECOLUMN,featuredom);
-    }
-    return true;
+    return attTable;
 
 }
 
@@ -142,7 +129,13 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
     QString basemaptype = _odf->value("BaseMap", "Type");
     // feature coverages always have an attribute table; rasters might have
     if ( basemaptype != "Map" || attfile != sUNDEF) {
-        prepareAttributeTable(attfile, basemaptype, options, coverage->attributeTable());
+        ITable tbl = prepareAttributeTable(attfile, basemaptype, options);
+        if ( tbl.isValid()){
+        if ( basemaptype == "Map"){
+            static_cast<RasterCoverage *>(coverage)->attributeTable(tbl);
+        } else
+            static_cast<FeatureCoverage *>(coverage)->attributesFromTable(tbl);
+        }
     }
 
     QString cbounds = _odf->value("BaseMap","CoordBounds");
@@ -235,7 +228,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
 
     calcStatics(obj,NumericStatistics::pBASIC);
-    int itemCount = 0;
+
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
 
         quint16 digits = coverage->statistics().significantDigits();
@@ -284,7 +277,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
                 _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
                 _odf->setKeyValue("BaseMap","Domain",_domainName);
             }
-            itemCount = themdom->count();
+            _itemCount = themdom->count();
         } else if(dom->valueType() == itINDEXEDITEM) {
             _domainName = QFileInfo(QUrl(_odf->file()).toLocalFile()).fileName();
             _domainInfo = QString("%1;Long;UniqueID;0;;").arg(_domainName);
@@ -302,19 +295,12 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             QUrl url = makeUrl(_odf->file(),_domainName);
             iddom->connectTo(url,"domain","ilwis3", IlwisObject::cmOUTPUT);
             iddom->store({"storemode",Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA});
-            itemCount = iddom->count();
+            _itemCount = iddom->count();
         }
     }
     QFileInfo inf(_domainName);
     _domainName = inf.fileName();
 
-    ITable attTable = coverage->attributeTable();
-    if ( attTable.isValid() && attTable->columnCount() > 1) {
-        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, coverage, type,baseName));
-        std::vector<quint32> recs(itemCount);
-        conn->selectedRecords(recs);
-        conn->storeMetaData(attTable.ptr());
-    }
     return true;
 }
 
