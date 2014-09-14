@@ -50,36 +50,7 @@ bool TableSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     }
     for(int rec = 0; rec < tbl->recordCount(); ++rec){
         auto record = tbl->record(rec);
-        _stream << record.itemid();
-        for(int col = 0; col < tbl->columnCount(); ++col){
-
-            switch (types[col]){
-            case itUINT8:
-                _stream << record.cell(col).toUInt();break;
-            case itINT8:
-                _stream << record.cell(col).toInt();break;
-            case itUINT32:
-            case itINDEXEDITEM:
-            case itTHEMATICITEM:
-            case itNAMEDITEM:
-            case itNUMERICITEM:
-            case itPALETTECOLOR:
-            case itCONTINUOUSCOLOR:
-                _stream << record.cell(col).toUInt();break;
-            case itINT32:
-                _stream << record.cell(col).toInt();break;
-            case itUINT64:
-                _stream << record.cell(col).toULongLong();break;
-            case itINT64:
-                _stream << record.cell(col).toLongLong();break;
-            case itDOUBLE:
-                _stream << record.cell(col).toDouble();break;
-            case itFLOAT:
-                _stream << record.cell(col).toFloat();break;
-            case itSTRING:
-                _stream << record.cell(col).toString();break;
-            }
-        }
+        record.storeData(types, _stream,options);
     }
     return true;
 }
@@ -127,59 +98,11 @@ bool TableSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
             tbl->columndefinition(col).datadef().range(range);
 
     }
-    quint8 valu8;
-    qint8 val8;
-    quint32 valu32;
-    qint32 val32;
-    quint64 valu64;
-    qint64 val64;
-    double vald;
-    float valf;
-    QString vals;
 
     for(quint32 rec = 0; rec < recordCount; ++rec){
-        std::vector<QVariant> record(columnCount);
-        quint64 itemid;
-        _stream >> itemid;
-        for(int col = 0; col < columnCount; ++col){
-            switch(types[col]){
-            case itUINT8:
-                _stream >> valu8;
-                record[col] = valu8;break;
-            case itINT8:
-                _stream >> val8;
-                record[col] = val8;break;
-            case itUINT32:
-            case itINDEXEDITEM:
-            case itTHEMATICITEM:
-            case itNAMEDITEM:
-            case itNUMERICITEM:
-            case itPALETTECOLOR:
-            case itCONTINUOUSCOLOR:
-                _stream >> valu32;
-                record[col] = valu32;break;
-            case itINT32:
-                _stream >> val32;
-                record[col] = val32;break;
-            case itUINT64:
-                _stream >> valu64;
-                record[col] = valu64;break;
-            case itINT64:
-                _stream >> val64;
-                record[col] = val64;break;
-            case itDOUBLE:
-                _stream >> vald;
-                record[col] = vald;break;
-            case itFLOAT:
-                _stream >> valf;
-                record[col] = valf;break;
-            case itSTRING:
-                _stream >> vals;
-                record[col] = vals;break;
-            }
-        }
-        tbl->record(NEW_RECORD,record);
-       // tbl->recordRef(tbl->recordCount() - 1).itemid(itemid);
+        Record& record = tbl->newRecord();
+        record.loadData(types,_stream,options);
+
     }
     return true;
 }
