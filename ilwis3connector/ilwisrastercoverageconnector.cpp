@@ -26,6 +26,7 @@
 #include "ilwis3connector.h"
 #include "rawconverter.h"
 #include "coverageconnector.h"
+#include "tableconnector.h"
 #include "operationhelpergrid.h"
 #include "ilwisrastercoverageconnector.h"
 
@@ -65,7 +66,10 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Number of maps", gcoverage->name());
 
     gcoverage->gridRef()->prepare(gcoverage, sz);
-
+    std::vector<double> bands(sz.zsize());
+    for(int i =0; i < sz.zsize(); ++i)
+        bands[i] = i;
+    gcoverage->stackDefinitionRef().setSubDefinition(IDomain("count"),bands);
     for(int i = 0; i < z; ++i) {
         QString file = _odf->value("MapList",QString("Map%1").arg(i));
         //file = filename2FullPath(file);
@@ -80,7 +84,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
             if ( !def.isValid()) {
                 return false;
             }
-            gcoverage->addBand(i, def,i);
+            gcoverage->setBandDefinition(i, def);
 
         } else {
             ERROR2(ERR_COULD_NOT_LOAD_2,"files","maplist");
@@ -219,7 +223,9 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
          _dataFiles.push_back(dataFile);
 
     QString storeType = _odf->value("MapStore","Type");
-    gcoverage->addBand(0, gcoverage->datadef(),0);
+    std::vector<double> v={0};
+    gcoverage->stackDefinitionRef().setSubDefinition(IDomain("count"),v);
+    gcoverage->setBandDefinition(0, gcoverage->datadef());
 
     setStoreType(storeType);
 
@@ -575,6 +581,14 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
             _odf->setKeyValue("MapStore","Type","Int");
         }
     }
+
+    ITable attTable = raster->attributeTable();
+    if ( attTable.isValid() && attTable->columnCount() > 1) {
+        QFileInfo basename(QUrl(_odf->file()).toLocalFile());
+        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, raster.ptr(), itRASTER,basename.baseName()));
+        conn->storeMetaData(attTable.ptr());
+    }
+
     QFileInfo inf(_resource.toLocalFile());
     QString file = inf.baseName() + ".mp#";
     QString exts = "mprmpamppmpsdomtbtgrfcsympl";
