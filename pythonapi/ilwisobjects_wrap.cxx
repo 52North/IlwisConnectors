@@ -35850,6 +35850,34 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_delete_VertexIterator(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::VertexIterator *arg1 = (pythonapi::VertexIterator *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_VertexIterator",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__VertexIterator, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_VertexIterator" "', argument " "1"" of type '" "pythonapi::VertexIterator *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::VertexIterator * >(argp1);
+  {
+    try {
+      delete arg1;
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_VertexIterator___bool__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::VertexIterator *arg1 = (pythonapi::VertexIterator *) 0 ;
@@ -36617,34 +36645,6 @@ SWIGINTERN PyObject *_wrap_VertexIterator_end(PyObject *SWIGUNUSEDPARM(self), Py
     }
   }
   resultobj = SWIG_NewPointerObj((new pythonapi::VertexIterator(static_cast< const pythonapi::VertexIterator& >(result))), SWIGTYPE_p_pythonapi__VertexIterator, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_VertexIterator(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::VertexIterator *arg1 = (pythonapi::VertexIterator *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:delete_VertexIterator",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__VertexIterator, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_VertexIterator" "', argument " "1"" of type '" "pythonapi::VertexIterator *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::VertexIterator * >(argp1);
-  {
-    try {
-      delete arg1;
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -37634,6 +37634,7 @@ static PyMethodDef SwigMethods[] = {
 		"VertexIterator(Geometry geom)\n"
 		"new_VertexIterator(std::string const & wkt) -> VertexIterator\n"
 		""},
+	 { (char *)"delete_VertexIterator", _wrap_delete_VertexIterator, METH_VARARGS, (char *)"delete_VertexIterator(VertexIterator self)"},
 	 { (char *)"VertexIterator___bool__", _wrap_VertexIterator___bool__, METH_VARARGS, (char *)"VertexIterator___bool__(VertexIterator self) -> bool"},
 	 { (char *)"VertexIterator___str__", _wrap_VertexIterator___str__, METH_VARARGS, (char *)"VertexIterator___str__(VertexIterator self) -> std::string"},
 	 { (char *)"VertexIterator___iter__", _wrap_VertexIterator___iter__, METH_VARARGS, (char *)"VertexIterator___iter__(VertexIterator self) -> VertexIterator"},
@@ -37656,7 +37657,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"VertexIterator_isInteriorVertex", _wrap_VertexIterator_isInteriorVertex, METH_VARARGS, (char *)"VertexIterator_isInteriorVertex(VertexIterator self) -> bool"},
 	 { (char *)"VertexIterator_begin", _wrap_VertexIterator_begin, METH_VARARGS, (char *)"VertexIterator_begin(VertexIterator self) -> VertexIterator"},
 	 { (char *)"VertexIterator_end", _wrap_VertexIterator_end, METH_VARARGS, (char *)"VertexIterator_end(VertexIterator self) -> VertexIterator"},
-	 { (char *)"delete_VertexIterator", _wrap_delete_VertexIterator, METH_VARARGS, (char *)"delete_VertexIterator(VertexIterator self)"},
 	 { (char *)"VertexIterator_swigregister", VertexIterator_swigregister, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };

@@ -714,35 +714,6 @@ try:
             #     world.setConnection(workingDir+tempDir+"/drainage_fromshp", "vectormap", "ilwis3", IlwisObject.cmOUTPUT)
             #     world.store()
 
-        def test_vertexiterator(self):
-            fc = FeatureCoverage("drainage.shp")
-            
-            for feat in fc:
-                baseIt = VertexIterator(feat.geometry())
-                beginIt = baseIt.begin()
-                endIt = baseIt.end()
-
-                self.assertTrue(beginIt < endIt)
-                self.assertTrue(beginIt <= endIt)
-                self.assertFalse(beginIt > endIt)
-                self.assertFalse(beginIt >= endIt)
-
-                listA = []
-                while beginIt != endIt:
-                    listA.append(beginIt.current())
-                    beginIt += 1
-
-                self.assertTrue(beginIt == endIt)
-
-                vertIt = iter(feat)
-                listB = []
-                for vert in vertIt:
-                    listB.append(vert)
-
-            self.assertEqual(listB == listA)
-
-
-
     #@ut.skip("temporarily")
     class TestCoordinateSystem(ut.TestCase):
         def setUp(self):
@@ -2202,11 +2173,47 @@ try:
             opt = IOOptions("headerline", 0)
             tab = Table("simpleTest1.xlsx", opt)
 
+    class TestVertexIterator(ut.TestCase):
+        def setUp(self):
+            try:
+                disconnectIssueLogger()
+                Engine.setWorkingCatalog(workingDir + featureDir)
+                connectIssueLogger()
+            except IlwisException:
+                connectIssueLogger()
+                self.skipTest("could not set working directory!")
+
+        def test_vertexiterator(self):
+            fc = FeatureCoverage("drainage.shp")
+
+            for feat in fc:
+                baseIt = VertexIterator(feat.geometry())
+                beginIt = baseIt.begin()
+                endIt = baseIt.end()
+
+                self.assertTrue(beginIt < endIt)
+                self.assertTrue(beginIt <= endIt)
+                self.assertFalse(beginIt > endIt)
+                self.assertFalse(beginIt >= endIt)
+
+                listA = []
+                while beginIt != endIt:
+                    listA.append(beginIt.current())
+                    beginIt += 1
+
+                self.assertTrue(beginIt == endIt)
+
+                vertIt = iter(feat)
+                listB = []
+                for vert in vertIt:
+                    listB.append(vert)
+
+            self.assertEqual(listB == listA)
 
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest='TestFeature', verbosity=2)
+        ut.main(defaultTest='TestVertexIterator', verbosity=2)
 
 except ImportError as e:
     print(e)

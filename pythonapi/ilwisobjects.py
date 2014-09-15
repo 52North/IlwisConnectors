@@ -3372,6 +3372,8 @@ class VertexIterator(_object):
         this = _ilwisobjects.new_VertexIterator(*args)
         try: self.this.append(this)
         except: self.this = this
+    __swig_destroy__ = _ilwisobjects.delete_VertexIterator
+    __del__ = lambda self : None;
     def __bool__(self):
         """__bool__(VertexIterator self) -> bool"""
         return _ilwisobjects.VertexIterator___bool__(self)
@@ -3460,8 +3462,6 @@ class VertexIterator(_object):
         """end(VertexIterator self) -> VertexIterator"""
         return _ilwisobjects.VertexIterator_end(self)
 
-    __swig_destroy__ = _ilwisobjects.delete_VertexIterator
-    __del__ = lambda self : None;
 VertexIterator_swigregister = _ilwisobjects.VertexIterator_swigregister
 VertexIterator_swigregister(VertexIterator)
 

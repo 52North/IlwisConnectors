@@ -22,7 +22,9 @@
 using namespace pythonapi;
 
 VertexIterator::VertexIterator(){
+}
 
+VertexIterator::~VertexIterator(){
 }
 
 VertexIterator::VertexIterator(const Geometry &geom) : _ilwisVertexIterator(new Ilwis::VertexIterator(geom.ptr())){

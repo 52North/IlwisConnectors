@@ -20,7 +20,7 @@ public:
     VertexIterator();
     VertexIterator(const Geometry& geom);
     VertexIterator(const std::string& wkt);
-
+    ~VertexIterator();
 
     bool __bool__() const;
     std::string __str__() const;
