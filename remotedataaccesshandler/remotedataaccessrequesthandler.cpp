@@ -63,7 +63,13 @@ void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const 
     if ( iter != parameters.end()){
         storemode = iter.value() == "data" ? IlwisObject::smBINARYDATA : IlwisObject::smMETADATA;
     }
-    obj->store(storemode);
+
+    IOOptions options({"storemode",storemode});
+    iter = parameters.find("lines");
+    if ( iter!= parameters.end()){
+        options << IOOptions::Option("lines",iter.value());
+    }
+    obj->store(options);
 
 }
 
