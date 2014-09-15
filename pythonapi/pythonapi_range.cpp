@@ -1,31 +1,31 @@
-#include "kernel.h"
-#include "ilwisdata.h"
-#include "range.h"
-#include "domain.h"
-#include "domainitem.h"
-#include "itemdomain.h"
-#include "numericrange.h"
-#include "itemrange.h"
-#include "interval.h"
-#include "identifieritem.h"
-#include "thematicitem.h"
-#include "intervalrange.h"
-#include "identifierrange.h"
-#include "colorrange.h"
-#include "coloritem.h"
+#include "../../IlwisCore/core/kernel.h"
+#include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
+#include "../../IlwisCore/core/util/range.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/domain.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/domainitem.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/itemdomain.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/numericrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/itemrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/interval.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/identifieritem.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/thematicitem.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/intervalrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/identifierrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/colorrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/coloritem.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/rangeiterator.h"
+
 #include "pythonapi_pyobject.h"
 #include "pythonapi_range.h"
 #include "pythonapi_qvariant.h"
-#include "rangeiterator.h"
-#include "coloritem.h"
+
 #include "pythonapi_error.h"
 
 #define BIGTIME 1e150
 
 using namespace pythonapi;
 
-Range::Range() {
-
+Range::Range(){
 }
 
 Range::~Range(){
@@ -93,6 +93,10 @@ NumericRange::NumericRange(Ilwis::NumericRange* nr){
     _range.reset(nr);
 }
 
+NumericRange::NumericRange(){
+    _range.reset(new Ilwis::NumericRange());
+}
+
 NumericRange::~NumericRange(){
 
 }
@@ -144,25 +148,25 @@ void NumericRange::set(const NumericRange &vr)
     setMin(vr.min());
 }
 
-//NumericRangeIterator NumericRange::__iter__(){
-//    return NumericRangeIterator(this);
-//}
+NumericRangeIterator NumericRange::__iter__(){
+    return NumericRangeIterator(this);
+}
 
-//NumericRangeIterator NumericRange::begin(){
-//    Ilwis::NumericRange* ilwRng = static_cast<Ilwis::NumericRange*>(_range.get());
-//    Ilwis::NumericRangeIterator* ilwIt = new Ilwis::NumericRangeIterator(Ilwis::begin(*ilwRng));
-//    NumericRangeIterator pyIt(ilwIt);
-//    pyIt.setRange(this);
-//    return pyIt;
-//}
+NumericRangeIterator NumericRange::begin(){
+    Ilwis::NumericRange* ilwRng = static_cast<Ilwis::NumericRange*>(_range.get());
+    Ilwis::NumericRangeIterator* ilwIt = new Ilwis::NumericRangeIterator(Ilwis::begin(*ilwRng));
+    NumericRangeIterator pyIt(ilwIt);
+    pyIt.setRange(this);
+    return pyIt;
+}
 
-//NumericRangeIterator NumericRange::end(){
-//    Ilwis::NumericRange* ilwRng = static_cast<Ilwis::NumericRange*>(_range.get());
-//    Ilwis::NumericRangeIterator* ilwIt = new Ilwis::NumericRangeIterator(Ilwis::end(*ilwRng));
-//    NumericRangeIterator pyIt(ilwIt);
-//    pyIt.setRange(this);
-//    return pyIt;
-//}
+NumericRangeIterator NumericRange::end(){
+    Ilwis::NumericRange* ilwRng = static_cast<Ilwis::NumericRange*>(_range.get());
+    Ilwis::NumericRangeIterator* ilwIt = new Ilwis::NumericRangeIterator(Ilwis::end(*ilwRng));
+    NumericRangeIterator pyIt(ilwIt);
+    pyIt.setRange(this);
+    return pyIt;
+}
 
 void NumericRange::clear()
 {
@@ -183,10 +187,6 @@ quint32 ItemRange::count()
 void ItemRange::clear()
 {
     static_cast<Ilwis::ItemRange*>(_range.get())->clear();
-}
-
-ItemRangeIterator ItemRange::__iter__(){
-    return ItemRangeIterator(this);
 }
 
 //------------------------------------------------------------
@@ -418,119 +418,6 @@ ThematicRange *ThematicRange::clone()
     return newRange;
 }
 
-//----------------------------------------------------------------
-
-Color::Color(){
-    _colorVal = PyDictNew();
-}
-
-Color::Color(ColorModel type, PyObject* obj, const std::string& name){
-    _colorVal = PyDictNew();
-    readColor(type, obj);
-    _name = name;
-}
-
-Color::Color(const std::string& typeStr, PyObject* obj, const std::string& name){
-    _colorVal = PyDictNew();
-    ColorModel type = stringToModel(typeStr);
-    readColor(type, obj);
-    _name = name;
-}
-
-void Color::readColor(ColorModel type, PyObject* obj)
-{
-    PyObject* dict = PyDictNew();
-    _type = type;
-    if(PyDictCheckExact(obj))
-    {
-        _colorVal = obj;
-        return;
-    }else if(PyTupleCheckExact(obj)){
-        if(CppTupleElementCount(obj) >= 4){
-            switch(type){
-            case ColorModel::cmCYMKA:
-                PyDictSetItemString(dict, "cyan", PyTupleGetItem(obj, 0));
-                PyDictSetItemString(dict, "magenta", PyTupleGetItem(obj, 1));
-                PyDictSetItemString(dict, "yellow", PyTupleGetItem(obj, 2));
-                PyDictSetItemString(dict, "black", PyTupleGetItem(obj, 3));
-                if(CppTupleElementCount(obj) == 5)
-                    PyDictSetItemString(dict, "alpha", PyTupleGetItem(obj, 4));
-                break;
-            case ColorModel::cmHSLA:
-                PyDictSetItemString(dict, "hue", PyTupleGetItem(obj, 0));
-                PyDictSetItemString(dict, "lightness", PyTupleGetItem(obj, 1));
-                PyDictSetItemString(dict, "saturation", PyTupleGetItem(obj, 2));
-                PyDictSetItemString(dict, "alpha", PyTupleGetItem(obj, 3));
-                break;
-            case ColorModel::cmGREYSCALE:
-            case ColorModel::cmRGBA:
-                PyDictSetItemString(dict, "red", PyTupleGetItem(obj, 0));
-                PyDictSetItemString(dict, "green", PyTupleGetItem(obj, 1));
-                PyDictSetItemString(dict, "blue", PyTupleGetItem(obj, 2));
-                PyDictSetItemString(dict, "alpha", PyTupleGetItem(obj, 3));
-                break;
-            case ColorModel::cmNONE:
-                break;
-            }
-        }
-    }
-
-    _colorVal = dict;
-}
-
-double Color::getItem(std::string str) const{
-    const char* key = str.c_str();
-    return CppFloat2Double(PyDictGetItemString(_colorVal,key));
-}
-
-void Color::setName(const std::string& name){
-    this->_name = name;
-}
-
-std::string Color::getName(){
-    return _name;
-}
-
-
-ColorModel Color::getColorModel() const{
-    return _type;
-}
-
-std::string Color::toString() const{
-    QString colors;
-    switch(_type){
-    case ColorModel::cmCYMKA:
-        colors += QString("CMYKA(%1,%2,%3,%4,%5)").arg(this->getItem("cyan")).arg(this->getItem("magenta")).arg(this->getItem("yellow")).arg(this->getItem("black")).arg(this->getItem("alpha"));
-        break;
-    case ColorModel::cmHSLA:
-        colors += QString("HSLA(%1,%2,%3,%4)").arg(this->getItem("hue")).arg(this->getItem("saturation")).arg(this->getItem("lightness")).arg(this->getItem("alpha"));
-        break;
-    case ColorModel::cmRGBA:
-        colors += QString("RGBA(%1,%2,%3,%4)").arg(this->getItem("red")).arg(this->getItem("blue")).arg(this->getItem("green")).arg(this->getItem("alpha"));
-        break;
-    case ColorModel::cmGREYSCALE:
-        break;
-    case ColorModel::cmNONE:
-        break;
-    }
-    return colors.toStdString();
-}
-
-std::string Color::__str__(){
-    return toString();
-}
-
-ColorModel Color::stringToModel(const std::string& type){
-
-    if(type == "RGBA"){
-        return ColorModel::cmRGBA;
-    } else if (type == "CYMKA"){
-        return ColorModel::cmCYMKA;
-    } else if (type == "HSLA")
-        return ColorModel::cmHSLA;
-    else
-        throw InvalidObject("Not a known Color Model");
-}
 
 //-----------------------------------------------------------------
 
@@ -809,6 +696,10 @@ TimeInterval::TimeInterval(const PyObject* beg, const PyObject* end, std::string
     delete qvar;
 }
 
+TimeInterval::TimeInterval(Ilwis::Range* ti){
+    _range.reset(static_cast<Ilwis::TimeInterval*>(ti));
+}
+
 //std::string TimeInterval::__str__(){
 //    QString begin = static_cast<Ilwis::TimeInterval*>(_range.get())->begin().toString();
 //    QString end = static_cast<Ilwis::TimeInterval*>(_range.get())->end().toString();
@@ -832,14 +723,9 @@ bool TimeInterval::contains(const PyObject* value, bool inclusive) const
 }
 
 
-Ilwis::Range *TimeInterval::clone() const
+TimeInterval* TimeInterval::clone() const
 {
-    return static_cast<Ilwis::TimeInterval*>(_range.get())->clone();
-}
-
-bool TimeInterval::isValid() const
-{
-    return static_cast<Ilwis::TimeInterval*>(_range.get())->isValid();
+    return new TimeInterval(static_cast<Ilwis::TimeInterval*>(_range.get())->clone());
 }
 
 void TimeInterval::begin(const PyObject *t)

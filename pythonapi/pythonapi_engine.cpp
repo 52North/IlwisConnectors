@@ -6,9 +6,9 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/ilwisobjects/operation/operationmetadata.h"
 #include "../../IlwisCore/core/ilwisobjects/operation/symboltable.h"
+#include "../../IlwisCore/core/ilwisobjects/operation/commandhandler.h"
 #include "../../IlwisCore/core/ilwisobjects/operation/operationExpression.h"
 #include "../../IlwisCore/core/ilwisobjects/operation/operation.h"
-#include "../../IlwisCore/core/ilwisobjects/operation/commandhandler.h"
 
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 

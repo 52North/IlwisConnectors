@@ -20,12 +20,14 @@
 #include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/geometryhelper.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/vertexiterator.h"
 
 #include "pythonapi_feature.h"
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_columndefinition.h"
 
 #include "pythonapi_qvariant.h"
+#include "pythonapi_vertexiterator.h"
 #include <QVariant>
 
 
@@ -36,7 +38,7 @@ Feature::Feature(std::unique_ptr<Ilwis::FeatureInterface> &ilwisFeature, Feature
 }
 
 bool Feature::__bool__() const{
-    return (bool)this->_ilwisSPFeatureI && this->_ilwisSPFeatureI->isValid() && this->_coverage != NULL && this->_coverage->__bool__();
+    return  (bool)this->_ilwisSPFeatureI && this->_ilwisSPFeatureI->isValid() && this->_coverage != NULL && this->_coverage->__bool__();
 }
 
 std::string Feature::__str__(){
@@ -44,6 +46,11 @@ std::string Feature::__str__(){
         return QString("Feature(%1)").arg(this->_ilwisSPFeatureI->featureid()).toStdString();
     else
         return QString("invalid Feature!").toStdString();
+}
+
+VertexIterator Feature::__iter__(){
+    Geometry* geom = this->geometry();
+    return VertexIterator(*geom);
 }
 
 quint64 Feature::id(){
@@ -207,8 +214,20 @@ QVariant* Feature::checkIndex(PyObject *obj){
         return PyObject2QVariant(obj);
 }
 
+VertexIterator Feature::begin(){
+    Ilwis::VertexIterator ilwIt = ::begin(const_cast<std::unique_ptr<geos::geom::Geometry>&>(this->geometry()->ptr()));
+    return VertexIterator(new Ilwis::VertexIterator(ilwIt));
+}
+
+VertexIterator Feature::end(){
+    Ilwis::VertexIterator ilwIt = ::end(const_cast<std::unique_ptr<geos::geom::Geometry>&>(this->geometry()->ptr()));
+    return VertexIterator(new Ilwis::VertexIterator(ilwIt));
+}
+
 std::unique_ptr<Ilwis::FeatureInterface> &Feature::ptr() const{
     if (!this->__bool__())
         throw Ilwis::ErrorObject(QString("invalid Feature!"));
     return this->_ilwisSPFeatureI;
 }
+
+

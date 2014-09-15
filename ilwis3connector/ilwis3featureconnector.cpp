@@ -3,7 +3,6 @@
 #include <fstream>
 #include <iterator>
 
-#include "kernel.h"
 #include "coverage.h"
 #include "geos/geom/CoordinateArraySequence.h"
 #include "geos/geom/Point.h"
@@ -22,20 +21,17 @@
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "inifile.h"
-#include "coverage.h"
 #include "ilwiscontext.h"
 #include "catalog.h"
 #include "numericdomain.h"
 #include "numericrange.h"
-#include "columndefinition.h"
 #include "table.h"
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "featureiterator.h"
 #include "containerstatistics.h"
 #include "rawconverter.h"
@@ -214,9 +210,10 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     }
     QDataStream stream(&file);
     int nrPolygons = fcoverage->featureCount(itPOLYGON);
-    fcoverage->setFeatureCount(itPOLYGON, 0,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     map<quint32,vector<geos::geom::Geometry *>> polygons;
+    std::vector<double> featureValues(isNumeric ? nrPolygons : 0);
+    fcoverage->setFeatureCount(itPOLYGON, iUNDEF); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
     for(int j=0; j < nrPolygons; ++j) {
         geos::geom::CoordinateArraySequence *outer = readRing(stream);
         if ( !outer)
@@ -237,37 +234,44 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         //in this way all polygons with the same raw value will become a multipolygon
         polygons[isNumeric ? j + 1 : (quint32)value].push_back(pol);
         if ( isNumeric) {
-            tbl->setCell(FEATUREVALUECOLUMN, j, QVariant(value));
+            featureValues[j] = value;
         }
     }
-    addFeatures(polygons, fcoverage,tbl, itPOLYGON);
+    addFeatures(polygons, fcoverage,featureValues, itPOLYGON);
     file.close();
 
     return true;
 }
 
-void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>& geometries,FeatureCoverage *fcoverage,ITable& tbl, IlwisTypes tp) {
+void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>& geometries,FeatureCoverage *fcoverage,const std::vector<double>& featureValues, IlwisTypes tp) {
     quint32 rec = 0;
     for(auto iter = geometries.begin() ; iter != geometries.end(); ++iter) {
         vector<geos::geom::Geometry *>& geoms1 = (*iter).second;
+        geos::geom::Geometry *geometry = 0;
         if ( geoms1.size() == 1) {
-            fcoverage->newFeature({geoms1[0]},false);
+            geometry = geoms1[0];
         } else {
             std::vector<geos::geom::Geometry *> *geoms = new std::vector<geos::geom::Geometry *>((*iter).second);
             geos::geom::GeometryCollection *multigeom = 0;
             switch(tp) {
                 case itPOLYGON:
-                    multigeom = fcoverage->geomfactory()->createMultiPolygon(geoms); break;
+                    geometry = fcoverage->geomfactory()->createMultiPolygon(geoms); break;
                 case itLINE:
-                    multigeom = fcoverage->geomfactory()->createMultiLineString(geoms); break;
+                    geometry = fcoverage->geomfactory()->createMultiLineString(geoms); break;
                 case itPOINT:
-                    multigeom = fcoverage->geomfactory()->createMultiPoint(geoms); break;
+                    geometry = fcoverage->geomfactory()->createMultiPoint(geoms); break;
             }
 
 
             fcoverage->newFeature({multigeom},false);
         }
-        tbl->setCell(COVERAGEKEYCOLUMN, rec++, QVariant((*iter).first - 1));
+        auto feature = fcoverage->newFeature({geometry},false);
+        if ( featureValues.size() > 0)
+            feature(FEATUREVALUECOLUMN, QVariant(featureValues[rec]));
+        else
+            feature(COVERAGEKEYCOLUMN, QVariant((*iter).first - 1));
+
+        ++rec;
     }
 }
 
@@ -307,10 +311,10 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     int colCoords = mpsTable.index("Coords");
     int colItemId = mpsTable.index("SegmentValue");
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-    ITable tbl = fcoverage->attributeTable();
-    fcoverage->setFeatureCount(itLINE, 0,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itLINE, iUNDEF); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
 
     map<quint32,vector<geos::geom::Geometry *>> lines;
+    std::vector<double> featureValues(isNumeric ? mpsTable.rows() : 0);
     double value;
     for(quint32 i= 0; i < mpsTable.rows(); ++i) {
         std::vector<Coordinate > coords;
@@ -325,12 +329,12 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
         //in this way all lines with the same raw value will become a multilinestring
         lines[isNumeric ? i + 1 : (quint32)value].push_back(line);
         if ( isNumeric) {
-            tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(value));
+            featureValues[i] = value;
         }
 
 
     }
-    addFeatures(lines, fcoverage,tbl, itLINE);
+    addFeatures(lines, fcoverage,featureValues, itLINE);
     return true;
 
 
@@ -348,9 +352,10 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
     int colItemId = mppTable.index("Name");
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
 
-    ITable tbl = fcoverage->attributeTable();
+    std::vector<double> featureValues(isNumeric ? mppTable.rows() : 0);
     bool newCase =  coordColumnX == iUNDEF;
-    fcoverage->setFeatureCount(itPOINT, 0,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itPOINT, iUNDEF); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+
     map<quint32,vector<geos::geom::Geometry *>> points;
     for(quint32 i= 0; i < mppTable.rows(); ++i) {
         Coordinate c;
@@ -367,11 +372,11 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
         geos::geom::Point *point = fcoverage->geomfactory()->createPoint(c);
         points[isNumeric ? i + 1 : (quint32)value].push_back(point);
         if ( isNumeric) {
-            tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(value));
+            featureValues[i] = value;
         }
 
     }
-    addFeatures(points, fcoverage,tbl, itPOINT);
+    addFeatures(points, fcoverage,featureValues, itPOINT);
     return true;
 }
 
@@ -391,21 +396,25 @@ bool FeatureConnector::loadData(Ilwis::IlwisObject *obj, const IOOptions &) {
     }
     bool ok = false;
     try {
-        if (fcoverage->featureTypes() == itPOINT)
-            ok = loadBinaryPoints(fcoverage);
-        else if (fcoverage->featureTypes() == itLINE)
-            ok = loadBinarySegments(fcoverage);
-        else if (fcoverage->featureTypes() == itPOLYGON)
-            ok = loadBinaryPolygons(fcoverage);
+         if (fcoverage->featureTypes() == itPOINT)
+             ok = loadBinaryPoints(fcoverage);
+         else if (fcoverage->featureTypes() == itLINE)
+             ok = loadBinarySegments(fcoverage);
+         else if (fcoverage->featureTypes() == itPOLYGON)
+             ok = loadBinaryPolygons(fcoverage);
 
-        if ( ok && extTable.isValid()) {
-            ITable attTbl = fcoverage->attributeTable();
-            //quint32 keyIndex = attTbl->columnIndex(COVERAGEKEYCOLUMN);
-            for(quint32 rowExt=0; rowExt < extTable->recordCount(); ++rowExt) {
-                vector<QVariant> rec = extTable->record(rowExt);
-                attTbl->record(rowExt,rec);
-            }
-        }
+         if ( ok && extTable.isValid()) {
+             ITable attTbl = fcoverage->attributeTable();
+             quint32 keyIndex = extTable->columnIndex(COVERAGEKEYCOLUMN);
+             for(quint32 rowExt=0; rowExt < extTable->recordCount(); ++rowExt) {
+                 if ( rowExt < fcoverage->featureCount()){
+                     vector<QVariant> rec = extTable->record(rowExt);
+                     if ( keyIndex == iUNDEF) // a pristine external table doesnt have a coverage key column which is present in the attributes of the feature coverage
+                         rec.resize(rec.size() + 1);
+                     attTbl->record(rowExt,rec);
+                 }
+             }
+         }
     } catch (FeatureCreationError& ) {
     }
     if ( ok)
@@ -419,7 +428,7 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj,const IOOptions& opt
     if ( !ok)
         return false;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
-    fcoverage->setFeatureCount(itFEATURE, 0,0);
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF);
     IlwisTypes coverageType = itPOINT;
 
     int features = _odf->value("PointMap","Points").toInt(&ok);
@@ -434,7 +443,7 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj,const IOOptions& opt
 
     if (ok){
         fcoverage->featureTypes(coverageType);
-        fcoverage->setFeatureCount(coverageType, features,0);
+        fcoverage->setFeatureCount(coverageType, features);
     }
     else
        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",obj->name());
@@ -470,9 +479,9 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     cov.set(fcov);
     FeatureIterator iter(cov);
     double raw = 1;
-    for_each(iter, iter.end(), [&](UPFeatureI& feature){
+    for_each(iter, iter.end(), [&](SPFeatureI feature){
         const UPGeometry& geom = feature->geometry();
-        for(int i=0; i < feature->trackSize(); ++i) {
+        for(int i=0; i < feature->subFeatureCount(); ++i) {
             geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
             if ( geostype == geos::geom::GEOS_POLYGON || geostype == geos::geom::GEOS_MULTIPOLYGON) {
                 const geos::geom::Geometry *polygons = geom.get();
@@ -537,9 +546,9 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
     FeatureIterator iter(cov);
     double raw = 1;
 
-    for_each(iter, iter.end(), [&](UPFeatureI& feature){
+    for_each(iter, iter.end(), [&](SPFeatureI feature){
         const UPGeometry& geom = feature->geometry();
-        for(int i=0; i < feature->trackSize(); ++i) {
+        for(int i=0; i < feature->subFeatureCount(); ++i) {
             geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
             if ( geostype == geos::geom::GEOS_MULTILINESTRING || geos::geom::GEOS_LINESTRING) {
 
@@ -589,9 +598,9 @@ bool FeatureConnector::storeBinaryDataPoints(FeatureCoverage *fcov, const QStrin
     FeatureIterator iter(cov);
     double raw = 1;
 
-    for_each(iter, iter.end(), [&](UPFeatureI& feature){
+    for_each(iter, iter.end(), [&](SPFeatureI feature){
         const UPGeometry& geom = feature->geometry();
-        for(int i=0; i < feature->trackSize(); ++i) {
+        for(int i=0; i < feature->subFeatureCount(); ++i) {
             geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
             if ( geostype == geos::geom::GEOS_MULTIPOINT ||geostype == geos::geom::GEOS_POINT) {
 
@@ -692,7 +701,7 @@ bool FeatureConnector::storeMetaLine(FeatureCoverage *fcov, const QString& filep
     _odf->setKeyValue("SegmentMapStore","DeletedPolygons",QString::number(0));
     _odf->setKeyValue("Ilwis","Class","ILWIS::Segment Map");
 
-    int noOfLines = fcov->featureCount(itLINE,true);
+    int noOfLines = fcov->featureCount(itLINE);
     _odf->setKeyValue("SegmentMapStore", "Segments", QString::number(noOfLines));
 
     _odf->setKeyValue("Table", "Domain", "None.dom");
@@ -727,7 +736,7 @@ bool FeatureConnector::storeMetaPoint(FeatureCoverage *fcov, const QString& file
     _odf->setKeyValue("PointMapStore","Format",QString::number(2));
     _odf->setKeyValue("Ilwis","Class","ILWIS::Point Map");
 
-    int noOfPoints = fcov->featureCount(itPOINT, true);
+    int noOfPoints = fcov->featureCount(itPOINT);
     _odf->setKeyValue("PointMap", "Points", QString::number(noOfPoints));
 
     _odf->setKeyValue("Table", "Domain", "None.dom");
@@ -760,7 +769,7 @@ bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& fi
 
     QString localFile = dataFile + ".mpz#";
     _odf->setKeyValue("PolygonMapStore","DataPol", localFile);
-    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(fcov->featureCount(itPOLYGON, true)));
+    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(fcov->featureCount(itPOLYGON)));
 
     return true;
 }
@@ -807,7 +816,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         _odf->setKeyValue("DomainSort","Sorting","AlphaNumeric");
         _odf->setKeyValue("DomainSort","Prefix","feature");
         _odf->setKeyValue("DomainSort","Class","Domain UniqueID");
-        _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(type,true)));
+        _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(type)));
     }
 
     QString ext = "mpa";
@@ -821,6 +830,12 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     if ( hasType(type, itPOINT)){
         ok = storeMetaPoint(fcov, baseName);
         ext = "mpp";
+    }
+    if ( attTable.isValid() && attTable->columnCount() > 1) {
+        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, fcov, type,baseName));
+        std::vector<quint32> recs(_itemCount);
+        conn->selectedRecords(recs);
+        conn->storeMetaData(attTable.ptr());
     }
 
     _odf->store(ext, QFileInfo(baseName));

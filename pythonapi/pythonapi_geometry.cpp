@@ -32,6 +32,7 @@
 #include "pythonapi_error.h"
 #include "pythonapi_pyobject.h"
 #include "pythonapi_qvariant.h"
+#include "pythonapi_vertexiterator.h"
 
 namespace pythonapi{
 
@@ -133,6 +134,10 @@ Geometry* Geometry::transform(const CoordinateSystem &cs){
 
 Envelope Geometry::envelope(){
     return Envelope(this->ptr()->getEnvelopeInternal());
+}
+
+VertexIterator Geometry::__iter__(){
+    return VertexIterator(*this);
 }
 
 bool Geometry::isSimple() const{

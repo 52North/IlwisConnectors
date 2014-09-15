@@ -1,13 +1,13 @@
 #include <cstddef>
-#include "kernel.h"
-#include "ilwisdata.h"
+#include "../../IlwisCore/core/kernel.h"
+#include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "pythonapi_qtGNUTypedefs.h"
 
-#include "itemrange.h"
-#include "domainitem.h"
-#include "identifieritem.h"
-#include "thematicitem.h"
-#include "interval.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/itemrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/domainitem.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/identifieritem.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/thematicitem.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/interval.h"
 
 #include "pythonapi_range.h"
 #include "pythonapi_error.h"

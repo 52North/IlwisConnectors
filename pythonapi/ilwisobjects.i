@@ -42,6 +42,7 @@
 #include "pythonapi_columndefinition.h"
 #include "pythonapi_domainitem.h"
 #include "pythonapi_rangeiterator.h"
+#include "pythonapi_vertexiterator.h"
 %}
 
 %include "pythonapi_qtGNUTypedefs.h"
@@ -260,12 +261,12 @@ def object_cast(obj):
 
 %include "pythonapi_domain.h"
 
+%include "pythonapi_range.h"
+
 %include "pythonapi_rangeiterator.h"
 
 //%template(NumericRangeIterator) pythonapi::RangeIterator<double, pythonapi::NumericRange, double, Ilwis::NumericRange>;
-%template(ItemRangeIterator) pythonapi::RangeIterator<pythonapi::DomainItem, pythonapi::ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange>;
-
-%include "pythonapi_range.h"
+//%template(ItemRangeIterator) pythonapi::RangeIterator<pythonapi::DomainItem, pythonapi::ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange>;
 
 %include "pythonapi_datadefinition.h"
 
@@ -273,6 +274,7 @@ def object_cast(obj):
 
 %include "pythonapi_domainitem.h"
 
+%include "pythonapi_vertexiterator.h"
 
 // declaring the Const for Python side xUNDEF declarations
 %pythoncode %{

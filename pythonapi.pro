@@ -40,7 +40,8 @@ HEADERS += \
     pythonapi/pythonapi_datadefinition.h \
     pythonapi/pythonapi_rangeiterator.h \
     pythonapi/pythonapi_columndefinition.h \
-    pythonapi/pythonapi_domainitem.h
+    pythonapi/pythonapi_domainitem.h \
+    pythonapi/pythonapi_vertexiterator.h
 
 
 SOURCES += \
@@ -69,7 +70,8 @@ SOURCES += \
     pythonapi/pythonapi_datadefinition.cpp \
     pythonapi/pythonapi_rangeiterator.cpp \
     pythonapi/pythonapi_columndefinition.cpp \
-    pythonapi/pythonapi_domainitem.cpp
+    pythonapi/pythonapi_domainitem.cpp \
+    pythonapi/pythonapi_vertexiterator.cpp
 
 
 OTHER_FILES += \

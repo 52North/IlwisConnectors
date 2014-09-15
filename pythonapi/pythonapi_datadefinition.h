@@ -22,7 +22,6 @@ class DataDefinition{
 
 public:
     DataDefinition();
-    DataDefinition(Ilwis::DataDefinition* datdef);
     ~DataDefinition();
     DataDefinition(const Domain& dm, Range *rng = 0);
     DataDefinition(const DataDefinition &datdef);
@@ -38,6 +37,7 @@ public:
     Domain* domain() const;
 
 protected:
+    DataDefinition(Ilwis::DataDefinition* datdef);
     Ilwis::DataDefinition& ptr() const;
     std::shared_ptr<Ilwis::DataDefinition> _ilwisDatadef;
 };

@@ -214,7 +214,7 @@ bool Ilwis3Connector::store(IlwisObject *obj, const IOOptions &options)
         return false;
 
     bool ok = true;
-    int storemode = options["storemode"].toInt();
+    int storemode = options.contains("storemode") ? options["storemode"].toInt() : IlwisObject::smMETADATA | IlwisObject::smBINARYDATA;
     if ( storemode & IlwisObject::smMETADATA)
         ok &= storeMetaData(obj);
     if ( ok && storemode & IlwisObject::smBINARYDATA)
@@ -292,6 +292,8 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
 }
 
 QString Ilwis3Connector::suffix(IlwisTypes type) {
+    if ( type == (itRASTER | itCOLLECTION))
+        return "mpl";
     if ( type == itRASTER)
         return "mpr";
     if ( type == itPOLYGON)
@@ -375,7 +377,7 @@ IniFile *Ilwis3Connector::makeIni(const Resource &resource, IlwisTypes type)
     QString name = resource.url().toLocalFile();
     QString ext = suffix(type);
     int index = name.lastIndexOf(".");
-    if ( index != -1){
+    if ( index != -1 && index > name.size() - 5){
         name = name.left(index);
     }
     name += "." + ext;

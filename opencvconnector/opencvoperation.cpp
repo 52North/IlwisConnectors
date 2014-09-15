@@ -26,9 +26,10 @@ bool OpenCVOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
             return false;
 
     try{
-        for(int index = 0; index < _inputRaster->indexDefinition().indexSize(); ++index ){
-            QVariant trackIndex = _inputRaster->indexDefinition().byOrder(index);
-            PixelIterator inputIter = _inputRaster->band(trackIndex);
+        auto indexes = _inputRaster->stackDefinition().indexes();
+        _outputRaster->stackDefinitionRef().setSubDefinition(_inputRaster->stackDefinition().domain(), indexes);
+        for(auto index : indexes ){
+            PixelIterator inputIter = _inputRaster->band(index);
 
             cv::Mat cvRaster;
 
@@ -38,8 +39,8 @@ bool OpenCVOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
             cv::Mat cvProcessed;
             doOperation(cvRaster, cvProcessed);
 
-            _outputRaster->addBand(index,_outputRaster->datadef(),trackIndex);
-            PixelIterator outputIter = _outputRaster->band(trackIndex);
+            _outputRaster->setBandDefinition(index,_outputRaster->datadef());
+            PixelIterator outputIter = _outputRaster->band(index);
 
             OpenCVHelper::mat2Raster(cvProcessed,outputIter);
         }
