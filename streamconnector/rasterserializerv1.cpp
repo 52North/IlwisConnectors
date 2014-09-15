@@ -99,7 +99,7 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 
 }
 
-bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions & )
+bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions &options )
 {
     _stream << itRASTER;
     _stream << Version::IlwisVersion;
@@ -110,6 +110,19 @@ bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions & )
     RawConverter converter(stats[ContainerStatistics<double>::pMIN], stats[ContainerStatistics<double>::pMAX],scale);
 
     _stream << stats[ContainerStatistics<double>::pMIN] << stats[ContainerStatistics<double>::pMAX] << scale;
+    BoundingBox box;
+    if (options.contains("lines")) {
+        QStringList parts = options["lines"].toString().split(" ");
+        quint32 layer = parts[0].toUInt();
+        quint32 minlines = parts[1].toUInt();
+        quint32 maxlines = parts[2].toUInt();
+        _stream <<  layer <<minlines << maxlines;
+        box = BoundingBox(Pixel(0, minlines,layer), Pixel(raster->size().xsize(),maxlines,layer));
+
+    }else {
+        quint32 undef = iUNDEF;
+        _stream << undef << undef << undef;
+    }
     quint64 count = 0;
     IRasterCoverage rcoverage(raster);
     switch (converter.storeType()){
@@ -124,15 +137,20 @@ bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions & )
             _stream << (qint64)v;
         break;
     default:
-        for(double v : rcoverage){
+    {
+        PixelIterator iter(rcoverage, box);
+        while(iter != iter.end()){
             if ( count % STREAMBLOCKSIZE && _streamconnector->needFlush()){
                 _streamconnector->flush(false);
 
             }
             ++count;
-            _stream << v;
+            _stream << *iter;
+            ++iter;
         }
         break;
+    }
+
     }
     return true;
 }
