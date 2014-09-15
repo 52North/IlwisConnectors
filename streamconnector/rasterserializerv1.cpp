@@ -1,14 +1,11 @@
-#include "kernel.h"
+#include "raster.h"
 #include "version.h"
-#include "ilwisdata.h"
 #include "connectorinterface.h"
 #include "versionedserializer.h"
 #include "domain.h"
-#include "datadefinition.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "coverage.h"
-#include "raster.h"
+#include "basetable.h"
+#include "flattable.h"
 #include "pixeliterator.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -53,11 +50,24 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 
     _stream << raster->size().xsize() << raster->size().ysize() << raster->size().zsize();
 
+
     if(!storeDataDefintion(raster->datadef(), _stream, options))
         return false;
+
+    std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
+    if ( !domainStreamer)
+        return false;
+    domainStreamer->store( raster->stackDefinition().domain().ptr(), options);
+    std::vector<QString> indexes = raster->stackDefinition().indexes();
+    _stream << indexes.size();
+    for(auto index : indexes)
+        _stream << index;
+
+
     for(int index = 0; index < raster->size().zsize(); ++index)   {
         const DataDefinition& def = raster->datadef(index);
         storeDataDefintion(def,_stream, options);
+
     }
     std::unique_ptr<DataInterface> grfstreamer(factory->create(Version::IlwisVersion, itGEOREF,_stream));
     if ( !grfstreamer)
@@ -65,41 +75,11 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 
     if(!grfstreamer->store(raster->georeference().ptr(), options))
         return false;
-
-//    NumericStatistics& stats = raster->statistics(ContainerStatistics<double>::pBASIC);
-//    qint16 digits = stats.significantDigits();
-//    double scale = digits == 0 ? 0 : std::pow(10,-digits);
-//    RawConverter converter(stats[ContainerStatistics<double>::pMIN], stats[ContainerStatistics<double>::pMAX],scale);
-//    _stream << stats[ContainerStatistics<double>::pMIN] << stats[ContainerStatistics<double>::pMAX] << scale;
-//    quint64 count = 0;
-//    IRasterCoverage rcoverage(raster);
-//    switch (converter.storeType()){
-//    case itUINT8:
-//        storeBulk<quint8>(converter, _stream, rcoverage); break;
-//    case itINT16:
-//        storeBulk<qint16>(converter, _stream, rcoverage); break;
-//    case itINT32:
-//        storeBulk<qint32>(converter, _stream, rcoverage); break;
-//    case itINT64:
-//        for(double v : rcoverage)
-//            _stream << (qint64)v;
-//        break;
-//    default:
-//        for(double v : rcoverage){
-//            if ( count % STREAMBLOCKSIZE && _streamconnector->needFlush()){
-//                _streamconnector->flush(false);
-
-//            }
-//            ++count;
-//            _stream << v;
-//        }
-//        break;
-//    }
     return true;
 
 }
 
-bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions & )
+bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions &options )
 {
      RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
     NumericStatistics& stats = raster->statistics(ContainerStatistics<double>::pBASIC);
@@ -131,6 +111,18 @@ bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions & )
         }
         break;
     }
+    VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+    std::unique_ptr<DataInterface> tblStreamer(factory->create(Version::IlwisVersion, itTABLE,_stream));
+    if ( !tblStreamer)
+        return false;
+
+    if ( raster->hasAttributes()){
+        tblStreamer->store(raster->attributeTable().ptr(), options);
+    } else{
+        _stream << itUNKNOWN;
+    }
+
+
     return true;
 }
 
@@ -156,6 +148,22 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
     }
     quint64 type;
     QString version;
+    _stream >> type;
+    _stream >> version;
+
+    std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
+    if ( !domainStreamer)
+        return false;
+    IDomain dom(type);
+    domainStreamer->loadMetaData( dom.ptr(), options);
+    size_t nrOfBands;
+    _stream >> nrOfBands;
+    std::vector<QString> variants(nrOfBands);
+    for(int i =0; i < nrOfBands; ++i){
+        _stream >> variants[i];
+    }
+    raster->stackDefinitionRef().setSubDefinition(dom, variants);
+
     _stream >> type;
     _stream >> version;
 
@@ -213,6 +221,21 @@ bool RasterSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
             }
             break;
         }
+    }
+    quint64 type;
+    QString version;
+    VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+    _stream >> type;
+    if ( type != itUNKNOWN){
+        _stream >> version;
+
+        std::unique_ptr<DataInterface> tableStreamer(factory->create(version, itTABLE,_stream));
+        if ( !tableStreamer)
+            return false;
+        FlatTable *tbl = new FlatTable();
+
+        tableStreamer->loadMetaData(tbl,options);
+        raster->attributeTable(tbl);
     }
     return true;
 }

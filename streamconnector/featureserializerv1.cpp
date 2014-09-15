@@ -1,15 +1,10 @@
-#include "kernel.h"
+#include "coverage.h"
 #include "version.h"
-#include "ilwisdata.h"
 #include "connectorinterface.h"
 #include "versionedserializer.h"
-#include "domain.h"
-#include "datadefinition.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "coverage.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "featureiterator.h"
 #include "coverageserializerv1.h"
 #include "factory.h"
@@ -35,11 +30,43 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         return false;
 
     IFeatureCoverage fcoverage;
+    VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+
     fcoverage.prepare(obj->id());
 
+    int defCount = fcoverage->attributeDefinitions().definitionCount();
+    _stream << defCount;
+
+    for(int col = 0; col < defCount; ++col){
+        const ColumnDefinition& coldef = fcoverage->attributeDefinitionsRef().columndefinitionRef(col);
+        _stream << coldef.name();
+
+        std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
+        if ( !domainStreamer)
+            return false;
+        domainStreamer->store(coldef.datadef().domain().ptr(), options);
+        if ( !coldef.datadef().range().isNull()) // no range for textdomains
+            coldef.datadef().range()->store(_stream);
+    }
+
+    if (fcoverage->attributeDefinitions().domain().isValid()){
+        std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
+        if ( !domainStreamer)
+            return false;
+        domainStreamer->store( fcoverage->attributeDefinitions().domain().ptr(), options);
+
+        std::vector<QString> indexes = fcoverage->attributeDefinitions().indexes();
+        _stream << indexes.size();
+        for(auto index : indexes)
+            _stream << index;
+    }else{
+        _stream << itUNKNOWN;
+        _stream << itUNKNOWN;
+        _stream << Version::IlwisVersion;
+    }
     _stream << fcoverage->featureCount();
-    for(const UPFeatureI& feature : fcoverage){
-        feature->store(_stream);
+    for(const SPFeatureI& feature : fcoverage){
+        feature->store(fcoverage->attributeDefinitions(),_stream, options);
     }
 
     return true;
@@ -50,11 +77,65 @@ bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &option
     if (!CoverageSerializerV1::loadMetaData(obj, options))
         return false;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
+    int columnCount;
+    QString version;
+    quint64 type;
+    IlwisTypes valueType;
+    VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+    std::vector<IlwisTypes> types;
+
+    _stream >> columnCount;
+    for(int col =0; col < columnCount; ++col){
+        QString columnName;
+        _stream >> columnName;
+
+        _stream >> valueType;
+        _stream >> type;
+        _stream >> version;
+        std::unique_ptr<DataInterface> domainStreamer(factory->create(version, itDOMAIN,_stream));
+        if ( !domainStreamer)
+            return false;
+
+        IDomain dom(type | valueType);
+        Range *range = 0;
+        types.push_back(valueType);
+        domainStreamer->loadMetaData(dom.ptr(), options);
+        if ( type != itTEXTDOMAIN){
+            range = Range::create(dom->valueType());
+            if (!range)
+                return false;
+            range->load(_stream);
+        }
+
+        fcoverage->attributeDefinitionsRef().addColumn(ColumnDefinition(columnName, dom));
+        if ( range)
+            fcoverage->attributeDefinitionsRef().columndefinitionRef(col).datadef().range(range);
+    }
+    _stream >> valueType;
+    _stream >> type;
+    _stream >> version;
+    if ( type != itUNKNOWN){
+        std::unique_ptr<DataInterface> domainStreamer(factory->create(version, itDOMAIN,_stream));
+        if ( !domainStreamer)
+            return false;
+        IDomain dom(type | valueType);
+        domainStreamer->loadMetaData( dom.ptr(), options);
+        size_t nrOfVariants;
+        _stream >> nrOfVariants;
+        std::vector<QString> variants(nrOfVariants);
+        for(int i =0; i < nrOfVariants; ++i){
+            _stream >> variants[i];
+        }
+        fcoverage->attributeDefinitionsRef().setSubDefinition(dom, variants);
+    }
+
+
+
     quint32 featureCount;
     _stream >> featureCount;
     for(quint32 f = 0; f < featureCount; ++f){
-        UPFeatureI& feature = fcoverage->newFeature(0, false); // create an empty feature
-        feature->load(_stream, fcoverage->geomfactory());
+        SPFeatureI feature = fcoverage->newFeature(0, false); // create an empty feature
+        feature->load(fcoverage->attributeDefinitions(), _stream, options);
     }
     return true;
 }

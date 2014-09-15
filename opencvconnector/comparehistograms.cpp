@@ -30,11 +30,11 @@ bool CompareHistograms::execute(ExecutionContext *ctx, SymbolTable &symTable)
     try{
         std::vector<double> _markers;
         cv::SparseMat histogram1, histogram2;
-        for(int index = 0; index < _inputRaster1->indexDefinition().indexSize(); ++index ){
-            QVariant trackIndex1 = _inputRaster1->indexDefinition().byOrder(index);
-            QVariant trackIndex2 = _inputRaster2->indexDefinition().byOrder(index);
-            PixelIterator inputIter1 = _inputRaster1->band(trackIndex1);
-            PixelIterator inputIter2 = _inputRaster2->band(trackIndex2);
+        auto indexes1 = _inputRaster1->stackDefinition().indexes();
+        auto indexes2 = _inputRaster2->stackDefinition().indexes();
+        for(int i =0; i < indexes1.size(); ++i ){
+            PixelIterator inputIter1 = _inputRaster1->band(indexes1[i]);
+            PixelIterator inputIter2 = _inputRaster2->band(indexes2[i]);
 
             OpenCVHelper::createHistogram(inputIter1,histogram1, _accumulate);
             OpenCVHelper::createHistogram(inputIter2,histogram2, _accumulate);

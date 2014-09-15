@@ -3,7 +3,6 @@
 #include <fstream>
 #include <iterator>
 
-#include "kernel.h"
 #include "coverage.h"
 #include "geos/geom/CoordinateArraySequence.h"
 #include "geos/geom/Point.h"
@@ -19,16 +18,14 @@
 #include "catalog.h"
 #include "numericdomain.h"
 #include "numericrange.h"
-#include "columndefinition.h"
 #include "table.h"
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "textdomain.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "featureiterator.h"
 #include "gdalproxy.h"
 #include "ilwisobjectconnector.h"
@@ -78,7 +75,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
         return false;
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
-    fcoverage->setFeatureCount(itFEATURE, 0,0);
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF);
 
     OGRLayerH hLayer = getLayerHandle();
 
@@ -98,7 +95,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
         }else{
             int featureCount = fcoverage->featureCount(type);
             featureCount += temp;
-            fcoverage->setFeatureCount(type, featureCount,0); // subgeometries are not known at this level
+            fcoverage->setFeatureCount(type, featureCount); // subgeometries are not known at this level
         }
         //attribute table
         ITable attTable;
@@ -107,7 +104,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
             ERROR1(ERR_NO_INITIALIZED_1,resource.name());
             return false;
         }
-        fcoverage->attributeTable(attTable);
+        fcoverage->attributesFromTable(attTable);
 
         //layer envelopes/extents
         Envelope bbox;
@@ -144,7 +141,7 @@ bool GdalFeatureConnector::loadData(IlwisObject* data, const IOOptions &options)
             ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename.toString());
             return false;
         }
-        fcoverage->setFeatureCount(itFEATURE, 0, 0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+        fcoverage->setFeatureCount(itFEATURE, iUNDEF); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
 
         OGRLayerH hLayer = getLayerHandle();
         if ( hLayer) {
@@ -160,8 +157,8 @@ bool GdalFeatureConnector::loadData(IlwisObject* data, const IOOptions &options)
                     loader.loadRecord(attTable.ptr(), hFeature, record);
                     geos::geom::Geometry * geometry = fillFeature(fcoverage, gdal()->getGeometryRef(hFeature));
                     if (geometry){
-                        attTable->record(attTable->recordCount(), record);
-                        fcoverage->newFeature(geometry, false);
+                        auto feature = fcoverage->newFeature(geometry, false);
+                        feature->record(record);
                     }else{
                         ERROR1("GDAL error during load of binary data: no geometry detected for feature in %1", _filename.toString());
                     }
@@ -394,7 +391,7 @@ OGRwkbGeometryType GdalFeatureConnector::ilwisType2GdalFeatureType(IlwisTypes tp
     return wkbUnknown;
 }
 
-void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, UPFeatureI& feature, const std::vector<bool>& validAttributes, const std::vector<ColumnDefinition>& columnDef) {
+void GdalFeatureConnector::setAttributes(OGRFeatureH hfeature, SPFeatureI& feature, const std::vector<bool>& validAttributes, const std::vector<ColumnDefinition>& columnDef) {
     int index = 0;
     for(int i=0; i < feature->attributeColumnCount(); ++i){
         if ( !validAttributes[i])
@@ -440,7 +437,7 @@ bool GdalFeatureConnector::createDataSourceAndLayers(IlwisTypes types,
 
     QFileInfo fileinfo = source().toLocalFile();
     int typeIndex  = ilwisType2Index(types);
-    AttributeTable tbl = features->attributeTable();
+    ITable tbl = features->attributeTable();
     datasources[typeIndex]._source =  createFileBasedDataSource(postfix, fileinfo);
     if ( datasources[typeIndex]._source == 0)
         return false;
@@ -454,7 +451,7 @@ bool GdalFeatureConnector::createDataSourceAndLayers(IlwisTypes types,
 bool GdalFeatureConnector::setDataSourceAndLayers(const IFeatureCoverage& features, std::vector<SourceHandles>& datasources,std::vector<bool>& validAttributes) {
 
 
-    AttributeTable tbl = features->attributeTable();
+    ITable tbl = features->attributeTable();
     validAttributes.resize(tbl->columnCount(), false);
     std::vector<OGRFieldDefnH> fielddefs(tbl->columnCount());
 
@@ -503,7 +500,7 @@ int GdalFeatureConnector::ilwisType2Index(IlwisTypes tp)
         case itPOLYGON:
             return 2;
     }
-    throw ErrorObject(TR("Illegal use of ilwisType2Index method"));
+    return itUNKNOWN;
 }
 
 OGRGeometryH GdalFeatureConnector::createFeature(const geos::geom::Geometry* geom){
@@ -685,19 +682,22 @@ bool GdalFeatureConnector::store(IlwisObject *obj, const IOOptions&   )
     FeatureIterator fiter(coverage);
     FeatureIterator endIter = end(coverage);
     for(; fiter != endIter; ++fiter) {
-        UPFeatureI& feature = *fiter;
-        OGRLayerH lyr = datasources[ilwisType2Index(feature->geometryType())]._layers[0];
-        OGRFeatureH hfeature = gdal()->createFeature(gdal()->getLayerDef(lyr));
-        if (hfeature) {
-            setAttributes(hfeature, feature, validAttributes, defs);
-            const geos::geom::Geometry* geometry = feature->geometry().get();
-            if (gdal()->setGeometryDirectly(hfeature,createFeature(geometry)) != OGRERR_NONE)
-                ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("geometry"), _filename.toString());
-            if (gdal()->addFeature2Layer(lyr, hfeature) != OGRERR_NONE) {
-                ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("feature"), _filename.toString());
-            }
-            gdal()->destroyFeature(hfeature);
-        };
+        SPFeatureI feature = *fiter;
+        IlwisTypes geomType = feature->geometryType();
+        if ( geomType != 0){
+            OGRLayerH lyr = datasources[ilwisType2Index(geomType)]._layers[0];
+            OGRFeatureH hfeature = gdal()->createFeature(gdal()->getLayerDef(lyr));
+            if (hfeature) {
+                setAttributes(hfeature, feature, validAttributes, defs);
+                const geos::geom::Geometry* geometry = feature->geometry().get();
+                if (gdal()->setGeometryDirectly(hfeature,createFeature(geometry)) != OGRERR_NONE)
+                    ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("geometry"), _filename.toString());
+                if (gdal()->addFeature2Layer(lyr, hfeature) != OGRERR_NONE) {
+                    ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("feature"), _filename.toString());
+                }
+                gdal()->destroyFeature(hfeature);
+            };
+        }
     }
     for(auto& datasource : datasources){
         if ( datasource._source != 0)

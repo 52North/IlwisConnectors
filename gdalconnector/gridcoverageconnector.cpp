@@ -59,6 +59,13 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
         Coordinate cMin, cMax;
         Size<> rastersize(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
 
+
+        std::vector<double> bands(rastersize.zsize());
+        for(int i =0; i < rastersize.zsize(); ++i){
+            bands[i] = i;
+        }
+        raster->stackDefinitionRef().setSubDefinition(IDomain("count"),bands);
+
         auto layerHandle = gdal()->getRasterBand(_handle->handle(), 1);
         GDALColorInterp colorType = gdal()->colorInterpretation(layerHandle);
         bool ok = false;
