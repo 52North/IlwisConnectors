@@ -18,6 +18,7 @@ public:
     bool loadData(IlwisObject *data, const IOOptions &options);
 
     QString provider() const;
+    quint32 position() const;
     bool needFlush() const;
     void flush(bool last);
     static ConnectorInterface *create(const Resource &resource, bool load, const IOOptions &options);

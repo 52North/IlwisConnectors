@@ -63,8 +63,7 @@ bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
 
 bool StreamConnector::openSource(bool reading){
     QUrl url = _resource.url(true);
-    QUrlQuery query(url);
-    if ( query.queryItemValue("service") == "ilwisobjects" || _resource.hasProperty("remote")) // can't use anything marked as internal
+    if ( url.scheme() == "http")
     {
         _bytes.resize(STREAMBLOCKSIZE);
         _bytes.fill(0);
@@ -110,9 +109,9 @@ bool StreamConnector::store(IlwisObject *obj, const IOOptions &options){
     _versionedConnector->connector(this);
     bool ok;
     int storemode = options["storemode"].toInt();
-    if ( storemode != IlwisObject::smBINARYDATA)
+    if ( hasType(storemode, IlwisObject::smMETADATA))
         ok = _versionedConnector->store(obj, options);
-    else
+    if ( hasType(storemode, IlwisObject::smBINARYDATA))
         ok = _versionedConnector->storeData(obj, options);
 
     flush(true);
@@ -131,7 +130,13 @@ QString StreamConnector::provider() const
 
 bool StreamConnector::needFlush() const
 {
-    return _datasource->pos() > STREAMBLOCKSIZE && _resource.url().scheme() != "file";
+    return _datasource->pos() >= STREAMBLOCKSIZE && _resource.url().scheme() != "file";
+}
+
+quint32 StreamConnector::position() const {
+    if ( _datasource)
+        return _datasource->pos();
+    return iUNDEF;
 }
 
 void StreamConnector::flush(bool last)
@@ -139,6 +144,6 @@ void StreamConnector::flush(bool last)
     if ( _resource.url().scheme() == "file") // we dont flush with files; OS does this
         return;
     QBuffer *buf = static_cast<QBuffer *>(_datasource.get());
-    emit dataAvailable(buf,true);
+    emit dataAvailable(buf,last);
 
 }
