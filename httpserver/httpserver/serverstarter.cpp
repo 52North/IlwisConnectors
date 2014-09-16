@@ -32,7 +32,7 @@ void ServerStarter::start() {
     // Initialize the core application
     _listener.reset(new HttpListener(arguments(), new RequestMapper()));
     Ilwis::Time time = Ilwis::Time::now();
-    auto txt =QString("ServiceHelper: Service has started at : ").arg(time.toString()).toLatin1();
+    auto txt =QString("ServiceHelper: Service has started at : %1").arg(time.toString()).toLatin1();
     qWarning(txt);
 }
 
