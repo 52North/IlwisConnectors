@@ -63,6 +63,12 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     if(!storeDataDefintion(raster->datadef(), _stream, options))
         return false;
 
+    for(int index = 0; index < raster->size().zsize(); ++index)   {
+        const DataDefinition& def = raster->datadef(index);
+        storeDataDefintion(def,_stream, options);
+
+    }
+
     std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
     if ( !domainStreamer)
         return false;
@@ -72,12 +78,6 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     for(auto index : indexes)
         _stream << index;
 
-
-    for(int index = 0; index < raster->size().zsize(); ++index)   {
-        const DataDefinition& def = raster->datadef(index);
-        storeDataDefintion(def,_stream, options);
-
-    }
     std::unique_ptr<DataInterface> grfstreamer(factory->create(Version::IlwisVersion, itGEOREF,_stream));
     if ( !grfstreamer)
         return false;
