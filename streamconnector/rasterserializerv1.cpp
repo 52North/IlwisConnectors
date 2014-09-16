@@ -23,9 +23,18 @@ RasterSerializerV1::RasterSerializerV1(QDataStream& stream) : CoverageSerializer
 {
 }
 
-template<typename T> void storeBulk(const RawConverter& converter, QDataStream& stream, const IRasterCoverage& raster){
-    for(double v : raster){
-        stream << (T)converter.real2raw(v);
+template<typename T> void storeBulk(const RawConverter& converter, QDataStream& stream, StreamConnector *streamconnector, const BoundingBox& box, const IRasterCoverage& raster){
+    quint64 count = streamconnector->position();
+    PixelIterator iter(raster, box);
+    while(iter != iter.end()){
+        if ( count >= STREAMBLOCKSIZE - 9 ) {
+            streamconnector->flush(false);
+            count = 0;
+
+        }
+        count += sizeof(T);
+        stream << (T)converter.real2raw(*iter);
+        ++iter;
     }
 }
 
@@ -86,7 +95,7 @@ bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions &options )
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
     NumericStatistics& stats = raster->statistics(ContainerStatistics<double>::pBASIC);
     qint16 digits = stats.significantDigits();
-    double scale = digits == 0 ? 0 : std::pow(10,-digits);
+    double scale = std::pow(10,-digits);
     RawConverter converter(stats[ContainerStatistics<double>::pMIN], stats[ContainerStatistics<double>::pMAX],scale);
 
     _stream << stats[ContainerStatistics<double>::pMIN] << stats[ContainerStatistics<double>::pMAX] << scale;
@@ -103,28 +112,30 @@ bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions &options )
         quint32 undef = iUNDEF;
         _stream << undef << undef << undef;
     }
-    quint64 count = 0;
     IRasterCoverage rcoverage(raster);
     switch (converter.storeType()){
     case itUINT8:
-        storeBulk<quint8>(converter, _stream, rcoverage); break;
+        storeBulk<quint8>(converter, _stream, _streamconnector, box,rcoverage); break;
     case itINT16:
-        storeBulk<qint16>(converter, _stream, rcoverage); break;
+        storeBulk<qint16>(converter, _stream, _streamconnector, box, rcoverage); break;
     case itINT32:
-        storeBulk<qint32>(converter, _stream, rcoverage); break;
+        storeBulk<qint32>(converter, _stream, _streamconnector, box, rcoverage); break;
     case itINT64:
         for(double v : rcoverage)
             _stream << (qint64)v;
         break;
     default:
     {
+        quint64 count = _streamconnector->position();
         PixelIterator iter(rcoverage, box);
         while(iter != iter.end()){
-            if ( count % STREAMBLOCKSIZE && _streamconnector->needFlush()){
+            if ( count >= STREAMBLOCKSIZE - 9 ) {
+                quint32 pos = _streamconnector->position();
                 _streamconnector->flush(false);
+                count = 0;
 
             }
-            ++count;
+            count += 8;
             _stream << *iter;
             ++iter;
         }
