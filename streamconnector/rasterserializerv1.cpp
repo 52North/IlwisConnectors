@@ -178,8 +178,9 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
     for(int band = 0; band < raster->size().zsize(); ++band) {
         loadDataDefinition(raster->datadefRef(band), _stream, options)    ;
     }
-    quint64 type;
+    quint64 type, valueType;
     QString version;
+    _stream >> valueType;
     _stream >> type;
     _stream >> version;
 
