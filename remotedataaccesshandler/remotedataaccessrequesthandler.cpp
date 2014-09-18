@@ -45,6 +45,7 @@ void RemoteDataAccessRequestHandler::service(HttpRequest &request, HttpResponse 
             return ;
         }
         response.setHeader("Content-Type", qPrintable("application/octet-stream"));
+        name = name.replace('.','_');
         response.setHeader("Content-Disposition", qPrintable("attachment;filename=" + name + ".bin"));
 
         writeObject(obj, request, response);
