@@ -322,6 +322,12 @@ bool CoordinateSystemConnector::storeMetaData(IlwisObject *data) {
     if ( csy->isLatLon()) {
         _odf->setKeyValue("CoordSystem", "Datum", "WGS 1984");
         _odf->setKeyValue("CoordSystem","Type","LatLon");
+        if ( csy.as<ConventionalCoordinateSystem>()->ellipsoid().isValid()){
+            IEllipsoid ell = csy.as<ConventionalCoordinateSystem>()->ellipsoid();
+            _odf->setKeyValue("CoordSystem","Ellipsoid","User Defined");
+            _odf->setKeyValue("Ellipsoid","1/f", 1.0 / ell->flattening());
+            _odf->setKeyValue("Ellipsoid","a", ell->majorAxis());
+        }
     }else{
         IConventionalCoordinateSystem projectedCsy = csy.as<ConventionalCoordinateSystem>();
         if( !projectedCsy->ellipsoid().isValid() || !projectedCsy->projection().isValid()){
