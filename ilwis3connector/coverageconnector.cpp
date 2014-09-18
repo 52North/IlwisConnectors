@@ -266,7 +266,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
-         if ( dom->valueType() == itTHEMATICITEM && coverage->ilwisType() == itRASTER) {
+         if ( hasType(dom->valueType(),itTHEMATICITEM | itNUMERICITEM) && coverage->ilwisType() == itRASTER) {
             _domainName =  Resource::toLocalFile(dom->source().url(), true);
             if ( _domainName == sUNDEF){
                 _domainName = QFileInfo(baseName).baseName() + ".dom";
@@ -342,7 +342,9 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
 }
 DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const IOOptions &options) const{
     IDomain dom;
-    if(!dom.prepare(odf->file(), options)) {
+    QString domname = odf->value("BaseMap","Domain");
+    QString filename = context()->workingCatalog()->resolve(domname, itDOMAIN);
+    if(!dom.prepare(filename, options)) {
         ERROR2(ERR_NO_INITIALIZED_2,"domain",odf->file());
         return DataDefinition();
     }

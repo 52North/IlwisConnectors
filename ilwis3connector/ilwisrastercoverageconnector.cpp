@@ -159,22 +159,27 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data, const IOOptions &op
             int index = dminfo.indexOf("class;");
             if ( index != -1) {
                 _converter = RawConverter("class");
-            } else {
-                index = dminfo.indexOf("id;");
+            }else {
+                index = dminfo.indexOf("group;");
                 if ( index != -1) {
-                    _converter = RawConverter("id");
-                } else {
-                    index = dminfo.indexOf("UniqueID;");
+                    _converter = RawConverter("group");
+                }else {
+                    index = dminfo.indexOf("id;");
                     if ( index != -1) {
-                        _converter = RawConverter("UniqueID");
+                        _converter = RawConverter("id");
+                    } else {
+                        index = dminfo.indexOf("UniqueID;");
+                        if ( index != -1) {
+                            _converter = RawConverter("UniqueID");
+                        }
+                        index = dminfo.indexOf("color;");
+                        if ( index != -1) {
+                            _converter = RawConverter("color");
+                        }
                     }
-                    index = dminfo.indexOf("color;");
-                     if ( index != -1) {
-                        _converter = RawConverter("color");
-                     }
                 }
-            }
 
+            }
         }
     }
 
@@ -412,14 +417,14 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
         output_file.close();
 
     } else if ( dom->ilwisType() == itITEMDOMAIN ){
-        if ( hasType(dom->valueType(), itTHEMATICITEM | itNAMEDITEM)) {
+        if ( hasType(dom->valueType(), itTHEMATICITEM | itNAMEDITEM | itNUMERICITEM)) {
             std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
             if ( !output_file.is_open()){
                 return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
             }
 
-            if( hasType(dom->valueType(), itTHEMATICITEM)){
-                RawConverter conv("class");
+            if( hasType(dom->valueType(), itTHEMATICITEM | itNUMERICITEM)){
+                RawConverter conv(dom->valueType() == itTHEMATICITEM ? "class" : "group");
                 ok = save<quint8>(output_file,conv, raster,sz);
             }
             else{
@@ -575,7 +580,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
             _odf->setKeyValue("MapStore","Type","Real");
         }
     } if ( hasType(dom->ilwisType(),itITEMDOMAIN)) {
-        if ( hasType(dom->valueType(), itTHEMATICITEM))
+        if ( hasType(dom->valueType(), itTHEMATICITEM | itNUMERICITEM)  )
             _odf->setKeyValue("MapStore","Type","Byte");
         else if ( hasType(dom->valueType(), itNAMEDITEM)) {
             _odf->setKeyValue("MapStore","Type","Int");

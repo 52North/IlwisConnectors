@@ -19,7 +19,7 @@ public:
             _storeType = itUINT32;
             _colors = true;
         }
-        if ( type == "class") {
+        if ( type == "class" || type == "group") {
             _storeType = itUINT8;
         } else if ( type == "ident"){
             _storeType = itUINT16;
