@@ -269,7 +269,14 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
          if ( hasType(dom->valueType(),itTHEMATICITEM | itNUMERICITEM) && coverage->ilwisType() == itRASTER) {
             _domainName =  Resource::toLocalFile(dom->source().url(), true);
             if ( _domainName == sUNDEF){
-                _domainName = QFileInfo(baseName).baseName() + ".dom";
+                if ( baseName != sUNDEF)
+                    _domainName = QFileInfo(baseName).baseName() + ".dom";
+                else{
+                    _domainName = dom->name();
+                    if ( _domainName.indexOf(".dom") == -1)
+                        _domainName += ".dom";
+                }
+
             }
             IThematicDomain themdom = dom.as<ThematicDomain>();
             if ( themdom.isValid()) {
