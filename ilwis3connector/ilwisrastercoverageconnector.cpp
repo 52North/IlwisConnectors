@@ -585,6 +585,11 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
         else if ( hasType(dom->valueType(), itNAMEDITEM)) {
             _odf->setKeyValue("MapStore","Type","Int");
         }
+        if ( _domainName.indexOf(".dom") != -1 && !dom->isSystemObject()){
+            QString filename = context()->workingCatalog()->resolve(_domainName);
+            dom->connectTo(filename,"domain","ilwis3", Ilwis::IlwisObject::cmOUTPUT);
+            dom->store();
+        }
     }
 
     ITable attTable = raster->attributeTable();
