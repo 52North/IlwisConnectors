@@ -39,11 +39,33 @@ template<typename T> void storeBulk(const RawConverter& converter, QDataStream& 
 }
 
 template<typename T> void loadBulk(const RawConverter& converter, QDataStream& stream, const IRasterCoverage& raster){
+    UPGrid &grid = raster->gridRef();
+    qint64 blockSizeBytes = grid->blockSize(0) * sizeof(T);
+    qint64 szLeft = grid->size().xsize() * grid->size().ysize() * sizeof(T);
+    qint64 result = 0;
+    qint64 totalRead =0;
+    quint32 count = 0;
     T value;
-    for(double& v : raster){
-        stream >> value;
-        v = converter.raw2real(value);
+    std::vector<double> values(grid->blockSize(0));
+    while(szLeft > 0) {
+         quint32 noItems = grid->blockSize(count);
+         if ( noItems == iUNDEF)
+            return ;
+
+        values.resize(noItems);
+        for(quint32 i=0; i < noItems; ++i) {
+            stream >> value;
+
+            values[i] = converter.raw2real(value);
+        }
+
+        grid->setBlockData(count, values, true);
+        totalRead += result;
+        ++count;
+        szLeft -= blockSizeBytes;
+
     }
+
 }
 
 bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
@@ -130,7 +152,6 @@ bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions &options )
         PixelIterator iter(rcoverage, box);
         while(iter != iter.end()){
             if ( count >= STREAMBLOCKSIZE - 9 ) {
-                quint32 pos = _streamconnector->position();
                 _streamconnector->flush(false);
                 count = 0;
 
