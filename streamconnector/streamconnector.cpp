@@ -41,6 +41,13 @@ IlwisObject *StreamConnector::create() const
 
 StreamConnector::StreamConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource,load,options)
 {
+    QUrlQuery query(source().url());
+    QString url =QString(source().url(true).toString(QUrl::RemoveQuery));
+    if ( query.hasQueryItem("datasource")){
+        QString item = query.queryItemValue("datasource");
+        url += "/" + item;
+        source().setUrl(url);;
+    }
 }
 
 StreamConnector::~StreamConnector()
