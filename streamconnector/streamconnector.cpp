@@ -13,6 +13,7 @@
 #include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
+#include "rawconverter.h"
 #include "downloadmanager.h"
 #include "versioneddatastreamfactory.h"
 
