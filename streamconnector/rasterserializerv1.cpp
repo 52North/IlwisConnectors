@@ -38,33 +38,30 @@ template<typename T> void storeBulk(const RawConverter& converter, QDataStream& 
     }
 }
 
-template<typename T> void loadBulk(const RawConverter& converter, QDataStream& stream, const IRasterCoverage& raster){
+template<typename T> quint32 loadBulk(const RawConverter& converter, quint32 block, QByteArray &data, const IRasterCoverage& raster){
     UPGrid &grid = raster->gridRef();
-    qint64 blockSizeBytes = grid->blockSize(0) * sizeof(T);
-    qint64 szLeft = grid->size().xsize() * grid->size().ysize() * sizeof(T);
-    qint64 result = 0;
-    qint64 totalRead =0;
-    quint32 count = 0;
+    qint64 blockSizeBytes = grid->blockSize(block) * sizeof(T);
+    qint64 szLeft = data.size();
     T value;
+    QBuffer buf(&data);
+    buf.open(QIODevice::ReadWrite);
+    QDataStream stream(&buf);
     std::vector<double> values(grid->blockSize(0));
-    while(szLeft > 0) {
-         quint32 noItems = grid->blockSize(count);
-         if ( noItems == iUNDEF)
-            return ;
+    quint32 noItems = grid->blockSize(block);
+    if ( noItems == iUNDEF)
+        return 0;
 
-        values.resize(noItems);
-        for(quint32 i=0; i < noItems; ++i) {
-            stream >> value;
+    values.resize(noItems);
+    for(quint32 i=0; i < noItems; ++i) {
+        stream >> value;
 
-            values[i] = converter.raw2real(value);
-        }
-
-        grid->setBlockData(count, values, true);
-        totalRead += result;
-        ++count;
-        szLeft -= blockSizeBytes;
-
+        values[i] = converter.raw2real(value);
     }
+
+    grid->setBlockData(block, values, true);
+    szLeft -= blockSizeBytes;
+
+    return szLeft;
 
 }
 
@@ -238,61 +235,70 @@ bool RasterSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
 {
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
-    int startBlock = 0;
-    double mmin,  mmax, mscale;
-    quint32 layer, minline, maxline;
-    _stream >> mmin >> mmax >> mscale;
-    _stream >> layer >> minline >> maxline;
-    std::vector<quint32> blockList;
-    if ( layer == iUNDEF || minline == iUNDEF || maxline == iUNDEF){
-        for(int i=0; i < raster->grid()->blocks(); ++i)
-            blockList.push_back(i);
-    }else {
-        startBlock = layer * raster->grid()->blocksPerBand();
-        for(quint32 startline = minline, count=0; startline < maxline; startline += raster->grid()->maxLines(), ++count ){
-            blockList.push_back(startBlock + count);
-        }
-    }
+//     RawConverter converter(mmin, mmax, mscale);
 
-    RawConverter converter(mmin, mmax, mscale);
+//    IRasterCoverage rcoverage(raster);
+//    switch (converter.storeType()){
+//    case itUINT8:
+//        loadBulk<quint8>(converter, _stream, rcoverage); break;
+//    case itINT16:
+//        loadBulk<qint16>(converter, _stream, rcoverage); break;
+//    case itINT32:
+//        loadBulk<qint32>(converter, _stream, rcoverage); break;
+//    case itINT64:{
+//    default:
+//            for(int i = 0; i < blockList.size(); ++i) {
+//                quint64 noOfPixels = raster->grid()->blockSize(blockList[i]);
+//                std::vector<double> values(noOfPixels);
+//                for(int j = 0; j < noOfPixels; ++j){
+//                    _stream >> values[j];
+//                }
+//                raster->gridRef()->setBlockData(blockList[i], values, true);
+//            }
+//            break;
+//        }
+//    }
+//    quint64 type;
+//    QString version;
+//    VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+//    _stream >> type;
+//    if ( type != itUNKNOWN){
+//        _stream >> version;
+
+//        std::unique_ptr<DataInterface> tableStreamer(factory->create(version, itTABLE,_stream));
+//        if ( !tableStreamer)
+//            return false;
+//        FlatTable *tbl = new FlatTable();
+
+//        tableStreamer->loadMetaData(tbl,options);
+//        raster->attributeTable(tbl);
+//    }
+    return true;
+}
+
+quint32 RasterSerializerV1::loadGridBlock(IlwisObject *data, quint32 block, QByteArray &blockdata, const RawConverter& converter, const IOOptions &)
+{
+    RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
     IRasterCoverage rcoverage(raster);
     switch (converter.storeType()){
     case itUINT8:
-        loadBulk<quint8>(converter, _stream, rcoverage); break;
+        return loadBulk<quint8>(converter, block, blockdata, rcoverage); break;
     case itINT16:
-        loadBulk<qint16>(converter, _stream, rcoverage); break;
+        return loadBulk<qint16>(converter, block, blockdata, rcoverage); break;
     case itINT32:
-        loadBulk<qint32>(converter, _stream, rcoverage); break;
+        return loadBulk<qint32>(converter, block, blockdata, rcoverage); break;
     case itINT64:{
     default:
-            for(int i = 0; i < blockList.size(); ++i) {
-                quint64 noOfPixels = raster->grid()->blockSize(blockList[i]);
-                std::vector<double> values(noOfPixels);
-                for(int j = 0; j < noOfPixels; ++j){
-                    _stream >> values[j];
-                }
-                raster->gridRef()->setBlockData(blockList[i], values, true);
+            quint64 noOfPixels = raster->grid()->blockSize(block);
+            std::vector<double> values(noOfPixels);
+            for(int j = 0; j < noOfPixels; ++j){
+                _stream >> values[j];
             }
-            break;
+            raster->gridRef()->setBlockData(block, values, true);
+            return blockdata.size() - noOfPixels * 8;
         }
     }
-    quint64 type;
-    QString version;
-    VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
-    _stream >> type;
-    if ( type != itUNKNOWN){
-        _stream >> version;
-
-        std::unique_ptr<DataInterface> tableStreamer(factory->create(version, itTABLE,_stream));
-        if ( !tableStreamer)
-            return false;
-        FlatTable *tbl = new FlatTable();
-
-        tableStreamer->loadMetaData(tbl,options);
-        raster->attributeTable(tbl);
-    }
-    return true;
 }
 
 VersionedSerializer *RasterSerializerV1::create(QDataStream &stream)

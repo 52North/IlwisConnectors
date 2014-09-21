@@ -1,4 +1,5 @@
 #include <QEventLoop>
+#include <cstring>
 #include "kernel.h"
 #include "resource.h"
 #include "version.h"
@@ -14,6 +15,7 @@
 #include "factory.h"
 #include "abstractfactory.h"
 #include "versioneddatastreamfactory.h"
+#include "rawconverter.h"
 #include "downloadmanager.h"
 
 using namespace Ilwis;
@@ -28,11 +30,12 @@ bool DownloadManager::loadData(IlwisObject *object, const IOOptions &options){
 
     QUrlQuery query(url);
     if ( object->ilwisType() == itRASTER){
+        RasterCoverage *raster = static_cast<RasterCoverage*>(object);
+        _blockSizeBytes = raster->grid()->blockSize(0);
         if ( options.contains("blockindex")){
-            RasterCoverage *raster = static_cast<RasterCoverage*>(object);
-            int bindex = options["blockindex"].toInt();
-            int layer = bindex / raster->grid()->blocksPerBand();
-            int relativeBlock = bindex - layer * raster->grid()->blocksPerBand();
+            _currentBlock = options["blockindex"].toInt();
+            int layer = _currentBlock / raster->grid()->blocksPerBand();
+            int relativeBlock = _currentBlock - layer * raster->grid()->blocksPerBand();
             unsigned int minLine = raster->grid()->maxLines() * relativeBlock ;
             unsigned int maxLine = std::min( minLine + raster->grid()->maxLines(), raster->size().ysize());
             query.addQueryItem("lines",QString("%1 %2 %3").arg(layer).arg(minLine).arg(maxLine));
@@ -46,7 +49,10 @@ bool DownloadManager::loadData(IlwisObject *object, const IOOptions &options){
 
     QNetworkReply *reply = _manager.get(request);
 
-    connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readReady);
+    if ( object->ilwisType() == itRASTER)
+        connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readReadyRaster);
+    else
+        connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readReady);
     connect(reply, &QNetworkReply::downloadProgress, this, &DownloadManager::downloadProgress);
     connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &DownloadManager::error);
     connect(reply, &QNetworkReply::finished, this, &DownloadManager::finishedData);
@@ -67,7 +73,6 @@ bool DownloadManager::loadMetaData(IlwisObject *object, const IOOptions &options
     query.addQueryItem("datatype","metadata");
     url.setQuery(query);
     _object = object;
-    QString urltxt = url.toString();
     QNetworkRequest request(url);
 
     QNetworkReply *reply = _manager.get(request);
@@ -94,6 +99,67 @@ void DownloadManager::readReady()
     }
 }
 
+void DownloadManager::copyData(bool lastBlock)
+{
+    int bytesLeft = _bytes.size();
+    while ( bytesLeft >= _blockSizeBytes || lastBlock){
+
+        bytesLeft = _versionedConnector->loadGridBlock(_object, _currentBlock, _bytes, _converter, IOOptions());
+        ++_currentBlock;
+        std::memcpy(_bytes.data(), _bytes.data() + _bytes.size() - bytesLeft, bytesLeft);
+        _bytes.resize(bytesLeft);
+        lastBlock = false;
+
+    }
+}
+
+void DownloadManager::readReadyRaster()
+{
+
+    if (QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender())) {
+         _bytes.append(reply->readAll());
+        if ( _initialRasterData){
+            VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+            if (factory){
+                QBuffer buf(&_bytes);
+                buf.open(QIODevice::ReadWrite);
+                QDataStream stream(&buf);
+                quint64 type;
+                stream >> type;
+                QString version;
+                stream >> version;
+                double mmin,  mmax, mscale;
+                stream >> mmin >> mmax >> mscale;
+                int pos = stream.device()->pos();
+                _converter = RawConverter(mmin, mmax, mscale);
+                switch (_converter.storeType()){ // calculate true blocksize in bytes
+                case itUINT8:
+                    break;
+                case itINT16:
+                   _blockSizeBytes *= 2; break;
+                case itINT32:
+                    _blockSizeBytes *= 4; break;
+                default:
+                    _blockSizeBytes *= 8; break;
+                }
+                quint32 bytesLeft = _bytes.size() - pos; // we chopped of a few bytes for the metadata; so we adjust the actual bytes for this.
+                std::memcpy(_bytes.data(), _bytes.data() + bytesLeft, bytesLeft);
+                _bytes.resize(bytesLeft);
+                stream.device()->seek(0);
+                _versionedConnector.reset( factory->create(version,type,stream));
+
+            }
+
+            if (!_versionedConnector)
+                return ;
+
+            _initialRasterData = false;
+        }
+        copyData();
+    }
+}
+
+
 void DownloadManager::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
     Q_UNUSED(bytesReceived);
@@ -112,6 +178,10 @@ void DownloadManager::error(QNetworkReply::NetworkError code)
 
 void DownloadManager::finishedData()
 {
+    if ( _object->ilwisType() == itRASTER){
+        copyData(true);
+        return;
+    }
     QBuffer buf(&_bytes);
     buf.open(QIODevice::ReadWrite);
     QDataStream stream(&buf);
