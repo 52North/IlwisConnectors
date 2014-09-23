@@ -106,7 +106,8 @@ void DownloadManager::copyData(bool lastBlock)
 
         bytesLeft = _versionedConnector->loadGridBlock(_object, _currentBlock, _bytes, _converter, IOOptions());
         ++_currentBlock;
-        std::memcpy(_bytes.data(), _bytes.data() + _bytes.size() - bytesLeft, bytesLeft);
+        quint32 delta = _bytes.size() - bytesLeft;
+        std::memcpy(_bytes.data(), _bytes.data() + delta, bytesLeft);
         _bytes.resize(bytesLeft);
         lastBlock = false;
 
@@ -143,7 +144,7 @@ void DownloadManager::readReadyRaster()
                     _blockSizeBytes *= 8; break;
                 }
                 quint32 bytesLeft = _bytes.size() - pos; // we chopped of a few bytes for the metadata; so we adjust the actual bytes for this.
-                std::memcpy(_bytes.data(), _bytes.data() + bytesLeft, bytesLeft);
+                std::memcpy(_bytes.data(), _bytes.data() + pos, bytesLeft);
                 _bytes.resize(bytesLeft);
                 stream.device()->seek(0);
                 _versionedConnector.reset( factory->create(version,type,stream));
