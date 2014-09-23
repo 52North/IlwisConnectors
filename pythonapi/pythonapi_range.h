@@ -6,6 +6,7 @@
 #include<map>
 #include "pythonapi_rangeiterator.h"
 #include <QSharedPointer>
+#include "pythonapi_util.h"
 
 namespace Ilwis {
 class Range;
@@ -53,6 +54,7 @@ public:
     NumericRange(double mi, double ma, double resolution = 0);
     NumericRange(const NumericRange &vr);
     NumericRange(Ilwis::NumericRange* nr);
+    NumericRange();
     ~NumericRange();
 
     bool contains(double v, bool inclusive = true) const;
@@ -67,9 +69,9 @@ public:
 
     void set(const NumericRange& vr);
 
-//    pythonapi::NumericRangeIterator __iter__();
-//    pythonapi::NumericRangeIterator begin();
-//    pythonapi::NumericRangeIterator end();
+    pythonapi::NumericRangeIterator __iter__();
+    pythonapi::NumericRangeIterator begin();
+    pythonapi::NumericRangeIterator end();
 
     void clear();
 };
@@ -80,7 +82,6 @@ public:
     quint32 count();
     void remove(const std::string& name);
     void clear();
-    ItemRangeIterator __iter__();
 };
 
 class NumericItemRange : public ItemRange{
@@ -120,37 +121,6 @@ public:
     ThematicRange* clone();
 };
 
-#ifdef SWIG
-%rename(ColorModel) ColorModelNS;
-#endif
-
-struct ColorModelNS{
-    enum Value{cmNONE, cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
-};
-
-typedef ColorModelNS::Value ColorModel;
-
-class Color{
-public:
-    Color();
-    Color(ColorModel type, PyObject* obj, const std::string& name = "");
-    Color(const std::string& typeStr, PyObject* obj, const std::string& name = "");
-    double getItem(std::string key) const;
-
-    void setName(const std::string& name);
-    std::string getName();
-
-    ColorModel getColorModel() const;
-    std::string toString() const;
-    std::string __str__();
-private:
-    void readColor(ColorModel type, PyObject* obj);
-    ColorModel stringToModel(const std::string& type);
-    ColorModel _type = ColorModel::cmRGBA;
-    PyObject* _colorVal;
-    std::string _name = "";
-};
-
 
 class ColorRange : public virtual Range{
     friend class ColorDomain;
@@ -163,7 +133,7 @@ public:
     void defaultColorModel(ColorModel m);
 
     static Color toColor(quint64 clrint, ColorModel clrModel, const std::string& name = "") ;
-    static Color toColor(PyObject*, ColorModel colortype, const std::string& name = "");
+    static Color toColor(PyObject* v, ColorModel colortype, const std::string& name = "");
 
 protected:
     Color qColorToColor(QColor qCol, const std::string& name = "") const;
@@ -231,8 +201,10 @@ public:
     bool contains(const std::string& value, bool inclusive = true) const;
     bool contains(const PyObject* value, bool inclusive = true) const;
 
-    Ilwis::Range *clone() const ;
-    bool isValid() const;
+    TimeInterval* clone() const ;
+
+protected:
+    TimeInterval(Ilwis::Range* ti);
 };
 
 }

@@ -26,6 +26,7 @@
 #include "ilwis3connector.h"
 #include "rawconverter.h"
 #include "coverageconnector.h"
+#include "tableconnector.h"
 #include "operationhelpergrid.h"
 #include "ilwisrastercoverageconnector.h"
 
@@ -65,7 +66,10 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Number of maps", gcoverage->name());
 
     gcoverage->gridRef()->prepare(gcoverage, sz);
-
+    std::vector<double> bands(sz.zsize());
+    for(int i =0; i < sz.zsize(); ++i)
+        bands[i] = i;
+    gcoverage->stackDefinitionRef().setSubDefinition(IDomain("count"),bands);
     for(int i = 0; i < z; ++i) {
         QString file = _odf->value("MapList",QString("Map%1").arg(i));
         //file = filename2FullPath(file);
@@ -80,7 +84,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
             if ( !def.isValid()) {
                 return false;
             }
-            gcoverage->addBand(i, def,i);
+            gcoverage->setBandDefinition(i, def);
 
         } else {
             ERROR2(ERR_COULD_NOT_LOAD_2,"files","maplist");
@@ -155,22 +159,27 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data, const IOOptions &op
             int index = dminfo.indexOf("class;");
             if ( index != -1) {
                 _converter = RawConverter("class");
-            } else {
-                index = dminfo.indexOf("id;");
+            }else {
+                index = dminfo.indexOf("group;");
                 if ( index != -1) {
-                    _converter = RawConverter("id");
-                } else {
-                    index = dminfo.indexOf("UniqueID;");
+                    _converter = RawConverter("group");
+                }else {
+                    index = dminfo.indexOf("id;");
                     if ( index != -1) {
-                        _converter = RawConverter("UniqueID");
+                        _converter = RawConverter("id");
+                    } else {
+                        index = dminfo.indexOf("UniqueID;");
+                        if ( index != -1) {
+                            _converter = RawConverter("UniqueID");
+                        }
+                        index = dminfo.indexOf("color;");
+                        if ( index != -1) {
+                            _converter = RawConverter("color");
+                        }
                     }
-                    index = dminfo.indexOf("color;");
-                     if ( index != -1) {
-                        _converter = RawConverter("color");
-                     }
                 }
-            }
 
+            }
         }
     }
 
@@ -219,7 +228,9 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
          _dataFiles.push_back(dataFile);
 
     QString storeType = _odf->value("MapStore","Type");
-    gcoverage->addBand(0, gcoverage->datadef(),0);
+    std::vector<double> v={0};
+    gcoverage->stackDefinitionRef().setSubDefinition(IDomain("count"),v);
+    gcoverage->setBandDefinition(0, gcoverage->datadef());
 
     setStoreType(storeType);
 
@@ -406,14 +417,14 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
         output_file.close();
 
     } else if ( dom->ilwisType() == itITEMDOMAIN ){
-        if ( hasType(dom->valueType(), itTHEMATICITEM | itNAMEDITEM)) {
+        if ( hasType(dom->valueType(), itTHEMATICITEM | itNAMEDITEM | itNUMERICITEM)) {
             std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
             if ( !output_file.is_open()){
                 return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
             }
 
-            if( hasType(dom->valueType(), itTHEMATICITEM)){
-                RawConverter conv("class");
+            if( hasType(dom->valueType(), itTHEMATICITEM | itNUMERICITEM)){
+                RawConverter conv(dom->valueType() == itTHEMATICITEM ? "class" : "group");
                 ok = save<quint8>(output_file,conv, raster,sz);
             }
             else{
@@ -569,12 +580,25 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
             _odf->setKeyValue("MapStore","Type","Real");
         }
     } if ( hasType(dom->ilwisType(),itITEMDOMAIN)) {
-        if ( hasType(dom->valueType(), itTHEMATICITEM))
+        if ( hasType(dom->valueType(), itTHEMATICITEM | itNUMERICITEM)  )
             _odf->setKeyValue("MapStore","Type","Byte");
         else if ( hasType(dom->valueType(), itNAMEDITEM)) {
             _odf->setKeyValue("MapStore","Type","Int");
         }
+        if ( _domainName.indexOf(".dom") != -1 && !dom->isSystemObject()){
+            QString filename = context()->workingCatalog()->resolve(_domainName);
+            dom->connectTo(filename,"domain","ilwis3", Ilwis::IlwisObject::cmOUTPUT);
+            dom->store();
+        }
     }
+
+    ITable attTable = raster->attributeTable();
+    if ( attTable.isValid() && attTable->columnCount() > 1) {
+        QFileInfo basename(QUrl(_odf->file()).toLocalFile());
+        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, raster.ptr(), itRASTER,basename.baseName()));
+        conn->storeMetaData(attTable.ptr());
+    }
+
     QFileInfo inf(_resource.toLocalFile());
     QString file = inf.baseName() + ".mp#";
     QString exts = "mprmpamppmpsdomtbtgrfcsympl";

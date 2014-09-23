@@ -25,6 +25,8 @@
 #include "binaryilwis3table.h"
 #include "ilwis3range.h"
 #include "textdomain.h"
+#include "interval.h"
+#include "intervalrange.h"
 #include "domainconnector.h"
 
 #include <QUrlQuery>
@@ -86,14 +88,30 @@ bool DomainConnector::handleItemDomains(IlwisObject* data) {
         return false;
     }
     quint32 indexCode = tbl.index("Code"); // not mandatory
-    ItemDomain<ThematicItem> *tdomain = static_cast<ItemDomain<ThematicItem> *>(data);
-    QString itemName, itemCode = sUNDEF;
-    for(quint32 i = 0; i < tbl.rows(); ++i) {
-        tbl.get(i,indexName,itemName);
-        if ( indexCode != iUNDEF)
-            tbl.get(i,indexName,itemCode);
-        ThematicItem *item = new ThematicItem({itemName,itemCode});
-        tdomain->addItem(item);
+    if ( domtype == "DomainGroup"){
+        ItemDomain<Interval> *intervaldomain = static_cast<ItemDomain<Interval> *>(data);
+        QString itemName, itemCode = sUNDEF;
+        double bound = 0, oldBound = 0;
+        quint32 indexBounds = tbl.index("Bounds"); // not mandatory
+        for(quint32 i = 0; i < tbl.rows(); ++i) {
+            tbl.get(i,indexName,itemName);
+            if ( indexCode != iUNDEF)
+                tbl.get(i,indexCode,itemCode);
+            tbl.get(i,indexBounds,bound);
+            Interval *item = new Interval({itemName,NumericRange(oldBound, bound)});
+            intervaldomain->addItem(item);
+            oldBound = bound;
+        }
+    }else {
+        ItemDomain<ThematicItem> *tdomain = static_cast<ItemDomain<ThematicItem> *>(data);
+        QString itemName, itemCode = sUNDEF;
+        for(quint32 i = 0; i < tbl.rows(); ++i) {
+            tbl.get(i,indexName,itemName);
+            if ( indexCode != iUNDEF)
+                tbl.get(i,indexName,itemCode);
+            ThematicItem *item = new ThematicItem({itemName,itemCode});
+            tdomain->addItem(item);
+        }
     }
 
     return true;
@@ -169,7 +187,7 @@ QString DomainConnector::parseDomainInfo(const QString& inf) const{
     return sUNDEF;
 }
 
-bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
+bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes valueType) {
 
     if(!willStore(dom))
         return true;
@@ -199,12 +217,23 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
     _odf->setKeyValue("Table","Domain","String.dom");
     _odf->setKeyValue("Table","Type","TableStore");
     _odf->setKeyValue("Table","DomainInfo", "String.dom;String;string;0;;");
-    _odf->setKeyValue("Table","Columns",tp == itTHEMATICITEM ? "5" : "3");
+    int nrOfColumns = 3;
+    if ( valueType == itTHEMATICITEM)
+        nrOfColumns = 5;
+    if ( valueType == itNUMERICITEM)
+        nrOfColumns = 6;
+    _odf->setKeyValue("Table","Columns",QString::number(nrOfColumns));
     _odf->setKeyValue("Table","Records", QString::number(iddomain->count()));
     _odf->setKeyValue("DomainSort","Prefix", "");
     _odf->setKeyValue("DomainSort","Sorting","Alphabetical");
-    _odf->setKeyValue("Domain", "Type", tp == itTHEMATICITEM ? "DomainSort" : "DomainIdentifier");
-    _odf->setKeyValue( tp == itTHEMATICITEM ? "DomainClass" : "DomainIdentifier", "Nr", QString::number(iddomain->count()));
+    QString typeName = "DomainIdentifier";
+    if ( valueType == itTHEMATICITEM)
+        typeName = "DomainSort";
+    if ( valueType == itNUMERICITEM)
+        typeName = "DomainGroup";
+
+    _odf->setKeyValue("Domain", "Type", typeName);
+    _odf->setKeyValue( hasType(valueType,itTHEMATICITEM | itNUMERICITEM) ? "DomainClass" : "DomainIdentifier", "Nr", QString::number(iddomain->count()));
 
     QFileInfo inf=dom->source(IlwisObject::cmOUTPUT).url().toLocalFile();
     QString dataName  = inf.baseName() + ".dm#";
@@ -213,18 +242,23 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
     _odf->setKeyValue("TableStore", "Col1", "Ord");
     _odf->setKeyValue("TableStore", "Col2", "Ind");
     _odf->setKeyValue("TableStore", "Type", "TableBinary");
-    if (tp == itTHEMATICITEM) {
+    if (hasType(valueType,itTHEMATICITEM | itNUMERICITEM)) {
         _odf->setKeyValue("TableStore", "Col3", "Code");
         _odf->setKeyValue("TableStore", "Col4", "Description");
+        if ( valueType == itNUMERICITEM)
+             _odf->setKeyValue("TableStore", "Col5", "Bounds");
     }
 
     writeColumnFunc("Col:Name","String.dom","String.dom;String;string;0;;", sUNDEF, "String");
     writeColumnFunc("Col:Ord","value.dom","value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0;", "-32766:32767:offset=0","Int");
     writeColumnFunc("Col:Ind","value.dom","value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0;", "-32766:32767:offset=0","Int");
-    if ( tp == itTHEMATICITEM) {
+    if ( hasType(valueType,itTHEMATICITEM | itNUMERICITEM)) {
         writeColumnFunc("Col:Code","String.dom","String.dom;String;string;0;;", sUNDEF, "String");
         writeColumnFunc("Col:Description","String.dom","String.dom;String;string;0;;", sUNDEF, "String");
+        if ( valueType == itNUMERICITEM)
+             writeColumnFunc("Col:Bounds","value.dom","value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0", "-1e+100:1e+100:0.000000:offset=0", "Real");
     }
+
 
     BinaryIlwis3Table ilw3tbl;
     std::ofstream output_file;
@@ -243,18 +277,34 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes tp) {
     ilw3tbl.addStoreDefinition(deftxt);
     ilw3tbl.addStoreDefinition(deford);
     ilw3tbl.addStoreDefinition(defind);
-    if ( tp == itTHEMATICITEM) {
+    if ( valueType == itNUMERICITEM){
+        ilw3tbl.addStoreDefinition(deftxt);
+        ilw3tbl.addStoreDefinition(deftxt);
+        ilw3tbl.addStoreDefinition(DataDefinition(IDomain("value")));
+    }
+    if ( valueType == itTHEMATICITEM) {
         ilw3tbl.addStoreDefinition(deftxt);
         ilw3tbl.addStoreDefinition(deftxt);
     }
 
     std::map<quint32, std::vector<QVariant>> orderedRecords;
     for(DomainItem *item : iddomain){
-        std::vector<QVariant> record(tp == itTHEMATICITEM ? 5 : 3);
+        int columnCount=  3;
+        if ( valueType == itTHEMATICITEM)
+            columnCount = 5;
+        if ( valueType == itNUMERICITEM)
+            columnCount = 6;
+        std::vector<QVariant> record(columnCount);
         record[0] = item->name();
         record[1] = item->raw() + 1;
         record[2] = item->raw() + 1;
-        if ( tp == itTHEMATICITEM) {
+        if ( valueType == itNUMERICITEM){
+            Interval *intervalitem = static_cast<Interval *>(item);
+            record[3] = intervalitem->code();
+            record[4] = intervalitem->description();
+            record[5] = intervalitem->range().max();
+        }
+        else if ( valueType == itTHEMATICITEM ) {
             ThematicItem *thematicItem = static_cast<ThematicItem *>(item);
             record[3] = thematicItem->code();
             record[4] = thematicItem->description();
@@ -276,10 +326,6 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
 {
     Domain *dom = static_cast<Domain *>(data);
     QString dmName = dom->name();
-//    int index = 0;
-//    if ( (index = dmName.toLower().indexOf(".dom")) == dmName.size() - 4){
-//        dmName = dmName.left(index);
-//    }
     QString alias = kernel()->database().findAlias(dmName,"domain","ilwis3");
     if ( alias != sUNDEF)
         return true; // nothing to be done, already exists as a system domain
@@ -310,6 +356,8 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
         }
     } else if ( dom->valueType() == itTHEMATICITEM) {
         storeMetaDataSortDomain(dom, itTHEMATICITEM);
+    } else if ( dom->valueType() == itNUMERICITEM) {
+        storeMetaDataSortDomain(dom, itNUMERICITEM);
     } else if ( dom->valueType() & itIDENTIFIERITEM) {
         storeMetaDataSortDomain(dom, itIDENTIFIERITEM);
     } else if ( dom->ilwisType() == itTEXTDOMAIN) {
@@ -367,6 +415,8 @@ IlwisObject *DomainConnector::create() const
             return new ItemDomain<NamedIdentifier>(_resource);
         if ( subtype == "DomainClass" || subtype == "DomainSort")
             return new ItemDomain<ThematicItem>(_resource);
+        if ( subtype == "DomainGroup")
+            return new ItemDomain<Interval>(_resource);
         subtype = parseDomainInfo( _odf->value("BaseMap","DomainInfo"));
         if ( subtype.left(5) == "image" || subtype.left(5) == "value"){
             return fromValueRange();

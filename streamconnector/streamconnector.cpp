@@ -1,7 +1,6 @@
 #include <QBuffer>
-#include "kernel.h"
+#include "raster.h"
 #include "version.h"
-#include "ilwisdata.h"
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
@@ -9,16 +8,12 @@
 #include "catalogconnector.h"
 #include "streamconnector.h"
 #include "versionedserializer.h"
-#include "domain.h"
-#include "datadefinition.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "coverage.h"
-#include "feature.h"
 #include "featurecoverage.h"
-#include "raster.h"
+#include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
+#include "rawconverter.h"
 #include "downloadmanager.h"
 #include "versioneddatastreamfactory.h"
 
@@ -46,6 +41,13 @@ IlwisObject *StreamConnector::create() const
 
 StreamConnector::StreamConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource,load,options)
 {
+    QUrlQuery query(source().url());
+    QString url =QString(source().url(true).toString(QUrl::RemoveQuery));
+    if ( query.hasQueryItem("datasource")){
+        QString item = query.queryItemValue("datasource");
+        url += "/" + item;
+        source().setUrl(url);;
+    }
 }
 
 StreamConnector::~StreamConnector()
@@ -69,8 +71,7 @@ bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
 
 bool StreamConnector::openSource(bool reading){
     QUrl url = _resource.url(true);
-    QUrlQuery query(url);
-    if ( query.queryItemValue("service") == "ilwisobjects") // can't use anything marked as internal
+    if ( url.scheme() == "http")
     {
         _bytes.resize(STREAMBLOCKSIZE);
         _bytes.fill(0);
@@ -116,9 +117,9 @@ bool StreamConnector::store(IlwisObject *obj, const IOOptions &options){
     _versionedConnector->connector(this);
     bool ok;
     int storemode = options["storemode"].toInt();
-    if ( storemode != IlwisObject::smBINARYDATA)
+    if ( hasType(storemode, IlwisObject::smMETADATA))
         ok = _versionedConnector->store(obj, options);
-    else
+    if ( hasType(storemode, IlwisObject::smBINARYDATA))
         ok = _versionedConnector->storeData(obj, options);
 
     flush(true);
@@ -137,7 +138,13 @@ QString StreamConnector::provider() const
 
 bool StreamConnector::needFlush() const
 {
-    return _datasource->pos() > STREAMBLOCKSIZE && _resource.url().scheme() != "file";
+    return _datasource->pos() >= STREAMBLOCKSIZE && _resource.url().scheme() != "file";
+}
+
+quint32 StreamConnector::position() const {
+    if ( _datasource)
+        return _datasource->pos();
+    return iUNDEF;
 }
 
 void StreamConnector::flush(bool last)
@@ -145,6 +152,6 @@ void StreamConnector::flush(bool last)
     if ( _resource.url().scheme() == "file") // we dont flush with files; OS does this
         return;
     QBuffer *buf = static_cast<QBuffer *>(_datasource.get());
-    emit dataAvailable(buf,true);
+    emit dataAvailable(buf,last);
 
 }

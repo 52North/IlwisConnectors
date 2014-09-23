@@ -58,6 +58,8 @@ bool DomainSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
         if ( !range)
             return false;
         range->load(_stream);
+        dom->range(range);
+
     }
 
     return true;

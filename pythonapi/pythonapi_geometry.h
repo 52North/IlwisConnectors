@@ -15,11 +15,13 @@ namespace geom {
 namespace pythonapi {
 
     class Feature;
+    class VertexIterator;
 
     class Geometry : public Object{
         friend class Feature;
         friend class FeatureCoverage;
         friend class PixelIterator;
+        friend class VertexIterator;
     public:
         Geometry(std::string wkt, const CoordinateSystem &csy);
         Geometry(Feature* feature, PyObject* index);
@@ -35,6 +37,8 @@ namespace pythonapi {
         void setCoordinateSystem(const CoordinateSystem& cs);
         Geometry* transform(const CoordinateSystem& cs);
         Envelope envelope();
+
+        VertexIterator __iter__();
 
         bool isSimple() const;
 

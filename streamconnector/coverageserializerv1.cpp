@@ -38,29 +38,6 @@ bool CoverageSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 
     _stream << coverage->envelope().min_corner().x << coverage->envelope().min_corner().y << coverage->envelope().max_corner().x << coverage->envelope().max_corner().y;
 
-    std::unique_ptr<DataInterface> tblStreamer(factory->create(Version::IlwisVersion, itTABLE,_stream));
-    if ( !tblStreamer)
-        return false;
-
-    if ( coverage->hasAttributes()){
-        tblStreamer->store(coverage->attributeTable().ptr(), options);
-    } else{
-        _stream << itUNKNOWN;
-    }
-
-    if ( coverage->hasAttributes(Coverage::atINDEX)){
-        tblStreamer->store(coverage->attributeTable(Coverage::atINDEX).ptr(), options);
-        std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
-        if ( !domainStreamer)
-            return false;
-        domainStreamer->store(coverage->indexDefinition().domain().ptr(), options);
-        coverage->indexDefinition().range()->store(_stream);
-    }
-    else
-        _stream << itUNKNOWN;
-
-
-
     return true;
 }
 
@@ -89,40 +66,7 @@ bool CoverageSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &optio
     _stream >> minx >> miny >> maxx >> maxy;
     coverage->envelope(Envelope(Coordinate(minx, miny), Coordinate(maxx, maxy)));
 
-    std::unique_ptr<DataInterface> tableStreamer(factory->create(version, itTABLE,_stream));
-    if ( !tableStreamer)
-        return false;
 
-    _stream >> type;
-    if ( type != itUNKNOWN){
-        _stream >> version;
-        FlatTable *tbl = new FlatTable();
-        tableStreamer->loadMetaData(tbl,options);
-        coverage->attributeTable(tbl);
-    }
-    IlwisTypes valueType;
-    _stream >> type;
-    if ( type != itUNKNOWN){
-        _stream >> version;
-        FlatTable *tbl = new FlatTable();
-        tableStreamer->loadMetaData(tbl,options);
-        coverage->attributeTable(tbl,Coverage::atINDEX);
-
-        std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
-        if ( !domainStreamer)
-            return false;
-        _stream >> valueType;
-        _stream >> type;
-        _stream >> version;
-        IDomain dom(type | valueType);
-        domainStreamer->loadMetaData(dom.ptr(),options);
-        Range *range = Range::create(valueType);
-        if ( !range)
-            return false;
-        range->load(_stream);
-        coverage->indexDomain(dom, range);
-
-    }
 
     return true;
 }

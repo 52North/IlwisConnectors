@@ -64,7 +64,7 @@ namespace pythonapi {
         return Size(this->ptr()->as<Ilwis::GeoReference>()->size());
     }
 
-    void GeoReference::size(const Size& sz){
+    void GeoReference::setSize(const Size& sz){
         this->ptr()->as<Ilwis::GeoReference>()->size(sz.data());
     }
 
@@ -72,7 +72,7 @@ namespace pythonapi {
         return this->ptr()->as<Ilwis::GeoReference>()->centerOfPixel();
     }
 
-    void GeoReference::centerOfPixel(bool yesno){
+    void GeoReference::setCenterOfPixel(bool yesno){
         this->ptr()->as<Ilwis::GeoReference>()->centerOfPixel(yesno);
     }
 

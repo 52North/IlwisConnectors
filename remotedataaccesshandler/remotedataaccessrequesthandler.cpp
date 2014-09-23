@@ -6,6 +6,7 @@
 #include <QDirIterator>
 #include <QXmlStreamWriter>
 #include <QBuffer>
+#include <QHostAddress>
 #include "geometries.h"
 #include "ilwiscontext.h"
 #include "ilwisconfiguration.h"
@@ -36,27 +37,51 @@ void RemoteDataAccessRequestHandler::service(HttpRequest &request, HttpResponse 
     QMultiMap<QByteArray,QByteArray>::Iterator iter;
     if ( (iter = parameters.find("datasource")) != parameters.end() ){
         QString name = iter.value();
-        iter = parameters.find("ilwistype");
         IIlwisObject obj = getObject(name, iter.value());
+        if ( !obj.isValid()){
+            response.setHeader("Content-Type", qPrintable("text/plain"));
+            QString message  = QString("Could not create object for %1, object doesnt exist or has the wrong type").arg(name);
+            response.write(message.toLocal8Bit());
+            return ;
+        }
         response.setHeader("Content-Type", qPrintable("application/octet-stream"));
+        name = name.replace('.','_');
         response.setHeader("Content-Disposition", qPrintable("attachment;filename=" + name + ".bin"));
 
-        writeObject(obj, iter.value(), response);
+        writeObject(obj, request, response);
     }
 
 }
 
-void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const QString& typeName, HttpResponse &response){
-    Resource bufferResource(obj->name(),IlwisObject::name2Type(typeName));
-    bufferResource.code("serialized");
+void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const HttpRequest &request, HttpResponse &response){
+    QMultiMap<QByteArray,QByteArray> parameters = request.getParameterMap();
+    QMultiMap<QByteArray,QByteArray>::Iterator iter;
 
+    QString typeName = parameters.find("ilwistype").value();
+    QString ip = response.host()->localAddress().toString();
+    quint16 port = response.host()->localPort();
+    QString url = QString("http://%1:%2/dataccess?datasource=%3&ilwistype=%4&service=ilwisobjects").arg(ip).arg(port).arg(obj->name()).arg(typeName);
+    Resource bufferResource(url,IlwisObject::name2Type(typeName));
+    //bufferResource.addProperty("remote", true);
     _response = &response;
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     Ilwis::ConnectorInterface *conn = factory->createFromFormat(bufferResource, typeName,"stream");
     IlwisObjectConnector *ioObjectConnector = static_cast<IlwisObjectConnector *>(conn);
     ioObjectConnector->connect(ioObjectConnector,&IlwisObjectConnector::dataAvailable,this,&RemoteDataAccessRequestHandler::sendData);
     obj->setConnector(ioObjectConnector,IlwisObject::cmOUTPUT);
-    obj->store();
+
+    iter = parameters.find("datatype");
+    int storemode = IlwisObject::smMETADATA | IlwisObject::smBINARYDATA;
+    if ( iter != parameters.end()){
+        storemode = iter.value() == "data" ? IlwisObject::smBINARYDATA : IlwisObject::smMETADATA;
+    }
+
+    IOOptions options({"storemode",storemode});
+    iter = parameters.find("lines");
+    if ( iter!= parameters.end()){
+        options << IOOptions::Option("lines",iter.value());
+    }
+    obj->store(options);
 
 }
 

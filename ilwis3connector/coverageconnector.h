@@ -27,8 +27,9 @@ protected:
     QString _domainName;
     QString _domainInfo;
     QString _csyName;
+    int _itemCount = 0;
 private:
-    bool prepareAttributeTable(const QString &file, const QString& basemaptype,const IOOptions &, AttributeTable attTable) const;
+    ITable prepareAttributeTable(const QString &file, const QString& basemaptype,const IOOptions &) const;
 
 };
 }

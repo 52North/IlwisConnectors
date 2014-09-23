@@ -6,3 +6,4 @@ pythonapi/ilwisobjects.conf
 /Doxyfile
 wfsconnector/ConnectorWFS.cpp
 wfsconnector/ConnectorWFS.h
+/.project

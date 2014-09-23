@@ -12,10 +12,10 @@
 #include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/rastercoverage.h"
-#include "pixeliterator.h"
-#include "geometryhelper.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/pixeliterator.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/geometryhelper.h"
 
-#include "operationoverloads.h"
+#include "../../IlwisCore/core/ilwisobjects/operation/operationoverloads.h"
 
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_engine.h"

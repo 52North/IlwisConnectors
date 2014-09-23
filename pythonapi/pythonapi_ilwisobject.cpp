@@ -23,8 +23,8 @@ void IlwisObject::setOutputConnection(const std::string& url, const std::string&
     (*this->ptr())->connectTo(QUrl(url.c_str()), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
 }
 
-void IlwisObject::store(int storeMode){
-    if (!(*this->ptr())->store(storeMode))
+void IlwisObject::store(const IOOptions& opt){
+    if (!(*this->ptr())->store(opt.ptr()))
         throw OSError(std::string("IOError on attempt to store ")+this->name());
 }
 

@@ -19,6 +19,7 @@
 
 #include "pythonapi_util.h"
 #include "pythonapi_qvariant.h"
+#include "pythonapi_error.h"
 
 namespace pythonapi {
 
@@ -418,6 +419,121 @@ namespace pythonapi {
     Ilwis::IOOptions& IOOptions::ptr() const{
         return (*this->_data);
     }
+
+    //==========================Color=================================
+
+    Color::Color(){
+        _colorVal = PyDictNew();
+    }
+
+    Color::Color(ColorModel type, PyObject* obj, const std::string& name){
+        _colorVal = PyDictNew();
+        readColor(type, obj);
+        _name = name;
+    }
+
+    Color::Color(const std::string& typeStr, PyObject* obj, const std::string& name){
+        _colorVal = PyDictNew();
+        ColorModel type = stringToModel(typeStr);
+        readColor(type, obj);
+        _name = name;
+    }
+
+    void Color::readColor(ColorModel type, PyObject* obj)
+    {
+        PyObject* dict = PyDictNew();
+        _type = type;
+        if(PyDictCheckExact(obj))
+        {
+            _colorVal = obj;
+            return;
+        }else if(PyTupleCheckExact(obj)){
+            if(CppTupleElementCount(obj) >= 4){
+                switch(type){
+                case ColorModel::cmCYMKA:
+                    PyDictSetItemString(dict, "cyan", PyTupleGetItem(obj, 0));
+                    PyDictSetItemString(dict, "magenta", PyTupleGetItem(obj, 1));
+                    PyDictSetItemString(dict, "yellow", PyTupleGetItem(obj, 2));
+                    PyDictSetItemString(dict, "black", PyTupleGetItem(obj, 3));
+                    if(CppTupleElementCount(obj) == 5)
+                        PyDictSetItemString(dict, "alpha", PyTupleGetItem(obj, 4));
+                    break;
+                case ColorModel::cmHSLA:
+                    PyDictSetItemString(dict, "hue", PyTupleGetItem(obj, 0));
+                    PyDictSetItemString(dict, "lightness", PyTupleGetItem(obj, 1));
+                    PyDictSetItemString(dict, "saturation", PyTupleGetItem(obj, 2));
+                    PyDictSetItemString(dict, "alpha", PyTupleGetItem(obj, 3));
+                    break;
+                case ColorModel::cmGREYSCALE:
+                case ColorModel::cmRGBA:
+                    PyDictSetItemString(dict, "red", PyTupleGetItem(obj, 0));
+                    PyDictSetItemString(dict, "green", PyTupleGetItem(obj, 1));
+                    PyDictSetItemString(dict, "blue", PyTupleGetItem(obj, 2));
+                    PyDictSetItemString(dict, "alpha", PyTupleGetItem(obj, 3));
+                    break;
+                case ColorModel::cmNONE:
+                    break;
+                }
+            }
+        }
+
+        _colorVal = dict;
+    }
+
+    double Color::getItem(std::string str) const{
+        const char* key = str.c_str();
+        return CppFloat2Double(PyDictGetItemString(_colorVal,key));
+    }
+
+    void Color::setName(const std::string& name){
+        this->_name = name;
+    }
+
+    std::string Color::getName(){
+        return _name;
+    }
+
+
+    ColorModel Color::getColorModel() const{
+        return _type;
+    }
+
+    std::string Color::toString() const{
+        QString colors;
+        switch(_type){
+        case ColorModel::cmCYMKA:
+            colors += QString("CMYKA(%1,%2,%3,%4,%5)").arg(this->getItem("cyan")).arg(this->getItem("magenta")).arg(this->getItem("yellow")).arg(this->getItem("black")).arg(this->getItem("alpha"));
+            break;
+        case ColorModel::cmHSLA:
+            colors += QString("HSLA(%1,%2,%3,%4)").arg(this->getItem("hue")).arg(this->getItem("saturation")).arg(this->getItem("lightness")).arg(this->getItem("alpha"));
+            break;
+        case ColorModel::cmRGBA:
+            colors += QString("RGBA(%1,%2,%3,%4)").arg(this->getItem("red")).arg(this->getItem("blue")).arg(this->getItem("green")).arg(this->getItem("alpha"));
+            break;
+        case ColorModel::cmGREYSCALE:
+            break;
+        case ColorModel::cmNONE:
+            break;
+        }
+        return colors.toStdString();
+    }
+
+    std::string Color::__str__(){
+        return toString();
+    }
+
+    ColorModel Color::stringToModel(const std::string& type){
+
+        if(type == "RGBA"){
+            return ColorModel::cmRGBA;
+        } else if (type == "CYMKA"){
+            return ColorModel::cmCYMKA;
+        } else if (type == "HSLA")
+            return ColorModel::cmHSLA;
+        else
+            throw InvalidObject("Not a known Color Model");
+    }
+
 
 
 } // namespace pythonapi

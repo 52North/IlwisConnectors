@@ -1,11 +1,11 @@
-#include "kernel.h"
-#include "ilwisdata.h"
+#include "../../IlwisCore/core/kernel.h"
+#include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/util/range.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/rangeiterator.h"
-#include "itemrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/itemrange.h"
 
 #include <QSharedPointer>
-#include "kernel_global.h"
+#include "../../IlwisCore/core/kernel_global.h"
 
 #include "pythonapi_rangeiterator.h"
 #include "pythonapi_range.h"
@@ -34,6 +34,11 @@ RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::RangeIterator(Ilwis::
 {
 }
 
+template<typename OutputType, typename RangeType, typename IlwOutput, typename IlwRange>
+RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::~RangeIterator(){
+
+}
+
 template<typename OutputType, typename RangeType, typename IlwOutput, typename IlwRange> bool
 RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__bool__() const{
     return (this->_rng && this->_rng->__bool__() && (bool)this->_ilwisRangeIterator && this->_ilwisRangeIterator->isValid());
@@ -41,7 +46,7 @@ RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__bool__() const{
 
 template<typename OutputType, typename RangeType, typename IlwOutput, typename IlwRange> std::string
 RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__str__(){
-    return "RangeIterator at value: " + current().__str__() + " of Range: " + _rng->__str__();
+    return "RangeIterator at value: " + std::to_string(current()) + " of Range: " + _rng->__str__();
 }
 
 
@@ -56,8 +61,7 @@ RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__next__(){
     if (iter.isValid()){
         IlwOutput t = (*iter);
         ++iter;
-        DomainItem tempDI(t.data());
-        return tempDI;
+        return t;
 
 //        OutputType o = t;
 //        DomainItem tempDI;
@@ -73,12 +77,12 @@ RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__next__(){
 
 template<typename OutputType, typename RangeType, typename IlwOutput, typename IlwRange> OutputType
 RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::current(){
-    return DomainItem((*this->ptr()).data());
+    return *this->ptr();
 }
 
 template<typename OutputType, typename RangeType, typename IlwOutput, typename IlwRange> OutputType
 RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::__getitem__(quint32 pos){
-    return DomainItem(this->ptr()[pos].data());
+    return this->ptr()[pos];
 }
 
 template<typename OutputType, typename RangeType, typename IlwOutput, typename IlwRange> RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>
@@ -159,8 +163,8 @@ RangeIterator<OutputType, RangeType, IlwOutput, IlwRange>::ptr() const{
     return (*this->_ilwisRangeIterator);
 }
 
-//template class RangeIterator<double, NumericRange, double, Ilwis::NumericRange>;
-template class RangeIterator<DomainItem, ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange>;
+template class RangeIterator<double, NumericRange, double, Ilwis::NumericRange>;
+//template class RangeIterator<DomainItem, ItemRange, Ilwis::SPDomainItem, Ilwis::ItemRange>;
 
 
 }

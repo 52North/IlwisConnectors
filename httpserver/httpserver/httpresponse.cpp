@@ -132,3 +132,10 @@ void HttpResponse::redirect(const QByteArray& url) {
     setHeader("Location",url);
     write("Redirect",true);
 }
+
+const QTcpSocket *HttpResponse::host() const
+{
+    return socket;
+}
+
+

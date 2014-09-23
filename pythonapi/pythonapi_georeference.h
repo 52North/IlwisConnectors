@@ -33,9 +33,9 @@ namespace pythonapi {
             double pixelSize() const;
 
             Size size() const;
-            void size(const Size& sz);
+            void setSize(const Size& sz);
             bool centerOfPixel() const;
-            void centerOfPixel(bool yesno);
+            void setCenterOfPixel(bool yesno);
             bool isCompatible(const GeoReference& other) const;
             bool compute();
             IlwisTypes ilwisType() const;

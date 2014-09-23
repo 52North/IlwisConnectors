@@ -20,8 +20,7 @@ class ColumnDefinition{
 public:
     ColumnDefinition();
     ColumnDefinition(const ColumnDefinition& coldef, quint32 index);
-    ColumnDefinition(const std::string& name, const DataDefinition& coldef, quint64 colindex);
-    ColumnDefinition(Ilwis::ColumnDefinition*);
+    ColumnDefinition(const std::string& name, const DataDefinition& datdef, quint64 colindex);
     ColumnDefinition(const ColumnDefinition& coldef);
     ColumnDefinition(const std::string& nm, const Domain &dom, quint64 colindex);
     ~ColumnDefinition();
@@ -36,6 +35,7 @@ public:
     bool __bool__() const;
 
 protected:
+    ColumnDefinition(Ilwis::ColumnDefinition*);
     std::shared_ptr<Ilwis::ColumnDefinition> ptr() const;
     std::shared_ptr<Ilwis::ColumnDefinition> _ilwisColDef;
 };
