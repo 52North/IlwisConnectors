@@ -52,8 +52,6 @@ bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions
     qDebug() << "PostgresqlFeatureConnector::loadMetaData()";
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
-    fcoverage->setFeatureCount(itFEATURE, iUNDEF);
-
     PostgresqlFeatureCoverageLoader loader(source());
     if ( !loader.loadMetadata(fcoverage)) {
         ERROR1(ERR_NO_INITIALIZED_1, source().name());
