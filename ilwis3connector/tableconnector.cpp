@@ -186,8 +186,6 @@ bool TableConnector::storeBinaryData(IlwisObject *obj)
 {
     const Table *tbl = static_cast<const Table *>(obj);
 
-    if ( tbl && tbl->columnCount() == 1 && _attributeDomain != "") // only one column in attribute domains means only feature id, nothing to do
-        return true;
 
     int skip = iUNDEF;
     BinaryIlwis3Table ilw3tbl;
@@ -231,13 +229,10 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
 {
     const Table *tbl = static_cast<const Table *>(obj);
 
-    if ( tbl && tbl->columnCount() == 1 && _attributeDomain != "") // only one column in attribute domains means only feature id, nothing to do
-        return true;
-
     if(!Ilwis3Connector::storeMetaData(obj, itTABLE))
         return false;
 
-    int reduceColumns = 1; // the featured_id column will not be go the ilwis3, useless info at that level
+    int reduceColumns = 0; // the featured_id column will not be go the ilwis3, useless info at that level
     quint32 reccount = _selected.size() > 0 ? _selected.size() :  tbl->recordCount();
     QFileInfo inf(_attributeDomain);
     _odf->setKeyValue("Ilwis", "Type", "Table");
@@ -252,7 +247,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
     QFileInfo tblOdf(_resource.toLocalFile(true));
     QString dataFile = tblOdf.baseName() + ".tb#";
     _odf->setKeyValue("TableStore", "Data", dataFile);
-    for(int i=0,index=1; i < tbl->columnCount(); ++i) {
+    for(int i=0; i < tbl->columnCount(); ++i) {
         ColumnDefinition def = tbl->columndefinition(i);
         IDomain dmColumn = def.datadef().domain<>();
         bool isOldSystem = true;
@@ -264,7 +259,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         QString colpostfix = def.name();
         if ( colpostfix.indexOf(QRegExp("[.]")) != -1)
             colpostfix = "'" + colpostfix + "'";
-        _odf->setKeyValue("TableStore", QString("Col%1").arg(index - reduceColumns), colpostfix);
+        _odf->setKeyValue("TableStore", QString("Col%1").arg(i), colpostfix);
         QString colName = QString("Col:%1").arg(colpostfix);
         _odf->setKeyValue(colName, "Time", Time::now().toString());
         _odf->setKeyValue(colName, "Version", "3.1");
@@ -328,8 +323,6 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
             _odf->setKeyValue(colName, "StoreType", "Long");
         }
         _odf->setKeyValue(colName, "DomainInfo", domainInfo);
-        ++index;
-
     }
     _odf->setKeyValue("TableStore", "StoreTime", Time::now().toString());
     _odf->store("tbt", source().toLocalFile());

@@ -326,16 +326,17 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     if ( index != -1) {
         dataFile = dataFile.left(index);
     }else{
-        if ( tp == itPOLYGON)
-            attDom += ".mpa";
-        if ( tp == itRASTER)
-            attDom += ".mpr";
-        if ( tp == itPOINT)
-            attDom += ".mpp";
-        if ( tp == itLINE)
-            attDom += ".mps";
+//        if ( tp == itPOLYGON)
+//            attDom += ".mpa";
+//        if ( tp == itRASTER)
+//            attDom += ".mpr";
+//        if ( tp == itPOINT)
+//            attDom += ".mpp";
+//        if ( tp == itLINE)
+//            attDom += ".mps";
+        attDom  += ".dom";
     }
-    if ( attTable->columnCount() > 1) { // one column means only featurid which we dont save.
+    if ( attTable->columnCount() > 0) { // one column means only featurid which we dont save.
         QFileInfo inf(dataFile);
         QString filename = dataFile + ".tbt";
         _odf->setKeyValue("BaseMap","AttributeTable",filename);

@@ -837,6 +837,10 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         }
         indexdom->setRange(range);
         datadef.domain(indexdom);
+        QFileInfo inf ( _resource.url().toLocalFile());
+        QString filename = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + inf.baseName() + ".dom";
+        indexdom->connectTo(filename,"domain","ilwis3", Ilwis::IlwisObject::cmOUTPUT);
+        indexdom->store();
     }
     bool isMulti = (fcov->featureTypes() & (fcov->featureTypes() - 1)) != 0;
     QString baseName = Ilwis3Connector::outputNameFor(fcov, isMulti, type);
@@ -871,7 +875,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         ok = storeMetaPoint(fcov, baseName);
         ext = "mpp";
     }
-    if ( attTable.isValid() && attTable->columnCount() > 1) {
+    if ( attTable.isValid() && attTable->columnCount() > 0) {
         QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, fcov, type,baseName));
         std::vector<quint32> recs(_itemCount);
         conn->selectedRecords(recs);
@@ -900,7 +904,7 @@ bool FeatureConnector::storeBinaryDataTable(IlwisObject *obj, IlwisTypes tp, con
 {
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
     ITable attTable = fcoverage->attributeTable();
-    if ( attTable.isValid() && attTable->columnCount() > 1) {
+    if ( attTable.isValid() && attTable->columnCount() > 0) {
         QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, fcoverage, tp, baseName));
         IFeatureCoverage cov(fcoverage);
         FeatureIterator iter(cov);
