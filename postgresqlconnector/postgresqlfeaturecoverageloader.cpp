@@ -167,7 +167,7 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
             IlwisTypes types = meta.geomType;
             int count = query.value("count").toInt();
             if (count > 0) {
-                fcoverage->setFeatureCount(types, iUNDEF);
+                fcoverage->setFeatureCount(types, count);
             }
         }
     }
