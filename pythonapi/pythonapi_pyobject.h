@@ -43,6 +43,7 @@ namespace pythonapi {
     bool setTupleItem(PyObject *tuple, int i, PyObject* v);
     bool PyTupleCheckExact(const PyObject* obj);
     PyObject* PyTupleGetItem(PyObject* obj, int index);
+    int PyTupleSize(PyObject* obj);
 
     //======list============================
     bool PyListCheckExact(const PyObject* obj);

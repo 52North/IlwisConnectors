@@ -8,10 +8,10 @@
 #include "../../IlwisCore/core/ilwisobjects/domain/numericdomain.h"
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
-#include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
+#include "../../IlwisCore/core/ilwisobjects/table/attributedefinition.h"
 
-#include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/featureiterator.h"
 
 #include "pythonapi_featureiterator.h"
@@ -32,7 +32,8 @@ FeatureIterator::FeatureIterator(const FeatureIterator &it): _coverage(it._cover
 Feature FeatureIterator::__next__(){
     Ilwis::FeatureIterator& iter = this->ptr();
     if (iter != (*this->_end)){
-        std::unique_ptr<Ilwis::FeatureInterface>& f = (*iter);
+        Ilwis::SPFeatureI test = *iter;
+        Ilwis::SPFeatureI* f = new Ilwis::SPFeatureI(*iter);
         iter++;
         return Feature(f, this->_coverage);
     }else{
@@ -41,7 +42,7 @@ Feature FeatureIterator::__next__(){
 }
 
 Feature FeatureIterator::current(){
-    return Feature((*this->ptr()),this->_coverage);
+    return Feature(new Ilwis::SPFeatureI(*this->ptr()), this->_coverage);
 }
 
 FeatureIterator *FeatureIterator::__iter__(){

@@ -16,7 +16,7 @@
 #include "../../IlwisCore/core/ilwisobjects/domain/datadefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
-#include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
+#include "../../IlwisCore/core/ilwisobjects/table/attributedefinition.h"
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/raster.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
@@ -27,8 +27,9 @@
 
 #include "../../IlwisCore/core/util/box.h"
 
-#include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
+
 
 #include "pythonapi_object.h"
 #include "pythonapi_engine.h"

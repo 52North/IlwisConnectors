@@ -41,7 +41,8 @@ HEADERS += \
     pythonapi/pythonapi_rangeiterator.h \
     pythonapi/pythonapi_columndefinition.h \
     pythonapi/pythonapi_domainitem.h \
-    pythonapi/pythonapi_vertexiterator.h
+    pythonapi/pythonapi_vertexiterator.h \
+    pythonapi/pythonapi_attributedefinition.h
 
 
 SOURCES += \

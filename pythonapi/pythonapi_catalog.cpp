@@ -14,12 +14,13 @@
 #include "../../IlwisCore/core/ilwisobjects/domain/numericdomain.h"
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
-#include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
+#include "../../IlwisCore/core/ilwisobjects/table/attributedefinition.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 #include "../../IlwisCore/core/factory.h"
 #include "../../IlwisCore/core/abstractfactory.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/featurefactory.h"
-#include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
+
 #include "pythonapi_featurecoverage.h"
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/raster.h"

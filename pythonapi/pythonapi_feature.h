@@ -7,13 +7,12 @@
 
 namespace Ilwis{    
     class FeatureInterface;
+    class SPFeatureI;
 }
 
 class QVariant;
 
 typedef struct _object PyObject;
-
-
 
 namespace pythonapi{
 
@@ -27,40 +26,53 @@ namespace pythonapi{
         bool __bool__() const;
         std::string __str__();
         VertexIterator __iter__();
-        quint64 id();
+
+        Feature createSubFeature(PyObject* subFeatureIndex, const Geometry& geom) ;
+
         PyObject* __getitem__(std::string name);
         PyObject* __getitem__(quint32 colIndex);
-        PyObject* attribute(std::string name, qint64 defaultValue, PyObject* index = NULL);
-        PyObject* attribute(std::string name, double defaultValue, PyObject* index = NULL);
-        PyObject* attribute(std::string name, std::string defaultValue, PyObject* index = NULL);
+        PyObject* attribute(std::string name, qint64 defaultValue);
+        PyObject* attribute(std::string name, double defaultValue);
+        PyObject* attribute(std::string name, std::string defaultValue);
         void __setitem__(std::string name, const PyObject* value);
-        void setAttribute(std::string name, const PyObject* value, PyObject* index = NULL);
+        void setAttribute(std::string name, const PyObject* value);
         void __setitem__(std::string name, qint64 value);
-        void setAttribute(std::string name, qint64 value, PyObject* index = NULL);
+        void setAttribute(std::string name, qint64 value);
         void __setitem__(std::string name, double value);
-        void setAttribute(std::string name, double value, PyObject* index = NULL);
+        void setAttribute(std::string name, double value);
         void __setitem__(std::string name, std::string value);
-        void setAttribute(std::string name, std::string value, PyObject* index = NULL);
+        void setAttribute(std::string name, std::string value);
         IlwisTypes ilwisType();
-        Geometry* geometry(PyObject* index = NULL);
-        void setGeometry(Geometry &geometry, PyObject* index = NULL);
-        void addGeometry(Geometry &geometry, PyObject* index = NULL);
-        void removeGeometry(PyObject* index);
+
+        Geometry* geometry();
+        void geometry(const Geometry& geom);
+        IlwisTypes geometryType();
+
         quint64 featureId() const;
-        quint32 trackSize() const;
-        pythonapi::ColumnDefinition columnDefinition(const std::string& name, bool coverages=true) const;
-        pythonapi::ColumnDefinition columnDefinition(quint32 index, bool coverages=true) const;
-        PyObject* trackIndexValue(quint32 index);
+
+        pythonapi::ColumnDefinition attributeDefinition(const std::string& name) const;
+        pythonapi::ColumnDefinition attributeDefinition(quint32 index) const;
+        quint32 attributeColumnCount() const;
+
+        void removeSubFeature(const std::string& subFeatureIndex);
+        void setSubFeature(const std::string &subFeatureIndex, Feature feature);
+        void removeSubFeature(double subFeatureIndex);
+        void setSubFeature(double subFeatureIndex, Feature feature);
+        quint32 subFeatureCount() const;
+
+        void setRecord(PyObject* pyValues, quint32 offset = 0);
+        PyObject* record();
 
         VertexIterator begin();
         VertexIterator end();
 
     private:
-        PyObject* attribute(std::string name, const QVariant& defaultValue, const QVariant& index = COVERAGEATRIB);
+        PyObject* attribute(std::string name, const QVariant& defaultValue);
         QVariant* checkIndex(PyObject* obj);
-        Feature(std::unique_ptr<Ilwis::FeatureInterface>& ilwisFeature, FeatureCoverage* fc);
-        std::unique_ptr<Ilwis::FeatureInterface>& ptr() const;
-        std::unique_ptr<Ilwis::FeatureInterface>& _ilwisSPFeatureI;
+        Feature(std::shared_ptr<Ilwis::FeatureInterface> ilwisFeature, FeatureCoverage* fc);
+        Feature(Ilwis::SPFeatureI* ilwFeat, FeatureCoverage* fc);
+        std::shared_ptr<Ilwis::FeatureInterface> ptr() const;
+        std::shared_ptr<Ilwis::FeatureInterface> _ilwisSPFeatureI;
         FeatureCoverage* _coverage;
     };
 

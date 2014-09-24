@@ -16,6 +16,7 @@ namespace pythonapi {
     class Table : public IlwisObject{
         friend class Coverage;
         friend class Catalog;
+        friend class FeatureCoverage;
         public:
             Table();
             Table(std::string resource, const IOOptions& opt = IOOptions());

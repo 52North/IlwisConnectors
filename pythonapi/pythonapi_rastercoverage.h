@@ -22,6 +22,8 @@ namespace pythonapi {
          friend class Catalog;
     private:
          RasterCoverage(Ilwis::IRasterCoverage* coverage);
+         QVariant resolveIndex(PyObject* pyTrackIndex);
+         std::string dateToString(int datepart);
     public:
         RasterCoverage();
         RasterCoverage(std::string resource);
@@ -66,6 +68,17 @@ namespace pythonapi {
 
         PixelIterator band(PyObject* pyTrackIndex);
         void addBand(PyObject* pyTrackIndex, PixelIterator* pyIter);
+        void setBandDefinition(PyObject* pyTrackIndex, const DataDefinition& datdef);
+
+        void setSubDefinition(const Domain& dom, PyObject* items);
+        quint32 indexOf(const std::string& variantId) const;
+        quint32 indexOf(double domainItem) const;
+        quint32 indexOf(PyObject* obj) const;
+        std::string atIndex(quint32 idx) const;
+        PyObject* indexes() const;
+        quint32 countSubs() const;
+        Domain subDomain() const;
+        void clear();
 
         RasterCoverage select(std::string selectionQ);
         RasterCoverage select(Geometry& geom);

@@ -17,6 +17,7 @@ class ColumnDefinition{
     friend class Feature;
     friend class Table;
     friend class Coverage;
+    friend class FeatureCoverage;
 public:
     ColumnDefinition();
     ColumnDefinition(const ColumnDefinition& coldef, quint32 index);

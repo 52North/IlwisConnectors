@@ -24,7 +24,7 @@ namespace pythonapi {
         friend class VertexIterator;
     public:
         Geometry(std::string wkt, const CoordinateSystem &csy);
-        Geometry(Feature* feature, PyObject* index);
+        Geometry(Feature* feature);
         ~Geometry();
 
         bool __bool__() const ;

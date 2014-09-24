@@ -12,22 +12,25 @@
 #include "../../IlwisCore/core/ilwisobjects/domain/datadefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
-#include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
+#include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h"
+#include "../../IlwisCore/core/ilwisobjects/table/attributedefinition.h"
 
 #include "geos/geom/Geometry.h"
 #include "geos/geom/CoordinateFilter.h"
 
-#include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
-
 #include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
+
 #include "../../IlwisCore/core/ilwisobjects/coverage/featureiterator.h"
 #include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/csytransform.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/geometryhelper.h"
 
 #include "pythonapi_featurecoverage.h"
+#include "pythonapi_domain.h"
 #include "pythonapi_error.h"
 #include "pythonapi_pyobject.h"
+#include "pythonapi_qvariant.h"
 
 using namespace pythonapi;
 
@@ -66,20 +69,164 @@ unsigned int FeatureCoverage::featureCount() const{
     return this->ptr()->as<Ilwis::FeatureCoverage>()->featureCount();
 }
 
-void FeatureCoverage::setFeatureCount(IlwisTypes type, quint32 geomCnt, quint32 subGeomCnt, int index){
-    this->ptr()->as<Ilwis::FeatureCoverage>()->setFeatureCount(type, geomCnt, subGeomCnt, index);
+void FeatureCoverage::setFeatureCount(IlwisTypes type, quint32 geomCnt){
+    this->ptr()->as<Ilwis::FeatureCoverage>()->setFeatureCount(type, geomCnt);
 }
 
 Feature FeatureCoverage::newFeature(const std::string& wkt, const CoordinateSystem& csy, bool load){
-    return Feature(this->ptr()->as<Ilwis::FeatureCoverage>()->newFeature(QString::fromStdString(wkt), csy.ptr()->as<Ilwis::CoordinateSystem>(), load),this);
+    Ilwis::SPFeatureI ilwFeatureI = this->ptr()->as<Ilwis::FeatureCoverage>()->newFeature(QString::fromStdString(wkt), csy.ptr()->as<Ilwis::CoordinateSystem>(), load);
+    return Feature(ilwFeatureI, this);
 }
 
 Feature FeatureCoverage::newFeature(const Geometry &geometry){
-    return Feature(this->ptr()->as<Ilwis::FeatureCoverage>()->newFeature(geometry.ptr().get()->clone()),this);
+    Ilwis::SPFeatureI ilwFeatureI =this->ptr()->as<Ilwis::FeatureCoverage>()->newFeature(geometry.ptr().get()->clone());
+    return Feature(ilwFeatureI, this);
 }
 
 Feature FeatureCoverage::newFeatureFrom(const Feature& feat, const CoordinateSystem& csy){
-    return Feature(this->ptr()->as<Ilwis::FeatureCoverage>()->newFeatureFrom(feat.ptr().get()->clone(), csy.ptr()->as<Ilwis::CoordinateSystem>()),this);
+    Ilwis::FeatureInterface* ilwFeat = feat.ptr().get()->clone(this->ptr()->as<Ilwis::FeatureCoverage>().ptr());
+    Ilwis::SPFeatureI ilwFeatureI = this->ptr()->as<Ilwis::FeatureCoverage>()->newFeatureFrom(ilwFeat, csy.ptr()->as<Ilwis::CoordinateSystem>());
+    return Feature(ilwFeatureI ,this);
+}
+
+Table FeatureCoverage::attributeTable(){
+    Ilwis::ITable ilwTab = this->ptr()->as<Ilwis::FeatureCoverage>()->attributeTable();
+    return Table(new Ilwis::ITable(ilwTab));
+}
+
+void FeatureCoverage::attributesFromTable(const Table &otherTable){
+    this->ptr()->as<Ilwis::FeatureCoverage>()->attributesFromTable(otherTable.ptr()->as<Ilwis::Table>());
+}
+
+bool FeatureCoverage::addColumn(const ColumnDefinition &coldef){
+    Ilwis::ColumnDefinition ilwDef = *(coldef.ptr());
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().addColumn(ilwDef);
+}
+
+bool FeatureCoverage::addColumn(const std::string &name, const std::string &domainname){
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().addColumn(QString::fromStdString(name), QString::fromStdString(domainname));
+}
+
+ColumnDefinition FeatureCoverage::columndefinition(const std::string &nme) const{
+    Ilwis::ColumnDefinition ilwDef = this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().columndefinition(QString::fromStdString(nme));
+    return ColumnDefinition(new Ilwis::ColumnDefinition(ilwDef));
+}
+
+ColumnDefinition FeatureCoverage::columndefinition(quint32 index) const{
+    Ilwis::ColumnDefinition ilwDef = this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().columndefinition(index);
+    return ColumnDefinition(new Ilwis::ColumnDefinition(ilwDef));
+}
+
+void FeatureCoverage::setColumndefinition(const ColumnDefinition &coldef){
+    Ilwis::ColumnDefinition ilwDef = *(coldef.ptr());
+    this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().columndefinition(ilwDef);
+}
+
+quint32 FeatureCoverage::columnIndex(const std::string &nme) const{
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().columnIndex(QString::fromStdString(nme));
+}
+
+ColumnDefinition FeatureCoverage::__getitem__(quint32 index){
+    Ilwis::ColumnDefinition ilwDef = this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef()[index];
+    return ColumnDefinition(new Ilwis::ColumnDefinition(ilwDef));
+}
+
+PyObject* FeatureCoverage::checkInput(PyObject* inputVar, quint32 columnIndex) const{
+    QVariant* qInput = PyObject2QVariant(inputVar);
+    QVariant qVar = this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().checkInput(*qInput, columnIndex);
+    delete qInput;
+    return QVariant2PyObject(qVar);
+}
+
+quint32 FeatureCoverage::definitionCount() const{
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().definitionCount();
+}
+
+void FeatureCoverage::setSubDefinition(const Domain& dom, PyObject* items){
+    if(PyTupleCheckExact(items)){
+        int sz = PyTupleSize(items);
+        if(PyFloatCheckExact(PyTupleGetItem(items, 0))){
+            std::vector<double> ilwVec;
+            for(int i = 0; i < sz; ++i){
+                double val = PyFloatAsDouble(PyTupleGetItem(items, i));
+                ilwVec.push_back(val);
+            }
+            this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().setSubDefinition(dom.ptr()->as<Ilwis::Domain>(), ilwVec);
+        }else if(PyLongCheckExact(PyTupleGetItem(items, 0))){
+            std::vector<double> ilwVec;
+            for(int i = 0; i < sz; ++i){
+                long val = PyLongAsLong(PyTupleGetItem(items, i));
+                ilwVec.push_back((double)val);
+            }
+            this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().setSubDefinition(dom.ptr()->as<Ilwis::Domain>(), ilwVec);
+        }else if(PyUnicodeCheckExact(PyTupleGetItem(items, 0))){
+            std::vector<QString> ilwVec;
+            for(int i = 0; i < sz; ++i){
+                std::string val = PyBytesAsString(PyTupleGetItem(items, i));
+                ilwVec.push_back(QString::fromStdString(val));
+            }
+            this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().setSubDefinition(dom.ptr()->as<Ilwis::Domain>(), ilwVec);
+        }else if(PyDateTimeCheckExact(PyTupleGetItem(items, 0)) || PyDateCheckExact(PyTupleGetItem(items, 0)) || PyTimeCheckExact(PyTupleGetItem(items, 0))){
+            std::vector<QString> ilwVec;
+            for(int i = 0; i < sz; ++i){
+                int year = PyDateTimeGET_YEAR(PyTupleGetItem(items, i));
+                int month = PyDateTimeGET_MONTH(PyTupleGetItem(items, i));
+                int day = PyDateTimeGET_DAY(PyTupleGetItem(items, i));
+                std::string dateStr = std::to_string(year) + std::to_string(month) + std::to_string(day);
+                ilwVec.push_back(QString::fromStdString(dateStr));
+            }
+            this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().setSubDefinition(dom.ptr()->as<Ilwis::Domain>(), ilwVec);
+        }
+    }
+}
+
+quint32 FeatureCoverage::indexOf(const std::string& variantId) const{
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().index(QString::fromStdString(variantId));
+}
+
+quint32 FeatureCoverage::indexOf(double domainItem) const{
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().index(domainItem);
+}
+
+quint32 FeatureCoverage::indexOf(PyObject* obj) const{
+    if(PyDateTimeCheckExact(obj) || PyDateCheckExact(obj) || PyTimeCheckExact(obj)){
+        int year = PyDateTimeGET_YEAR(obj);
+        int month = PyDateTimeGET_MONTH(obj);
+        int day = PyDateTimeGET_DAY(obj);
+        std::string dateStr = std::to_string(year) + std::to_string(month) + std::to_string(day);
+        return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().index(QString::fromStdString(dateStr));
+    }
+    return iUNDEF;
+}
+
+std::string FeatureCoverage::atIndex(quint32 idx) const{
+    QString qStr =  this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().index(idx);
+    return qStr.toStdString();
+}
+
+PyObject* FeatureCoverage::indexes() const{
+    std::vector<QString> qVec = this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().indexes();
+    PyObject* pyTup = newPyTuple(qVec.size());
+
+    for(int i = 0; i < qVec.size(); ++i){
+        std::string actStr = qVec[i].toStdString();
+        setTupleItem(pyTup, i, PyBuildString(actStr));
+    }
+
+    return pyTup;
+}
+
+quint32 FeatureCoverage::countSubs() const{
+    return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().count();
+}
+
+Domain FeatureCoverage::subDomain() const{
+    Ilwis::IDomain ilwDom =  this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().domain();
+    return Domain(new Ilwis::IDomain(ilwDom));
+}
+
+void FeatureCoverage::clear(){
+    this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().clear();
 }
 
 FeatureCoverage *FeatureCoverage::toFeatureCoverage(Object *obj){
@@ -102,24 +249,18 @@ void FeatureCoverage::reprojectFeatures(const CoordinateSystem& csy){
     Ilwis::IFeatureCoverage fc = this->ptr()->as<Ilwis::FeatureCoverage>();
     Ilwis::ICoordinateSystem ilwCsy = csy.ptr()->as<Ilwis::CoordinateSystem>();
     for(const auto &feat : fc ){
-        for(int i=0; i < feat->trackSize(); ++i){
-              Ilwis::UPGeometry& geom = feat->geometry(i);
-              if ( ilwCsy.isValid() && !ilwCsy->isEqual(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>().ptr())){
-                  Ilwis::CsyTransform trans(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>(), ilwCsy);
-                  geom->apply_rw(&trans);
-                  geom->geometryChangedAction();
-              }
-              Ilwis::GeometryHelper::setCoordinateSystem(geom.get(), ilwCsy.ptr());
+        Ilwis::UPGeometry& geom = feat->geometryRef();
+        if ( ilwCsy.isValid() && !ilwCsy->isEqual(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>().ptr())){
+            Ilwis::CsyTransform trans(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>(), ilwCsy);
+            geom->apply_rw(&trans);
+            geom->geometryChangedAction();
         }
+        Ilwis::GeometryHelper::setCoordinateSystem(geom.get(), ilwCsy.ptr());
     }
     Ilwis::ICoordinateSystem oldCsy = coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>();
     fc->coordinateSystem(ilwCsy);
     Ilwis::Envelope newEnv = oldCsy->convertEnvelope(ilwCsy, fc->envelope());
     fc->envelope(newEnv);
-}
-
-quint32 FeatureCoverage::maxIndex() const{
-    return this->ptr()->as<Ilwis::FeatureCoverage>()->maxIndex();
 }
 
 FeatureCoverage *FeatureCoverage::clone(){
