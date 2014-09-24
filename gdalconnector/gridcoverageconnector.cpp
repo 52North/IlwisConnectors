@@ -378,7 +378,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& optio
     std::map<quint32, std::vector<quint32> > blocklimits = grid->calcBlockLimits(options);
 
     for(const auto& layer : blocklimits){
-        quint64 linesLeft = std::min((quint64)grid->maxLines(), totalLines - grid->maxLines() * layer.second[0]);
+        quint64 linesLeft = totalLines; //std::min((quint64)grid->maxLines(), totalLines - grid->maxLines() * layer.second[0]);
         if ( _colorModel == ColorRangeBase::cmNONE || raster->datadef().domain()->valueType() == itPALETTECOLOR){ // palette entries are just integers so we can use the numeric read for it
             layerHandle = gdal()->getRasterBand(_handle->handle(), layer.first + 1);
             int inLayerBlockIndex = layer.second[0] % grid->blocksPerBand(); //

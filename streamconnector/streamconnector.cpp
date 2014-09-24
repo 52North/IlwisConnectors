@@ -46,7 +46,7 @@ StreamConnector::StreamConnector(const Ilwis::Resource &resource, bool load, con
     if ( query.hasQueryItem("datasource")){
         QString item = query.queryItemValue("datasource");
         url += "/" + item;
-        source().setUrl(url);;
+        source().setUrl(url);
     }
 }
 
