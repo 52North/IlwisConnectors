@@ -104,6 +104,8 @@ public:
     */
     void redirect(const QByteArray& url);
 
+    const QTcpSocket * host() const;
+
 private:
 
     /** Request headers */

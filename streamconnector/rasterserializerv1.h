@@ -15,6 +15,7 @@ public:
     bool storeData(IlwisObject *obj, const IOOptions& options = IOOptions()) override ;
     bool loadMetaData(IlwisObject*obj, const IOOptions & options);
     bool loadData(IlwisObject *data, const IOOptions &options);
+    quint32 loadGridBlock(IlwisObject *data, quint32 block, QByteArray& blockdata, const RawConverter& converter, const IOOptions &options);
     static VersionedSerializer *create(QDataStream &stream);
 
 private:

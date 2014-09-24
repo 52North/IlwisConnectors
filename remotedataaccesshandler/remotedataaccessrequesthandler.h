@@ -32,7 +32,8 @@ private:
     HttpResponse *_response;
 
     IIlwisObject getObject(const QString &name, const QString &ilwTypeName);
-    void writeObject(const IIlwisObject &obj, const QString &typeName, HttpResponse &response);
+    void writeObject(const IIlwisObject &obj, const HttpRequest &request, HttpResponse &response);
+    //void writeObject(const IIlwisObject &obj, const QString &typeName, HttpResponse &response);
 };
 }
 }

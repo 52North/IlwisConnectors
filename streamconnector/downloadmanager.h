@@ -12,6 +12,7 @@
 #include "resource.h"
 #include "iooptions.h"
 #include "connectorinterface.h"
+#include "rawconverter.h"
 #include "versionedserializer.h"
 
 namespace Ilwis {
@@ -32,9 +33,11 @@ public:
     bool loadMetaData(IlwisObject *object, const IOOptions &options);
     bool loadData(IlwisObject *object, const IOOptions &options);
 
+
 public slots:
 protected slots:
     void readReady();
+    void readReadyRaster();
     void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
     void error(QNetworkReply::NetworkError code);
     void finishedMetadata();
@@ -46,6 +49,14 @@ private:
     std::unique_ptr<VersionedSerializer> _versionedConnector;
     QByteArray _bytes;
     IlwisObject *_object;
+
+    //raster only
+    quint32 _blockSizeBytes =0;
+    quint32 _currentBlock=0;
+    bool _initialRasterData = true;
+    RawConverter _converter;
+
+    void copyData(bool lastBlock=false);
 };
 }
 }

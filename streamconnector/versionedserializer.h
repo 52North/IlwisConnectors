@@ -7,6 +7,7 @@ class DataDefinition;
 namespace Stream {
 
 class StreamConnector;
+class RawConverter;
 
 class VersionedSerializer : public DataInterface
 {
@@ -20,6 +21,7 @@ public:
     bool dataIsLoaded() const { return false; }
     bool store(IlwisObject *obj, const IOOptions& options = IOOptions() );
     virtual bool storeData(IlwisObject *obj, const IOOptions& options = IOOptions() ) { return true;} // not mandatory to implement this, so empty is ok
+    virtual quint32 loadGridBlock(IlwisObject *data, quint32 block, QByteArray &blockdata, const RawConverter& converter, const IOOptions &) { return 0;}
     void connector(StreamConnector *streamconnector);
 
 protected:

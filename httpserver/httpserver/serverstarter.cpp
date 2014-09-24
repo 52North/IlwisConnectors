@@ -6,6 +6,8 @@
 #include "serverstarter.h"
 #include "httplistener.h"
 #include "requestmapper.h"
+#include "kernel.h"
+#include "juliantime.h"
 #include <QDir>
 
 /** Name of this application */
@@ -29,8 +31,9 @@ ServerStarter::~ServerStarter()
 void ServerStarter::start() {
     // Initialize the core application
     _listener.reset(new HttpListener(arguments(), new RequestMapper()));
-
-    qWarning("ServiceHelper: Service has started");
+    Ilwis::Time time = Ilwis::Time::now();
+    auto txt =QString("ServiceHelper: Service has started at : %1").arg(time.toString()).toLatin1();
+    qWarning(txt);
 }
 
 void ServerStarter::stop() {

@@ -192,6 +192,10 @@ bool IniFile::load()
          }
              break;
          case StoreKey:
+             if (value[0] == '\''){
+                 int index = value.lastIndexOf("'");
+                 value = value.mid(1,index-1) + value.mid(index + 1);
+             }
              setKeyValue(section, key, value);
              state = FindSection;
              break;
@@ -233,7 +237,8 @@ void IniFile::store(const QString& ext, const QFileInfo& file )
         for (iterEntry = entries.begin(); iterEntry != entries.end(); ++iterEntry)
         {
             QString key = iterEntry->first;
-            key[0] = key[0].toUpper();
+            if ( key.size() > 1) // else the a from ellipsoid (major axis) goes to upper
+                key[0] = key[0].toUpper();
             text <<  key.trimmed() << "=" << iterEntry->second << "\n";
         }
         first = false;
