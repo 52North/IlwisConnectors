@@ -379,10 +379,6 @@ PyObject* RasterCoverage::indexes() const{
     PyObject* pyTup = newPyTuple(qVec.size());
 
     for(int i = 0; i < qVec.size(); ++i){
-//        QString vecAtt = qVec[i];
-//        Ilwis::Time ilwTime (vecAtt.toDouble());
-//        QVariant qVar(IVARIANT(ilwTime));
-//        setTupleItem(pyTup, i, QVariant2PyObject(qVar));
         std::string actStr = qVec[i].toStdString();
         setTupleItem(pyTup, i, PyBuildString(actStr));
     }
@@ -406,12 +402,14 @@ void RasterCoverage::clear(){
 RasterCoverage RasterCoverage::select(std::string selectionQ){
     QString selectGeom = QString::fromStdString(selectionQ);
     geos::geom::Geometry *geom = Ilwis::GeometryHelper::fromWKT(selectGeom, this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
+
+
     if(geom){
         Ilwis::PixelIterator iterIn(this->ptr()->as<Ilwis::RasterCoverage>(), geom);
         const geos::geom::Envelope *env = geom->getEnvelopeInternal();
         Ilwis::Envelope envelope(Ilwis::Coordinate(env->getMinX(), env->getMinY()),Ilwis::Coordinate(env->getMaxX(), env->getMaxY()));
         Ilwis::BoundingBox box = this->ptr()->as<Ilwis::RasterCoverage>()->georeference()->coord2Pixel(envelope);
-        QString grfcode = QString("code=georef:type=corners,csy=%1,envelope=%2,gridsize=%3,name=gorilla").arg(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem()->id()).arg(envelope.toString()).arg(box.size().toString());
+        QString grfcode = QString("code=georef:type=corners,csy=%1,envelope=%2,gridsize=%3,name=selection").arg(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem()->id()).arg(envelope.toString()).arg(box.size().toString());
         Ilwis::IGeoReference grf(grfcode);
 
         Ilwis::IRasterCoverage map2;

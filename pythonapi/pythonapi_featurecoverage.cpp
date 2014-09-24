@@ -250,6 +250,8 @@ void FeatureCoverage::reprojectFeatures(const CoordinateSystem& csy){
     Ilwis::ICoordinateSystem ilwCsy = csy.ptr()->as<Ilwis::CoordinateSystem>();
     for(const auto &feat : fc ){
         Ilwis::UPGeometry& geom = feat->geometryRef();
+        if(!geom)
+            continue;
         if ( ilwCsy.isValid() && !ilwCsy->isEqual(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>().ptr())){
             Ilwis::CsyTransform trans(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>(), ilwCsy);
             geom->apply_rw(&trans);

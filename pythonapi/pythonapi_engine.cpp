@@ -114,6 +114,8 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
                     (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
                 return new GeoReference(obj);
             }
+        } else if (result._type == itBOOL){
+
         }
         throw Ilwis::ErrorObject(QString("couldn't handle return type of do(%1)").arg(command));
     }else{
