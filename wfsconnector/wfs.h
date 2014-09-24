@@ -17,16 +17,16 @@ public:
     WebFeatureService(QUrl wfsUrl);
 
     QUrl url() const;
-    WfsResponse *getCapabilities(bool async=false) const;
-    WfsResponse *describeFeatureType(QUrlQuery query, bool async=false) const;
-    WfsResponse *getFeature(QUrlQuery query, bool async=false) const;
+    SPWfsResponse getCapabilities(bool async=false) const;
+    SPWfsResponse describeFeatureType(QUrlQuery query, bool async=false) const;
+    SPWfsResponse getFeature(QUrlQuery query, bool async=false) const;
 
 private:
     QUrl _resource;
 
-    WfsResponse *performRequest(QUrlQuery query, QString wfsRequest, bool async=false) const;
-    WfsResponse *performSyncRequest(QUrl request) const;
-    WfsResponse *performAsyncRequest(QUrl request) const;
+    SPWfsResponse performRequest(QUrlQuery query, QString wfsRequest, bool async=false) const;
+    SPWfsResponse performSyncRequest(QUrl request) const;
+    SPWfsResponse performAsyncRequest(QUrl request) const;
 
 
 };

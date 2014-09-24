@@ -9,9 +9,9 @@
 #include "coverage.h"
 #include "columndefinition.h"
 #include "record.h"
-#include "attributerecord.h"
-#include "feature.h"
+#include "coverage.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "wfsresponse.h"
 #include "wfsutils.h"
 #include "wfs.h"
@@ -28,23 +28,23 @@ QUrl WebFeatureService::url() const
     return _resource;
 }
 
-WfsResponse *WebFeatureService::getCapabilities(bool async) const
+SPWfsResponse WebFeatureService::getCapabilities(bool async) const
 {
     QUrlQuery query(_resource);
     return performRequest(query, "GetCapabilities", async);
 }
 
-WfsResponse *WebFeatureService::describeFeatureType(QUrlQuery query, bool async) const
+SPWfsResponse WebFeatureService::describeFeatureType(QUrlQuery query, bool async) const
 {
     return performRequest(query, "DescribeFeatureType", async);
 }
 
-WfsResponse *WebFeatureService::getFeature(QUrlQuery query, bool async) const
+SPWfsResponse WebFeatureService::getFeature(QUrlQuery query, bool async) const
 {
     return performRequest(query, "GetFeature", async);
 }
 
-WfsResponse *WebFeatureService::performRequest(QUrlQuery query, QString wfsRequest, bool async) const
+SPWfsResponse WebFeatureService::performRequest(QUrlQuery query, QString wfsRequest, bool async) const
 {
     WfsUtils::lowerCaseKeys(query);
     query.removeQueryItem("request");
@@ -56,7 +56,6 @@ WfsResponse *WebFeatureService::performRequest(QUrlQuery query, QString wfsReque
         query.removeQueryItem("version");
         query.addQueryItem("version", "1.1.0");
     }
-    QString ss = _resource.toString();
     QUrl wfsUrl = _resource;
     wfsUrl.setQuery(query);
 
@@ -67,10 +66,10 @@ WfsResponse *WebFeatureService::performRequest(QUrlQuery query, QString wfsReque
     }
 }
 
-WfsResponse *WebFeatureService::performSyncRequest(QUrl requestUrl) const
+SPWfsResponse WebFeatureService::performSyncRequest(QUrl requestUrl) const
 {
     QNetworkRequest request(requestUrl);
-    WfsResponse *response = new WfsResponse;
+    SPWfsResponse response = SPWfsResponse(new WfsResponse);
     QNetworkReply *reply = response->performRequest(request, false);
 
     QEventLoop loop; // waits for request to complete
@@ -81,10 +80,10 @@ WfsResponse *WebFeatureService::performSyncRequest(QUrl requestUrl) const
     return response;
 }
 
-WfsResponse *WebFeatureService::performAsyncRequest(QUrl requestUrl) const
+SPWfsResponse WebFeatureService::performAsyncRequest(QUrl requestUrl) const
 {
     QNetworkRequest request(requestUrl);
-    WfsResponse *response = new WfsResponse;
+    SPWfsResponse response = SPWfsResponse(new WfsResponse);
     // response registers an async callback
     response->performRequest(request);
     return response;

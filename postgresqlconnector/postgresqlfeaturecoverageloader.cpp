@@ -6,12 +6,15 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "geometries.h"
-#include "feature.h"
 #include "coverage.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "attributedefinition.h"
+#include "featurecoverage.h"
+#include "feature.h"
 #include "table.h"
 #include "basetable.h"
 #include "flattable.h"
-#include "featurecoverage.h"
 #include "geometryhelper.h"
 #include "connectorinterface.h"
 #include "ilwisobjectconnector.h"
@@ -45,7 +48,7 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
         return false;
     }
 
-    fcoverage->attributeTable(featureTable);
+    fcoverage->attributesFromTable(featureTable);
     setFeatureCount(fcoverage);
     setSpatialMetadata(fcoverage);
     return true;
@@ -164,7 +167,7 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
             IlwisTypes types = meta.geomType;
             int count = query.value("count").toInt();
             if (count > 0) {
-                fcoverage->setFeatureCount(types, count, 0);
+                fcoverage->setFeatureCount(types, iUNDEF);
             }
         }
     }

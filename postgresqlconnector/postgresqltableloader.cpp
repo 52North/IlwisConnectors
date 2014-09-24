@@ -12,9 +12,10 @@
 #include "textdomain.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
-#include "feature.h"
+#include "attributedefinition.h"
 #include "coverage.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "table.h"
 
 #include "postgresqltableloader.h"

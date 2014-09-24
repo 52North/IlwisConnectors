@@ -16,8 +16,8 @@
 #include "basetable.h"
 #include "flattable.h"
 #include "coverage.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 
 #include "postgresqlconnector.h"
 #include "postgresqltableloader.h"
@@ -52,7 +52,7 @@ bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions
     qDebug() << "PostgresqlFeatureConnector::loadMetaData()";
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
-    fcoverage->setFeatureCount(itFEATURE, 0,0);
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF);
 
     PostgresqlFeatureCoverageLoader loader(source());
     if ( !loader.loadMetadata(fcoverage)) {

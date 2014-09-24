@@ -16,7 +16,9 @@
 #include "datadefinition.h"
 #include "numericdomain.h"
 #include "numericrange.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
+#include "attributedefinition.h"
 #include "table.h"
 #include "domainitem.h"
 #include "itemdomain.h"
@@ -24,12 +26,11 @@
 #include "juliantime.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
-#include "attributerecord.h"
-#include "feature.h"
+#include "coverage.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "geometryhelper.h"
 
-#include "wfsresponse.h"
 #include "xmlstreamparser.h"
 #include "wfsparsingcontext.h"
 #include "wfsfeatureparser.h"
@@ -38,7 +39,7 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-WfsFeatureParser::WfsFeatureParser(WfsResponse *response, FeatureCoverage *fcoverage): _fcoverage(fcoverage)
+WfsFeatureParser::WfsFeatureParser(SPWfsResponse response, FeatureCoverage *fcoverage): _fcoverage(fcoverage)
 {
     _parser = new XmlStreamParser(response->device());
     _parser->addNamespaceMapping("wfs", "http://www.opengis.net/wfs");

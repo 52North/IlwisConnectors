@@ -19,9 +19,9 @@
 #include "textdomain.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
-#include "attributerecord.h"
-#include "feature.h"
+#include "coverage.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "featureiterator.h"
 #include "ilwisobjectconnector.h"
 #include "wfsparsingcontext.h"
@@ -57,7 +57,7 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const IOOptions
     QUrl featureUrl = source().url(true);
     WebFeatureService wfs(featureUrl);
     QUrlQuery queryFeatureType(featureUrl);
-    WfsResponse *featureDescriptionResponse = wfs.describeFeatureType(queryFeatureType);
+    SPWfsResponse featureDescriptionResponse = wfs.describeFeatureType(queryFeatureType);
     WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse);
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
@@ -79,7 +79,7 @@ bool WfsFeatureConnector::loadData(IlwisObject *data, const IOOptions &)
     WebFeatureService wfs(featureUrl);
 
     QUrlQuery queryFeature(featureUrl);
-    WfsResponse *response = wfs.getFeature(queryFeature);
+    SPWfsResponse response = wfs.getFeature(queryFeature);
     WfsFeatureParser featureParser(response, fcoverage);
 
     featureParser.context(_context);

@@ -81,15 +81,6 @@ public:
             db.setPassword(password);
         }
 
-        if (db.isValid()) {
-            if (open && !db.isOpen()) {
-                QString error = db.lastError().text();
-                QString connection = resource.url(true).toString();
-                ERROR2("Cannot establish connection to %1 (%2)", connection, error);
-            }
-            return db;
-        }
-
         if (open) {
             if ( !db.open()) {
                 QString error = db.lastError().text();
@@ -97,6 +88,7 @@ public:
                 ERROR2("Cannot establish connection to %1 (%2)", connection, error);
             }
         }
+
         return db;
     }
 

@@ -7,19 +7,20 @@
 #include "ilwis.h"
 #include "ilwisdata.h"
 #include "domain.h"
-#include "datadefinition.h"
 #include "numericdomain.h"
 #include "numericrange.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
+#include "attributedefinition.h"
 #include "table.h"
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "textdomain.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
-#include "attributerecord.h"
-#include "feature.h"
+#include "coverage.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "featureiterator.h"
 
 #include "wfsresponse.h"
@@ -36,7 +37,7 @@ WfsFeatureDescriptionParser::WfsFeatureDescriptionParser()
 }
 
 
-WfsFeatureDescriptionParser::WfsFeatureDescriptionParser(WfsResponse *response)
+WfsFeatureDescriptionParser::WfsFeatureDescriptionParser(SPWfsResponse response)
 {
     _parser = new XmlStreamParser(response->device());
     _parser->addNamespaceMapping("xsd", "http://www.w3.org/2001/XMLSchema");
@@ -67,7 +68,7 @@ bool WfsFeatureDescriptionParser::parseMetadata(FeatureCoverage *fcoverage, WfsP
         return false;
     }
 
-    fcoverage->attributeTable(featureTable);
+    fcoverage->attributesFromTable(featureTable);
     if (_parser->startParsing("xsd:schema")) {
         parseNamespaces(context);
         while ( !_parser->atEnd()) {
