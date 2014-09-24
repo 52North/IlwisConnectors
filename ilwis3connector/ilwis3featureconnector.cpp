@@ -547,27 +547,13 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
     double raw = 1;
 
     for_each(iter, iter.end(), [&](SPFeatureI feature){
-        const UPGeometry& geom = feature->geometry();
-        for(int i=0; i < feature->subFeatureCount(); ++i) {
-            geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
-            if ( geostype == geos::geom::GEOS_MULTILINESTRING || geos::geom::GEOS_LINESTRING) {
-
-                const geos::geom::Geometry *lines = geom.get();
-                if ( geostype == geos::geom::GEOS_LINESTRING ){
-                    const geos::geom::LineString *line = dynamic_cast<const geos::geom::LineString*>(lines);
-                    if ( !line)
-                        return ERROR2(ERR_NO_INITIALIZED_2, "lines", fcov->name());
-                    writeLine(line,output_file,raw);
-                } else {
-                    int n = lines->getNumGeometries();
-                    for(int i = 0; i < n ; ++i){
-                        const geos::geom::LineString* line = dynamic_cast<const geos::geom::LineString*>(lines->getGeometryN(i));
-                        if ( !line)
-                            return ERROR2(ERR_NO_INITIALIZED_2, "lines", fcov->name());
-                        writeLine(line,output_file,raw);
-                    }
-                }
-                ++raw;
+        storeFeature(feature->geometry(), fcov,output_file,raw);
+        auto indexes = fcov->attributeDefinitions().indexes();
+        for(auto index : indexes) {
+            auto subfeature = feature[index];
+            if (!subfeature.get()) {
+                continue;
+                storeFeature(subfeature->geometry(), fcov,output_file,raw);
             }
         }
         return true;
@@ -578,6 +564,32 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
     return true;
 }
 
+void FeatureConnector::storeFeature(const UPGeometry& geom, const FeatureCoverage *fcov, std::ofstream& output_file, double& raw){
+    geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
+    if ( geostype == geos::geom::GEOS_MULTILINESTRING || geos::geom::GEOS_LINESTRING) {
+
+        const geos::geom::Geometry *lines = geom.get();
+        if ( geostype == geos::geom::GEOS_LINESTRING ){
+            const geos::geom::LineString *line = dynamic_cast<const geos::geom::LineString*>(lines);
+            if ( !line){
+                ERROR2(ERR_NO_INITIALIZED_2, "lines", fcov->name());
+                return;
+            }
+            writeLine(line,output_file,raw);
+        } else {
+            int n = lines->getNumGeometries();
+            for(int i = 0; i < n ; ++i){
+                const geos::geom::LineString *line = dynamic_cast<const geos::geom::LineString*>(lines->getGeometryN(i));
+                if ( !line){
+                    ERROR2(ERR_NO_INITIALIZED_2, "lines", fcov->name());
+                    return;
+                }
+                writeLine(line,output_file,raw);
+            }
+        }
+        ++raw;
+    }
+}
 void FeatureConnector::writePoint(const geos::geom::Point* point,std::ofstream& output_file,long raw ) {
     writeCoord(output_file, *(point->getCoordinate()));
     output_file.write((char *)&raw, 4);

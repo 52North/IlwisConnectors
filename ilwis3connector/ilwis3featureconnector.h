@@ -62,6 +62,7 @@ private:
     void writePoint(const geos::geom::Point *point, std::ofstream &output_file, long raw);
     void addFeatures(map<quint32, vector<geos::geom::Geometry *> > &geometries, FeatureCoverage *fcoverage, const std::vector<double>& featureValues, IlwisTypes tp);
     bool storeBinaryDataTable(IlwisObject *obj, IlwisTypes tp, const QString &baseName);
+    void storeFeature(const UPGeometry &geom, const FeatureCoverage *fcov, std::ofstream &output_file, double &raw);
 };
 }
 }
