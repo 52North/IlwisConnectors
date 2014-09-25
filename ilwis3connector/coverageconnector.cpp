@@ -350,7 +350,9 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
 DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const IOOptions &options) const{
     IDomain dom;
     QString domname = odf->value("BaseMap","Domain");
-    QString filename = context()->workingCatalog()->resolve(domname, itDOMAIN);
+    QString filename = kernel()->database().findAlias(QFileInfo(domname).baseName().toLower(),"domain","ilwis3");
+    if ( filename == sUNDEF)
+        filename = context()->workingCatalog()->resolve(domname, itDOMAIN);
     if(!dom.prepare(filename, options)) {
         ERROR2(ERR_NO_INITIALIZED_2,"domain",odf->file());
         return DataDefinition();

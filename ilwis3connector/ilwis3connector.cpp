@@ -392,6 +392,9 @@ QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name, IlwisTyp
     QString file = path;
     if ( file == "")
         file = _resource.url().toString();
+    if ( file.indexOf("file:///") != -1){
+        file = QUrl(file).toLocalFile();
+    }
     //TODO: container pathing here; grf uses local path
     QFileInfo inf(file);
     QString localpath = inf.absolutePath();
