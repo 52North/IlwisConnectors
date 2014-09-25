@@ -252,7 +252,7 @@ void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>&
             geometry = geoms1[0];
         } else {
             std::vector<geos::geom::Geometry *> *geoms = new std::vector<geos::geom::Geometry *>((*iter).second);
-            geos::geom::GeometryCollection *multigeom = 0;
+//            geos::geom::GeometryCollection *multigeom = 0;
             switch(tp) {
                 case itPOLYGON:
                     geometry = fcoverage->geomfactory()->createMultiPolygon(geoms); break;
@@ -263,7 +263,7 @@ void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>&
             }
 
 
-            fcoverage->newFeature({multigeom},false);
+//            fcoverage->newFeature({multigeom},false);
         }
         auto feature = fcoverage->newFeature({geometry},false);
         if ( featureValues.size() > 0)
@@ -480,15 +480,17 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     FeatureIterator iter(cov);
     double raw = 1;
     for_each(iter, iter.end(), [&](SPFeatureI feature){
-        storePolygon(feature->geometry(), fcov,output_file,raw);
-        auto indexes = fcov->attributeDefinitions().indexes();
-        for(auto index : indexes) {
-            auto subfeature = feature[index];
-            if (!subfeature.get()) {
-                continue;
-            }
-            storePolygon(subfeature->geometry(), fcov,output_file,raw);
+        if ( feature->geometry().get() != 0){
+            storePolygon(feature->geometry(), fcov,output_file,raw);
+            auto indexes = fcov->attributeDefinitions().indexes();
+            for(auto index : indexes) {
+                auto subfeature = feature[index];
+                if (!subfeature.get()) {
+                    continue;
+                }
+                storePolygon(subfeature->geometry(), fcov,output_file,raw);
 
+            }
         }
         return true;
     });
@@ -809,9 +811,28 @@ bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& fi
 
     QString localFile = dataFile + ".mpz#";
     _odf->setKeyValue("PolygonMapStore","DataPol", localFile);
-    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(fcov->featureCount(itPOLYGON)));
+
+    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(countPolygons(fcov)));
 
     return true;
+}
+
+quint32  FeatureConnector::countPolygons(FeatureCoverage *fcov){
+    quint32 count = 0;
+    IFeatureCoverage features(fcov) ;
+    for(const auto& feature : features){
+        if ( feature->geometry().get() != 0){
+            const UPGeometry& geom = feature->geometry();
+            geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
+            if ( geostype == geos::geom::GEOS_POLYGON ){
+                ++count;
+            }else {
+                const geos::geom::Geometry *polygons = geom.get();
+                count += polygons->getNumGeometries();}
+        }
+    }
+
+    return count;
 }
 
 bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
