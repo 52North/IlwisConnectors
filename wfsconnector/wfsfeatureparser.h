@@ -1,9 +1,11 @@
 #ifndef WFSFEATUREPARSER_H
 #define WFSFEATUREPARSER_H
 
-#include "wfsconnector_global.h"
-
 #include "geos/geom/Polygon.h"
+
+#include "wfsconnector_global.h"
+#include "wfsresponse.h"
+
 
 class QString;
 class XmlStreamParser;
@@ -11,13 +13,12 @@ class XmlStreamParser;
 namespace Ilwis {
 namespace Wfs {
 
-class WfsResponse;
 class FillerColumnDef;
 
 class WFSCONNECTORSHARED_EXPORT WfsFeatureParser
 {
 public:
-    WfsFeatureParser(WfsResponse *response, FeatureCoverage *fcoverage);
+    WfsFeatureParser(SPWfsResponse response, FeatureCoverage *fcoverage);
     ~WfsFeatureParser();
 
     void context(const WfsParsingContext &context);
@@ -44,6 +45,7 @@ private:
     XmlStreamParser *_parser;
     FeatureCoverage *_fcoverage;
     WfsParsingContext _context;
+    bool _swapAxesNeededToAlignInternXYOrder = false;
     QString _featureType;
 
     bool parseFeature(std::vector<QVariant> &record, ITable& table);

@@ -32,6 +32,11 @@ QMap<QString, QString> WfsParsingContext::namespaceMappings() const
     return _namespaceMappings;
 }
 
+QString WfsParsingContext::featureType() const
+{
+    return _featureType;
+}
+
 Resource WfsParsingContext::resource() const
 {
     return _resource;
@@ -60,6 +65,11 @@ void WfsParsingContext::setGeometryAtttributeName(QString geometryAtttributeName
 void WfsParsingContext::addNamespaceMapping(QString prefix, QString uriNamespace)
 {
     _namespaceMappings[prefix] = uriNamespace;
+}
+
+void WfsParsingContext::setFeatureType(QString featureType)
+{
+    _featureType = featureType;
 }
 
 void WfsParsingContext::setResource(Resource resource)

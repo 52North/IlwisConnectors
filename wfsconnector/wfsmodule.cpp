@@ -8,18 +8,18 @@
 #include "geos/geom/Geometry.h"
 #include "range.h"
 #include "domain.h"
-#include "datadefinition.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
 #include "projection.h"
 #include "coordinatesystem.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
+#include "attributedefinition.h"
 #include "table.h"
 #include "catalog.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "coverage.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
 #include "abstractfactory.h"
@@ -67,8 +67,10 @@ void WfsModule::prepare()
     if (!cfactory)
         return;
 
+
+    cfactory->addCreator(itCATALOG, "wfs", CatalogConnector::create);
     cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
-    IlwisObject::addTypeFunction(WfsFeatureConnector::ilwisType);
+//    IlwisObject::addTypeFunction(WfsFeatureConnector::ilwisType);
 }
 
 QString WfsModule::getName() const

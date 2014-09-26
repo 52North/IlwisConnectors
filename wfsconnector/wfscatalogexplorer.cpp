@@ -8,11 +8,13 @@
 #include "ilwisdata.h"
 #include "domain.h"
 #include "coverage.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
-#include "record.h"
-#include "attributerecord.h"
-#include "feature.h"
+#include "attributedefinition.h"
+#include "coverage.h"
 #include "featurecoverage.h"
+#include "record.h"
+#include "feature.h"
 #include "connectorinterface.h"
 #include "identity.h"
 #include "resource.h"
@@ -23,6 +25,7 @@
 #include "catalogexplorer.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
+
 #include "wfscatalogexplorer.h"
 #include "wfsutils.h"
 #include "wfs.h"
@@ -52,8 +55,8 @@ std::vector<Resource> WfsCatalogExplorer::loadItems()
 {
     QUrl serviceUrl = source().url();
     WebFeatureService wfs(serviceUrl);
-    WfsResponse *response = wfs.getCapabilities();
-    WfsCapabilitiesParser parser(response, serviceUrl);
+    SPWfsResponse response = wfs.getCapabilities();
+    WfsCapabilitiesParser parser(response, source());
 
     std::vector<Resource> wfsFeatures;
     parser.parseFeatures(wfsFeatures);

@@ -1,6 +1,8 @@
 #ifndef WFSUTILS_H
 #define WFSUTILS_H
 
+#include <QCoreApplication>
+
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "symboltable.h"
@@ -109,6 +111,34 @@ public:
     {
         return gmlName.contains("Point");
     }
+
+    static bool swapAxes(const Resource resource, const ICoordinateSystem crs)
+    {
+        bool latLonOrder = isDefinedAsLatLonAxesOrder(crs);
+        bool forceXY = isForcedXYOrder(resource);
+        return latLonOrder && forceXY;
+    }
+
+    static bool isForcedXYOrder(const Resource resource)
+    {
+        return !(resource.hasProperty("forceXY")
+                 && resource["forceXY"].toBool());
+    }
+
+    static bool isDefinedAsLatLonAxesOrder(ICoordinateSystem crs)
+    {
+        QString sqlBuilder;
+        sqlBuilder.append("SELECT code FROM epsgcodeswithlatlonaxesorder ");
+        sqlBuilder.append(" WHERE code='");
+        sqlBuilder.append(crs->code());
+        sqlBuilder.append("' ;");
+
+        QSqlQuery query(kernel()->database());
+        query.exec(sqlBuilder);
+        // exact one or no match
+        return query.next();
+    }
+
 
 private:
     static void checkVersionCompatibility(QString kvpValueVersions) {

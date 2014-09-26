@@ -16,7 +16,9 @@
 #include "datadefinition.h"
 #include "numericdomain.h"
 #include "numericrange.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
+#include "attributedefinition.h"
 #include "table.h"
 #include "domainitem.h"
 #include "itemdomain.h"
@@ -24,12 +26,11 @@
 #include "juliantime.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
-#include "attributerecord.h"
-#include "feature.h"
+#include "coverage.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "geometryhelper.h"
 
-#include "wfsresponse.h"
 #include "xmlstreamparser.h"
 #include "wfsparsingcontext.h"
 #include "wfsfeatureparser.h"
@@ -38,7 +39,7 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-WfsFeatureParser::WfsFeatureParser(WfsResponse *response, FeatureCoverage *fcoverage): _fcoverage(fcoverage)
+WfsFeatureParser::WfsFeatureParser(SPWfsResponse response, FeatureCoverage *fcoverage): _fcoverage(fcoverage)
 {
     _parser = new XmlStreamParser(response->device());
     _parser->addNamespaceMapping("wfs", "http://www.opengis.net/wfs");
@@ -65,9 +66,10 @@ WfsParsingContext WfsFeatureParser::context() const
 
 void WfsFeatureParser::parseFeatureMembers()
 {
+    qDebug() << "WfsFeatureParser::parseFeatureMembers()";
+
     ITable table = _fcoverage->attributeTable();
-    _featureType = table->name();
-    _featureType = "target:" + _featureType;
+    _featureType = "target:" + _context.featureType();
 
     quint64 featureCount = 0;
     if (_parser->findNextOf( {"wfs:FeatureCollection"} )) {
@@ -94,11 +96,11 @@ void WfsFeatureParser::parseFeatureMembers()
             }
         }
     }
+    _fcoverage->attributesFromTable(table);
 }
 
 bool WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table)
 {
-    //qDebug() << "create new feature ...";
     bool continueReadingStream = true;
     QString geometryAttributeName = _context.geometryAtttributeName();
     for (int i = 0; i < table->columnCount(); i++) {
@@ -361,6 +363,11 @@ void WfsFeatureParser::initCrs(ICoordinateSystem &crs) {
     if ( !crs.prepare(geomCrsCode, itCONVENTIONALCOORDSYSTEM)) {
         ERROR1("Could not prepare crs with code=%1.",_context.srsName());
     }
+    _swapAxesNeededToAlignInternXYOrder = WfsUtils::swapAxes(_fcoverage->source(), crs);
+    if (_swapAxesNeededToAlignInternXYOrder) {
+        DEBUG0("XY axes order used internally. OGC respects lat/lon order, though.");
+        DEBUG1("Will swap axes order for CRS '%1'.", _context.srsName());
+    }
 }
 
 geos::geom::Point *WfsFeatureParser::parsePoint(bool &ok)
@@ -486,15 +493,30 @@ QString WfsFeatureParser::gmlPosListToWktCoords(QString gmlPosList)
     QStringList coords = gmlPosList.split(" ");
     if (_context.srsDimension() == 2) {
         for (int i = 0; i < coords.size() - 1; i++) {
-            wktCoords.append(coords.at(i)).append(" ");
-            wktCoords.append(coords.at(++i)).append(" ");
+            QString first = coords.at(i);
+            QString second = coords.at(++i);
+            if (!_swapAxesNeededToAlignInternXYOrder) {
+                wktCoords.append(first).append(" ");
+                wktCoords.append(second).append(" ");
+            } else {
+                wktCoords.append(second).append(" ");
+                wktCoords.append(first).append(" ");
+            }
             wktCoords.append(", ");
         }
     } else if (_context.srsDimension() == 3) {
         for (int i = 0; i < coords.size() - 2; i++) {
-            wktCoords.append(coords.at(i)).append(" ");
-            wktCoords.append(coords.at(++i)).append(" ");
-            wktCoords.append(coords.at(++i));
+            QString first = coords.at(i);
+            QString second = coords.at(++i);
+            QString third = coords.at(++i);
+            if (!_swapAxesNeededToAlignInternXYOrder) {
+                wktCoords.append(first).append(" ");
+                wktCoords.append(second).append(" ");
+            } else {
+                wktCoords.append(second).append(" ");
+                wktCoords.append(first).append(" ");
+            }
+            wktCoords.append(third);
             wktCoords.append(", ");
         }
     }

@@ -7,30 +7,35 @@
 #include <QXmlResultItems>
 
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "geometries.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "attributedefinition.h"
+#include "xpathparser.h"
+#include "coverage.h"
+#include "featurecoverage.h"
+#include "table.h"
+
 #include "wfsresponse.h"
 #include "wfsfeature.h"
 #include "wfscapabilitiesparser.h"
-#include "xpathparser.h"
 #include "wfsutils.h"
 
 using namespace Ilwis;
 using namespace Wfs;
 
-WfsCapabilitiesParser::WfsCapabilitiesParser(WfsResponse *response, QUrl wfsUrl): _url(wfsUrl)
+WfsCapabilitiesParser::WfsCapabilitiesParser(const SPWfsResponse response, const Resource wfsResource): _wfsResource(wfsResource)
 {
-    _parser = new XPathParser(response->device());
+    _parser = UPXPathParser(new XPathParser(response->device()));
     _parser->addNamespaceMapping("wfs", "http://www.opengis.net/wfs");
     _parser->addNamespaceMapping("ows", "http://www.opengis.net/ows");
 }
 
-WfsCapabilitiesParser::~WfsCapabilitiesParser()
-{
-    delete _parser;
-}
-
 void WfsCapabilitiesParser::parseFeatures(std::vector<Resource> &wfsFeatures)
 {
+    qDebug() << "WfsCapabilitiesParser::parseFeatures()";
+
     QXmlResultItems results;
     UPXmlQuery& query = _parser->queryFromRoot("//wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType");
 
@@ -49,16 +54,7 @@ void WfsCapabilitiesParser::parseFeatures(std::vector<Resource> &wfsFeatures)
     }
 }
 
-QString WfsCapabilitiesParser::valueOf(QXmlItem &item, const QString& xpathQuqery) const{
-    QString value;
-    UPXmlQuery& query = _parser->queryRelativeFrom(item, xpathQuqery);
-    query->evaluateTo(&value);
-    value = value.trimmed();
-
-    return value;
-}
-
-void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) const
+void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature)
 {
     QUrl rawUrl, normalizedUrl;
     QString name = valueOf(item, "./wfs:Name/string()");
@@ -76,6 +72,21 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature) co
     feature.addProperty("coordinatesystem", srs);
     feature.addProperty("envelope.ll", llText);
     feature.addProperty("envelope.ur", urText);
+
+    if (_wfsResource.hasProperty("forceXY")) {
+        // override if forced XY axes order
+        feature.addProperty("forceXY", _wfsResource["forceXY"].toBool());
+    } else {
+        feature.addProperty("forceXY", false);
+    }
+}
+
+QString WfsCapabilitiesParser::valueOf(const QXmlItem &item, const QString &xpathQuery) {
+    QString value;
+    UPXmlQuery& query = _parser->queryRelativeFrom(item, xpathQuery);
+    query->evaluateTo(&value);
+    value = value.trimmed();
+    return value;
 }
 
 void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl& rawUrl, QUrl& normalizedUrl) const
@@ -85,8 +96,8 @@ void WfsCapabilitiesParser::createGetFeatureUrl(const QString& featureName, QUrl
     query.addQueryItem("version", "1.1.0");
     query.addQueryItem("request", "GetFeature");
     query.addQueryItem("typeName", featureName);
-    rawUrl = _url; // copy
+    rawUrl = _wfsResource.url(); // copy
     rawUrl.setQuery(query);
-    normalizedUrl = _url.toString(QUrl::RemoveQuery) + "/" + featureName;
+    normalizedUrl = _wfsResource.url().toString(QUrl::RemoveQuery) + "/" + featureName;
 }
 

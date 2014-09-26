@@ -15,6 +15,7 @@ public:
     int srsDimension() const;
     QString geometryAtttributeName() const;
     QMap<QString,QString> namespaceMappings() const;
+    QString featureType()const;
     Resource resource() const;
     QString currentItem() const;
 
@@ -22,6 +23,7 @@ public:
     void setSrsDimension(int srsDimension);
     void setGeometryAtttributeName(QString geometryAtttributeName);
     void addNamespaceMapping(QString prefix, QString uriNamespace);
+    void setFeatureType(QString featureType);
     void setResource(Resource resource);
     void setCurrentItem(QString item);
 
@@ -29,6 +31,7 @@ private:
     QString _srsName;
     int _srsDimension;
     QString _currentItem;
+    QString _featureType;
     QString _geometryAttributeName;
     QMap<QString,QString> _namespaceMappings;
     Resource _resource;
