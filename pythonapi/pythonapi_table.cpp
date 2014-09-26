@@ -18,7 +18,7 @@
 
 namespace pythonapi {
 
-    Table::Table(){
+    Table::Table(){        
     }
 
     Table::Table(Ilwis::ITable *table):IlwisObject(new Ilwis::IIlwisObject(*table)){

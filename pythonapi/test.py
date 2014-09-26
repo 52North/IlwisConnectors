@@ -90,7 +90,7 @@ try:
             self.assertFalse(fc.isInternal(), msg="created a new table object with that name!!")
             self.assertEqual(
                 ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
-                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT'),
+                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum'),
                 fc.attributeTable().columns()
             )
 
@@ -1221,7 +1221,10 @@ try:
                 #polygon.setAttribute("maxY", 0)
                 for point in distribution:
                     if polygon.geometry().contains(point.geometry()):
-                        maxval = max(polygon.attribute("maxY", 0), point.attribute("freq_speciesY", 0))
+                        if polygon.attribute("maxY", 0) != '?':
+                            maxval = max(polygon.attribute("maxY", 0), point.attribute("freq_speciesY", 0))
+                        else:
+                            maxval = 0
                         polygon.setAttribute("maxY", maxval)
                     #print(count)
 
@@ -2231,7 +2234,7 @@ try:
 
     #here you can chose which test case will be executed
     if __name__ == "__main__":
-        ut.main(defaultTest=None, verbosity=2)
+        ut.main(defaultTest='TestExample', verbosity=2)
 
 except ImportError as e:
     print(e)
