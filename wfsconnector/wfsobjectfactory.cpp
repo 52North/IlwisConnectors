@@ -15,6 +15,12 @@
 #include "connectorfactory.h"
 #include "ilwisobjectconnector.h"
 #include "geometries.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "attributedefinition.h"
+#include "coverage.h"
+#include "featurecoverage.h"
+#include "table.h"
 
 #include "wfsparsingcontext.h"
 #include "wfsfeatureconnector.h"

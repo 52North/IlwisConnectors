@@ -19,9 +19,9 @@
 #include "textdomain.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
-#include "attributerecord.h"
-#include "feature.h"
+#include "coverage.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "featureiterator.h"
 #include "ilwisobjectconnector.h"
 #include "wfsparsingcontext.h"
@@ -46,15 +46,18 @@ WfsFeatureConnector::WfsFeatureConnector(const Resource &resource, bool load, co
 
 
 Ilwis::IlwisObject* WfsFeatureConnector::create() const {
+    qDebug() << "WfsFeatureConnector::create -> FeatureCoverage";
     return new FeatureCoverage(this->_resource);
 }
 
 bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const IOOptions&)
 {
+    qDebug() << "WfsFeatureConnector::loadMetaData()";
+
     QUrl featureUrl = source().url(true);
     WebFeatureService wfs(featureUrl);
     QUrlQuery queryFeatureType(featureUrl);
-    WfsResponse *featureDescriptionResponse = wfs.describeFeatureType(queryFeatureType);
+    SPWfsResponse featureDescriptionResponse = wfs.describeFeatureType(queryFeatureType);
     WfsFeatureDescriptionParser schemaParser(featureDescriptionResponse);
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
@@ -62,8 +65,9 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const IOOptions
     return schemaParser.parseMetadata(fcoverage, _context);
 }
 
-bool WfsFeatureConnector::loadData(IlwisObject *data)
+bool WfsFeatureConnector::loadData(IlwisObject *data, const IOOptions &)
 {
+    qDebug() << "WfsFeatureConnector::loadData()";
 
     // TODO: check how to avoid double loading metadata
     if(!loadMetaData(data, IOOptions()))
@@ -75,7 +79,7 @@ bool WfsFeatureConnector::loadData(IlwisObject *data)
     WebFeatureService wfs(featureUrl);
 
     QUrlQuery queryFeature(featureUrl);
-    WfsResponse *response = wfs.getFeature(queryFeature);
+    SPWfsResponse response = wfs.getFeature(queryFeature);
     WfsFeatureParser featureParser(response, fcoverage);
 
     featureParser.context(_context);

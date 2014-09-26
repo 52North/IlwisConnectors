@@ -58,4 +58,9 @@ OTHER_FILES += \
     wfsconnector/wfsconnector.json \
     wfsconnector/scratch_pad.txt
 
+resources.files = \
+    wfsconnector/resources/codes_with_latlon_order.txt
+
+resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
+
 

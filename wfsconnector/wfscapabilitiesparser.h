@@ -5,31 +5,29 @@
 
 #include <QList>
 
+#include "xpathparser.h"
+
 class QUrl;
 class QXmlItem;
 
 namespace Ilwis {
-
-class XPathParser;
-
 namespace Wfs {
 
 class WFSCONNECTORSHARED_EXPORT WfsCapabilitiesParser
 {
 public:
-    WfsCapabilitiesParser(WfsResponse *response, QUrl wfsUrl);
-    ~WfsCapabilitiesParser();
+    WfsCapabilitiesParser(const SPWfsResponse response, const Resource wfsResource);
 
     void parseFeatures(std::vector<Ilwis::Resource> &wfsFeaturesTypes);
 
 private:
-    QUrl _url;
-    XPathParser *_parser;
+    Resource _wfsResource;
+    UPXPathParser _parser;
 
     void createGetFeatureUrl(const QString &featureType, QUrl &rawUrl, QUrl &normalizedUrl) const;
-    void parseFeature(QXmlItem &item, WfsFeature &feature) const;
+    void parseFeature(QXmlItem &item, WfsFeature &feature);
 
-    QString valueOf(QXmlItem &item, const QString &xpathQuqery) const;
+    QString valueOf(const QXmlItem &item, const QString &xpathQuery);
 };
 }
 }

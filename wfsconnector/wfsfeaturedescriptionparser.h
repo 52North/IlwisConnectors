@@ -16,7 +16,7 @@ class WFSCONNECTORSHARED_EXPORT WfsFeatureDescriptionParser
 {
 public:
     WfsFeatureDescriptionParser();
-    WfsFeatureDescriptionParser(WfsResponse *response);
+    WfsFeatureDescriptionParser(SPWfsResponse response);
     ~WfsFeatureDescriptionParser();
 
     bool parseMetadata(FeatureCoverage *fcoverage, WfsParsingContext &context);

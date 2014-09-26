@@ -16,7 +16,7 @@ class QNetworkAccessManager;
 namespace Ilwis {
 namespace Wfs {
 
-class WFSCONNECTORSHARED_EXPORT WfsResponse: QObject
+class WFSCONNECTORSHARED_EXPORT WfsResponse: public QObject
 {
     Q_OBJECT
 
@@ -100,6 +100,11 @@ private:
     void initialize();
 
 };
+
+
+typedef QSharedPointer<WfsResponse> SPWfsResponse;
+
+
 }
 }
 

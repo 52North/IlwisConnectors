@@ -12,9 +12,10 @@
 #include "textdomain.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
-#include "feature.h"
+#include "attributedefinition.h"
 #include "coverage.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "table.h"
 
 #include "postgresqltableloader.h"
@@ -25,7 +26,6 @@ using namespace Postgresql;
 
 PostgresqlTableLoader::PostgresqlTableLoader(Resource resource): _resource(resource)
 {
-    PostgresqlDatabaseUtil::openForResource(_resource,"tableloader");
 }
 
 PostgresqlTableLoader::~PostgresqlTableLoader()
@@ -48,6 +48,7 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
     sqlBuilder.append(" table_name='").append(rawTablename).append("';");
     qDebug() << "SQL: " << sqlBuilder;
 
+    PostgresqlDatabaseUtil::openForResource(_resource, "tableloader");
     QSqlDatabase db = QSqlDatabase::database("tableloader");
     QSqlQuery columnTypesQuery = db.exec(sqlBuilder);
 
@@ -61,27 +62,11 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
             }
         }
     }
-
-//    sqlBuilder.clear();
-//    sqlBuilder.append("SELECT ");
-//    sqlBuilder.append(" count ( * ) ");
-//    sqlBuilder.append(" FROM ");
-//    sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
-//    sqlBuilder.append(";");
-//    qDebug() << "SQL: " << sqlBuilder;
-
-//    QSqlQuery countQuery = db.exec(sqlBuilder);
-
-//    if (countQuery.next()) {
-//        table->recordCount(countQuery.value(0).toInt());
-//    } else {
-//        ERROR2("Could not execute query '%1' on '%2'", sqlBuilder, rawTablename);
-//    }
-
+    db.close();
     return table->isValid();
 }
 
-QSqlQuery PostgresqlTableLoader::select(QString columns) const
+QString PostgresqlTableLoader::select(QString columns) const
 {
     QString sqlBuilder;
     sqlBuilder.append("SELECT ");
@@ -89,9 +74,7 @@ QSqlQuery PostgresqlTableLoader::select(QString columns) const
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
     qDebug() << "SQL: " << sqlBuilder;
-
-    QSqlDatabase db = QSqlDatabase::database("tableloader");
-    return db.exec(sqlBuilder);
+    return sqlBuilder;
 }
 
 bool PostgresqlTableLoader::loadData(Table *table) const
@@ -99,22 +82,18 @@ bool PostgresqlTableLoader::loadData(Table *table) const
     QString allNonGeometryColumns;
     for (int i = 0; i < table->columnCount(); i++) {
         ColumnDefinition& coldef = table->columndefinitionRef(i);
-        if (coldef.name() == FEATUREIDCOLUMN) {
-            continue; // coverage-only attribute
-        }
         allNonGeometryColumns.append(" ").append(coldef.name()).append(" ,");
     }
     allNonGeometryColumns = allNonGeometryColumns.left(allNonGeometryColumns.length() - 1);
-    QSqlQuery query = select(allNonGeometryColumns);
+    PostgresqlDatabaseUtil::openForResource(_resource,"tableloader.loadData");
+    QSqlDatabase db = QSqlDatabase::database("tableloader.loadData");
+    QSqlQuery query = db.exec(select(allNonGeometryColumns));
 
     quint64 count = 0;
     while (query.next()) {
         std::vector<QVariant> record(table->columnCount());
         for (int i = 0; i < table->columnCount(); i++) {
             ColumnDefinition& coldef = table->columndefinitionRef(i);
-            if (coldef.name() == FEATUREIDCOLUMN) {
-                continue; // if coverage table
-            }
             DataDefinition& datadef = coldef.datadef();
             if( !datadef.domain().isValid()) {
                 WARN2(ERR_NO_INITIALIZED_2, "domain", coldef.name());
@@ -125,6 +104,7 @@ bool PostgresqlTableLoader::loadData(Table *table) const
         }
         table->record(count++, record);
     }
+    db.close();
     return true;
 }
 
@@ -158,9 +138,7 @@ bool PostgresqlTableLoader::createColumnDefinition(Table *table, QSqlQuery *quer
     } else if (udtName == "bool") {
         domain.prepare("boolean", itBOOL);
     } else if (udtName == "geometry") {
-        // table describes features
-        table->addColumn(FEATUREIDCOLUMN, "count");
-        return true;
+        return true; // handled automatically
     } else {
         MESSAGE1("No domain handle for db type '%1')", udtName);
         return false;

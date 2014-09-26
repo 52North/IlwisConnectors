@@ -389,7 +389,7 @@ IniFile *Ilwis3Connector::makeIni(const Resource &resource, IlwisTypes type)
 }
 
 QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name, IlwisTypes type) {
-    QString file = path;
+    QString file = path.indexOf("file://") == 0 ? QUrl(path).toLocalFile() : path;
     if ( file == "")
         file = _resource.url().toString();
     if ( file.indexOf("file:///") != -1){

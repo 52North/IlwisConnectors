@@ -65,6 +65,7 @@ private:
     void storeSegment(const UPGeometry &geom, const FeatureCoverage *fcov, std::ofstream &output_file, double &raw);
     void storePolygon(const UPGeometry &geom, const FeatureCoverage *fcov, std::ofstream &output_file, double &raw);
     void storePoint(const UPGeometry &geom, const FeatureCoverage *fcov, std::ofstream &output_file, double &raw);
+    quint32 countPolygons(FeatureCoverage *fcov);
 };
 }
 }
