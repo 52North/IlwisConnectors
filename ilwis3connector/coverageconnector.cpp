@@ -326,16 +326,17 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     if ( index != -1) {
         dataFile = dataFile.left(index);
     }else{
-        if ( tp == itPOLYGON)
-            attDom += ".mpa";
-        if ( tp == itRASTER)
-            attDom += ".mpr";
-        if ( tp == itPOINT)
-            attDom += ".mpp";
-        if ( tp == itLINE)
-            attDom += ".mps";
+//        if ( tp == itPOLYGON)
+//            attDom += ".mpa";
+//        if ( tp == itRASTER)
+//            attDom += ".mpr";
+//        if ( tp == itPOINT)
+//            attDom += ".mpp";
+//        if ( tp == itLINE)
+//            attDom += ".mps";
+        attDom  += ".dom";
     }
-    if ( attTable->columnCount() > 1) { // one column means only featurid which we dont save.
+    if ( attTable->columnCount() > 0) { // one column means only featurid which we dont save.
         QFileInfo inf(dataFile);
         QString filename = dataFile + ".tbt";
         _odf->setKeyValue("BaseMap","AttributeTable",filename);
@@ -350,9 +351,10 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
 DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const IOOptions &options) const{
     IDomain dom;
     QString domname = odf->value("BaseMap","Domain");
-    QString filename = kernel()->database().findAlias(QFileInfo(domname).baseName().toLower(),"domain","ilwis3");
+    QString filename = name2Code(domname, "domain");
     if ( filename == sUNDEF)
         filename = context()->workingCatalog()->resolve(domname, itDOMAIN);
+
     if(!dom.prepare(filename, options)) {
         ERROR2(ERR_NO_INITIALIZED_2,"domain",odf->file());
         return DataDefinition();

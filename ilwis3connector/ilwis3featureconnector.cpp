@@ -480,28 +480,15 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     FeatureIterator iter(cov);
     double raw = 1;
     for_each(iter, iter.end(), [&](SPFeatureI feature){
-        const UPGeometry& geom = feature->geometry();
-        for(int i=0; i < feature->subFeatureCount(); ++i) {
-            geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
-            if ( geostype == geos::geom::GEOS_POLYGON || geostype == geos::geom::GEOS_MULTIPOLYGON) {
-                const geos::geom::Geometry *polygons = geom.get();
-                if ( geostype == geos::geom::GEOS_POLYGON ){
-                    const geos::geom::Polygon *polygon = dynamic_cast<const geos::geom::Polygon*>(polygons);
-                    if ( !polygon)
-                        return ERROR2(ERR_NO_INITIALIZED_2, "polygon", fcov->name());
-                    writePolygon(polygon,output_file,raw);
-                } else {
-                    int n = polygons->getNumGeometries();
-                    for(int i = 0; i < n ; ++i){
-                        const geos::geom::Polygon* polygon = dynamic_cast<const geos::geom::Polygon*>(polygons->getGeometryN(i));
-                        if ( !polygon)
-                            return ERROR2(ERR_NO_INITIALIZED_2, "polygon", fcov->name());
-                        writePolygon(polygon,output_file,raw);
-                    }
-                }
-
-                ++raw;
+        storePolygon(feature->geometry(), fcov,output_file,raw);
+        auto indexes = fcov->attributeDefinitions().indexes();
+        for(auto index : indexes) {
+            auto subfeature = feature[index];
+            if (!subfeature.get()) {
+                continue;
             }
+            storePolygon(subfeature->geometry(), fcov,output_file,raw);
+
         }
         return true;
     });
@@ -511,6 +498,32 @@ bool FeatureConnector::storeBinaryDataPolygon(FeatureCoverage *fcov, const QStri
     return true;
 }
 
+void FeatureConnector::storePolygon(const UPGeometry& geom, const FeatureCoverage *fcov, std::ofstream& output_file, double& raw){
+    geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
+    if ( geostype == geos::geom::GEOS_POLYGON || geostype == geos::geom::GEOS_MULTIPOLYGON) {
+        const geos::geom::Geometry *polygons = geom.get();
+        if ( geostype == geos::geom::GEOS_POLYGON ){
+            const geos::geom::Polygon *polygon = dynamic_cast<const geos::geom::Polygon*>(polygons);
+            if ( !polygon){
+                ERROR2(ERR_NO_INITIALIZED_2, "polygon", fcov->name());
+                return;
+            }
+            writePolygon(polygon,output_file,raw);
+        } else {
+            int n = polygons->getNumGeometries();
+            for(int i = 0; i < n ; ++i){
+                const geos::geom::Polygon* polygon = dynamic_cast<const geos::geom::Polygon*>(polygons->getGeometryN(i));
+                if ( !polygon){
+                    ERROR2(ERR_NO_INITIALIZED_2, "polygon", fcov->name());
+                    return;
+                }
+                writePolygon(polygon,output_file,raw);
+            }
+        }
+
+        ++raw;
+    }
+}
 
 void FeatureConnector::writeLine(const geos::geom::LineString* line,std::ofstream& output_file,long raw ) {
     if (!line)
@@ -547,28 +560,15 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
     double raw = 1;
 
     for_each(iter, iter.end(), [&](SPFeatureI feature){
-        const UPGeometry& geom = feature->geometry();
-        for(int i=0; i < feature->subFeatureCount(); ++i) {
-            geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
-            if ( geostype == geos::geom::GEOS_MULTILINESTRING || geos::geom::GEOS_LINESTRING) {
-
-                const geos::geom::Geometry *lines = geom.get();
-                if ( geostype == geos::geom::GEOS_LINESTRING ){
-                    const geos::geom::LineString *line = dynamic_cast<const geos::geom::LineString*>(lines);
-                    if ( !line)
-                        return ERROR2(ERR_NO_INITIALIZED_2, "lines", fcov->name());
-                    writeLine(line,output_file,raw);
-                } else {
-                    int n = lines->getNumGeometries();
-                    for(int i = 0; i < n ; ++i){
-                        const geos::geom::LineString* line = dynamic_cast<const geos::geom::LineString*>(lines->getGeometryN(i));
-                        if ( !line)
-                            return ERROR2(ERR_NO_INITIALIZED_2, "lines", fcov->name());
-                        writeLine(line,output_file,raw);
-                    }
-                }
-                ++raw;
+        storeSegment(feature->geometry(), fcov,output_file,raw);
+        auto indexes = fcov->attributeDefinitions().indexes();
+        for(auto index : indexes) {
+            auto subfeature = feature[index];
+            if (!subfeature.get()) {
+                continue;
             }
+            storeSegment(subfeature->geometry(), fcov,output_file,raw);
+
         }
         return true;
     });
@@ -578,6 +578,32 @@ bool FeatureConnector::storeBinaryDataLine(FeatureCoverage *fcov, const QString&
     return true;
 }
 
+void FeatureConnector::storeSegment(const UPGeometry& geom, const FeatureCoverage *fcov, std::ofstream& output_file, double& raw){
+    geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
+    if ( geostype == geos::geom::GEOS_MULTILINESTRING || geos::geom::GEOS_LINESTRING) {
+
+        const geos::geom::Geometry *lines = geom.get();
+        if ( geostype == geos::geom::GEOS_LINESTRING ){
+            const geos::geom::LineString *line = dynamic_cast<const geos::geom::LineString*>(lines);
+            if ( !line){
+                ERROR2(ERR_NO_INITIALIZED_2, "lines", fcov->name());
+                return;
+            }
+            writeLine(line,output_file,raw);
+        } else {
+            int n = lines->getNumGeometries();
+            for(int i = 0; i < n ; ++i){
+                const geos::geom::LineString *line = dynamic_cast<const geos::geom::LineString*>(lines->getGeometryN(i));
+                if ( !line){
+                    ERROR2(ERR_NO_INITIALIZED_2, "lines", fcov->name());
+                    return;
+                }
+                writeLine(line,output_file,raw);
+            }
+        }
+        ++raw;
+    }
+}
 void FeatureConnector::writePoint(const geos::geom::Point* point,std::ofstream& output_file,long raw ) {
     writeCoord(output_file, *(point->getCoordinate()));
     output_file.write((char *)&raw, 4);
@@ -599,28 +625,15 @@ bool FeatureConnector::storeBinaryDataPoints(FeatureCoverage *fcov, const QStrin
     double raw = 1;
 
     for_each(iter, iter.end(), [&](SPFeatureI feature){
-        const UPGeometry& geom = feature->geometry();
-        for(int i=0; i < feature->subFeatureCount(); ++i) {
-            geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
-            if ( geostype == geos::geom::GEOS_MULTIPOINT ||geostype == geos::geom::GEOS_POINT) {
-
-                const geos::geom::Geometry *points = geom.get();
-                if ( geostype == geos::geom::GEOS_POINT ){
-                    const geos::geom::Point *point = dynamic_cast<const geos::geom::Point*>(points);
-                    if ( !point)
-                        return ERROR2(ERR_NO_INITIALIZED_2, "points", fcov->name());
-                    writePoint(point,output_file, raw);
-                } else {
-                    int n = points->getNumGeometries();
-                    for(int i = 0; i < n ; ++i){
-                        const geos::geom::Point* point = dynamic_cast<const geos::geom::Point*>(points->getGeometryN(i));
-                        if ( !point)
-                            return ERROR2(ERR_NO_INITIALIZED_2, "points", fcov->name());
-                        writePoint(point,output_file, raw);
-                    }
-                }
-                ++raw;
+        storePoint(feature->geometry(), fcov,output_file,raw);
+        auto indexes = fcov->attributeDefinitions().indexes();
+        for(auto index : indexes) {
+            auto subfeature = feature[index];
+            if (!subfeature.get()) {
+                continue;
             }
+            storePoint(subfeature->geometry(), fcov,output_file,raw);
+
         }
         return true;
     });
@@ -628,6 +641,33 @@ bool FeatureConnector::storeBinaryDataPoints(FeatureCoverage *fcov, const QStrin
     output_file.close();
 
     return true;
+}
+
+void FeatureConnector::storePoint(const UPGeometry& geom, const FeatureCoverage *fcov, std::ofstream& output_file, double& raw){
+    geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
+    if ( geostype == geos::geom::GEOS_MULTIPOINT ||geostype == geos::geom::GEOS_POINT) {
+
+        const geos::geom::Geometry *points = geom.get();
+        if ( geostype == geos::geom::GEOS_POINT ){
+            const geos::geom::Point *point = dynamic_cast<const geos::geom::Point*>(points);
+            if ( !point){
+                ERROR2(ERR_NO_INITIALIZED_2, "points", fcov->name());
+                return;
+            }
+            writePoint(point,output_file, raw);
+        } else {
+            int n = points->getNumGeometries();
+            for(int i = 0; i < n ; ++i){
+                const geos::geom::Point* point = dynamic_cast<const geos::geom::Point*>(points->getGeometryN(i));
+                if ( !point){
+                    ERROR2(ERR_NO_INITIALIZED_2, "points", fcov->name());
+                    return;
+                }
+                writePoint(point,output_file, raw);
+            }
+        }
+        ++raw;
+    }
 }
 
 bool FeatureConnector::storeBinaryData(FeatureCoverage *fcov, bool isMulti,IlwisTypes type) {
@@ -797,6 +837,10 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         }
         indexdom->setRange(range);
         datadef.domain(indexdom);
+        QFileInfo inf ( _resource.url().toLocalFile());
+        QString filename = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + inf.baseName() + ".dom";
+        indexdom->connectTo(filename,"domain","ilwis3", Ilwis::IlwisObject::cmOUTPUT);
+        indexdom->store();
     }
     bool isMulti = (fcov->featureTypes() & (fcov->featureTypes() - 1)) != 0;
     QString baseName = Ilwis3Connector::outputNameFor(fcov, isMulti, type);
@@ -831,7 +875,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         ok = storeMetaPoint(fcov, baseName);
         ext = "mpp";
     }
-    if ( attTable.isValid() && attTable->columnCount() > 1) {
+    if ( attTable.isValid() && attTable->columnCount() > 0) {
         QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, fcov, type,baseName));
         std::vector<quint32> recs(_itemCount);
         conn->selectedRecords(recs);
@@ -860,7 +904,7 @@ bool FeatureConnector::storeBinaryDataTable(IlwisObject *obj, IlwisTypes tp, con
 {
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
     ITable attTable = fcoverage->attributeTable();
-    if ( attTable.isValid() && attTable->columnCount() > 1) {
+    if ( attTable.isValid() && attTable->columnCount() > 0) {
         QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, fcoverage, tp, baseName));
         IFeatureCoverage cov(fcoverage);
         FeatureIterator iter(cov);
