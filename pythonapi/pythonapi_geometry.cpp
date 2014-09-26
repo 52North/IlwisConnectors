@@ -19,12 +19,15 @@
 #include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/geometryhelper.h"
 
+
 #include "../../IlwisCore/core/ilwisobjects/domain/domain.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/datadefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
-#include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
 
+#include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
+#include "../../IlwisCore/core/ilwisobjects/table/attributedefinition.h"
+#include "../../IlwisCore/core/ilwisobjects/coverage/featurecoverage.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/feature.h"
 
 #include "pythonapi_geometry.h"
@@ -53,12 +56,10 @@ Geometry::Geometry(geos::geom::Geometry* geometry, const Ilwis::ICoordinateSyste
     Ilwis::GeometryHelper::setCoordinateSystem(this->_ilwisGeometry.get(),csy.ptr());
 }
 
-Geometry::Geometry(Feature* feature, PyObject* index):
+Geometry::Geometry(Feature* feature):
     _standalone(false),
     _feature(feature),
     _ilwisGeometry(nullptr){
-    QVariant* qIndex = PyObject2QVariant(index);
-    _index = *qIndex;
 }
 
 Geometry::~Geometry(){
@@ -68,7 +69,7 @@ bool Geometry::__bool__() const{
     if (this->_standalone){
         return this->_ilwisGeometry != nullptr && (bool)this->_ilwisGeometry && this->_ilwisGeometry->isValid();
     }else{
-        return this->_feature != nullptr && (bool)this->_feature && this->_feature->__bool__() && (bool)this->_feature->ptr()->geometry(this->_index) && this->_feature->ptr()->geometry(this->_index)->isValid();
+        return this->_feature != nullptr && (bool)this->_feature && this->_feature->__bool__() && (bool)this->_feature->ptr()->geometry() && this->_feature->ptr()->geometry()->isValid();
     }
 }
 
@@ -95,7 +96,7 @@ void Geometry::fromWKT(const std::string& wkt){
             this->_ilwisGeometry.reset(fromWKTReader(wkt));
         }else{
             if (this->_feature != nullptr && (bool)this->_feature && this->_feature->__bool__()){
-                this->_feature->ptr()->set(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt), Ilwis::ICoordinateSystem()), this->_index);
+                this->_feature->ptr()->geometry(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt), Ilwis::ICoordinateSystem()));
             }else
                 throw InvalidObject("invalid referenc to hosting feature of non-standalone geometry!");
         }
@@ -103,7 +104,7 @@ void Geometry::fromWKT(const std::string& wkt){
         if (_standalone){
             this->_ilwisGeometry.reset(fromWKTReader(wkt));
         }else{
-            this->_feature->ptr()->set(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt), Ilwis::ICoordinateSystem()), this->_index);
+            this->_feature->ptr()->geometry(Ilwis::GeometryHelper::fromWKT(QString::fromStdString(wkt), Ilwis::ICoordinateSystem()));
         }
     }
 }
@@ -240,7 +241,7 @@ const std::unique_ptr<geos::geom::Geometry>& Geometry::ptr() const{
     }else{
         if (!this->__bool__())
             throw InvalidObject("invalid Geometry!");
-        return this->_feature->ptr()->geometry(this->_index);
+        return this->_feature->ptr()->geometry();
     }
 }
 

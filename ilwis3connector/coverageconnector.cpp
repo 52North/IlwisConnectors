@@ -175,41 +175,44 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
     // create a suitable filepath
     if ( csy->code() != "unknown"){
-        _csyName = Resource::toLocalFile(csy->source().url(),true, "csy");
-        if ( csy->isInternalObject()){
-            QString csyFile = Resource::toLocalFile(source().url(),false, "csy");
-            int index = csy->source().url().toString().lastIndexOf("/");
-            QString name = csy->source().url().toString().mid(index + 1);
-            _csyName =  QFileInfo(csyFile).absolutePath() + "/" + name;
-        }
-        else if ( _csyName == sUNDEF || _csyName == "") {
-            QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
-            QString name = csy->name();
-            if ( !csy->isAnonymous()) {
-                name = name.replace(QRegExp("[/ .'\"]"),"_");
+        if ( csy->code() != "epsg:4326"){
+            _csyName = Resource::toLocalFile(csy->source().url(),true, "csy");
+            if ( csy->isInternalObject()){
+                QString csyFile = Resource::toLocalFile(source().url(),false, "csy");
+                int index = csy->source().url().toString().lastIndexOf("/");
+                QString name = csy->source().url().toString().mid(index + 1);
+                _csyName =  QFileInfo(csyFile).absolutePath() + "/" + name;
             }
-            _csyName = path + name;
-            if ( !_csyName.endsWith(".csy"))
-                _csyName += ".csy";
-            //return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
-        }
-
-        QFileInfo csyinf(_csyName);
-        if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
-            if (!csyinf.isAbsolute()){
-                _csyName = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + _csyName;
+            else if ( _csyName == sUNDEF || _csyName == "") {
+                QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
+                QString name = csy->name();
+                if ( !csy->isAnonymous()) {
+                    name = name.replace(QRegExp("[/ .'\"]"),"_");
+                }
+                _csyName = path + name;
+                if ( !_csyName.endsWith(".csy"))
+                    _csyName += ".csy";
+                //return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
             }
 
-            QUrl url = QUrl::fromLocalFile(_csyName); // new attempt to create a suitable path;
-            csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
-            if(!csy->store({"storemode",Ilwis::IlwisObject::smMETADATA})){ // fail, we default to unknown
-                _csyName = "Unknown.csy";
-                WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
-            } else {
-                _csyName = url.toLocalFile();
+            QFileInfo csyinf(_csyName);
+            if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
+                if (!csyinf.isAbsolute()){
+                    _csyName = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + _csyName;
+                }
+
+                QUrl url = QUrl::fromLocalFile(_csyName); // new attempt to create a suitable path;
+                csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
+                if(!csy->store({"storemode",Ilwis::IlwisObject::smMETADATA})){ // fail, we default to unknown
+                    _csyName = "Unknown.csy";
+                    WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
+                } else {
+                    _csyName = url.toLocalFile();
+                }
             }
-        }
-        _odf->setKeyValue("BaseMap","CoordSystem", QFileInfo(_csyName).fileName());
+            _odf->setKeyValue("BaseMap","CoordSystem", QFileInfo(_csyName).fileName());
+        }else
+            _odf->setKeyValue("BaseMap","CoordSystem", "LatLonWGS84");
     }else
         _odf->setKeyValue("BaseMap","CoordSystem", "unknown.csy");
 
@@ -292,10 +295,8 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             _odf->setKeyValue("BaseMap","Domain",_domainName);
         } else if ( dom->valueType() == itNAMEDITEM) {
             INamedIdDomain iddom = dom.as<NamedIdDomain>();
-            _domainName = Resource::toLocalFile(dom->source().url(), true);
-            if ( _domainName == sUNDEF){
-                _domainName = QFileInfo(baseName).baseName() + ".dom";
-            }
+            _domainName = baseName + ".dom"; // Resource::toLocalFile(dom->source().url(), true);
+            _domainName = QFileInfo(_domainName).fileName();
             _domainInfo = QString("%1;Int;id;%2;;").arg(_domainName).arg(iddom->count());
             _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
             _odf->setKeyValue("BaseMap","Domain",_domainName);
@@ -326,16 +327,17 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     if ( index != -1) {
         dataFile = dataFile.left(index);
     }else{
-        if ( tp == itPOLYGON)
-            attDom += ".mpa";
-        if ( tp == itRASTER)
-            attDom += ".mpr";
-        if ( tp == itPOINT)
-            attDom += ".mpp";
-        if ( tp == itLINE)
-            attDom += ".mps";
+//        if ( tp == itPOLYGON)
+//            attDom += ".mpa";
+//        if ( tp == itRASTER)
+//            attDom += ".mpr";
+//        if ( tp == itPOINT)
+//            attDom += ".mpp";
+//        if ( tp == itLINE)
+//            attDom += ".mps";
+        attDom  += ".dom";
     }
-    if ( attTable->columnCount() > 1) { // one column means only featurid which we dont save.
+    if ( attTable->columnCount() > 0) { // one column means only featurid which we dont save.
         QFileInfo inf(dataFile);
         QString filename = dataFile + ".tbt";
         _odf->setKeyValue("BaseMap","AttributeTable",filename);
@@ -350,7 +352,10 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
 DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const IOOptions &options) const{
     IDomain dom;
     QString domname = odf->value("BaseMap","Domain");
-    QString filename = context()->workingCatalog()->resolve(domname, itDOMAIN);
+    QString filename = name2Code(domname, "domain");
+    if ( filename == sUNDEF)
+        filename = context()->workingCatalog()->resolve(domname, itDOMAIN);
+
     if(!dom.prepare(filename, options)) {
         ERROR2(ERR_NO_INITIALIZED_2,"domain",odf->file());
         return DataDefinition();

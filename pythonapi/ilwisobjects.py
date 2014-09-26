@@ -1324,43 +1324,6 @@ class Coverage(IlwisObject):
     atINDEX = _ilwisobjects.Coverage_atINDEX
     __swig_destroy__ = _ilwisobjects.delete_Coverage
     __del__ = lambda self : None;
-    def addAttribute(self, *args):
-        """
-        addAttribute(Coverage self, std::string const & name, std::string const & domain) -> bool
-        addAttribute(Coverage self, std::string const & name, Domain domain) -> bool
-        addAttribute(Coverage self, ColumnDefinition domain) -> bool
-        """
-        return _ilwisobjects.Coverage_addAttribute(self, *args)
-
-    def attributeCount(self):
-        """attributeCount(Coverage self) -> quint32"""
-        return _ilwisobjects.Coverage_attributeCount(self)
-
-    def attributes(self):
-        """attributes(Coverage self) -> PyObject *"""
-        return _ilwisobjects.Coverage_attributes(self)
-
-    def attributeTable(self, *args):
-        """
-        attributeTable(Coverage self, pythonapi::Coverage::AttributeType attType=atCOVERAGE) -> Table
-        attributeTable(Coverage self) -> Table
-        """
-        return _ilwisobjects.Coverage_attributeTable(self, *args)
-
-    def setTable(self, *args):
-        """
-        setTable(Coverage self, Table tbl, pythonapi::Coverage::AttributeType attType=atCOVERAGE)
-        setTable(Coverage self, Table tbl)
-        """
-        return _ilwisobjects.Coverage_setTable(self, *args)
-
-    def hasAttributes(self, *args):
-        """
-        hasAttributes(Coverage self, pythonapi::Coverage::AttributeType attType=atCOVERAGE) -> bool
-        hasAttributes(Coverage self) -> bool
-        """
-        return _ilwisobjects.Coverage_hasAttributes(self, *args)
-
     def coordinateSystem(self):
         """coordinateSystem(Coverage self) -> CoordinateSystem"""
         return _ilwisobjects.Coverage_coordinateSystem(self)
@@ -1372,21 +1335,6 @@ class Coverage(IlwisObject):
     def setEnvelope(self, *args):
         """setEnvelope(Coverage self, Envelope env)"""
         return _ilwisobjects.Coverage_setEnvelope(self, *args)
-
-    def indexDomain(self, *args):
-        """indexDomain(Coverage self, Domain dom)"""
-        return _ilwisobjects.Coverage_indexDomain(self, *args)
-
-    def indexValues(self):
-        """indexValues(Coverage self) -> PyObject *"""
-        return _ilwisobjects.Coverage_indexValues(self)
-
-    def value(self, *args):
-        """
-        value(Coverage self, std::string const & colName, quint32 itemid, qint32 layerIndex=-1) -> PyObject
-        value(Coverage self, std::string const & colName, quint32 itemid) -> PyObject *
-        """
-        return _ilwisobjects.Coverage_value(self, *args)
 
 Coverage_swigregister = _ilwisobjects.Coverage_swigregister
 Coverage_swigregister(Coverage)
@@ -1403,7 +1351,7 @@ class Geometry(Object):
     def __init__(self, *args): 
         """
         __init__(pythonapi::Geometry self, std::string wkt, CoordinateSystem csy) -> Geometry
-        __init__(pythonapi::Geometry self, Feature feature, PyObject * index) -> Geometry
+        __init__(pythonapi::Geometry self, Feature feature) -> Geometry
         """
         this = _ilwisobjects.new_Geometry(*args)
         try: self.this.append(this)
@@ -1574,9 +1522,9 @@ class Feature(Object):
         """__iter__(Feature self) -> VertexIterator"""
         return _ilwisobjects.Feature___iter__(self)
 
-    def id(self):
-        """id(Feature self) -> quint64"""
-        return _ilwisobjects.Feature_id(self)
+    def createSubFeature(self, *args):
+        """createSubFeature(Feature self, PyObject * subFeatureIndex, Geometry geom) -> Feature"""
+        return _ilwisobjects.Feature_createSubFeature(self, *args)
 
     def __getitem__(self, *args):
         """
@@ -1587,11 +1535,8 @@ class Feature(Object):
 
     def attribute(self, *args):
         """
-        attribute(Feature self, std::string name, qint64 defaultValue, PyObject * index=None) -> PyObject
         attribute(Feature self, std::string name, qint64 defaultValue) -> PyObject
-        attribute(Feature self, std::string name, double defaultValue, PyObject * index=None) -> PyObject
         attribute(Feature self, std::string name, double defaultValue) -> PyObject
-        attribute(Feature self, std::string name, std::string defaultValue, PyObject * index=None) -> PyObject
         attribute(Feature self, std::string name, std::string defaultValue) -> PyObject *
         """
         return _ilwisobjects.Feature_attribute(self, *args)
@@ -1607,13 +1552,9 @@ class Feature(Object):
 
     def setAttribute(self, *args):
         """
-        setAttribute(Feature self, std::string name, PyObject const * value, PyObject * index=None)
         setAttribute(Feature self, std::string name, PyObject const * value)
-        setAttribute(Feature self, std::string name, qint64 value, PyObject * index=None)
         setAttribute(Feature self, std::string name, qint64 value)
-        setAttribute(Feature self, std::string name, double value, PyObject * index=None)
         setAttribute(Feature self, std::string name, double value)
-        setAttribute(Feature self, std::string name, std::string value, PyObject * index=None)
         setAttribute(Feature self, std::string name, std::string value)
         """
         return _ilwisobjects.Feature_setAttribute(self, *args)
@@ -1622,51 +1563,60 @@ class Feature(Object):
         """ilwisType(Feature self) -> IlwisTypes"""
         return _ilwisobjects.Feature_ilwisType(self)
 
-    def geometry(self, index=None):
+    def geometry(self, *args):
         """
-        geometry(Feature self, PyObject * index=None) -> Geometry
         geometry(Feature self) -> Geometry
+        geometry(Feature self, Geometry geom)
         """
-        return _ilwisobjects.Feature_geometry(self, index)
+        return _ilwisobjects.Feature_geometry(self, *args)
 
-    def setGeometry(self, *args):
-        """
-        setGeometry(Feature self, Geometry geometry, PyObject * index=None)
-        setGeometry(Feature self, Geometry geometry)
-        """
-        return _ilwisobjects.Feature_setGeometry(self, *args)
-
-    def addGeometry(self, *args):
-        """
-        addGeometry(Feature self, Geometry geometry, PyObject * index=None)
-        addGeometry(Feature self, Geometry geometry)
-        """
-        return _ilwisobjects.Feature_addGeometry(self, *args)
-
-    def removeGeometry(self, *args):
-        """removeGeometry(Feature self, PyObject * index)"""
-        return _ilwisobjects.Feature_removeGeometry(self, *args)
+    def geometryType(self):
+        """geometryType(Feature self) -> IlwisTypes"""
+        return _ilwisobjects.Feature_geometryType(self)
 
     def featureId(self):
         """featureId(Feature self) -> quint64"""
         return _ilwisobjects.Feature_featureId(self)
 
-    def trackSize(self):
-        """trackSize(Feature self) -> quint32"""
-        return _ilwisobjects.Feature_trackSize(self)
-
-    def columnDefinition(self, *args):
+    def attributeDefinition(self, *args):
         """
-        columnDefinition(Feature self, std::string const & name, bool coverages=True) -> ColumnDefinition
-        columnDefinition(Feature self, std::string const & name) -> ColumnDefinition
-        columnDefinition(Feature self, quint32 index, bool coverages=True) -> ColumnDefinition
-        columnDefinition(Feature self, quint32 index) -> ColumnDefinition
+        attributeDefinition(Feature self, std::string const & name) -> ColumnDefinition
+        attributeDefinition(Feature self, quint32 index) -> ColumnDefinition
         """
-        return _ilwisobjects.Feature_columnDefinition(self, *args)
+        return _ilwisobjects.Feature_attributeDefinition(self, *args)
 
-    def trackIndexValue(self, *args):
-        """trackIndexValue(Feature self, quint32 index) -> PyObject *"""
-        return _ilwisobjects.Feature_trackIndexValue(self, *args)
+    def attributeColumnCount(self):
+        """attributeColumnCount(Feature self) -> quint32"""
+        return _ilwisobjects.Feature_attributeColumnCount(self)
+
+    def removeSubFeature(self, *args):
+        """
+        removeSubFeature(Feature self, std::string const & subFeatureIndex)
+        removeSubFeature(Feature self, double subFeatureIndex)
+        """
+        return _ilwisobjects.Feature_removeSubFeature(self, *args)
+
+    def setSubFeature(self, *args):
+        """
+        setSubFeature(Feature self, std::string const & subFeatureIndex, Feature feature)
+        setSubFeature(Feature self, double subFeatureIndex, Feature feature)
+        """
+        return _ilwisobjects.Feature_setSubFeature(self, *args)
+
+    def subFeatureCount(self):
+        """subFeatureCount(Feature self) -> quint32"""
+        return _ilwisobjects.Feature_subFeatureCount(self)
+
+    def setRecord(self, *args):
+        """
+        setRecord(Feature self, PyObject * pyValues, quint32 offset=0)
+        setRecord(Feature self, PyObject * pyValues)
+        """
+        return _ilwisobjects.Feature_setRecord(self, *args)
+
+    def record(self):
+        """record(Feature self) -> PyObject *"""
+        return _ilwisobjects.Feature_record(self)
 
     def begin(self):
         """begin(Feature self) -> VertexIterator"""
@@ -1776,7 +1726,7 @@ class FeatureCoverage(Coverage):
         return _ilwisobjects.FeatureCoverage_featureCount(self)
 
     def setFeatureCount(self, *args):
-        """setFeatureCount(FeatureCoverage self, IlwisTypes type, quint32 geomCnt, quint32 subGeomCnt, int index)"""
+        """setFeatureCount(FeatureCoverage self, IlwisTypes type, quint32 geomCnt)"""
         return _ilwisobjects.FeatureCoverage_setFeatureCount(self, *args)
 
     def newFeature(self, *args):
@@ -1795,6 +1745,80 @@ class FeatureCoverage(Coverage):
         """reprojectFeatures(FeatureCoverage self, CoordinateSystem csy)"""
         return _ilwisobjects.FeatureCoverage_reprojectFeatures(self, *args)
 
+    def attributeTable(self):
+        """attributeTable(FeatureCoverage self) -> Table"""
+        return _ilwisobjects.FeatureCoverage_attributeTable(self)
+
+    def attributesFromTable(self, *args):
+        """attributesFromTable(FeatureCoverage self, Table otherTable)"""
+        return _ilwisobjects.FeatureCoverage_attributesFromTable(self, *args)
+
+    def addColumn(self, *args):
+        """
+        addColumn(FeatureCoverage self, ColumnDefinition coldef) -> bool
+        addColumn(FeatureCoverage self, std::string const & name, std::string const & domainname) -> bool
+        """
+        return _ilwisobjects.FeatureCoverage_addColumn(self, *args)
+
+    def columndefinition(self, *args):
+        """
+        columndefinition(FeatureCoverage self, std::string const & nme) -> ColumnDefinition
+        columndefinition(FeatureCoverage self, quint32 index) -> ColumnDefinition
+        """
+        return _ilwisobjects.FeatureCoverage_columndefinition(self, *args)
+
+    def setColumndefinition(self, *args):
+        """setColumndefinition(FeatureCoverage self, ColumnDefinition coldef)"""
+        return _ilwisobjects.FeatureCoverage_setColumndefinition(self, *args)
+
+    def columnIndex(self, *args):
+        """columnIndex(FeatureCoverage self, std::string const & nme) -> quint32"""
+        return _ilwisobjects.FeatureCoverage_columnIndex(self, *args)
+
+    def __getitem__(self, *args):
+        """__getitem__(FeatureCoverage self, quint32 index) -> ColumnDefinition"""
+        return _ilwisobjects.FeatureCoverage___getitem__(self, *args)
+
+    def checkInput(self, *args):
+        """checkInput(FeatureCoverage self, PyObject * inputVar, quint32 columnIndex) -> PyObject *"""
+        return _ilwisobjects.FeatureCoverage_checkInput(self, *args)
+
+    def definitionCount(self):
+        """definitionCount(FeatureCoverage self) -> quint32"""
+        return _ilwisobjects.FeatureCoverage_definitionCount(self)
+
+    def setSubDefinition(self, *args):
+        """setSubDefinition(FeatureCoverage self, Domain dom, PyObject * items)"""
+        return _ilwisobjects.FeatureCoverage_setSubDefinition(self, *args)
+
+    def indexOf(self, *args):
+        """
+        indexOf(FeatureCoverage self, std::string const & variantId) -> quint32
+        indexOf(FeatureCoverage self, double domainItem) -> quint32
+        indexOf(FeatureCoverage self, PyObject * obj) -> quint32
+        """
+        return _ilwisobjects.FeatureCoverage_indexOf(self, *args)
+
+    def atIndex(self, *args):
+        """atIndex(FeatureCoverage self, quint32 idx) -> std::string"""
+        return _ilwisobjects.FeatureCoverage_atIndex(self, *args)
+
+    def indexes(self):
+        """indexes(FeatureCoverage self) -> PyObject *"""
+        return _ilwisobjects.FeatureCoverage_indexes(self)
+
+    def countSubs(self):
+        """countSubs(FeatureCoverage self) -> quint32"""
+        return _ilwisobjects.FeatureCoverage_countSubs(self)
+
+    def subDomain(self):
+        """subDomain(FeatureCoverage self) -> Domain"""
+        return _ilwisobjects.FeatureCoverage_subDomain(self)
+
+    def clear(self):
+        """clear(FeatureCoverage self)"""
+        return _ilwisobjects.FeatureCoverage_clear(self)
+
     def toFeatureCoverage(*args):
         """toFeatureCoverage(Object obj) -> FeatureCoverage"""
         return _ilwisobjects.FeatureCoverage_toFeatureCoverage(*args)
@@ -1804,10 +1828,6 @@ class FeatureCoverage(Coverage):
     def select(self, *args):
         """select(FeatureCoverage self, std::string const & spatialQuery) -> PyObject *"""
         return _ilwisobjects.FeatureCoverage_select(self, *args)
-
-    def maxIndex(self):
-        """maxIndex(FeatureCoverage self) -> quint32"""
-        return _ilwisobjects.FeatureCoverage_maxIndex(self)
 
     def clone(self):
         """clone(FeatureCoverage self) -> FeatureCoverage"""
@@ -2221,6 +2241,42 @@ class RasterCoverage(Coverage):
     def addBand(self, *args):
         """addBand(RasterCoverage self, PyObject * pyTrackIndex, PixelIterator pyIter)"""
         return _ilwisobjects.RasterCoverage_addBand(self, *args)
+
+    def setBandDefinition(self, *args):
+        """setBandDefinition(RasterCoverage self, PyObject * pyTrackIndex, DataDefinition datdef)"""
+        return _ilwisobjects.RasterCoverage_setBandDefinition(self, *args)
+
+    def setSubDefinition(self, *args):
+        """setSubDefinition(RasterCoverage self, Domain dom, PyObject * items)"""
+        return _ilwisobjects.RasterCoverage_setSubDefinition(self, *args)
+
+    def indexOf(self, *args):
+        """
+        indexOf(RasterCoverage self, std::string const & variantId) -> quint32
+        indexOf(RasterCoverage self, double domainItem) -> quint32
+        indexOf(RasterCoverage self, PyObject * obj) -> quint32
+        """
+        return _ilwisobjects.RasterCoverage_indexOf(self, *args)
+
+    def atIndex(self, *args):
+        """atIndex(RasterCoverage self, quint32 idx) -> std::string"""
+        return _ilwisobjects.RasterCoverage_atIndex(self, *args)
+
+    def indexes(self):
+        """indexes(RasterCoverage self) -> PyObject *"""
+        return _ilwisobjects.RasterCoverage_indexes(self)
+
+    def countSubs(self):
+        """countSubs(RasterCoverage self) -> quint32"""
+        return _ilwisobjects.RasterCoverage_countSubs(self)
+
+    def subDomain(self):
+        """subDomain(RasterCoverage self) -> Domain"""
+        return _ilwisobjects.RasterCoverage_subDomain(self)
+
+    def clear(self):
+        """clear(RasterCoverage self)"""
+        return _ilwisobjects.RasterCoverage_clear(self)
 
     def select(self, *args):
         """

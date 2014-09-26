@@ -15262,656 +15262,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Coverage_addAttribute__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  std::string *arg2 = 0 ;
-  std::string *arg3 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  int res3 = SWIG_OLDOBJ ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  bool result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:Coverage_addAttribute",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_addAttribute" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Coverage_addAttribute" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_addAttribute" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Coverage_addAttribute" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_addAttribute" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    arg3 = ptr;
-  }
-  {
-    try {
-      result = (bool)(arg1)->addAttribute((std::string const &)*arg2,(std::string const &)*arg3);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_addAttribute__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  std::string *arg2 = 0 ;
-  pythonapi::Domain *arg3 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  bool result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:Coverage_addAttribute",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_addAttribute" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Coverage_addAttribute" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_addAttribute" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__Domain,  0  | 0);
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Coverage_addAttribute" "', argument " "3"" of type '" "pythonapi::Domain const &""'"); 
-  }
-  if (!argp3) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_addAttribute" "', argument " "3"" of type '" "pythonapi::Domain const &""'"); 
-  }
-  arg3 = reinterpret_cast< pythonapi::Domain * >(argp3);
-  {
-    try {
-      result = (bool)(arg1)->addAttribute((std::string const &)*arg2,(pythonapi::Domain const &)*arg3);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_addAttribute__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  pythonapi::ColumnDefinition *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  bool result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Coverage_addAttribute",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_addAttribute" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__ColumnDefinition,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Coverage_addAttribute" "', argument " "2"" of type '" "pythonapi::ColumnDefinition const &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_addAttribute" "', argument " "2"" of type '" "pythonapi::ColumnDefinition const &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::ColumnDefinition * >(argp2);
-  {
-    try {
-      result = (bool)(arg1)->addAttribute((pythonapi::ColumnDefinition const &)*arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_addAttribute(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[4];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__ColumnDefinition, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_Coverage_addAttribute__SWIG_2(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_pythonapi__Domain, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          return _wrap_Coverage_addAttribute__SWIG_1(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          return _wrap_Coverage_addAttribute__SWIG_0(self, args);
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Coverage_addAttribute'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Coverage::addAttribute(std::string const &,std::string const &)\n"
-    "    pythonapi::Coverage::addAttribute(std::string const &,pythonapi::Domain const &)\n"
-    "    pythonapi::Coverage::addAttribute(pythonapi::ColumnDefinition const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_attributeCount(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  quint32 result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:Coverage_attributeCount",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_attributeCount" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  {
-    try {
-      result = (quint32)(arg1)->attributeCount();
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_attributes(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:Coverage_attributes",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_attributes" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  {
-    try {
-      result = (PyObject *)(arg1)->attributes();
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = result;
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_attributeTable__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  pythonapi::Coverage::AttributeType arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  pythonapi::Table result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Coverage_attributeTable",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_attributeTable" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Coverage_attributeTable" "', argument " "2"" of type '" "pythonapi::Coverage::AttributeType""'");
-  } 
-  arg2 = static_cast< pythonapi::Coverage::AttributeType >(val2);
-  {
-    try {
-      result = (arg1)->attributeTable(arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_NewPointerObj((new pythonapi::Table(static_cast< const pythonapi::Table& >(result))), SWIGTYPE_p_pythonapi__Table, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_attributeTable__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  pythonapi::Table result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:Coverage_attributeTable",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_attributeTable" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  {
-    try {
-      result = (arg1)->attributeTable();
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_NewPointerObj((new pythonapi::Table(static_cast< const pythonapi::Table& >(result))), SWIGTYPE_p_pythonapi__Table, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_attributeTable(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[3];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_Coverage_attributeTable__SWIG_1(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_Coverage_attributeTable__SWIG_0(self, args);
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Coverage_attributeTable'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Coverage::attributeTable(pythonapi::Coverage::AttributeType)\n"
-    "    pythonapi::Coverage::attributeTable()\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_setTable__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  pythonapi::Table *arg2 = 0 ;
-  pythonapi::Coverage::AttributeType arg3 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:Coverage_setTable",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_setTable" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Table,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Coverage_setTable" "', argument " "2"" of type '" "pythonapi::Table &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_setTable" "', argument " "2"" of type '" "pythonapi::Table &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::Table * >(argp2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Coverage_setTable" "', argument " "3"" of type '" "pythonapi::Coverage::AttributeType""'");
-  } 
-  arg3 = static_cast< pythonapi::Coverage::AttributeType >(val3);
-  {
-    try {
-      (arg1)->setTable(*arg2,arg3);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_setTable__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  pythonapi::Table *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Coverage_setTable",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_setTable" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Table,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Coverage_setTable" "', argument " "2"" of type '" "pythonapi::Table &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_setTable" "', argument " "2"" of type '" "pythonapi::Table &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::Table * >(argp2);
-  {
-    try {
-      (arg1)->setTable(*arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_setTable(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[4];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Table, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_Coverage_setTable__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Table, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_int(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_Coverage_setTable__SWIG_0(self, args);
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Coverage_setTable'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Coverage::setTable(pythonapi::Table &,pythonapi::Coverage::AttributeType)\n"
-    "    pythonapi::Coverage::setTable(pythonapi::Table &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_hasAttributes__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  pythonapi::Coverage::AttributeType arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  bool result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Coverage_hasAttributes",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_hasAttributes" "', argument " "1"" of type '" "pythonapi::Coverage const *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Coverage_hasAttributes" "', argument " "2"" of type '" "pythonapi::Coverage::AttributeType""'");
-  } 
-  arg2 = static_cast< pythonapi::Coverage::AttributeType >(val2);
-  {
-    try {
-      result = (bool)((pythonapi::Coverage const *)arg1)->hasAttributes(arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_hasAttributes__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  bool result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:Coverage_hasAttributes",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_hasAttributes" "', argument " "1"" of type '" "pythonapi::Coverage const *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  {
-    try {
-      result = (bool)((pythonapi::Coverage const *)arg1)->hasAttributes();
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_hasAttributes(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[3];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_Coverage_hasAttributes__SWIG_1(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_Coverage_hasAttributes__SWIG_0(self, args);
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Coverage_hasAttributes'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Coverage::hasAttributes(pythonapi::Coverage::AttributeType) const\n"
-    "    pythonapi::Coverage::hasAttributes() const\n");
-  return 0;
-}
-
-
 SWIGINTERN PyObject *_wrap_Coverage_coordinateSystem(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
@@ -16010,256 +15360,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Coverage_indexDomain(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  pythonapi::Domain *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Coverage_indexDomain",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_indexDomain" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Domain,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Coverage_indexDomain" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_indexDomain" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::Domain * >(argp2);
-  {
-    try {
-      (arg1)->indexDomain((pythonapi::Domain const &)*arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_indexValues(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:Coverage_indexValues",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_indexValues" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  {
-    try {
-      result = (PyObject *)(arg1)->indexValues();
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = result;
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_value__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  std::string *arg2 = 0 ;
-  quint32 arg3 ;
-  qint32 arg4 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  unsigned int val3 ;
-  int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:Coverage_value",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_value" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Coverage_value" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_value" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  ecode3 = SWIG_AsVal_unsigned_SS_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Coverage_value" "', argument " "3"" of type '" "quint32""'");
-  } 
-  arg3 = static_cast< quint32 >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Coverage_value" "', argument " "4"" of type '" "qint32""'");
-  } 
-  arg4 = static_cast< qint32 >(val4);
-  {
-    try {
-      result = (PyObject *)(arg1)->value((std::string const &)*arg2,arg3,arg4);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = result;
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_value__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Coverage *arg1 = (pythonapi::Coverage *) 0 ;
-  std::string *arg2 = 0 ;
-  quint32 arg3 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  unsigned int val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:Coverage_value",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Coverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Coverage_value" "', argument " "1"" of type '" "pythonapi::Coverage *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Coverage * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Coverage_value" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Coverage_value" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  ecode3 = SWIG_AsVal_unsigned_SS_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Coverage_value" "', argument " "3"" of type '" "quint32""'");
-  } 
-  arg3 = static_cast< quint32 >(val3);
-  {
-    try {
-      result = (PyObject *)(arg1)->value((std::string const &)*arg2,arg3);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = result;
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Coverage_value(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[5];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_unsigned_SS_int(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_Coverage_value__SWIG_1(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Coverage, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_unsigned_SS_int(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            return _wrap_Coverage_value__SWIG_0(self, args);
-          }
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Coverage_value'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Coverage::value(std::string const &,quint32,qint32)\n"
-    "    pythonapi::Coverage::value(std::string const &,quint32)\n");
-  return 0;
-}
-
-
 SWIGINTERN PyObject *Coverage_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
@@ -16313,23 +15413,20 @@ fail:
 SWIGINTERN PyObject *_wrap_new_Geometry__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  PyObject *arg2 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
   pythonapi::Geometry *result = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:new_Geometry",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:new_Geometry",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Geometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  arg2 = obj1;
   {
     try {
-      result = (pythonapi::Geometry *)new pythonapi::Geometry(arg1,arg2);
+      result = (pythonapi::Geometry *)new pythonapi::Geometry(arg1);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -16352,16 +15449,13 @@ SWIGINTERN PyObject *_wrap_new_Geometry(PyObject *self, PyObject *args) {
   for (ii = 0; (ii < 2) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
   }
-  if (argc == 2) {
+  if (argc == 1) {
     int _v;
     void *vptr = 0;
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      _v = (argv[1] != 0);
-      if (_v) {
-        return _wrap_new_Geometry__SWIG_1(self, args);
-      }
+      return _wrap_new_Geometry__SWIG_1(self, args);
     }
   }
   if (argc == 2) {
@@ -16381,7 +15475,7 @@ fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_Geometry'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    pythonapi::Geometry::Geometry(std::string,pythonapi::CoordinateSystem const &)\n"
-    "    pythonapi::Geometry::Geometry(pythonapi::Feature *,PyObject *)\n");
+    "    pythonapi::Geometry::Geometry(pythonapi::Feature *)\n");
   return 0;
 }
 
@@ -17914,29 +17008,44 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Feature_id(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Feature_createSubFeature(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  PyObject *arg2 = (PyObject *) 0 ;
+  pythonapi::Geometry *arg3 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
   PyObject * obj0 = 0 ;
-  quint64 result;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  SwigValueWrapper< pythonapi::Feature > result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:Feature_id",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOO:Feature_createSubFeature",&obj0,&obj1,&obj2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_id" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_createSubFeature" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  arg2 = obj1;
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__Geometry,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Feature_createSubFeature" "', argument " "3"" of type '" "pythonapi::Geometry const &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_createSubFeature" "', argument " "3"" of type '" "pythonapi::Geometry const &""'"); 
+  }
+  arg3 = reinterpret_cast< pythonapi::Geometry * >(argp3);
   {
     try {
-      result = (quint64)(arg1)->id();
+      result = (arg1)->createSubFeature(arg2,(pythonapi::Geometry const &)*arg3);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
-  resultobj = SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(result));
+  resultobj = SWIG_NewPointerObj((new pythonapi::Feature(static_cast< const pythonapi::Feature& >(result))), SWIGTYPE_p_pythonapi__Feature, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -18074,7 +17183,6 @@ SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_0(PyObject *SWIGUNUSEDPARM(se
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
   qint64 arg3 ;
-  PyObject *arg4 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   long long val3 ;
@@ -18082,10 +17190,9 @@ SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_0(PyObject *SWIGUNUSEDPARM(se
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
   PyObject *result = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:Feature_attribute",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOO:Feature_attribute",&obj0,&obj1,&obj2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_attribute" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
@@ -18105,10 +17212,9 @@ SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_0(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_attribute" "', argument " "3"" of type '" "qint64""'");
   } 
   arg3 = static_cast< qint64 >(val3);
-  arg4 = obj3;
   {
     try {
-      result = (PyObject *)(arg1)->attribute(arg2,arg3,arg4);
+      result = (PyObject *)(arg1)->attribute(arg2,arg3);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -18125,10 +17231,10 @@ SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_1(PyObject *SWIGUNUSEDPARM(se
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
-  qint64 arg3 ;
+  double arg3 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  long long val3 ;
+  double val3 ;
   int ecode3 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
@@ -18150,11 +17256,11 @@ SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_1(PyObject *SWIGUNUSEDPARM(se
     arg2 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
   }
-  ecode3 = SWIG_AsVal_long_SS_long(obj2, &val3);
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
   if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_attribute" "', argument " "3"" of type '" "qint64""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_attribute" "', argument " "3"" of type '" "double""'");
   } 
-  arg3 = static_cast< qint64 >(val3);
+  arg3 = static_cast< double >(val3);
   {
     try {
       result = (PyObject *)(arg1)->attribute(arg2,arg3);
@@ -18171,161 +17277,6 @@ fail:
 
 
 SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  std::string arg2 ;
-  double arg3 ;
-  PyObject *arg4 = (PyObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:Feature_attribute",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_attribute" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Feature_attribute" "', argument " "2"" of type '" "std::string""'"); 
-    }
-    arg2 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_attribute" "', argument " "3"" of type '" "double""'");
-  } 
-  arg3 = static_cast< double >(val3);
-  arg4 = obj3;
-  {
-    try {
-      result = (PyObject *)(arg1)->attribute(arg2,arg3,arg4);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = result;
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  std::string arg2 ;
-  double arg3 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:Feature_attribute",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_attribute" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Feature_attribute" "', argument " "2"" of type '" "std::string""'"); 
-    }
-    arg2 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_attribute" "', argument " "3"" of type '" "double""'");
-  } 
-  arg3 = static_cast< double >(val3);
-  {
-    try {
-      result = (PyObject *)(arg1)->attribute(arg2,arg3);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = result;
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_4(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  std::string arg2 ;
-  std::string arg3 ;
-  PyObject *arg4 = (PyObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:Feature_attribute",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_attribute" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Feature_attribute" "', argument " "2"" of type '" "std::string""'"); 
-    }
-    arg2 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj2, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Feature_attribute" "', argument " "3"" of type '" "std::string""'"); 
-    }
-    arg3 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  arg4 = obj3;
-  {
-    try {
-      result = (PyObject *)(arg1)->attribute(arg2,arg3,arg4);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = result;
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_attribute__SWIG_5(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
@@ -18378,12 +17329,12 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Feature_attribute(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[5];
+  PyObject *argv[4];
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
   }
   if (argc == 3) {
@@ -18397,6 +17348,25 @@ SWIGINTERN PyObject *_wrap_Feature_attribute(PyObject *self, PyObject *args) {
       if (_v) {
         {
           int res = SWIG_AsVal_long_SS_long(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_Feature_attribute__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
           _v = SWIG_CheckState(res);
         }
         if (_v) {
@@ -18414,93 +17384,10 @@ SWIGINTERN PyObject *_wrap_Feature_attribute(PyObject *self, PyObject *args) {
       int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_Feature_attribute__SWIG_3(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
         int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
         _v = SWIG_CheckState(res);
         if (_v) {
-          return _wrap_Feature_attribute__SWIG_5(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_long_SS_long(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          _v = (argv[3] != 0);
-          if (_v) {
-            return _wrap_Feature_attribute__SWIG_0(self, args);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          _v = (argv[3] != 0);
-          if (_v) {
-            return _wrap_Feature_attribute__SWIG_2(self, args);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          _v = (argv[3] != 0);
-          if (_v) {
-            return _wrap_Feature_attribute__SWIG_4(self, args);
-          }
+          return _wrap_Feature_attribute__SWIG_2(self, args);
         }
       }
     }
@@ -18509,11 +17396,8 @@ SWIGINTERN PyObject *_wrap_Feature_attribute(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_attribute'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Feature::attribute(std::string,qint64,PyObject *)\n"
     "    pythonapi::Feature::attribute(std::string,qint64)\n"
-    "    pythonapi::Feature::attribute(std::string,double,PyObject *)\n"
     "    pythonapi::Feature::attribute(std::string,double)\n"
-    "    pythonapi::Feature::attribute(std::string,std::string,PyObject *)\n"
     "    pythonapi::Feature::attribute(std::string,std::string)\n");
   return 0;
 }
@@ -18562,51 +17446,6 @@ fail:
 
 
 SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  std::string arg2 ;
-  PyObject *arg3 = (PyObject *) 0 ;
-  PyObject *arg4 = (PyObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:Feature_setAttribute",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_setAttribute" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Feature_setAttribute" "', argument " "2"" of type '" "std::string""'"); 
-    }
-    arg2 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  arg3 = obj2;
-  arg4 = obj3;
-  {
-    try {
-      (arg1)->setAttribute(arg2,(PyObject const *)arg3,arg4);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
@@ -18696,58 +17535,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  std::string arg2 ;
-  qint64 arg3 ;
-  PyObject *arg4 = (PyObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  long long val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:Feature_setAttribute",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_setAttribute" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Feature_setAttribute" "', argument " "2"" of type '" "std::string""'"); 
-    }
-    arg2 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  ecode3 = SWIG_AsVal_long_SS_long(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_setAttribute" "', argument " "3"" of type '" "qint64""'");
-  } 
-  arg3 = static_cast< qint64 >(val3);
-  arg4 = obj3;
-  {
-    try {
-      (arg1)->setAttribute(arg2,arg3,arg4);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
@@ -18843,58 +17631,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_4(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  std::string arg2 ;
-  double arg3 ;
-  PyObject *arg4 = (PyObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:Feature_setAttribute",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_setAttribute" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Feature_setAttribute" "', argument " "2"" of type '" "std::string""'"); 
-    }
-    arg2 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_setAttribute" "', argument " "3"" of type '" "double""'");
-  } 
-  arg3 = static_cast< double >(val3);
-  arg4 = obj3;
-  {
-    try {
-      (arg1)->setAttribute(arg2,arg3,arg4);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_5(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
@@ -19085,60 +17822,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_6(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  std::string arg2 ;
-  std::string arg3 ;
-  PyObject *arg4 = (PyObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:Feature_setAttribute",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_setAttribute" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Feature_setAttribute" "', argument " "2"" of type '" "std::string""'"); 
-    }
-    arg2 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj2, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Feature_setAttribute" "', argument " "3"" of type '" "std::string""'"); 
-    }
-    arg3 = *ptr;
-    if (SWIG_IsNewObj(res)) delete ptr;
-  }
-  arg4 = obj3;
-  {
-    try {
-      (arg1)->setAttribute(arg2,arg3,arg4);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_7(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Feature_setAttribute__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string arg2 ;
@@ -19190,12 +17874,12 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Feature_setAttribute(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[5];
+  PyObject *argv[4];
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
   }
   if (argc == 3) {
@@ -19212,6 +17896,42 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute(PyObject *self, PyObject *args) 
           _v = SWIG_CheckState(res);
         }
         if (_v) {
+          return _wrap_Feature_setAttribute__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_Feature_setAttribute__SWIG_2(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
+        _v = SWIG_CheckState(res);
+        if (_v) {
           return _wrap_Feature_setAttribute__SWIG_3(self, args);
         }
       }
@@ -19226,128 +17946,9 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute(PyObject *self, PyObject *args) 
       int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_Feature_setAttribute__SWIG_5(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          return _wrap_Feature_setAttribute__SWIG_7(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
         _v = (argv[2] != 0);
         if (_v) {
-          return _wrap_Feature_setAttribute__SWIG_1(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_long_SS_long(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          _v = (argv[3] != 0);
-          if (_v) {
-            return _wrap_Feature_setAttribute__SWIG_2(self, args);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          _v = (argv[3] != 0);
-          if (_v) {
-            return _wrap_Feature_setAttribute__SWIG_4(self, args);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          _v = (argv[3] != 0);
-          if (_v) {
-            return _wrap_Feature_setAttribute__SWIG_6(self, args);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        _v = (argv[2] != 0);
-        if (_v) {
-          _v = (argv[3] != 0);
-          if (_v) {
-            return _wrap_Feature_setAttribute__SWIG_0(self, args);
-          }
+          return _wrap_Feature_setAttribute__SWIG_0(self, args);
         }
       }
     }
@@ -19356,13 +17957,9 @@ SWIGINTERN PyObject *_wrap_Feature_setAttribute(PyObject *self, PyObject *args) 
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_setAttribute'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Feature::setAttribute(std::string,PyObject const *,PyObject *)\n"
     "    pythonapi::Feature::setAttribute(std::string,PyObject const *)\n"
-    "    pythonapi::Feature::setAttribute(std::string,qint64,PyObject *)\n"
     "    pythonapi::Feature::setAttribute(std::string,qint64)\n"
-    "    pythonapi::Feature::setAttribute(std::string,double,PyObject *)\n"
     "    pythonapi::Feature::setAttribute(std::string,double)\n"
-    "    pythonapi::Feature::setAttribute(std::string,std::string,PyObject *)\n"
     "    pythonapi::Feature::setAttribute(std::string,std::string)\n");
   return 0;
 }
@@ -19400,38 +17997,6 @@ fail:
 SWIGINTERN PyObject *_wrap_Feature_geometry__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  PyObject *arg2 = (PyObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  pythonapi::Geometry *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_geometry",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_geometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  arg2 = obj1;
-  {
-    try {
-      result = (pythonapi::Geometry *)(arg1)->geometry(arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__Geometry, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_geometry__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
@@ -19458,6 +18023,46 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Feature_geometry__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  pythonapi::Geometry *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_geometry",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_geometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Geometry,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_geometry" "', argument " "2"" of type '" "pythonapi::Geometry const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_geometry" "', argument " "2"" of type '" "pythonapi::Geometry const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Geometry * >(argp2);
+  {
+    try {
+      (arg1)->geometry((pythonapi::Geometry const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Feature_geometry(PyObject *self, PyObject *args) {
   int argc;
   PyObject *argv[3];
@@ -19474,7 +18079,7 @@ SWIGINTERN PyObject *_wrap_Feature_geometry(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      return _wrap_Feature_geometry__SWIG_1(self, args);
+      return _wrap_Feature_geometry__SWIG_0(self, args);
     }
   }
   if (argc == 2) {
@@ -19483,9 +18088,10 @@ SWIGINTERN PyObject *_wrap_Feature_geometry(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      _v = (argv[1] != 0);
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__Geometry, 0);
+      _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_Feature_geometry__SWIG_0(self, args);
+        return _wrap_Feature_geometry__SWIG_1(self, args);
       }
     }
   }
@@ -19493,305 +18099,35 @@ SWIGINTERN PyObject *_wrap_Feature_geometry(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_geometry'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Feature::geometry(PyObject *)\n"
-    "    pythonapi::Feature::geometry()\n");
+    "    pythonapi::Feature::geometry()\n"
+    "    pythonapi::Feature::geometry(pythonapi::Geometry const &)\n");
   return 0;
 }
 
 
-SWIGINTERN PyObject *_wrap_Feature_setGeometry__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Feature_geometryType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  pythonapi::Geometry *arg2 = 0 ;
-  PyObject *arg3 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
   PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
+  IlwisTypes result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOO:Feature_setGeometry",&obj0,&obj1,&obj2)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:Feature_geometryType",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_setGeometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_geometryType" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Geometry,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_setGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_setGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::Geometry * >(argp2);
-  arg3 = obj2;
   {
     try {
-      (arg1)->setGeometry(*arg2,arg3);
+      result = (IlwisTypes)(arg1)->geometryType();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_setGeometry__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  pythonapi::Geometry *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_setGeometry",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_setGeometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Geometry,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_setGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_setGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::Geometry * >(argp2);
-  {
-    try {
-      (arg1)->setGeometry(*arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_setGeometry(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[4];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Geometry, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_Feature_setGeometry__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Geometry, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        _v = (argv[2] != 0);
-        if (_v) {
-          return _wrap_Feature_setGeometry__SWIG_0(self, args);
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_setGeometry'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Feature::setGeometry(pythonapi::Geometry &,PyObject *)\n"
-    "    pythonapi::Feature::setGeometry(pythonapi::Geometry &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_addGeometry__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  pythonapi::Geometry *arg2 = 0 ;
-  PyObject *arg3 = (PyObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:Feature_addGeometry",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_addGeometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Geometry,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_addGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_addGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::Geometry * >(argp2);
-  arg3 = obj2;
-  {
-    try {
-      (arg1)->addGeometry(*arg2,arg3);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_addGeometry__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  pythonapi::Geometry *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_addGeometry",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_addGeometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Geometry,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_addGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_addGeometry" "', argument " "2"" of type '" "pythonapi::Geometry &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::Geometry * >(argp2);
-  {
-    try {
-      (arg1)->addGeometry(*arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_addGeometry(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[4];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Geometry, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_Feature_addGeometry__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_pythonapi__Geometry, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        _v = (argv[2] != 0);
-        if (_v) {
-          return _wrap_Feature_addGeometry__SWIG_0(self, args);
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_addGeometry'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Feature::addGeometry(pythonapi::Geometry &,PyObject *)\n"
-    "    pythonapi::Feature::addGeometry(pythonapi::Geometry &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_removeGeometry(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  PyObject *arg2 = (PyObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_removeGeometry",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_removeGeometry" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  arg2 = obj1;
-  {
-    try {
-      (arg1)->removeGeometry(arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
+  resultobj = SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(result));
   return resultobj;
 fail:
   return NULL;
@@ -19827,7 +18163,138 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Feature_trackSize(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Feature_attributeDefinition__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::ColumnDefinition result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_attributeDefinition",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_attributeDefinition" "', argument " "1"" of type '" "pythonapi::Feature const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_attributeDefinition" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_attributeDefinition" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = ((pythonapi::Feature const *)arg1)->attributeDefinition((std::string const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::ColumnDefinition(static_cast< const pythonapi::ColumnDefinition& >(result))), SWIGTYPE_p_pythonapi__ColumnDefinition, SWIG_POINTER_OWN |  0 );
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_attributeDefinition__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  quint32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::ColumnDefinition result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_attributeDefinition",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_attributeDefinition" "', argument " "1"" of type '" "pythonapi::Feature const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Feature_attributeDefinition" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  {
+    try {
+      result = ((pythonapi::Feature const *)arg1)->attributeDefinition(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::ColumnDefinition(static_cast< const pythonapi::ColumnDefinition& >(result))), SWIGTYPE_p_pythonapi__ColumnDefinition, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_attributeDefinition(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_Feature_attributeDefinition__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_Feature_attributeDefinition__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_attributeDefinition'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::Feature::attributeDefinition(std::string const &) const\n"
+    "    pythonapi::Feature::attributeDefinition(quint32) const\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_attributeColumnCount(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   void *argp1 = 0 ;
@@ -19835,15 +18302,15 @@ SWIGINTERN PyObject *_wrap_Feature_trackSize(PyObject *SWIGUNUSEDPARM(self), PyO
   PyObject * obj0 = 0 ;
   quint32 result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:Feature_trackSize",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:Feature_attributeColumnCount",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_trackSize" "', argument " "1"" of type '" "pythonapi::Feature const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_attributeColumnCount" "', argument " "1"" of type '" "pythonapi::Feature const *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
   {
     try {
-      result = (quint32)((pythonapi::Feature const *)arg1)->trackSize();
+      result = (quint32)((pythonapi::Feature const *)arg1)->attributeColumnCount();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -19856,61 +18323,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Feature_columnDefinition__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  std::string *arg2 = 0 ;
-  bool arg3 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  bool val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  pythonapi::ColumnDefinition result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:Feature_columnDefinition",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_columnDefinition" "', argument " "1"" of type '" "pythonapi::Feature const *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_columnDefinition" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_columnDefinition" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  ecode3 = SWIG_AsVal_bool(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_columnDefinition" "', argument " "3"" of type '" "bool""'");
-  } 
-  arg3 = static_cast< bool >(val3);
-  {
-    try {
-      result = ((pythonapi::Feature const *)arg1)->columnDefinition((std::string const &)*arg2,arg3);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_NewPointerObj((new pythonapi::ColumnDefinition(static_cast< const pythonapi::ColumnDefinition& >(result))), SWIGTYPE_p_pythonapi__ColumnDefinition, SWIG_POINTER_OWN |  0 );
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Feature_columnDefinition__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Feature_removeSubFeature__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
   std::string *arg2 = 0 ;
@@ -19919,34 +18332,33 @@ SWIGINTERN PyObject *_wrap_Feature_columnDefinition__SWIG_1(PyObject *SWIGUNUSED
   int res2 = SWIG_OLDOBJ ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  pythonapi::ColumnDefinition result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_columnDefinition",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_removeSubFeature",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_columnDefinition" "', argument " "1"" of type '" "pythonapi::Feature const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_removeSubFeature" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(obj1, &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_columnDefinition" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_removeSubFeature" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_columnDefinition" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_removeSubFeature" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     arg2 = ptr;
   }
   {
     try {
-      result = ((pythonapi::Feature const *)arg1)->columnDefinition((std::string const &)*arg2);
+      (arg1)->removeSubFeature((std::string const &)*arg2);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj((new pythonapi::ColumnDefinition(static_cast< const pythonapi::ColumnDefinition& >(result))), SWIGTYPE_p_pythonapi__ColumnDefinition, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
@@ -19955,92 +18367,363 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Feature_columnDefinition__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Feature_setSubFeature__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  quint32 arg2 ;
-  bool arg3 ;
+  std::string *arg2 = 0 ;
+  SwigValueWrapper< pythonapi::Feature > arg3 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  unsigned int val2 ;
+  int res2 = SWIG_OLDOBJ ;
+  void *argp3 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:Feature_setSubFeature",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_setSubFeature" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Feature_setSubFeature" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_setSubFeature" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__Feature,  0  | 0);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Feature_setSubFeature" "', argument " "3"" of type '" "pythonapi::Feature""'"); 
+    }  
+    if (!argp3) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_setSubFeature" "', argument " "3"" of type '" "pythonapi::Feature""'");
+    } else {
+      pythonapi::Feature * temp = reinterpret_cast< pythonapi::Feature * >(argp3);
+      arg3 = *temp;
+      if (SWIG_IsNewObj(res3)) delete temp;
+    }
+  }
+  {
+    try {
+      (arg1)->setSubFeature((std::string const &)*arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_removeSubFeature__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
   int ecode2 = 0 ;
-  bool val3 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_removeSubFeature",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_removeSubFeature" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Feature_removeSubFeature" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      (arg1)->removeSubFeature(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_removeSubFeature(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_Feature_removeSubFeature__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_Feature_removeSubFeature__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_removeSubFeature'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::Feature::removeSubFeature(std::string const &)\n"
+    "    pythonapi::Feature::removeSubFeature(double)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_setSubFeature__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  double arg2 ;
+  SwigValueWrapper< pythonapi::Feature > arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  void *argp3 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:Feature_setSubFeature",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_setSubFeature" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Feature_setSubFeature" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__Feature,  0  | 0);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Feature_setSubFeature" "', argument " "3"" of type '" "pythonapi::Feature""'"); 
+    }  
+    if (!argp3) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Feature_setSubFeature" "', argument " "3"" of type '" "pythonapi::Feature""'");
+    } else {
+      pythonapi::Feature * temp = reinterpret_cast< pythonapi::Feature * >(argp3);
+      arg3 = *temp;
+      if (SWIG_IsNewObj(res3)) delete temp;
+    }
+  }
+  {
+    try {
+      (arg1)->setSubFeature(arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_setSubFeature(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_pythonapi__Feature, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_Feature_setSubFeature__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_pythonapi__Feature, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_Feature_setSubFeature__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_setSubFeature'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::Feature::setSubFeature(std::string const &,pythonapi::Feature)\n"
+    "    pythonapi::Feature::setSubFeature(double,pythonapi::Feature)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_subFeatureCount(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Feature_subFeatureCount",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_subFeatureCount" "', argument " "1"" of type '" "pythonapi::Feature const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
+  {
+    try {
+      result = (quint32)((pythonapi::Feature const *)arg1)->subFeatureCount();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Feature_setRecord__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
+  PyObject *arg2 = (PyObject *) 0 ;
+  quint32 arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val3 ;
   int ecode3 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
-  pythonapi::ColumnDefinition result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOO:Feature_columnDefinition",&obj0,&obj1,&obj2)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOO:Feature_setRecord",&obj0,&obj1,&obj2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_columnDefinition" "', argument " "1"" of type '" "pythonapi::Feature const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_setRecord" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Feature_columnDefinition" "', argument " "2"" of type '" "quint32""'");
-  } 
-  arg2 = static_cast< quint32 >(val2);
-  ecode3 = SWIG_AsVal_bool(obj2, &val3);
+  arg2 = obj1;
+  ecode3 = SWIG_AsVal_unsigned_SS_int(obj2, &val3);
   if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_columnDefinition" "', argument " "3"" of type '" "bool""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Feature_setRecord" "', argument " "3"" of type '" "quint32""'");
   } 
-  arg3 = static_cast< bool >(val3);
+  arg3 = static_cast< quint32 >(val3);
   {
     try {
-      result = ((pythonapi::Feature const *)arg1)->columnDefinition(arg2,arg3);
+      (arg1)->setRecord(arg2,arg3);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj((new pythonapi::ColumnDefinition(static_cast< const pythonapi::ColumnDefinition& >(result))), SWIGTYPE_p_pythonapi__ColumnDefinition, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
 }
 
 
-SWIGINTERN PyObject *_wrap_Feature_columnDefinition__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Feature_setRecord__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  quint32 arg2 ;
+  PyObject *arg2 = (PyObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  unsigned int val2 ;
-  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  pythonapi::ColumnDefinition result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_columnDefinition",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_setRecord",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_columnDefinition" "', argument " "1"" of type '" "pythonapi::Feature const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_setRecord" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Feature_columnDefinition" "', argument " "2"" of type '" "quint32""'");
-  } 
-  arg2 = static_cast< quint32 >(val2);
+  arg2 = obj1;
   {
     try {
-      result = ((pythonapi::Feature const *)arg1)->columnDefinition(arg2);
+      (arg1)->setRecord(arg2);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj((new pythonapi::ColumnDefinition(static_cast< const pythonapi::ColumnDefinition& >(result))), SWIGTYPE_p_pythonapi__ColumnDefinition, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
 }
 
 
-SWIGINTERN PyObject *_wrap_Feature_columnDefinition(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Feature_setRecord(PyObject *self, PyObject *args) {
   int argc;
   PyObject *argv[4];
   int ii;
@@ -20056,25 +18739,9 @@ SWIGINTERN PyObject *_wrap_Feature_columnDefinition(PyObject *self, PyObject *ar
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      {
-        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
+      _v = (argv[1] != 0);
       if (_v) {
-        return _wrap_Feature_columnDefinition__SWIG_3(self, args);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_Feature_columnDefinition__SWIG_1(self, args);
+        return _wrap_Feature_setRecord__SWIG_1(self, args);
       }
     }
   }
@@ -20084,78 +18751,45 @@ SWIGINTERN PyObject *_wrap_Feature_columnDefinition(PyObject *self, PyObject *ar
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      {
-        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
+      _v = (argv[1] != 0);
       if (_v) {
         {
-          int res = SWIG_AsVal_bool(argv[2], NULL);
+          int res = SWIG_AsVal_unsigned_SS_int(argv[2], NULL);
           _v = SWIG_CheckState(res);
         }
         if (_v) {
-          return _wrap_Feature_columnDefinition__SWIG_2(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Feature, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_bool(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_Feature_columnDefinition__SWIG_0(self, args);
+          return _wrap_Feature_setRecord__SWIG_0(self, args);
         }
       }
     }
   }
   
 fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_columnDefinition'.\n"
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Feature_setRecord'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Feature::columnDefinition(std::string const &,bool) const\n"
-    "    pythonapi::Feature::columnDefinition(std::string const &) const\n"
-    "    pythonapi::Feature::columnDefinition(quint32,bool) const\n"
-    "    pythonapi::Feature::columnDefinition(quint32) const\n");
+    "    pythonapi::Feature::setRecord(PyObject *,quint32)\n"
+    "    pythonapi::Feature::setRecord(PyObject *)\n");
   return 0;
 }
 
 
-SWIGINTERN PyObject *_wrap_Feature_trackIndexValue(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Feature_record(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Feature *arg1 = (pythonapi::Feature *) 0 ;
-  quint32 arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  unsigned int val2 ;
-  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
   PyObject *result = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:Feature_trackIndexValue",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:Feature_record",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Feature, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_trackIndexValue" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Feature_record" "', argument " "1"" of type '" "pythonapi::Feature *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::Feature * >(argp1);
-  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Feature_trackIndexValue" "', argument " "2"" of type '" "quint32""'");
-  } 
-  arg2 = static_cast< quint32 >(val2);
   {
     try {
-      result = (PyObject *)(arg1)->trackIndexValue(arg2);
+      result = (PyObject *)(arg1)->record();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -20995,25 +19629,17 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_setFeatureCount(PyObject *SWIGUNUSEDP
   pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
   IlwisTypes arg2 ;
   quint32 arg3 ;
-  quint32 arg4 ;
-  int arg5 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   unsigned long long val2 ;
   int ecode2 = 0 ;
   unsigned int val3 ;
   int ecode3 = 0 ;
-  unsigned int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:FeatureCoverage_setFeatureCount",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOO:FeatureCoverage_setFeatureCount",&obj0,&obj1,&obj2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_setFeatureCount" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
@@ -21029,19 +19655,9 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_setFeatureCount(PyObject *SWIGUNUSEDP
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "FeatureCoverage_setFeatureCount" "', argument " "3"" of type '" "quint32""'");
   } 
   arg3 = static_cast< quint32 >(val3);
-  ecode4 = SWIG_AsVal_unsigned_SS_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "FeatureCoverage_setFeatureCount" "', argument " "4"" of type '" "quint32""'");
-  } 
-  arg4 = static_cast< quint32 >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "FeatureCoverage_setFeatureCount" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
   {
     try {
-      (arg1)->setFeatureCount(arg2,arg3,arg4,arg5);
+      (arg1)->setFeatureCount(arg2,arg3);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -21385,6 +20001,923 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_FeatureCoverage_attributeTable(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::Table result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_attributeTable",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_attributeTable" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  {
+    try {
+      result = (arg1)->attributeTable();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Table(static_cast< const pythonapi::Table& >(result))), SWIGTYPE_p_pythonapi__Table, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_attributesFromTable(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  pythonapi::Table *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage_attributesFromTable",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_attributesFromTable" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Table,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_attributesFromTable" "', argument " "2"" of type '" "pythonapi::Table const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_attributesFromTable" "', argument " "2"" of type '" "pythonapi::Table const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Table * >(argp2);
+  {
+    try {
+      (arg1)->attributesFromTable((pythonapi::Table const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_addColumn__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  pythonapi::ColumnDefinition *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage_addColumn",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_addColumn" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__ColumnDefinition,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_addColumn" "', argument " "2"" of type '" "pythonapi::ColumnDefinition const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_addColumn" "', argument " "2"" of type '" "pythonapi::ColumnDefinition const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::ColumnDefinition * >(argp2);
+  {
+    try {
+      result = (bool)(arg1)->addColumn((pythonapi::ColumnDefinition const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_addColumn__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  int res3 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:FeatureCoverage_addColumn",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_addColumn" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_addColumn" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_addColumn" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "FeatureCoverage_addColumn" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_addColumn" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    try {
+      result = (bool)(arg1)->addColumn((std::string const &)*arg2,(std::string const &)*arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_addColumn(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__FeatureCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__ColumnDefinition, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_FeatureCoverage_addColumn__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__FeatureCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_FeatureCoverage_addColumn__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'FeatureCoverage_addColumn'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::FeatureCoverage::addColumn(pythonapi::ColumnDefinition const &)\n"
+    "    pythonapi::FeatureCoverage::addColumn(std::string const &,std::string const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_columndefinition__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::ColumnDefinition result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage_columndefinition",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_columndefinition" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_columndefinition" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_columndefinition" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = ((pythonapi::FeatureCoverage const *)arg1)->columndefinition((std::string const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::ColumnDefinition(static_cast< const pythonapi::ColumnDefinition& >(result))), SWIGTYPE_p_pythonapi__ColumnDefinition, SWIG_POINTER_OWN |  0 );
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_columndefinition__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  quint32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::ColumnDefinition result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage_columndefinition",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_columndefinition" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "FeatureCoverage_columndefinition" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  {
+    try {
+      result = ((pythonapi::FeatureCoverage const *)arg1)->columndefinition(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::ColumnDefinition(static_cast< const pythonapi::ColumnDefinition& >(result))), SWIGTYPE_p_pythonapi__ColumnDefinition, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_columndefinition(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__FeatureCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_FeatureCoverage_columndefinition__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__FeatureCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_FeatureCoverage_columndefinition__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'FeatureCoverage_columndefinition'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::FeatureCoverage::columndefinition(std::string const &) const\n"
+    "    pythonapi::FeatureCoverage::columndefinition(quint32) const\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_setColumndefinition(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  pythonapi::ColumnDefinition *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage_setColumndefinition",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_setColumndefinition" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__ColumnDefinition,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_setColumndefinition" "', argument " "2"" of type '" "pythonapi::ColumnDefinition const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_setColumndefinition" "', argument " "2"" of type '" "pythonapi::ColumnDefinition const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::ColumnDefinition * >(argp2);
+  {
+    try {
+      (arg1)->setColumndefinition((pythonapi::ColumnDefinition const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_columnIndex(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage_columnIndex",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_columnIndex" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_columnIndex" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_columnIndex" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = (quint32)((pythonapi::FeatureCoverage const *)arg1)->columnIndex((std::string const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage___getitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  quint32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::ColumnDefinition result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage___getitem__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage___getitem__" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "FeatureCoverage___getitem__" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  {
+    try {
+      result = (arg1)->__getitem__(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::ColumnDefinition(static_cast< const pythonapi::ColumnDefinition& >(result))), SWIGTYPE_p_pythonapi__ColumnDefinition, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_checkInput(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  PyObject *arg2 = (PyObject *) 0 ;
+  quint32 arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:FeatureCoverage_checkInput",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_checkInput" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  arg2 = obj1;
+  ecode3 = SWIG_AsVal_unsigned_SS_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "FeatureCoverage_checkInput" "', argument " "3"" of type '" "quint32""'");
+  } 
+  arg3 = static_cast< quint32 >(val3);
+  {
+    try {
+      result = (PyObject *)((pythonapi::FeatureCoverage const *)arg1)->checkInput(arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = result;
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_definitionCount(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_definitionCount",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_definitionCount" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  {
+    try {
+      result = (quint32)((pythonapi::FeatureCoverage const *)arg1)->definitionCount();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_setSubDefinition(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  pythonapi::Domain *arg2 = 0 ;
+  PyObject *arg3 = (PyObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:FeatureCoverage_setSubDefinition",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_setSubDefinition" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Domain,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_setSubDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_setSubDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Domain * >(argp2);
+  arg3 = obj2;
+  {
+    try {
+      (arg1)->setSubDefinition((pythonapi::Domain const &)*arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_indexOf__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage_indexOf",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_indexOf" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_indexOf" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_indexOf" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = (quint32)((pythonapi::FeatureCoverage const *)arg1)->indexOf((std::string const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_indexOf__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage_indexOf",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_indexOf" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "FeatureCoverage_indexOf" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = (quint32)((pythonapi::FeatureCoverage const *)arg1)->indexOf(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_indexOf__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  PyObject *arg2 = (PyObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage_indexOf",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_indexOf" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  arg2 = obj1;
+  {
+    try {
+      result = (quint32)((pythonapi::FeatureCoverage const *)arg1)->indexOf(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_indexOf(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__FeatureCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_FeatureCoverage_indexOf__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__FeatureCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_FeatureCoverage_indexOf__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__FeatureCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      _v = (argv[1] != 0);
+      if (_v) {
+        return _wrap_FeatureCoverage_indexOf__SWIG_2(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'FeatureCoverage_indexOf'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::FeatureCoverage::indexOf(std::string const &) const\n"
+    "    pythonapi::FeatureCoverage::indexOf(double) const\n"
+    "    pythonapi::FeatureCoverage::indexOf(PyObject *) const\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_atIndex(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  quint32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureCoverage_atIndex",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_atIndex" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "FeatureCoverage_atIndex" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  {
+    try {
+      result = ((pythonapi::FeatureCoverage const *)arg1)->atIndex(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_indexes(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_indexes",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_indexes" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  {
+    try {
+      result = (PyObject *)((pythonapi::FeatureCoverage const *)arg1)->indexes();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = result;
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_countSubs(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_countSubs",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_countSubs" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  {
+    try {
+      result = (quint32)((pythonapi::FeatureCoverage const *)arg1)->countSubs();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_subDomain(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::Domain result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_subDomain",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_subDomain" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  {
+    try {
+      result = ((pythonapi::FeatureCoverage const *)arg1)->subDomain();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Domain(static_cast< const pythonapi::Domain& >(result))), SWIGTYPE_p_pythonapi__Domain, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FeatureCoverage_clear(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_clear",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_clear" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
+  {
+    try {
+      (arg1)->clear();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_FeatureCoverage_toFeatureCoverage(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Object *arg1 = (pythonapi::Object *) 0 ;
@@ -21455,35 +20988,6 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_select(PyObject *SWIGUNUSEDPARM(self)
   return resultobj;
 fail:
   if (SWIG_IsNewObj(res2)) delete arg2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_FeatureCoverage_maxIndex(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  quint32 result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_maxIndex",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_maxIndex" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
-  {
-    try {
-      result = (quint32)((pythonapi::FeatureCoverage const *)arg1)->maxIndex();
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
-  return resultobj;
-fail:
   return NULL;
 }
 
@@ -25352,6 +24856,421 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_addBand(PyObject *SWIGUNUSEDPARM(self)
   {
     try {
       (arg1)->addBand(arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_setBandDefinition(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  PyObject *arg2 = (PyObject *) 0 ;
+  pythonapi::DataDefinition *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:RasterCoverage_setBandDefinition",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_setBandDefinition" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  arg2 = obj1;
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__DataDefinition,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "RasterCoverage_setBandDefinition" "', argument " "3"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "RasterCoverage_setBandDefinition" "', argument " "3"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  arg3 = reinterpret_cast< pythonapi::DataDefinition * >(argp3);
+  {
+    try {
+      (arg1)->setBandDefinition(arg2,(pythonapi::DataDefinition const &)*arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_setSubDefinition(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  pythonapi::Domain *arg2 = 0 ;
+  PyObject *arg3 = (PyObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:RasterCoverage_setSubDefinition",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_setSubDefinition" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Domain,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "RasterCoverage_setSubDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "RasterCoverage_setSubDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
+  }
+  arg2 = reinterpret_cast< pythonapi::Domain * >(argp2);
+  arg3 = obj2;
+  {
+    try {
+      (arg1)->setSubDefinition((pythonapi::Domain const &)*arg2,arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_indexOf__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:RasterCoverage_indexOf",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_indexOf" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "RasterCoverage_indexOf" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "RasterCoverage_indexOf" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = (quint32)((pythonapi::RasterCoverage const *)arg1)->indexOf((std::string const &)*arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_indexOf__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:RasterCoverage_indexOf",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_indexOf" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RasterCoverage_indexOf" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = (quint32)((pythonapi::RasterCoverage const *)arg1)->indexOf(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_indexOf__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  PyObject *arg2 = (PyObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:RasterCoverage_indexOf",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_indexOf" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  arg2 = obj1;
+  {
+    try {
+      result = (quint32)((pythonapi::RasterCoverage const *)arg1)->indexOf(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_indexOf(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_RasterCoverage_indexOf__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_RasterCoverage_indexOf__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__RasterCoverage, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      _v = (argv[1] != 0);
+      if (_v) {
+        return _wrap_RasterCoverage_indexOf__SWIG_2(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'RasterCoverage_indexOf'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pythonapi::RasterCoverage::indexOf(std::string const &) const\n"
+    "    pythonapi::RasterCoverage::indexOf(double) const\n"
+    "    pythonapi::RasterCoverage::indexOf(PyObject *) const\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_atIndex(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  quint32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:RasterCoverage_atIndex",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_atIndex" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RasterCoverage_atIndex" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  {
+    try {
+      result = ((pythonapi::RasterCoverage const *)arg1)->atIndex(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_indexes(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_indexes",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_indexes" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  {
+    try {
+      result = (PyObject *)((pythonapi::RasterCoverage const *)arg1)->indexes();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = result;
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_countSubs(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  quint32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_countSubs",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_countSubs" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  {
+    try {
+      result = (quint32)((pythonapi::RasterCoverage const *)arg1)->countSubs();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_subDomain(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::Domain result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_subDomain",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_subDomain" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  {
+    try {
+      result = ((pythonapi::RasterCoverage const *)arg1)->subDomain();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Domain(static_cast< const pythonapi::Domain& >(result))), SWIGTYPE_p_pythonapi__Domain, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RasterCoverage_clear(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_clear",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_clear" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
+  {
+    try {
+      (arg1)->clear();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -36994,38 +36913,13 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"delete_Table", _wrap_delete_Table, METH_VARARGS, (char *)"delete_Table(Table self)"},
 	 { (char *)"Table_swigregister", Table_swigregister, METH_VARARGS, NULL},
 	 { (char *)"delete_Coverage", _wrap_delete_Coverage, METH_VARARGS, (char *)"delete_Coverage(Coverage self)"},
-	 { (char *)"Coverage_addAttribute", _wrap_Coverage_addAttribute, METH_VARARGS, (char *)"\n"
-		"addAttribute(std::string const & name, std::string const & domain) -> bool\n"
-		"addAttribute(std::string const & name, Domain domain) -> bool\n"
-		"Coverage_addAttribute(Coverage self, ColumnDefinition domain) -> bool\n"
-		""},
-	 { (char *)"Coverage_attributeCount", _wrap_Coverage_attributeCount, METH_VARARGS, (char *)"Coverage_attributeCount(Coverage self) -> quint32"},
-	 { (char *)"Coverage_attributes", _wrap_Coverage_attributes, METH_VARARGS, (char *)"Coverage_attributes(Coverage self) -> PyObject *"},
-	 { (char *)"Coverage_attributeTable", _wrap_Coverage_attributeTable, METH_VARARGS, (char *)"\n"
-		"attributeTable(pythonapi::Coverage::AttributeType attType=atCOVERAGE) -> Table\n"
-		"Coverage_attributeTable(Coverage self) -> Table\n"
-		""},
-	 { (char *)"Coverage_setTable", _wrap_Coverage_setTable, METH_VARARGS, (char *)"\n"
-		"setTable(Table tbl, pythonapi::Coverage::AttributeType attType=atCOVERAGE)\n"
-		"Coverage_setTable(Coverage self, Table tbl)\n"
-		""},
-	 { (char *)"Coverage_hasAttributes", _wrap_Coverage_hasAttributes, METH_VARARGS, (char *)"\n"
-		"hasAttributes(pythonapi::Coverage::AttributeType attType=atCOVERAGE) -> bool\n"
-		"Coverage_hasAttributes(Coverage self) -> bool\n"
-		""},
 	 { (char *)"Coverage_coordinateSystem", _wrap_Coverage_coordinateSystem, METH_VARARGS, (char *)"Coverage_coordinateSystem(Coverage self) -> CoordinateSystem"},
 	 { (char *)"Coverage_envelope", _wrap_Coverage_envelope, METH_VARARGS, (char *)"Coverage_envelope(Coverage self) -> Envelope"},
 	 { (char *)"Coverage_setEnvelope", _wrap_Coverage_setEnvelope, METH_VARARGS, (char *)"Coverage_setEnvelope(Coverage self, Envelope env)"},
-	 { (char *)"Coverage_indexDomain", _wrap_Coverage_indexDomain, METH_VARARGS, (char *)"Coverage_indexDomain(Coverage self, Domain dom)"},
-	 { (char *)"Coverage_indexValues", _wrap_Coverage_indexValues, METH_VARARGS, (char *)"Coverage_indexValues(Coverage self) -> PyObject *"},
-	 { (char *)"Coverage_value", _wrap_Coverage_value, METH_VARARGS, (char *)"\n"
-		"value(std::string const & colName, quint32 itemid, qint32 layerIndex=-1) -> PyObject\n"
-		"Coverage_value(Coverage self, std::string const & colName, quint32 itemid) -> PyObject *\n"
-		""},
 	 { (char *)"Coverage_swigregister", Coverage_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_Geometry", _wrap_new_Geometry, METH_VARARGS, (char *)"\n"
 		"Geometry(std::string wkt, CoordinateSystem csy)\n"
-		"new_Geometry(Feature feature, PyObject * index) -> Geometry\n"
+		"new_Geometry(Feature feature) -> Geometry\n"
 		""},
 	 { (char *)"delete_Geometry", _wrap_delete_Geometry, METH_VARARGS, (char *)"delete_Geometry(Geometry self)"},
 	 { (char *)"Geometry___bool__", _wrap_Geometry___bool__, METH_VARARGS, (char *)"Geometry___bool__(Geometry self) -> bool"},
@@ -37069,17 +36963,14 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Feature___bool__", _wrap_Feature___bool__, METH_VARARGS, (char *)"Feature___bool__(Feature self) -> bool"},
 	 { (char *)"Feature___str__", _wrap_Feature___str__, METH_VARARGS, (char *)"Feature___str__(Feature self) -> std::string"},
 	 { (char *)"Feature___iter__", _wrap_Feature___iter__, METH_VARARGS, (char *)"Feature___iter__(Feature self) -> VertexIterator"},
-	 { (char *)"Feature_id", _wrap_Feature_id, METH_VARARGS, (char *)"Feature_id(Feature self) -> quint64"},
+	 { (char *)"Feature_createSubFeature", _wrap_Feature_createSubFeature, METH_VARARGS, (char *)"Feature_createSubFeature(Feature self, PyObject * subFeatureIndex, Geometry geom) -> Feature"},
 	 { (char *)"Feature___getitem__", _wrap_Feature___getitem__, METH_VARARGS, (char *)"\n"
 		"__getitem__(std::string name) -> PyObject\n"
 		"Feature___getitem__(Feature self, quint32 colIndex) -> PyObject *\n"
 		""},
 	 { (char *)"Feature_attribute", _wrap_Feature_attribute, METH_VARARGS, (char *)"\n"
-		"attribute(std::string name, qint64 defaultValue, PyObject * index=None) -> PyObject\n"
 		"attribute(std::string name, qint64 defaultValue) -> PyObject\n"
-		"attribute(std::string name, double defaultValue, PyObject * index=None) -> PyObject\n"
 		"attribute(std::string name, double defaultValue) -> PyObject\n"
-		"attribute(std::string name, std::string defaultValue, PyObject * index=None) -> PyObject\n"
 		"Feature_attribute(Feature self, std::string name, std::string defaultValue) -> PyObject *\n"
 		""},
 	 { (char *)"Feature___setitem__", _wrap_Feature___setitem__, METH_VARARGS, (char *)"\n"
@@ -37089,38 +36980,37 @@ static PyMethodDef SwigMethods[] = {
 		"Feature___setitem__(Feature self, std::string name, std::string value)\n"
 		""},
 	 { (char *)"Feature_setAttribute", _wrap_Feature_setAttribute, METH_VARARGS, (char *)"\n"
-		"setAttribute(std::string name, PyObject const * value, PyObject * index=None)\n"
 		"setAttribute(std::string name, PyObject const * value)\n"
-		"setAttribute(std::string name, qint64 value, PyObject * index=None)\n"
 		"setAttribute(std::string name, qint64 value)\n"
-		"setAttribute(std::string name, double value, PyObject * index=None)\n"
 		"setAttribute(std::string name, double value)\n"
-		"setAttribute(std::string name, std::string value, PyObject * index=None)\n"
 		"Feature_setAttribute(Feature self, std::string name, std::string value)\n"
 		""},
 	 { (char *)"Feature_ilwisType", _wrap_Feature_ilwisType, METH_VARARGS, (char *)"Feature_ilwisType(Feature self) -> IlwisTypes"},
 	 { (char *)"Feature_geometry", _wrap_Feature_geometry, METH_VARARGS, (char *)"\n"
-		"geometry(PyObject * index=None) -> Geometry\n"
-		"Feature_geometry(Feature self) -> Geometry\n"
+		"geometry() -> Geometry\n"
+		"Feature_geometry(Feature self, Geometry geom)\n"
 		""},
-	 { (char *)"Feature_setGeometry", _wrap_Feature_setGeometry, METH_VARARGS, (char *)"\n"
-		"setGeometry(Geometry geometry, PyObject * index=None)\n"
-		"Feature_setGeometry(Feature self, Geometry geometry)\n"
-		""},
-	 { (char *)"Feature_addGeometry", _wrap_Feature_addGeometry, METH_VARARGS, (char *)"\n"
-		"addGeometry(Geometry geometry, PyObject * index=None)\n"
-		"Feature_addGeometry(Feature self, Geometry geometry)\n"
-		""},
-	 { (char *)"Feature_removeGeometry", _wrap_Feature_removeGeometry, METH_VARARGS, (char *)"Feature_removeGeometry(Feature self, PyObject * index)"},
+	 { (char *)"Feature_geometryType", _wrap_Feature_geometryType, METH_VARARGS, (char *)"Feature_geometryType(Feature self) -> IlwisTypes"},
 	 { (char *)"Feature_featureId", _wrap_Feature_featureId, METH_VARARGS, (char *)"Feature_featureId(Feature self) -> quint64"},
-	 { (char *)"Feature_trackSize", _wrap_Feature_trackSize, METH_VARARGS, (char *)"Feature_trackSize(Feature self) -> quint32"},
-	 { (char *)"Feature_columnDefinition", _wrap_Feature_columnDefinition, METH_VARARGS, (char *)"\n"
-		"columnDefinition(std::string const & name, bool coverages=True) -> ColumnDefinition\n"
-		"columnDefinition(std::string const & name) -> ColumnDefinition\n"
-		"columnDefinition(quint32 index, bool coverages=True) -> ColumnDefinition\n"
-		"Feature_columnDefinition(Feature self, quint32 index) -> ColumnDefinition\n"
+	 { (char *)"Feature_attributeDefinition", _wrap_Feature_attributeDefinition, METH_VARARGS, (char *)"\n"
+		"attributeDefinition(std::string const & name) -> ColumnDefinition\n"
+		"Feature_attributeDefinition(Feature self, quint32 index) -> ColumnDefinition\n"
 		""},
-	 { (char *)"Feature_trackIndexValue", _wrap_Feature_trackIndexValue, METH_VARARGS, (char *)"Feature_trackIndexValue(Feature self, quint32 index) -> PyObject *"},
+	 { (char *)"Feature_attributeColumnCount", _wrap_Feature_attributeColumnCount, METH_VARARGS, (char *)"Feature_attributeColumnCount(Feature self) -> quint32"},
+	 { (char *)"Feature_removeSubFeature", _wrap_Feature_removeSubFeature, METH_VARARGS, (char *)"\n"
+		"removeSubFeature(std::string const & subFeatureIndex)\n"
+		"Feature_removeSubFeature(Feature self, double subFeatureIndex)\n"
+		""},
+	 { (char *)"Feature_setSubFeature", _wrap_Feature_setSubFeature, METH_VARARGS, (char *)"\n"
+		"setSubFeature(std::string const & subFeatureIndex, Feature feature)\n"
+		"Feature_setSubFeature(Feature self, double subFeatureIndex, Feature feature)\n"
+		""},
+	 { (char *)"Feature_subFeatureCount", _wrap_Feature_subFeatureCount, METH_VARARGS, (char *)"Feature_subFeatureCount(Feature self) -> quint32"},
+	 { (char *)"Feature_setRecord", _wrap_Feature_setRecord, METH_VARARGS, (char *)"\n"
+		"setRecord(PyObject * pyValues, quint32 offset=0)\n"
+		"Feature_setRecord(Feature self, PyObject * pyValues)\n"
+		""},
+	 { (char *)"Feature_record", _wrap_Feature_record, METH_VARARGS, (char *)"Feature_record(Feature self) -> PyObject *"},
 	 { (char *)"Feature_begin", _wrap_Feature_begin, METH_VARARGS, (char *)"Feature_begin(Feature self) -> VertexIterator"},
 	 { (char *)"Feature_end", _wrap_Feature_end, METH_VARARGS, (char *)"Feature_end(Feature self) -> VertexIterator"},
 	 { (char *)"delete_Feature", _wrap_delete_Feature, METH_VARARGS, (char *)"delete_Feature(Feature self)"},
@@ -37151,7 +37041,7 @@ static PyMethodDef SwigMethods[] = {
 		"FeatureCoverage_featureTypes(FeatureCoverage self, IlwisTypes type)\n"
 		""},
 	 { (char *)"FeatureCoverage_featureCount", _wrap_FeatureCoverage_featureCount, METH_VARARGS, (char *)"FeatureCoverage_featureCount(FeatureCoverage self) -> unsigned int"},
-	 { (char *)"FeatureCoverage_setFeatureCount", _wrap_FeatureCoverage_setFeatureCount, METH_VARARGS, (char *)"FeatureCoverage_setFeatureCount(FeatureCoverage self, IlwisTypes type, quint32 geomCnt, quint32 subGeomCnt, int index)"},
+	 { (char *)"FeatureCoverage_setFeatureCount", _wrap_FeatureCoverage_setFeatureCount, METH_VARARGS, (char *)"FeatureCoverage_setFeatureCount(FeatureCoverage self, IlwisTypes type, quint32 geomCnt)"},
 	 { (char *)"FeatureCoverage_newFeature", _wrap_FeatureCoverage_newFeature, METH_VARARGS, (char *)"\n"
 		"newFeature(std::string const & wkt, CoordinateSystem csy, bool load=True) -> Feature\n"
 		"newFeature(std::string const & wkt, CoordinateSystem csy) -> Feature\n"
@@ -37159,9 +37049,34 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { (char *)"FeatureCoverage_newFeatureFrom", _wrap_FeatureCoverage_newFeatureFrom, METH_VARARGS, (char *)"FeatureCoverage_newFeatureFrom(FeatureCoverage self, Feature feat, CoordinateSystem csy) -> Feature"},
 	 { (char *)"FeatureCoverage_reprojectFeatures", _wrap_FeatureCoverage_reprojectFeatures, METH_VARARGS, (char *)"FeatureCoverage_reprojectFeatures(FeatureCoverage self, CoordinateSystem csy)"},
+	 { (char *)"FeatureCoverage_attributeTable", _wrap_FeatureCoverage_attributeTable, METH_VARARGS, (char *)"FeatureCoverage_attributeTable(FeatureCoverage self) -> Table"},
+	 { (char *)"FeatureCoverage_attributesFromTable", _wrap_FeatureCoverage_attributesFromTable, METH_VARARGS, (char *)"FeatureCoverage_attributesFromTable(FeatureCoverage self, Table otherTable)"},
+	 { (char *)"FeatureCoverage_addColumn", _wrap_FeatureCoverage_addColumn, METH_VARARGS, (char *)"\n"
+		"addColumn(ColumnDefinition coldef) -> bool\n"
+		"FeatureCoverage_addColumn(FeatureCoverage self, std::string const & name, std::string const & domainname) -> bool\n"
+		""},
+	 { (char *)"FeatureCoverage_columndefinition", _wrap_FeatureCoverage_columndefinition, METH_VARARGS, (char *)"\n"
+		"columndefinition(std::string const & nme) -> ColumnDefinition\n"
+		"FeatureCoverage_columndefinition(FeatureCoverage self, quint32 index) -> ColumnDefinition\n"
+		""},
+	 { (char *)"FeatureCoverage_setColumndefinition", _wrap_FeatureCoverage_setColumndefinition, METH_VARARGS, (char *)"FeatureCoverage_setColumndefinition(FeatureCoverage self, ColumnDefinition coldef)"},
+	 { (char *)"FeatureCoverage_columnIndex", _wrap_FeatureCoverage_columnIndex, METH_VARARGS, (char *)"FeatureCoverage_columnIndex(FeatureCoverage self, std::string const & nme) -> quint32"},
+	 { (char *)"FeatureCoverage___getitem__", _wrap_FeatureCoverage___getitem__, METH_VARARGS, (char *)"FeatureCoverage___getitem__(FeatureCoverage self, quint32 index) -> ColumnDefinition"},
+	 { (char *)"FeatureCoverage_checkInput", _wrap_FeatureCoverage_checkInput, METH_VARARGS, (char *)"FeatureCoverage_checkInput(FeatureCoverage self, PyObject * inputVar, quint32 columnIndex) -> PyObject *"},
+	 { (char *)"FeatureCoverage_definitionCount", _wrap_FeatureCoverage_definitionCount, METH_VARARGS, (char *)"FeatureCoverage_definitionCount(FeatureCoverage self) -> quint32"},
+	 { (char *)"FeatureCoverage_setSubDefinition", _wrap_FeatureCoverage_setSubDefinition, METH_VARARGS, (char *)"FeatureCoverage_setSubDefinition(FeatureCoverage self, Domain dom, PyObject * items)"},
+	 { (char *)"FeatureCoverage_indexOf", _wrap_FeatureCoverage_indexOf, METH_VARARGS, (char *)"\n"
+		"indexOf(std::string const & variantId) -> quint32\n"
+		"indexOf(double domainItem) -> quint32\n"
+		"FeatureCoverage_indexOf(FeatureCoverage self, PyObject * obj) -> quint32\n"
+		""},
+	 { (char *)"FeatureCoverage_atIndex", _wrap_FeatureCoverage_atIndex, METH_VARARGS, (char *)"FeatureCoverage_atIndex(FeatureCoverage self, quint32 idx) -> std::string"},
+	 { (char *)"FeatureCoverage_indexes", _wrap_FeatureCoverage_indexes, METH_VARARGS, (char *)"FeatureCoverage_indexes(FeatureCoverage self) -> PyObject *"},
+	 { (char *)"FeatureCoverage_countSubs", _wrap_FeatureCoverage_countSubs, METH_VARARGS, (char *)"FeatureCoverage_countSubs(FeatureCoverage self) -> quint32"},
+	 { (char *)"FeatureCoverage_subDomain", _wrap_FeatureCoverage_subDomain, METH_VARARGS, (char *)"FeatureCoverage_subDomain(FeatureCoverage self) -> Domain"},
+	 { (char *)"FeatureCoverage_clear", _wrap_FeatureCoverage_clear, METH_VARARGS, (char *)"FeatureCoverage_clear(FeatureCoverage self)"},
 	 { (char *)"FeatureCoverage_toFeatureCoverage", _wrap_FeatureCoverage_toFeatureCoverage, METH_VARARGS, (char *)"FeatureCoverage_toFeatureCoverage(Object obj) -> FeatureCoverage"},
 	 { (char *)"FeatureCoverage_select", _wrap_FeatureCoverage_select, METH_VARARGS, (char *)"FeatureCoverage_select(FeatureCoverage self, std::string const & spatialQuery) -> PyObject *"},
-	 { (char *)"FeatureCoverage_maxIndex", _wrap_FeatureCoverage_maxIndex, METH_VARARGS, (char *)"FeatureCoverage_maxIndex(FeatureCoverage self) -> quint32"},
 	 { (char *)"FeatureCoverage_clone", _wrap_FeatureCoverage_clone, METH_VARARGS, (char *)"FeatureCoverage_clone(FeatureCoverage self) -> FeatureCoverage"},
 	 { (char *)"FeatureCoverage_geometryType", _wrap_FeatureCoverage_geometryType, METH_VARARGS, (char *)"FeatureCoverage_geometryType(FeatureCoverage self, Geometry geom) -> IlwisTypes"},
 	 { (char *)"FeatureCoverage_setCoordinateSystem", _wrap_FeatureCoverage_setCoordinateSystem, METH_VARARGS, (char *)"FeatureCoverage_setCoordinateSystem(FeatureCoverage self, CoordinateSystem cs)"},
@@ -37283,6 +37198,18 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"RasterCoverage_end", _wrap_RasterCoverage_end, METH_VARARGS, (char *)"RasterCoverage_end(RasterCoverage self) -> PixelIterator"},
 	 { (char *)"RasterCoverage_band", _wrap_RasterCoverage_band, METH_VARARGS, (char *)"RasterCoverage_band(RasterCoverage self, PyObject * pyTrackIndex) -> PixelIterator"},
 	 { (char *)"RasterCoverage_addBand", _wrap_RasterCoverage_addBand, METH_VARARGS, (char *)"RasterCoverage_addBand(RasterCoverage self, PyObject * pyTrackIndex, PixelIterator pyIter)"},
+	 { (char *)"RasterCoverage_setBandDefinition", _wrap_RasterCoverage_setBandDefinition, METH_VARARGS, (char *)"RasterCoverage_setBandDefinition(RasterCoverage self, PyObject * pyTrackIndex, DataDefinition datdef)"},
+	 { (char *)"RasterCoverage_setSubDefinition", _wrap_RasterCoverage_setSubDefinition, METH_VARARGS, (char *)"RasterCoverage_setSubDefinition(RasterCoverage self, Domain dom, PyObject * items)"},
+	 { (char *)"RasterCoverage_indexOf", _wrap_RasterCoverage_indexOf, METH_VARARGS, (char *)"\n"
+		"indexOf(std::string const & variantId) -> quint32\n"
+		"indexOf(double domainItem) -> quint32\n"
+		"RasterCoverage_indexOf(RasterCoverage self, PyObject * obj) -> quint32\n"
+		""},
+	 { (char *)"RasterCoverage_atIndex", _wrap_RasterCoverage_atIndex, METH_VARARGS, (char *)"RasterCoverage_atIndex(RasterCoverage self, quint32 idx) -> std::string"},
+	 { (char *)"RasterCoverage_indexes", _wrap_RasterCoverage_indexes, METH_VARARGS, (char *)"RasterCoverage_indexes(RasterCoverage self) -> PyObject *"},
+	 { (char *)"RasterCoverage_countSubs", _wrap_RasterCoverage_countSubs, METH_VARARGS, (char *)"RasterCoverage_countSubs(RasterCoverage self) -> quint32"},
+	 { (char *)"RasterCoverage_subDomain", _wrap_RasterCoverage_subDomain, METH_VARARGS, (char *)"RasterCoverage_subDomain(RasterCoverage self) -> Domain"},
+	 { (char *)"RasterCoverage_clear", _wrap_RasterCoverage_clear, METH_VARARGS, (char *)"RasterCoverage_clear(RasterCoverage self)"},
 	 { (char *)"RasterCoverage_select", _wrap_RasterCoverage_select, METH_VARARGS, (char *)"\n"
 		"select(std::string selectionQ) -> RasterCoverage\n"
 		"RasterCoverage_select(RasterCoverage self, Geometry geom) -> RasterCoverage\n"

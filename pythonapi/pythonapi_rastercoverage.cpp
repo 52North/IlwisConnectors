@@ -6,7 +6,6 @@
 #include "../../IlwisCore/core/ilwisobjects/domain/datadefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/columndefinition.h"
 #include "../../IlwisCore/core/ilwisobjects/table/table.h"
-#include "../../IlwisCore/core/ilwisobjects/table/attributerecord.h"
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/raster.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/coverage.h"
@@ -247,29 +246,170 @@ PixelIterator RasterCoverage::end(){
     return PixelIterator(this).end();
 }
 
-PixelIterator RasterCoverage::band(PyObject* pyTrackIndex){
-    std::unique_ptr<QVariant> ilwTrackIndex(PyObject2QVariant(pyTrackIndex));
-    Ilwis::PixelIterator* ilwIter = new Ilwis::PixelIterator(this->ptr()->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex));
-    if(ilwIter->isValid())
+PixelIterator RasterCoverage::band(PyObject *pyTrackIndex){
+    QVariant qIndex = resolveIndex(pyTrackIndex);
+    if((QMetaType::Type)qIndex.type() == QMetaType::Double){
+         Ilwis::PixelIterator* ilwIter = new Ilwis::PixelIterator(this->ptr()->as<Ilwis::RasterCoverage>()->band(qIndex.toDouble()));
         return PixelIterator(ilwIter);
-    else
-        throw InvalidObject("Not a valid band");
+    } else if((QMetaType::Type)qIndex.type() == QMetaType::QString){
+         Ilwis::PixelIterator* ilwIter = new Ilwis::PixelIterator(this->ptr()->as<Ilwis::RasterCoverage>()->band(qIndex.toString()));
+        return PixelIterator(ilwIter);
+    }
+
+    throw InvalidObject("Couldn't find data at this index.");
 }
 
 void RasterCoverage::addBand(PyObject* pyTrackIndex, PixelIterator* pyIter){
-    std::unique_ptr<QVariant> ilwTrackIndex(PyObject2QVariant(pyTrackIndex));
-    this->_ilwisObject->as<Ilwis::RasterCoverage>()->band(*ilwTrackIndex, pyIter->ptr());
+    QVariant qIndex = resolveIndex(pyTrackIndex);
+    if((QMetaType::Type)qIndex.type() == QMetaType::Double){
+        this->_ilwisObject->as<Ilwis::RasterCoverage>()->band(qIndex.toDouble(), pyIter->ptr());
+    } else if((QMetaType::Type)qIndex.type() == QMetaType::QString){
+        this->_ilwisObject->as<Ilwis::RasterCoverage>()->band(qIndex.toString(), pyIter->ptr());
+    } else {
+        throw InvalidObject("The index is not included in the definition.");
+    }
+}
+
+void RasterCoverage::setBandDefinition(PyObject *pyTrackIndex, const DataDefinition &datdef){
+    QVariant qIndex = resolveIndex(pyTrackIndex);
+    if((QMetaType::Type)qIndex.type() == QMetaType::Double){
+        this->_ilwisObject->as<Ilwis::RasterCoverage>()->setBandDefinition(qIndex.toDouble(), datdef.ptr());
+    } else if((QMetaType::Type)qIndex.type() == QMetaType::QString){
+        this->_ilwisObject->as<Ilwis::RasterCoverage>()->setBandDefinition(qIndex.toString(), datdef.ptr());
+    } else{
+        throw InvalidObject("The index is not included in the definition.");
+    }
+}
+
+QVariant RasterCoverage::resolveIndex(PyObject *pyTrackIndex){
+    if(PyFloatCheckExact(pyTrackIndex)){
+        double val = PyFloatAsDouble(pyTrackIndex);
+        return QVariant(val);
+    }else if(PyLongCheckExact(pyTrackIndex)){
+        long val = PyLongAsLong(pyTrackIndex);
+        return QVariant((double) val);
+    }else if(PyUnicodeCheckExact(pyTrackIndex)){
+        std::string val = PyBytesAsString(pyTrackIndex);
+        return QVariant(QString::fromStdString(val));
+    }else if(PyDateTimeCheckExact(pyTrackIndex) || PyDateCheckExact(pyTrackIndex) || PyTimeCheckExact(pyTrackIndex)){
+        int year = PyDateTimeGET_YEAR(pyTrackIndex);
+        int month = PyDateTimeGET_MONTH(pyTrackIndex);
+        int day = PyDateTimeGET_DAY(pyTrackIndex);
+        std::string dateStr = std::to_string(year) + dateToString(month) + dateToString(day);
+        return QVariant(QString::fromStdString(dateStr));
+    }
+    throw InvalidObject("Could not resolve index.");
+}
+
+std::string RasterCoverage::dateToString(int datepart){
+    std::string dateStr;
+    if(datepart < 10){
+        dateStr = "0" + std::to_string(datepart);
+    } else {
+        dateStr = std::to_string(datepart);
+    }
+
+    return dateStr;
+}
+
+void RasterCoverage::setSubDefinition(const Domain& dom, PyObject* items){
+    if(PyTupleCheckExact(items)){
+        int sz = PyTupleSize(items);
+        if(PyFloatCheckExact(PyTupleGetItem(items, 0))){
+            std::vector<double> ilwVec;
+            for(int i = 0; i < sz; ++i){
+                double val = PyFloatAsDouble(PyTupleGetItem(items, i));
+                ilwVec.push_back(val);
+            }
+            this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().setSubDefinition(dom.ptr()->as<Ilwis::Domain>(), ilwVec);
+        }else if(PyLongCheckExact(PyTupleGetItem(items, 0))){
+            std::vector<double> ilwVec;
+            for(int i = 0; i < sz; ++i){
+                long val = PyLongAsLong(PyTupleGetItem(items, i));
+                ilwVec.push_back((double)val);
+            }
+            this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().setSubDefinition(dom.ptr()->as<Ilwis::Domain>(), ilwVec);
+        }else if(PyUnicodeCheckExact(PyTupleGetItem(items, 0))){
+            std::vector<QString> ilwVec;
+            for(int i = 0; i < sz; ++i){
+                std::string val = PyBytesAsString(PyTupleGetItem(items, i));
+                ilwVec.push_back(QString::fromStdString(val));
+            }
+            this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().setSubDefinition(dom.ptr()->as<Ilwis::Domain>(), ilwVec);
+        }else if(PyDateTimeCheckExact(PyTupleGetItem(items, 0)) || PyDateCheckExact(PyTupleGetItem(items, 0)) || PyTimeCheckExact(PyTupleGetItem(items, 0))){
+            std::vector<QString> ilwVec;
+            for(int i = 0; i < sz; ++i){
+                int year = PyDateTimeGET_YEAR(PyTupleGetItem(items, i));
+                int month = PyDateTimeGET_MONTH(PyTupleGetItem(items, i));
+                int day = PyDateTimeGET_DAY(PyTupleGetItem(items, i));
+                std::string dateStr = std::to_string(year) + dateToString(month) + dateToString(day);
+                ilwVec.push_back(QString::fromStdString(dateStr));
+            }
+            this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().setSubDefinition(dom.ptr()->as<Ilwis::Domain>(), ilwVec);
+        }
+    }
+}
+
+quint32 RasterCoverage::indexOf(const std::string& variantId) const{
+    return this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().index(QString::fromStdString(variantId));
+}
+
+quint32 RasterCoverage::indexOf(double domainItem) const{
+    return this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().index(domainItem);
+}
+
+quint32 RasterCoverage::indexOf(PyObject* obj) const{
+    if(PyDateTimeCheckExact(obj) || PyDateCheckExact(obj) || PyTimeCheckExact(obj)){
+        int year = PyDateTimeGET_YEAR(obj);
+        int month = PyDateTimeGET_MONTH(obj);
+        int day = PyDateTimeGET_DAY(obj);
+        std::string dateStr = std::to_string(year) + std::to_string(month) + std::to_string(day);
+        return this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().index(QString::fromStdString(dateStr));
+    }
+    return iUNDEF;
+}
+
+std::string RasterCoverage::atIndex(quint32 idx) const{
+    QString qStr =  this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().index(idx);
+    return qStr.toStdString();
+}
+
+PyObject* RasterCoverage::indexes() const{
+    std::vector<QString> qVec = this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().indexes();
+    PyObject* pyTup = newPyTuple(qVec.size());
+
+    for(int i = 0; i < qVec.size(); ++i){
+        std::string actStr = qVec[i].toStdString();
+        setTupleItem(pyTup, i, PyBuildString(actStr));
+    }
+
+    return pyTup;
+}
+
+quint32 RasterCoverage::countSubs() const{
+    return this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().count();
+}
+
+Domain RasterCoverage::subDomain() const{
+    Ilwis::IDomain ilwDom =  this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().domain();
+    return Domain(new Ilwis::IDomain(ilwDom));
+}
+
+void RasterCoverage::clear(){
+    this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().clear();
 }
 
 RasterCoverage RasterCoverage::select(std::string selectionQ){
     QString selectGeom = QString::fromStdString(selectionQ);
     geos::geom::Geometry *geom = Ilwis::GeometryHelper::fromWKT(selectGeom, this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
+
+
     if(geom){
         Ilwis::PixelIterator iterIn(this->ptr()->as<Ilwis::RasterCoverage>(), geom);
         const geos::geom::Envelope *env = geom->getEnvelopeInternal();
         Ilwis::Envelope envelope(Ilwis::Coordinate(env->getMinX(), env->getMinY()),Ilwis::Coordinate(env->getMaxX(), env->getMaxY()));
         Ilwis::BoundingBox box = this->ptr()->as<Ilwis::RasterCoverage>()->georeference()->coord2Pixel(envelope);
-        QString grfcode = QString("code=georef:type=corners,csy=%1,envelope=%2,gridsize=%3,name=gorilla").arg(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem()->id()).arg(envelope.toString()).arg(box.size().toString());
+        QString grfcode = QString("code=georef:type=corners,csy=%1,envelope=%2,gridsize=%3,name=selection").arg(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem()->id()).arg(envelope.toString()).arg(box.size().toString());
         Ilwis::IGeoReference grf(grfcode);
 
         Ilwis::IRasterCoverage map2;

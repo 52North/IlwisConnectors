@@ -129,6 +129,14 @@ namespace pythonapi {
         return PyTuple_GetItem(obj, index);
     }
 
+    int PyTupleSize(PyObject *obj){
+        if(PyTupleCheckExact(obj))
+        {
+            return PyTuple_Size(obj);
+        }
+        return iUNDEF;
+    }
+
     //======list=============================
     bool PyListCheckExact(const PyObject* obj){
         return PyList_CheckExact(const_cast<PyObject*>(obj));

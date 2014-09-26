@@ -26,20 +26,9 @@ namespace pythonapi{
             Coverage(Ilwis::ICoverage* coverage);
         public:
             virtual ~Coverage(){}
-            bool addAttribute(const std::string& name, const std::string& domain);
-            bool addAttribute(const std::string& name, const Domain& domain);
-            bool addAttribute(const ColumnDefinition& domain);
-            quint32 attributeCount();
-            PyObject *attributes();
-            Table attributeTable(AttributeType attType=atCOVERAGE);
-            void setTable(Table& tbl, AttributeType attType=atCOVERAGE);
-            bool hasAttributes(AttributeType attType=atCOVERAGE) const;
             CoordinateSystem coordinateSystem();
             pythonapi::Envelope envelope();
             void setEnvelope(const pythonapi::Envelope& env);
-            void indexDomain(const Domain& dom);
-            PyObject* indexValues();
-            PyObject* value(const std::string& colName, quint32 itemid, qint32 layerIndex = -1);
     };
 
 }
