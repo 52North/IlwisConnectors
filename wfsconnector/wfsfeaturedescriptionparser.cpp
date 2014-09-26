@@ -51,24 +51,8 @@ bool WfsFeatureDescriptionParser::parseMetadata(FeatureCoverage *fcoverage, WfsP
 {
     qDebug() << "WfsFeatureDescriptionParser::parseMetadata()";
 
-    QString name = fcoverage->name();
-    quint64 id = fcoverage->id();
-    QString schemaResource = WfsUtils::getInternalNameFrom(name, id);
     WfsUtils::addSpatialMetadata(fcoverage, context.resource());
 
-    ITable featureTable;
-    Resource resource(schemaResource, itFLATTABLE);
-    if(!featureTable.prepare(resource)) {
-        ERROR1(ERR_NO_INITIALIZED_1, resource.name());
-        return false;
-    }
-
-    if ( !featureTable.isValid()) {
-        ERROR0(TR("Invalid table (uninitialized?) while parsing WFS feature description."));
-        return false;
-    }
-
-    fcoverage->attributesFromTable(featureTable);
     if (_parser->startParsing("xsd:schema")) {
         parseNamespaces(context);
         while ( !_parser->atEnd()) {
@@ -77,7 +61,7 @@ bool WfsFeatureDescriptionParser::parseMetadata(FeatureCoverage *fcoverage, WfsP
                     parseFeatureProperties(fcoverage, context);
                 } else if (_parser->isAtBeginningOf("xsd:element")) {
                     QStringRef typeName = _parser->attributes().value("name");
-                    featureTable->name(typeName.toString());
+                    context.setFeatureType(typeName.toString());
                 }
             }
         }
@@ -106,7 +90,7 @@ void WfsFeatureDescriptionParser::parseNamespaces(WfsParsingContext &context)
 
 void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcoverage, WfsParsingContext &context)
 {
-    ITable table = fcoverage->attributeTable();
+    FeatureAttributeDefinition &fad = fcoverage->attributeDefinitionsRef();
     if (_parser->findNextOf( { "xsd:complexContent" } )) {
         if (_parser->findNextOf( { "xsd:extension" } )) {
             if (_parser->findNextOf( { "xsd:sequence" } )) {
@@ -128,7 +112,7 @@ void WfsFeatureDescriptionParser::parseFeatureProperties(FeatureCoverage *fcover
                         } else {
                             IDomain domain;
                             if (initDomainViaType(type, domain)) {
-                                table->addColumn(name, domain);
+                                fad.addColumn(name, domain);
                             }
                         }
                         _parser->skipCurrentElement(); // move to end

@@ -69,8 +69,7 @@ void WfsFeatureParser::parseFeatureMembers()
     qDebug() << "WfsFeatureParser::parseFeatureMembers()";
 
     ITable table = _fcoverage->attributeTable();
-    _featureType = table->name();
-    _featureType = "target:" + _featureType;
+    _featureType = "target:" + _context.featureType();
 
     quint64 featureCount = 0;
     if (_parser->findNextOf( {"wfs:FeatureCollection"} )) {
@@ -97,6 +96,7 @@ void WfsFeatureParser::parseFeatureMembers()
             }
         }
     }
+    _fcoverage->attributesFromTable(table);
 }
 
 bool WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table)
