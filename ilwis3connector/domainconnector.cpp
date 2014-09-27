@@ -235,7 +235,7 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes valueType)
     _odf->setKeyValue("Domain", "Type", typeName);
     _odf->setKeyValue( hasType(valueType,itTHEMATICITEM | itNUMERICITEM) ? "DomainClass" : "DomainIdentifier", "Nr", QString::number(iddomain->count()));
 
-    QFileInfo inf=dom->source(IlwisObject::cmOUTPUT).url().toLocalFile();
+    QFileInfo inf(QUrl(_odf->file()).toLocalFile());
     QString dataName  = inf.baseName() + ".dm#";
     _odf->setKeyValue("TableStore", "Data", dataName);
     _odf->setKeyValue("TableStore", "Col0", "Name");
