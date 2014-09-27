@@ -409,8 +409,10 @@ bool FeatureConnector::loadData(Ilwis::IlwisObject *obj, const IOOptions &) {
              for(quint32 rowExt=0; rowExt < extTable->recordCount(); ++rowExt) {
                  if ( rowExt < fcoverage->featureCount()){
                      vector<QVariant> rec = extTable->record(rowExt);
-                     if ( keyIndex == iUNDEF) // a pristine external table doesnt have a coverage key column which is present in the attributes of the feature coverage
+                     if ( keyIndex == iUNDEF) {// a pristine external table doesnt have a coverage key column which is present in the attributes of the feature coverage
                          rec.resize(rec.size() + 1);
+                         rec[rec.size() - 1] = rowExt;
+                     }
                      attTbl->record(rowExt,rec);
                  }
              }
