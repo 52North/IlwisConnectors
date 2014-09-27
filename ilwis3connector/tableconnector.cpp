@@ -301,10 +301,6 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
                 storeType = "Int"  ;
             else if ( conv.storeType() & itUINT8 )
                  storeType = "Byte"  ;
-//            QString attrdomname = dmColumn->name();
-//            int index = attrdomname.indexOf(".dom");
-//            if ( index == -1)
-//                attrdomname += ".dom";
             domainInfo = QString("%1;%2;value;0;%3;%4;0.1;offset=%5").arg(domName).
                     arg(storeType).
                     arg(numdmrange->min()).
