@@ -327,15 +327,16 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     if ( index != -1) {
         dataFile = dataFile.left(index);
     }else{
-//        if ( tp == itPOLYGON)
-//            attDom += ".mpa";
-//        if ( tp == itRASTER)
-//            attDom += ".mpr";
-//        if ( tp == itPOINT)
-//            attDom += ".mpp";
-//        if ( tp == itLINE)
-//            attDom += ".mps";
-        attDom  += ".dom";
+        if ( tp == itPOLYGON)
+            attDom += ".mpa";
+        else if ( tp == itRASTER)
+            attDom += ".mpr";
+        else if ( tp == itPOINT)
+            attDom += ".mpp";
+        else if ( tp == itLINE)
+            attDom += ".mps";
+        else
+            attDom  += ".dom";
     }
     if ( attTable->columnCount() > 0) { // one column means only featurid which we dont save.
         QFileInfo inf(dataFile);
