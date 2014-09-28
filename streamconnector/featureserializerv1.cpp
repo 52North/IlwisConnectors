@@ -137,14 +137,6 @@ bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &option
         fcoverage->attributeDefinitionsRef().setSubDefinition(dom, variants);
     }
 
-
-
-//    quint32 featureCount;
-//    _stream >> featureCount;
-//    for(quint32 f = 0; f < featureCount; ++f){
-//        SPFeatureI feature = fcoverage->newFeature(0, false); // create an empty feature
-//        feature->load(fcoverage->attributeDefinitions(), _stream, options);
-//    }
     return true;
 }
 
