@@ -16,6 +16,8 @@ std::map<StreamerKey, CreateStreamIO, LessStreamKey> VersionedDataStreamFactory:
 
 bool LessStreamKey::operator()(const StreamerKey &val1, const StreamerKey &val2) const
 {
+    if ( hasType(val1._type,val2._type) && val1._version <= val2._version)
+        return false;
 
     return val1._type < val2._type && val1._version <= val2._version;
 }
