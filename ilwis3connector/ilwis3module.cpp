@@ -92,6 +92,7 @@ void Ilwis3Module::prepare()
     factory->addCreator("vectormap","ilwis3",Ilwis3::FeatureConnector::create);
     factory->addCreator("domain","ilwis3",Ilwis3::DomainConnector::create);
     factory->addCreator("coordsystem","ilwis3",Ilwis3::CoordinateSystemConnector::create);
+    factory->addCreator("table","ilwis3",Ilwis3::TableConnector::create);
 
     IlwisObject::addTypeFunction(Ilwis3Connector::ilwisType);
 
