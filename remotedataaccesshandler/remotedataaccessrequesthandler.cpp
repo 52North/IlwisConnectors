@@ -37,6 +37,7 @@ void RemoteDataAccessRequestHandler::service(HttpRequest &request, HttpResponse 
     QMultiMap<QByteArray,QByteArray>::Iterator iter;
     if ( (iter = parameters.find("datasource")) != parameters.end() ){
         QString name = iter.value();
+        iter = parameters.find("ilwistype");
         IIlwisObject obj = getObject(name, iter.value());
         if ( !obj.isValid()){
             response.setHeader("Content-Type", qPrintable("text/plain"));
