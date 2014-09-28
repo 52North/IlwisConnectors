@@ -70,6 +70,7 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 }
 bool FeatureSerializerV1::storeData(IlwisObject *obj, const IOOptions& options){
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
+    _stream << itFEATURE;
     _stream << Version::IlwisVersion;
     _stream << fcoverage->featureCount();
     for(const SPFeatureI& feature : fcoverage){
