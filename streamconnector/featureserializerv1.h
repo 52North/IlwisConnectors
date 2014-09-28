@@ -11,7 +11,10 @@ public:
     FeatureSerializerV1(QDataStream& stream);
 
     bool store(IlwisObject *obj, const IOOptions& options = IOOptions());
+    bool storeData(IlwisObject *obj, const IOOptions &options = IOOptions());
     bool loadMetaData(IlwisObject*obj, const IOOptions & options);
+    bool loadData(IlwisObject *obj, const IOOptions &options = IOOptions());
+
     static Ilwis::Stream::VersionedSerializer *create(QDataStream &stream);
 };
 }

@@ -64,12 +64,17 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         _stream << itUNKNOWN;
         _stream << Version::IlwisVersion;
     }
+
+
+    return true;
+}
+bool FeatureSerializerV1::storeData(IlwisObject *obj, const IOOptions& options){
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
+    _stream << Version::IlwisVersion;
     _stream << fcoverage->featureCount();
     for(const SPFeatureI& feature : fcoverage){
         feature->store(fcoverage->attributeDefinitions(),_stream, options);
     }
-
-    return true;
 }
 
 bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
@@ -131,7 +136,20 @@ bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &option
 
 
 
+//    quint32 featureCount;
+//    _stream >> featureCount;
+//    for(quint32 f = 0; f < featureCount; ++f){
+//        SPFeatureI feature = fcoverage->newFeature(0, false); // create an empty feature
+//        feature->load(fcoverage->attributeDefinitions(), _stream, options);
+//    }
+    return true;
+}
+
+bool FeatureSerializerV1::loadData(IlwisObject* obj, const IOOptions& options ){
+    FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
+    QString version;
     quint32 featureCount;
+    _stream >> version;
     _stream >> featureCount;
     for(quint32 f = 0; f < featureCount; ++f){
         SPFeatureI feature = fcoverage->newFeature(0, false); // create an empty feature
