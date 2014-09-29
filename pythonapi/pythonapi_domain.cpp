@@ -336,7 +336,7 @@ PyObject *ItemDomain::item(int index, bool labelOnly)
     IlwisTypes vt = valueType();
     switch (vt) {
     case itNUMERICITEM:{
-        Ilwis::Interval *numitem = domitem->toType<Ilwis::Interval>();
+        Ilwis::Interval *numitem = domitem->as<Ilwis::Interval>();
         PyObject* list;
         if ( labelOnly)
             list = newPyTuple(1);
@@ -352,7 +352,7 @@ PyObject *ItemDomain::item(int index, bool labelOnly)
     }
         break;
     case itTHEMATICITEM:{
-        Ilwis::ThematicItem *titem = domitem->toType<Ilwis::ThematicItem>();
+        Ilwis::ThematicItem *titem = domitem->as<Ilwis::ThematicItem>();
         PyObject* list;
         if ( labelOnly)
             list = newPyTuple(1);
@@ -367,12 +367,12 @@ PyObject *ItemDomain::item(int index, bool labelOnly)
     }
         break;
     case itINDEXEDITEM:{
-        Ilwis::IndexedIdentifier *indexed = domitem->toType<Ilwis::IndexedIdentifier>();
+        Ilwis::IndexedIdentifier *indexed = domitem->as<Ilwis::IndexedIdentifier>();
         return PyBuildString(indexed->name().toStdString());
     }
         break;
     case itNAMEDITEM:{
-        Ilwis::NamedIdentifier *named = domitem->toType<Ilwis::NamedIdentifier>();
+        Ilwis::NamedIdentifier *named = domitem->as<Ilwis::NamedIdentifier>();
         return PyBuildString(named->name().toStdString());
     }
         break;
