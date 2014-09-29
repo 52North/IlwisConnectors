@@ -49,18 +49,14 @@ namespace pythonapi {
     }
 
     PyObject* Table::columns() const{
-        if(this->ptr()->as<Ilwis::Table>()->isDataLoaded()){
-            Ilwis::ITable tbl = this->ptr()->as<Ilwis::Table>();
-            PyObject* list = newPyTuple(tbl->columnCount());
-            for(int i = 0; i < tbl->columnCount(); i++){
-                Ilwis::ColumnDefinition coldef = tbl->columndefinition(i);
-                if (!setTupleItem(list, i, PyUnicodeFromString(coldef.name().toStdString().data())))
-                    throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of columns").arg(tbl->columndefinition(i).name()));
-            }
-            return list;
-        } else {
-            throw InvalidObject("Data of the table is not loaded. Access a feature first.");
+        Ilwis::ITable tbl = this->ptr()->as<Ilwis::Table>();
+        PyObject* list = newPyTuple(tbl->columnCount());
+        for(int i = 0; i < tbl->columnCount(); i++){
+            Ilwis::ColumnDefinition coldef = tbl->columndefinition(i);
+            if (!setTupleItem(list, i, PyUnicodeFromString(coldef.name().toStdString().data())))
+                throw Ilwis::ErrorObject(QString("internal conversion error while trying to add '%1' to list of columns").arg(tbl->columndefinition(i).name()));
         }
+        return list;
     }
 
     PyObject* Table::select(const std::string& conditions) const{
@@ -83,14 +79,10 @@ namespace pythonapi {
     }
 
     PyObject* Table::cell(const std::string& name, quint32 rec){
-        if(this->ptr()->as<Ilwis::Table>()->isDataLoaded()){
-            QVariant ret = this->ptr()->as<Ilwis::Table>()->cell(QString::fromStdString(name), rec,false);
-            if (!ret.isValid())
-                throw std::out_of_range(QString("No attribute '%1' found or record %2 out of bound").arg(name.c_str()).arg(rec).toStdString());
-            return QVariant2PyObject(ret);
-        } else {
-            throw InvalidObject("Data of the table is not loaded. Access a feature first.");
-        }
+        QVariant ret = this->ptr()->as<Ilwis::Table>()->cell(QString::fromStdString(name), rec,false);
+        if (!ret.isValid())
+            throw std::out_of_range(QString("No attribute '%1' found or record %2 out of bound").arg(name.c_str()).arg(rec).toStdString());
+        return QVariant2PyObject(ret);
     }
 
     PyObject* Table::cell(quint32 colIndex, quint32 rec){
@@ -141,27 +133,15 @@ namespace pythonapi {
     }
 
     PyObject* Table::column(const std::string& name) const{
-        if(this->ptr()->as<Ilwis::Table>()->isDataLoaded()){
-            return StdVectorOfQVariant2PyTuple(this->ptr()->as<Ilwis::Table>()->column(QString::fromStdString(name)));
-        } else {
-            throw InvalidObject("Data of the table is not loaded. Access a feature first.");
-        }
+        return StdVectorOfQVariant2PyTuple(this->ptr()->as<Ilwis::Table>()->column(QString::fromStdString(name)));
     }
 
     PyObject* Table::column(quint32 columnIndex) const{
-        if(this->ptr()->as<Ilwis::Table>()->isDataLoaded()){
-            return StdVectorOfQVariant2PyTuple(this->ptr()->as<Ilwis::Table>()->column(columnIndex));
-        } else {
-            throw InvalidObject("Data of the table is not loaded. Access a feature first.");
-        }
+        return StdVectorOfQVariant2PyTuple(this->ptr()->as<Ilwis::Table>()->column(columnIndex));
    }
 
     PyObject* Table::record(quint32 rec) const{
-        if(this->ptr()->as<Ilwis::Table>()->isDataLoaded()){
-            return StdVectorOfQVariant2PyTuple(this->ptr()->as<Ilwis::Table>()->record(rec));
-        } else {
-            throw InvalidObject("Data of the table is not loaded. Access a feature first.");
-        }
+        return StdVectorOfQVariant2PyTuple(this->ptr()->as<Ilwis::Table>()->record(rec));
     }
 
     Table* Table::toTable(Object *obj){
