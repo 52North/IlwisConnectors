@@ -84,6 +84,7 @@ void StreamModule::prepare()
     //outputconnectors
     cfactory->addCreator("featurecoverage","stream",StreamConnector::create);
     cfactory->addCreator("rastercoverage","stream",StreamConnector::create);
+    cfactory->addCreator("table","stream",StreamConnector::create);
 
 
 

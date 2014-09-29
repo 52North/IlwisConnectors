@@ -69,6 +69,8 @@ public:
         return real / _scale - _offset;
     }
     bool isNeutral() const{
+        if ( _storeType == itDOUBLE )
+            return true;
         return !_colors && ((_offset == 0 && _scale == 1.0) || _scale == 0);
     }
 

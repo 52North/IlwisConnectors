@@ -222,7 +222,12 @@ QString TableConnector::getDomainName(const IDomain& dom, bool& isSystem) {
     if ( name != sUNDEF)
         return name;
     isSystem = dom->isSystemObject();
-    return dom->source().toLocalFile(true);
+
+    Resource res = dom->source();
+    QString url = res.url().toString();
+    QString filename = url.mid(url.lastIndexOf("/") + 1);
+
+    return filename;
 }
 
 bool TableConnector::storeMetaData(IlwisObject *obj)
@@ -253,7 +258,13 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         bool isOldSystem = true;
         QString domName = getDomainName(dmColumn, isOldSystem);
         if ( !isOldSystem) {
-            DomainConnector conn(dmColumn->source(), itDOMAIN);
+            Resource res = dmColumn->source();
+            QString url = res.url().toString();
+            QString filename = url.mid(url.lastIndexOf("/"));
+            QString fileUrl = context()->workingCatalog()->filesystemLocation().toString() + filename;
+            res.setUrl(fileUrl);
+
+            DomainConnector conn(res, itDOMAIN);
             conn.storeMetaData(dmColumn.ptr());
         }
         QString colpostfix = def.name();
@@ -301,10 +312,6 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
                 storeType = "Int"  ;
             else if ( conv.storeType() & itUINT8 )
                  storeType = "Byte"  ;
-//            QString attrdomname = dmColumn->name();
-//            int index = attrdomname.indexOf(".dom");
-//            if ( index == -1)
-//                attrdomname += ".dom";
             domainInfo = QString("%1;%2;value;0;%3;%4;0.1;offset=%5").arg(domName).
                     arg(storeType).
                     arg(numdmrange->min()).

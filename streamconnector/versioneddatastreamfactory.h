@@ -33,7 +33,7 @@ private:
 };
 
 inline bool operator==(const StreamerKey& key1, const StreamerKey& key2){
-    return key1._version == key2._version && key1._type == key2._type;
+    return key1._version == key2._version && hasType(key1._type, key2._type);
 }
 }
 }

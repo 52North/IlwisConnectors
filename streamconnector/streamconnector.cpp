@@ -9,6 +9,8 @@
 #include "streamconnector.h"
 #include "versionedserializer.h"
 #include "table.h"
+#include "basetable.h"
+#include "flattable.h"
 #include "featurecoverage.h"
 #include "feature.h"
 #include "factory.h"
@@ -33,6 +35,8 @@ IlwisObject *StreamConnector::create() const
         return new FeatureCoverage(_resource);
     case itRASTER:
         return new RasterCoverage(_resource);
+    case itTABLE:
+        return new FlatTable(_resource);
     default:
         return 0;
     }

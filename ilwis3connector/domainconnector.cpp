@@ -235,7 +235,7 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes valueType)
     _odf->setKeyValue("Domain", "Type", typeName);
     _odf->setKeyValue( hasType(valueType,itTHEMATICITEM | itNUMERICITEM) ? "DomainClass" : "DomainIdentifier", "Nr", QString::number(iddomain->count()));
 
-    QFileInfo inf=dom->source(IlwisObject::cmOUTPUT).url().toLocalFile();
+    QFileInfo inf(QUrl(_odf->file()).toLocalFile());
     QString dataName  = inf.baseName() + ".dm#";
     _odf->setKeyValue("TableStore", "Data", dataName);
     _odf->setKeyValue("TableStore", "Col0", "Name");
@@ -409,7 +409,8 @@ IlwisObject *DomainConnector::create() const
         return new NumericDomain(_resource);
     else if (type() == itITEMDOMAIN || type() == itDOMAIN) { // second case is for internal domains
         subtype =_odf->value("Domain", "Type");
-        if ( subtype == "DomainUniqueID")
+        bool internal = _odf->value("TableStore", "Data") == sUNDEF;
+        if ( subtype == "DomainUniqueID" || internal)
             return new ItemDomain<IndexedIdentifier>(_resource);
         if ( subtype == "DomainIdentifier")
             return new ItemDomain<NamedIdentifier>(_resource);
