@@ -390,8 +390,8 @@ try:
 
         def test_IssueLogger(self):
             disconnectIssueLogger()
-            fc = FeatureCoverage(workingDir + "/noneexistentDir/nonexistent.file")
-            self.assertFalse(bool(fc))
+            with self.assertRaises(IlwisException, msg="Cann't find suitable factory for nonexistent.file "):
+                fc = FeatureCoverage(workingDir + "/noneexistentDir/nonexistent.file")
             connectIssueLogger()
 
         def test_ilwisTypes(self):
@@ -521,8 +521,9 @@ try:
             self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
             summ = 0
             for f in fc:
-                if f.attribute("MAY", 0) != '?':
-                    summ += f.attribute("MAY", 0)
+                tempsum = f.attribute("MAY", 0)
+                if tempsum != -1e+308:
+                    summ = summ + int(tempsum)
                 f["sum"] = str(summ)
                 self.assertRegex(str(f), r"Feature\([0-9]*\)", msg="wrong feature representation")
                 self.assertRegex(str(f.geometry()),
@@ -1472,6 +1473,7 @@ try:
         def setUp(self):
             disconnectIssueLogger()
             connectIssueLogger()
+
 
         def test_containementInt(self):
             nr = NumericRange(5, 60, 5)
