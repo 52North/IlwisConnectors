@@ -148,9 +148,11 @@ bool TableConnector::loadData(IlwisObject* data , const IOOptions &) {
 
     if(!table->createTable())
         return false;
+    table->dataLoaded(true); //  to prevent any succesfull calls of iniltload, we are loading here so no extra call needed
 
-    for(quint32 i = 0; i < tbl.columns(); ++i) {
-        QString colName = tbl.columnName(i);
+    int colindex = 0;
+    while( colindex < tbl.columns()) {
+        QString colName = tbl.columnName(colindex);
         ColumnDefinition col = table->columndefinition(colName);
         if ( col.isValid()) {
             std::vector<QVariant> varlist(tbl.rows());
@@ -159,23 +161,20 @@ bool TableConnector::loadData(IlwisObject* data , const IOOptions &) {
             for(quint32 j = 0; j < tbl.rows(); ++j){
                 if ( (valueType >= itINT8 && valueType <= itDOUBLE) || ((valueType & itDOMAINITEM) != 0)) {
                     double value;
-                    if (tbl.get(j,i,value)) {
+                    if (tbl.get(j,colindex,value)) {
                         double v = conv.scale() == 0 ? value : conv.raw2real(value);
                         varlist[j] =  v;
                     }
                 } else if (valueType == itSTRING ) {
                     QString value;
-                    if (tbl.get(j,i,value)) {
+                    if (tbl.get(j,colindex,value)) {
                         varlist[j] = value;
                     }
                 }
             }
             table->column(colName,varlist);
-        } else {
-            kernel()->issues()->log(TR(ERR_NO_OBJECT_TYPE_FOR_2).arg("column", colName));
-            return false;
         }
-
+        colindex++;
     }
     _binaryIsLoaded = true;
 
