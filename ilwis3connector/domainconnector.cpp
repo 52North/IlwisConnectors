@@ -409,7 +409,7 @@ IlwisObject *DomainConnector::create() const
         return new NumericDomain(_resource);
     else if (type() == itITEMDOMAIN || type() == itDOMAIN) { // second case is for internal domains
         subtype =_odf->value("Domain", "Type");
-        bool internal = _odf->value("TableStore", "Data") == sUNDEF;
+        bool internal = _odf->value("TableStore","Col1") != "Ord"; // if not exists it is no table so no datafile
         if ( subtype == "DomainUniqueID" || internal)
             return new ItemDomain<IndexedIdentifier>(_resource);
         if ( subtype == "DomainIdentifier")
