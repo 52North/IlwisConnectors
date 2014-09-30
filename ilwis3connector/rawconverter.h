@@ -21,8 +21,10 @@ public:
         }
         if ( type == "class" || type == "group") {
             _storeType = itUINT8;
+            _item = true;
         } else if ( type == "ident"){
             _storeType = itUINT16;
+            _item = true;
         } else
             _storeType = itUINT32;
     }
@@ -59,7 +61,7 @@ public:
             return ( (quint32)raw | 0xFF000000); // setting transparency bit to 255 as this is by default not present
 
         }
-        if ( raw == _undefined || raw == 0)
+        if ( _item && (raw == _undefined || raw == 0))
             return rUNDEF;
         return (raw + _offset) * _scale;
     }
@@ -117,6 +119,7 @@ private:
     IlwisTypes _storeType;
     double _undefined;
     bool _colors=false;
+    bool _item=false;
 
 
 };
