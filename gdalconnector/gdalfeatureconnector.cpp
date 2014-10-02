@@ -75,7 +75,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
         return false;
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
-    fcoverage->setFeatureCount(itFEATURE, iUNDEF);
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES);
 
     OGRLayerH hLayer = getLayerHandle();
 
@@ -95,7 +95,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
         }else{
             int featureCount = fcoverage->featureCount(type);
             featureCount += temp;
-            fcoverage->setFeatureCount(type, featureCount); // subgeometries are not known at this level
+            fcoverage->setFeatureCount(type, featureCount,0); // subgeometries are not known at this level
         }
         //attribute table
         ITable attTable;
@@ -141,7 +141,7 @@ bool GdalFeatureConnector::loadData(IlwisObject* data, const IOOptions &options)
             ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename.toString());
             return false;
         }
-        fcoverage->setFeatureCount(itFEATURE, iUNDEF); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+        fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
 
         OGRLayerH hLayer = getLayerHandle();
         if ( hLayer) {

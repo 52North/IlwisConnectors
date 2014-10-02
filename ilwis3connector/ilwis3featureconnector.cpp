@@ -213,7 +213,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     map<quint32,vector<geos::geom::Geometry *>> polygons;
     std::vector<double> featureValues(isNumeric ? nrPolygons : 0);
-    fcoverage->setFeatureCount(itPOLYGON, iUNDEF); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itPOLYGON, iUNDEF,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
     for(int j=0; j < nrPolygons; ++j) {
         geos::geom::CoordinateArraySequence *outer = readRing(stream);
         if ( !outer)
@@ -311,7 +311,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     int colCoords = mpsTable.index("Coords");
     int colItemId = mpsTable.index("SegmentValue");
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-    fcoverage->setFeatureCount(itLINE, iUNDEF); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itLINE, iUNDEF,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
 
     map<quint32,vector<geos::geom::Geometry *>> lines;
     std::vector<double> featureValues(isNumeric ? mpsTable.rows() : 0);
@@ -354,7 +354,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
 
     std::vector<double> featureValues(isNumeric ? mppTable.rows() : 0);
     bool newCase =  coordColumnX == iUNDEF;
-    fcoverage->setFeatureCount(itPOINT, iUNDEF); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itPOINT, iUNDEF,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
 
     map<quint32,vector<geos::geom::Geometry *>> points;
     for(quint32 i= 0; i < mppTable.rows(); ++i) {
@@ -430,7 +430,7 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj,const IOOptions& opt
     if ( !ok)
         return false;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
-    fcoverage->setFeatureCount(itFEATURE, iUNDEF);
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES);
     IlwisTypes coverageType = itPOINT;
 
     int features = _odf->value("PointMap","Points").toInt(&ok);
@@ -445,7 +445,7 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj,const IOOptions& opt
 
     if (ok){
         fcoverage->featureTypes(coverageType);
-        fcoverage->setFeatureCount(coverageType, features);
+        fcoverage->setFeatureCount(coverageType, features,0);
     }
     else
        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Records",obj->name());
