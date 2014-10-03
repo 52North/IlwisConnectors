@@ -318,14 +318,14 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
                     arg(conv.offset());
             _odf->setKeyValue(colName, "StoreType", storeType == "Real" ? "Real" : "Long");
         } else if ( dmColumn->valueType() == itTHEMATICITEM) {
-            domainInfo = QString("%1;Int;class;256;;").arg(dmColumn->source().toLocalFile(true)) ;
+            domainInfo = QString("%1;Int;class;256;;").arg(domName) ;
             _odf->setKeyValue(colName, "StoreType", "Long");
         } else if ( dmColumn->valueType() == itSTRING) {
             domainInfo = "string.dom;String;string;0;;";
             _odf->setKeyValue(colName, "StoreType","String");
         } else if ( dmColumn->valueType() & itIDENTIFIERITEM) {
             int count = dmColumn->range<ItemRange>()->count();
-            domainInfo = QString("%1;Long;id;%2;;").arg(dmColumn->source().toLocalFile(true)).arg(count) ;
+            domainInfo = QString("%1;Long;id;%2;;").arg(domName).arg(count) ;
             _odf->setKeyValue(colName, "StoreType", "Long");
         }
         _odf->setKeyValue(colName, "DomainInfo", domainInfo);
