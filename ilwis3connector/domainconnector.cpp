@@ -108,7 +108,7 @@ bool DomainConnector::handleItemDomains(IlwisObject* data) {
         for(quint32 i = 0; i < tbl.rows(); ++i) {
             tbl.get(i,indexName,itemName);
             if ( indexCode != iUNDEF)
-                tbl.get(i,indexName,itemCode);
+                tbl.get(i,indexCode,itemCode);
             ThematicItem *item = new ThematicItem({itemName,itemCode});
             tdomain->addItem(item);
         }
@@ -228,7 +228,7 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes valueType)
     _odf->setKeyValue("DomainSort","Sorting","Alphabetical");
     QString typeName = "DomainIdentifier";
     if ( valueType == itTHEMATICITEM)
-        typeName = "DomainSort";
+        typeName = "DomainClass";
     if ( valueType == itNUMERICITEM)
         typeName = "DomainGroup";
 
