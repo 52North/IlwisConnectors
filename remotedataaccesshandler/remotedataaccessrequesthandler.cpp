@@ -61,7 +61,9 @@ void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const 
     QString typeName = parameters.find("ilwistype").value();
     QString ip = response.host()->localAddress().toString();
     quint16 port = response.host()->localPort();
-    QString url = QString("http://%1:%2/dataccess?datasource=%3&ilwistype=%4&service=ilwisobjects").arg(ip).arg(port).arg(obj->name()).arg(typeName);
+    QString baseurl = "http://%1:%2/dataccess?datasource=%3&ilwistype=%4&service=ilwisobjects";
+    QString url = QString(baseurl).arg(ip).arg(port).arg(obj->name()).arg(typeName);
+    baseurl = baseurl.arg(ip).arg(port);
     Resource bufferResource(url,IlwisObject::name2Type(typeName));
     //bufferResource.addProperty("remote", true);
     _response = &response;
@@ -81,6 +83,9 @@ void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const 
     iter = parameters.find("lines");
     if ( iter!= parameters.end()){
         options << IOOptions::Option("lines",iter.value());
+    }
+    if ( obj->ilwisType() == itCATALOG){
+        options << IOOptions::Option("baseurl", baseurl);
     }
     obj->store(options);
 
