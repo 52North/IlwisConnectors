@@ -15,6 +15,8 @@
 using namespace Ilwis;
 using namespace Stream;
 
+REGISTER_CATALOGEXPLORER(RemoteCatalogExplorer)
+
 RemoteCatalogExplorer::RemoteCatalogExplorer(const Ilwis::Resource &resource, const IOOptions &options) : CatalogExplorer(resource, options)
 {
 

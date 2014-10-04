@@ -16,6 +16,8 @@ public:
 
 private:
     QFileInfo toLocalFile(const QUrl &datasource) const { return QFileInfo();}
+
+    NEW_CATALOGEXPLORER(RemoteCatalogExplorer);
 };
 }
 }
