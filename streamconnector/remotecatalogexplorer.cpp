@@ -23,7 +23,7 @@ RemoteCatalogExplorer::RemoteCatalogExplorer(const Ilwis::Resource &resource, co
 std::vector<Resource> RemoteCatalogExplorer::loadItems()
 {
 
-    ICatalog catalog(_resource.url(true));
+    ICatalog catalog(source().url(true).toString());
     std::vector<Resource> items = catalog->items();
 
     return items;

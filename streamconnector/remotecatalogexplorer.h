@@ -13,6 +13,9 @@ public:
     QString provider() const;
 
     static Ilwis::CatalogExplorer *create(const Ilwis::Resource &resource, const Ilwis::IOOptions &options);
+
+private:
+    QFileInfo toLocalFile(const QUrl &datasource) const { return QFileInfo();}
 };
 }
 }
