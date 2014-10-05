@@ -25,6 +25,26 @@ DownloadManager::DownloadManager(const Resource& resource,QNetworkAccessManager&
 {
 }
 
+std::vector<Resource> DownloadManager::loadItems(){
+    QUrl url = _resource.url(true);
+
+    QNetworkRequest request(url);
+
+    QNetworkReply *reply = _manager.get(request);
+
+    connect(reply, &QNetworkReply::downloadProgress, this, &DownloadManager::downloadProgress);
+    connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &DownloadManager::error);
+    connect(reply, &QNetworkReply::finished, this, &DownloadManager::finishedDataExplorer);
+
+    QEventLoop loop; // waits for request to complete
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    delete reply;
+
+    return _items;
+}
+
 bool DownloadManager::loadData(IlwisObject *object, const IOOptions &options){
     QUrl url = _resource.url(true);
 
@@ -202,6 +222,27 @@ void DownloadManager::finishedData()
 
     buf.close();
 }
+void DownloadManager::finishedDataExplorer() {
+    QBuffer buf(&_bytes);
+    buf.open(QIODevice::ReadWrite);
+    QDataStream stream(&buf);
+    quint64 type;
+    stream >> type;
+    QString version;
+    stream >> version;
+
+    VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+    if (factory){
+        _versionedConnector.reset( factory->create(version,type,stream));
+    }
+
+    if (!_versionedConnector)
+        return ;
+    _versionedConnector->loadItems(_items);
+
+    buf.close();
+}
+
 void DownloadManager::finishedMetadata()
 {
     QBuffer buf(&_bytes);
@@ -219,7 +260,7 @@ void DownloadManager::finishedMetadata()
 
     if (!_versionedConnector)
         return ;
-    _versionedConnector->loadMetaData(_object, IOOptions());
+    _versionedConnector->loadItems(_items);
 
     buf.close();
 }

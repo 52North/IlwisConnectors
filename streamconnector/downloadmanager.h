@@ -32,9 +32,8 @@ public:
     DownloadManager(const Ilwis::Resource &resource, QNetworkAccessManager &manager);
     bool loadMetaData(IlwisObject *object, const IOOptions &options);
     bool loadData(IlwisObject *object, const IOOptions &options);
+    std::vector<Resource> loadItems();
 
-
-public slots:
 protected slots:
     void readReady();
     void readReadyRaster();
@@ -42,13 +41,15 @@ protected slots:
     void error(QNetworkReply::NetworkError code);
     void finishedMetadata();
     void finishedData();
+    void finishedDataExplorer();
 
 private:
     Resource _resource;
     QNetworkAccessManager& _manager;
     std::unique_ptr<VersionedSerializer> _versionedConnector;
     QByteArray _bytes;
-    IlwisObject *_object;
+    std::vector<Resource> _items;
+    IlwisObject *_object = 0;
 
     //raster only
     quint32 _blockSizeBytes =0;
