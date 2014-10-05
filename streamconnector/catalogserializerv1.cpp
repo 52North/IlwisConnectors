@@ -81,7 +81,7 @@ void CatalogserializerV1::adaptResource(const QString& baseUrl, Resource& resour
 QString CatalogserializerV1::adaptedUrl(const QString& baseUrl, const Resource& resource) const{
     QString sourceurl = resource.url(true).toString();
     QString tail = sourceurl.mid(sourceurl.lastIndexOf("/") + 1);
-    QString url = QString(baseUrl).arg(tail).arg(IlwisObject::type2Name(resource.ilwisType()));
+    QString url = QString(baseUrl).arg(tail).arg(IlwisObject::type2Name(resource.ilwisType()).toLower());
     return url;
 }
 
