@@ -10,6 +10,7 @@
 #include "catalogconnector.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
+#include "downloadmanager.h"
 #include "remotecatalogexplorer.h"
 
 using namespace Ilwis;
@@ -25,10 +26,9 @@ RemoteCatalogExplorer::RemoteCatalogExplorer(const Ilwis::Resource &resource, co
 std::vector<Resource> RemoteCatalogExplorer::loadItems()
 {
 
-    ICatalog catalog(source().url(true).toString());
-    std::vector<Resource> items = catalog->items();
+    DownloadManager manager(source(), _manager);
+    return manager.loadItems();
 
-    return items;
 }
 
 bool RemoteCatalogExplorer::canUse(const Resource &resource) const

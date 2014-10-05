@@ -1,6 +1,8 @@
 #ifndef REMOTECATALOGEXPLORER_H
 #define REMOTECATALOGEXPLORER_H
 
+#include <QNetworkAccessManager>
+
 namespace Ilwis {
 namespace Stream {
 class RemoteCatalogExplorer : public CatalogExplorer
@@ -16,6 +18,8 @@ public:
 
 private:
     QFileInfo toLocalFile(const QUrl &datasource) const { return QFileInfo();}
+
+    QNetworkAccessManager _manager;
 
     NEW_CATALOGEXPLORER(RemoteCatalogExplorer);
 };
