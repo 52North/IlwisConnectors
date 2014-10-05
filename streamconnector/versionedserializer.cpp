@@ -24,6 +24,20 @@ VersionedSerializer::~VersionedSerializer()
 
 }
 
+bool VersionedSerializer::loadItems(std::vector<Resource> &){
+    QString var;
+    _stream >> var;
+    _stream >> var;
+    _stream >> var;
+    bool readonly;
+    _stream >> readonly;
+    double time;
+    _stream >> time;
+    _stream >> time;
+
+    return true;
+}
+
 bool VersionedSerializer::loadMetaData(IlwisObject *obj, const IOOptions &)
 {
     if ( obj->isReadOnly())
