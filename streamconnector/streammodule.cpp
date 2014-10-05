@@ -24,6 +24,7 @@
 #include "ellipsoidSerializerv1.h"
 #include "georefSerializerv1.h"
 #include "rasterSerializerv1.h"
+#include "catalogserializerv1.h"
 
 using namespace Ilwis;
 using namespace Stream;
@@ -72,6 +73,7 @@ void StreamModule::prepare()
     versionFactory->addCreator({"iv40",itPROJECTION},ProjectionSerializerV1::create);
     versionFactory->addCreator({"iv40",itGEOREF},GeorefSerializerV1::create);
     versionFactory->addCreator({"iv40",itRASTER},RasterSerializerV1::create);
+    versionFactory->addCreator({"iv40",itCATALOG},CatalogserializerV1::create);
 
 
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
