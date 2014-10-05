@@ -46,13 +46,7 @@ bool CatalogserializerV1::store(IlwisObject *obj, const Ilwis::IOOptions &option
     _stream << items.size();
 
     for(Resource resource : items){
-        QString sourceurl = resource.url(true).toString();
-        QString tail = sourceurl.mid(sourceurl.lastIndexOf("/") + 1);
-        QString url = QString(baseurl).arg(tail).arg(IlwisObject::type2Name(resource.ilwisType()));
-        QString tempName = resource.name();
-        resource.setUrl(url);
-        resource.setUrl(url, true);
-        resource.name(tempName, false);
+        adaptResource(baseurl, resource);
         resource.store(_stream);
 
     }
@@ -61,6 +55,34 @@ bool CatalogserializerV1::store(IlwisObject *obj, const Ilwis::IOOptions &option
     return true;
 
 
+}
+
+void CatalogserializerV1::adaptProperyResource(const QString& baseUrl, Resource& resource, const QString& propertyName) const
+{
+    Resource properyResource = resource.property2Resource(propertyName, itCOORDSYSTEM);
+    if ( properyResource.isValid()){
+        QString url = adaptedUrl(baseUrl, properyResource );
+        resource.addProperty(propertyName, url);
+    }
+}
+
+void CatalogserializerV1::adaptResource(const QString& baseUrl, Resource& resource) const{
+
+    QString url = adaptedUrl(baseUrl, resource);
+    QString tempName = resource.name();
+    resource.setUrl(url);
+    resource.setUrl(url, true);
+    resource.name(tempName, false);
+    adaptProperyResource(baseUrl, resource,"coordinatesystem");
+    adaptProperyResource(baseUrl, resource,"georeference");
+    adaptProperyResource(baseUrl, resource,"domain");
+}
+
+QString CatalogserializerV1::adaptedUrl(const QString& baseUrl, const Resource& resource) const{
+    QString sourceurl = resource.url(true).toString();
+    QString tail = sourceurl.mid(sourceurl.lastIndexOf("/") + 1);
+    QString url = QString(baseUrl).arg(tail).arg(IlwisObject::type2Name(resource.ilwisType()));
+    return url;
 }
 
 bool CatalogserializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)

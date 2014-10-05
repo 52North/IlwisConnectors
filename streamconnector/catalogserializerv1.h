@@ -12,6 +12,10 @@ public:
     bool loadMetaData(IlwisObject*obj, const IOOptions & options);
     bool loadItems(std::vector<Resource> &items);
     static VersionedSerializer *create(QDataStream &stream);
+private:
+    void adaptProperyResource(const QString& baseUrl, Resource& resource, const QString &propertyName) const;
+    void adaptResource(const QString &baseUrl, Resource &resource) const;
+    QString adaptedUrl(const QString &baseUrl, const Resource &resource) const;
 };
 }
 }
