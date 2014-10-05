@@ -49,8 +49,10 @@ bool CatalogserializerV1::store(IlwisObject *obj, const Ilwis::IOOptions &option
         QString sourceurl = resource.url(true).toString();
         QString tail = sourceurl.mid(sourceurl.lastIndexOf("/") + 1);
         QString url = QString(baseurl).arg(tail).arg(IlwisObject::type2Name(resource.ilwisType()));
+        QString tempName = resource.name();
         resource.setUrl(url);
         resource.setUrl(url, true);
+        resource.name(tempName, false);
         resource.store(_stream);
 
     }
