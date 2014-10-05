@@ -50,6 +50,10 @@ void RemoteDataAccessRequestHandler::service(HttpRequest &request, HttpResponse 
         response.setHeader("Content-Disposition", qPrintable("attachment;filename=" + name + ".bin"));
 
         writeObject(obj, request, response);
+    }else if ((iter = parameters.find("ilwistype")) != parameters.end()){
+        if ( iter.value() == "catalog")  {
+            writeObject(_datafolder, request, response);
+        }
     }
 
 }
