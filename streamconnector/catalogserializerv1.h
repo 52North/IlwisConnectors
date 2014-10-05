@@ -3,13 +3,14 @@
 
 namespace Ilwis {
 namespace Stream {
-class Catalogserializer : public VersionedSerializer
+class CatalogserializerV1 : public VersionedSerializer
 {
 public:
-    Catalogserializer(QDataStream &stream) ;
+    CatalogserializerV1(QDataStream &stream) ;
 
     bool store(IlwisObject *obj, const Ilwis::IOOptions &options= IOOptions());
     bool loadMetaData(IlwisObject*obj, const IOOptions & options);
+    bool loadItems(std::vector<Resource> &items);
     static VersionedSerializer *create(QDataStream &stream);
 };
 }

@@ -5,16 +5,30 @@
 #include "connectorinterface.h"
 #include "versionedserializer.h"
 #include "catalog.h"
-#include "catalogserializer.h"
+#include "catalogserializerv1.h"
 
 using namespace Ilwis;
 using namespace Stream;
 
-Catalogserializer::Catalogserializer(QDataStream &stream) : VersionedSerializer(stream)
+CatalogserializerV1::CatalogserializerV1(QDataStream &stream) : VersionedSerializer(stream)
 {
 }
 
-bool Catalogserializer::store(IlwisObject *obj, const Ilwis::IOOptions &options)
+bool CatalogserializerV1::loadItems(std::vector<Resource>& items ) {
+    if (!VersionedSerializer::loadItems(items))
+        return false;
+
+    size_t sz;
+    _stream >> sz;
+    for(int i = 0; i < sz; ++i){
+        Resource resource;
+        resource.load(_stream);
+        items.push_back(resource);
+    }
+    return true;
+}
+
+bool CatalogserializerV1::store(IlwisObject *obj, const Ilwis::IOOptions &options)
 {
     if (!VersionedSerializer::store(obj, options))
         return false;
@@ -47,19 +61,12 @@ bool Catalogserializer::store(IlwisObject *obj, const Ilwis::IOOptions &options)
 
 }
 
-bool Catalogserializer::loadMetaData(IlwisObject *obj, const IOOptions &options)
+bool CatalogserializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 {
-    if (!VersionedSerializer::loadMetaData(obj, options))
+    std::vector<Resource> items;
+    if(!loadItems(items))
         return false;
 
-    size_t sz;
-    _stream >> sz;
-    std::vector<Resource> items;
-    for(int i = 0; i < sz; ++i){
-        Resource resource;
-        resource.load(_stream);
-        items.push_back(resource);
-    }
     mastercatalog()->addItems(items);
 
     QUrl url;
@@ -70,7 +77,7 @@ bool Catalogserializer::loadMetaData(IlwisObject *obj, const IOOptions &options)
     return true;
 }
 
-VersionedSerializer *Catalogserializer::create(QDataStream &stream)
+VersionedSerializer *CatalogserializerV1::create(QDataStream &stream)
 {
-        return new Catalogserializer(stream);
+        return new CatalogserializerV1(stream);
 }
