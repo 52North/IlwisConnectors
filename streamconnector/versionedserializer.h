@@ -18,7 +18,7 @@ public:
 
     bool loadMetaData(IlwisObject*obj, const IOOptions & );
     bool loadData(IlwisObject*, const IOOptions& options = IOOptions()) { return false; }
-    bool loadItems(std::vector<Resource>& ) ;
+    virtual bool loadItems(std::vector<Resource>& ) ;
     bool dataIsLoaded() const { return false; }
     bool store(IlwisObject *obj, const IOOptions& options = IOOptions() );
     virtual bool storeData(IlwisObject *obj, const IOOptions& options = IOOptions() ) { return true;} // not mandatory to implement this, so empty is ok
