@@ -1,3 +1,5 @@
+#include <iostream>
+#include <array>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -7,6 +9,11 @@
 #include "ilwisdata.h"
 #include "geometries.h"
 #include "coverage.h"
+#include "domain.h"
+#include "itemdomain.h"
+#include "thematicitem.h"
+#include "range.h"
+#include "identifierrange.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "attributedefinition.h"
@@ -51,6 +58,25 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
     fcoverage->attributesFromTable(featureTable);
     setFeatureCount(fcoverage);
     setSpatialMetadata(fcoverage);
+
+
+    IDomain semantics;
+    std::vector<QString> items;
+    prepareSubFeatureSementics(semantics);
+    if ( !semantics.isValid()) {
+        // prepare default domain
+        std::vector<double> priorities;
+        fcoverage->attributeDefinitionsRef().setSubDefinition(IDomain("value"), priorities);
+    } else {
+        ItemRangeIterator iter(semantics->range<>().data());
+        while (iter.isValid()) {
+            SPDomainItem geomName = (*iter); // why geomName is NULL?
+            items.push_back(geomName->name());
+            ++iter;
+        }
+        fcoverage->attributeDefinitionsRef().setSubDefinition(semantics, items);
+    }
+
     return true;
 }
 
@@ -73,15 +99,21 @@ QString PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeomet
     return sqlBuilder;
 }
 
+void PostgresqlFeatureCoverageLoader::prepareSubFeatureSementics(IDomain &domain) const
+{
+    quint64 id = _resource["trackIdx.domainId"].toInt();
+    ESPIlwisObject obj = mastercatalog()->get(id);
+    domain = static_cast<IDomain>(obj);
+}
+
+
 bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
 {
     qDebug() << "PostgresqlFeatureCoverageLoader::loadData()";
 
-    ITable table = fcoverage->attributeTable();
+    ITable table;
     Resource tableResource = PostgresqlDatabaseUtil::copyWithPropertiesAndType(_resource,itFLATTABLE);
-    if ( !table.isValid()) {
-        table.prepare(tableResource);
-    }
+    table.prepare(tableResource);
 
     PostgresqlTableLoader tableLoader(table->source());
     if (!tableLoader.loadData(table.ptr())) {
@@ -95,13 +127,43 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
     QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
     QSqlQuery query = db.exec(selectGeometries(metaGeometries));
 
-    while (query.next()) {
-        if (metaGeometries.size() > 0) {
-            MetaGeometryColumn meta = metaGeometries.at(0);
-            geos::geom::Geometry *geom = createGeometry(query,meta);
-            fcoverage->newFeature(geom,false);
+    IDomain semantics;
+    prepareSubFeatureSementics(semantics);
 
-            // TODO how to add further geometries to the feature (according to the trackindex)?
+    while (query.next()) {
+        // can have multiple geometries with prioritized order
+        geos::geom::Geometry* geometries[metaGeometries.size()];
+        if (metaGeometries.size() > 0) {
+            int multipleGeomIdx = 0;
+            for (MetaGeometryColumn meta : metaGeometries) { // iterate geometries
+                geos::geom::Geometry *geom = createGeometry(query,meta);
+
+                QString geomName = meta.geomColumn;
+                if ( !semantics.isValid()) {
+                    // treat column ordering as priority semantics
+                    geometries[multipleGeomIdx++] = geom;
+                } else {
+                    NamedIdentifierRange *range = semantics->range<NamedIdentifierRange>().data();
+                    for (int i = 0 ; i < range->count() ; i++) {
+                        // TODO not very elegant to order geometries
+                        SPDomainItem item = range->itemByOrder(i);
+                        if (item->name() == geomName) {
+                            geometries[i] = geom;
+                            break;
+                        }
+                    }
+                }
+            }
+            // reset
+            multipleGeomIdx = 0;
+
+            if (metaGeometries.size() > 0) {
+                SPFeatureI feature = fcoverage->newFeature(geometries[0],false);
+                for (int i = 1 ; i < metaGeometries.size() ; i++) {
+                    // add subfeatures
+                    feature = feature->createSubFeature(metaGeometries.at(i).geomColumn, geometries[i]);
+                }
+            }
         }
     }
 
@@ -130,14 +192,14 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
     QList<MetaGeometryColumn> metaGeometries;
     PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, metaGeometries);
 
+    IDomain semantics;
+    prepareSubFeatureSementics(semantics);
+
     PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
     QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
-    foreach (MetaGeometryColumn meta, metaGeometries) {
-        //select distinct st_geometrytype(geom), count
-        //    from public.tl_2010_us_rails,
-        //    ( select count(*) from public.tl_2010_us_rails where not st_isEmpty(geom))
-        //     AS count;
 
+    int level = -1;
+    foreach (MetaGeometryColumn meta, metaGeometries) {
         QString sqlBuilder;
         sqlBuilder.append("SELECT  ");
         sqlBuilder.append(" count( * )");
@@ -156,18 +218,24 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
 
         QSqlQuery query = db.exec(sqlBuilder);
 
-
-        // TODO Consider multiple geometries for each feature which might have
-        // different geometry types as well! Shall we stretch the count for
-        // features having multiple geometries, though the feature is the same
-        // (is it really the same by definition?)
-
+        if (semantics.isValid()) {
+            NamedIdentifierRange *range = semantics->range<NamedIdentifierRange>().data();
+            for (int i = 0 ; i < range->count() ; i++) {
+                SPDomainItem item = range->itemByOrder(i);
+                if (item->name() == meta.geomColumn) {
+                    level = i;
+                    break;
+                }
+            }
+        } else {
+            level++; // first come first serve
+        }
 
         if (query.next()) {
             IlwisTypes types = meta.geomType;
             int count = query.value("count").toInt();
             if (count > 0) {
-                fcoverage->setFeatureCount(types, count);
+                fcoverage->setFeatureCount(types, count, level);
             }
         }
     }

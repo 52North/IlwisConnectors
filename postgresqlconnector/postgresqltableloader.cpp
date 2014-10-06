@@ -79,6 +79,8 @@ QString PostgresqlTableLoader::select(QString columns) const
 
 bool PostgresqlTableLoader::loadData(Table *table) const
 {
+    qDebug() << "PostgresqlTableLoader::loadData()";
+
     QString allNonGeometryColumns;
     for (int i = 0; i < table->columnCount(); i++) {
         ColumnDefinition& coldef = table->columndefinitionRef(i);
