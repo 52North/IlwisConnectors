@@ -56,7 +56,7 @@ Ilwis::OperationImplementation::State BilateralFilter::prepare(ExecutionContext 
 quint64 BilateralFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/bilateralfilter"},"opencv");
-    operation.setSyntax("bilateralfilter(inputraster, radius-pixelneigborhood, sigmacolor, sigmaspace");
+    operation.setSyntax("bilateralfilter(inputraster, radius-pixelneigborhood, sigmacolor, sigmaspace)");
     operation.setDescription(TR("Calculates the first, second, third, or mixed image derivatives using an extended Sobel operator, used in edge detection"));
     operation.setInParameterCount({4});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"));

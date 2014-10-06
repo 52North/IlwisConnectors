@@ -52,7 +52,8 @@ Ilwis::OperationImplementation::State HistogramEqualization::prepare(ExecutionCo
 quint64 HistogramEqualization::createMetadata()
 {
     OperationResource operation({"ilwis://operations/histogramhqualization"},"opencv");
-    operation.setSyntax("HistogramEqualization(inputraster1, inputraster2]");
+    operation.setLongName("Histogram Equalization");
+    operation.setSyntax("HistogramEqualization(inputraster1, inputraster2)");
     operation.setDescription(TR("Equalizes the histogram of a grayscale image,normalizes the brightness and increases the contrast of the image"));
     operation.setInParameterCount({1});
     operation.addInParameter(0,itRASTER , TR("first rastercoverage"), TR("Source domain image single channel image"));
