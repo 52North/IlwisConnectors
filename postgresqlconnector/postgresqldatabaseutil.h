@@ -47,7 +47,7 @@ public:
      * @param connectionname the name of the connection.
      * @return a database connection setup with the given user credentials.
      */
-    static QSqlDatabase openForResource(const Resource resource, QString connectionname="", bool open=true) {
+    static QSqlDatabase openForResource(const Resource &resource, QString connectionname="", bool open=true) {
 
         QUrl url = resource.url();
         if (connectionname.isEmpty()) {
@@ -98,7 +98,7 @@ public:
      * @param resource the resource to copy
      * @return a copied instance
      */
-    static Resource copyWithPropertiesAndType(const Resource resource, IlwisTypes newType) {
+    static Resource copyWithPropertiesAndType(const Resource &resource, IlwisTypes newType) {
         Resource copy(resource.url(true), newType);
         copy.addProperty("pg.user", resource["pg.user"].toString());
         copy.addProperty("pg.password", resource["pg.password"].toString());
@@ -112,7 +112,7 @@ public:
      * @param resource the resource where to extract the raw tablename from.
      * @return the unqualified table name
      */
-    static QString tablenameFromResource(const Resource resource) {
+    static QString tablenameFromResource(const Resource &resource) {
         QStringList pathElements = resource.url().path().split("/", QString::SkipEmptyParts);
 
         return pathElements.size() == 2
@@ -126,7 +126,7 @@ public:
      * @param resource the resource where to extract the qualified tablename from.
      * @return the qualified table name (e.g. schema.tablename)
      */
-    static QString qTableFromTableResource(const Resource resource) {
+    static QString qTableFromTableResource(const Resource &resource) {
         QStringList pathElements = resource.url().path().split("/", QString::SkipEmptyParts);
         if (pathElements.size() == 2) {
             QString schema("public");
@@ -144,7 +144,7 @@ public:
         return QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id);
     }
 
-    static void getMetaForGeometryColumns(const Resource resource, QList<MetaGeometryColumn> &columns) {
+    static void getMetaForGeometryColumns(const Resource &resource, QList<MetaGeometryColumn> &columns) {
         QString qtablename = qTableFromTableResource(resource);
         QString sqlBuilder;
         sqlBuilder.append("SELECT ");
