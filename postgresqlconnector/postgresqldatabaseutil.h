@@ -199,7 +199,37 @@ public:
             columns.push_back(meta);
         }
 
-        db.close(); // util class has to close after each select
+        db.close();
+    }
+
+    static void getPrimaryKeys(const Resource &resource, QList<QString> &primaryColumns) {
+        QString qtablename = qTableFromTableResource(resource);
+        QString sqlBuilder;
+        sqlBuilder.append("SELECT ");
+        sqlBuilder.append(" pg_attribute.attname ");
+        //sqlBuilder.append(" , format_type(pg_attribute.atttypid, pg_attribute.atttypmod) ");
+        sqlBuilder.append(" FROM ");
+        sqlBuilder.append(" pg_index, pg_class, pg_attribute ");
+        sqlBuilder.append(" WHERE ");
+        sqlBuilder.append(" pg_class.oid = '").append(qtablename).append("'").append("::regclass ");
+        sqlBuilder.append(" AND ");
+        sqlBuilder.append(" indrelid = pg_class.oid ");
+        sqlBuilder.append(" AND ");
+        sqlBuilder.append("pg_attribute.attrelid = pg_class.oid ");
+        sqlBuilder.append(" AND ");
+        sqlBuilder.append(" pg_attribute.attnum = any(pg_index.indkey) ");
+        sqlBuilder.append(" AND ");
+        sqlBuilder.append(" indisprimary"); // ignore indexed only columns
+        sqlBuilder.append(" ;");
+        qDebug() << "SQL: " << sqlBuilder;
+
+        QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(resource,"tmp");
+        QSqlQuery query = db.exec(sqlBuilder);
+
+        while (query.next()) {
+            primaryColumns.append(query.value(0).toString());
+        }
+        db.close();
     }
 
     static void prepareCoordinateSystem(QString srid, ICoordinateSystem &crs) {

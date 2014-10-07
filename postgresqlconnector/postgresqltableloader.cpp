@@ -52,9 +52,12 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
     QSqlDatabase db = QSqlDatabase::database("tableloader");
     QSqlQuery columnTypesQuery = db.exec(sqlBuilder);
 
+    QList<QString> primaryKeys;
+    PostgresqlDatabaseUtil::getPrimaryKeys(_resource, primaryKeys);
+
     while (columnTypesQuery.next()) {
         QString columnName = columnTypesQuery.value(0).toString();
-        if ( !createColumnDefinition(table, &columnTypesQuery)) {
+        if ( !createColumnDefinition(table, columnTypesQuery, primaryKeys)) {
             if ( !columnTypesQuery.isValid()) {
                 WARN("no data record selected.");
             } else {
@@ -111,15 +114,15 @@ bool PostgresqlTableLoader::loadData(Table *table) const
 }
 
 
-bool PostgresqlTableLoader::createColumnDefinition(Table *table, QSqlQuery *query) const
+bool PostgresqlTableLoader::createColumnDefinition(Table *table, const QSqlQuery &query, QList<QString> &primaryKeys) const
 {
-    if ( !query->isValid()) {
+    if ( !query.isValid()) {
         WARN("Can't create columndefinition for an invalid data record.");
         return false;
     }
 
-    QString columnName = query->value(0).toString();
-    QString udtName = query->value(1).toString();
+    QString columnName = query.value(0).toString();
+    QString udtName = query.value(1).toString();
 
     IDomain domain;
     if (udtName == "varchar" || udtName == "text" || udtName == "char") {
@@ -147,6 +150,7 @@ bool PostgresqlTableLoader::createColumnDefinition(Table *table, QSqlQuery *quer
         return false;
     }
 
-    table->addColumn(columnName, domain);
+    bool readonly = primaryKeys.contains(columnName);
+    table->addColumn(columnName, domain, readonly);
     return true;
 }

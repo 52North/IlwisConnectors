@@ -22,7 +22,7 @@ private:
     Resource _resource;
 
     QString select(QString columns) const;
-    bool createColumnDefinition(Table *table, QSqlQuery *query) const;
+    bool createColumnDefinition(Table *table, const QSqlQuery &query, QList<QString> &primaryKeys) const;
 };
 
 }
