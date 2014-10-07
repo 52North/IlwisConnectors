@@ -35,6 +35,7 @@ std::vector<Resource> DownloadManager::loadItems(){
     connect(reply, &QNetworkReply::downloadProgress, this, &DownloadManager::downloadProgress);
     connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &DownloadManager::error);
     connect(reply, &QNetworkReply::finished, this, &DownloadManager::finishedDataExplorer);
+    connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readReady);
 
     QEventLoop loop; // waits for request to complete
     connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
