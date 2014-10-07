@@ -111,16 +111,6 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
 {
     qDebug() << "PostgresqlFeatureCoverageLoader::loadData()";
 
-    ITable table;
-    Resource tableResource = PostgresqlDatabaseUtil::copyWithPropertiesAndType(_resource,itFLATTABLE);
-    table.prepare(tableResource);
-
-    PostgresqlTableLoader tableLoader(table->source());
-    if (!tableLoader.loadData(table.ptr())) {
-        ERROR1("Could not load table data for table '%1'", table->name());
-        return false;
-    }
-
     QList<MetaGeometryColumn> metaGeometries;
     PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource,metaGeometries);
     PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
@@ -167,6 +157,17 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
         }
     }
 
+    ITable table;
+    Resource tableResource = PostgresqlDatabaseUtil::copyWithPropertiesAndType(_resource,itFLATTABLE);
+    table.prepare(tableResource);
+
+    PostgresqlTableLoader tableLoader(table->source());
+    if (!tableLoader.loadData(table.ptr())) {
+        ERROR1("Could not load table data for table '%1'", table->name());
+        return false;
+    }
+
+    fcoverage->attributesFromTable(table);
     db.close();
     return true;
 }
