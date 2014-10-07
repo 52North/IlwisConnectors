@@ -124,7 +124,8 @@ bool PostgresqlTableLoader::createColumnDefinition(Table *table, QSqlQuery *quer
     IDomain domain;
     if (udtName == "varchar" || udtName == "text" || udtName == "char") {
         domain.prepare("code=domain:text",itTEXTDOMAIN);
-    } else if (udtName == "timestamptz") {
+    } else if (udtName.startsWith("timestamp")) {
+        // TODO timestamp vs. timestamptz?
         ITimeDomain tdomain;
         tdomain.prepare();
         tdomain->range(new TimeInterval(itDATE));
