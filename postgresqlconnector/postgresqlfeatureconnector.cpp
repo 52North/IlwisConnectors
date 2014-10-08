@@ -74,7 +74,7 @@ bool PostgresqlFeatureConnector::loadData(IlwisObject *data, const IOOptions& op
     return loader.loadData(fcoverage);
 }
 
-bool PostgresqlFeatureConnector::store(IlwisObject *data)
+bool PostgresqlFeatureConnector::store(IlwisObject *data, const IOOptions& options)
 {
     qDebug() << "PostgresqlFeatureConnector::store()";
 
