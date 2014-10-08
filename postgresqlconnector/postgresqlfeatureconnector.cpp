@@ -64,6 +64,9 @@ bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions
 bool PostgresqlFeatureConnector::loadData(IlwisObject *data, const IOOptions& options)
 {
     qDebug() << "PostgresqlFeatureConnector::loadData()";
+    if (options.size() > 0) {
+        qWarning() << "IOOptions not empty .. not handled for now.";
+    }
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 //    if ( !loadMetaData(fcoverage)) {
@@ -71,12 +74,17 @@ bool PostgresqlFeatureConnector::loadData(IlwisObject *data, const IOOptions& op
 //        return false;
 //    }
     PostgresqlFeatureCoverageLoader loader(source());
-    return loader.loadData(fcoverage);
+    bool ok = loader.loadData(fcoverage);
+    _binaryIsLoaded = ok;
+    return ok;
 }
 
 bool PostgresqlFeatureConnector::store(IlwisObject *data, const IOOptions& options)
 {
     qDebug() << "PostgresqlFeatureConnector::store()";
+    if (options.size() > 0) {
+        qWarning() << "IOOptions not empty .. not handled for now.";
+    }
 
     // TODO store data back to table
 
