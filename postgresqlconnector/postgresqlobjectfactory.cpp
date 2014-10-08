@@ -15,6 +15,7 @@
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "connectorfactory.h"
+#include "domain.h"
 
 #include "postgresqlconnector.h"
 #include "postgresqltableconnector.h"
