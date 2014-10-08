@@ -53,6 +53,9 @@ Ilwis::IlwisObject* WfsFeatureConnector::create() const {
 bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const IOOptions&)
 {
     qDebug() << "WfsFeatureConnector::loadMetaData()";
+    if (options.size() > 0) {
+        qWarning() << "IOOptions not empty .. not handled for now.";
+    }
 
     QUrl featureUrl = source().url(true);
     WebFeatureService wfs(featureUrl);
@@ -68,6 +71,9 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const IOOptions
 bool WfsFeatureConnector::loadData(IlwisObject *data, const IOOptions &)
 {
     qDebug() << "WfsFeatureConnector::loadData()";
+    if (options.size() > 0) {
+        qWarning() << "IOOptions not empty .. not handled for now.";
+    }
 
     // TODO: check how to avoid double loading metadata
     if(!loadMetaData(data, IOOptions()))
@@ -85,7 +91,8 @@ bool WfsFeatureConnector::loadData(IlwisObject *data, const IOOptions &)
     featureParser.context(_context);
     featureParser.parseFeatureMembers();
 
-    return true;
+    _binaryIsLoaded = true;
+    return _binaryIsLoaded;
 }
 
 IlwisTypes WfsFeatureConnector::ilwisType(const QString &resourceUrl)
