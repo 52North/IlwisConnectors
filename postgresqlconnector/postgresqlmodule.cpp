@@ -11,6 +11,7 @@
 #include "connectorinterface.h"
 #include "catalogconnector.h"
 #include "ilwiscontext.h"
+#include "domain.h"
 
 #include "postgresqlobjectfactory.h"
 #include "postgresqlconnector.h"
@@ -58,6 +59,10 @@ void PostgresqlModule::prepare()
     if (!cfactory)
         return ;
 
+    // handling plain table
+    cfactory->addCreator("table", "postgresql", PostgresqlTableConnector::create);
+    // handling simplefeatures
+    cfactory->addCreator("simplefeatures", "postgresql", PostgresqlTableConnector::create);
     cfactory->addCreator(itTABLE, "postgresql", PostgresqlTableConnector::create);
     cfactory->addCreator(itFEATURE, "postgresql", PostgresqlFeatureConnector::create);
     cfactory->addCreator(itCATALOG, "postgresql", PostgresqlFeatureConnector::create);
