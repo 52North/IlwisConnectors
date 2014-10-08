@@ -53,7 +53,8 @@ HEADERS += \
     streamconnector/coordinatesystemserializerv1.h \
     streamconnector/downloadmanager.h \    
     streamconnector/remotecatalogexplorer.h \
-    streamconnector/catalogserializerv1.h
+    streamconnector/catalogserializerv1.h \
+    streamconnector/catalogconnection.h
 
 SOURCES += \
     streamconnector/streammodule.cpp \
@@ -73,7 +74,8 @@ SOURCES += \
     streamconnector/versioneddatastreamfactory.cpp \
     streamconnector/downloadmanager.cpp \
     streamconnector/remotecatalogexplorer.cpp \
-    streamconnector/catalogserializerv1.cpp
+    streamconnector/catalogserializerv1.cpp \
+    streamconnector/catalogconnection.cpp
 
 
 
