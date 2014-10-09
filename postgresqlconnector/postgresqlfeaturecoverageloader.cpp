@@ -62,7 +62,7 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
 
     IDomain semantics;
     std::vector<QString> items;
-    prepareSubFeatureSementics(semantics);
+    PostgresqlDatabaseUtil::prepareSubFeatureSementics(_resource, semantics);
     if ( !semantics.isValid()) {
         // prepare default domain
         std::vector<double> priorities;
@@ -99,14 +99,6 @@ QString PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeomet
     return sqlBuilder;
 }
 
-void PostgresqlFeatureCoverageLoader::prepareSubFeatureSementics(IDomain &domain) const
-{
-    quint64 id = _resource["trackIdx.domainId"].toInt();
-    ESPIlwisObject obj = mastercatalog()->get(id);
-    domain = static_cast<IDomain>(obj);
-}
-
-
 bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
 {
     qDebug() << "PostgresqlFeatureCoverageLoader::loadData()";
@@ -118,7 +110,7 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
     QSqlQuery query = db.exec(selectGeometries(metaGeometries));
 
     IDomain semantics;
-    prepareSubFeatureSementics(semantics);
+    PostgresqlDatabaseUtil::prepareSubFeatureSementics(_resource, semantics);
 
     while (query.next()) {
         // can have multiple geometries with prioritized order
@@ -194,7 +186,7 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
     PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, metaGeometries);
 
     IDomain semantics;
-    prepareSubFeatureSementics(semantics);
+    PostgresqlDatabaseUtil::prepareSubFeatureSementics(_resource, semantics);
 
     PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
     QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");

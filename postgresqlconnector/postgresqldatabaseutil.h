@@ -10,6 +10,7 @@
 #include "resource.h"
 #include "geometries.h"
 #include "coordinatesystem.h"
+#include "domain.h"
 
 namespace Ilwis {
 
@@ -237,6 +238,12 @@ public:
         if ( !crs.prepare(code, itCONVENTIONALCOORDSYSTEM)) {
             ERROR1("Could not prepare crs with %1.", code);
         }
+    }
+
+    static void prepareSubFeatureSementics(const Resource &resource, IDomain &domain) {
+        quint64 id = resource["subfeature.domainId"].toInt();
+        ESPIlwisObject obj = mastercatalog()->get(id);
+        domain = static_cast<IDomain>(obj);
     }
 
 private:
