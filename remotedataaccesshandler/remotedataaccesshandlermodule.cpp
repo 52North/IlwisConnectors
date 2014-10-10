@@ -11,6 +11,7 @@
 #include "operation.h"
 #include "catalog.h"
 #include "remotedataaccessrequesthandler.h"
+#include "remoteoperationrequesthandler.h"
 #include "httpserver/requesthandlerfactory.h"
 
 
@@ -45,6 +46,7 @@ void RemoteDataAccessHandlerModule::finalizePreparation()
     HTTP::HTTPRequestHandlerFactory *factory = kernel()->factory<HTTP::HTTPRequestHandlerFactory>("ilwis::HTTPRequestHandlerFactory");
     if ( factory){
         factory->addHandler("/dataaccess", RemoteDataAccessRequestHandler::create);
+        factory->addHandler("/operation", RemoteOperationRequestHandler::create);
     }
 }
 

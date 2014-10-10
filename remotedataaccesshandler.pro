@@ -40,11 +40,13 @@ OTHER_FILES += \
 
 HEADERS += \
     remotedataaccesshandler/remotedataaccesshandlermodule.h \
-    remotedataaccesshandler/remotedataaccessrequesthandler.h
+    remotedataaccesshandler/remotedataaccessrequesthandler.h \
+    remotedataaccesshandler/remoteoperationrequesthandler.h
 
 SOURCES += \
     remotedataaccesshandler/remotedataaccesshandlermodule.cpp \
-    remotedataaccesshandler/remotedataaccessrequesthandler.cpp
+    remotedataaccesshandler/remotedataaccessrequesthandler.cpp \
+    remotedataaccesshandler/remoteoperationrequesthandler.cpp
 
 
 
