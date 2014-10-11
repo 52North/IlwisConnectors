@@ -33,6 +33,7 @@ private:
 
     IIlwisObject getObject(const QString &name, const QString &ilwTypeName);
     void writeObject(const IIlwisObject &obj, const HttpRequest &request, HttpResponse &response);
+    void error(const QString& text, HttpResponse &response) const;
     //void writeObject(const IIlwisObject &obj, const QString &typeName, HttpResponse &response);
 };
 }

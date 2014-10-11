@@ -42,7 +42,16 @@ bool CatalogserializerV1::store(IlwisObject *obj, const Ilwis::IOOptions &option
 
 
 
-    std::vector<Resource> items = catalog->items();
+    std::vector<Resource> items;
+    if ( options.contains("data"))
+        items = catalog->items();
+
+    if ( options.contains("operations")){
+        ICatalog cat("ilwis://operations");
+        std::vector<Resource> operations = cat->items();
+        std::copy(operations.begin(), operations.end(), std::back_inserter(items));
+    }
+
     _stream << items.size();
 
     for(Resource resource : items){
@@ -61,27 +70,38 @@ void CatalogserializerV1::adaptProperyResource(const QString& baseUrl, Resource&
 {
     Resource properyResource = resource.property2Resource(propertyName, itCOORDSYSTEM);
     if ( properyResource.isValid()){
-        QString url = adaptedUrl(baseUrl, properyResource );
+        QString url = adaptedUrl(baseUrl, properyResource,true);
         resource.addProperty(propertyName, url);
     }
 }
 
 void CatalogserializerV1::adaptResource(const QString& baseUrl, Resource& resource) const{
 
-    QString url = adaptedUrl(baseUrl, resource);
     QString tempName = resource.name();
-    resource.setUrl(url);
-    resource.setUrl(url, true);
+    resource.setUrl(adaptedUrl(baseUrl, resource, false));
+    resource.setUrl(adaptedUrl(baseUrl, resource, true), true);
     resource.name(tempName, false);
     adaptProperyResource(baseUrl, resource,"coordinatesystem");
     adaptProperyResource(baseUrl, resource,"georeference");
     adaptProperyResource(baseUrl, resource,"domain");
 }
 
-QString CatalogserializerV1::adaptedUrl(const QString& baseUrl, const Resource& resource) const{
-    QString sourceurl = resource.url(true).toString();
-    QString tail = sourceurl.mid(sourceurl.lastIndexOf("/") + 1);
-    QString url = QString(baseUrl).arg(tail).arg(IlwisObject::type2Name(resource.ilwisType()).toLower());
+QString CatalogserializerV1::adaptedUrl(const QString& baseUrl, const Resource& resource, bool asRaw) const{
+    QString url;
+    if ( asRaw){
+        QString sourceurl = resource.url(true).toString();
+        QString tail = sourceurl.mid(sourceurl.lastIndexOf("/") + 1);
+        url = QString(baseUrl).arg(tail).arg(IlwisObject::type2Name(resource.ilwisType()).toLower());
+        if ( resource.ilwisType() == itOPERATIONMETADATA){
+            url = url.replace("/dataccess?","/operation?");
+            url = url.replace("?datasource=","?operationcode=");
+        }
+    }else {
+        QUrl burl(baseUrl);
+        QString host = burl.host();
+        int port = burl.port();
+        url = QString("http://%1:%2/%3").arg(host).arg(port).arg(resource.name());
+    }
     return url;
 }
 

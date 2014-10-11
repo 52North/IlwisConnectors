@@ -34,15 +34,18 @@ void RemoteDataAccessRequestHandler::service(HttpRequest &request, HttpResponse 
 {
 
     QMultiMap<QByteArray,QByteArray> parameters = request.getParameterMap();
-    QMultiMap<QByteArray,QByteArray>::Iterator iter;
-    if ( (iter = parameters.find("datasource")) != parameters.end() ){
+    QMultiMap<QByteArray,QByteArray>::Iterator iter, iterType;
+    iterType = parameters.find("ilwistype");
+    if ( iterType == parameters.end()){
+        error(QString("Could not find type, wrong type used"), response);
+        return ;
+    }
+    QString ilwtype = iterType.value();
+    if ( ((iter = parameters.find("datasource")) != parameters.end()) && ilwtype != "catalog"){
         QString name = iter.value();
-        iter = parameters.find("ilwistype");
-        IIlwisObject obj = getObject(name, iter.value());
+        IIlwisObject obj = getObject(name, ilwtype);
         if ( !obj.isValid()){
-            response.setHeader("Content-Type", qPrintable("text/plain"));
-            QString message  = QString("Could not create object for %1, object doesnt exist or has the wrong type").arg(name);
-            response.write(message.toLocal8Bit());
+            error(QString("Could not create object for %1, object doesnt exist or has the wrong type").arg(name), response);
             return ;
         }
         response.setHeader("Content-Type", qPrintable("application/octet-stream"));
@@ -50,10 +53,9 @@ void RemoteDataAccessRequestHandler::service(HttpRequest &request, HttpResponse 
         response.setHeader("Content-Disposition", qPrintable("attachment;filename=" + name + ".bin"));
 
         writeObject(obj, request, response);
-    }else if ((iter = parameters.find("ilwistype")) != parameters.end()){
-        if ( iter.value() == "catalog")  {
-            writeObject(_datafolder, request, response);
-        }
+    }else if ( ilwtype == "catalog")  {
+        writeObject(_datafolder, request, response);
+
     }
 
 }
@@ -90,9 +92,25 @@ void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const 
     }
     if ( obj->ilwisType() == itCATALOG){
         options << IOOptions::Option("baseurl", baseurl);
+        if ( ( iter = parameters.find("datasource")) != parameters.end()){
+            QString requesteddata = iter.value();
+            if ( requesteddata.indexOf("data")!= -1)
+                options << IOOptions::Option("data", "");
+            if ( requesteddata.indexOf("operations")!= -1)
+                options << IOOptions::Option("operations", "");
+
+        }else{
+            options << IOOptions::Option("data","");
+        }
     }
     obj->store(options);
 
+}
+
+void RemoteDataAccessRequestHandler::error(const QString &text, HttpResponse &response) const
+{
+    response.setHeader("Content-Type", qPrintable("text/plain"));
+    response.write(text.toLocal8Bit());
 }
 
 IIlwisObject RemoteDataAccessRequestHandler::getObject(const QString& name, const QString& ilwTypeName){
