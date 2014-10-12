@@ -21,7 +21,7 @@
 using namespace Ilwis;
 using namespace Stream;
 
-DownloadManager::DownloadManager(const Resource& resource,QNetworkAccessManager& manager) : _resource(resource), _manager(manager)
+DownloadManager::DownloadManager(const Resource& resource) : _resource(resource)
 {
 }
 
@@ -30,7 +30,7 @@ std::vector<Resource> DownloadManager::loadItems(){
 
     QNetworkRequest request(url);
 
-    QNetworkReply *reply = _manager.get(request);
+    QNetworkReply *reply = kernel()->network().get(request);
 
     connect(reply, &QNetworkReply::downloadProgress, this, &DownloadManager::downloadProgress);
     connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &DownloadManager::error);
@@ -68,7 +68,7 @@ bool DownloadManager::loadData(IlwisObject *object, const IOOptions &options){
     _object = object;
     QNetworkRequest request(url);
 
-    QNetworkReply *reply = _manager.get(request);
+    QNetworkReply *reply = kernel()->network().get(request);
 
     if ( object->ilwisType() == itRASTER)
         connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readReadyRaster);
@@ -96,7 +96,7 @@ bool DownloadManager::loadMetaData(IlwisObject *object, const IOOptions &options
     _object = object;
     QNetworkRequest request(url);
 
-    QNetworkReply *reply = _manager.get(request);
+    QNetworkReply *reply = kernel()->network().get(request);
 
     connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readReady);
     connect(reply, &QNetworkReply::downloadProgress, this, &DownloadManager::downloadProgress);
