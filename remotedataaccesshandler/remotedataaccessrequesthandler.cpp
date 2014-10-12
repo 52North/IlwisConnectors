@@ -50,7 +50,7 @@ void RemoteDataAccessRequestHandler::service(HttpRequest &request, HttpResponse 
         }
         response.setHeader("Content-Type", qPrintable("application/octet-stream"));
         name = name.replace('.','_');
-        response.setHeader("Content-Disposition", qPrintable("attachment;filename=" + name + ".bin"));
+        response.setHeader("Content-Disposition", qPrintable("attachment;filename=" + name + ".ilwis4"));
 
         writeObject(obj, request, response);
     }else if ( ilwtype == "catalog")  {
@@ -107,11 +107,6 @@ void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const 
 
 }
 
-void RemoteDataAccessRequestHandler::error(const QString &text, HttpResponse &response) const
-{
-    response.setHeader("Content-Type", qPrintable("text/plain"));
-    response.write(text.toLocal8Bit());
-}
 
 IIlwisObject RemoteDataAccessRequestHandler::getObject(const QString& name, const QString& ilwTypeName){
     IlwisTypes tp = IlwisObject::name2Type(ilwTypeName);
