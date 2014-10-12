@@ -34,7 +34,7 @@ linux{
     LIBS += -L$$GEOSLIB/ -lgeos-3.4.2
 }
 
-QT += sql
+QT += sql network
 
 INCLUDEPATH += ../IlwisCore/core \
                 ../IlwisCore/core/ilwisobjects \
