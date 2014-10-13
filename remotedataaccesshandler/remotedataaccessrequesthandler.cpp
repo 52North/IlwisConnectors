@@ -28,6 +28,7 @@ RemoteDataAccessRequestHandler::RemoteDataAccessRequestHandler()
 {
     QString dataRoot = ilwisconfig("remotedataserver/root-data-folder",QString("?"));
     _datafolder.prepare(dataRoot);
+    _internalCatalog.prepare(context()->persistentInternalCatalog().toString());
 }
 
 void RemoteDataAccessRequestHandler::service(HttpRequest &request, HttpResponse &response)
@@ -111,8 +112,11 @@ void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const 
 IIlwisObject RemoteDataAccessRequestHandler::getObject(const QString& name, const QString& ilwTypeName){
     IlwisTypes tp = IlwisObject::name2Type(ilwTypeName);
     QString url = _datafolder->resolve(name, tp);
-    if ( url == sUNDEF)
-        return IIlwisObject();
+    if ( url == sUNDEF){
+        url = _internalCatalog->resolve(name, tp);
+        if ( url == sUNDEF)
+            return IIlwisObject();
+    }
     IIlwisObject obj;
     obj.prepare(url, tp);
     return obj;

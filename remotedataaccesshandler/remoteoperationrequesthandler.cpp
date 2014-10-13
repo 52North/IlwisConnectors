@@ -1,6 +1,7 @@
 #include "remoteoperationrequesthandler.h"
 #include "juliantime.h"
 #include "symboltable.h"
+#include "ilwiscontext.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
 #include "commandhandler.h"
@@ -41,7 +42,26 @@ void RemoteOperationRequestHandler::service(HttpRequest &request, HttpResponse &
             Operation localoperation(a);
             ExecutionContext ctx;
             SymbolTable tbl;
-            localoperation->execute(&ctx, tbl);
+            if ( localoperation->execute(&ctx, tbl)){
+                for(auto result : ctx._results){
+                    IIlwisObject obj = tbl.getSymbol(result)._var.value<Ilwis::IIlwisObject>();
+                    QString internalUrl = context()->persistentInternalCatalog().toString() + "/" + result + ".ilwis4";
+                    QString format;
+                    if ( hasType(obj->ilwisType(), itFEATURE))
+                        format = "featurecoverage";
+                    else if ( obj->ilwisType() == itRASTER)
+                        format = "rastercoverage";
+                    else if (hasType(obj->ilwisType(), itTABLE))
+                        format = "table";
+                    else if (hasType(obj->ilwisType(), itCATALOG))
+                        format = "catalog";
+                    else
+                        continue;
+
+                    obj->connectTo(internalUrl,format,"stream",IlwisObject::cmOUTPUT);
+                    obj->store();
+                }
+            }
 
 
         }
