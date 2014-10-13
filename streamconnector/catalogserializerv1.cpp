@@ -93,7 +93,7 @@ QString CatalogserializerV1::adaptedUrl(const QString& baseUrl, const Resource& 
         QString tail = sourceurl.mid(sourceurl.lastIndexOf("/") + 1);
         url = QString(baseUrl).arg(tail).arg(IlwisObject::type2Name(resource.ilwisType()).toLower());
         if ( resource.ilwisType() == itOPERATIONMETADATA){
-            url = url.replace("/dataccess?","/operation?");
+            url = url.replace("/dataaccess?","/operation?");
             url = url.replace("?datasource=","?operationcode=");
         }
     }else {
