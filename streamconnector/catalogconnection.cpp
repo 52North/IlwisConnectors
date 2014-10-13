@@ -14,7 +14,7 @@ using namespace Stream;
 
     REGISTER_OPERATION(CatalogConnection)
 
-CatalogConnection::CatalogConnection(quint64 metaid, const Ilwis::OperationExpression &expr)
+CatalogConnection::CatalogConnection(quint64 metaid, const Ilwis::OperationExpression &expression) : OperationImplementation(metaid, expression)
 {
 
 }
@@ -63,6 +63,7 @@ Ilwis::OperationImplementation::State CatalogConnection::prepare(ExecutionContex
 quint64 CatalogConnection::createMetadata()
 {
     OperationResource operation({"ilwis://operations/ilwisremotecatalog"});
+    operation.setLongName("Ilwis Remote Catalog");
     operation.setSyntax("ilwisremotecatalog(host, port, path, username, password)");
     operation.setDescription(TR("creates a url to access the catalog of a remote ilwis server"));
     operation.setInParameterCount({5});
@@ -71,7 +72,7 @@ quint64 CatalogConnection::createMetadata()
     operation.addInParameter(2,itSTRING , TR("path"),TR("path as defined for accessing the remote server, often empty"));
     operation.addInParameter(3,itSTRING , TR("username"),TR("username for authentication on the remote server"));
     operation.addInParameter(4,itSTRING , TR("password"),TR("password for authentication on the remote server"));
-    operation.setOutParameterCount({1,2});
+    operation.setOutParameterCount({1});
     operation.addOutParameter(0,itSTRING, TR("connection url"),TR("string that is sufficient to access the remote catalog"));
     operation.setKeywords("service,ilwisremote");
 
