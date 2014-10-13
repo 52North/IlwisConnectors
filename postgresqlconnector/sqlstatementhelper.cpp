@@ -35,11 +35,13 @@ void SqlStatementHelper::addCreateTempTableStmt(const QString &tmpTableName)
 
     _tmpTables.push_back(tmpTableName);
     QString templateTable = PostgresqlDatabaseUtil::qTableFromTableResource(_resource);
-    _sqlBuilder.append(" CREATE TEMP TABLE ");
-    _sqlBuilder.append(tmpTableName);
-    _sqlBuilder.append(" ON COMMIT DROP AS ");
-    _sqlBuilder.append(" (SELECT * FROM ").append(templateTable).append(" )");
-    _sqlBuilder.append(" WITH NO DATA ; ");
+    QString sqlBuilder;
+    sqlBuilder.append(" CREATE TEMP TABLE ");
+    sqlBuilder.append(tmpTableName);
+    sqlBuilder.append(" ON COMMIT DROP AS ");
+    sqlBuilder.append(" (SELECT * FROM ").append(templateTable).append(" )");
+    sqlBuilder.append(" WITH NO DATA ; ");
+    _sqlBuilder.append(sqlBuilder);
 }
 
 void SqlStatementHelper::addInsertChangedDataToTempTableStmt(const QString &tmpTable, const Table *table)
@@ -51,27 +53,29 @@ void SqlStatementHelper::addInsertChangedDataToTempTableStmt(const QString &tmpT
         return;
     }
 
-    _sqlBuilder.append(" INSERT INTO ").append(tmpTable).append(" ( ");
-    _sqlBuilder.append(columnNamesCommaSeparated(table));
-    _sqlBuilder.append(" ) VALUES ");
+    QString sqlBuilder;
+    sqlBuilder.append(" INSERT INTO ").append(tmpTable).append(" ( ");
+    sqlBuilder.append(columnNamesCommaSeparated(table));
+    sqlBuilder.append(" ) VALUES ");
     for (int i = 0 ; i < table->recordCount() ; i++) {
         Record record = table->record(i);
         if (record.isChanged()) {
 
             // create value tuples
-            _sqlBuilder.append(" ( ");
+            sqlBuilder.append(" ( ");
             for (int j = 0 ; j < record.columnCount() ; j++) {
                 ColumnDefinition coldef = table->columndefinition(j);
                 QVariant value = record.cell(j);
-                _sqlBuilder.append(createInsertValueString(value, coldef));
-                _sqlBuilder.append(", ");
+                sqlBuilder.append(createInsertValueString(value, coldef));
+                sqlBuilder.append(", ");
             }
-            _sqlBuilder = trimAndRemoveLastCharacter(_sqlBuilder);
-            _sqlBuilder.append(" ), ");
+            sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
+            sqlBuilder.append(" ), ");
         }
     }
-    _sqlBuilder = trimAndRemoveLastCharacter(_sqlBuilder);
-    _sqlBuilder.append(" ; ");
+    sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
+    sqlBuilder.append(" ; ");
+    _sqlBuilder.append(sqlBuilder);
 }
 
 void SqlStatementHelper::addUpdateStmt(const QString &tmpTable, const Table *table)
@@ -82,34 +86,36 @@ void SqlStatementHelper::addUpdateStmt(const QString &tmpTable, const Table *tab
         return;
     }
 
+    QString sqlBuilder;
     QString qtablename = PostgresqlDatabaseUtil::qTableFromTableResource(_resource);
-    _sqlBuilder.append(" UPDATE ");
-    _sqlBuilder.append(qtablename);
-    _sqlBuilder.append(" AS current");
-    _sqlBuilder.append(" SET ");
+    sqlBuilder.append(" UPDATE ");
+    sqlBuilder.append(qtablename);
+    sqlBuilder.append(" AS current");
+    sqlBuilder.append(" SET ");
 
     for (int i = 0 ; i < table->columnCount() ; i++) {
         ColumnDefinition coldef = table->columndefinition(i);
         if ( !coldef.isReadOnly()) {
-            _sqlBuilder.append(coldef.name());
-            _sqlBuilder.append(" = updated.").append(coldef.name());
-            _sqlBuilder.append(", ");
+            sqlBuilder.append(coldef.name());
+            sqlBuilder.append(" = updated.").append(coldef.name());
+            sqlBuilder.append(", ");
         }
     }
     QString columns = columnNamesCommaSeparated(table);
-    _sqlBuilder = trimAndRemoveLastCharacter(_sqlBuilder);
-    _sqlBuilder.append(" FROM ");
-    _sqlBuilder.append(" ( SELECT ( ");
-    _sqlBuilder.append(columns);
-    _sqlBuilder.append(" ) FROM ");
-    _sqlBuilder.append(tmpTable);
-    _sqlBuilder.append(" ) ");
-    _sqlBuilder.append(" AS updated ( ");
-    _sqlBuilder.append(columns);
-    _sqlBuilder.append(" ) ");
+    sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
+    sqlBuilder.append(" FROM ");
+    sqlBuilder.append(" ( SELECT ");
+    sqlBuilder.append(columns);
+    sqlBuilder.append(" FROM ");
+    sqlBuilder.append(tmpTable);
+    sqlBuilder.append(" ) ");
+    sqlBuilder.append(" AS updated ( ");
+    sqlBuilder.append(columns);
+    sqlBuilder.append(" ) ");
 
-    _sqlBuilder.append(createWhereComparingPrimaryKeys("updated", "current"));
-    _sqlBuilder.append(" ; ");
+    sqlBuilder.append(createWhereComparingPrimaryKeys("updated", "current"));
+    sqlBuilder.append(" ; ");
+    _sqlBuilder.append(sqlBuilder);
 }
 
 void SqlStatementHelper::addInsertStmt(const QString &tmpTable, const Table *table)
@@ -119,17 +125,19 @@ void SqlStatementHelper::addInsertStmt(const QString &tmpTable, const Table *tab
         return;
     }
 
+    QString sqlBuilder;
     QString qtablename = PostgresqlDatabaseUtil::qTableFromTableResource(_resource);
-    _sqlBuilder.append(" INSERT INTO ");
-    _sqlBuilder.append(qtablename);
+    sqlBuilder.append(" INSERT INTO ");
+    sqlBuilder.append(qtablename);
     QString columns = columnNamesCommaSeparated(table);
-    _sqlBuilder.append(" ( ").append(columns).append(" ) ");
-    _sqlBuilder.append(" SELECT ").append(columns).append(" FROM ");
-    _sqlBuilder.append(tmpTable).append(" AS new ");
-    _sqlBuilder.append(" WHERE NOT EXISTS ( SELECT NULL FROM ");
-    _sqlBuilder.append(qtablename).append(" AS existing");
-    _sqlBuilder.append(createWhereComparingPrimaryKeys("new", "existing"));
-    _sqlBuilder.append(" ) ;");
+    sqlBuilder.append(" ( ").append(columns).append(" ) ");
+    sqlBuilder.append(" SELECT ").append(columns).append(" FROM ");
+    sqlBuilder.append(tmpTable).append(" AS new ");
+    sqlBuilder.append(" WHERE NOT EXISTS ( SELECT NULL FROM ");
+    sqlBuilder.append(qtablename).append(" AS existing");
+    sqlBuilder.append(createWhereComparingPrimaryKeys("new", "existing"));
+    sqlBuilder.append(" ) ;");
+    _sqlBuilder.append(sqlBuilder);
 }
 
 QString SqlStatementHelper::sql()
@@ -150,16 +158,18 @@ QString SqlStatementHelper::createWhereComparingPrimaryKeys(const QString &first
         } else {
             whereClause.append(" AND ");
         }
-        whereClause.append(" .").append(first).append(primaryKey);
+        whereClause.append(first).append(".").append(primaryKey);
         whereClause.append(" = ");
-        whereClause.append(" .").append(second).append(primaryKey);
+        whereClause.append(second).append(".").append(primaryKey);
+        whereClause.append(" ");
     }
     return whereClause;
 }
 
 QString SqlStatementHelper::trimAndRemoveLastCharacter(const QString &string) const
 {
-    return string.left(string.trimmed().length() - 1);
+    QString trimmed = string.trimmed();
+    return trimmed.left(trimmed.length() - 1);
 }
 
 QString SqlStatementHelper::columnNamesCommaSeparated(const Table *table) const
