@@ -42,6 +42,9 @@ public:
     */
     virtual void service(HttpRequest& request, HttpResponse& response);
 
+protected:
+    void error(const QString& text, HttpResponse &response) const;
+
 };
 
 typedef std::unique_ptr<HttpRequestHandler> UPHTTPRequestHandler;

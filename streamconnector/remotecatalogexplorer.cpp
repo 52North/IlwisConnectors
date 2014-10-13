@@ -26,8 +26,11 @@ RemoteCatalogExplorer::RemoteCatalogExplorer(const Ilwis::Resource &resource, co
 std::vector<Resource> RemoteCatalogExplorer::loadItems()
 {
 
-    DownloadManager manager(source(), _manager);
-    return manager.loadItems();
+    DownloadManager manager(source());
+    std::vector<Resource> items = manager.loadItems();
+    mastercatalog()->addItems(items);
+
+    return items;
 
 }
 

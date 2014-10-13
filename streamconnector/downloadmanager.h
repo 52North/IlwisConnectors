@@ -29,7 +29,7 @@ class DownloadManager : public QObject
 {
     Q_OBJECT
 public:
-    DownloadManager(const Ilwis::Resource &resource, QNetworkAccessManager &manager);
+    DownloadManager(const Ilwis::Resource &resource);
     bool loadMetaData(IlwisObject *object, const IOOptions &options);
     bool loadData(IlwisObject *object, const IOOptions &options);
     std::vector<Resource> loadItems();
@@ -45,7 +45,6 @@ protected slots:
 
 private:
     Resource _resource;
-    QNetworkAccessManager& _manager;
     std::unique_ptr<VersionedSerializer> _versionedConnector;
     QByteArray _bytes;
     std::vector<Resource> _items;

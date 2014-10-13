@@ -15,7 +15,7 @@ public:
 private:
     void adaptProperyResource(const QString& baseUrl, Resource& resource, const QString &propertyName) const;
     void adaptResource(const QString &baseUrl, Resource &resource) const;
-    QString adaptedUrl(const QString &baseUrl, const Resource &resource) const;
+    QString adaptedUrl(const QString &baseUrl, const Resource &resource, bool asRaw) const;
 };
 }
 }

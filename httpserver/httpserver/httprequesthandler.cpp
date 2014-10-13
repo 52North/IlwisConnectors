@@ -19,3 +19,9 @@ void HttpRequestHandler::service(HttpRequest& request, HttpResponse& response) {
     response.setStatus(501,"not implemented");
     response.write("501 not implemented",true);
 }
+
+void HttpRequestHandler::error(const QString &text, HttpResponse &response) const
+{
+    response.setHeader("Content-Type", qPrintable("text/plain"));
+    response.write(text.toLocal8Bit());
+}

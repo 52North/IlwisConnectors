@@ -27,8 +27,6 @@ private:
     std::unique_ptr<VersionedSerializer> _versionedConnector;
     std::unique_ptr<QIODevice> _datasource;
     QByteArray _bytes;
-    QNetworkAccessManager _manager;
-
 
     bool store(IlwisObject *obj,const IOOptions& options = IOOptions());
     bool openSource(bool reading);
