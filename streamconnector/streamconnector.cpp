@@ -120,7 +120,7 @@ bool StreamConnector::store(IlwisObject *obj, const IOOptions &options){
         return false;
     _versionedConnector->connector(this);
     bool ok;
-    int storemode = options["storemode"].toInt();
+    int storemode = options.contains("storemode") ? options["storemode"].toInt() : IlwisObject::smMETADATA | IlwisObject::smBINARYDATA;
     if ( hasType(storemode, IlwisObject::smMETADATA))
         ok = _versionedConnector->store(obj, options);
     if ( hasType(storemode, IlwisObject::smBINARYDATA))
