@@ -1,4 +1,7 @@
 #include "remoteoperationrequesthandler.h"
+#include "raster.h"
+#include "table.h"
+#include "featurecoverage.h"
 #include "juliantime.h"
 #include "symboltable.h"
 #include "ilwiscontext.h"
@@ -44,18 +47,23 @@ void RemoteOperationRequestHandler::service(HttpRequest &request, HttpResponse &
             SymbolTable tbl;
             if ( localoperation->execute(&ctx, tbl)){
                 for(auto result : ctx._results){
-                    IIlwisObject obj = tbl.getSymbol(result)._var.value<Ilwis::IIlwisObject>();
+                    Symbol sym = tbl.getSymbol(result);
                     QString internalUrl = context()->persistentInternalCatalog().toString() + "/" + result + ".ilwis4";
                     QString format;
-                    if ( hasType(obj->ilwisType(), itFEATURE))
+                    IIlwisObject obj;
+                    if ( hasType(sym._type, itFEATURE)){
+                        obj = sym._var.value<Ilwis::IFeatureCoverage>();
                         format = "featurecoverage";
-                    else if ( obj->ilwisType() == itRASTER)
+                    }else if ( sym._type == itRASTER){
+                        obj = sym._var.value<Ilwis::IRasterCoverage>();
                         format = "rastercoverage";
-                    else if (hasType(obj->ilwisType(), itTABLE))
+                    }else if (hasType(sym._type, itTABLE)){
+                        obj = sym._var.value<Ilwis::ITable>();
                         format = "table";
-                    else if (hasType(obj->ilwisType(), itCATALOG))
+                    }else if (hasType(sym._type, itCATALOG)){
+                        obj = sym._var.value<Ilwis::ICatalog>();
                         format = "catalog";
-                    else
+                    }else
                         continue;
 
                     obj->connectTo(internalUrl,format,"stream",IlwisObject::cmOUTPUT);
