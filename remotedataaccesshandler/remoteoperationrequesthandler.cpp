@@ -49,7 +49,7 @@ void RemoteOperationRequestHandler::service(HttpRequest &request, HttpResponse &
                 if ( parm.pathType() == Parameter::ptREMOTE ){
                     QUrl urlExpr(parm.value());
                     int index = parm.value().lastIndexOf("/");
-                    QString name = parm.value().mid(index);
+                    QString name = parm.value().mid(index + 1);
                     Resource res=mastercatalog()->name2Resource(name);
                     QString typeName = IlwisObject::type2Name(res.ilwisType());
                     parmlist += QString("http://%1:%2/dataaccess?datasource=%3&ilwistype=%4&service=ilwisobjects").arg(urlExpr.host()).arg(urlExpr.port()).arg(name).arg(typeName);
