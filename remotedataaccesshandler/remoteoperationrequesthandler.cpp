@@ -50,9 +50,7 @@ void RemoteOperationRequestHandler::service(HttpRequest &request, HttpResponse &
                     QUrl urlExpr(parm.value());
                     int index = parm.value().lastIndexOf("/");
                     QString name = parm.value().mid(index + 1);
-                    Resource res=mastercatalog()->name2Resource(name);
-                    QString typeName = IlwisObject::type2Name(res.ilwisType());
-                    parmlist += QString("http://%1:%2/dataaccess?datasource=%3&ilwistype=%4&service=ilwisobjects").arg(urlExpr.host()).arg(urlExpr.port()).arg(name).arg(typeName);
+                    parmlist += QString("http://%1:%2/dataaccess?datasource=%3&ilwistype=ilwisobject&service=ilwisobjects").arg(urlExpr.host()).arg(urlExpr.port()).arg(name);
                 }else if ( parm.pathType() == Parameter::ptLOCALOBJECT  ){
                     error(TR("No local filenames allowed in requested data"), response);
                     return;
