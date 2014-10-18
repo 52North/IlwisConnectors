@@ -1,5 +1,7 @@
 #include <QEventLoop>
 #include "remoteoperation.h"
+#include "catalog.h"
+#include "ilwiscontext.h"
 
 using namespace Ilwis;
 using namespace RemoteDataAccess;
@@ -81,15 +83,57 @@ Ilwis::OperationImplementation::State RemoteOperation::prepare(ExecutionContext 
 
     QString operation = expr.mid(1,expr.size() - 3);
     _operationexpr = OperationExpression(operation);
+    QString workingcatalog = context()->workingCatalog()->source().url().toString();
+    QString urlexpr;
+    bool startserver = false;
+    for(int i = 0; i < _operationexpr.parameterCount(); ++i){
+        if ( urlexpr != "")    {
+            urlexpr += ",";
+        }
+        Parameter parm = _operationexpr.parm(i);
+        if ( parm.pathType() == Parameter::ptLOCALOBJECT ){
+            int index = parm.value().lastIndexOf("/");
+            QString name = parm.value().mid(index);
+            urlexpr += QString("http://%1:%2/dataaccess/%3").arg(context()->ipv4()).arg(ilwisconfig("server-settings/port", 8080)).arg(name);
+            startserver = true;
+        }else if ( parm.pathType() == Parameter::ptNONE && !context()->workingCatalog()->isRemote() ){
+            urlexpr += QString("http://%1:%2/dataaccess/%3").arg(context()->ipv4()).arg(ilwisconfig("server-settings/port", 8080)).arg(parm.value());
+            startserver = true;
+        }
+        else
+            urlexpr += parm.value();
+    }
     QUrl rightside(_operationexpr.toString(true));
     QString path = rightside.path().mid(1);
+    int index = path.indexOf("(");
+    if ( index == -1){
+        ERROR2(ERR_ILLEGAL_VALUE_2,TR("operation definition"),_operationexpr.toString());
+        return sPREPAREFAILED;
+    }
+    QString name = path.left(index);
+    path = name + "(" + urlexpr + ")";
     _operationRequest = QUrl(QString("http://%1:%2/operation?expression=%3").arg(rightside.host()).arg(rightside.port()).arg(path));
 
 
 
     if (!_operationRequest.isValid())
         return sPREPAREFAILED;
+    if ( startserver){
+        try {
+            QString expr="httpserver(8095)";
+            QString datafolder = Ilwis::ilwisconfig("remotedataserver/root-data-folder", QString("?"));
 
+            Ilwis::ExecutionContext ctx;
+            Ilwis::SymbolTable syms;
+            if (!Ilwis::commandhandler()->execute(expr,&ctx,syms)){
+                ERROR1(ERR_OPERATION_FAILID1,TR("starting http server"));
+                return sPREPAREFAILED;
+            }
+        } catch(const ErrorObject& err){
+            ERROR1(ERR_OPERATION_FAILID1, err.message());
+            return sPREPAREFAILED;
+        }
+    }
     return sPREPARED;
 }
 
