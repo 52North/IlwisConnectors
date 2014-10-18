@@ -102,7 +102,7 @@ QString CatalogserializerV1::adaptedUrl(const QString& baseUrl, const Resource& 
         QUrl burl(baseUrl);
         QString host = burl.host();
         int port = burl.port();
-        QString path = burl.path();
+        QString path = resource.ilwisType() == itOPERATIONMETADATA ? "" : burl.path();
         url = QString("http://%1:%2%3/%4").arg(host).arg(port).arg(path).arg(resource.name());
     }
     return url;
