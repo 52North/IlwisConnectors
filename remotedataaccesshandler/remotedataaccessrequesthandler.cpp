@@ -78,7 +78,7 @@ void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const 
     Ilwis::ConnectorInterface *conn = factory->createFromFormat(bufferResource, typeName,"stream");
     IlwisObjectConnector *ioObjectConnector = static_cast<IlwisObjectConnector *>(conn);
     if ( !conn){
-        error(QString(TR("Could not create streaming connector for %1")).arg(bufferResource.name()));
+        error(QString(TR("Could not create streaming connector for %1")).arg(bufferResource.name()),response);
         return;
     }
     ioObjectConnector->connect(ioObjectConnector,&IlwisObjectConnector::dataAvailable,this,&RemoteDataAccessRequestHandler::sendData);
