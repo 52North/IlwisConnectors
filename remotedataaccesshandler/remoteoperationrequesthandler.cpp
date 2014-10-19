@@ -1,4 +1,5 @@
 #include "remoteoperationrequesthandler.h"
+#include <QHostAddress>
 #include "raster.h"
 #include "table.h"
 #include "featurecoverage.h"
@@ -67,25 +68,32 @@ void RemoteOperationRequestHandler::service(HttpRequest &request, HttpResponse &
                 for(auto result : ctx._results){
                     Symbol sym = tbl.getSymbol(result);
                     QString internalUrl = context()->persistentInternalCatalog().toString() + "/" + result + ".ilwis4";
-                    QString format;
+                    QString typeName;
                     IIlwisObject obj;
                     if ( hasType(sym._type, itFEATURE)){
                         obj = sym._var.value<Ilwis::IFeatureCoverage>();
-                        format = "featurecoverage";
+                        typeName = "featurecoverage";
                     }else if ( sym._type == itRASTER){
                         obj = sym._var.value<Ilwis::IRasterCoverage>();
-                        format = "rastercoverage";
+                        typeName = "rastercoverage";
                     }else if (hasType(sym._type, itTABLE)){
                         obj = sym._var.value<Ilwis::ITable>();
-                        format = "table";
+                        typeName = "table";
                     }else if (hasType(sym._type, itCATALOG)){
                         obj = sym._var.value<Ilwis::ICatalog>();
-                        format = "catalog";
+                        typeName = "catalog";
                     }else
                         continue;
 
-                    obj->connectTo(internalUrl,format,"stream",IlwisObject::cmOUTPUT);
+                    obj->connectTo(internalUrl,typeName,"stream",IlwisObject::cmOUTPUT);
                     obj->store();
+                    response.setHeader("Content-Type", qPrintable("text/plain"));
+                    response.setHeader("Content-Disposition", qPrintable("attachment;filename=" + result + ".dataurl"));
+                    QString ip = response.host()->localAddress().toString();
+                    quint16 port = response.host()->localPort();
+                    QString baseurl = "http://%1:%2/dataaccess?datasource=operationresult/%3&ilwistype=%4&service=ilwisobjects";
+                    QString url = QString(baseurl).arg(ip).arg(port).arg(result).arg(typeName);
+                    response.write(url.toLocal8Bit());
                 }
             }
 
