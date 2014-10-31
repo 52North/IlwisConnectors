@@ -62,7 +62,7 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature)
     feature = WfsFeature(rawUrl, normalizedUrl);
     feature.name(name, false);
     feature.setTitle(valueOf(item, "./wfs:Title/string()"));
-    feature.setAbstract(valueOf(item, "./wfs:Abstract/string()"));
+    feature.setDescription(valueOf(item, "./wfs:Abstract/string()"));
 
     QString code = valueOf(item, "./wfs:DefaultSRS/string()");
     QString srs = QString("code=").append(WfsUtils::normalizeEpsgCode(code));
@@ -72,6 +72,8 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature)
     feature.addProperty("coordinatesystem", srs);
     feature.addProperty("envelope.ll", llText);
     feature.addProperty("envelope.ur", urText);
+    feature.dimensions(urText + "," + llText);
+    feature.addProperty("domain",name);
 
     if (_wfsResource.hasProperty("forceXY")) {
         // override if forced XY axes order

@@ -28,6 +28,7 @@ RemoteDataAccessRequestHandler::RemoteDataAccessRequestHandler()
 {
     QString dataRoot = ilwisconfig("remotedataserver/root-data-folder",QString("?"));
     _datafolder.prepare(dataRoot);
+    _internalCatalog.prepare(context()->persistentInternalCatalog().toString());
 }
 
 void RemoteDataAccessRequestHandler::service(HttpRequest &request, HttpResponse &response)
@@ -67,7 +68,7 @@ void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const 
     QString typeName = parameters.find("ilwistype").value();
     QString ip = response.host()->localAddress().toString();
     quint16 port = response.host()->localPort();
-    QString baseurl = "http://%1:%2/dataccess?datasource=%3&ilwistype=%4&service=ilwisobjects";
+    QString baseurl = "http://%1:%2/dataaccess?datasource=%3&ilwistype=%4&service=ilwisobjects";
     QString url = QString(baseurl).arg(ip).arg(port).arg(obj->name()).arg(typeName);
     baseurl = baseurl.arg(ip).arg(port);
     Resource bufferResource(url,IlwisObject::name2Type(typeName));
@@ -76,6 +77,10 @@ void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const 
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     Ilwis::ConnectorInterface *conn = factory->createFromFormat(bufferResource, typeName,"stream");
     IlwisObjectConnector *ioObjectConnector = static_cast<IlwisObjectConnector *>(conn);
+    if ( !conn){
+        error(QString(TR("Could not create streaming connector for %1")).arg(bufferResource.name()),response);
+        return;
+    }
     ioObjectConnector->connect(ioObjectConnector,&IlwisObjectConnector::dataAvailable,this,&RemoteDataAccessRequestHandler::sendData);
     obj->setConnector(ioObjectConnector,IlwisObject::cmOUTPUT);
 
@@ -111,8 +116,11 @@ void RemoteDataAccessRequestHandler::writeObject(const IIlwisObject& obj, const 
 IIlwisObject RemoteDataAccessRequestHandler::getObject(const QString& name, const QString& ilwTypeName){
     IlwisTypes tp = IlwisObject::name2Type(ilwTypeName);
     QString url = _datafolder->resolve(name, tp);
-    if ( url == sUNDEF)
-        return IIlwisObject();
+    if ( url == sUNDEF){
+        url = _internalCatalog->resolve(name, tp);
+        if ( url == sUNDEF)
+            return IIlwisObject();
+    }
     IIlwisObject obj;
     obj.prepare(url, tp);
     return obj;

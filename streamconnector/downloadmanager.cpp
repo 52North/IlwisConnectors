@@ -92,6 +92,9 @@ bool DownloadManager::loadMetaData(IlwisObject *object, const IOOptions &options
     QUrl url = _resource.url(true);
     QUrlQuery query(url);
     query.addQueryItem("datatype","metadata");
+    query.removeQueryItem("ilwistype"); // ilwistype might be too generic so we replace it we a more accurate version
+    QString ilwtype = IlwisObject::type2Name(_resource.ilwisType()).toLower();
+    query.addQueryItem("ilwistype",ilwtype);
     url.setQuery(query);
     _object = object;
     QNetworkRequest request(url);

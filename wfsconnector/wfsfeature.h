@@ -27,9 +27,6 @@ public:
     QString title() const;
     void setTitle(QString title="");
 
-    QString abstract() const;
-    void setAbstract(QString abstract="");
-
     Envelope bbox() const;
     void setBBox(Envelope &bbox);
 

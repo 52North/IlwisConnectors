@@ -83,7 +83,7 @@ Ilwis::OperationImplementation::State DilateFilter::prepare(ExecutionContext *ct
 quint64 DilateFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/dilatefilter"},"opencv");
-    operation.setSyntax("DilateFilter(inputraster,iterations, rectangle|ellipse|cross,kernel-x-size, kernel-y-size[,x-anchor, y-anchor] ");
+    operation.setSyntax("DilateFilter(inputraster,iterations, !rectangle|ellipse|cross,kernel-x-size, kernel-y-size[,x-anchor, y-anchor] ");
     operation.setDescription(TR("Blurs an image using the box filter"));
     operation.setInParameterCount({5,7});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"));

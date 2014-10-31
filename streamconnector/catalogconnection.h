@@ -21,7 +21,6 @@ public:
 
 private:
     QString _host;
-    QString _path;
     QString _username;
     QString _password;
     quint32 _port;
