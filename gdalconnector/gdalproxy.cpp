@@ -96,6 +96,7 @@ bool GDALProxy::prepare() {
     getAttributeValue = add<IOSRGetAttrValue>("OSRGetAttrValue");
     getDriver = add<IGDALGetDriver>("GDALGetDriver");
     getGDALDriverByName = add<IGDALGetDriverByName>("GDALGetDriverByName");
+    getDriverByDataSet = add<IGDALGetDatasetDriver>("GDALGetDatasetDriver");
     getDriverCount = add<IGDALGetDriverCount>("GDALGetDriverCount");
     getLongName = add<IGDALGetDriverName>("GDALGetDriverLongName");
     getShortName = add<IGDALGetDriverName>("GDALGetDriverShortName");
@@ -197,6 +198,9 @@ bool GDALProxy::prepare() {
     addGeometry = add<IOGR_G_AddGeometry>("OGR_G_AddGeometry");
     addGeometryDirectly = add<IOGR_G_AddGeometryDirectly>("OGR_G_AddGeometryDirectly");
     getCoordinateDimension = add<IOGR_G_GetCoordinateDimension>("OGR_G_GetCoordinateDimension");
+    getDriverName = add<IOGR_Dr_GetName>("OGR_Dr_GetName");
+    getDriverFromDS = add<IOGR_DS_GetDriver>("OGR_DS_GetDriver");
+
     //CPL
     pushFinderLocation = add<ICPLPushFinderLocation>("CPLPushFinderLocation");
     getLastErrorMsg = add<ICPLGetLastErrorMsg>("CPLGetLastErrorMsg");
