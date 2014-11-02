@@ -60,6 +60,7 @@ std::vector<Ilwis::Resource> SpreadSheetCatalogExplorer::loadItems()
     }
 
      mastercatalog()->addItems(resources);
+     kernel()->issues()->log(QString(TR("Added %1 objects through the spreadsheet connector")).arg( resources.size()),IssueObject::itMessage);
 
      kernel()->issues()->silent(false);
 
