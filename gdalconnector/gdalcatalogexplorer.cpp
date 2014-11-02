@@ -112,6 +112,9 @@ std::vector<Resource> GdalCatalogExplorer::loadItems()
 
         std::copy(existingItems.begin(), existingItems.end(), std::back_inserter(output));
 
+        if (output.size() > 0)
+            kernel()->issues()->log(QString(TR("Added %1 objects through the gdal connector")).arg( output.size()),IssueObject::itMessage);
+
         return output;
     } catch(const ErrorObject& err){
         kernel()->issues()->silent(false);
