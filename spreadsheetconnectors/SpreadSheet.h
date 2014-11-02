@@ -18,6 +18,8 @@ public:
     virtual bool isValid() const = 0;
     virtual bool isRowValid(quint32 rowIndex) const = 0;
     virtual bool isCellValid(quint32 columnIndex,quint32 rowIndex) const = 0;
+    virtual bool isReadOnly() const = 0;
+    virtual QString format() const = 0;
 
     virtual QString storeSheet(const QString& spreadsheetPath) const { return sUNDEF;}
 

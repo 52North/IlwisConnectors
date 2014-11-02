@@ -22,11 +22,13 @@ public:
     QString provider() const;
     const std::unique_ptr<SpreadSheet>& spreadsheet() const;
     bool isValid() const;
+    bool isReadOnly() const;
 
     static bool knownSuffix(const QString& suffix);
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load, const Ilwis::IOOptions &options=IOOptions());
 
+    QString format() const;
 private:
     struct ColInfo{
         IlwisTypes _type = itUNKNOWN;

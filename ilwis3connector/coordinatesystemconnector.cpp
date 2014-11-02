@@ -383,3 +383,8 @@ bool CoordinateSystemConnector::storeMetaData(IlwisObject *data) {
 
 
 }
+
+QString CoordinateSystemConnector::format() const
+{
+    return "coordsystem";
+}

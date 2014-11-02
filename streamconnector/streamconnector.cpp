@@ -159,3 +159,8 @@ void StreamConnector::flush(bool last)
     emit dataAvailable(buf,last);
 
 }
+
+bool StreamConnector::isReadOnly() const
+{
+    return false;
+}

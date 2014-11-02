@@ -22,8 +22,10 @@ public:
    bool isValid() const;
    bool isRowValid(quint32 rowIndex) const;
    bool isCellValid(quint32 columnIndex,quint32 rowIndex) const;
+   bool isReadOnly() const;
 
 
+   QString format() const;
 private:
     const void *_handle = 0;
     int _currentSheet = iUNDEF;
