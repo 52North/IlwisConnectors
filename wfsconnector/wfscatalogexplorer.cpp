@@ -61,6 +61,7 @@ std::vector<Resource> WfsCatalogExplorer::loadItems()
     std::vector<Resource> wfsFeatures;
     parser.parseFeatures(wfsFeatures);
     mastercatalog()->addItems(wfsFeatures);
+    kernel()->issues()->log(QString(TR("Added %1 objects through the wfs connector")).arg( wfsFeatures.size()),IssueObject::itMessage);
     return wfsFeatures;
 }
 
