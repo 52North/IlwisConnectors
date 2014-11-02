@@ -10,6 +10,7 @@
 #include "gdalconnector.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
+#include "dataformat.h"
 
 using namespace Ilwis;
 using namespace Gdal;
@@ -85,11 +86,36 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
             _handle = gdal()->openFile(inf, data->id(), GA_ReadOnly);
             data->name(fileinf.fileName());
         }
-    } else
+
+
+    } else{
         data->name(fileinf.fileName());
+    }
     if (!_handle){
         return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename.toString(),QString(gdal()->getLastErrorMsg()));
     }
+
+    if ( data->ilwisType() == itRASTER){
+        GDALDriverH driverH = gdal()->getDriverByDataSet(_handle->handle());
+        if ( driverH){
+            _gdalShortName = gdal()->getShortName(driverH);
+        }
+    }else if ( hasType( data->ilwisType(), itFEATURE)){
+        OGRSFDriverH driverH = gdal()->getDriverFromDS(_handle->handle());
+        if ( driverH){
+            _gdalShortName = gdal()->getDriverName(driverH);
+        }
+    }
+
+    QVariantList values = DataFormat::getFormatProperties(DataFormat::fpREADWRITE,itCOVERAGE,"gdal", _gdalShortName);
+    if ( values.size() == 1){
+        _readOnly = values[0].toString().indexOf("c")== -1;
+    }
+    Time tm = fileinf.created();
+    data->createTime(tm);
+    tm = fileinf.lastModified();
+    data->modifiedTime(tm);
+
 
     return true;
 }
@@ -175,4 +201,9 @@ OGRLayerH GdalConnector::getLayerHandle() const{
     if ( !hLayer) // so this was not a gdal container connector url, then the one layer per source case
          hLayer = gdal()->getLayer(_handle->handle(), layer);
     return hLayer;
+}
+
+bool GdalConnector::isReadOnly() const
+{
+    return _readOnly;
 }
