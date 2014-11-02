@@ -42,8 +42,9 @@ bool Ilwis3Connector::loadMetaData(IlwisObject *data, const IOOptions &options)
         _odf.reset(ini);
         data->name(inf.fileName());
         data->setDescription(_odf->value("Ilwis","Description"));
-        QString readOnlyStatus = _odf->value("Ilwis","DataReadOnly");
-        data->readOnly(readOnlyStatus != "No" && readOnlyStatus != sUNDEF && readOnlyStatus != "");
+        // TODO : readonly at this stage will block setting al kind of properties
+        //QString readOnlyStatus = _odf->value("Ilwis","DataReadOnly");
+        //data->readOnly(readOnlyStatus.toLower() != "no" && readOnlyStatus != sUNDEF && readOnlyStatus != "");
         bool ok;
         quint32 sec = _odf->value("Ilwis","Time").toULong(&ok);
         if ( ok) {
