@@ -35,7 +35,7 @@ PostgresqlTableLoader::~PostgresqlTableLoader()
 
 bool PostgresqlTableLoader::loadMetadata(Table *table) const
 {
-    qDebug() << "PostgresqlTableLoader::loadMetadata()";
+    //qDebug() << "PostgresqlTableLoader::loadMetadata()";
 
     QString rawTablename(PostgresqlDatabaseUtil::tablenameFromResource(_resource));
 
@@ -46,7 +46,7 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
     sqlBuilder.append(" information_schema.columns ");
     sqlBuilder.append(" WHERE ");
     sqlBuilder.append(" table_name='").append(rawTablename).append("';");
-    qDebug() << "SQL: " << sqlBuilder;
+    //qDebug() << "SQL: " << sqlBuilder;
 
     PostgresqlDatabaseUtil::openForResource(_resource, "tableloader");
     QSqlDatabase db = QSqlDatabase::database("tableloader");
@@ -76,13 +76,13 @@ QString PostgresqlTableLoader::select(QString columns) const
     sqlBuilder.append(columns);
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
-    qDebug() << "SQL: " << sqlBuilder;
+    //qDebug() << "SQL: " << sqlBuilder;
     return sqlBuilder;
 }
 
 bool PostgresqlTableLoader::loadData(Table *table) const
 {
-    qDebug() << "PostgresqlTableLoader::loadData()";
+    //qDebug() << "PostgresqlTableLoader::loadData()";
 
     QString allNonGeometryColumns;
     for (int i = 0; i < table->columnCount(); i++) {

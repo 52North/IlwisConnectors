@@ -46,7 +46,7 @@ PostgresqlFeatureCoverageLoader::~PostgresqlFeatureCoverageLoader()
 
 bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) const
 {
-    qDebug() << "PostgresqlFeatureCoverageLoader::loadMetadata()";
+    //qDebug() << "PostgresqlFeatureCoverageLoader::loadMetadata()";
 
     ITable featureTable;
     Resource tableResource = PostgresqlDatabaseUtil::copyWithPropertiesAndType(_resource,itFLATTABLE);
@@ -70,7 +70,7 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
     } else {
         ItemRangeIterator iter(semantics->range<>().data());
         while (iter.isValid()) {
-            SPDomainItem geomName = (*iter); // why geomName is NULL?
+            SPDomainItem geomName = (*iter);
             items.push_back(geomName->name());
             ++iter;
         }
@@ -95,13 +95,16 @@ QString PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeomet
     sqlBuilder.append(columns);
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
-    qDebug() << "SQL: " << sqlBuilder;
+    //qDebug() << "SQL: " << sqlBuilder;
     return sqlBuilder;
 }
 
 bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
 {
-    qDebug() << "PostgresqlFeatureCoverageLoader::loadData()";
+    //qDebug() << "PostgresqlFeatureCoverageLoader::loadData()";
+
+    // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES);
 
     QList<MetaGeometryColumn> metaGeometries;
     PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource,metaGeometries);
@@ -180,7 +183,7 @@ geos::geom::Geometry* PostgresqlFeatureCoverageLoader::createGeometry(QSqlQuery 
 
 void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage) const
 {
-    qDebug() << "PostgresqlFeatureCoverageLoader::setFeatureCount()";
+    //qDebug() << "PostgresqlFeatureCoverageLoader::setFeatureCount()";
 
     QList<MetaGeometryColumn> metaGeometries;
     PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, metaGeometries);
@@ -207,7 +210,7 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
         sqlBuilder.append(meta.geomColumn);
         sqlBuilder.append(" ) ");
         sqlBuilder.append(" ) AS not_null ;");
-        qDebug() << "SQL: " << sqlBuilder;
+        //qDebug() << "SQL: " << sqlBuilder;
 
         QSqlQuery query = db.exec(sqlBuilder);
 
@@ -237,7 +240,7 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
 
 void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcoverage) const
 {
-    qDebug() << "PostgresqlFeatureCoverageLoader::setSpatialMetadata()";
+    //qDebug() << "PostgresqlFeatureCoverageLoader::setSpatialMetadata()";
 
     QList<MetaGeometryColumn> metaGeometries;
     PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, metaGeometries);
@@ -256,7 +259,7 @@ void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcover
         sqlBuilder.append(" FROM ");
         sqlBuilder.append(meta.qtablename());
         sqlBuilder.append(";");
-        qDebug() << "SQL: " << sqlBuilder;
+        //qDebug() << "SQL: " << sqlBuilder;
 
         QSqlQuery envelopeQuery = db.exec(sqlBuilder);
 

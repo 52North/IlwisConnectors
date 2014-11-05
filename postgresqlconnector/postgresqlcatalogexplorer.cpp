@@ -34,7 +34,7 @@ PostgresqlCatalogExplorer::~PostgresqlCatalogExplorer()
 
 std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
 {
-    qDebug() << "PostgresqlCatalogExplorer::loadItems()";
+    //qDebug() << "PostgresqlCatalogExplorer::loadItems()";
 
     QString schema("public");
     if (source().hasProperty("pg.schema")) {

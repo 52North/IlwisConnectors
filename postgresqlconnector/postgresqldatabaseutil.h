@@ -59,7 +59,7 @@ public:
         if (QSqlDatabase::contains(connectionname)) {
             db = QSqlDatabase::database(connectionname);
         } else {
-            qDebug() << "add pg database connection" << connectionname;
+            //qDebug() << "add pg database connection" << connectionname;
             db = QSqlDatabase::addDatabase("QPSQL", connectionname);
 
             qint64 port = url.port();
@@ -222,7 +222,7 @@ public:
         sqlBuilder.append(" AND ");
         sqlBuilder.append(" indisprimary"); // ignore indexed only columns
         sqlBuilder.append(" ;");
-        qDebug() << "SQL: " << sqlBuilder;
+        //qDebug() << "SQL: " << sqlBuilder;
 
         QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(resource,"tmp");
         QSqlQuery query = db.exec(sqlBuilder);
@@ -245,6 +245,18 @@ public:
         ESPIlwisObject obj = mastercatalog()->get(id);
         domain = static_cast<IDomain>(obj);
     }
+
+    /* MOVED TO SqlStatementHelper
+    static QString createTempTableStatement(const QString &tmpTableName, const QString &templateTable) {
+        QString sqlBuilder;
+        sqlBuilder.append("CREATE TEMP TABLE ");
+        sqlBuilder.append(tmpTableName);
+        sqlBuilder.append(" ON COMMIT DROP AS ");
+        sqlBuilder.append(" (SELECT * FROM ").append(templateTable).append(" )");
+        sqlBuilder.append(" WITH NO DATA ; ");
+        return sqlBuilder;
+    }
+    */
 
 private:
     static void validateNotNullOrEmpty(QString parameter, QVariant value) {

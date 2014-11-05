@@ -20,6 +20,9 @@ public:
     bool loadData(IlwisObject *data, const IOOptions &options=IOOptions());
     bool store(IlwisObject* data, const IOOptions &options);
 
+private:
+    QString trimAndRemoveLastCharacter(const QString &string);
+
 };
 }
 }

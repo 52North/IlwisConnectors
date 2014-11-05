@@ -13,6 +13,7 @@
 #include "basetable.h"
 #include "flattable.h"
 
+#include "sqlstatementhelper.h"
 #include "postgresqldatabaseutil.h"
 #include "postgresqlconnector.h"
 #include "postgresqltableconnector.h"
@@ -27,7 +28,7 @@ PostgresqlTableConnector::PostgresqlTableConnector(const Ilwis::Resource &resour
 
 IlwisObject *PostgresqlTableConnector::create() const
 {
-    qDebug() << "PostgresqlTableConnector::create() -> FlatTable";
+    //qDebug() << "PostgresqlTableConnector::create() -> FlatTable";
     return new FlatTable(_resource);
 }
 
@@ -38,7 +39,7 @@ ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &reso
 
 bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions& options)
 {
-    qDebug() << "PostgresqlTableConnector::loadMetaData()";
+    //qDebug() << "PostgresqlTableConnector::loadMetaData()";
     if (options.size() > 0) {
         qWarning() << "IOOptions not empty .. not handled for now.";
     }
@@ -50,77 +51,24 @@ bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions& 
 
 bool PostgresqlTableConnector::store(IlwisObject *data, const IOOptions& options)
 {
-    qDebug() << "PostgresqlTableConnector::store()";
+    //qDebug() << "PostgresqlTableConnector::store()";
     if (options.size() > 0) {
         qWarning() << "IOOptions not empty .. not handled for now.";
     }
 
     Table *table = static_cast<Table *>(data);
+    SPSqlStatementHelper sqlHelper = SPSqlStatementHelper(new SqlStatementHelper(_resource));
+    sqlHelper->addCreateTempTableStmt("data_level_0");
+    sqlHelper->addInsertChangedDataToTempTableStmt("data_level_0", table);
+    sqlHelper->addUpdateStmt("data_level_0", table);
+    sqlHelper->addInsertStmt("data_level_0", table);
 
-    QString sqlBuilder;
-    sqlBuilder.append("UPDATE ");
-    sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
-    sqlBuilder.append(" AS current");
-    sqlBuilder.append(" SET ");
+    // TODO delete deleted rows
 
-    for (int i = 0 ; i < table->columnCount() ; i++) {
-        ColumnDefinition coldef = table->columndefinition(i);
-        if ( !coldef.isReadOnly()) {
-            sqlBuilder.append(coldef.name());
-            sqlBuilder.append(" = updates.").append(coldef.name());
-            sqlBuilder.append(", ");
-        }
-    }
-    sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
-    sqlBuilder.append(" FROM ");
-    sqlBuilder.append(" ( VALUES ");
+    //qDebug() << "SQL: " << sqlHelper->sql();
 
-    for (int i = 0 ; i < table->recordCount() ; i++) {
-        Record record = table->record(i);
-        if (record.isChanged()) {
-            sqlBuilder.append(" ( ");
-            for (int j = 0 ; j < record.columnCount() ; j++) {
-                ColumnDefinition coldef = table->columndefinition(j);
-                QVariant value = record.cell(j);
-                sqlBuilder.append(createInsertValueString(value, coldef));
-                sqlBuilder.append(", ");
-            }
-            sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
-            sqlBuilder.append(" ), ");
-        }
-    }
-    sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
-    sqlBuilder.append(" ) AS updates ( ");
-
-    for (int i = 0 ; i < table->columnCount() ; i++) {
-        ColumnDefinition coldef = table->columndefinition(i);
-        sqlBuilder.append(coldef.name());
-        sqlBuilder.append(", ");
-    }
-    sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
-    sqlBuilder.append(" ) ");
-
-    QString whereClause;
-
-    for (int i = 0 ; i < table->columnCount(); i ++) {
-        ColumnDefinition coldef = table->columndefinition(i);
-        if (coldef.isReadOnly()) {
-            if (whereClause.isEmpty()) {
-                whereClause.append(" WHERE ");
-            } else {
-                whereClause.append(" AND ");
-            }
-            whereClause.append(" current.").append(coldef.name());
-            whereClause.append(" = ");
-            whereClause.append(" updates.").append(coldef.name());
-        }
-    }
-    sqlBuilder.append(whereClause).append(" ;");
-    qDebug() << "SQL: " << sqlBuilder;
-
-
-    QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(_resource,"updatetable");
-    db.exec(sqlBuilder);
+    QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(_resource,"upserting_table");
+    db.exec(sqlHelper->sql());
     db.close();
 
     return true;
@@ -165,7 +113,7 @@ QString PostgresqlTableConnector::createInsertValueString(QVariant value, const 
 
 bool PostgresqlTableConnector::loadData(IlwisObject *data,const IOOptions& options)
 {
-    qDebug() << "PostgresqlTableConnector::loadData()";
+    //qDebug() << "PostgresqlTableConnector::loadData()";
     if (options.size() > 0) {
         qWarning() << "IOOptions not empty .. not handled for now.";
     }
