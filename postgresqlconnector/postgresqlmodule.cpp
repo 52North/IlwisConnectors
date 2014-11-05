@@ -49,7 +49,7 @@ QString PostgresqlModule::getVersion() const
 
 void PostgresqlModule::prepare()
 {
-    qDebug() << "preparing postgresql module ...";
+    //qDebug() << "preparing postgresql module ...";
 
     PostgresqlObjectFactory *factory = new PostgresqlObjectFactory();
     factory->prepare();
@@ -59,10 +59,8 @@ void PostgresqlModule::prepare()
     if (!cfactory)
         return ;
 
-    // handling plain table
     cfactory->addCreator("table", "postgresql", PostgresqlTableConnector::create);
-    // handling simplefeatures
-    cfactory->addCreator("simplefeatures", "postgresql", PostgresqlTableConnector::create);
+    cfactory->addCreator("simplefeatures", "postgresql", PostgresqlFeatureConnector::create);
     cfactory->addCreator(itTABLE, "postgresql", PostgresqlTableConnector::create);
     cfactory->addCreator(itFEATURE, "postgresql", PostgresqlFeatureConnector::create);
     cfactory->addCreator(itCATALOG, "postgresql", PostgresqlFeatureConnector::create);
