@@ -50,7 +50,7 @@ Ilwis::IlwisObject* WfsFeatureConnector::create() const {
     return new FeatureCoverage(this->_resource);
 }
 
-bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const IOOptions&)
+bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const IOOptions& options)
 {
     qDebug() << "WfsFeatureConnector::loadMetaData()";
     if (options.size() > 0) {
@@ -68,7 +68,7 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const IOOptions
     return schemaParser.parseMetadata(fcoverage, _context);
 }
 
-bool WfsFeatureConnector::loadData(IlwisObject *data, const IOOptions &)
+bool WfsFeatureConnector::loadData(IlwisObject *data, const IOOptions &options)
 {
     qDebug() << "WfsFeatureConnector::loadData()";
     if (options.size() > 0) {

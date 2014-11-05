@@ -24,8 +24,8 @@ public:
     static IlwisTypes ilwisType(const QString &name);
 
 protected:
-    bool loadMetaData(IlwisObject* data,const IOOptions&);
-    bool loadData(IlwisObject* data,const IOOptions&);
+    bool loadMetaData(IlwisObject* data, const IOOptions&options);
+    bool loadData(IlwisObject* data,const IOOptions& options);
 
 private:
     WfsParsingContext _context;
