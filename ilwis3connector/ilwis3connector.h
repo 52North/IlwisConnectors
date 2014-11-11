@@ -21,6 +21,7 @@ public:
     QString provider() const;
     virtual bool storeBinaryData(IlwisObject* ) { return false; }
     virtual bool storeMetaData(IlwisObject* )  { return false; }
+    bool isReadOnly() const;
     QString unquote(const QString &name) const;
 
     bool store(IlwisObject *, const IOOptions& options = IOOptions());

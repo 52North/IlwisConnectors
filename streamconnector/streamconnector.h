@@ -21,6 +21,7 @@ public:
     quint32 position() const;
     bool needFlush() const;
     void flush(bool last);
+    bool isReadOnly() const;
     static ConnectorInterface *create(const Resource &resource, bool load, const IOOptions &options);
 
 private:

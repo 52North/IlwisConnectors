@@ -30,8 +30,11 @@ public:
     bool isRowValid(quint32 rowIndex) const;
     bool isCellValid(quint32 columnIndex,quint32 rowIndex) const;
 
+    bool isReadOnly() const;
+
     QString storeSheet(const QString& spreadsheetPath) const ;
 
+    QString format() const;
 private:
     std::unique_ptr<ods::Book> _book;
     ods::Sheet *_currentSheet;

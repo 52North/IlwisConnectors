@@ -431,3 +431,8 @@ IlwisObject *DomainConnector::create() const
     }
     return 0;
 }
+
+QString DomainConnector::format() const
+{
+    return "domain";
+}

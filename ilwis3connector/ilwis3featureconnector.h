@@ -28,6 +28,7 @@ public:
     void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
 
 
+    QString format() const;
 private:
     bool loadBinaryPoints(FeatureCoverage *fcoverage);
     bool loadBinarySegments(FeatureCoverage *fcoverage);

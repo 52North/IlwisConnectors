@@ -945,3 +945,8 @@ bool FeatureConnector::storeBinaryDataTable(IlwisObject *obj, IlwisTypes tp, con
 
     return true; // no store needed
 }
+
+QString FeatureConnector::format() const
+{
+    return "vectormap";
+}

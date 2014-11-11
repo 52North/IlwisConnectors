@@ -121,6 +121,11 @@ bool XLSXFormat::isCellValid(quint32 columnIndex, quint32 rowIndex) const
     return cellValueType(columnIndex, rowIndex) != itUNKNOWN;
 }
 
+bool XLSXFormat::isReadOnly() const
+{
+    return false;
+}
+
 quint32 XLSXFormat::sheetCount() const{
     if (! _xlsxdocument)
         return iUNDEF;
@@ -137,6 +142,11 @@ QString XLSXFormat::sheetName(quint32 index) const
     if ( index < names.size())
         return names[index];
     return sUNDEF;
+}
+
+QString XLSXFormat::format() const
+{
+    return "XLSX Spreadsheet";
 }
 
 QString XLSXFormat::storeSheet(const QString &spreadsheetPath) const

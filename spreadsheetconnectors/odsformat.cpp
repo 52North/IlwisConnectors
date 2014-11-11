@@ -177,6 +177,16 @@ bool ODSFormat::isCellValid(quint32 columnIndex, quint32 rowIndex) const
     return getCellInternal(columnIndex, rowIndex) != 0;
 }
 
+bool ODSFormat::isReadOnly() const
+{
+    return false;
+}
+
+QString ODSFormat::format() const
+{
+    return "ODS Spreadsheet";
+}
+
 QString ODSFormat::storeSheet(const QString &spreadsheetPath) const
 {
     QFile file(spreadsheetPath);

@@ -32,6 +32,7 @@ typedef int (*IGDALGetAccess )(GDALDatasetH) ;
 typedef GDALDriverH (*IGDALGetDriver )(int) ;
 typedef int (*IGDALGetDriverCount )() ;
 typedef GDALDriverH (*IGDALGetDriverByName)(const char * ) ;
+typedef GDALDriverH (*IGDALGetDatasetDriver)(GDALDatasetH );
 typedef const char* (*IGDALGetDriverName )(GDALDriverH) ;
 typedef const char* (*IGDALGetMetadataItem )(GDALMajorObjectH , const char *, const char *) ;
 typedef char ** (*IGDALGetMetadata)(GDALMajorObjectH , const char *);
@@ -132,6 +133,8 @@ typedef OGRErr (*IOGR_G_AddGeometry)(OGRGeometryH,OGRGeometryH);
 typedef OGRErr (*IOGR_G_AddGeometryDirectly)(OGRGeometryH,OGRGeometryH);
 typedef int (*IOGR_G_GetCoordinateDimension)(OGRGeometryH);
 typedef void (*IOSRRelease)( OGRSpatialReferenceH );
+typedef OGRSFDriverH (*IOGR_DS_GetDriver)(OGRDataSourceH);
+typedef const char * (*IOGR_Dr_GetName)(OGRSFDriverH);
 
 
 typedef FILE* (*IVSIFileFromMemBuffer)( const char *, GByte *, vsi_l_offset ,int  );
@@ -231,6 +234,7 @@ class GDALProxy {
         IGDALGetAccess getAccess;
         IGDALGetDriver getDriver;
         IGDALGetDriverByName getGDALDriverByName;
+        IGDALGetDatasetDriver getDriverByDataSet;
         IGDALGetDriverCount getDriverCount;
         IGDALGetDriverName getLongName;
         IGDALGetDriverName getShortName;
@@ -332,6 +336,8 @@ class GDALProxy {
         IOGR_G_AddGeometry addGeometry;
         IOGR_G_AddGeometryDirectly addGeometryDirectly;
         IOGR_G_GetCoordinateDimension getCoordinateDimension;
+        IOGR_Dr_GetName getDriverName;
+        IOGR_DS_GetDriver getDriverFromDS;
 
         IVSIFileFromMemBuffer vsiFileFromMem;
         IVSIFCloseL vsiClose;
