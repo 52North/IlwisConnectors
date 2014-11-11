@@ -237,7 +237,10 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
     gcoverage->gridRef()->prepare(gcoverage, grf->size());
 
     gcoverage->georeference(grf);
-    _dataType = gcoverage->datadefRef().range()->valueType();
+    if ( !gcoverage->datadefRef().range().isNull() )
+        _dataType = gcoverage->datadefRef().range()->valueType();
+    else
+        _dataType = itUNKNOWN;
 
     return true;
 
@@ -439,6 +442,11 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
     }
     return ok;
 
+}
+
+QString RasterCoverageConnector::format() const
+{
+    return "map";
 }
 
 void RasterCoverageConnector::calcStatics(const IlwisObject *obj, NumericStatistics::PropertySets set) const {

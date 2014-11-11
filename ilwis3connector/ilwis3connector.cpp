@@ -42,11 +42,15 @@ bool Ilwis3Connector::loadMetaData(IlwisObject *data, const IOOptions &options)
         _odf.reset(ini);
         data->name(inf.fileName());
         data->setDescription(_odf->value("Ilwis","Description"));
+        // TODO : readonly at this stage will block setting al kind of properties
+        //QString readOnlyStatus = _odf->value("Ilwis","DataReadOnly");
+        //data->readOnly(readOnlyStatus.toLower() != "no" && readOnlyStatus != sUNDEF && readOnlyStatus != "");
         bool ok;
         quint32 sec = _odf->value("Ilwis","Time").toULong(&ok);
         if ( ok) {
             data->createTime((time_t)sec);
-            data->modifiedTime( tUNDEF);
+            Time modifiedTime = inf.lastModified();
+            data->modifiedTime(modifiedTime);
         }
         return true;
     } else {
@@ -195,6 +199,11 @@ QString Ilwis3Connector::code2name(const QString& code, const QString& type) {
 QString Ilwis3Connector::provider() const
 {
     return "ilwis3";
+}
+
+bool Ilwis3Connector::isReadOnly() const
+{
+    return false; // ilwis3 data is file based so basically reading/writing is allowd. any deviations from it are taken into account in the odf and thus already registered in the status of the ilwis object itself
 }
 
 QString Ilwis3Connector::unquote(const QString &name) const

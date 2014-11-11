@@ -13,6 +13,7 @@ public:
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
+    QString format() const;
 private:
     bool loadGeoref(const IniFile &odf, IlwisObject *data);
     IlwisObject *createGeoreference(const IniFile &odf) const;

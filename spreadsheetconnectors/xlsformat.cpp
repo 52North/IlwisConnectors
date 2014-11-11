@@ -153,4 +153,14 @@ bool XLSFormat::isCellValid(quint32 columnIndex, quint32 rowIndex) const
     return columnIndex < const_cast<XLSFormat *>(this)->columnCount() && rowIndex < rowCount();
 }
 
+bool XLSFormat::isReadOnly() const
+{
+    return true;
+}
+
+QString XLSFormat::format() const
+{
+    return "XLS Spreadsheet";
+}
+
 

@@ -77,7 +77,11 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems()
         }
     }
     mastercatalog()->addItems(finalList);
+
     kernel()->issues()->silent(false);
+
+    if ( finalList.size() > 0)
+        kernel()->issues()->log(QString(TR("Added %1 objects through the ilwis3 connector")).arg( finalList.size()),IssueObject::itMessage);
 
     std::copy(existingItems.begin(), existingItems.end(), std::back_inserter(finalList));
     return finalList;

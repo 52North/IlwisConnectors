@@ -356,3 +356,8 @@ void TableConnector::attributeDomain(const QString &attdom)
 {
     _attributeDomain = attdom;
 }
+
+QString TableConnector::format() const
+{
+    return "table";
+}

@@ -16,6 +16,7 @@ public:
     IlwisObject *create() const;
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
+    QString format() const;
 private:
     bool handleValueDomains(IlwisObject *data);
     /*!

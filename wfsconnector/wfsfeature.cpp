@@ -47,16 +47,6 @@ void WfsFeature::setTitle(QString title)
     _title = title;
 }
 
-QString WfsFeature::abstract() const
-{
-    return _abstract;
-}
-
-void WfsFeature::setAbstract(QString abstract)
-{
-    _abstract = abstract;
-}
-
 Envelope WfsFeature::bbox() const
 {
     return _bbox;

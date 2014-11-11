@@ -237,6 +237,11 @@ bool SpreadSheetTableConnector::isValid() const
     return _spreadsheet && _spreadsheet->isValid();
 }
 
+bool SpreadSheetTableConnector::isReadOnly() const
+{
+    return _spreadsheet && _spreadsheet->isReadOnly();
+}
+
 bool SpreadSheetTableConnector::knownSuffix(const QString &suffix){
     return std::find(_suffixes.begin(), _suffixes.end(), suffix.toLower()) != _suffixes.end();
 }
@@ -246,3 +251,9 @@ ConnectorInterface *SpreadSheetTableConnector::create(const Ilwis::Resource &res
     return new SpreadSheetTableConnector(resource, load, options);
 }
 
+QString SpreadSheetTableConnector::format() const
+{
+    if ( _spreadsheet)
+        return spreadsheet()->format();
+    return sUNDEF;
+}

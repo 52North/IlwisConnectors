@@ -27,10 +27,13 @@ public:
     virtual bool isRowValid(quint32 rowIndex) const;
     virtual bool isCellValid(quint32 columnIndex,quint32 rowIndex) const;
 
+    bool isReadOnly() const;
+
     virtual QString storeSheet(const QString& spreadsheetPath) const ;
 
     quint32 sheetCount() const;
     QString sheetName(quint32 index) const;
+    QString format() const;
 private:
     std::unique_ptr<QXlsx::Document> _xlsxdocument;
 };

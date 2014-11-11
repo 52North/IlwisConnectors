@@ -29,6 +29,7 @@ public slots:
     void sendData(QBuffer *buf, bool lastBlock);
 private:
     ICatalog _datafolder;
+    ICatalog _internalCatalog;
     HttpResponse *_response;
 
     IIlwisObject getObject(const QString &name, const QString &ilwTypeName);

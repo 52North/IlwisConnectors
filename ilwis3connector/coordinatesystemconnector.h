@@ -15,6 +15,7 @@ public:
     IlwisObject *create() const;
     static ConnectorInterface *create(const Resource &resource, bool load=true, const Ilwis::IOOptions &options=IOOptions());
 
+    QString format() const;
 private:
     GeodeticDatum *getDatum(QString& ellipsoid);
     IProjection getProjection(Ilwis::ConventionalCoordinateSystem *csycc);

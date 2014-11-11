@@ -80,6 +80,8 @@ void CatalogserializerV1::adaptResource(const QString& baseUrl, Resource& resour
     QString tempName = resource.name();
     resource.setUrl(adaptedUrl(baseUrl, resource, false));
     resource.setUrl(adaptedUrl(baseUrl, resource, true), true);
+//    QString container = QString(baseUrl).arg(resource.ilwisType() == itOPERATIONMETADATA ? "operation" : "data").arg("catalog");
+//    resource.addContainer(QUrl(container));
     resource.name(tempName, false);
     adaptProperyResource(baseUrl, resource,"coordinatesystem");
     adaptProperyResource(baseUrl, resource,"georeference");
@@ -93,14 +95,15 @@ QString CatalogserializerV1::adaptedUrl(const QString& baseUrl, const Resource& 
         QString tail = sourceurl.mid(sourceurl.lastIndexOf("/") + 1);
         url = QString(baseUrl).arg(tail).arg(IlwisObject::type2Name(resource.ilwisType()).toLower());
         if ( resource.ilwisType() == itOPERATIONMETADATA){
-            url = url.replace("/dataccess?","/operation?");
+            url = url.replace("/dataaccess?","/operation?");
             url = url.replace("?datasource=","?operationcode=");
         }
     }else {
         QUrl burl(baseUrl);
         QString host = burl.host();
         int port = burl.port();
-        url = QString("http://%1:%2/%3").arg(host).arg(port).arg(resource.name());
+        QString path = resource.ilwisType() == itOPERATIONMETADATA ? "" : burl.path();
+        url = QString("http://%1:%2%3/%4").arg(host).arg(port).arg(path).arg(resource.name());
     }
     return url;
 }

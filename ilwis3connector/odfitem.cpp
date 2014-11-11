@@ -33,6 +33,8 @@ ODFItem::ODFItem(const QFileInfo &file) : Resource(QUrl::fromLocalFile(file.abso
     IlwisTypes csytp, domtp, grftp;
     csytp = domtp = grftp = itUNKNOWN;
 
+    setDescription( _odf.value("Ilwis", "Description"));
+
     _ilwtype = Ilwis3Connector::ilwisType(_file.absoluteFilePath());
     _csyname = findCsyName(file.absoluteFilePath());
     _domname = findDomainName(file.absoluteFilePath());

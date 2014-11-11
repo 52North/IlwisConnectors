@@ -276,3 +276,8 @@ IlwisObject *GeorefConnector::create() const
     IniFile *odf = _odf.data();
     return createGeoreference(*odf);
 }
+
+QString GeorefConnector::format() const
+{
+    return "georef";
+}

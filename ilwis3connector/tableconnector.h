@@ -21,6 +21,7 @@ public:
     static bool storeTable(const ITable& tbl);
     void attributeDomain(const QString& attdom);
     void selectedRecords(const std::vector<quint32> &recs);
+    QString format() const;
 private:
     ColumnDefinition getKeyColumn();
     ColumnDefinition makeColumn(const QString &colName, quint64 index);

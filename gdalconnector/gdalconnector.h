@@ -19,6 +19,7 @@ public:
     void format(const QString&);
     QString format() const;
     OGRLayerH getLayerHandle() const;
+    bool isReadOnly() const;
 protected:
     static GDALDataType ilwisType2GdalType(IlwisTypes tp) ;
     static OGRFieldType ilwisType2GdalFieldType(IlwisTypes tp);
@@ -26,6 +27,7 @@ protected:
     QUrl _filename;
     QString _internalPath;
     QString _gdalShortName;
+    bool _readOnly = true;
     GdalHandle* _handle;
 };
 }
