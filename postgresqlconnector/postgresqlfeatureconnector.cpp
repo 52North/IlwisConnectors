@@ -171,7 +171,7 @@ bool PostgresqlFeatureConnector::store(IlwisObject *data, const IOOptions& optio
             geomData->setCell(geomIdxOffset + level, rowIdx, wkt);
 
             ++featureIter; // next geom level
-            feature = *(featureIter);
+            feature = (*featureIter);
         }
         rowIdx++; // next row
     }
