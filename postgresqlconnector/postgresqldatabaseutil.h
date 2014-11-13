@@ -240,7 +240,7 @@ public:
         }
     }
 
-    static void prepareSubFeatureSementics(const Resource &resource, IDomain &domain) {
+    static void prepareSubFeatureSemantics(const Resource &resource, IDomain &domain) {
         quint64 id = resource["subfeature.domainId"].toInt();
         ESPIlwisObject obj = mastercatalog()->get(id);
         domain = static_cast<IDomain>(obj);
