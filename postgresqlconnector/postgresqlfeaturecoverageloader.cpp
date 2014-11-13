@@ -237,7 +237,7 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage, cons
 
         // add (sub)geometries and increase iterator
         quint32 geomIdxOffset = primaryKeys.size();
-        for (quint32 level = 0 ; level < depth && feature->isValid(); level++) {
+        for (quint32 level = 0 ; level < depth; level++) {
 
             /*
             // TODO storing level n data only makes sense
