@@ -292,7 +292,7 @@ IProjection CoordinateSystemConnector::getProjection(ConventionalCoordinateSyste
     if ( ok)
         proj->setParameter(Projection::pvZONE, gzone);
     QString hemisphere = _odf->value("Projection","Northern Hemisphere");
-    if ( hemisphere == sUNDEF && code == "utm")
+    if ( hemisphere != sUNDEF && code == "utm")
         proj->setParameter(Projection::pvNORTH, hemisphere);
 
     return proj;
