@@ -221,12 +221,20 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
         if(!csy.prepare(resource))
             return false;
     }else {
-        QUrl path = mastercatalog()->name2url(csyName, itCOORDSYSTEM);
-        if( !csy.prepare(path.toString())) {
-            kernel()->issues()->log(TR("Couldn't find coordinate system %1, defaulting to unknown").arg(csyName),IssueObject::itWarning);
+        if ( csyName == "unknown.csy" || csyName == "" || csyName == sUNDEF){
             Resource resource = mastercatalog()->name2Resource("code=csy:unknown", itCOORDSYSTEM);
             if(!csy.prepare(resource)) {
                 return false;
+            }
+        }else {
+
+            QUrl path = mastercatalog()->name2url(csyName, itCOORDSYSTEM);
+            if( !csy.prepare(path.toString())) {
+                kernel()->issues()->log(TR("Couldn't find coordinate system %1, defaulting to unknown").arg(csyName),IssueObject::itWarning);
+                Resource resource = mastercatalog()->name2Resource("code=csy:unknown", itCOORDSYSTEM);
+                if(!csy.prepare(resource)) {
+                    return false;
+                }
             }
         }
     }
