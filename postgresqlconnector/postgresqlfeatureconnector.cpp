@@ -70,7 +70,7 @@ bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions
 
 bool PostgresqlFeatureConnector::loadData(IlwisObject *data, const IOOptions& options)
 {
-    ////qDebug() << "PostgresqlFeatureConnector::loadData()";
+    //qDebug() << "PostgresqlFeatureConnector::loadData()";
     if (options.size() > 0) {
         qWarning() << "IOOptions not empty .. not handled for now.";
     }
@@ -93,8 +93,6 @@ bool PostgresqlFeatureConnector::store(IlwisObject *data, const IOOptions& optio
     PostgresqlFeatureCoverageLoader loader(source());
     bool ok = loader.storeData(fcoverage, options);
     return ok;
-
-
 }
 
 

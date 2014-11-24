@@ -57,9 +57,9 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage, c
         return false;
     }
 
-    fcoverage->attributesFromTable(featureTable);
     setFeatureCount(fcoverage);
     setSpatialMetadata(fcoverage);
+    fcoverage->attributesFromTable(featureTable);
 
     IDomain semantics;
     PostgresqlDatabaseUtil::prepareSubFeatureSemantics(_resource, semantics);
@@ -68,22 +68,29 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage, c
     return true;
 }
 
-void PostgresqlFeatureCoverageLoader::setSubfeatureSemantics(FeatureCoverage *fcoverage, const IDomain &semantics) const
+void PostgresqlFeatureCoverageLoader::setSubfeatureSemantics(FeatureCoverage *fcoverage, IDomain &semantics) const
 {
     std::vector<QString> items;
     if ( !semantics.isValid()) {
-        // prepare default domain
-        std::vector<double> priorities;
-        fcoverage->attributeDefinitionsRef().setSubDefinition(IDomain("value"), priorities);
-    } else {
-        ItemRangeIterator iter(semantics->range<>().data());
-        while (iter.isValid()) {
-            SPDomainItem geomName = (*iter);
-            items.push_back(geomName->name());
-            ++iter;
+
+        QList<MetaGeometryColumn> geomMetadatas;
+        PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, geomMetadatas);
+
+        NamedIdentifierRange priorities;
+        foreach (MetaGeometryColumn geomMetadata, geomMetadatas) {
+            priorities << geomMetadata.geomColumn;
+            items.push_back(geomMetadata.geomColumn);
         }
-        fcoverage->attributeDefinitionsRef().setSubDefinition(semantics, items);
+        static_cast<IThematicDomain>(semantics)->setRange(priorities);
     }
+
+    ItemRangeIterator iter(semantics->range<>().data());
+    while (iter.isValid()) {
+        SPDomainItem geomName = (*iter);
+        items.push_back(geomName->name());
+        ++iter;
+    }
+    fcoverage->attributeDefinitionsRef().setSubDefinition(semantics, items);
 }
 
 QString PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeometryColumn> &metaGeometry) const
@@ -121,31 +128,31 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage, const
 
     // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
     fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES);
-    fcoverage->attributesFromTable(table);
 
     QList<MetaGeometryColumn> metaGeometries;
     PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource,metaGeometries);
     PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
     QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
     QSqlQuery query = db.exec(selectGeometries(metaGeometries));
+    quint32 geometriesPerFeature = metaGeometries.size();
 
     IDomain semantics;
     PostgresqlDatabaseUtil::prepareSubFeatureSemantics(_resource, semantics);
-    setSubfeatureSemantics(fcoverage, semantics);
+    //setSubfeatureSemantics(fcoverage, semantics);
 
     while (query.next()) {
-        // can have multiple geometries with prioritized order
-        geos::geom::Geometry* geometries[metaGeometries.size()];
-        if (metaGeometries.size() > 0) {
+        // a feature can have multiple geometries with prioritized order
+        geos::geom::Geometry* geometries[geometriesPerFeature];
+        if (geometriesPerFeature > 0) {
             int multipleGeomIdx = 0;
-            for (MetaGeometryColumn meta : metaGeometries) { // iterate geometries
-                geos::geom::Geometry *geom = createGeometry(query,meta);
-
+            for (MetaGeometryColumn meta : metaGeometries) {
                 QString geomName = meta.geomColumn;
+                geos::geom::Geometry *geom = createGeometry(query, meta);
                 if ( !semantics.isValid()) {
-                    // treat column ordering as priority semantics
+                    // column ordering as priority semantics
                     geometries[multipleGeomIdx++] = geom;
                 } else {
+                    //predefined priority domain (with implicit order)
                     NamedIdentifierRange *range = semantics->range<NamedIdentifierRange>().data();
                     for (int i = 0 ; i < range->count() ; i++) {
                         // TODO not very elegant to order geometries
@@ -157,18 +164,19 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage, const
                     }
                 }
             }
-            // reset
-            multipleGeomIdx = 0;
+            multipleGeomIdx = 0; // reset
 
-            if (metaGeometries.size() > 0) {
-                SPFeatureI feature = fcoverage->newFeature(geometries[0],false);
-                for (int i = 1 ; i < metaGeometries.size() ; i++) {
-                    // add subfeatures
-                    feature = feature->createSubFeature(metaGeometries.at(i).geomColumn, geometries[i]);
-                }
+            SPFeatureI feature = fcoverage->newFeature(geometries[0],false);
+            for (int i = 1 ; i < geometriesPerFeature ; i++) {
+                // for all other geometries create subfeatures
+                feature = feature->createSubFeature(metaGeometries.at(i).geomColumn, geometries[i]);
             }
+        } else {
+            SPFeatureI feature = fcoverage->newFeature(0);
+
         }
     }
+    fcoverage->attributesFromTable(table);
 
     db.close();
     return true;
@@ -176,68 +184,54 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage, const
 
 bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage, const IOOptions& options) const
 {
+    bool queryOk = true;
     ITable baseData = fcoverage->attributeTable();
-    PostgresqlTableConnector connector(_resource,false);
-    bool tableOk = connector.store(baseData.ptr(), options);
+    SqlStatementHelper sqlHelper(_resource);
 
-    ITable geomData; // insert/update data
     IDomain semantics; // subfeature semantics
     QList<QString> primaryKeys; // readonly keys
     QList<MetaGeometryColumn> metaGeomColumns; // geometry columns
     PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, metaGeomColumns);
     PostgresqlDatabaseUtil::prepareSubFeatureSemantics(_resource, semantics);
     PostgresqlDatabaseUtil::getPrimaryKeys(_resource,primaryKeys);
-    //setSubfeatureSemantics(fcoverage, semantics);
-    geomData.prepare();
-
-    foreach (QString primaryKey, primaryKeys) {
-        IDomain keyDomain;
-        // TODO will text always work?
-        keyDomain.prepare("primaryKey",itTEXTDOMAIN);
-        geomData->addColumn(primaryKey, keyDomain);
-    }
-
-    quint32 depth = 0;
-    if ( !semantics.isValid()) {
-        // first come first serve case
-        depth = metaGeomColumns.size();
-        for (MetaGeometryColumn meta : metaGeomColumns) {
-            IDomain wktDomain;
-            QString geomColumn = meta.geomColumn;
-            wktDomain.prepare("wkttext",itTEXTDOMAIN);
-            geomData->addColumn(geomColumn, wktDomain);
-        }
-    } else {
-        // order defines priority semantics
-        depth = semantics->range<>()->count();
-        ItemRangeIterator rangeIter(semantics->range<>().data());
-        while (rangeIter.isValid()) {
-            IDomain wktDomain;
-            QString geomColumn = (*rangeIter)->name();
-            wktDomain.prepare("wkttext",itTEXTDOMAIN);
-            geomData->addColumn(geomColumn, wktDomain);
-            ++rangeIter;
-        }
-    }
 
     // add geoms to update/insert data table
     FeatureIterator featureIter(fcoverage);
     featureIter.flow(FeatureIterator::fDEPTHFIRST);
-    quint32 rowIdx = 0;
+
+    QString columnNamesCommaSeparated = sqlHelper.columnNamesCommaSeparated(baseData.ptr());
+
+    QString code = fcoverage->coordinateSystem()->code();
+    QString srid = code.right(code.indexOf(":"));
+    QString qtablename = PostgresqlDatabaseUtil::qTableFromTableResource(_resource);
+    QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(_resource,"updategeometries");
     while(featureIter != featureIter.end()) {
         SPFeatureI feature = (*featureIter);
+        bool newFeature = !PostgresqlDatabaseUtil::exists(_resource, feature);
 
-        // set primary key from level 0
-        for (quint32 keyIdx = 0 ; keyIdx < primaryKeys.size() ; keyIdx++) {
-            Record record = feature->record();
-            quint32 idx = baseData->columnIndex(primaryKeys[keyIdx]);
-            QString value = record.cell(idx).toString();
-            geomData->setCell(primaryKeys[keyIdx], rowIdx, value);
-        }
 
-        // add (sub)geometries and increase iterator
-        quint32 geomIdxOffset = primaryKeys.size();
-        for (quint32 level = 0 ; level < depth; level++) {
+        QString columnValuesCommaSeparated = sqlHelper.columnValuesCommaSeparated(feature);
+
+        QString sqlStmt;
+        if (newFeature) {
+            sqlStmt = "INSERT INTO ";
+            sqlStmt.append(qtablename);
+
+
+            sqlStmt.append(" ( ");
+            sqlStmt.append(columnNamesCommaSeparated);
+
+            foreach (MetaGeometryColumn geomMeta, metaGeomColumns) {
+                sqlStmt.append(", ");
+                sqlStmt.append(geomMeta.geomColumn);
+            }
+
+            sqlStmt.append(" ) ");
+            sqlStmt.append(" VALUES ( ");
+            sqlStmt.append(columnValuesCommaSeparated);
+            sqlStmt.append(", ");
+
+            // add geometry values
 
             /*
             // TODO storing level n data only makes sense
@@ -250,107 +244,100 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage, cons
             tableOk = connector.store(levelData.ptr(), options);
             */
 
-            if (feature->geometry() != nullptr) {
-                QString wkt = GeometryHelper::toWKT(feature->geometry().get());
-                geomData->setCell(geomIdxOffset + level, rowIdx, wkt);
+            QString rootGeomColumn = fcoverage->attributeDefinitionsRef().index((quint32)0);
+            foreach (MetaGeometryColumn geomMeta, metaGeomColumns) {
+                QString wkt = "NULL";
+                QString geomColumn = geomMeta.geomColumn;
+                if (rootGeomColumn == geomColumn) {
+                    if (feature->geometry() != nullptr){
+                        wkt = QString("'%1'").arg(GeometryHelper::toWKT(feature->geometry().get()));
+                    }
+                } else if (feature[geomColumn]->geometry() != nullptr){
+                    // access subfeature geometries
+                    SPFeatureI subfeature = feature[geomColumn];
+                    wkt = QString("'%1'").arg(GeometryHelper::toWKT(subfeature->geometry().get()));
+                }
+                sqlStmt.append("st_geomfromtext(").append(wkt);
+                sqlStmt.append(", ").append(srid).append(")");
+                sqlStmt.append(",");
+
+                // skip subfeature's geometries, as accessed already via domain
+                ++featureIter;
             }
 
-            ++featureIter; // next geom
-            if (featureIter != featureIter.end()) {
-                feature = (*featureIter);
-            }
-        }
-        rowIdx++; // next row
-    }
+            sqlStmt = sqlHelper.trimAndRemoveLastCharacter(sqlStmt);
 
 
+            sqlStmt.append(" ); ");
+            DEBUG1("SQL: '%1'", sqlStmt);
 
-
-    SqlStatementHelper sqlHelper(_resource);
-    sqlHelper.addCreateTempTableStmt("geom_data_level0");
-
-/*
-
-    QString sqlBuilder;
-    sqlBuilder.append("UPDATE ");
-    sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
-    sqlBuilder.append(" AS current");
-    sqlBuilder.append(" SET ");
-
-    for (MetaGeometryColumn column : metaGeomColunms) {
-        sqlBuilder.append(column.geomColumn);
-        sqlBuilder.append(" = updates.").append(column.geomColumn);
-        sqlBuilder.append(", ");
-    }
-
-    sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
-    sqlBuilder.append(" FROM ");
-    sqlBuilder.append(" ( VALUES ");
-
-    while (featureIter != featureIter.end()) {
-        sqlBuilder.append(" ( ");
-        for (int i = 0 ; i < depth ; i++) {
-            SPFeatureI feature = (*featureIter);
-
-            // TODO respect isChanged() once implemented
-
-            geos::geom::Geometry* geom = feature->geometry().get();
-            sqlBuilder.append(" '");
-            sqlBuilder.append(GeometryHelper::toWKT(geom));
-            sqlBuilder.append("' , ");
-            featureIter++;
-        }
-        sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
-        sqlBuilder.append("), ");
-    }
-
-    sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
-    sqlBuilder.append(" ) AS updates ( ");
-
-    if (semantics.isValid()) {
-        // respect defined order
-        ItemRangeIterator rangeIter(semantics->range<>().data());
-        while (rangeIter.isValid()) {
-            sqlBuilder.append((*rangeIter)->name());
-            sqlBuilder.append(", ");
-            ++rangeIter;
-        }
-    } else {
-        // respect first come first serve order
-        foreach (MetaGeometryColumn column, metaGeomColunms) {
-            sqlBuilder.append(column.geomColumn);
-            sqlBuilder.append(", ");
-        }
-    }
-
-    sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
-    sqlBuilder.append(" ) ");
-
-    QString whereClause;
-    QList<QString> primaryKeys;
-    PostgresqlDatabaseUtil::getPrimaryKeys(_resource,primaryKeys);
-    for (QString primaryKey : primaryKeys) {
-        if (whereClause.isEmpty()) {
-            whereClause.append(" WHERE ");
         } else {
-            whereClause.append(" AND ");
+
+            // update feature
+
+            sqlStmt = "UPDATE ";
+            sqlStmt.append(qtablename);
+            sqlStmt.append(" SET ");
+
+            Record record = feature->record();
+            for (int i = 0; i < feature->attributeColumnCount(); ++i) {
+                ColumnDefinition coldef = feature->attributedefinition(i);
+                sqlStmt.append(coldef.name()).append(" = ");
+                sqlStmt.append(sqlHelper.createInsertValueString(record.cell(i), coldef));
+                sqlStmt.append(", ");
+            }
+
+            quint32 levels = metaGeomColumns.size();
+            for (quint32 level = 0 ; level < levels ; level++) {
+                QString wkt = "NULL";
+                if (feature->geometry() != nullptr) {
+                    wkt = QString("'%1'").arg(GeometryHelper::toWKT(feature->geometry().get()));
+                }
+
+                QString geomColumn = fcoverage->attributeDefinitionsRef().index(level);
+                sqlStmt.append(geomColumn).append(" = ");
+                sqlStmt.append("st_geomfromtext(").append(wkt);
+                sqlStmt.append(", ").append(srid).append(")");
+                sqlStmt.append(",");
+
+                ++featureIter; // next geom
+                if (featureIter != featureIter.end()) {
+                    feature = (*featureIter);
+                }
+            }
+
+            if (metaGeomColumns.size() == 0) {
+                ++featureIter; // next geom
+                if (featureIter != featureIter.end()) {
+                    feature = (*featureIter);
+                }
+            }
+
+            sqlStmt = sqlHelper.trimAndRemoveLastCharacter(sqlStmt);
+            QString where = " WHERE ";
+            foreach (QString primaryKey, primaryKeys) {
+                ColumnDefinition coldef = feature->attributedefinition(primaryKey);
+                where.append(coldef.name()).append(" = ");
+                QVariant value = record.cell(coldef.columnindex());
+                where.append(sqlHelper.createInsertValueString(value, coldef));
+                where.append(", ");
+
+            }
+            where = sqlHelper.trimAndRemoveLastCharacter(where);
+            sqlStmt.append(" ").append(where);
+            sqlStmt.append("; ");
         }
-        whereClause.append(" current.").append(primaryKey);
-        whereClause.append(" = ");
-        whereClause.append(" updates.").append(primaryKey);
+
+        // TODO check count and delete deleted features
+
+        PostgresqlDatabaseUtil::doQuery(sqlStmt, db);
+
     }
-    sqlBuilder.append(whereClause).append(" ;");
 
-
- */
-    qDebug() << "SQL: " << sqlHelper.sql();
-
-    QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(_resource,"updategeometries");
-    db.exec(sqlHelper.sql());
     db.close();
 
     bool featuresOk = true;
-    return tableOk && featuresOk;
+    return queryOk && featuresOk;
 }
 
 geos::geom::Geometry* PostgresqlFeatureCoverageLoader::createGeometry(QSqlQuery &query, MetaGeometryColumn &meta) const

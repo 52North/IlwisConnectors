@@ -10,7 +10,14 @@
 #include "resource.h"
 #include "geometries.h"
 #include "coordinatesystem.h"
-#include "domain.h"
+#include "itemdomain.h"
+#include "thematicitem.h"
+#include "coverage.h"
+#include "featurecoverage.h"
+#include "feature.h"
+#include "record.h"
+
+#include "sqlstatementhelper.h"
 
 namespace Ilwis {
 
@@ -203,6 +210,42 @@ public:
         db.close();
     }
 
+    static bool exists(const Resource &resource, SPFeatureI feature) {
+
+        SqlStatementHelper sqlHelper(resource);
+
+        QString where;
+        QList<QString> primaryKeys;
+        getPrimaryKeys(resource, primaryKeys);
+        Record record = feature->record();
+        foreach (QString primaryKey, primaryKeys) {
+            if (where.isEmpty()) {
+                where.append(" WHERE ");
+            } else {
+                where.append(" AND ");
+            }
+            ColumnDefinition coldef = feature->attributedefinition(primaryKey);
+            QVariant value = record.cell(coldef.columnindex());
+
+            where.append(primaryKey).append(" = ");
+            where.append(sqlHelper.createInsertValueString(value, coldef));
+        }
+
+        QSqlDatabase db = openForResource(resource, "exists");
+        QString sql = "SELECT ";
+        //sql.append(" count(").append(primaryKeys.at(0)).append(") ");
+        sql.append(QStringList(primaryKeys).join(","));
+        sql.append(" FROM ").append(qTableFromTableResource(resource));
+        sql.append(where);
+
+        QSqlQuery query = doQuery(sql, db);
+        bool exists = query.next();
+
+        db.close();
+        return exists;
+    }
+
+
     static void getPrimaryKeys(const Resource &resource, QList<QString> &primaryColumns) {
         QString qtablename = qTableFromTableResource(resource);
         QString sqlBuilder;
@@ -246,17 +289,16 @@ public:
         domain = static_cast<IDomain>(obj);
     }
 
-    /* MOVED TO SqlStatementHelper
-    static QString createTempTableStatement(const QString &tmpTableName, const QString &templateTable) {
-        QString sqlBuilder;
-        sqlBuilder.append("CREATE TEMP TABLE ");
-        sqlBuilder.append(tmpTableName);
-        sqlBuilder.append(" ON COMMIT DROP AS ");
-        sqlBuilder.append(" (SELECT * FROM ").append(templateTable).append(" )");
-        sqlBuilder.append(" WITH NO DATA ; ");
-        return sqlBuilder;
+    static QSqlQuery doQuery(QString stmt, QSqlDatabase db) {
+        QSqlQuery query = db.exec(stmt);
+        if ( !query.isActive()) {
+            QString error = db.lastError().text();
+            ERROR2("Could not execute sql statement (error: '%1'): '%2'", error, stmt);
+        } else {
+            //DEBUG1("SQL: '%1'", stmt);
+        }
+        return query;
     }
-    */
 
 private:
     static void validateNotNullOrEmpty(QString parameter, QVariant value) {
@@ -264,6 +306,7 @@ private:
             WARN1("Property '%1' is null or empty.", parameter);
         }
     }
+
 };
 
 }

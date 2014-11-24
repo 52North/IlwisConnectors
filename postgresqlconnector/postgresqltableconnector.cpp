@@ -6,7 +6,8 @@
 #include "ilwisobjectconnector.h"
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
-#include "domain.h"
+#include "itemdomain.h"
+#include "thematicitem.h"
 #include "juliantime.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
@@ -57,18 +58,18 @@ bool PostgresqlTableConnector::store(IlwisObject *data, const IOOptions& options
     }
 
     Table *table = static_cast<Table *>(data);
-    SPSqlStatementHelper sqlHelper = SPSqlStatementHelper(new SqlStatementHelper(_resource));
-    sqlHelper->addCreateTempTableStmt("data_level_0");
-    sqlHelper->addInsertChangedDataToTempTableStmt("data_level_0", table);
-    sqlHelper->addUpdateStmt("data_level_0", table);
-    sqlHelper->addInsertStmt("data_level_0", table);
+    SqlStatementHelper sqlHelper(_resource);
+    sqlHelper.addCreateTempTableStmt("data_level_0");
+    sqlHelper.addInsertChangedDataToTempTableStmt("data_level_0", table);
+    sqlHelper.addUpdateStmt("data_level_0", table);
+    sqlHelper.addInsertStmt("data_level_0", table);
 
     // TODO delete deleted rows
 
     //qDebug() << "SQL: " << sqlHelper->sql();
 
     QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(_resource,"upserting_table");
-    db.exec(sqlHelper->sql());
+    db.exec(sqlHelper.sql());
     db.close();
 
     return true;

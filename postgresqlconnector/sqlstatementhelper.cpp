@@ -6,9 +6,17 @@
 #include "ilwistypes.h"
 #include "domain.h"
 #include "juliantime.h"
+#include "geometries.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
+#include "attributedefinition.h"
+#include "coordinatesystem.h"
 #include "table.h"
+#include "coverage.h"
+#include "featurecoverage.h"
+#include "feature.h"
+#include "ilwisinterfaces.h"
+#include "record.h"
 
 #include "postgresqldatabaseutil.h"
 #include "sqlstatementhelper.h"
@@ -140,14 +148,22 @@ void SqlStatementHelper::addInsertStmt(const QString &tmpTable, const Table *tab
     _sqlBuilder.append(sqlBuilder);
 }
 
+void SqlStatementHelper::addDeleteStmt(const QString &tmpTable, const Table *table)
+{
+    if ( !_tmpTables.contains(tmpTable)) {
+        ERROR1("No data table '%1' present.", tmpTable);
+        return;
+    }
+}
+
+
 QString SqlStatementHelper::sql()
 {
+    kernel()->issues()->log(_sqlBuilder, IssueObject::itDebug);
     return _sqlBuilder;
 }
 
-// private methods
-
-QString SqlStatementHelper::createWhereComparingPrimaryKeys(const QString &first, const QString &second) const
+QString SqlStatementHelper::createWhereComparingPrimaryKeys(const QString &aliasfirst, const QString &aliassecond) const
 {
     QString whereClause;
     QList<QString> primaryKeys;
@@ -158,9 +174,9 @@ QString SqlStatementHelper::createWhereComparingPrimaryKeys(const QString &first
         } else {
             whereClause.append(" AND ");
         }
-        whereClause.append(first).append(".").append(primaryKey);
+        whereClause.append(aliasfirst).append(".").append(primaryKey);
         whereClause.append(" = ");
-        whereClause.append(second).append(".").append(primaryKey);
+        whereClause.append(aliassecond).append(".").append(primaryKey);
         whereClause.append(" ");
     }
     return whereClause;
@@ -181,6 +197,18 @@ QString SqlStatementHelper::columnNamesCommaSeparated(const Table *table) const
         columns.append(", ");
     }
     return trimAndRemoveLastCharacter(columns);
+}
+
+QString SqlStatementHelper::columnValuesCommaSeparated(const SPFeatureI feature) const
+{
+    QString values;
+    Record record = feature->record();
+    for (int i = 0 ; i < feature->attributeColumnCount() ; i++) {
+        ColumnDefinition coldef = feature->attributedefinition(i);
+        values.append(createInsertValueString(record.cell(i), coldef));
+        values.append(", ");
+    }
+    return trimAndRemoveLastCharacter(values);
 }
 
 QString SqlStatementHelper::createInsertValueString(QVariant value, const ColumnDefinition &coldef) const {
@@ -207,8 +235,11 @@ QString SqlStatementHelper::createInsertValueString(QVariant value, const Column
             return time.toString(itDATETIME);
         }
     } else if (hasType(domain->valueType(),itSTRING)){
-
-        return QString("'%1'").arg(value.toString());
+        if (domain->name() == "wkttext") {
+            return QString("st_geomfromtext('%1')").arg(value.toString());
+        } else {
+            return QString("'%1'").arg(value.toString());
+        }
 
     } else {
         ERROR0("Could not determine data type.");

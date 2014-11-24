@@ -113,7 +113,6 @@ bool PostgresqlTableLoader::loadData(Table *table) const
     return true;
 }
 
-
 bool PostgresqlTableLoader::createColumnDefinition(Table *table, const QSqlQuery &query, QList<QString> &primaryKeys) const
 {
     if ( !query.isValid()) {
