@@ -148,6 +148,8 @@ bool DomainConnector::handleValueDomains(IlwisObject* data) {
         return false;
     }
     vdata->range(range);
+    IDomain dom("value");
+    vdata->setParent(dom);
 
 
     return true;
