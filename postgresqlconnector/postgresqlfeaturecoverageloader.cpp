@@ -209,7 +209,6 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage, cons
         SPFeatureI feature = (*featureIter);
         bool newFeature = !PostgresqlDatabaseUtil::exists(_resource, feature);
 
-
         QString columnValuesCommaSeparated = sqlHelper.columnValuesCommaSeparated(feature);
 
         QString sqlStmt;
@@ -321,18 +320,19 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage, cons
                 QVariant value = record.cell(coldef.columnindex());
                 where.append(sqlHelper.createInsertValueString(value, coldef));
                 where.append(", ");
-
             }
             where = sqlHelper.trimAndRemoveLastCharacter(where);
             sqlStmt.append(" ").append(where);
             sqlStmt.append("; ");
         }
 
-        // TODO check count and delete deleted features
-
         PostgresqlDatabaseUtil::doQuery(sqlStmt, db);
-
     }
+
+    // "SELECT primaryKeysCsv FROM qtablename WHERE "
+
+
+    // TODO check count and delete deleted features
 
     db.close();
 

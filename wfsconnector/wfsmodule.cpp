@@ -57,8 +57,6 @@ QString WfsModule::getInterfaceVersion() const
 
 void WfsModule::prepare()
 {
-    qDebug() << "preparing wfs module ...";
-
     WfsObjectFactory *factory = new WfsObjectFactory();
     factory->prepare();
     kernel()->addFactory(factory);

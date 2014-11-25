@@ -36,15 +36,6 @@ bool PostgresqlObjectFactory::canUse(const Resource &resource) const
         return false; // can't use anything other than pg connection
 
     IlwisTypes type = resource.ilwisType() ;
-//    if ( type & itDOMAIN)
-//        return true;
-//    else if ( type & itCOORDSYSTEM)
-//        return true;
-//    else if ( type & itRASTER)
-//        return true;
-//    else if ( type & itGEOREF)
-//        return true;
-//    else
     if ( type & itFEATURE)
         return true;
     else if ( type & itTABLE)
