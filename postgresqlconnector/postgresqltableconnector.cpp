@@ -30,7 +30,7 @@ PostgresqlTableConnector::PostgresqlTableConnector(const Ilwis::Resource &resour
 IlwisObject *PostgresqlTableConnector::create() const
 {
     //qDebug() << "PostgresqlTableConnector::create() -> FlatTable";
-    return new FlatTable(_resource);
+    return new FlatTable(source());
 }
 
 ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &resource, bool load,const IOOptions& options)
@@ -41,24 +41,19 @@ ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &reso
 bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions& options)
 {
     //qDebug() << "PostgresqlTableConnector::loadMetaData()";
-    if (options.size() > 0) {
-        qWarning() << "IOOptions not empty .. not handled for now.";
-    }
-
     Table *table = static_cast<Table *>(data);
-    PostgresqlTableLoader loader(source());
+    IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
+    PostgresqlTableLoader loader = PostgresqlTableLoader(source(), iooptions);
     return loader.loadMetadata(table);
 }
 
 bool PostgresqlTableConnector::store(IlwisObject *data, const IOOptions& options)
 {
     //qDebug() << "PostgresqlTableConnector::store()";
-    if (options.size() > 0) {
-        qWarning() << "IOOptions not empty .. not handled for now.";
-    }
-
     Table *table = static_cast<Table *>(data);
-    SqlStatementHelper sqlHelper(_resource);
+    IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
+    PostgresqlDatabaseUtil pgUtil(source(), iooptions);
+    SqlStatementHelper sqlHelper(pgUtil);
     sqlHelper.addCreateTempTableStmt("data_level_0");
     sqlHelper.addInsertChangedDataToTempTableStmt("data_level_0", table);
     sqlHelper.addUpdateStmt("data_level_0", table);
@@ -68,9 +63,7 @@ bool PostgresqlTableConnector::store(IlwisObject *data, const IOOptions& options
 
     //qDebug() << "SQL: " << sqlHelper->sql();
 
-    QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(_resource,"upserting_table");
-    db.exec(sqlHelper.sql());
-    db.close();
+    pgUtil.doQuery(sqlHelper.sql(), "upserting_table");
 
     return true;
 }
@@ -115,12 +108,9 @@ QString PostgresqlTableConnector::createInsertValueString(QVariant value, const 
 bool PostgresqlTableConnector::loadData(IlwisObject *data,const IOOptions& options)
 {
     //qDebug() << "PostgresqlTableConnector::loadData()";
-    if (options.size() > 0) {
-        qWarning() << "IOOptions not empty .. not handled for now.";
-    }
-
     Table *table = static_cast<Table *>(data);
-    PostgresqlTableLoader loader(source());
+    IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
+    PostgresqlTableLoader loader = PostgresqlTableLoader(source(), iooptions);
     if ( !loader.loadMetadata(table)) {
         return false;
     }

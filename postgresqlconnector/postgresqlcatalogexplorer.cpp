@@ -1,6 +1,8 @@
 #include <QSqlDatabase>
 
 #include "kernel.h"
+#include "ilwisdata.h"
+#include "domain.h"
 #include "resource.h"
 #include "connectorinterface.h"
 #include "mastercatalog.h"
@@ -20,7 +22,7 @@ REGISTER_CATALOGEXPLORER(PostgresqlCatalogExplorer)
 
 CatalogExplorer *PostgresqlCatalogExplorer::create(const Resource &resource, const IOOptions &options)
 {
-    return new PostgresqlCatalogExplorer(resource,  options);
+    return new PostgresqlCatalogExplorer(resource, options);
 }
 
 PostgresqlCatalogExplorer::PostgresqlCatalogExplorer(const Resource &resource, const IOOptions &options) : CatalogExplorer(resource, options)
@@ -29,10 +31,9 @@ PostgresqlCatalogExplorer::PostgresqlCatalogExplorer(const Resource &resource, c
 
 PostgresqlCatalogExplorer::~PostgresqlCatalogExplorer()
 {
-    QSqlDatabase::removeDatabase("exploreitems");
 }
 
-std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
+std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &options)
 {
     //qDebug() << "PostgresqlCatalogExplorer::loadItems()";
 
@@ -55,9 +56,9 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
     //qDebug() << "SQL: " << sqlBuilder;
 
     std::vector<Resource> resources;
-    PostgresqlDatabaseUtil::openForResource(source(), "exploreitems");
-    QSqlDatabase db = QSqlDatabase::database("exploreitems");
-    QSqlQuery query = db.exec(sqlBuilder);
+    IOOptions iooptions = options.isEmpty() ? this->iooptions() : options;
+    PostgresqlDatabaseUtil pgUtil(source(), iooptions);
+    QSqlQuery query = pgUtil.doQuery(sqlBuilder, "exploreitems");
 
     QString parentDatasourceNormalized = source().url().toString();
     parentDatasourceNormalized = !parentDatasourceNormalized.endsWith("/")
@@ -97,7 +98,6 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems()
         resources.push_back(table);
     }
 
-    db.close();
     return resources;
 }
 

@@ -12,7 +12,7 @@ namespace Postgresql {
 class PostgresqlTableLoader
 {
 public:
-    PostgresqlTableLoader(Resource resource);
+    PostgresqlTableLoader(const Resource &resource, const IOOptions &options);
     ~PostgresqlTableLoader();
 
     bool loadMetadata(Table *table) const;
@@ -20,6 +20,7 @@ public:
 
 private:
     Resource _resource;
+    IOOptions _options;
 
     QString select(QString columns) const;
     bool createColumnDefinition(Table *table, const QSqlQuery &query, QList<QString> &primaryKeys) const;
