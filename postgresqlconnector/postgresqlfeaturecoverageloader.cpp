@@ -107,20 +107,23 @@ QString PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeomet
     sqlBuilder.append("SELECT ");
     sqlBuilder.append(columns);
     sqlBuilder.append(" FROM ");
-    sqlBuilder.append(PostgresqlDatabaseUtil::qTableFromTableResource(_resource));
+
+    PostgresqlDatabaseUtil pgUtil(_resource,_options);
+    sqlBuilder.append(pgUtil.qTableFromTableResource());
     //qDebug() << "SQL: " << sqlBuilder;
     return sqlBuilder;
 }
 
-bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage, const IOOptions &options) const
+bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
 {
     //qDebug() << "PostgresqlFeatureCoverageLoader::loadData()";
 
     ITable table;
-    Resource tableResource = PostgresqlDatabaseUtil::copyWithPropertiesAndType(_resource,itFLATTABLE);
-    table.prepare(tableResource);
+    PostgresqlDatabaseUtil pgUtil(_resource,_options);
+    Resource tableResource = pgUtil.resourceForType(itFLATTABLE);
+    table.prepare(tableResource, _options);
 
-    PostgresqlTableLoader tableLoader(table->source());
+    PostgresqlTableLoader tableLoader(table->source(), _options);
     if (!tableLoader.loadData(table.ptr())) {
         ERROR1("Could not load table data for table '%1'", table->name());
         return false;
@@ -130,70 +133,60 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage, const
     fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES);
 
     QList<MetaGeometryColumn> metaGeometries;
-    PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource,metaGeometries);
-    PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
-    QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
-    QSqlQuery query = db.exec(selectGeometries(metaGeometries));
+    pgUtil.getMetaForGeometryColumns(metaGeometries);
+    QSqlQuery query = pgUtil.doQuery(selectGeometries(metaGeometries), "featurecoverageloader");
     quint32 geometriesPerFeature = metaGeometries.size();
 
     IDomain semantics;
-    PostgresqlDatabaseUtil::prepareSubFeatureSemantics(_resource, semantics);
-    //setSubfeatureSemantics(fcoverage, semantics);
+    pgUtil.prepareSubFeatureSemantics(semantics);
 
     while (query.next()) {
-        // a feature can have multiple geometries with prioritized order
-        geos::geom::Geometry* geometries[geometriesPerFeature];
-        if (geometriesPerFeature > 0) {
-            int multipleGeomIdx = 0;
-            for (MetaGeometryColumn meta : metaGeometries) {
-                QString geomName = meta.geomColumn;
-                geos::geom::Geometry *geom = createGeometry(query, meta);
-                if ( !semantics.isValid()) {
-                    // column ordering as priority semantics
-                    geometries[multipleGeomIdx++] = geom;
-                } else {
-                    //predefined priority domain (with implicit order)
-                    NamedIdentifierRange *range = semantics->range<NamedIdentifierRange>().data();
-                    for (int i = 0 ; i < range->count() ; i++) {
-                        // TODO not very elegant to order geometries
-                        SPDomainItem item = range->itemByOrder(i);
-                        if (item->name() == geomName) {
-                            geometries[i] = geom;
-                            break;
-                        }
-                    }
-                }
-            }
-            multipleGeomIdx = 0; // reset
-
-            SPFeatureI feature = fcoverage->newFeature(geometries[0],false);
-            for (int i = 1 ; i < geometriesPerFeature ; i++) {
-                // for all other geometries create subfeatures
-                feature = feature->createSubFeature(metaGeometries.at(i).geomColumn, geometries[i]);
-            }
+        if (geometriesPerFeature == 0) {
+            fcoverage->newFeature(0);
         } else {
-            SPFeatureI feature = fcoverage->newFeature(0);
-
+            // index 0 is root, indeces > 0 are subfeatures of root
+            bool atRoot = true;
+            SPFeatureI rootFeature;
+            // iterate semantics to keep predefined order
+            ItemRangeIterator iter(semantics->range<>().data());
+            while (iter.isValid()) {
+                QString geomName = (*iter)->name();
+                ICoordinateSystem crs;
+                std::for_each(metaGeometries.begin(), metaGeometries.end(), [&crs,geomName](MetaGeometryColumn c) {
+                    if (c.geomColumn == geomName) {
+                        crs = c.crs;
+                    }
+                });
+                if (atRoot) {
+                    atRoot = false;
+                    geos::geom::Geometry *rootGeometry = createGeometry(query, geomName, crs);
+                    rootFeature = fcoverage->newFeature(rootGeometry, false);
+                } else {
+                    geos::geom::Geometry *subGeometry = createGeometry(query, geomName, crs);
+                    rootFeature->createSubFeature(geomName,subGeometry);
+                }
+                ++iter;
+            }
         }
     }
     fcoverage->attributesFromTable(table);
 
-    db.close();
     return true;
 }
 
-bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage, const IOOptions& options) const
+bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) const
 {
     bool queryOk = true;
     ITable baseData = fcoverage->attributeTable();
-    SqlStatementHelper sqlHelper(_resource);
+    PostgresqlDatabaseUtil pgUtil(_resource, _options);
+    SqlStatementHelper sqlHelper(pgUtil);
 
     IDomain semantics; // subfeature semantics
     QList<QString> primaryKeys; // readonly keys
     QList<MetaGeometryColumn> metaGeomColumns; // geometry columns
-    PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, metaGeomColumns);
-    PostgresqlDatabaseUtil::prepareSubFeatureSemantics(_resource, semantics);
-    PostgresqlDatabaseUtil::getPrimaryKeys(_resource,primaryKeys);
+    pgUtil.getMetaForGeometryColumns(metaGeomColumns);
+    pgUtil.prepareSubFeatureSemantics(semantics);
+    pgUtil.getPrimaryKeys(primaryKeys);
 
     // add geoms to update/insert data table
     FeatureIterator featureIter(fcoverage);
@@ -203,11 +196,10 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage, cons
 
     QString code = fcoverage->coordinateSystem()->code();
     QString srid = code.right(code.indexOf(":"));
-    QString qtablename = PostgresqlDatabaseUtil::qTableFromTableResource(_resource);
-    QSqlDatabase db = PostgresqlDatabaseUtil::openForResource(_resource,"updategeometries");
+    QString qtablename = pgUtil.qTableFromTableResource();
     while(featureIter != featureIter.end()) {
         SPFeatureI feature = (*featureIter);
-        bool newFeature = !PostgresqlDatabaseUtil::exists(_resource, feature);
+        bool newFeature = !pgUtil.exists(feature);
 
         QString columnValuesCommaSeparated = sqlHelper.columnValuesCommaSeparated(feature);
 
@@ -244,6 +236,7 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage, cons
             */
 
             QString rootGeomColumn = fcoverage->attributeDefinitionsRef().index((quint32)0);
+            // have to iterate the order of given geom columns
             foreach (MetaGeometryColumn geomMeta, metaGeomColumns) {
                 QString wkt = "NULL";
                 QString geomColumn = geomMeta.geomColumn;
