@@ -1,6 +1,9 @@
 #ifndef SQLSTATEMENTHELPER_H
 #define SQLSTATEMENTHELPER_H
 
+
+#include "postgresqldatabaseutil.h"
+
 namespace Ilwis {
 
 class SPFeatureI;
@@ -10,7 +13,7 @@ namespace Postgresql {
 class SqlStatementHelper
 {
 public:
-    SqlStatementHelper(const Resource &resource);
+    SqlStatementHelper(const PostgresqlDatabaseUtil &pgUtil);
     ~SqlStatementHelper();
 
     void addCreateTempTableStmt(const QString &tmpTableName);
@@ -28,11 +31,9 @@ public:
     QString sql();
 
 private:
-    Resource _resource;
+    PostgresqlDatabaseUtil _pgUtil;
     QList<QString> _tmpTables;
     QString _sqlBuilder;
-
-
 };
 
 }

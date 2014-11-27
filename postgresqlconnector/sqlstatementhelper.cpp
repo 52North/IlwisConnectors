@@ -18,13 +18,12 @@
 #include "ilwisinterfaces.h"
 #include "record.h"
 
-#include "postgresqldatabaseutil.h"
 #include "sqlstatementhelper.h"
 
 using namespace Ilwis;
 using namespace Postgresql;
 
-SqlStatementHelper::SqlStatementHelper(const Resource &resource): _resource(resource), _tmpTables( {0} )
+SqlStatementHelper::SqlStatementHelper(const PostgresqlDatabaseUtil &pgUtil): _pgUtil(pgUtil), _tmpTables( {0} )
 {
 }
 
@@ -42,7 +41,7 @@ void SqlStatementHelper::addCreateTempTableStmt(const QString &tmpTableName)
     }
 
     _tmpTables.push_back(tmpTableName);
-    QString templateTable = PostgresqlDatabaseUtil::qTableFromTableResource(_resource);
+    QString templateTable = _pgUtil.qTableFromTableResource();
     QString sqlBuilder;
     sqlBuilder.append(" CREATE TEMP TABLE ");
     sqlBuilder.append(tmpTableName);
@@ -95,7 +94,7 @@ void SqlStatementHelper::addUpdateStmt(const QString &tmpTable, const Table *tab
     }
 
     QString sqlBuilder;
-    QString qtablename = PostgresqlDatabaseUtil::qTableFromTableResource(_resource);
+    QString qtablename = _pgUtil.qTableFromTableResource();
     sqlBuilder.append(" UPDATE ");
     sqlBuilder.append(qtablename);
     sqlBuilder.append(" AS current");
@@ -134,7 +133,7 @@ void SqlStatementHelper::addInsertStmt(const QString &tmpTable, const Table *tab
     }
 
     QString sqlBuilder;
-    QString qtablename = PostgresqlDatabaseUtil::qTableFromTableResource(_resource);
+    QString qtablename = _pgUtil.qTableFromTableResource();
     sqlBuilder.append(" INSERT INTO ");
     sqlBuilder.append(qtablename);
     QString columns = columnNamesCommaSeparated(table);
@@ -167,7 +166,7 @@ QString SqlStatementHelper::createWhereComparingPrimaryKeys(const QString &alias
 {
     QString whereClause;
     QList<QString> primaryKeys;
-    PostgresqlDatabaseUtil::getPrimaryKeys(_resource,primaryKeys);
+    _pgUtil.getPrimaryKeys(primaryKeys);
     for (QString primaryKey : primaryKeys) {
         if (whereClause.isEmpty()) {
             whereClause.append(" WHERE ");

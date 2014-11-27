@@ -37,7 +37,7 @@
 using namespace Ilwis;
 using namespace Postgresql;
 
-PostgresqlFeatureCoverageLoader::PostgresqlFeatureCoverageLoader(const Resource resource): _resource(resource)
+PostgresqlFeatureCoverageLoader::PostgresqlFeatureCoverageLoader(const Resource &resource, const IOOptions &options): _resource(resource), _options(options)
 {
 }
 
@@ -46,14 +46,13 @@ PostgresqlFeatureCoverageLoader::~PostgresqlFeatureCoverageLoader()
     QSqlDatabase::removeDatabase("featurecoverageloader");
 }
 
-bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage, const IOOptions &options) const
+bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) const
 {
     //qDebug() << "PostgresqlFeatureCoverageLoader::loadMetadata()";
 
     ITable featureTable;
-    Resource tableResource = PostgresqlDatabaseUtil::copyWithPropertiesAndType(_resource,itFLATTABLE);
-    if(!featureTable.prepare(tableResource)) {
-        ERROR1(ERR_NO_INITIALIZED_1, tableResource.name() + "[itFLATTABLE]");
+    if(!featureTable.prepare(_resource.url().toString(), itFLATTABLE, _options)) {
+        ERROR1(ERR_NO_INITIALIZED_1, _resource.name() + "[itFLATTABLE]");
         return false;
     }
 
@@ -62,7 +61,8 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage, c
     fcoverage->attributesFromTable(featureTable);
 
     IDomain semantics;
-    PostgresqlDatabaseUtil::prepareSubFeatureSemantics(_resource, semantics);
+    PostgresqlDatabaseUtil pgUtil(_resource,_options);
+    pgUtil.prepareSubFeatureSemantics(semantics);
     setSubfeatureSemantics(fcoverage, semantics);
 
     return true;
@@ -74,7 +74,8 @@ void PostgresqlFeatureCoverageLoader::setSubfeatureSemantics(FeatureCoverage *fc
     if ( !semantics.isValid()) {
 
         QList<MetaGeometryColumn> geomMetadatas;
-        PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, geomMetadatas);
+        PostgresqlDatabaseUtil pgUtil(_resource,_options);
+        pgUtil.getMetaForGeometryColumns(geomMetadatas);
 
         NamedIdentifierRange priorities;
         foreach (MetaGeometryColumn geomMetadata, geomMetadatas) {
@@ -319,7 +320,7 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
             sqlStmt.append("; ");
         }
 
-        PostgresqlDatabaseUtil::doQuery(sqlStmt, db);
+        pgUtil.doQuery(sqlStmt, "updategeometries");
     }
 
     // "SELECT primaryKeysCsv FROM qtablename WHERE "
@@ -327,21 +328,17 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
 
     // TODO check count and delete deleted features
 
-    db.close();
-
     bool featuresOk = true;
     return queryOk && featuresOk;
 }
 
-geos::geom::Geometry* PostgresqlFeatureCoverageLoader::createGeometry(QSqlQuery &query, MetaGeometryColumn &meta) const
+geos::geom::Geometry* PostgresqlFeatureCoverageLoader::createGeometry(QSqlQuery &query, QString geomColumn, ICoordinateSystem crs) const
 {
-    ICoordinateSystem crs = meta.crs;
-
     // postgis wkb is different from ogc wkb
     // => select ewkb, but this seems to be slower than selecting wkt
     //ByteArray wkbBytes = variant.toByteArray();
 
-    QVariant variant = query.value(meta.geomColumn);
+    QVariant variant = query.value(geomColumn);
     QString wkt = variant.toString();
     return GeometryHelper::fromWKT(wkt,crs);
 }
@@ -352,15 +349,14 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
     //qDebug() << "PostgresqlFeatureCoverageLoader::setFeatureCount()";
 
     QList<MetaGeometryColumn> metaGeometries;
-    PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, metaGeometries);
+    PostgresqlDatabaseUtil pgUtil(_resource, _options);
+    pgUtil.getMetaForGeometryColumns(metaGeometries);
 
     IDomain semantics;
-    PostgresqlDatabaseUtil::prepareSubFeatureSemantics(_resource, semantics);
-
-    PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
-    QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
+    pgUtil.prepareSubFeatureSemantics(semantics);
 
     int level = -1;
+    QSqlQuery query;
     foreach (MetaGeometryColumn meta, metaGeometries) {
         QString sqlBuilder;
         sqlBuilder.append("SELECT  ");
@@ -378,7 +374,7 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
         sqlBuilder.append(" ) AS not_null ;");
         //qDebug() << "SQL: " << sqlBuilder;
 
-        QSqlQuery query = db.exec(sqlBuilder);
+        query = pgUtil.doQuery(sqlBuilder, "featurecoverageloader");
 
         if (semantics.isValid()) {
             NamedIdentifierRange *range = semantics->range<NamedIdentifierRange>().data();
@@ -401,7 +397,6 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
             }
         }
     }
-    db.close();
 }
 
 void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcoverage) const
@@ -409,13 +404,12 @@ void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcover
     //qDebug() << "PostgresqlFeatureCoverageLoader::setSpatialMetadata()";
 
     QList<MetaGeometryColumn> metaGeometries;
-    PostgresqlDatabaseUtil::getMetaForGeometryColumns(_resource, metaGeometries);
+    PostgresqlDatabaseUtil pgUtil(_resource, _options);
+    pgUtil.getMetaForGeometryColumns(metaGeometries);
 
     Envelope bbox;
     ICoordinateSystem crs;
 
-    PostgresqlDatabaseUtil::openForResource(_resource,"featurecoverageloader");
-    QSqlDatabase db = QSqlDatabase::database("featurecoverageloader");
     foreach (MetaGeometryColumn meta, metaGeometries) {
         QString sqlBuilder;
         sqlBuilder.append("SELECT ");
@@ -427,7 +421,7 @@ void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcover
         sqlBuilder.append(";");
         //qDebug() << "SQL: " << sqlBuilder;
 
-        QSqlQuery envelopeQuery = db.exec(sqlBuilder);
+        QSqlQuery envelopeQuery = pgUtil.doQuery(sqlBuilder, "featurecoverageloader");
 
         if (envelopeQuery.next()) {
 
@@ -451,7 +445,6 @@ void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcover
         fcoverage->coordinateSystem(crs);
         fcoverage->envelope(bbox);
     }
-    db.close();
 }
 
 
