@@ -327,6 +327,7 @@ void RasterCoverageConnector::loadBlock(UPGrid& grid,QFile& file, quint32 blockI
 bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &options)
 {
     Locker<> lock(_mutex);
+    IOOptions iooptions = options.isEmpty() ? ioOptions() : options;
 
     if ( _dataFiles.size() == 0) {
         return ERROR1(ERR_MISSING_DATA_FILE_1,_resource.name());
@@ -334,7 +335,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &optio
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
     UPGrid& grid = raster->gridRef();
-    std::map<quint32, std::vector<quint32> > blocklimits = grid->calcBlockLimits(options);
+    std::map<quint32, std::vector<quint32> > blocklimits = grid->calcBlockLimits(iooptions);
 
     for(const auto& layer : blocklimits){
         QString  datafile = _dataFiles[layer.first].toLocalFile();

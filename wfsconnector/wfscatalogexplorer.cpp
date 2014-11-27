@@ -51,7 +51,7 @@ WfsCatalogExplorer::~WfsCatalogExplorer()
 {
 }
 
-std::vector<Resource> WfsCatalogExplorer::loadItems()
+std::vector<Resource> WfsCatalogExplorer::loadItems(const IOOptions&)
 {
     QUrl serviceUrl = source().url();
     WebFeatureService wfs(serviceUrl);

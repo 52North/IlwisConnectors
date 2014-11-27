@@ -68,12 +68,9 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const IOOptions
     return schemaParser.parseMetadata(fcoverage, _context);
 }
 
-bool WfsFeatureConnector::loadData(IlwisObject *data, const IOOptions &options)
+bool WfsFeatureConnector::loadData(IlwisObject *data, const IOOptions &)
 {
     qDebug() << "WfsFeatureConnector::loadData()";
-    if (options.size() > 0) {
-        qWarning() << "IOOptions not empty .. not handled for now.";
-    }
 
     // TODO: check how to avoid double loading metadata
     if(!loadMetaData(data, IOOptions()))

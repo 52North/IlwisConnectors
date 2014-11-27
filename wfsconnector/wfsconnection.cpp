@@ -31,7 +31,7 @@ bool WFSConnection::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( _path != "") {
         expression += "/" + _path;
     }
-    expression += QString("/wfs?service=WFS&%1REQUEST=GetCapabilities").arg(_version == "" ? "" : "version=" + _version + "&");
+    expression += QString("/wfs?service=WFS&%1REQUEST=GetCapabilities&ACCEPTVERSIONS=1.1.0");
 
     if ( _username != "" && _password != ""){
         expression += QString("&username=%1&password=%2").arg(_username).arg(_password);
@@ -54,9 +54,9 @@ Ilwis::OperationImplementation::State WFSConnection::prepare(ExecutionContext *c
     _host = _expression.input<QString>(0);
     _port = _expression.input<quint32>(1);
     _path = _expression.input<QString>(2);
-    _version = _expression.input<QString>(3);
-    _username = _expression.input<QString>(4);
-    _password = _expression.input<QString>(5);
+    //_version = _expression.input<QString>(3);
+    _username = _expression.input<QString>(3);
+    _password = _expression.input<QString>(4);
     if ( _host == "")
         return sPREPAREFAILED;
 
@@ -69,13 +69,14 @@ quint64 WFSConnection::createMetadata()
     operation.setLongName("Web Feature Service Catalog");
     operation.setSyntax("wfscatalog(host[,port],path,version[,username, password])");
     operation.setDescription(TR("creates a url to access the catalog of a wfs server"));
-    operation.setInParameterCount({3,4,5,6});
+    operation.setInParameterCount({3,4,5});
     operation.addInParameter(0,itSTRING , TR("host address"),TR("identifies the host that is running the wfs server"));
     operation.addInParameter(1,itPOSITIVEINTEGER , TR("port number"),TR("port used on the remote server"));
     operation.addInParameter(2,itSTRING , TR("path/server"),TR("Additional path on the wfs server(usualy a server type)"));
-    operation.addInParameter(3,itSTRING , TR("version"),TR("Additional path on the wfs server(usualy a server type)"));
-    operation.addInParameter(4,itSTRING , TR("username"),TR("username for authentication on the remote server"));
-    operation.addInParameter(5,itSTRING , TR("password"),TR("password for authentication on the remote server"));
+    // only 1.1.0 is supported and added automatically
+    //operation.addInParameter(3,itSTRING , TR("version"),TR("Additional path on the wfs server(usualy a server type)"));
+    operation.addInParameter(3,itSTRING , TR("username"),TR("username for authentication on the remote server"));
+    operation.addInParameter(4,itSTRING , TR("password"),TR("password for authentication on the remote server"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itSTRING, TR("connection url"),TR("string that is sufficient to access the remote catalog"));
     operation.setKeywords("service,wfs");

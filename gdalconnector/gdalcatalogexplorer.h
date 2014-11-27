@@ -8,7 +8,7 @@ class GdalCatalogExplorer : public CatalogExplorer
 public:
     GdalCatalogExplorer(const Ilwis::Resource &resource,const IOOptions& options=IOOptions());
 
-    std::vector<Ilwis::Resource> loadItems();
+    std::vector<Ilwis::Resource> loadItems(const IOOptions &options=IOOptions());
     bool canUse(const Resource& resource) const;
     QString provider() const;
 

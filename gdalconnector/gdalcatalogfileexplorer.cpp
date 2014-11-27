@@ -37,7 +37,7 @@ Ilwis::CatalogExplorer *GdalCatalogFileExplorer::create(const Resource &resource
 GdalCatalogFileExplorer::GdalCatalogFileExplorer(const Ilwis::Resource &resource, const IOOptions &options) : CatalogExplorer(resource, options)
 {
 }
-std::vector<Ilwis::Resource> GdalCatalogFileExplorer::loadItems()
+std::vector<Ilwis::Resource> GdalCatalogFileExplorer::loadItems(const IOOptions &)
 {
     QFileInfo containerInf = source().toLocalFile();
     if ( containerInf.isDir()){

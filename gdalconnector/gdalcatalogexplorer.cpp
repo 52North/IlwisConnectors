@@ -41,7 +41,7 @@ inline uint qHash(const QFileInfo& inf ){
     return ::qHash(inf.canonicalFilePath());
 }
 
-std::vector<Resource> GdalCatalogExplorer::loadItems()
+std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
 {
     QStringList filters; //gdal()->getRasterExtensions();
     std::multimap<QString, DataFormat>  formats = DataFormat::getSelectedBy(DataFormat::fpEXTENSION, "connector='gdal'");

@@ -10,7 +10,7 @@ class Ilwis3CatalogExplorer : public FolderCatalogExplorer
 public:
     Ilwis3CatalogExplorer(const Ilwis::Resource &resource,const IOOptions& options=IOOptions());
 
-    std::vector<Resource> loadItems();
+    std::vector<Resource> loadItems(const IOOptions &options=IOOptions());
     bool canUse(const Resource& resource) const;
     QString provider() const;
 

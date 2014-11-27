@@ -362,6 +362,7 @@ bool RasterCoverageConnector::moveIndexes(quint32& linesPerBlock, quint64& lines
 }
 
 bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& options ){
+    IOOptions iooptions = options.isEmpty() ? ioOptions() : options;
     auto layerHandle = gdal()->getRasterBand(_handle->handle(), 1);
     if (!layerHandle) {
         ERROR2(ERR_COULD_NOT_LOAD_2, "GDAL","layer");
@@ -375,7 +376,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& optio
     qint64 blockSizeBytes = grid->blockSize(0) * _typeSize;
     char *block = new char[blockSizeBytes];
     quint64 totalLines =grid->size().ysize();
-    std::map<quint32, std::vector<quint32> > blocklimits = grid->calcBlockLimits(options);
+    std::map<quint32, std::vector<quint32> > blocklimits = grid->calcBlockLimits(iooptions);
 
     for(const auto& layer : blocklimits){
         quint64 linesLeft = totalLines; //std::min((quint64)grid->maxLines(), totalLines - grid->maxLines() * layer.second[0]);

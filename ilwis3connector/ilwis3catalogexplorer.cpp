@@ -34,7 +34,7 @@ inline uint qHash(const QFileInfo& inf ){
     return ::qHash(inf.canonicalFilePath());
 }
 
-std::vector<Resource> Ilwis3CatalogExplorer::loadItems()
+std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
 {
     QVariantList filters = DataFormat::getFormatProperties(DataFormat::fpEXTENSION, itILWISOBJECT,"ilwis3");
     QStringList sfilters;
