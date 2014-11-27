@@ -61,5 +61,6 @@ SOURCES += \
     postgresqlconnector/postgresqlfeaturecoverageloader.cpp \
     postgresqlconnector/catalogconnection.cpp \
     postgresqlconnector/sqlstatementhelper.cpp \
-    postgresqlconnector/postgresqlconnection.cpp
+    postgresqlconnector/postgresqlconnection.cpp \
+    postgresqlconnector/PostgresqlDatabaseUtil.cpp
 
