@@ -61,8 +61,10 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
     fcoverage->attributesFromTable(featureTable);
 
     IDomain semantics;
+    QList<MetaGeometryColumn> metaGeometries;
     PostgresqlDatabaseUtil pgUtil(_resource,_options);
-    pgUtil.prepareSubFeatureSemantics(semantics);
+    pgUtil.getMetaForGeometryColumns(metaGeometries);
+    pgUtil.prepareSubFeatureSemantics(semantics, metaGeometries);
     setSubfeatureSemantics(fcoverage, semantics);
 
     return true;
@@ -71,20 +73,6 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
 void PostgresqlFeatureCoverageLoader::setSubfeatureSemantics(FeatureCoverage *fcoverage, IDomain &semantics) const
 {
     std::vector<QString> items;
-    if ( !semantics.isValid()) {
-
-        QList<MetaGeometryColumn> geomMetadatas;
-        PostgresqlDatabaseUtil pgUtil(_resource,_options);
-        pgUtil.getMetaForGeometryColumns(geomMetadatas);
-
-        NamedIdentifierRange priorities;
-        foreach (MetaGeometryColumn geomMetadata, geomMetadatas) {
-            priorities << geomMetadata.geomColumn;
-            items.push_back(geomMetadata.geomColumn);
-        }
-        static_cast<IThematicDomain>(semantics)->setRange(priorities);
-    }
-
     ItemRangeIterator iter(semantics->range<>().data());
     while (iter.isValid()) {
         SPDomainItem geomName = (*iter);
@@ -139,7 +127,7 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
     quint32 geometriesPerFeature = metaGeometries.size();
 
     IDomain semantics;
-    pgUtil.prepareSubFeatureSemantics(semantics);
+    pgUtil.prepareSubFeatureSemantics(semantics, metaGeometries);
 
     while (query.next()) {
         if (geometriesPerFeature == 0) {
@@ -186,7 +174,7 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
     QList<QString> primaryKeys; // readonly keys
     QList<MetaGeometryColumn> metaGeomColumns; // geometry columns
     pgUtil.getMetaForGeometryColumns(metaGeomColumns);
-    pgUtil.prepareSubFeatureSemantics(semantics);
+    pgUtil.prepareSubFeatureSemantics(semantics, metaGeomColumns);
     pgUtil.getPrimaryKeys(primaryKeys);
 
     // add geoms to update/insert data table
@@ -348,12 +336,11 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
 {
     //qDebug() << "PostgresqlFeatureCoverageLoader::setFeatureCount()";
 
+    IDomain semantics;
     QList<MetaGeometryColumn> metaGeometries;
     PostgresqlDatabaseUtil pgUtil(_resource, _options);
     pgUtil.getMetaForGeometryColumns(metaGeometries);
-
-    IDomain semantics;
-    pgUtil.prepareSubFeatureSemantics(semantics);
+    pgUtil.prepareSubFeatureSemantics(semantics, metaGeometries);
 
     int level = -1;
     QSqlQuery query;

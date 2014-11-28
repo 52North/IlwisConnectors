@@ -40,13 +40,15 @@ bool PostgresqlObjectFactory::canUse(const Resource &resource) const
         return true;
     else if ( type & itTABLE)
         return true;
+    if ( type & itCATALOG)
+        return true;
     return false;
 }
 
 IlwisObject *PostgresqlObjectFactory::create(const Resource &resource, const IOOptions &options) const
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    PostgresqlConnector *connector = factory->createFromResource<PostgresqlConnector>(resource, "postgresql", options);
+    IlwisObjectConnector *connector = factory->createFromResource<IlwisObjectConnector>(resource, "postgresql", options);
     if ( !connector) {
        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
        return 0;

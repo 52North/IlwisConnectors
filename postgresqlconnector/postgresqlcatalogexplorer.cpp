@@ -37,9 +37,10 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
 {
     //qDebug() << "PostgresqlCatalogExplorer::loadItems()";
 
+    IOOptions iooptions = options.isEmpty() ? this->iooptions() : options;
     QString schema("public");
-    if (source().hasProperty("pg.schema")) {
-        schema = source()["pg.schema"].toString();
+    if (iooptions.contains("pg.schema")) {
+        schema = iooptions["pg.schema"].toString();
     }
 
     QString sqlBuilder;
@@ -56,7 +57,6 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
     //qDebug() << "SQL: " << sqlBuilder;
 
     std::vector<Resource> resources;
-    IOOptions iooptions = options.isEmpty() ? this->iooptions() : options;
     PostgresqlDatabaseUtil pgUtil(source(), iooptions);
     QSqlQuery query = pgUtil.doQuery(sqlBuilder, "exploreitems");
 
@@ -81,7 +81,7 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
         IlwisTypes extTypes;
         if ( hasGeometry) {
             mainType = itCOVERAGE;
-            extTypes = itFLATTABLE; // | itGEOREF;
+            extTypes = itFLATTABLE;
         } else {
             mainType = itFLATTABLE;
         }
@@ -89,12 +89,6 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
         QUrl url(resourceId);
         Resource table(url, mainType);
         table.setExtendedType(extTypes);
-        table.addProperty("pg.user", source()["pg.user"]);
-        table.addProperty("pg.password", source()["pg.password"]);
-        table.addProperty("pg.schema", source().hasProperty("pg.schema")
-                          ? source()["pg.schema"]
-                          : "public");
-
         resources.push_back(table);
     }
 
@@ -103,12 +97,14 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
 
 bool PostgresqlCatalogExplorer::canUse(const Resource &resource) const
 {
-    if ( resource.ilwisType() != itCATALOG)
-        return false;
     if (resource.url().scheme() != "postgresql")
         return false;
+    if ( resource.ilwisType() != itCATALOG)
+        return false;
     QString dbName = resource.url().path();
-    return dbName.length() != 0;
+    return dbName.startsWith("/")
+            ? dbName.length() > 1
+            : dbName.length() > 0;
 }
 
 QString PostgresqlCatalogExplorer::provider() const

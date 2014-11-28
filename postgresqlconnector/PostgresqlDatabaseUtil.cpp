@@ -8,8 +8,11 @@
 #include "geometries.h"
 #include "ilwisdata.h"
 #include "coordinatesystem.h"
+#include "domain.h"
 #include "itemdomain.h"
 #include "thematicitem.h"
+#include "range.h"
+#include "identifierrange.h"
 #include "coverage.h"
 #include "featurecoverage.h"
 #include "feature.h"
@@ -234,11 +237,29 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::prepareCoordinateSystem(QString 
     }
 }
 
-void Ilwis::Postgresql::PostgresqlDatabaseUtil::prepareSubFeatureSemantics(Ilwis::IDomain &domain) const
+void Ilwis::Postgresql::PostgresqlDatabaseUtil::prepareSubFeatureSemantics(Ilwis::IDomain &domain, const QList<MetaGeometryColumn> &geomColumns) const
 {
-    quint64 id = _resource["subfeature.domainId"].toInt();
-    ESPIlwisObject obj = mastercatalog()->get(id);
-    domain = static_cast<IDomain>(obj);
+    QString columns;
+    if ( !_options.contains("pg.features.order")) {
+        auto join = [&columns](MetaGeometryColumn item) {
+            QString column = item.geomColumn;
+            return columns.isEmpty()
+                    ? columns.append(column)
+                    : columns.append(",").append(column);
+        };
+        std::for_each(geomColumns.begin(), geomColumns.end(), join);
+    } else {
+        columns = _options["pg.features.order"].toString();
+    }
+    QStringList orderedColumns = columns.split(",");
+    NamedIdentifierRange priorities;
+    foreach (QString column, orderedColumns) {
+        priorities << column.trimmed();
+    }
+    IThematicDomain trackIdx;
+    trackIdx.prepare();
+    trackIdx->setRange(priorities);
+    domain = trackIdx;
 }
 
 QSqlQuery Ilwis::Postgresql::PostgresqlDatabaseUtil::doQuery(QString stmt, QString connectionName) const

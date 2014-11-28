@@ -67,7 +67,7 @@ public:
 
     void prepareCoordinateSystem(QString srid, ICoordinateSystem &crs) const;
 
-    void prepareSubFeatureSemantics(IDomain &domain) const;
+    void prepareSubFeatureSemantics(IDomain &domain, const QList<MetaGeometryColumn> &geomColumns) const;
 
     QSqlQuery doQuery(QString stmt, QString connectionname="") const;
 
