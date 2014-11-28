@@ -37,7 +37,7 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
 {
     //qDebug() << "PostgresqlCatalogExplorer::loadItems()";
 
-    IOOptions iooptions = options.isEmpty() ? this->iooptions() : options;
+    IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
     QString schema("public");
     if (iooptions.contains("pg.schema")) {
         schema = iooptions["pg.schema"].toString();
