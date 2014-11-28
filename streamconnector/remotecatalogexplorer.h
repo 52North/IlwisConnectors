@@ -10,7 +10,7 @@ class RemoteCatalogExplorer : public CatalogExplorer
 public:
     RemoteCatalogExplorer(const Ilwis::Resource &resource,const IOOptions& options=IOOptions());
 
-    std::vector<Resource> loadItems();
+    std::vector<Resource> loadItems(const Ilwis::IOOptions &options=IOOptions());
     bool canUse(const Resource& resource) const;
     QString provider() const;
 

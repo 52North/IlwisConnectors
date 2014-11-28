@@ -23,7 +23,7 @@ RemoteCatalogExplorer::RemoteCatalogExplorer(const Ilwis::Resource &resource, co
 
 }
 
-std::vector<Resource> RemoteCatalogExplorer::loadItems()
+std::vector<Resource> RemoteCatalogExplorer::loadItems(const IOOptions &)
 {
 
     DownloadManager manager(source());

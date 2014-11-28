@@ -13,7 +13,7 @@ public:
 
     bool canUse(const Resource& resource) const;
 
-    std::vector<Ilwis::Resource> loadItems();
+    std::vector<Ilwis::Resource> loadItems(const IOOptions &options=IOOptions());
     QString provider() const;
 
     QFileInfo toLocalFile(const QUrl &datasource) const;

@@ -34,7 +34,7 @@ Ilwis::CatalogExplorer *SpreadSheetCatalogFileExplorer::create(const Resource &r
 SpreadSheetCatalogFileExplorer::SpreadSheetCatalogFileExplorer(const Ilwis::Resource &resource, const IOOptions &options) : CatalogExplorer(resource, options)
 {
 }
-std::vector<Ilwis::Resource> SpreadSheetCatalogFileExplorer::loadItems()
+std::vector<Ilwis::Resource> SpreadSheetCatalogFileExplorer::loadItems(const IOOptions &)
 {
     QFileInfo containerInf = source().toLocalFile();
     if ( containerInf.isDir()){
