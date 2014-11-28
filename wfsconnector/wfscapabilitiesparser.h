@@ -16,12 +16,13 @@ namespace Wfs {
 class WFSCONNECTORSHARED_EXPORT WfsCapabilitiesParser
 {
 public:
-    WfsCapabilitiesParser(const SPWfsResponse response, const Resource wfsResource);
+    WfsCapabilitiesParser(const SPWfsResponse response, const Resource wfsResource, const IOOptions &options = IOOptions());
 
     void parseFeatures(std::vector<Ilwis::Resource> &wfsFeaturesTypes);
 
 private:
     Resource _wfsResource;
+    IOOptions _options;
     UPXPathParser _parser;
 
     void createGetFeatureUrl(const QString &featureType, QUrl &rawUrl, QUrl &normalizedUrl) const;

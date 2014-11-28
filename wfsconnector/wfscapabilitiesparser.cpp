@@ -25,7 +25,7 @@
 using namespace Ilwis;
 using namespace Wfs;
 
-WfsCapabilitiesParser::WfsCapabilitiesParser(const SPWfsResponse response, const Resource wfsResource): _wfsResource(wfsResource)
+WfsCapabilitiesParser::WfsCapabilitiesParser(const SPWfsResponse response, const Resource wfsResource, const IOOptions &options): _wfsResource(wfsResource), _options(options)
 {
     _parser = UPXPathParser(new XPathParser(response->device()));
     _parser->addNamespaceMapping("wfs", "http://www.opengis.net/wfs");
@@ -75,9 +75,9 @@ void WfsCapabilitiesParser::parseFeature(QXmlItem &item, WfsFeature &feature)
     feature.dimensions(urText + "," + llText);
     feature.addProperty("domain",name);
 
-    if (_wfsResource.hasProperty("forceXY")) {
+    if (_options.contains("forceXY")) {
         // override if forced XY axes order
-        feature.addProperty("forceXY", _wfsResource["forceXY"].toBool());
+        feature.addProperty("forceXY", _options["forceXY"].toBool());
     } else {
         feature.addProperty("forceXY", false);
     }

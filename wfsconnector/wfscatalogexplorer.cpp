@@ -51,17 +51,18 @@ WfsCatalogExplorer::~WfsCatalogExplorer()
 {
 }
 
-std::vector<Resource> WfsCatalogExplorer::loadItems(const IOOptions&)
+std::vector<Resource> WfsCatalogExplorer::loadItems(const IOOptions &options)
 {
+    IOOptions iooptions = options.isEmpty() ? ioOptions() : options;
     QUrl serviceUrl = source().url();
     WebFeatureService wfs(serviceUrl);
     SPWfsResponse response = wfs.getCapabilities();
-    WfsCapabilitiesParser parser(response, source());
+    WfsCapabilitiesParser parser(response, source(), iooptions);
 
     std::vector<Resource> wfsFeatures;
     parser.parseFeatures(wfsFeatures);
     mastercatalog()->addItems(wfsFeatures);
-    kernel()->issues()->log(QString(TR("Added %1 objects through the wfs connector")).arg( wfsFeatures.size()),IssueObject::itMessage);
+    MESSAGE1("Added %1 objects through the wfs connector", QString::number(wfsFeatures.size()));
     return wfsFeatures;
 }
 
