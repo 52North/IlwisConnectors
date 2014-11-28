@@ -82,7 +82,7 @@ bool EllipsoidConnector::createEllipsoidFromDatum(const QString &name, IlwisObje
         if ( db.next()) {
            Ellipsoid *ellipsoid =  static_cast<Ellipsoid *>(data);
            ellipsoid->fromInternal(db.record());
-           ellipsoid->setConnector(this); // we are internal, no connector needed
+           ellipsoid->setConnector(this, this->ioOptions()); // we are internal, no connector needed
            return true;
         }
     }else

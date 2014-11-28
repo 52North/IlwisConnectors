@@ -46,6 +46,7 @@ ProjectionConnector::ProjectionConnector(const Resource &resource, bool load, co
 
 bool ProjectionConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
+    IOOptions iooptions = options.isEmpty() ? ioOptions() : options;
     if (_odf.isNull())
         return false;
     QString prj = _odf->value("CoordSystem","Projection");
@@ -63,7 +64,7 @@ bool ProjectionConnector::loadMetaData(IlwisObject *data, const IOOptions &optio
             proj->fromInternal(rec);
             proj->setAuthority(rec.field("authority").value().toString());
             proj->setWkt(rec.field("wkt").value().toString());
-            proj->setConnector(this);
+            proj->setConnector(this, IlwisObject::cmINPUT, iooptions);
             proj->code(code);
             QStringList keys = _odf->childKeys("Projection");
             foreach(QString key,keys) {
