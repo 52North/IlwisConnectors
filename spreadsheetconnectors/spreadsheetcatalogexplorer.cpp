@@ -21,7 +21,7 @@ SpreadSheetCatalogExplorer::SpreadSheetCatalogExplorer(const Ilwis::Resource &re
 
 }
 
-std::vector<Ilwis::Resource> SpreadSheetCatalogExplorer::loadItems()
+std::vector<Ilwis::Resource> SpreadSheetCatalogExplorer::loadItems(const IOOptions &options)
 {
     QStringList sfilters;
     sfilters << "*.ods" << "*.xls" << "*.xslx";

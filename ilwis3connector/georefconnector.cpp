@@ -77,6 +77,7 @@ bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
         if (!ok)
             return false;
         grf->size(Size<>(columns, lines,1)); // we dont want the size of the parent georef
+        grf->compute();
         return true;
     } else if ( type == "GeoRefCTP"){
         return loadGeorefTiepoints(odf, grf);
@@ -252,6 +253,7 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
     grf->impl<CornersGeoReference>()->setEnvelope(Envelope(Coordinate(minx, miny), Coordinate(maxx, maxy)));
     bool centerOfCornerPixels = (odf.value("GeoRefCorners","CornersOfCorners").compare("No") == 0);
     grf->centerOfPixel(centerOfCornerPixels);
+    grf->compute();
     return true;
 }
 
