@@ -67,7 +67,7 @@ quint64 WFSConnection::createMetadata()
 {
     OperationResource operation({"ilwis://operations/wfscatalog"});
     operation.setLongName("Web Feature Service Catalog");
-    operation.setSyntax("wfscatalog(host[,port],path,version[,username, password])");
+    operation.setSyntax("wfscatalog(host[,port],path[,username, password])");
     operation.setDescription(TR("creates a url to access the catalog of a wfs server"));
     operation.setInParameterCount({3,4,5});
     operation.addInParameter(0,itSTRING , TR("host address"),TR("identifies the host that is running the wfs server"));
