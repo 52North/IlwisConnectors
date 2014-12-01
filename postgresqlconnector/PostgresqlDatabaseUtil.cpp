@@ -57,8 +57,8 @@ QSqlDatabase PostgresqlDatabaseUtil::openForResource(QString connectionname) con
        db.setDatabaseName(path);
        db.setPort(port);
 
-       QString username = _options.contains("pg.user")
-               ? _options["pg.user"].toString()
+       QString username = _options.contains("pg.username")
+               ? _options["pg.username"].toString()
                : "";
        QString password = _options.contains("pg.password")
                ? _options["pg.password"].toString()
