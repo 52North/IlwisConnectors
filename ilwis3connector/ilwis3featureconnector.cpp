@@ -403,6 +403,9 @@ bool FeatureConnector::loadData(Ilwis::IlwisObject *obj, const IOOptions &) {
          else if (fcoverage->featureTypes() == itPOLYGON)
              ok = loadBinaryPolygons(fcoverage);
 
+         if ( ok)
+             _binaryIsLoaded = true;
+
          if ( ok && extTable.isValid()) {
              ITable attTbl = fcoverage->attributeTable();
              quint32 keyIndex = extTable->columnIndex(COVERAGEKEYCOLUMN);
