@@ -90,6 +90,8 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
     }
     else if ( attTable->columnIndex(COVERAGEKEYCOLUMN) == iUNDEF) { // external tables might already have these
         DataDefinition def = determineDataDefintion(_odf, options);
+        if ( !def.isValid())
+            return ITable();
         attTable->addColumn(ColumnDefinition(COVERAGEKEYCOLUMN,def, attTable->columnCount()));
     }
     return attTable;
@@ -131,11 +133,12 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
     if ( basemaptype != "Map" || attfile != sUNDEF) {
         ITable tbl = prepareAttributeTable(attfile, basemaptype, options);
         if ( tbl.isValid()){
-        if ( basemaptype == "Map"){
-            static_cast<RasterCoverage *>(coverage)->attributeTable(tbl);
+            if ( basemaptype == "Map"){
+                static_cast<RasterCoverage *>(coverage)->attributeTable(tbl);
+            } else
+                static_cast<FeatureCoverage *>(coverage)->attributesFromTable(tbl);
         } else
-            static_cast<FeatureCoverage *>(coverage)->attributesFromTable(tbl);
-        }
+            return false;
     }
 
     QString cbounds = _odf->value("BaseMap","CoordBounds");
