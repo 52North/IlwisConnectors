@@ -426,7 +426,7 @@ IlwisObject *DomainConnector::create() const
         }
         if ( subtype.left(5) == "color" ){
             ColorDomain *dm = new ColorDomain(_resource);
-            ContinousColorRange *rng = new ContinousColorRange(QColor("#000000"), QColor("(#ffffff"));
+            ContinuousColorRange *rng = new ContinuousColorRange(QColor("#000000"), QColor("(#ffffff"));
             dm->range(rng);
             return dm;
         }

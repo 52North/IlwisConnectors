@@ -244,7 +244,7 @@ DataDefinition RasterCoverageConnector::createDataDefColor(std::map<int, int>& v
         break;
 
     }
-    Range *colorRange = new ContinousColorRange( clrMin, clrMax, _colorModel);
+    Range *colorRange = new ContinuousColorRange( clrMin, clrMax, _colorModel);
     _typeSize = 1;
     _gdalValueType = GDT_Byte;
     return DataDefinition(IDomain("color"), colorRange);
