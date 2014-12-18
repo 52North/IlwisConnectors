@@ -245,6 +245,8 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
 
 void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>& geometries,FeatureCoverage *fcoverage,const std::vector<double>& featureValues, IlwisTypes tp) {
     quint32 rec = 0;
+    ColumnDefinition& coldef = fcoverage->attributeDefinitionsRef().columndefinitionRef(featureValues.size() > 0 ? FEATUREVALUECOLUMN : COVERAGEKEYCOLUMN);
+    coldef.datadef().range(Range::create(coldef.datadef().range<>()->valueType())); // resetting the range to a default state
     for(auto iter = geometries.begin() ; iter != geometries.end(); ++iter) {
         vector<geos::geom::Geometry *>& geoms1 = (*iter).second;
         geos::geom::Geometry *geometry = 0;
@@ -266,10 +268,14 @@ void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>&
 //            fcoverage->newFeature({multigeom},false);
         }
         auto feature = fcoverage->newFeature({geometry},false);
-        if ( featureValues.size() > 0)
-            feature(FEATUREVALUECOLUMN, QVariant(featureValues[rec]));
-        else
-            feature(COVERAGEKEYCOLUMN, QVariant((*iter).first - 1));
+        if ( featureValues.size() > 0){
+            QVariant value(featureValues[rec]);
+            feature(FEATUREVALUECOLUMN, value);
+        }
+        else{
+            QVariant value((*iter).first - 1);
+            feature(COVERAGEKEYCOLUMN, value);
+        }
 
         ++rec;
     }
