@@ -279,6 +279,9 @@ void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>&
 
         ++rec;
     }
+    if ( featureValues.size() == 0){
+        coldef.datadef().range<IndexedIdentifierRange>()->add(new IndexedIdentifier("",0,rec));
+    }
 }
 
 geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& stream ) {
