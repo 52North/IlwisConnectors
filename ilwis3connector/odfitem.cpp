@@ -531,6 +531,13 @@ QString ODFItem::findDimensions() const
             }
         case itDOMAIN:
         case itITEMDOMAIN:
+            {
+                QString dtype =  _odf.value("Domain","Type");
+                if ( dtype == "DomainClass" || dtype == "DomainGroup")
+                    return _odf.value("DomainClass", "Nr");
+                else if ( dtype == "DomainIdentifier" || dtype == "DomainUniqueID")
+                    return _odf.value("DomainIdentifier", "Nr");
+            }
         case itNUMERICDOMAIN:
             return _odf.value( "Table", "Records");
         case itTABLE:
