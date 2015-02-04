@@ -132,13 +132,13 @@ bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, c
         if( coords.size() == 0 ||coords.back() == coords.front()){
             ring = new std::vector<geos::geom::Coordinate>(coords.size());
             std::copy(coords.begin(), coords.end(), ring->begin());
-        } else if ( coords.back() == ring->back()) {
+        } else if ( ring->size() > 0 && coords.back() == ring->back()) {
             ring = new std::vector<geos::geom::Coordinate>(coords.size());
             std::reverse_copy(coords.begin(), coords.end(), ring->begin());
-        } else if ( ring->front() == coords.front()) {
+        } else if ( ring->size() > 0 && ring->front() == coords.front()) {
             ring = new std::vector<geos::geom::Coordinate>(coords.size());
             std::reverse_copy(coords.begin(), coords.end(), ring->begin());
-        } else if ( ring->front() == coords.back()) {
+        } else if ( ring->size() > 0 && ring->front() == coords.back()) {
             ring = new std::vector<geos::geom::Coordinate>(coords.size());
             std::copy(coords.begin(), coords.end(), ring->begin());
         }
@@ -215,7 +215,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     std::vector<double> featureValues(isNumeric ? nrPolygons : 0);
     fcoverage->setFeatureCount(itPOLYGON, iUNDEF,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
     for(int j=0; j < nrPolygons; ++j) {
-        geos::geom::CoordinateArraySequence *outer = readRing(stream);
+        geos::geom::CoordinateArraySequence *outer = readRing(stream, false);
         if ( !outer)
             return false;
 
@@ -225,9 +225,13 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         quint32 numberOfHoles;
         stream.readRawData((char *)&value, 8);
         stream.readRawData((char *)&numberOfHoles, 4);
-        std::vector<geos::geom::Geometry*> *inners = new std::vector<geos::geom::Geometry*>(numberOfHoles);
-        for(quint32 i=0; i< numberOfHoles;++i)
-            (*inners)[i] = fcoverage->geomfactory()->createLinearRing(readRing(stream));
+        std::vector<geos::geom::Geometry*> *inners = new std::vector<geos::geom::Geometry*>();
+        for(quint32 i=0; i< numberOfHoles;++i){
+            auto ring = readRing(stream, true);
+            if ( ring){
+                inners->push_back(fcoverage->geomfactory()->createLinearRing(ring));
+            }
+        }
         geos::geom::Polygon *pol = fcoverage->geomfactory()->createPolygon(outerring, inners);
 
         //collect all polygons in a map; the key is either a unique number ( index j) or the raw value from the polygon
@@ -284,7 +288,7 @@ void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>&
     }
 }
 
-geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& stream ) {
+geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& stream, bool checkArea ) {
     quint32 numberOfCoords;
 
     if (stream.readRawData((char *)&numberOfCoords, 4) <= 0){
@@ -293,9 +297,19 @@ geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& str
     }
     vector<XYZ> pnts(numberOfCoords);
     stream.readRawData((char *)&pnts[0],numberOfCoords*3*8);
+    double area = 0;
+    double j = numberOfCoords - 1;
     geos::geom::CoordinateArraySequence *ring = new geos::geom::CoordinateArraySequence(numberOfCoords);
     for(quint32 i=0; i < numberOfCoords; ++i) {
         ring->setAt(geos::geom::Coordinate(pnts[i].x, pnts[i].y, pnts[i].z), i);
+        area += (pnts[j].x + pnts[i].x) * (pnts[j].y - pnts[i].y);
+        j = i;
+    }
+    if ( checkArea){
+        if ( std::abs(area) < 1e-6){
+            delete ring;
+            return 0;
+        }
     }
 
    return ring;
