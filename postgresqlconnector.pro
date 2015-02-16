@@ -46,7 +46,6 @@ HEADERS += \
     postgresqlconnector/postgresqldatabaseutil.h \
     postgresqlconnector/postgresqltableloader.h \
     postgresqlconnector/postgresqlfeaturecoverageloader.h \
-    postgresqlconnector/catalogconnection.h \
     postgresqlconnector/sqlstatementhelper.h \
     postgresqlconnector/postgresqlconnection.h
 
@@ -59,7 +58,6 @@ SOURCES += \
     postgresqlconnector/postgresqlcatalogexplorer.cpp \
     postgresqlconnector/postgresqltableloader.cpp \
     postgresqlconnector/postgresqlfeaturecoverageloader.cpp \
-    postgresqlconnector/catalogconnection.cpp \
     postgresqlconnector/sqlstatementhelper.cpp \
     postgresqlconnector/postgresqlconnection.cpp \
     postgresqlconnector/PostgresqlDatabaseUtil.cpp
