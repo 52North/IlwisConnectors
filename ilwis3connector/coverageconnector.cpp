@@ -372,6 +372,14 @@ DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const 
     QString range = odf->value("BaseMap","Range");
     if ( range != sUNDEF ) {
         if ( getRawInfo(range, vmin,vmax,scale,offset)) {
+            QString range = odf->value("BaseMap","MinMax"); // this might be there, not necessarily. its info is better
+            if ( range != sUNDEF){
+                QStringList parts = range.split(":");
+                if ( parts.size() == 2){
+                    vmin = parts[0].toDouble();
+                    vmax = parts[1].toDouble();
+                }
+            }
             if ( scale == 1.0) {
                 def.range(new NumericRange(vmin, vmax,1));
 
