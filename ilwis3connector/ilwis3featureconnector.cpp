@@ -84,6 +84,7 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
     qint32 colArea = polTable.index("Area");
     int nrPolygons = polTable.rows();
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
+    fcoverage->setFeatureCount(itFEATURE, 0,0); // reset all counts
 
     double v;
     for(int i = 0; i < nrPolygons; ++i) {
@@ -213,7 +214,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     map<quint32,vector<geos::geom::Geometry *>> polygons;
     std::vector<double> featureValues(isNumeric ? nrPolygons : 0);
-    fcoverage->setFeatureCount(itPOLYGON, iUNDEF,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // reset all counts
     for(int j=0; j < nrPolygons; ++j) {
         geos::geom::CoordinateArraySequence *outer = readRing(stream, false);
         if ( !outer)
@@ -334,7 +335,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     int colCoords = mpsTable.index("Coords");
     int colItemId = mpsTable.index("SegmentValue");
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-    fcoverage->setFeatureCount(itLINE, iUNDEF,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF,0); // reset all counts
 
     map<quint32,vector<geos::geom::Geometry *>> lines;
     std::vector<double> featureValues(isNumeric ? mpsTable.rows() : 0);
@@ -377,7 +378,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
 
     std::vector<double> featureValues(isNumeric ? mppTable.rows() : 0);
     bool newCase =  coordColumnX == iUNDEF;
-    fcoverage->setFeatureCount(itPOINT, iUNDEF,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF,0); // reset all counts
 
     map<quint32,vector<geos::geom::Geometry *>> points;
     for(quint32 i= 0; i < mppTable.rows(); ++i) {
@@ -418,6 +419,7 @@ bool FeatureConnector::loadData(Ilwis::IlwisObject *obj, const IOOptions &) {
         }
     }
     bool ok = false;
+
     try {
          if (fcoverage->featureTypes() == itPOINT)
              ok = loadBinaryPoints(fcoverage);
