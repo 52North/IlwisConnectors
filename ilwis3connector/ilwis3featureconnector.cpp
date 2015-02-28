@@ -84,7 +84,7 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
     qint32 colArea = polTable.index("Area");
     int nrPolygons = polTable.rows();
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-    fcoverage->setFeatureCount(itFEATURE, 0,0); // reset all counts
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // reset all counts
 
     double v;
     for(int i = 0; i < nrPolygons; ++i) {
@@ -107,13 +107,13 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
             //std::copy(rings[0].begin(), rings[0].end(), polygon.outer().begin());
             polTable.get(i, colValue, v);
             if ( isNumeric) {
+                fcoverage->newFeature({polygon}, false);
                 tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
                 tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(v));
-                fcoverage->newFeature({polygon}, false);
             } else {
+                fcoverage->newFeature({polygon}, false);
                 quint32 itemId = v;
                 tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
-                fcoverage->newFeature({polygon}, false);
             }
         }
     }
@@ -129,7 +129,7 @@ bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, c
     bool forward = isForwardStartDirection(topTable,colForward, colBackward, colCoords, row);
     do{
         std::vector<Coordinate> coords;
-        topTable.get(row,colCoords,coords);
+        topTable.get(abs(row) - 1,colCoords,coords);
         if( coords.size() == 0 ||coords.back() == coords.front()){
             ring = new std::vector<geos::geom::Coordinate>(coords.size());
             std::copy(coords.begin(), coords.end(), ring->begin());
@@ -153,9 +153,9 @@ bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, c
         qint32 oldIndex = row;
         double v;
         if ( forward)
-            topTable.get(abs(row),colForward,v);
+            topTable.get(abs(row) - 1,colForward,v);
         else
-            topTable.get(abs(row), colBackward, v);\
+            topTable.get(abs(row) - 1, colBackward, v);\
         row = v;
         if ( oldIndex == row && row != startIndex) // this would indicate infintite loop. corrupt data
             return false;
@@ -421,6 +421,7 @@ bool FeatureConnector::loadData(Ilwis::IlwisObject *obj, const IOOptions &) {
     bool ok = false;
 
     try {
+        _binaryIsLoaded = true; // to prevent any subsequent calls to this routine while loading (which mat trigger it).
          if (fcoverage->featureTypes() == itPOINT)
              ok = loadBinaryPoints(fcoverage);
          else if (fcoverage->featureTypes() == itLINE)
@@ -428,8 +429,7 @@ bool FeatureConnector::loadData(Ilwis::IlwisObject *obj, const IOOptions &) {
          else if (fcoverage->featureTypes() == itPOLYGON)
              ok = loadBinaryPolygons(fcoverage);
 
-         if ( ok)
-             _binaryIsLoaded = true;
+         _binaryIsLoaded = ok;
 
          if ( ok && extTable.isValid()) {
              ITable attTbl = fcoverage->attributeTable();
