@@ -4,6 +4,7 @@
 #include <iterator>
 
 #include "coverage.h"
+#include "boost/math/special_functions.hpp"
 #include "geos/geom/CoordinateArraySequence.h"
 #include "geos/geom/Point.h"
 #include "geos/geom/LineString.h"
@@ -216,7 +217,8 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     std::vector<double> featureValues(isNumeric ? nrPolygons : 0);
     fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // reset all counts
     for(int j=0; j < nrPolygons; ++j) {
-        geos::geom::CoordinateArraySequence *outer = readRing(stream, false);
+        double outerArea = rUNDEF;
+        geos::geom::CoordinateArraySequence *outer = readRing(stream, outerArea);
         if ( !outer)
             return false;
 
@@ -228,7 +230,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         stream.readRawData((char *)&numberOfHoles, 4);
         std::vector<geos::geom::Geometry*> *inners = new std::vector<geos::geom::Geometry*>();
         for(quint32 i=0; i< numberOfHoles;++i){
-            auto ring = readRing(stream, true);
+            auto ring = readRing(stream, outerArea);
             if ( ring){
                 inners->push_back(fcoverage->geomfactory()->createLinearRing(ring));
             }
@@ -289,7 +291,7 @@ void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>&
     }
 }
 
-geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& stream, bool checkArea ) {
+geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& stream, double& outerArea ) {
     quint32 numberOfCoords;
 
     if (stream.readRawData((char *)&numberOfCoords, 4) <= 0){
@@ -306,12 +308,18 @@ geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& str
         area += (pnts[j].x + pnts[i].x) * (pnts[j].y - pnts[i].y);
         j = i;
     }
-    if ( checkArea){
+    if ( outerArea !=rUNDEF){
         if ( std::abs(area) < 1e-6){
             delete ring;
             return 0;
         }
-    }
+        if ( boost::math::sign(outerArea) == boost::math::sign(area)){ // inner and outer rings must be in reverse order
+            geos::geom::CoordinateSequence::reverse(ring);
+        }
+    }else
+        outerArea = area;
+
+
 
    return ring;
 }
