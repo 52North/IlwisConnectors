@@ -49,9 +49,9 @@ HEADERS += \
     wfsconnector/wfsconnection.h
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
                                               -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
                                               -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
 INCLUDEPATH += $$PWD/../external/geos
