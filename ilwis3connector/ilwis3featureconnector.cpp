@@ -343,7 +343,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     int colCoords = mpsTable.index("Coords");
     int colItemId = mpsTable.index("SegmentValue");
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-    fcoverage->setFeatureCount(itFEATURE, iUNDEF,0); // reset all counts
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // reset all counts
 
     map<quint32,vector<geos::geom::Geometry *>> lines;
     std::vector<double> featureValues(isNumeric ? mpsTable.rows() : 0);
@@ -386,7 +386,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
 
     std::vector<double> featureValues(isNumeric ? mppTable.rows() : 0);
     bool newCase =  coordColumnX == iUNDEF;
-    fcoverage->setFeatureCount(itFEATURE, iUNDEF,0); // reset all counts
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // reset all counts
 
     map<quint32,vector<geos::geom::Geometry *>> points;
     for(quint32 i= 0; i < mppTable.rows(); ++i) {
