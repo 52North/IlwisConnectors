@@ -171,17 +171,18 @@ bool FeatureConnector::isForwardStartDirection(const BinaryIlwis3Table& topTable
     double v;
     topTable.get(abs(index),colForward, v );
     fwl = v;
-    if ( fwl != iUNDEF)
-        --fwl; // due to being raw values
+   // if ( fwl != iUNDEF)
+   //     --fwl; // due to being raw values
     topTable.get(abs(index),colBackward, v );
     bwl = v;
-    if ( bwl != iUNDEF)
-        --bwl;
+   // if ( bwl != iUNDEF)
+   //    --bwl;
 
     if ( abs(fwl) == abs(bwl)	)
         return true;
     if ( index < 0)
         return false;
+    qDebug() << fwl << bwl;
     std::vector<Coordinate> startLine, forwardLine;
     topTable.get(abs(index), colCoords,startLine);
     topTable.get(abs(fwl), colCoords, forwardLine);
