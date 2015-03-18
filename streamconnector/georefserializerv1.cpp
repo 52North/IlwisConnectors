@@ -48,11 +48,11 @@ bool GeorefSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 
     if ( grf->grfType<CornersGeoReference>()){
         _stream << CornersGeoReference::typeName();
-        Envelope envelope = grf->impl<CornersGeoReference>()->envelope();
+        Envelope envelope = grf->envelope();
         _stream << envelope.min_corner().x << envelope.min_corner().y << envelope.max_corner().x << envelope.max_corner().y;
     } else if ( grf->grfType<CTPGeoReference>()){
         _stream << CTPGeoReference::typeName();
-        QSharedPointer<PlanarCTPGeoReference> ctpgrf = grf->impl<PlanarCTPGeoReference>();
+        QSharedPointer<PlanarCTPGeoReference> ctpgrf = grf->as<PlanarCTPGeoReference>();
         int nrOfControlPoints = ctpgrf->nrControlPoints();
         _stream << nrOfControlPoints;
         for(int i =0; i < nrOfControlPoints; ++i){
@@ -103,7 +103,7 @@ bool GeorefSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
         double minx, miny, maxx, maxy;
         _stream >> minx >> miny >> maxx >> maxy;
         CornersGeoReference *cornersgrf = new CornersGeoReference();
-        cornersgrf->setEnvelope(Envelope(Coordinate(minx, miny), Coordinate(maxx, maxy)));
+        cornersgrf->envelope(Envelope(Coordinate(minx, miny), Coordinate(maxx, maxy)));
         grf->impl(cornersgrf);
     } else if ( typeName == CTPGeoReference::typeName() ){
         PlanarCTPGeoReference *ctpgrf = new PlanarCTPGeoReference();

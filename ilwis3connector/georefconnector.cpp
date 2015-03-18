@@ -93,7 +93,7 @@ bool GeorefConnector::loadGeorefTiepoints(const IniFile& odf, GeoReference *grf)
         return ERROR2(ERR_COULD_NOT_LOAD_2, "coordinate system",csyName);
     }
     grf->coordinateSystem(csy);
-    QSharedPointer<PlanarCTPGeoReference> grfctp(grf->impl<PlanarCTPGeoReference>());
+    QSharedPointer<PlanarCTPGeoReference> grfctp(grf->as<PlanarCTPGeoReference>());
     BinaryIlwis3Table tbl;
     tbl.load(_odf);
     std::vector<int> colindexes(10, iUNDEF);
@@ -184,7 +184,7 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
     _odf->setKeyValue("GeoRef","Columns", QString::number(sz.xsize()));
     //CornersGeoReference *cgrf = dynamic_cast<CornersGeoReference *>(grf);
     if ( grf->grfType<CornersGeoReference>()) {
-        QSharedPointer<CornersGeoReference> cgrf = grf->impl<CornersGeoReference>();
+        QSharedPointer<CornersGeoReference> cgrf = grf->as<CornersGeoReference>();
         _odf->setKeyValue("GeoRef","CornersOfCorners", cgrf->centerOfPixel() ? "No" : "Yes");
         _odf->setKeyValue("GeoRef","Type", "GeoRefCorners");
         Coordinate cmin = cgrf->envelope().min_corner();
@@ -250,7 +250,7 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
         return false;
     }
 
-    grf->impl<CornersGeoReference>()->setEnvelope(Envelope(Coordinate(minx, miny), Coordinate(maxx, maxy)));
+    grf->envelope(Envelope(Coordinate(minx, miny), Coordinate(maxx, maxy)));
     bool centerOfCornerPixels = (odf.value("GeoRefCorners","CornersOfCorners").compare("No") == 0);
     grf->centerOfPixel(centerOfCornerPixels);
     grf->compute();

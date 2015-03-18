@@ -441,9 +441,9 @@ void RasterCoverageConnector::loadNumericBlock(GDALRasterBandH layerHandle, quin
 
 bool RasterCoverageConnector::setGeotransform(RasterCoverage *raster,GDALDatasetH dataset) {
     if ( raster->georeference()->grfType<CornersGeoReference>()) {
-        std::vector<double> sup = raster->georeference()->impl<CornersGeoReference>()->support();
-        Envelope env = raster->georeference()->impl<CornersGeoReference>()->envelope();
-        Size <> sz = raster->georeference()->impl<CornersGeoReference>()->size();
+        //std::vector<double> sup = raster->georeference()->as<CornersGeoReference>()->support();
+        Envelope env = raster->georeference()->envelope();
+        Size <> sz = raster->georeference()->as<CornersGeoReference>()->size();
         double a2 = (env.max_corner().x - env.min_corner().x) / sz.xsize();
         double b2 = (env.max_corner().y - env.min_corner().y) / sz.ysize();
         double geoTransform[6] = { env.min_corner().x, a2, 0, env.max_corner().y, 0, -b2 };
@@ -568,6 +568,7 @@ bool RasterCoverageConnector::storeColorRaster(RasterCoverage *raster, GDALDatas
         GDALRasterBandH hband = gdal()->getRasterBand(dataset,1);
         if ( gdal()->setColorPalette(hband, hpalette) != CE_None){
             const char *err = gdal()->getLastErrorMsg();
+            kernel()->issues()->log(err);
             return false;
         }
         ok = save<quint8>(raster, dataset,GDT_Byte);
