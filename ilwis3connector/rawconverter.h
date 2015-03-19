@@ -61,7 +61,7 @@ public:
             return ( (quint32)raw | 0xFF000000); // setting transparency bit to 255 as this is by default not present
 
         }
-        if ( _item && (raw == _undefined || raw == 0))
+        if (( _item && raw == 0) || (raw == _undefined))
             return rUNDEF;
         return (raw + _offset) * _scale;
     }

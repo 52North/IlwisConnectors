@@ -239,7 +239,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
         quint16 digits = coverage->statistics().significantDigits();
         qint32 delta = coverage->statistics()[NumericStatistics::pDELTA];
-        _domainName = "value.dom";
+        _domainName = dom->name();
         if ( delta >= 0 && delta < 256 && digits == 0){
             if ( delta >= 0 && delta < 256 && digits == 0){
                 if ( dom->code() == "boolean"){
@@ -265,10 +265,10 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - digits));
             _domainInfo = QString("%1:%2:%3:offset=%4").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]).arg(conv.scale()).arg(conv.offset());
             _odf->setKeyValue("BaseMap","Range",_domainInfo);
-            _odf->setKeyValue("BaseMap","Domain","value.dom");
+            _odf->setKeyValue("BaseMap","Domain",_domainName);
 
             _odf->setKeyValue("BaseMap","MinMax",QString("%1:%2").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]));
-            QString _domainInfo = QString("value.dom;Long;value;0;-9999999.9:9999999.9:0.1:offset=0");
+            QString _domainInfo = QString("%1;Long;value;0;-9999999.9:9999999.9:0.1:offset=0").arg(_domainName);
             _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
