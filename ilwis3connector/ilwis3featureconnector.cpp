@@ -4,6 +4,7 @@
 #include <iterator>
 
 #include "coverage.h"
+#include "boost/math/special_functions.hpp"
 #include "geos/geom/CoordinateArraySequence.h"
 #include "geos/geom/Point.h"
 #include "geos/geom/LineString.h"
@@ -84,6 +85,7 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
     qint32 colArea = polTable.index("Area");
     int nrPolygons = polTable.rows();
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // reset all counts
 
     double v;
     for(int i = 0; i < nrPolygons; ++i) {
@@ -106,13 +108,13 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
             //std::copy(rings[0].begin(), rings[0].end(), polygon.outer().begin());
             polTable.get(i, colValue, v);
             if ( isNumeric) {
+                fcoverage->newFeature({polygon}, false);
                 tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
                 tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(v));
-                fcoverage->newFeature({polygon}, false);
             } else {
+                fcoverage->newFeature({polygon}, false);
                 quint32 itemId = v;
                 tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
-                fcoverage->newFeature({polygon}, false);
             }
         }
     }
@@ -128,7 +130,7 @@ bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, c
     bool forward = isForwardStartDirection(topTable,colForward, colBackward, colCoords, row);
     do{
         std::vector<Coordinate> coords;
-        topTable.get(row,colCoords,coords);
+        topTable.get(abs(row) - 1,colCoords,coords);
         if( coords.size() == 0 ||coords.back() == coords.front()){
             ring = new std::vector<geos::geom::Coordinate>(coords.size());
             std::copy(coords.begin(), coords.end(), ring->begin());
@@ -152,9 +154,9 @@ bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, c
         qint32 oldIndex = row;
         double v;
         if ( forward)
-            topTable.get(abs(row),colForward,v);
+            topTable.get(abs(row) - 1,colForward,v);
         else
-            topTable.get(abs(row), colBackward, v);\
+            topTable.get(abs(row) - 1, colBackward, v);\
         row = v;
         if ( oldIndex == row && row != startIndex) // this would indicate infintite loop. corrupt data
             return false;
@@ -169,17 +171,18 @@ bool FeatureConnector::isForwardStartDirection(const BinaryIlwis3Table& topTable
     double v;
     topTable.get(abs(index),colForward, v );
     fwl = v;
-    if ( fwl != iUNDEF)
-        --fwl; // due to being raw values
+   // if ( fwl != iUNDEF)
+   //     --fwl; // due to being raw values
     topTable.get(abs(index),colBackward, v );
     bwl = v;
-    if ( bwl != iUNDEF)
-        --bwl;
+   // if ( bwl != iUNDEF)
+   //    --bwl;
 
     if ( abs(fwl) == abs(bwl)	)
         return true;
     if ( index < 0)
         return false;
+    qDebug() << fwl << bwl;
     std::vector<Coordinate> startLine, forwardLine;
     topTable.get(abs(index), colCoords,startLine);
     topTable.get(abs(fwl), colCoords, forwardLine);
@@ -213,9 +216,10 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     map<quint32,vector<geos::geom::Geometry *>> polygons;
     std::vector<double> featureValues(isNumeric ? nrPolygons : 0);
-    fcoverage->setFeatureCount(itPOLYGON, iUNDEF,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // reset all counts
     for(int j=0; j < nrPolygons; ++j) {
-        geos::geom::CoordinateArraySequence *outer = readRing(stream, false);
+        double outerArea = rUNDEF;
+        geos::geom::CoordinateArraySequence *outer = readRing(stream, outerArea);
         if ( !outer)
             return false;
 
@@ -227,7 +231,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         stream.readRawData((char *)&numberOfHoles, 4);
         std::vector<geos::geom::Geometry*> *inners = new std::vector<geos::geom::Geometry*>();
         for(quint32 i=0; i< numberOfHoles;++i){
-            auto ring = readRing(stream, true);
+            auto ring = readRing(stream, outerArea);
             if ( ring){
                 inners->push_back(fcoverage->geomfactory()->createLinearRing(ring));
             }
@@ -288,7 +292,7 @@ void  FeatureConnector::addFeatures(map<quint32,vector<geos::geom::Geometry *>>&
     }
 }
 
-geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& stream, bool checkArea ) {
+geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& stream, double& outerArea ) {
     quint32 numberOfCoords;
 
     if (stream.readRawData((char *)&numberOfCoords, 4) <= 0){
@@ -305,12 +309,18 @@ geos::geom::CoordinateArraySequence* FeatureConnector::readRing(QDataStream& str
         area += (pnts[j].x + pnts[i].x) * (pnts[j].y - pnts[i].y);
         j = i;
     }
-    if ( checkArea){
+    if ( outerArea !=rUNDEF){
         if ( std::abs(area) < 1e-6){
             delete ring;
             return 0;
         }
-    }
+        if ( boost::math::sign(outerArea) == boost::math::sign(area)){ // inner and outer rings must be in reverse order
+            geos::geom::CoordinateSequence::reverse(ring);
+        }
+    }else
+        outerArea = area;
+
+
 
    return ring;
 }
@@ -334,7 +344,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     int colCoords = mpsTable.index("Coords");
     int colItemId = mpsTable.index("SegmentValue");
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
-    fcoverage->setFeatureCount(itLINE, iUNDEF,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // reset all counts
 
     map<quint32,vector<geos::geom::Geometry *>> lines;
     std::vector<double> featureValues(isNumeric ? mpsTable.rows() : 0);
@@ -377,7 +387,7 @@ bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
 
     std::vector<double> featureValues(isNumeric ? mppTable.rows() : 0);
     bool newCase =  coordColumnX == iUNDEF;
-    fcoverage->setFeatureCount(itPOINT, iUNDEF,0); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // reset all counts
 
     map<quint32,vector<geos::geom::Geometry *>> points;
     for(quint32 i= 0; i < mppTable.rows(); ++i) {
@@ -418,7 +428,9 @@ bool FeatureConnector::loadData(Ilwis::IlwisObject *obj, const IOOptions &) {
         }
     }
     bool ok = false;
+
     try {
+        _binaryIsLoaded = true; // to prevent any subsequent calls to this routine while loading (which mat trigger it).
          if (fcoverage->featureTypes() == itPOINT)
              ok = loadBinaryPoints(fcoverage);
          else if (fcoverage->featureTypes() == itLINE)
@@ -426,8 +438,7 @@ bool FeatureConnector::loadData(Ilwis::IlwisObject *obj, const IOOptions &) {
          else if (fcoverage->featureTypes() == itPOLYGON)
              ok = loadBinaryPolygons(fcoverage);
 
-         if ( ok)
-             _binaryIsLoaded = true;
+         _binaryIsLoaded = ok;
 
          if ( ok && extTable.isValid()) {
              ITable attTbl = fcoverage->attributeTable();

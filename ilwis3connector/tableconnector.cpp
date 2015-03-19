@@ -163,6 +163,8 @@ bool TableConnector::loadData(IlwisObject* data , const IOOptions &) {
                     double value;
                     if (tbl.get(j,colindex,value)) {
                         double v = conv.scale() == 0 ? value : conv.raw2real(value);
+                        if ( v == iILW3UNDEF) // inconsistency of how column storetypes and undefs are defined
+                            v = rUNDEF;
                         varlist[j] =  v;
                     }
                 } else if (valueType == itSTRING ) {

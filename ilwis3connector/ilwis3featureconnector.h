@@ -36,7 +36,7 @@ private:
     bool loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable &tbl);
     bool loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& tbl);
     //bool readRing(QDataStream &stream,boost::geometry::model::ring<Coordinate2d>& ring);
-    geos::geom::CoordinateArraySequence *readRing(QDataStream &stream, bool checkArea);
+    geos::geom::CoordinateArraySequence *readRing(QDataStream &stream, double &outerArea);
     bool getRings(Ilwis::FeatureCoverage *fcoverage, qint32 startIndex, const BinaryIlwis3Table &topTable, const BinaryIlwis3Table& polTable, std::vector<geos::geom::LinearRing *> *rings);
     bool isForwardStartDirection(const BinaryIlwis3Table &topTable, qint32 colForward, qint32 colBackward, qint32 colCoords, long index);
 

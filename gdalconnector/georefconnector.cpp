@@ -70,7 +70,7 @@ bool GeorefConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
             cMax = Coordinate( max(crdLeftup.x, crdRightDown.x), max(crdLeftup.y, crdRightDown.y));
         }
         grf->size(sz);
-        grf->impl<CornersGeoReference>()->setEnvelope(Envelope(cMin, cMax));
+        grf->envelope(Envelope(cMin, cMax));
         grf->compute();
     }else{
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2, "Georeference", grf->name());
