@@ -61,7 +61,7 @@ StreamConnector::~StreamConnector()
 
 bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options)
 {
-    if ( _resource.url().scheme() == "file"){
+    if ( _resource.url(true).scheme() == "file"){
         VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
         if (!openSource(false))
             return false;
@@ -81,8 +81,8 @@ bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options
 }
 
 bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
-    if ( _resource.url().scheme() == "file"){
-        QFileInfo inf(_resource.url().toLocalFile());
+    if ( _resource.url(true).scheme() == "file"){
+        //QFileInfo inf(_resource.url().toLocalFile());
         VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
         QDataStream stream(_datasource.get());
         IlwisTypes tp;
@@ -90,7 +90,8 @@ bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
         stream >> tp;
         stream >> version;
         std::unique_ptr<VersionedSerializer> serializer(factory->create(version, tp,stream));
-        return serializer->loadData(object,options);
+        _binaryIsLoaded = serializer->loadData(object,options);
+        return _binaryIsLoaded;
 
     }else {
         DownloadManager manager(_resource);
