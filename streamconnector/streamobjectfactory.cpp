@@ -30,10 +30,9 @@ bool StreamObjectFactory::canUse(const Resource &resource) const
 {
     QUrlQuery query(resource.url());
     if ( query.queryItemValue("service") != "ilwisobjects") {
-        if ( resource.url().scheme() == "file") { // we might have a streamed object
-            QFileInfo inf(resource.url().toLocalFile());
-            const Module *module = kernel()->module("StreamModule");
-            if ( inf.suffix() != module->getInterfaceVersion()){
+        if ( resource.url(true).scheme() == "file") { // we might have a streamed object
+            QFileInfo inf(resource.url(true).toLocalFile());
+            if ( inf.suffix() != "ilwis"){
                 return false;
             }
 
