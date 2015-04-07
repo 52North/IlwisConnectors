@@ -15,9 +15,9 @@ OTHER_FILES += \
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/spreadsheetconnectors -lfreexl \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/spreadsheetconnectors -lQOds \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/spreadsheetconnectors -lQt0Xlsx
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/spreadsheetconnectors -lfreexl \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/spreadsheetconnectors -lQOds \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/spreadsheetconnectors -lQt0Xlsx
 		
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2

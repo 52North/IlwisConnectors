@@ -21,8 +21,8 @@ OTHER_FILES += \
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/opencvconnector -lopencv_imgproc249.dll \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/$opencvconnector -lopencv_core249.dll
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/opencvconnector -lopencv_imgproc249.dll \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/opencvconnector -lopencv_core249.dll
 		
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
