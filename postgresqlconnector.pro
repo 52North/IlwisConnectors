@@ -25,7 +25,7 @@ OTHER_FILES += \
     postgresqlconnector/postgresqlconnector.json \ 
     postgresqlconnector/scratch_pad.txt
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 		
 win32:CONFIG(release, debug|release): {

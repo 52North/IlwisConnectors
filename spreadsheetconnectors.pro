@@ -13,7 +13,7 @@ DEFINES += POSTGRESSQLCONNECTOR_LIBRARY
 OTHER_FILES += \
     spreadsheetconnectors/spreadsheetconnectors.json
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/spreadsheetconnectors -lfreexl \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/spreadsheetconnectors -lQOds \

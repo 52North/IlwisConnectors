@@ -22,7 +22,7 @@ DEFINES += STREAMCONNECTOR_LIBRARY
 OTHER_FILES += \
     streamconnector/streamconnector.json 
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 		
 win32:CONFIG(release, debug|release): {

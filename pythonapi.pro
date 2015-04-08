@@ -8,8 +8,11 @@ QMAKE_EXTENSION_SHLIB = pyd
 
 TEMPLATE = lib
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/pythonapi
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+}
+
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
 PYTHONDIR = C:/Python33
 
@@ -89,7 +92,7 @@ OTHER_FILES += \
     pythonapi/UPDATE \
     pythonapi/CHANGELOG
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
         -L$$PYTHONDIR/libs -lpython33
 
