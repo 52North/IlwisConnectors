@@ -171,7 +171,7 @@ RasterCoverage *RasterCoverage::__rtruediv__(double value){
 }
 
 double RasterCoverage::coord2value(const Coordinate& c){
-    return this->ptr()->as<Ilwis::RasterCoverage>()->coord2value(c.data());
+    return this->ptr()->as<Ilwis::RasterCoverage>()->coord2value(c.data()).toDouble();
 }
 
 PixelIterator RasterCoverage::__iter__(){
@@ -396,7 +396,7 @@ Domain RasterCoverage::subDomain() const{
 }
 
 void RasterCoverage::clear(){
-    this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().clear();
+    this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().clearSubFeatureDefinitions();
 }
 
 RasterCoverage RasterCoverage::select(std::string selectionQ){
