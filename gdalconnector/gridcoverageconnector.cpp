@@ -432,7 +432,7 @@ void RasterCoverageConnector::loadNumericBlock(GDALRasterBandH layerHandle, quin
     std::vector<double> values(noItems);
     for(quint32 i=0; i < noItems; ++i) {
         double v = value(block, i);
-        values[i] = std::isnan(v) ? rUNDEF : v;
+        values[i] = std::isnan(v) || std::isinf(v) ? rUNDEF : v;
     }
     grid->setBlockData(index, values, true);
 }
