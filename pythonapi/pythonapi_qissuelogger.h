@@ -1,6 +1,7 @@
 #ifndef PYTHONAPI_ISSUELOGGER_H
 #define PYTHONAPI_ISSUELOGGER_H
 
+#include "../../IlwisCore/core/issuelogger.h"
 #include <QObject>
 
 namespace pythonapi{
@@ -12,7 +13,7 @@ namespace pythonapi{
         QIssueLogger();
 
     public slots:
-        void ilwiserrormessage(const QString& message);
+        void ilwiserrormessage(const Ilwis::IssueObject& issueObject);
     };
 
 }
