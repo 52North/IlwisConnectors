@@ -3158,6 +3158,12 @@ namespace swig {
 #include "pythonapi_vertexiterator.h"
 
 
+void exitPython()
+{
+    pythonapi::_exitIlwisObjects();
+}
+
+
 SWIGINTERNINLINE PyObject*
   SWIG_From_bool  (bool value)
 {
@@ -3691,6 +3697,25 @@ SWIGINTERN PyObject *_wrap__initIlwisObjects(PyObject *SWIGUNUSEDPARM(self), PyO
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap__exitIlwisObjects(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  
+  if (!PyArg_ParseTuple(args,(char *)":_exitIlwisObjects")) SWIG_fail;
+  {
+    try {
+      pythonapi::_exitIlwisObjects();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -36584,6 +36609,7 @@ SWIGINTERN PyObject *VertexIterator_swigregister(PyObject *SWIGUNUSEDPARM(self),
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"_initIlwisObjects", _wrap__initIlwisObjects, METH_VARARGS, (char *)"_initIlwisObjects() -> bool"},
+	 { (char *)"_exitIlwisObjects", _wrap__exitIlwisObjects, METH_VARARGS, (char *)"_exitIlwisObjects()"},
 	 { (char *)"disconnectIssueLogger", _wrap_disconnectIssueLogger, METH_VARARGS, (char *)"disconnectIssueLogger()"},
 	 { (char *)"connectIssueLogger", _wrap_connectIssueLogger, METH_VARARGS, (char *)"connectIssueLogger()"},
 	 { (char *)"new_it", _wrap_new_it, METH_VARARGS, (char *)"new_it() -> it"},
@@ -38867,7 +38893,7 @@ SWIG_init(void) {
     PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
     return NULL;
   }
-  
+  atexit(exitPython);
   
   SWIG_Python_SetConstant(d, "it_FEATURE",SWIG_From_int(static_cast< int >(pythonapi::it::FEATURE)));
   SWIG_Python_SetConstant(d, "it_RASTER",SWIG_From_int(static_cast< int >(pythonapi::it::RASTER)));

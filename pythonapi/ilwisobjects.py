@@ -82,6 +82,10 @@ def _initIlwisObjects():
   """_initIlwisObjects() -> bool"""
   return _ilwisobjects._initIlwisObjects()
 
+def _exitIlwisObjects():
+  """_exitIlwisObjects()"""
+  return _ilwisobjects._exitIlwisObjects()
+
 def disconnectIssueLogger():
   """disconnectIssueLogger()"""
   return _ilwisobjects.disconnectIssueLogger()

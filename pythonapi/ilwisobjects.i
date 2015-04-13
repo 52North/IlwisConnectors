@@ -71,8 +71,16 @@
         PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
         return NULL;
     }
-
+    atexit(exitPython);
 %}
+
+%{
+void exitPython()
+{
+    pythonapi::_exitIlwisObjects();
+}
+%}
+
 //adds the export flag to pyd library for the IlwisException
 %pythoncode %{
     IlwisException = _ilwisobjects.IlwisException
