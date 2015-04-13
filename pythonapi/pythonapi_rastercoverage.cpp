@@ -435,6 +435,7 @@ RasterCoverage RasterCoverage::select(std::string selectionQ){
     }
 
     delete geom;
+    return RasterCoverage();
 }
 
 RasterCoverage RasterCoverage::select(Geometry& geom){
