@@ -1,5 +1,7 @@
 #include "../../IlwisCore/core/identity.h"
 #include "../../IlwisCore/core/kernel.h"
+#include "../../IlwisCore/core/ilwiscontext.h"
+#include "../../IlwisCore/core/catalog/catalog.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/catalog/resource.h"
 #include "../../IlwisCore/core/catalog/catalogview.h"
@@ -36,8 +38,18 @@
 namespace pythonapi {
 
     Catalog::Catalog(const std::string& url, const std::string& filter){
-        Ilwis::CatalogView* cat = new Ilwis::CatalogView(QUrl(QString::fromStdString(url)));
-        cat->filter(QString::fromStdString(filter))        ;
+        QUrl location (QString::fromStdString(url));
+        if (location.scheme().length() == 0)
+            location.setScheme("file");
+        if (location.scheme().compare("file") == 0) {
+            QString path = location.path();
+            if (path.indexOf('/') == -1 && path.indexOf('\\') == -1) {
+                path = '/' + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + path;
+                location.setPath(path);
+            }
+        }
+        Ilwis::CatalogView* cat = new Ilwis::CatalogView(location);
+        cat->filter(QString::fromStdString(filter));
         this->_data.reset(cat);
     }
 
