@@ -307,30 +307,23 @@ class IlwisObject(Object):
     smBINARYDATA = _ilwisobjects.IlwisObject_smBINARYDATA
     __swig_destroy__ = _ilwisobjects.delete_IlwisObject
     __del__ = lambda self : None;
-    def setInputConnection(self, *args):
+    def open(self, *args):
         """
-        setInputConnection(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="", 
+        open(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="", 
             IOOptions options=pythonapi::IOOptions())
-        setInputConnection(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="")
-        setInputConnection(IlwisObject self, std::string const & url, std::string const & format="")
-        setInputConnection(IlwisObject self, std::string const & url)
+        open(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="")
+        open(IlwisObject self, std::string const & url, std::string const & format="")
+        open(IlwisObject self, std::string const & url)
         """
-        return _ilwisobjects.IlwisObject_setInputConnection(self, *args)
-
-    def setOutputConnection(self, *args):
-        """
-        setOutputConnection(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="", 
-            IOOptions options=pythonapi::IOOptions())
-        setOutputConnection(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="")
-        setOutputConnection(IlwisObject self, std::string const & url, std::string const & format="")
-        setOutputConnection(IlwisObject self, std::string const & url)
-        """
-        return _ilwisobjects.IlwisObject_setOutputConnection(self, *args)
+        return _ilwisobjects.IlwisObject_open(self, *args)
 
     def store(self, *args):
         """
-        store(IlwisObject self, IOOptions opt=IOOptions())
-        store(IlwisObject self)
+        store(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="", 
+            IOOptions options=pythonapi::IOOptions())
+        store(IlwisObject self, std::string const & url, std::string const & format="", std::string const & fnamespace="")
+        store(IlwisObject self, std::string const & url, std::string const & format="")
+        store(IlwisObject self, std::string const & url)
         """
         return _ilwisobjects.IlwisObject_store(self, *args)
 

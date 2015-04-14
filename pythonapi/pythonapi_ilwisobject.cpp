@@ -17,7 +17,7 @@ IlwisObject::IlwisObject(Ilwis::IIlwisObject *object): _ilwisObject(std::shared_
 IlwisObject::~IlwisObject(){
 }
 
-void IlwisObject::setInputConnection(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
+void IlwisObject::open(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
     QUrl input (url.c_str());
     if (input.scheme().length() == 0)
         input.setScheme("file");
@@ -31,7 +31,7 @@ void IlwisObject::setInputConnection(const std::string& url, const std::string& 
     (*this->ptr())->connectTo(input, QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmINPUT, options.ptr());
 }
 
-void IlwisObject::setOutputConnection(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
+void IlwisObject::store(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
     QUrl output (url.c_str());
     if (output.scheme().length() == 0)
         output.setScheme("file");
@@ -43,10 +43,7 @@ void IlwisObject::setOutputConnection(const std::string& url, const std::string&
         }
     }
     (*this->ptr())->connectTo(output, QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
-}
-
-void IlwisObject::store(const IOOptions& opt){
-    if (!(*this->ptr())->store(opt.ptr()))
+    if (!(*this->ptr())->store(options.ptr()))
         throw OSError(std::string("IOError on attempt to store ")+this->name());
 }
 

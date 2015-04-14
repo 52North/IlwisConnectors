@@ -5134,7 +5134,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_IlwisObject_open__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
   std::string *arg2 = 0 ;
@@ -5154,20 +5154,20 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_0(PyObject *SWIG
   PyObject * obj3 = 0 ;
   PyObject * obj4 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:IlwisObject_setInputConnection",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:IlwisObject_open",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_setInputConnection" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_open" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(obj1, &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_setInputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_open" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setInputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_open" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     arg2 = ptr;
   }
@@ -5175,10 +5175,10 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_0(PyObject *SWIG
     std::string *ptr = (std::string *)0;
     res3 = SWIG_AsPtr_std_string(obj2, &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_setInputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_open" "', argument " "3"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setInputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_open" "', argument " "3"" of type '" "std::string const &""'"); 
     }
     arg3 = ptr;
   }
@@ -5186,24 +5186,24 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_0(PyObject *SWIG
     std::string *ptr = (std::string *)0;
     res4 = SWIG_AsPtr_std_string(obj3, &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "IlwisObject_setInputConnection" "', argument " "4"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "IlwisObject_open" "', argument " "4"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setInputConnection" "', argument " "4"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_open" "', argument " "4"" of type '" "std::string const &""'"); 
     }
     arg4 = ptr;
   }
   res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_pythonapi__IOOptions,  0  | 0);
   if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "IlwisObject_setInputConnection" "', argument " "5"" of type '" "pythonapi::IOOptions const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "IlwisObject_open" "', argument " "5"" of type '" "pythonapi::IOOptions const &""'"); 
   }
   if (!argp5) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setInputConnection" "', argument " "5"" of type '" "pythonapi::IOOptions const &""'"); 
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_open" "', argument " "5"" of type '" "pythonapi::IOOptions const &""'"); 
   }
   arg5 = reinterpret_cast< pythonapi::IOOptions * >(argp5);
   {
     try {
-      (arg1)->setInputConnection((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(pythonapi::IOOptions const &)*arg5);
+      (arg1)->open((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(pythonapi::IOOptions const &)*arg5);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -5222,7 +5222,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_IlwisObject_open__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
   std::string *arg2 = 0 ;
@@ -5238,20 +5238,20 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_1(PyObject *SWIG
   PyObject * obj2 = 0 ;
   PyObject * obj3 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:IlwisObject_setInputConnection",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:IlwisObject_open",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_setInputConnection" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_open" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(obj1, &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_setInputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_open" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setInputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_open" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     arg2 = ptr;
   }
@@ -5259,10 +5259,10 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_1(PyObject *SWIG
     std::string *ptr = (std::string *)0;
     res3 = SWIG_AsPtr_std_string(obj2, &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_setInputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_open" "', argument " "3"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setInputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_open" "', argument " "3"" of type '" "std::string const &""'"); 
     }
     arg3 = ptr;
   }
@@ -5270,16 +5270,16 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_1(PyObject *SWIG
     std::string *ptr = (std::string *)0;
     res4 = SWIG_AsPtr_std_string(obj3, &ptr);
     if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "IlwisObject_setInputConnection" "', argument " "4"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "IlwisObject_open" "', argument " "4"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setInputConnection" "', argument " "4"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_open" "', argument " "4"" of type '" "std::string const &""'"); 
     }
     arg4 = ptr;
   }
   {
     try {
-      (arg1)->setInputConnection((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4);
+      (arg1)->open((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -5298,7 +5298,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_IlwisObject_open__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
   std::string *arg2 = 0 ;
@@ -5311,20 +5311,20 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_2(PyObject *SWIG
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOO:IlwisObject_setInputConnection",&obj0,&obj1,&obj2)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOO:IlwisObject_open",&obj0,&obj1,&obj2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_setInputConnection" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_open" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(obj1, &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_setInputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_open" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setInputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_open" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     arg2 = ptr;
   }
@@ -5332,16 +5332,16 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_2(PyObject *SWIG
     std::string *ptr = (std::string *)0;
     res3 = SWIG_AsPtr_std_string(obj2, &ptr);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_setInputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_open" "', argument " "3"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setInputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_open" "', argument " "3"" of type '" "std::string const &""'"); 
     }
     arg3 = ptr;
   }
   {
     try {
-      (arg1)->setInputConnection((std::string const &)*arg2,(std::string const &)*arg3);
+      (arg1)->open((std::string const &)*arg2,(std::string const &)*arg3);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -5358,7 +5358,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_IlwisObject_open__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
   std::string *arg2 = 0 ;
@@ -5368,26 +5368,26 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection__SWIG_3(PyObject *SWIG
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:IlwisObject_setInputConnection",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:IlwisObject_open",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_setInputConnection" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_open" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(obj1, &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_setInputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_open" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setInputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_open" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     arg2 = ptr;
   }
   {
     try {
-      (arg1)->setInputConnection((std::string const &)*arg2);
+      (arg1)->open((std::string const &)*arg2);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -5402,7 +5402,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_IlwisObject_open(PyObject *self, PyObject *args) {
   int argc;
   PyObject *argv[6];
   int ii;
@@ -5421,7 +5421,7 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection(PyObject *self, PyObje
       int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_IlwisObject_setInputConnection__SWIG_3(self, args);
+        return _wrap_IlwisObject_open__SWIG_3(self, args);
       }
     }
   }
@@ -5437,7 +5437,7 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection(PyObject *self, PyObje
         int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
         _v = SWIG_CheckState(res);
         if (_v) {
-          return _wrap_IlwisObject_setInputConnection__SWIG_2(self, args);
+          return _wrap_IlwisObject_open__SWIG_2(self, args);
         }
       }
     }
@@ -5457,7 +5457,7 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection(PyObject *self, PyObje
           int res = SWIG_AsPtr_std_string(argv[3], (std::string**)(0));
           _v = SWIG_CheckState(res);
           if (_v) {
-            return _wrap_IlwisObject_setInputConnection__SWIG_1(self, args);
+            return _wrap_IlwisObject_open__SWIG_1(self, args);
           }
         }
       }
@@ -5481,7 +5481,7 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection(PyObject *self, PyObje
             int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_pythonapi__IOOptions, 0);
             _v = SWIG_CheckState(res);
             if (_v) {
-              return _wrap_IlwisObject_setInputConnection__SWIG_0(self, args);
+              return _wrap_IlwisObject_open__SWIG_0(self, args);
             }
           }
         }
@@ -5490,378 +5490,12 @@ SWIGINTERN PyObject *_wrap_IlwisObject_setInputConnection(PyObject *self, PyObje
   }
   
 fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'IlwisObject_setInputConnection'.\n"
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'IlwisObject_open'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::IlwisObject::setInputConnection(std::string const &,std::string const &,std::string const &,pythonapi::IOOptions const &)\n"
-    "    pythonapi::IlwisObject::setInputConnection(std::string const &,std::string const &,std::string const &)\n"
-    "    pythonapi::IlwisObject::setInputConnection(std::string const &,std::string const &)\n"
-    "    pythonapi::IlwisObject::setInputConnection(std::string const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_IlwisObject_setOutputConnection__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
-  std::string *arg2 = 0 ;
-  std::string *arg3 = 0 ;
-  std::string *arg4 = 0 ;
-  pythonapi::IOOptions *arg5 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  int res3 = SWIG_OLDOBJ ;
-  int res4 = SWIG_OLDOBJ ;
-  void *argp5 = 0 ;
-  int res5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:IlwisObject_setOutputConnection",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_setOutputConnection" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_setOutputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setOutputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_setOutputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setOutputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    arg3 = ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    res4 = SWIG_AsPtr_std_string(obj3, &ptr);
-    if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "IlwisObject_setOutputConnection" "', argument " "4"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setOutputConnection" "', argument " "4"" of type '" "std::string const &""'"); 
-    }
-    arg4 = ptr;
-  }
-  res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_pythonapi__IOOptions,  0  | 0);
-  if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "IlwisObject_setOutputConnection" "', argument " "5"" of type '" "pythonapi::IOOptions const &""'"); 
-  }
-  if (!argp5) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setOutputConnection" "', argument " "5"" of type '" "pythonapi::IOOptions const &""'"); 
-  }
-  arg5 = reinterpret_cast< pythonapi::IOOptions * >(argp5);
-  {
-    try {
-      (arg1)->setOutputConnection((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(pythonapi::IOOptions const &)*arg5);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  if (SWIG_IsNewObj(res4)) delete arg4;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  if (SWIG_IsNewObj(res4)) delete arg4;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_IlwisObject_setOutputConnection__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
-  std::string *arg2 = 0 ;
-  std::string *arg3 = 0 ;
-  std::string *arg4 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  int res3 = SWIG_OLDOBJ ;
-  int res4 = SWIG_OLDOBJ ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:IlwisObject_setOutputConnection",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_setOutputConnection" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_setOutputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setOutputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_setOutputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setOutputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    arg3 = ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    res4 = SWIG_AsPtr_std_string(obj3, &ptr);
-    if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "IlwisObject_setOutputConnection" "', argument " "4"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setOutputConnection" "', argument " "4"" of type '" "std::string const &""'"); 
-    }
-    arg4 = ptr;
-  }
-  {
-    try {
-      (arg1)->setOutputConnection((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  if (SWIG_IsNewObj(res4)) delete arg4;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  if (SWIG_IsNewObj(res4)) delete arg4;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_IlwisObject_setOutputConnection__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
-  std::string *arg2 = 0 ;
-  std::string *arg3 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  int res3 = SWIG_OLDOBJ ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:IlwisObject_setOutputConnection",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_setOutputConnection" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_setOutputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setOutputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_setOutputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setOutputConnection" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    arg3 = ptr;
-  }
-  {
-    try {
-      (arg1)->setOutputConnection((std::string const &)*arg2,(std::string const &)*arg3);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_IlwisObject_setOutputConnection__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
-  std::string *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:IlwisObject_setOutputConnection",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_setOutputConnection" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_setOutputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_setOutputConnection" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  {
-    try {
-      (arg1)->setOutputConnection((std::string const &)*arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_IlwisObject_setOutputConnection(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[6];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 5) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__IlwisObject, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_IlwisObject_setOutputConnection__SWIG_3(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__IlwisObject, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          return _wrap_IlwisObject_setOutputConnection__SWIG_2(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__IlwisObject, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          int res = SWIG_AsPtr_std_string(argv[3], (std::string**)(0));
-          _v = SWIG_CheckState(res);
-          if (_v) {
-            return _wrap_IlwisObject_setOutputConnection__SWIG_1(self, args);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__IlwisObject, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          int res = SWIG_AsPtr_std_string(argv[3], (std::string**)(0));
-          _v = SWIG_CheckState(res);
-          if (_v) {
-            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_pythonapi__IOOptions, 0);
-            _v = SWIG_CheckState(res);
-            if (_v) {
-              return _wrap_IlwisObject_setOutputConnection__SWIG_0(self, args);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'IlwisObject_setOutputConnection'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::IlwisObject::setOutputConnection(std::string const &,std::string const &,std::string const &,pythonapi::IOOptions const &)\n"
-    "    pythonapi::IlwisObject::setOutputConnection(std::string const &,std::string const &,std::string const &)\n"
-    "    pythonapi::IlwisObject::setOutputConnection(std::string const &,std::string const &)\n"
-    "    pythonapi::IlwisObject::setOutputConnection(std::string const &)\n");
+    "    pythonapi::IlwisObject::open(std::string const &,std::string const &,std::string const &,pythonapi::IOOptions const &)\n"
+    "    pythonapi::IlwisObject::open(std::string const &,std::string const &,std::string const &)\n"
+    "    pythonapi::IlwisObject::open(std::string const &,std::string const &)\n"
+    "    pythonapi::IlwisObject::open(std::string const &)\n");
   return 0;
 }
 
@@ -5869,11 +5503,234 @@ fail:
 SWIGINTERN PyObject *_wrap_IlwisObject_store__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
-  pythonapi::IOOptions *arg2 = 0 ;
+  std::string *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  std::string *arg4 = 0 ;
+  pythonapi::IOOptions *arg5 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  int res3 = SWIG_OLDOBJ ;
+  int res4 = SWIG_OLDOBJ ;
+  void *argp5 = 0 ;
+  int res5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:IlwisObject_store",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_store" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_store" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_store" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_store" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_store" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    res4 = SWIG_AsPtr_std_string(obj3, &ptr);
+    if (!SWIG_IsOK(res4)) {
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "IlwisObject_store" "', argument " "4"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_store" "', argument " "4"" of type '" "std::string const &""'"); 
+    }
+    arg4 = ptr;
+  }
+  res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_pythonapi__IOOptions,  0  | 0);
+  if (!SWIG_IsOK(res5)) {
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "IlwisObject_store" "', argument " "5"" of type '" "pythonapi::IOOptions const &""'"); 
+  }
+  if (!argp5) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_store" "', argument " "5"" of type '" "pythonapi::IOOptions const &""'"); 
+  }
+  arg5 = reinterpret_cast< pythonapi::IOOptions * >(argp5);
+  {
+    try {
+      (arg1)->store((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(pythonapi::IOOptions const &)*arg5);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  if (SWIG_IsNewObj(res4)) delete arg4;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  if (SWIG_IsNewObj(res4)) delete arg4;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IlwisObject_store__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  std::string *arg4 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  int res3 = SWIG_OLDOBJ ;
+  int res4 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:IlwisObject_store",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_store" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_store" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_store" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_store" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_store" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    res4 = SWIG_AsPtr_std_string(obj3, &ptr);
+    if (!SWIG_IsOK(res4)) {
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "IlwisObject_store" "', argument " "4"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_store" "', argument " "4"" of type '" "std::string const &""'"); 
+    }
+    arg4 = ptr;
+  }
+  {
+    try {
+      (arg1)->store((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  if (SWIG_IsNewObj(res4)) delete arg4;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  if (SWIG_IsNewObj(res4)) delete arg4;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IlwisObject_store__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  int res3 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:IlwisObject_store",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_store" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_store" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_store" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IlwisObject_store" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_store" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    try {
+      (arg1)->store((std::string const &)*arg2,(std::string const &)*arg3);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IlwisObject_store__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5883,75 +5740,43 @@ SWIGINTERN PyObject *_wrap_IlwisObject_store__SWIG_0(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_store" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__IOOptions,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_store" "', argument " "2"" of type '" "pythonapi::IOOptions const &""'"); 
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IlwisObject_store" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_store" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IlwisObject_store" "', argument " "2"" of type '" "pythonapi::IOOptions const &""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::IOOptions * >(argp2);
   {
     try {
-      (arg1)->store((pythonapi::IOOptions const &)*arg2);
+      (arg1)->store((std::string const &)*arg2);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_IlwisObject_store__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::IlwisObject *arg1 = (pythonapi::IlwisObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:IlwisObject_store",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__IlwisObject, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IlwisObject_store" "', argument " "1"" of type '" "pythonapi::IlwisObject *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::IlwisObject * >(argp1);
-  {
-    try {
-      (arg1)->store();
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
 
 SWIGINTERN PyObject *_wrap_IlwisObject_store(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[3];
+  PyObject *argv[6];
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 5) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__IlwisObject, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_IlwisObject_store__SWIG_1(self, args);
-    }
   }
   if (argc == 2) {
     int _v;
@@ -5959,10 +5784,73 @@ SWIGINTERN PyObject *_wrap_IlwisObject_store(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__IlwisObject, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_pythonapi__IOOptions, 0);
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_IlwisObject_store__SWIG_0(self, args);
+        return _wrap_IlwisObject_store__SWIG_3(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__IlwisObject, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_IlwisObject_store__SWIG_2(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__IlwisObject, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          int res = SWIG_AsPtr_std_string(argv[3], (std::string**)(0));
+          _v = SWIG_CheckState(res);
+          if (_v) {
+            return _wrap_IlwisObject_store__SWIG_1(self, args);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__IlwisObject, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          int res = SWIG_AsPtr_std_string(argv[3], (std::string**)(0));
+          _v = SWIG_CheckState(res);
+          if (_v) {
+            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_pythonapi__IOOptions, 0);
+            _v = SWIG_CheckState(res);
+            if (_v) {
+              return _wrap_IlwisObject_store__SWIG_0(self, args);
+            }
+          }
+        }
       }
     }
   }
@@ -5970,8 +5858,10 @@ SWIGINTERN PyObject *_wrap_IlwisObject_store(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'IlwisObject_store'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::IlwisObject::store(pythonapi::IOOptions const &)\n"
-    "    pythonapi::IlwisObject::store()\n");
+    "    pythonapi::IlwisObject::store(std::string const &,std::string const &,std::string const &,pythonapi::IOOptions const &)\n"
+    "    pythonapi::IlwisObject::store(std::string const &,std::string const &,std::string const &)\n"
+    "    pythonapi::IlwisObject::store(std::string const &,std::string const &)\n"
+    "    pythonapi::IlwisObject::store(std::string const &)\n");
   return 0;
 }
 
@@ -36648,23 +36538,19 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"delete_Engine", _wrap_delete_Engine, METH_VARARGS, (char *)"delete_Engine(Engine self)"},
 	 { (char *)"Engine_swigregister", Engine_swigregister, METH_VARARGS, NULL},
 	 { (char *)"delete_IlwisObject", _wrap_delete_IlwisObject, METH_VARARGS, (char *)"delete_IlwisObject(IlwisObject self)"},
-	 { (char *)"IlwisObject_setInputConnection", _wrap_IlwisObject_setInputConnection, METH_VARARGS, (char *)"\n"
-		"setInputConnection(std::string const & url, std::string const & format=\"\", std::string const & fnamespace=\"\", \n"
+	 { (char *)"IlwisObject_open", _wrap_IlwisObject_open, METH_VARARGS, (char *)"\n"
+		"open(std::string const & url, std::string const & format=\"\", std::string const & fnamespace=\"\", \n"
 		"    IOOptions options=pythonapi::IOOptions())\n"
-		"setInputConnection(std::string const & url, std::string const & format=\"\", std::string const & fnamespace=\"\")\n"
-		"setInputConnection(std::string const & url, std::string const & format=\"\")\n"
-		"IlwisObject_setInputConnection(IlwisObject self, std::string const & url)\n"
-		""},
-	 { (char *)"IlwisObject_setOutputConnection", _wrap_IlwisObject_setOutputConnection, METH_VARARGS, (char *)"\n"
-		"setOutputConnection(std::string const & url, std::string const & format=\"\", std::string const & fnamespace=\"\", \n"
-		"    IOOptions options=pythonapi::IOOptions())\n"
-		"setOutputConnection(std::string const & url, std::string const & format=\"\", std::string const & fnamespace=\"\")\n"
-		"setOutputConnection(std::string const & url, std::string const & format=\"\")\n"
-		"IlwisObject_setOutputConnection(IlwisObject self, std::string const & url)\n"
+		"open(std::string const & url, std::string const & format=\"\", std::string const & fnamespace=\"\")\n"
+		"open(std::string const & url, std::string const & format=\"\")\n"
+		"IlwisObject_open(IlwisObject self, std::string const & url)\n"
 		""},
 	 { (char *)"IlwisObject_store", _wrap_IlwisObject_store, METH_VARARGS, (char *)"\n"
-		"store(IOOptions opt=IOOptions())\n"
-		"IlwisObject_store(IlwisObject self)\n"
+		"store(std::string const & url, std::string const & format=\"\", std::string const & fnamespace=\"\", \n"
+		"    IOOptions options=pythonapi::IOOptions())\n"
+		"store(std::string const & url, std::string const & format=\"\", std::string const & fnamespace=\"\")\n"
+		"store(std::string const & url, std::string const & format=\"\")\n"
+		"IlwisObject_store(IlwisObject self, std::string const & url)\n"
 		""},
 	 { (char *)"IlwisObject___bool__", _wrap_IlwisObject___bool__, METH_VARARGS, (char *)"IlwisObject___bool__(IlwisObject self) -> bool"},
 	 { (char *)"IlwisObject___str__", _wrap_IlwisObject___str__, METH_VARARGS, (char *)"IlwisObject___str__(IlwisObject self) -> std::string"},
