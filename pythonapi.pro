@@ -88,6 +88,7 @@ OTHER_FILES += \
     pythonapi/ilwisobjects.conf \
     pythonapi/prepare_PATH.bat \
     pythonapi/prepare_PATH.sh \
+    pythonapi/paths.py \
     pythonapi/installerPy.nsi \
     pythonapi/LICENSE-2.0.txt \
     pythonapi/README \
