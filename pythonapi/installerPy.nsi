@@ -241,13 +241,10 @@ Section "Python Extension" pySecID
     Push "\"
     Call StrSlash
     Pop $R0
-    DetailPrint "Create $pythonDir\qt.conf"
-    WriteINIStr $pythonDir\qt.conf Paths Prefix "$R0/"
-    WriteINIStr $pythonDir\qt.conf Paths Plugins "plugins"
-    DetailPrint "Create $pythonDir\ilwislocation.config"
-    WriteINIStr $pythonDir\ilwislocation.config Paths ilwisDir "$R0/"
 
     SetOutPath $pythonDir\Lib\site-packages
+    DetailPrint "Create $pythonDir\Lib\site-packages\ilwislocation.config"
+    WriteINIStr $pythonDir\Lib\site-packages\ilwislocation.config Paths ilwisDir "$R0/"
     DetailPrint "Copy to $pythonDir\Lib\site-packages\_ilwisobjects.pyd"
     File bin\extensions\pythonapi\_ilwisobjects.pyd
     DetailPrint "Copy to $pythonDir\Lib\site-packages\ilwisobjects.py"
@@ -278,10 +275,8 @@ Section "un.Python Extension"
     DeleteRegValue HKLM "${REGKEY}\python" Path
     DeleteRegKey /IfEmpty HKLM "${REGKEY}\python"
 
-    DetailPrint "Delete $pythonDir\ilwislocation.config"
-    Delete /REBOOTOK $pythonDir\ilwislocation.config
-    DetailPrint "Delete $pythonDir\qt.conf"
-    Delete /REBOOTOK $pythonDir\qt.conf
+    DetailPrint "Delete $pythonDir\Lib\site-packages\ilwislocation.config"
+    Delete /REBOOTOK $pythonDir\Lib\site-packages\ilwislocation.config
 
     DetailPrint "Delete $pythonDir\Lib\site-packages\_ilwisobjects.pyd"
     Delete /REBOOTOK $pythonDir\Lib\site-packages\_ilwisobjects.pyd
