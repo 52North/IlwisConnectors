@@ -70,7 +70,7 @@ unsigned int FeatureCoverage::featureCount() const{
 }
 
 void FeatureCoverage::setFeatureCount(IlwisTypes type, quint32 geomCnt){
-    this->ptr()->as<Ilwis::FeatureCoverage>()->setFeatureCount(type, geomCnt);
+    this->ptr()->as<Ilwis::FeatureCoverage>()->setFeatureCount(type, geomCnt, 0);
 }
 
 Feature FeatureCoverage::newFeature(const std::string& wkt, const CoordinateSystem& csy, bool load){
@@ -226,7 +226,7 @@ Domain FeatureCoverage::subDomain() const{
 }
 
 void FeatureCoverage::clear(){
-    this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().clear();
+    this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().clearSubFeatureDefinitions();
 }
 
 FeatureCoverage *FeatureCoverage::toFeatureCoverage(Object *obj){
@@ -249,7 +249,7 @@ void FeatureCoverage::reprojectFeatures(const CoordinateSystem& csy){
     Ilwis::IFeatureCoverage fc = this->ptr()->as<Ilwis::FeatureCoverage>();
     Ilwis::ICoordinateSystem ilwCsy = csy.ptr()->as<Ilwis::CoordinateSystem>();
     for(const auto &feat : fc ){
-        Ilwis::UPGeometry& geom = feat->geometryRef();
+        const Ilwis::UPGeometry& geom = feat->geometry();
         if(!geom)
             continue;
         if ( ilwCsy.isValid() && !ilwCsy->isEqual(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>().ptr())){

@@ -1,4 +1,6 @@
 #include "../../IlwisCore/core/kernel.h"
+#include "../../IlwisCore/core/ilwiscontext.h"
+#include "../../IlwisCore/core/catalog/catalog.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 #include "pythonapi_ilwisobject.h"
@@ -15,16 +17,33 @@ IlwisObject::IlwisObject(Ilwis::IIlwisObject *object): _ilwisObject(std::shared_
 IlwisObject::~IlwisObject(){
 }
 
-void IlwisObject::setInputConnection(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
-    (*this->ptr())->connectTo(QUrl(url.c_str()), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmINPUT, options.ptr());
+void IlwisObject::open(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
+    QUrl input (url.c_str());
+    if (input.scheme().length() == 0)
+        input.setScheme("file");
+    if (input.scheme().compare("file") == 0) {
+        QString path = input.path();
+        if (path.indexOf('/') == -1 && path.indexOf('\\') == -1) {
+            path = '/' + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + path;
+            input.setPath(path);
+        }
+    }
+    (*this->ptr())->connectTo(input, QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmINPUT, options.ptr());
 }
 
-void IlwisObject::setOutputConnection(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
-    (*this->ptr())->connectTo(QUrl(url.c_str()), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
-}
-
-void IlwisObject::store(const IOOptions& opt){
-    if (!(*this->ptr())->store(opt.ptr()))
+void IlwisObject::store(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
+    QUrl output (url.c_str());
+    if (output.scheme().length() == 0)
+        output.setScheme("file");
+    if (output.scheme().compare("file") == 0) {
+        QString path = output.path();
+        if (path.indexOf('/') == -1 && path.indexOf('\\') == -1) {
+            path = '/' + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + path;
+            output.setPath(path);
+        }
+    }
+    (*this->ptr())->connectTo(output, QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
+    if (!(*this->ptr())->store(options.ptr()))
         throw OSError(std::string("IOError on attempt to store ")+this->name());
 }
 

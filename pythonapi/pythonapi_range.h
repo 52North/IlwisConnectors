@@ -146,11 +146,11 @@ private:
     ColorModel _defaultModel = ColorModel::cmRGBA;
 };
 
-class ContinousColorRange : public ColorRange{
+class ContinuousColorRange : public ColorRange{
 public:
-    ContinousColorRange();
-    ContinousColorRange(const Color& clr1, const Color& clr2);
-    ContinousColorRange *clone() const;
+    ContinuousColorRange();
+    ContinuousColorRange(const Color& clr1, const Color& clr2);
+    ContinuousColorRange *clone() const;
     PyObject* ensure(const PyObject *v, bool inclusive = true) const;
     bool containsVar(const PyObject *v, bool inclusive = true) const;
     bool containsColor(const Color &clr, bool inclusive = true) const;

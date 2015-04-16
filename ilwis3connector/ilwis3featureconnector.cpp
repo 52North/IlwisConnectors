@@ -182,12 +182,15 @@ bool FeatureConnector::isForwardStartDirection(const BinaryIlwis3Table& topTable
         return true;
     if ( index < 0)
         return false;
-    qDebug() << fwl << bwl;
+    //qDebug() << fwl << bwl;
     std::vector<Coordinate> startLine, forwardLine;
     topTable.get(abs(index), colCoords,startLine);
     topTable.get(abs(fwl), colCoords, forwardLine);
 
     bool forward = false;
+    if ( forwardLine.size() == 0 || startLine.size() == 0)
+        throw ErrorObject(TR("aborting topoplogy reading, polygon might be corrupted"));
+
     if ( fwl > 0)
         forward =  startLine.back() == forwardLine.front();
     else

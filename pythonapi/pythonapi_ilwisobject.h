@@ -30,9 +30,8 @@ namespace pythonapi {
     public:
         virtual ~IlwisObject();
 
-        void setInputConnection( const std::string& url,  const std::string& format  = "",  const std::string& fnamespace = "", const pythonapi::IOOptions& options = pythonapi::IOOptions());
-        void setOutputConnection( const std::string& url,  const std::string& format  = "",  const std::string& fnamespace = "", const pythonapi::IOOptions& options = pythonapi::IOOptions());
-        void store(const pythonapi::IOOptions& opt = IOOptions());
+        void open( const std::string& url,  const std::string& format  = "",  const std::string& fnamespace = "", const pythonapi::IOOptions& options = pythonapi::IOOptions());
+        void store( const std::string& url,  const std::string& format  = "",  const std::string& fnamespace = "", const pythonapi::IOOptions& options = pythonapi::IOOptions());
         bool __bool__() const;
         std::string __str__();
         std::string __add__(std::string value);

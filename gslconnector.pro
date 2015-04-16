@@ -25,7 +25,7 @@ OTHER_FILES += \
     gslconnector/gslconnector.json
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET -lgsl.dll
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET -lgsl.dll
 
 INCLUDEPATH += $$PWD/../external/gsl
 

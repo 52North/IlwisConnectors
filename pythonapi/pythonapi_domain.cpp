@@ -84,7 +84,7 @@ std::string Domain::contains(PyObject* value) const{
 }
 
 bool Domain::isCompatibleWith(const Domain &dom) const{
-    return this->ptr()->as<Ilwis::Domain>()->isCompatibleWith(dom.ptr()->as<Ilwis::Domain>());
+    return this->ptr()->as<Ilwis::Domain>()->isCompatibleWith(dom.ptr()->ptr());
 }
 
 void Domain::setRange(const Range &rng){

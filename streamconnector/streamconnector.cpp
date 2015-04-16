@@ -61,16 +61,42 @@ StreamConnector::~StreamConnector()
 
 bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options)
 {
+    if ( _resource.url(true).scheme() == "file"){
+        VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+        if (!openSource(false))
+            return false;
+        QDataStream stream(_datasource.get());
+        IlwisTypes tp;
+        QString version;
+        stream >> tp;
+        stream >> version;
+        std::unique_ptr<VersionedSerializer> serializer(factory->create(version,tp,stream));
+        return serializer->loadMetaData(object,options);
 
-    DownloadManager manager(_resource);
-    return manager.loadMetaData(object,options);
-
+    }else {
+        DownloadManager manager(_resource);
+        return manager.loadMetaData(object,options);
+    }
 
 }
 
 bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
-    DownloadManager manager(_resource);
-    return manager.loadData(object,options);
+    if ( _resource.url(true).scheme() == "file"){
+        //QFileInfo inf(_resource.url().toLocalFile());
+        VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+        QDataStream stream(_datasource.get());
+        IlwisTypes tp;
+        QString version;
+        stream >> tp;
+        stream >> version;
+        std::unique_ptr<VersionedSerializer> serializer(factory->create(version, tp,stream));
+        _binaryIsLoaded = serializer->loadData(object,options);
+        return _binaryIsLoaded;
+
+    }else {
+        DownloadManager manager(_resource);
+        return manager.loadData(object,options);
+    }
 }
 
 bool StreamConnector::openSource(bool reading){

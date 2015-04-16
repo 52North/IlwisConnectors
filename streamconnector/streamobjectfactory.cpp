@@ -29,8 +29,16 @@ StreamObjectFactory::StreamObjectFactory() : IlwisObjectFactory("IlwisObjectFact
 bool StreamObjectFactory::canUse(const Resource &resource) const
 {
     QUrlQuery query(resource.url());
-    if ( query.queryItemValue("service") != "ilwisobjects") // can't use anything marked as internal
-        return false;
+    if ( query.queryItemValue("service") != "ilwisobjects") {
+        if ( resource.url(true).scheme() == "file") { // we might have a streamed object
+            QFileInfo inf(resource.url(true).toLocalFile());
+            if ( inf.suffix() != "ilwis"){
+                return false;
+            }
+
+        }else
+            return false;
+    }
 
     IlwisTypes type = resource.ilwisType() ;
     if ( type & itDOMAIN)

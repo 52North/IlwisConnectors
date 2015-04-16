@@ -104,17 +104,21 @@ ColumnDefinition TableConnector::makeColumn(const QString& colName, quint64 inde
     _converters[colName] = conv;
     ColumnDefinition col(colName, dom, index );
     if ( dom->ilwisType() == itNUMERICDOMAIN){
+        QString minmax = _odf->value(section,"MinMax");
         QString range = _odf->value(section,"Range");
         QStringList parts = range.split(":");
-        if ( parts.size() >= 2) {
-            double resolution = 1.0;
-            double vmin = parts[0].toDouble();
-            double vmax = parts[1].toDouble();
-            if ( parts.size() > 3) {
-                resolution = parts[2].toDouble();
-            }
-            col.datadef().range(new NumericRange(vmin, vmax, resolution));
+        double resolution = 1.0;
+        if ( parts.size() > 3) {
+            resolution = parts[2].toDouble();
         }
+        if ( minmax != sUNDEF)
+            parts = minmax.split(":");
+
+        double vmin = parts[0].toDouble();
+        double vmax = parts[1].toDouble();
+
+        col.datadef().range(new NumericRange(vmin, vmax, resolution));
+
 
     }
     return col;

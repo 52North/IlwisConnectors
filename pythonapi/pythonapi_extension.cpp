@@ -16,15 +16,20 @@ namespace pythonapi {
 
     static QIssueLogger* logger;
     static QMetaObject::Connection connection;
+    static QCoreApplication* app;
 
     bool _initIlwisObjects(){
         int argc = 0;
         char* argv[0];
-        QCoreApplication app(argc, argv);
-        bool ret = Ilwis::initIlwis();
+        app = new QCoreApplication(argc, argv);
+        bool ret = Ilwis::initIlwis(Ilwis::rmCOMMANDLINE);
         pythonapi::logger = new pythonapi::QIssueLogger();
-        pythonapi::connection = QObject::connect(Ilwis::kernel()->issues().data(),SIGNAL(ilwiserrormessage(QString)),pythonapi::logger,SLOT(ilwiserrormessage(QString)));
+        pythonapi::connection = QObject::connect(Ilwis::kernel()->issues().data(),&Ilwis::IssueLogger::updateIssues,pythonapi::logger,&QIssueLogger::ilwiserrormessage);
         return ret;
+    }
+
+    void _exitIlwisObjects() {
+        delete app;
     }
 
     void disconnectIssueLogger(){
@@ -32,6 +37,6 @@ namespace pythonapi {
     }
 
     void connectIssueLogger(){
-        pythonapi::connection = QObject::connect(Ilwis::kernel()->issues().data(),SIGNAL(ilwiserrormessage(QString)),pythonapi::logger,SLOT(ilwiserrormessage(QString)));
+        pythonapi::connection = QObject::connect(Ilwis::kernel()->issues().data(),&Ilwis::IssueLogger::updateIssues,pythonapi::logger,&QIssueLogger::ilwiserrormessage);
     }
 }

@@ -434,7 +434,7 @@ ColorRange::ColorRange(IlwisTypes tp, ColorModel clrmodel)
 
 ColorModel ColorRange::defaultColorModel() const
 {
-    int enumVal = static_cast<const Ilwis::ContinousColorRange*>(_range.get())->defaultColorModel();
+    int enumVal = static_cast<const Ilwis::ContinuousColorRange*>(_range.get())->defaultColorModel();
     ColorModel colormodel = static_cast<ColorModel>(enumVal);
     return colormodel;
 }
@@ -443,7 +443,7 @@ void ColorRange::defaultColorModel(ColorModel m)
 {
     int enumVal = m;
     Ilwis::ColorRangeBase::ColorModel ilwCol = static_cast<Ilwis::ColorRangeBase::ColorModel>(enumVal);
-    static_cast<Ilwis::ContinousColorRange*>(_range.get())->defaultColorModel(ilwCol);
+    static_cast<Ilwis::ContinuousColorRange*>(_range.get())->defaultColorModel(ilwCol);
 }
 
 Color ColorRange::toColor(PyObject *v, ColorModel colortype, const std::string& name)
@@ -521,7 +521,7 @@ ColorModel ColorRange::stringToColorModel(std::string clrmd){
 }
 
 Color ColorRange::qColorToColor(QColor qCol, const std::string& name) const{
-    Ilwis::ColorRangeBase::ColorModel ilwMod = static_cast<const Ilwis::ContinousColorRange*>(_range.get())->defaultColorModel();
+    Ilwis::ColorRangeBase::ColorModel ilwMod = static_cast<const Ilwis::ContinuousColorRange*>(_range.get())->defaultColorModel();
     std::string colStr = (Ilwis::ColorRangeBase::toString(qCol, ilwMod)).toStdString();
     ColorModel type = static_cast<ColorModel>(ilwMod);
     return toColor(PyBuildString(colStr),type, name);
@@ -530,42 +530,42 @@ Color ColorRange::qColorToColor(QColor qCol, const std::string& name) const{
 QColor ColorRange::colorToQColor(const Color& pyCol) const{
     QString colorStr = QString::fromStdString(pyCol.toString());
     Ilwis::ColorRangeBase::ColorModel ilwColor = static_cast<Ilwis::ColorRangeBase::ColorModel>(pyCol.getColorModel());
-    return Ilwis::ContinousColorRange::toColor(QVariant(colorStr), ilwColor);
+    return Ilwis::ContinuousColorRange::toColor(QVariant(colorStr), ilwColor);
 }
 
 //--------------------------------------------------------------------------------
 
-ContinousColorRange::ContinousColorRange()
+ContinuousColorRange::ContinuousColorRange()
 {
-    _range.reset(new Ilwis::ContinousColorRange());
+    _range.reset(new Ilwis::ContinuousColorRange());
 }
 
-ContinousColorRange::ContinousColorRange(const Color &clr1, const Color &clr2)
+ContinuousColorRange::ContinuousColorRange(const Color &clr1, const Color &clr2)
 {
     QString color1 = QString::fromStdString(clr1.toString());
     QString color2 = QString::fromStdString(clr2.toString());
     Ilwis::ColorRangeBase::ColorModel ilwColor = static_cast<Ilwis::ColorRangeBase::ColorModel>(clr1.getColorModel());
 
-    QColor col1 = Ilwis::ContinousColorRange::toColor(QVariant(color1), ilwColor);
-    QColor col2 = Ilwis::ContinousColorRange::toColor(QVariant(color2), ilwColor);
-     _range.reset(new Ilwis::ContinousColorRange(col1, col2, ilwColor));
+    QColor col1 = Ilwis::ContinuousColorRange::toColor(QVariant(color1), ilwColor);
+    QColor col2 = Ilwis::ContinuousColorRange::toColor(QVariant(color2), ilwColor);
+     _range.reset(new Ilwis::ContinuousColorRange(col1, col2, ilwColor));
 }
 
-ContinousColorRange *ContinousColorRange::clone() const
+ContinuousColorRange *ContinuousColorRange::clone() const
 {
-    ContinousColorRange* colRa = new ContinousColorRange();
+    ContinuousColorRange* colRa = new ContinuousColorRange();
     colRa->_range.reset(this->_range.get()->clone());
     return colRa;
 }
 
-PyObject* ContinousColorRange::ensure(const PyObject *v, bool inclusive) const
+PyObject* ContinuousColorRange::ensure(const PyObject *v, bool inclusive) const
 {
     std::unique_ptr<QVariant> qvar(PyObject2QVariant(v));
-    QVariant result = static_cast<Ilwis::ContinousColorRange*>(_range.get())->ensure(*qvar, inclusive);
+    QVariant result = static_cast<Ilwis::ContinuousColorRange*>(_range.get())->ensure(*qvar, inclusive);
     return QVariant2PyObject(result);
 }
 
-bool ContinousColorRange::containsVar(const PyObject *v, bool inclusive) const
+bool ContinuousColorRange::containsVar(const PyObject *v, bool inclusive) const
 {
     std::unique_ptr<QVariant> qvar(PyObject2QVariant(v));
 
@@ -573,27 +573,27 @@ bool ContinousColorRange::containsVar(const PyObject *v, bool inclusive) const
 
 }
 
-bool ContinousColorRange::containsColor(const Color &clr, bool inclusive) const
+bool ContinuousColorRange::containsColor(const Color &clr, bool inclusive) const
 {
     QString color = QString::fromStdString(clr.toString());
 
-    Ilwis::ColorRangeBase::ColorModel ilwColor = static_cast<const Ilwis::ContinousColorRange*>(_range.get())->defaultColorModel();
+    Ilwis::ColorRangeBase::ColorModel ilwColor = static_cast<const Ilwis::ContinuousColorRange*>(_range.get())->defaultColorModel();
 
-    QColor col = Ilwis::ContinousColorRange::toColor(QVariant(color), ilwColor);
+    QColor col = Ilwis::ContinuousColorRange::toColor(QVariant(color), ilwColor);
 
     return _range.get()->contains(col, inclusive);
 
 }
 
-bool ContinousColorRange::containsRange(ColorRange *v, bool inclusive) const
+bool ContinuousColorRange::containsRange(ColorRange *v, bool inclusive) const
 {
-    return static_cast<const Ilwis::ContinousColorRange*>(_range.get())->contains(static_cast<ContinousColorRange*>(v)->_range.get(), inclusive);
+    return static_cast<const Ilwis::ContinuousColorRange*>(_range.get())->contains(static_cast<ContinuousColorRange*>(v)->_range.get(), inclusive);
 }
 
-Color ContinousColorRange::impliedValue(const PyObject *v) const
+Color ContinuousColorRange::impliedValue(const PyObject *v) const
 {
     std::unique_ptr<QVariant> qvar(PyObject2QVariant(v));
-    QVariant colVar = static_cast<const Ilwis::ContinousColorRange*>(_range.get())->impliedValue(*qvar);
+    QVariant colVar = static_cast<const Ilwis::ContinuousColorRange*>(_range.get())->impliedValue(*qvar);
     QColor ilwCol = colVar.value<QColor>();
 
     return qColorToColor(ilwCol);

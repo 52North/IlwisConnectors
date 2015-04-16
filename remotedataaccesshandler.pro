@@ -16,7 +16,7 @@ TEMPLATE = lib
 
 DEFINES += REMOTEDATAACCESSHANDLER_LIBRARY
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lhttpserver
 		

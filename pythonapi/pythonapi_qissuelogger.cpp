@@ -7,7 +7,7 @@ namespace pythonapi{
     QIssueLogger::QIssueLogger(){
     }
     //QT SLOT
-    void QIssueLogger::ilwiserrormessage(const QString &message){
-        log(message.toStdString());
+    void QIssueLogger::ilwiserrormessage(const Ilwis::IssueObject &issueObject){
+        log(issueObject.message().toStdString());
     }
 }

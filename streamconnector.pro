@@ -9,7 +9,7 @@ TARGET = streamconnector
 
 include(global.pri)
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
 QT       -= gui
@@ -22,7 +22,7 @@ DEFINES += STREAMCONNECTOR_LIBRARY
 OTHER_FILES += \
     streamconnector/streamconnector.json 
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 		
 win32:CONFIG(release, debug|release): {

@@ -8,8 +8,11 @@ QMAKE_EXTENSION_SHLIB = pyd
 
 TEMPLATE = lib
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/pythonapi
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+}
+
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
 PYTHONDIR = C:/Python33
 
@@ -85,11 +88,14 @@ OTHER_FILES += \
     pythonapi/ilwisobjects.conf \
     pythonapi/prepare_PATH.bat \
     pythonapi/prepare_PATH.sh \
+    pythonapi/paths.py \
+    pythonapi/installerPy.nsi \
+    pythonapi/LICENSE-2.0.txt \
     pythonapi/README \
     pythonapi/UPDATE \
     pythonapi/CHANGELOG
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
         -L$$PYTHONDIR/libs -lpython33
 
@@ -104,6 +110,7 @@ DEPENDPATH += $$PWD/../ilwiscore/core \
               $$PWD/../external/geos
 
 mytarget.files = pythonapi/ilwisobjects.py \
+                 $$PWD/../libraries/$$PLATFORM$$CONF/extensions/_ilwisobjects/_ilwisobjects.pyd \
                  pythonapi/test.py \
                  pythonapi/README \
                  pythonapi/UPDATE \
@@ -116,6 +123,10 @@ python_target.files = pythonapi/ilwisobjects.py \
 
 python_target.path = $$PYTHONDIR/Lib/site-packages
 
+install_target.files = pythonapi/installerPy.nsi
+
+install_target.path = $$PWD/../output/$$PLATFORM$$CONF
+
 target.path = $$PYTHONDIR/Lib/site-packages
 
-INSTALLS += mytarget python_target target
+INSTALLS += mytarget install_target python_target target

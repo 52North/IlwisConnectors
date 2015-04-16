@@ -3,7 +3,7 @@ TARGET = spreadsheetconnectors
 
 include(global.pri)
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
 TEMPLATE = lib
@@ -13,11 +13,11 @@ DEFINES += POSTGRESSQLCONNECTOR_LIBRARY
 OTHER_FILES += \
     spreadsheetconnectors/spreadsheetconnectors.json
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/spreadsheetconnectors -lfreexl \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/spreadsheetconnectors -lQOds \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/spreadsheetconnectors -lQt0Xlsx
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/spreadsheetconnectors -lfreexl \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/spreadsheetconnectors -lQOds \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/spreadsheetconnectors -lQt0Xlsx
 		
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
