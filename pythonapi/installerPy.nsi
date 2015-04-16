@@ -1,7 +1,7 @@
 Name "ILWIS Objects"
 
 #=======General Symbol Definitions==========
-!define VERSION "2.1.0 Beta"
+!define VERSION "2.2.0 Beta"
 !define COMPANY "52North GmbH"
 !define URL www.52n.org
 !define REGKEY "SOFTWARE\$(^Name)"
@@ -36,7 +36,7 @@ Var verifyDir
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !define MUI_COMPONENTSPAGE_NODESC
 !insertmacro MUI_PAGE_COMPONENTS
-!define MUI_DIRECTORYPAGE_TEXT_TOP "Please select the directory of you Python 3.3 (32bit) installation! $\n Here you can download Python: $\n$\n $\t http://www.python.org/ftp/python/3.3.5/python-3.3.5.msi"
+!define MUI_DIRECTORYPAGE_TEXT_TOP "Please select the directory of you Python 3 (32bit) installation! $\n Here you can download Python: $\n$\n $\t http://www.python.org/downloads/"
 !define MUI_DIRECTORYPAGE_VARIABLE $pythonDir
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preparePythonDirVerify
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE leavePythonDirVerify
@@ -50,13 +50,13 @@ Var verifyDir
 !insertmacro MUI_LANGUAGE English
 
 #=======Installer attributes=================
-OutFile "ILWISObjects-beta2.1-forPython3.3-32bit.exe"
+OutFile "ILWISObjects-beta2.2-forPython3-32bit.exe"
 InstallDir $PROGRAMFILES32\52n\ILWISObjects
 #InstallDirRegKey HKLM "${REGKEY}" "InstallPath" <-- doesn't work!
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 2.1.0.0
+VIProductVersion 2.2.0.0
 VIAddVersionKey ProductName ILWIS
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
