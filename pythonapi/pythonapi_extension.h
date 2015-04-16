@@ -7,7 +7,7 @@
 
 namespace pythonapi{
     //init modul
-    bool _initIlwisObjects();
+    bool _initIlwisObjects(const char * ilwisDir);
     void _exitIlwisObjects();
     void disconnectIssueLogger();
     void connectIssueLogger();

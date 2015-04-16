@@ -60,17 +60,6 @@
     pythonapi::invalidObjectException = PyErr_NewException("_ilwisobjects.InvalidObjectException",NULL,NULL);
     Py_INCREF(pythonapi::invalidObjectException);
     PyModule_AddObject(m, "InvalidObjectException", pythonapi::invalidObjectException);//m is SWIG declaration for Python C API modul creation
-
-    //init QtCoreApllication, Ilwis library and IssueLogger connection
-    try {
-        if (!pythonapi::_initIlwisObjects()){
-            PyErr_SetString(PyExc_ImportError,"ILWIS couldn't be initiallized!");
-            return NULL;
-        }
-    }catch (std::exception& e) {
-        PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-        return NULL;
-    }
     atexit(exitPython);
 %}
 
@@ -86,6 +75,8 @@ void exitPython()
     IlwisException = _ilwisobjects.IlwisException
     InvalidObjectException = _ilwisobjects.InvalidObjectException
     FeatureCreationError = _ilwisobjects.FeatureCreationError
+    if (not _ilwisobjects._initIlwisObjects(path)):
+        raise ImportError("ILWIS couldn't be initialized!")
 %}
 //catch std::exception's on all C API function calls
 %exception{

@@ -1,8 +1,11 @@
 import os
-f = open('ilwislocation.config', 'r')
+path = os.path.dirname(__file__)
+if (len(path) > 0):
+    path += os.sep
+f = open(path + 'ilwislocation.config', 'r')
 f.readline()
-line = f.readline().strip()
-line = line.split('=')[1]
+path = f.readline().strip()
+path = path.split('=')[1]
 f.close()
-os.environ["PATH"] = line + os.pathsep + os.environ["PATH"]
+os.environ["PATH"] = path + os.pathsep + os.environ["PATH"]
 

@@ -6,6 +6,7 @@
 
 #include <QtCore/QCoreApplication>
 #include <QString>
+#include <QSettings>
 #include <QFileInfo>
 #include <iostream>
 #include <QProcessEnvironment>
@@ -16,20 +17,21 @@ namespace pythonapi {
 
     static QIssueLogger* logger;
     static QMetaObject::Connection connection;
-    static QCoreApplication* app;
+    static QCoreApplication* app = 0;
 
-    bool _initIlwisObjects(){
+    bool _initIlwisObjects(const char * ilwisDir){
         int argc = 0;
         char* argv[0];
         app = new QCoreApplication(argc, argv);
-        bool ret = Ilwis::initIlwis(Ilwis::rmCOMMANDLINE);
+        bool ret = Ilwis::initIlwis(Ilwis::rmCOMMANDLINE, ilwisDir);
         pythonapi::logger = new pythonapi::QIssueLogger();
         pythonapi::connection = QObject::connect(Ilwis::kernel()->issues().data(),&Ilwis::IssueLogger::updateIssues,pythonapi::logger,&QIssueLogger::ilwiserrormessage);
         return ret;
     }
 
     void _exitIlwisObjects() {
-        delete app;
+        if (app)
+            delete app;
     }
 
     void disconnectIssueLogger(){
