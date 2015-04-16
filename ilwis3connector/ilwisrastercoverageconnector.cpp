@@ -218,7 +218,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
         QString szstr = _odf->value("Map","Size");
         QStringList parts = szstr.split(" ");
         if ( parts.size() == 2){
-            Size<> sz(parts[0].toLong(), parts[1].toLong(),1);
+            Size<> sz(parts[1].toLong(), parts[0].toLong(),1);
             grf->size(sz);
         }
         grf->coordinateSystem(gcoverage->coordinateSystem());
@@ -402,7 +402,8 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
         calcStatics(obj, NumericStatistics::pBASIC);
         const NumericStatistics& stats = raster->statistics();
-        RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - stats.significantDigits()));
+        double resolution = raster->datadef().range()->as<NumericRange>()->resolution();
+        RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],resolution);
 
 
         std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
@@ -572,12 +573,12 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     const IDomain dom = raster->datadef().domain<>();
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
         const NumericStatistics& stats = raster->statistics();
-        int digits = stats.significantDigits();
-        RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - digits));
+        double resolution = raster->datadef().range()->as<NumericRange>()->resolution();
+        RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],resolution);
         qint32 delta = stats[NumericStatistics::pDELTA];
         QString range = QString("%1:%2").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]);
          _odf->setKeyValue("BaseMap","MinMax",range);
-        if ( delta >= 0 && delta < 256 &&  digits == 0){
+        if ( delta >= 0 && delta < 256 &&  resolution == 0){
            _odf->setKeyValue("MapStore","Type","Byte");
         } else if ( conv.storeType() == itUINT8){
            _odf->setKeyValue("MapStore","Type","Byte");
