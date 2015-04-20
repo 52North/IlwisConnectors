@@ -64,16 +64,16 @@ Feature Feature::createSubFeature(PyObject* subFeatureIndex, const Geometry &geo
     if(PyFloatCheckExact(subFeatureIndex)){
             double val = PyFloatAsDouble(subFeatureIndex);
             std::string valStr = std::to_string(val);
-            ilwFeat = this->ptr()->createSubFeature(QString::fromStdString(valStr), geom.ptr().get());
+            ilwFeat = this->ptr()->createSubFeature(QString::fromStdString(valStr), geom.ptr().get()->clone());
     }else if(PyUnicodeCheckExact(subFeatureIndex)){
             std::string val = PyBytesAsString(subFeatureIndex);
-            ilwFeat = this->ptr()->createSubFeature(QString::fromStdString(val), geom.ptr().get());
+            ilwFeat = this->ptr()->createSubFeature(QString::fromStdString(val), geom.ptr().get()->clone());
     }else if(PyDateTimeCheckExact(subFeatureIndex) || PyDateCheckExact(subFeatureIndex) || PyTimeCheckExact(subFeatureIndex)){
             int year = PyDateTimeGET_YEAR(subFeatureIndex);
             int month = PyDateTimeGET_MONTH(subFeatureIndex);
             int day = PyDateTimeGET_DAY(subFeatureIndex);
             std::string dateStr = std::to_string(year) + std::to_string(month) + std::to_string(day);
-            ilwFeat = this->ptr()->createSubFeature(QString::fromStdString(dateStr), geom.ptr().get());
+            ilwFeat = this->ptr()->createSubFeature(QString::fromStdString(dateStr), geom.ptr().get()->clone());
     }
     return Feature(ilwFeat, _coverage);
 }
@@ -180,7 +180,7 @@ Geometry* Feature::geometry(){
 }
 
 void Feature::geometry(const Geometry& geom){
-    this->ptr()->geometry(geom.ptr().get());
+    this->ptr()->geometry(geom.ptr().get()->clone());
 }
 
 IlwisTypes Feature::geometryType(){
