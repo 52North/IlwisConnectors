@@ -48,13 +48,8 @@ bool GdalObjectFactory::canUse(const Resource &resource) const
     if ( resource.url().scheme() == "ilwis") // can't use anything marked as internal
         return false;
 
-    QFileInfo localResource(resource.url().toLocalFile());
-    if ( !(localResource.isFile() || localResource.isDir()))
-        return false; // do not handle remote sources
-
     if (!gdal()->supports(resource))
         return false;
-
 
     IlwisTypes type = resource.ilwisType() ;
     if ( type & itDOMAIN)
