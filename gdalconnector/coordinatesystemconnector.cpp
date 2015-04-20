@@ -78,6 +78,7 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const IOOptions 
                         setProjectionParameter(srshandle, "standard_parallel_2", Projection::pvLAT2, projection);
                         setProjectionParameter(srshandle, "zone", Projection::pvZONE, projection);
                         csyp->setProjection(projection);
+                        projection->setCoordinateSystem(csyp);
                     }
                 }
             }
