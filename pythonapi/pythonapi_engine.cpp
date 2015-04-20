@@ -123,9 +123,14 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
     }
 }
 
-void Engine::setWorkingCatalog(const std::string& location){
+void Engine::setWorkingCatalog(const std::string& location) {
+    QString loc (QString::fromStdString(location));
+    if (loc.indexOf("://") < 0)
+        loc = "file:///" + loc;
+    loc.replace('\\','/');
+
     Ilwis::ICatalog cat;
-    cat.prepare(QString::fromStdString(location));
+    cat.prepare(loc);
     if(cat.isValid()){
         Ilwis::context()->setWorkingCatalog(cat);
     }else
