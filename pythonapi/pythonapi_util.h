@@ -26,7 +26,7 @@ namespace Ilwis{
 namespace pythonapi {
 /**
  * since the implementation of this template classes are not included in the header file,
- * only the previously instanciated types (currently only Pixel, PixelD, Envelope, Box, Size and SizeD) can be used.
+ * only the previously instantiated types (currently only Pixel, PixelD, Envelope, Box, Size and SizeD) can be used.
  */
     class Coordinate;
     template<class CrdType> class PixelTemplate{
