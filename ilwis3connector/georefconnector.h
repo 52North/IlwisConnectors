@@ -16,7 +16,7 @@ public:
     QString format() const;
 private:
     bool loadGeoref(const IniFile &odf, IlwisObject *data);
-    IlwisObject *createGeoreference(const IniFile &odf) const;
+    void createGeoreference(const IniFile &odf, GeoReference *grf) const;
     bool loadGeorefCorners(const IniFile &odf, Ilwis::IlwisObject *data);
     bool loadGeorefTiepoints(const IniFile &odf, GeoReference *grf);
 };

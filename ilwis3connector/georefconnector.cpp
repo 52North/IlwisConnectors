@@ -258,33 +258,33 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
 }
 
 
-IlwisObject *GeorefConnector::createGeoreference(const IniFile &odf) const{
+void GeorefConnector::createGeoreference(const IniFile &odf, GeoReference *grf) const{
     //todo georefFACTOR
     QString type = odf.value("GeoRef","Type");
     if ( type == "GeoRefCorners"){
-        return GeoReference::create("corners", _resource);
-
+        grf->create("corners");
     }
     else if ( type == "GeoRefCTP") {
-        return GeoReference::create("tiepoints", _resource);
+        grf->create("tiepoints");
     }
     else if ( type == "GeoRefNone") {
-        return GeoReference::create("undetermined", _resource);
+        grf->create("undetermined");
     }
     else if ( type == "GeoRefSubMap") {
         auto name = _odf->value("GeoRefSubMap","GeoRef");
         QUrl resource = mastercatalog()->name2url(name, itGEOREF);
         IniFile odf;
         odf.setIniFile(resource.toLocalFile());
-        return createGeoreference(odf);
+        createGeoreference(odf, grf);
     }
-    return 0;
 }
 
 IlwisObject *GeorefConnector::create() const
 {
+    GeoReference * grf = new GeoReference(_resource);
     IniFile *odf = _odf.data();
-    return createGeoreference(*odf);
+    createGeoreference(*odf, grf);
+    return grf;
 }
 
 QString GeorefConnector::format() const
