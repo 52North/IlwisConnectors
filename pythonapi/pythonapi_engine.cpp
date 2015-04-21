@@ -129,10 +129,15 @@ void Engine::setWorkingCatalog(const std::string& location) {
     // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
     if (loc.indexOf("://") < 0) {
         int pos = loc.indexOf('/');
-        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
+        if (pos > 0) { // full path starting with drive-letter (MS-DOS-style)
             loc = "file:///" + loc;
-        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+            if (loc.endsWith('/')) // workaround an IlwisObjects problem that scans the folder twice if it ends with a slash
+                loc = loc.left(loc.length() - 1);
+        } else if (pos == 0) { // full path starting with path-separator (UNIX-style)
             loc = "file://" + loc;
+            if (loc.endsWith('/'))
+                loc = loc.left(loc.length() - 1);
+        }
     }
 
     Ilwis::ICatalog cat;
