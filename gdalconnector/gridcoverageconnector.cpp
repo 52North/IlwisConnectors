@@ -86,13 +86,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
         IGeoReference georeference;
         double geosys[6];
         CPLErr err = gdal()->getGeotransform(_handle->handle(), geosys) ;
-        if ( err != CE_None) {
-            cMin = Coordinate( 0, 0 );
-            cMax = Coordinate( rastersize.xsize() - 1, rastersize.ysize() - 1);
-            if(!georeference.prepare("code=georef:undetermined"))
-                return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",raster->name() );
-            georeference->coordinateSystem(raster->coordinateSystem()); // the grf.prepare() for internal ilwis georeferences (among others "undetermined") does not autmatically set its csy
-        } else {
+        if ( err == CE_None) {
             double a1 = geosys[0];
             double b1 = geosys[3];
             double a2 = geosys[1];
@@ -104,6 +98,26 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
 
             if(!georeference.prepare(_resource.url().toString()))
                 return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",raster->name() );
+        } else {
+            int iNrTiePoints = gdal()->getGCPCount(_handle->handle());
+            if (iNrTiePoints > 0) {
+                const GDAL_GCP* amtp = gdal()->getGCPs(_handle->handle());
+                Envelope envTieLimits;
+                for (int i = 0; i < iNrTiePoints; i++) {
+                    Coordinate crdtiep(amtp[i].dfGCPX,amtp[i].dfGCPY,0);
+                    envTieLimits += crdtiep;
+                }
+                cMin = envTieLimits.min_corner();
+                cMax = envTieLimits.max_corner();
+                if(!georeference.prepare(_resource.url().toString()))
+                    return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",raster->name() );
+            } else {
+                cMin = Coordinate( 0, 0 );
+                cMax = Coordinate( rastersize.xsize() - 1, rastersize.ysize() - 1);
+                if(!georeference.prepare("code=georef:undetermined"))
+                    return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",raster->name() );
+                georeference->coordinateSystem(raster->coordinateSystem()); // the grf.prepare() for internal ilwis georeferences (among others "undetermined") does not autmatically set its csy
+            }
         }
 
         georeference->size(rastersize);

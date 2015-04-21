@@ -38,6 +38,10 @@ typedef const char* (*IGDALGetMetadataItem )(GDALMajorObjectH , const char *, co
 typedef char ** (*IGDALGetMetadata)(GDALMajorObjectH , const char *);
 typedef double (*IGDALRasValue)(GDALRasterBandH, int * );
 typedef GDALColorInterp (*IGDALGetRasterColorInterpretation)(GDALRasterBandH);
+typedef int (*IGDALGetGCPCountFunc)(GDALDatasetH);
+typedef const char* (*IGDALGetGCPProjectionFunc)(GDALDatasetH);
+typedef const GDAL_GCP* (*IGDALGetGCPsFunc)(GDALDatasetH);
+
 
 typedef void (*IGDALSetColorEntry)(GDALColorTableH,int,const GDALColorEntry * );
 typedef GDALColorEntry *(*IGDALGetColorEntry)(GDALColorTableH,int );
@@ -240,6 +244,10 @@ class GDALProxy {
         IGDALGetDriverName getShortName;
         IGDALGetMetadataItem getMetaDataItem;
         IGDALGetMetadata getMetaData;
+        IGDALGetGCPCountFunc getGCPCount;
+        IGDALGetGCPProjectionFunc getGCPProjection;
+        IGDALGetGCPsFunc getGCPs;
+
         IGDALGetRasterColorInterpretation colorInterpretation;
         IGDALSetRasterColorInterpretation setColorInterpretation;
         IGDALSetColorEntry setColorPaletteEntry;
