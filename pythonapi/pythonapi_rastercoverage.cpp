@@ -1,4 +1,6 @@
 #include "../../IlwisCore/core/kernel.h"
+#include "../../IlwisCore/core/ilwiscontext.h"
+#include "../../IlwisCore/core/catalog/catalog.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
@@ -41,7 +43,19 @@ RasterCoverage::RasterCoverage(){
 }
 
 RasterCoverage::RasterCoverage(std::string resource){
-    Ilwis::IRasterCoverage fc(QString::fromStdString(resource), itRASTER);
+    QString input (QString::fromStdString(resource));
+    input.replace('\\','/');
+    // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
+    if (input.indexOf("://") < 0) {
+        int pos = input.indexOf('/');
+        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
+            input = "file:///" + input;
+        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+            input = "file://" + input;
+        else // file without path
+            input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+    }
+    Ilwis::IRasterCoverage fc(input, itRASTER);
     if (fc.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
 }

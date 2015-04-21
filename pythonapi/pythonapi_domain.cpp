@@ -1,4 +1,6 @@
 #include "../../IlwisCore/core/kernel.h"
+#include "../../IlwisCore/core/ilwiscontext.h"
+#include "../../IlwisCore/core/catalog/catalog.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/domain.h"
@@ -113,7 +115,19 @@ NumericDomain::NumericDomain(){
 }
 
 NumericDomain::NumericDomain(const std::string &resource){
-    Ilwis::INumericDomain numdom(QString::fromStdString(resource), itNUMERICDOMAIN);
+    QString input (QString::fromStdString(resource));
+    input.replace('\\','/');
+    // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
+    if (input.indexOf("://") < 0) {
+        int pos = input.indexOf('/');
+        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
+            input = "file:///" + input;
+        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+            input = "file://" + input;
+        else // file without path
+            input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+    }
+    Ilwis::INumericDomain numdom(input, itNUMERICDOMAIN);
     if (numdom.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(numdom));
 }
@@ -402,7 +416,19 @@ ColorDomain::ColorDomain()
 
 ColorDomain::ColorDomain(const std::string &resource)
 {
-    Ilwis::IColorDomain coldom(QString::fromStdString(resource), itCOLORDOMAIN);
+    QString input (QString::fromStdString(resource));
+    input.replace('\\','/');
+    // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
+    if (input.indexOf("://") < 0) {
+        int pos = input.indexOf('/');
+        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
+            input = "file:///" + input;
+        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+            input = "file://" + input;
+        else // file without path
+            input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+    }
+    Ilwis::IColorDomain coldom(input, itCOLORDOMAIN);
     if (coldom.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(coldom));
 }
@@ -441,7 +467,19 @@ TextDomain::TextDomain()
 
 TextDomain::TextDomain(const std::string &resource)
 {
-    Ilwis::ITextDomain texdom(QString::fromStdString(resource), itTEXTDOMAIN);
+    QString input (QString::fromStdString(resource));
+    input.replace('\\','/');
+    // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
+    if (input.indexOf("://") < 0) {
+        int pos = input.indexOf('/');
+        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
+            input = "file:///" + input;
+        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+            input = "file://" + input;
+        else // file without path
+            input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+    }
+    Ilwis::ITextDomain texdom(input, itTEXTDOMAIN);
     if (texdom.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(texdom));
 
@@ -459,7 +497,19 @@ TimeDomain::TimeDomain()
 
 TimeDomain::TimeDomain(const std::string& resource)
 {
-    Ilwis::ITimeDomain timedom(QString::fromStdString(resource), itNUMERICDOMAIN);
+    QString input (QString::fromStdString(resource));
+    input.replace('\\','/');
+    // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
+    if (input.indexOf("://") < 0) {
+        int pos = input.indexOf('/');
+        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
+            input = "file:///" + input;
+        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+            input = "file://" + input;
+        else // file without path
+            input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+    }
+    Ilwis::ITimeDomain timedom(input, itNUMERICDOMAIN);
     if (timedom.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(timedom));
 }

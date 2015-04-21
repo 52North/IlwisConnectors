@@ -38,16 +38,19 @@
 namespace pythonapi {
 
     Catalog::Catalog(const std::string& url, const std::string& filter){
-        QUrl location (QString::fromStdString(url));
-        if (location.scheme().length() == 0)
-            location.setScheme("file");
-        if (location.scheme().compare("file") == 0) {
-            QString path = location.path();
-            if (path.indexOf('/') == -1 && path.indexOf('\\') == -1) {
-                path = '/' + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + path;
-                location.setPath(path);
-            }
+        QString input (QString::fromStdString(url));
+        input.replace('\\','/');
+        // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
+        if (input.indexOf("://") < 0) {
+            int pos = input.indexOf('/');
+            if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
+                input = "file:///" + input;
+            else if (pos == 0) // full path starting with path-separator (UNIX-style)
+                input = "file://" + input;
+            else // file without path
+                input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
         }
+        QUrl location (input);
         Ilwis::CatalogView* cat = new Ilwis::CatalogView(location);
         cat->filter(QString::fromStdString(filter));
         this->_data.reset(cat);

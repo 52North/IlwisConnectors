@@ -125,9 +125,15 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
 
 void Engine::setWorkingCatalog(const std::string& location) {
     QString loc (QString::fromStdString(location));
-    if (loc.indexOf("://") < 0)
-        loc = "file:///" + loc;
     loc.replace('\\','/');
+    // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
+    if (loc.indexOf("://") < 0) {
+        int pos = loc.indexOf('/');
+        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
+            loc = "file:///" + loc;
+        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+            loc = "file://" + loc;
+    }
 
     Ilwis::ICatalog cat;
     cat.prepare(loc);

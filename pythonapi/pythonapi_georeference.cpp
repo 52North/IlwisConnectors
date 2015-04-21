@@ -3,6 +3,8 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 
 #include "../../IlwisCore/core/util/geometries.h"
+#include "../../IlwisCore/core/ilwiscontext.h"
+#include "../../IlwisCore/core/catalog/catalog.h"
 #include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h"
 #include "../../IlwisCore/core/ilwisobjects/geometry/georeference/georeference.h"
 
@@ -16,7 +18,19 @@ namespace pythonapi {
     }
 
     GeoReference::GeoReference(const std::string& resource){
-        Ilwis::IGeoReference gr(QString::fromStdString(resource), itGEOREF);
+        QString input (QString::fromStdString(resource));
+        input.replace('\\','/');
+        // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
+        if (input.indexOf("://") < 0) {
+            int pos = input.indexOf('/');
+            if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
+                input = "file:///" + input;
+            else if (pos == 0) // full path starting with path-separator (UNIX-style)
+                input = "file://" + input;
+            else // file without path
+                input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+        }
+        Ilwis::IGeoReference gr(input, itGEOREF);
         if (gr.isValid())
             this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(gr));
     }

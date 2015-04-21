@@ -18,31 +18,35 @@ IlwisObject::~IlwisObject(){
 }
 
 void IlwisObject::open(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
-    QUrl input (url.c_str());
-    if (input.scheme().length() == 0)
-        input.setScheme("file");
-    if (input.scheme().compare("file") == 0) {
-        QString path = input.path();
-        if (path.indexOf('/') == -1 && path.indexOf('\\') == -1) {
-            path = '/' + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + path;
-            input.setPath(path);
-        }
+    QString input (QString::fromStdString(url));
+    input.replace('\\','/');
+    // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
+    if (input.indexOf("://") < 0) {
+        int pos = input.indexOf('/');
+        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
+            input = "file:///" + input;
+        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+            input = "file://" + input;
+        else // file without path
+            input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
     }
-    (*this->ptr())->connectTo(input, QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmINPUT, options.ptr());
+    (*this->ptr())->connectTo(QUrl(input), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmINPUT, options.ptr());
 }
 
 void IlwisObject::store(const std::string& url, const std::string& format, const std::string& fnamespace, const IOOptions& options){
-    QUrl output (url.c_str());
-    if (output.scheme().length() == 0)
-        output.setScheme("file");
-    if (output.scheme().compare("file") == 0) {
-        QString path = output.path();
-        if (path.indexOf('/') == -1 && path.indexOf('\\') == -1) {
-            path = '/' + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + path;
-            output.setPath(path);
-        }
+    QString output (QString::fromStdString(url));
+    output.replace('\\','/');
+    // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
+    if (output.indexOf("://") < 0) {
+        int pos = output.indexOf('/');
+        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
+            output = "file:///" + output;
+        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+            output = "file://" + output;
+        else // file without path
+            output = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + output;
     }
-    (*this->ptr())->connectTo(output, QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
+    (*this->ptr())->connectTo(QUrl(output), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
     if (!(*this->ptr())->store(options.ptr()))
         throw OSError(std::string("IOError on attempt to store ")+this->name());
 }
