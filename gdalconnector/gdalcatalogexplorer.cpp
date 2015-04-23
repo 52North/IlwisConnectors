@@ -56,8 +56,6 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
     std::vector<QUrl> files = FolderCatalogExplorer::loadFolders(source(), filters ,CatalogConnector::foFULLPATHS | CatalogConnector::foEXTENSIONFILTER);
 
     std::set<Resource> gdalitems;
-    std::vector<Resource> folders;
-    std::vector<Resource> existingItems;
     if (!gdal()->isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1,"gdal library");
         return std::vector<Resource>();
@@ -65,57 +63,29 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
     kernel()->issues()->silent(true); // error messages during scan are not needed
     try{
         for(const QUrl& url : files) {
-            quint64 id1=i64UNDEF, id2=i64UNDEF;
-            if ( (id1=mastercatalog()->url2id(url, itRASTER)) == i64UNDEF && (id2=mastercatalog()->url2id(url, itFEATURE)) == i64UNDEF) {
-                QFileInfo file = toLocalFile(url);
-                if ( !file.exists())
-                    continue;
+            QFileInfo file = toLocalFile(url);
+            if ( !file.exists())
+                continue;
 
-                if ( !file.isDir() ) {
-                    IlwisTypes extendedTypes = extendedType(formats, file.suffix());
-                    GDALItems items(url, file, extendedTypes);
-                    for(auto item : items) {
-                        gdalitems.insert(item);
-                    }
-                } else {
-                    Resource resource(url, itCATALOG);
-                    QString filename = file.isRoot() ? file.absoluteFilePath() : file.fileName();
-                    resource.name(filename);
-
-                    folders.push_back(resource);
+            if ( !file.isDir() ) {
+                IlwisTypes extendedTypes = extendedType(formats, file.suffix());
+                GDALItems items(url, file, extendedTypes);
+                for(auto item : items) {
+                    gdalitems.insert(item);
                 }
-            }else{
-                quint64 id = id1 ==i64UNDEF ? id2 : id1;
-                Resource res = mastercatalog()->id2Resource(id);
-                existingItems.push_back(res);
             }
-
         }
+
         std::vector<Resource> items;
         for( const auto& resource : gdalitems){
             items.push_back(resource);
         }
         kernel()->issues()->silent(false);
 
-        mastercatalog()->addItems(items);
+        if (items.size() > 0)
+            kernel()->issues()->log(QString(TR("Added %1 objects through the gdal connector")).arg( items.size()),IssueObject::itMessage);
 
-        mastercatalog()->addItems(folders);
-
-        std::vector<Resource> output(items.size());
-
-        std::copy(items.begin(), items.end(), output.begin());
-
-
-        for(const auto& resource : folders){
-            output.push_back(resource);
-        }
-
-        std::copy(existingItems.begin(), existingItems.end(), std::back_inserter(output));
-
-        if (output.size() > 0)
-            kernel()->issues()->log(QString(TR("Added %1 objects through the gdal connector")).arg( output.size()),IssueObject::itMessage);
-
-        return output;
+        return items;
     } catch(const ErrorObject& err){
         kernel()->issues()->silent(false);
         throw err;
