@@ -28,7 +28,6 @@ std::vector<Resource> RemoteCatalogExplorer::loadItems(const IOOptions &)
 
     DownloadManager manager(source());
     std::vector<Resource> items = manager.loadItems();
-    mastercatalog()->addItems(items);
 
     return items;
 
