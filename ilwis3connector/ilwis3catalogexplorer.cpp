@@ -14,6 +14,7 @@
 #include "odfitem.h"
 #include "ilwiscontext.h"
 #include "dataformat.h"
+#include "tranquilizer.h"
 #include "foldercatalogexplorer.h"
 #include "ilwis3catalogexplorer.h"
 
@@ -45,50 +46,43 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                                                                  CatalogConnector::foFULLPATHS | CatalogConnector::foEXTENSIONFILTER);
 
     std::set<ODFItem> odfitems;
-    std::vector<Resource> existingItems;
     QHash<QString, quint64> names;
+    Tranquilizer trq;
+    trq.prepare("ilwis3 container",source().toLocalFile(),files.size());
     kernel()->issues()->silent(true);  // error messages during scan are not needed
     try{
-    foreach(const QUrl& url, files) {
-        QFileInfo file = toLocalFile(url);
-        IlwisTypes tp = Ilwis3Connector::ilwisType(file.fileName());
-        quint64 id = i64UNDEF;
-        if ( (id = mastercatalog()->url2id(url, tp)) == i64UNDEF) {
+        foreach(const QUrl& url, files) {
+            QFileInfo file = toLocalFile(url);
+            IlwisTypes tp = Ilwis3Connector::ilwisType(file.fileName());
             if ( tp & itILWISOBJECT ) {
                 ODFItem item(file);
                 odfitems.insert(item);
                 names[url.toString().toLower()] = item.id();
             }
-        }else {
-            Resource res = mastercatalog()->id2Resource(id);
-            existingItems.push_back(res);
+            trq.update(1);
         }
 
-    }
-
-    std::vector<ODFItem> items;
-    for( const auto& item : odfitems){
-        items.push_back(item);
-    }
-    std::vector<Resource> finalList;
-    for(ODFItem& item : items) {
-        if ( item.resolveNames(names)) {
-            finalList.push_back(item);
+        std::vector<ODFItem> items;
+        for( const auto& item : odfitems){
+            items.push_back(item);
         }
-    }
-    mastercatalog()->addItems(finalList);
+        std::vector<Resource> finalList;
+        for(ODFItem& item : items) {
+            if ( item.resolveNames(names)) {
+                finalList.push_back(item);
+            }
+        }
 
-    kernel()->issues()->silent(false);
+        kernel()->issues()->silent(false);
 
-    if ( finalList.size() > 0)
-        kernel()->issues()->log(QString(TR("Added %1 objects through the ilwis3 connector")).arg( finalList.size()),IssueObject::itMessage);
+        if ( finalList.size() > 0)
+            kernel()->issues()->log(QString(TR("Added %1 objects through the ilwis3 connector")).arg( finalList.size()),IssueObject::itMessage);
 
-    std::copy(existingItems.begin(), existingItems.end(), std::back_inserter(finalList));
-    return finalList;
+        return finalList;
     }
     catch(const ErrorObject& err){
-       kernel()->issues()->silent(false);
-       throw err;
+        kernel()->issues()->silent(false);
+        throw err;
     }
 }
 
