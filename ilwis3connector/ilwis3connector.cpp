@@ -258,6 +258,8 @@ QString Ilwis3Connector::ilwis3ClassName(IlwisTypes type) const {
         return "Polygon Map";
     else if ( type & itTABLE)
         return "Table";
+    else if ( type & itREPRESENTATION)
+        return "Representation";
 
     //TODO: other types
 
@@ -296,6 +298,8 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
         return itTABLE;
     if ( ext == "mpl")
         return itRASTER;
+    if ( ext == "rpr")
+        return itREPRESENTATION;
 
     return itUNKNOWN;
 }
@@ -319,6 +323,8 @@ QString Ilwis3Connector::suffix(IlwisTypes type) {
         return "csy";
     if ( type == itTABLE)
         return "tbt";
+    if ( type == itREPRESENTATION)
+        return "rpr";
     return  "";
 }
 
