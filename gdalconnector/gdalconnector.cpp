@@ -8,6 +8,7 @@
 #include "catalogconnector.h"
 #include "dataformat.h"
 #include "gdalconnector.h"
+#include "gdalitem.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
 #include "dataformat.h"
@@ -82,11 +83,35 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
             _handle = gdal()->openUrl(code,data->id(), GA_ReadOnly,false);
             data->name(source().name());
         } else {
-            QFileInfo inf = fileinf.absolutePath();
-            _handle = gdal()->openFile(inf, data->id(), GA_ReadOnly);
-            data->name(fileinf.fileName());
+            // scan our container (parent) and insert it into the mastercatalog
+            QFileInfo file = fileinf.absolutePath(); // strip-off the /subdataset at the end, and check if it is a file
+            if ( file.exists() && !file.isDir() ) {
+                bool prev = kernel()->issues()->silent();
+                kernel()->issues()->silent(true); // error messages during scan are not needed
+                IlwisTypes extendedTypes = 0; // from GDALItems: IlwisTypes extendedTypes = extendedType(formats, file.suffix());
+                GDALItems gdalitems(QUrl::fromLocalFile(file.absoluteFilePath()), file, extendedTypes);
+                std::vector<Resource> items;
+                for( const auto& resource : gdalitems){
+                    items.push_back(resource);
+                }
+                mastercatalog()->addItems(items);
+                kernel()->issues()->silent(prev);
+                // read ourselves back out of the mastercatalog, and overwrite our resource
+                IlwisTypes tp = data->ilwisType();
+                auto resource = mastercatalog()->name2Resource(_filename.toString(),tp );
+                if (resource.isValid()) {
+                    source() = resource;
+                    code = source().code();
+                }
+            }
+            if ( code != sUNDEF) { // re-try with new code
+                _handle = gdal()->openUrl(code,data->id(), GA_ReadOnly,false);
+                data->name(source().name());
+            } else { // last resort: attempt opening the parent container, but this will probably fail; if we reached here it is because we encountered a new type gdal-container-file, which is not handled correctly in GDALItems
+                _handle = gdal()->openFile(file, data->id(), GA_ReadOnly);
+                data->name(fileinf.fileName());
+            }
         }
-
 
     } else{
         data->name(fileinf.fileName());

@@ -31,6 +31,7 @@
 #include "tableconnector.h"
 #include "coordinatesystemconnector.h"
 #include "coverageconnector.h"
+#include "odfitem.h"
 
 using namespace Ilwis;
 using namespace Ilwis3;
@@ -114,6 +115,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
         csyName = "code=csy:unknown";
     else{
         csyName = filename2FullPath(csyName, this->_resource);
+        addToMasterCatalog(csyName, itCOORDSYSTEM);
     }
     ICoordinateSystem csy;
     if ( !csy.prepare(csyName, itCOORDSYSTEM, options)) {
@@ -353,20 +355,26 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     }
     return 0;
 }
+
 DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const IOOptions &options) const{
     IDomain dom;
-    if(!dom.prepare(odf->file(), options)) {
-        QString domname = odf->value("BaseMap","Domain");
-        QString filename = name2Code(domname, "domain");
-        if ( filename == sUNDEF)
-            filename = context()->workingCatalog()->resolve(domname, itDOMAIN);
-
-        if(!dom.prepare(filename, options)) {
-            ERROR2(ERR_NO_INITIALIZED_2,"domain",odf->file());
-            return DataDefinition();
+    QString filename;
+    QString domname = odf->value("BaseMap","Domain");
+    if (domname != sUNDEF) { // probe if domain is an external file
+        filename = filename2FullPath(domname, this->_resource); // use an eventual absolute-path supplied in domname, otherwise look for it in the same folder as the BaseMap
+        if (!QFileInfo(QUrl(filename).toLocalFile()).exists()) {
+            filename = context()->workingCatalog()->resolve(domname, itDOMAIN); // if it is also not there, look for it in the working catalog (it might be different than the location of the BaseMap)
+            if (!QFileInfo(QUrl(filename).toLocalFile()).exists())
+                filename = name2Code(domname, "domain"); // probe if it is a system file; note that this is a code, not a filename
+        } else { // handle the case whereby we open a loose coverage file that is not in the mastercatalog; the domain must be added to the mastercatalog at this point, otherwise it will not load correctly by the "prepare" that follows, due to an incomplete "Resource"
+            addToMasterCatalog(filename, itDOMAIN);
         }
+    } else
+        filename = odf->file(); // probe if it is an internal domain
+    if (!dom.prepare(filename, options)) {
+        ERROR2(ERR_NO_INITIALIZED_2,"domain",odf->file());
+        return DataDefinition();
     }
-
     DataDefinition def(dom);
     double vmax,vmin,scale,offset;
     QString range = odf->value("BaseMap","Range");
@@ -387,9 +395,18 @@ DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const 
             else {
                 def.range(new NumericRange(vmin, vmax));
             }
-
-
         }
     }
     return def;
 }
+
+void CoverageConnector::addToMasterCatalog(QString filename, IlwisTypes it) const {
+    auto resource = mastercatalog()->name2Resource(filename, it);
+    if (!resource.isValid()) {
+        std::vector<Resource> itemsToAdd;
+        ODFItem odfItem(QFileInfo(QUrl(filename).toLocalFile()));
+        itemsToAdd.push_back(odfItem);
+        mastercatalog()->addItems(itemsToAdd);
+    }
+}
+

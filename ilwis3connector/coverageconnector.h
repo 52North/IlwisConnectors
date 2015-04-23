@@ -31,6 +31,14 @@ protected:
 private:
     ITable prepareAttributeTable(const QString &file, const QString& basemaptype,const IOOptions &) const;
 
+    /**
+     * @brief addToMasterCatalog will check if the mastercatalog has a resource under this name, and add it if it doesn't;
+     * This is a helper function, its purpose is to workaround there where the ilwisobjects core code isn't properly opening files that aren't registered in the mastercatalog
+     * @param filename the file to add as an ODFItem-resource
+     * @param it the type under which the item is expected to be found
+     */
+    void addToMasterCatalog(QString filename, IlwisTypes it) const;
+
 };
 }
 }
