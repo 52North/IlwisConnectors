@@ -179,7 +179,7 @@ QString ODFItem::findDatumName() const {
 
 QString ODFItem::findDomainName(const QString& path) const
 {
-    quint64 validTypes = itTABLE | itCOVERAGE | itDOMAIN;
+    quint64 validTypes = itTABLE | itCOVERAGE | itDOMAIN | itREPRESENTATION;
     if ( (_ilwtype & validTypes) == 0)
         return sUNDEF;
 
@@ -206,12 +206,14 @@ QString ODFItem::findDomainName(const QString& path) const
         name = _odf.value("Table", "Domain");
     else if(_ilwtype & itDOMAIN)
         name = _file.fileName();
+    else if(_ilwtype & itREPRESENTATION)
+        name = _odf.value("Representation", "Domain");
     return cleanName(name);
 }
 
 IlwisTypes ODFItem::findDomainType(const QString& path) const
 {
-    quint64 validTypes = itTABLE | itCOVERAGE | itDOMAIN;
+    quint64 validTypes = itTABLE | itCOVERAGE | itDOMAIN | itREPRESENTATION;
     if ( (_ilwtype & validTypes) == 0)
         return itUNKNOWN;
 
@@ -377,31 +379,6 @@ QString ODFItem::findGrfName() const{
     return cleanName(name);
 
 }
-
-//IlwisTypes ODFItem::findGrfType() const {
-
-//    quint64 validTypes = itGEOREF | itRASTER;
-//    if ( (_ilwtype & validTypes) == 0)
-//        return itUNKNOWN;
-
-//    if ( _grfname == "")
-//        return itUNKNOWN;
-//    Resource resource = mastercatalog()->name2Resource(stripExtension(_grfname),itGEOREF);
-//    if ( resource.isValid())
-//        return resource.ilwisType();
-//    IniFile grf;
-//    QString path = _file.canonicalPath() + "/" + _grfname;
-//    if(!grf.setIniFile(path))
-//        return itUNKNOWN;
-
-//    QString type =  grf.value("GeoRef", "Type");
-//    if ( type.compare("georefcorners",Qt::CaseInsensitive) == 0)
-//        return itCORNERSGEOREF;
-//    if ( type.compare("georefctp",Qt::CaseInsensitive) == 0)
-//        return itTIEPOINTGEOREF;
-
-//    return itUNKNOWN;
-//}
 
 quint64 ODFItem::findSize() const
 {
