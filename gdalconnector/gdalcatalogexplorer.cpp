@@ -19,6 +19,7 @@
 #include "dataformat.h"
 #include "gdalmodule.h"
 #include "gdalproxy.h"
+#include "tranquilizer.h"
 #include "gdalcatalogexplorer.h"
 #include "gdalitem.h"
 #include "mastercatalog.h"
@@ -62,18 +63,21 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
     }
     kernel()->issues()->silent(true); // error messages during scan are not needed
     try{
+        Tranquilizer trq;
+        trq.prepare("gdal connector",source().toLocalFile(),files.size());
         for(const QUrl& url : files) {
             QFileInfo file = toLocalFile(url);
-            if ( !file.exists())
-                continue;
+            if ( file.exists()){
 
-            if ( !file.isDir() ) {
-                IlwisTypes extendedTypes = extendedType(formats, file.suffix());
-                GDALItems items(url, file, extendedTypes);
-                for(auto item : items) {
-                    gdalitems.insert(item);
+                if ( !file.isDir() ) {
+                    IlwisTypes extendedTypes = extendedType(formats, file.suffix());
+                    GDALItems items(url, file, extendedTypes);
+                    for(auto item : items) {
+                        gdalitems.insert(item);
+                    }
                 }
             }
+            trq.update(1);
         }
 
         std::vector<Resource> items;
