@@ -49,7 +49,7 @@ RasterCoverage::RasterCoverage(std::string resource){
     if (input.indexOf("://") < 0) {
         int pos = input.indexOf('/');
         if (pos > 0) {
-            if (QFileInfo(input).exists()) // full path starting with drive-letter (MS-DOS-style)
+            if ((input.count('/') > 1) || QFileInfo(input).exists()) // full path starting with drive-letter (MS-DOS-style)
                 input = "file:///" + input;
             else // container object without path, e.g. myfile.hdf/subdataset: look for it in workingCatalog()
                 input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
@@ -191,7 +191,7 @@ RasterCoverage *RasterCoverage::__rtruediv__(double value){
 }
 
 double RasterCoverage::coord2value(const Coordinate& c){
-    return this->ptr()->as<Ilwis::RasterCoverage>()->coord2value(c.data()).toDouble();
+    return this->ptr()->as<Ilwis::RasterCoverage>()->coord2value(c.data()).value<QVariantMap>()[PIXELVALUE].toDouble();
 }
 
 PixelIterator RasterCoverage::__iter__(){
