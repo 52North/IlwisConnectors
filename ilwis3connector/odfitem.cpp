@@ -10,6 +10,7 @@
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "inifile.h"
+#include "geometries.h"
 #include "identity.h"
 #include "resource.h"
 #include "catalog.h"
@@ -292,7 +293,7 @@ QString ODFItem::findCsyName(const QString& path) const
     return cleanName(name);
 }
 
-IlwisTypes ODFItem::findCsyType(const QString& path) const
+IlwisTypes ODFItem::findCsyType(const QString& path)
 {
     quint64 validTypes = itGEOREF | itCOORDSYSTEM | itCOVERAGE;
     if ( (_ilwtype & validTypes) == 0)
@@ -306,8 +307,13 @@ IlwisTypes ODFItem::findCsyType(const QString& path) const
     if ( resource.isValid())
         return resource.ilwisType();
     IniFile csy;
-    if ( _csyname == "latlonwgs84.csy")
+    if ( _csyname == "latlonwgs84.csy"){
+
+        if ( hasType(ilwisType(), itCOVERAGE))
+            addProperty("latlonenvelope",_odf.value("BaseMap", "CoordBounds"));
+
         return itCONVENTIONALCOORDSYSTEM;
+    }
     if ( _csyname == "unknown.csy")
         return itBOUNDSONLYCSY;
 
@@ -348,13 +354,23 @@ IlwisTypes ODFItem::findCsyType(const QString& path) const
     }
 
     QString type = csy.value("CoordSystem", "Type");
-    if ( type.compare("latlon",Qt::CaseInsensitive) == 0)
+    if ( type.compare("latlon",Qt::CaseInsensitive) == 0){
+        addProperty("projectionname", "LatLon WGS 84");
         return itCONVENTIONALCOORDSYSTEM;
+    }
     if ( type.compare("boundsonly",Qt::CaseInsensitive) == 0)
         return itBOUNDSONLYCSY;
 
     // type empty type can happen due to bug in older version of ilwis. no type was projected
     if ( type == sUNDEF || type.compare("projection",Qt::CaseInsensitive) == 0) {
+        QString proj = csy.value("CoordSystem","Projection");
+        if ( proj != sUNDEF){
+            if ( proj.toLower() == "utm"){
+                QString z = csy.value("Projection","Zone");
+                proj += " " + z;
+            }
+            addProperty("projectionname", proj);
+        }
         quint64 tp = itCONVENTIONALCOORDSYSTEM ;
         return tp;
     }

@@ -30,7 +30,7 @@ private:
     QString findDomainName(const QString &path) const;
     IlwisTypes findDomainType(const QString &path) const;
     QString findCsyName(const QString &path) const;
-    IlwisTypes findCsyType(const QString &path) const;
+    IlwisTypes findCsyType(const QString &path);
     QString findGrfName() const;
     QString findDatumName() const;
     QString findProjectionName() const;
