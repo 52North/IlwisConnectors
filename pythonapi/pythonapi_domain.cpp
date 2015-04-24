@@ -120,12 +120,18 @@ NumericDomain::NumericDomain(const std::string &resource){
     // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
     if (input.indexOf("://") < 0) {
         int pos = input.indexOf('/');
-        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
-            input = "file:///" + input;
-        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+        if (pos > 0) {
+            if (QFileInfo(input).exists()) // full path starting with drive-letter (MS-DOS-style)
+                input = "file:///" + input;
+            else // container object without path, e.g. myfile.hdf/subdataset: look for it in workingCatalog()
+                input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+        }  else if (pos == 0) // full path starting with path-separator (UNIX-style)
             input = "file://" + input;
-        else // file without path
-            input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+        else { // pos < 0: file without path, or new object
+            QString file = Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+            if (QFileInfo (file).exists()) // file without path
+                input = "file:///" + file;
+        }
     }
     Ilwis::INumericDomain numdom(input, itNUMERICDOMAIN);
     if (numdom.isValid())
@@ -421,12 +427,18 @@ ColorDomain::ColorDomain(const std::string &resource)
     // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
     if (input.indexOf("://") < 0) {
         int pos = input.indexOf('/');
-        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
-            input = "file:///" + input;
-        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+        if (pos > 0) {
+            if (QFileInfo(input).exists()) // full path starting with drive-letter (MS-DOS-style)
+                input = "file:///" + input;
+            else // container object without path, e.g. myfile.hdf/subdataset: look for it in workingCatalog()
+                input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+        }  else if (pos == 0) // full path starting with path-separator (UNIX-style)
             input = "file://" + input;
-        else // file without path
-            input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+        else { // pos < 0: file without path, or new object
+            QString file = Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+            if (QFileInfo (file).exists()) // file without path
+                input = "file:///" + file;
+        }
     }
     Ilwis::IColorDomain coldom(input, itCOLORDOMAIN);
     if (coldom.isValid())
@@ -472,12 +484,18 @@ TextDomain::TextDomain(const std::string &resource)
     // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
     if (input.indexOf("://") < 0) {
         int pos = input.indexOf('/');
-        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
-            input = "file:///" + input;
-        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+        if (pos > 0) {
+            if (QFileInfo(input).exists()) // full path starting with drive-letter (MS-DOS-style)
+                input = "file:///" + input;
+            else // container object without path, e.g. myfile.hdf/subdataset: look for it in workingCatalog()
+                input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+        }  else if (pos == 0) // full path starting with path-separator (UNIX-style)
             input = "file://" + input;
-        else // file without path
-            input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+        else { // pos < 0: file without path, or new object
+            QString file = Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+            if (QFileInfo (file).exists()) // file without path
+                input = "file:///" + file;
+        }
     }
     Ilwis::ITextDomain texdom(input, itTEXTDOMAIN);
     if (texdom.isValid())
@@ -502,12 +520,18 @@ TimeDomain::TimeDomain(const std::string& resource)
     // if it is file:// (or http:// etc) leave it untouched; if not, append file:// and the working catalog path if it is missing
     if (input.indexOf("://") < 0) {
         int pos = input.indexOf('/');
-        if (pos > 0) // full path starting with drive-letter (MS-DOS-style)
-            input = "file:///" + input;
-        else if (pos == 0) // full path starting with path-separator (UNIX-style)
+        if (pos > 0) {
+            if (QFileInfo(input).exists()) // full path starting with drive-letter (MS-DOS-style)
+                input = "file:///" + input;
+            else // container object without path, e.g. myfile.hdf/subdataset: look for it in workingCatalog()
+                input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+        }  else if (pos == 0) // full path starting with path-separator (UNIX-style)
             input = "file://" + input;
-        else // file without path
-            input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+        else { // pos < 0: file without path, or new object
+            QString file = Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
+            if (QFileInfo (file).exists()) // file without path
+                input = "file:///" + file;
+        }
     }
     Ilwis::ITimeDomain timedom(input, itNUMERICDOMAIN);
     if (timedom.isValid())
