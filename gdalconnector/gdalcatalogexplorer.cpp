@@ -22,6 +22,7 @@
 #include "tranquilizer.h"
 #include "gdalcatalogexplorer.h"
 #include "gdalitem.h"
+#include "ilwiscontext.h"
 #include "mastercatalog.h"
 
 using namespace Ilwis;
@@ -63,8 +64,8 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
     }
     kernel()->issues()->silent(true); // error messages during scan are not needed
     try{
-        Tranquilizer trq;
-        trq.prepare("gdal connector",source().toLocalFile(),files.size());
+        UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
+        trq->prepare("gdal connector",source().toLocalFile(),files.size());
         for(const QUrl& url : files) {
             QFileInfo file = toLocalFile(url);
             if ( file.exists()){
@@ -77,7 +78,7 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
                     }
                 }
             }
-            trq.update(1);
+            trq->update(1);
         }
 
         std::vector<Resource> items;
