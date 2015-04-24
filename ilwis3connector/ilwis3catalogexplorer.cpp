@@ -47,8 +47,8 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
 
     std::set<ODFItem> odfitems;
     QHash<QString, quint64> names;
-    Tranquilizer trq;
-    trq.prepare("ilwis3 connector",source().toLocalFile(),files.size());
+    UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
+    trq->prepare("ilwis3 connector",source().toLocalFile(),files.size());
     kernel()->issues()->silent(true);  // error messages during scan are not needed
     try{
         foreach(const QUrl& url, files) {
@@ -59,7 +59,7 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                 odfitems.insert(item);
                 names[url.toString().toLower()] = item.id();
             }
-            trq.update(1);
+            trq->update(1);
         }
 
         std::vector<ODFItem> items;
