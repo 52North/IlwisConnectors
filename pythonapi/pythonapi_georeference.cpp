@@ -24,7 +24,7 @@ namespace pythonapi {
         if (input.indexOf("://") < 0) {
             int pos = input.indexOf('/');
             if (pos > 0) {
-                if (QFileInfo(input).exists()) // full path starting with drive-letter (MS-DOS-style)
+                if ((input.count('/') > 1) || QFileInfo(input).exists()) // full path starting with drive-letter (MS-DOS-style)
                     input = "file:///" + input;
                 else // container object without path, e.g. myfile.hdf/subdataset: look for it in workingCatalog()
                     input = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + input;
