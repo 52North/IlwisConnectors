@@ -80,6 +80,15 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const IOOptions 
                         csyp->setProjection(projection);
                         projection->setCoordinateSystem(csyp);
                     }
+                }else // fallback, not all gdal wkt are correct
+                {
+                    char *proj4;
+                    gdal()->export2Proj4(srshandle, &proj4);
+                    QString sproj4 = proj4;
+                    if ( proj4){
+                        gdal()->free(proj4);
+                        csy->prepare(sproj4);
+                    }
                 }
             }
             QString ellipsoidName(gdal()->getAttributeValue(srshandle,"SPHEROID",0));
