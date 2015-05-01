@@ -59,7 +59,8 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                 odfitems.insert(item);
                 names[url.toString().toLower()] = item.id();
             }
-            trq->update(1);
+            if (!trq->update(1))
+                return std::vector<Resource>();
         }
 
         std::vector<ODFItem> items;

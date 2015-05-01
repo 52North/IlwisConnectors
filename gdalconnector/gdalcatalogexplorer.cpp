@@ -78,7 +78,8 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
                     }
                 }
             }
-            trq->update(1);
+            if (!trq->update(1))
+                return std::vector<Resource>();
         }
 
         std::vector<Resource> items;
