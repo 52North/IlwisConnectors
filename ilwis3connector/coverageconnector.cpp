@@ -203,7 +203,8 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             QFileInfo csyinf(_csyName);
             if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
                 if (!csyinf.isAbsolute()){
-                    _csyName = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + _csyName;
+                    QString destinationPath = QFileInfo(source().toLocalFile()).absolutePath();
+                    _csyName = destinationPath + "/" + _csyName;
                 }
 
                 QUrl url = QUrl::fromLocalFile(_csyName); // new attempt to create a suitable path;
