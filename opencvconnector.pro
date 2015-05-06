@@ -19,6 +19,11 @@ TEMPLATE = lib
 
 DEFINES += POSTGRESSQLCONNECTOR_LIBRARY
 
+resources.files += opencvconnector/resources/libraries.config
+resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
+
+INSTALLS += resources
+
 OTHER_FILES += \
     opencvconnector/opencvconnector.json 
 

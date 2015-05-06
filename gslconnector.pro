@@ -13,10 +13,7 @@ TEMPLATE = lib
 
 DEFINES += gslCONNECTOR_LIBRARY
 
-OTHER_FILES += \
-    gslconnector/gslconnector.json
-
-resources.files += gdalconnector/resources/libraries.config
+resources.files += gslconnector/resources/libraries.config
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
 INSTALLS += resources

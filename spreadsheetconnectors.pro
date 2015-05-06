@@ -10,6 +10,11 @@ TEMPLATE = lib
 
 DEFINES += POSTGRESSQLCONNECTOR_LIBRARY
 
+resources.files += spreadsheetconnectors/resources/libraries.config
+resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
+
+INSTALLS += resources
+
 OTHER_FILES += \
     spreadsheetconnectors/spreadsheetconnectors.json
 
