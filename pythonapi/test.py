@@ -8,7 +8,7 @@ try:
     from datetime import *
     from math import *
 
-    workingDir = "file:///D:/Profiles/KolbeJ/ILWIS/testdata/pytest"
+    workingDir = "file:///E:/pytest"
     babyDir = "/baby"
     exampleDir = "/example"
     worldDir = "/world"
@@ -654,20 +654,17 @@ try:
             world = FeatureCoverage("ne_110m_admin_0_countries.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setOutputConnection(workingDir + tempDir + "/countries_fromshp.shp", "ESRI Shapefile", "gdal")
-            world.store()
+            world.store(workingDir + tempDir + "/countries_fromshp.shp", "ESRI Shapefile", "gdal")
             # points
             world = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setOutputConnection(workingDir + tempDir + "/rainfall_fromshp.shp", "ESRI Shapefile", "gdal")
-            world.store()
+            world.store(workingDir + tempDir + "/rainfall_fromshp.shp", "ESRI Shapefile", "gdal")
             # lines
             world = FeatureCoverage("drainage.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
-            world.setOutputConnection(workingDir + tempDir + "/drainage_fromshp.shp", "ESRI Shapefile", "gdal")
-            world.store()
+            world.store(workingDir + tempDir + "/drainage_fromshp.shp", "ESRI Shapefile", "gdal")
 
         #@ut.skip("temporarily")
         def test_loadGDALstoreIlwis3(self):
@@ -676,21 +673,20 @@ try:
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             #            world.setCoordinateSystem(CoordinateSystem("countries.csy"))  # TODO use/copy shp files coordinate system instead
-            world.setOutputConnection(workingDir + tempDir + "/countries_fromshp", "vectormap", "ilwis3")
+            #world.setOutputConnection(workingDir + tempDir + "/countries_fromshp", "vectormap", "ilwis3")
             #world.store()
             # points
             world = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setOutputConnection(workingDir + tempDir + "/rainfall_fromshp", "vectormap", "ilwis3")
-            world.store()
+            world.store(workingDir + tempDir + "/rainfall_fromshp", "vectormap", "ilwis3")
             # lines
             world = FeatureCoverage("drainage.shp")
             self.assertTrue(bool(world))
             self.assertFalse(world.isInternal())
             world.setCoordinateSystem(CoordinateSystem("countries.csy"))
-            world.setOutputConnection(workingDir + tempDir + "/drainage_fromshp", "vectormap", "ilwis3")
+            #world.setOutputConnection(workingDir + tempDir + "/drainage_fromshp", "vectormap", "ilwis3")
             #world.store()  # skiped until Ilwis3Connector can handle datetime format
 
             # def test_loadIlwis3storeIlwis3(self):
@@ -816,6 +812,8 @@ try:
             self.assertEqual("536 478 536 478", str(
                 gr.envelope2Box(Envelope(Coordinate(-319195.47, 784540.64), Coordinate(-319990.248000, 784032.506500)))
             ))
+            gr.setCenterOfPixel(True)
+            self.assertTrue(gr.centerOfPixel())
 
     #@ut.skip("temporarily")
     class TestCatalog(ut.TestCase):
@@ -952,8 +950,7 @@ try:
             aa16 = Engine.do("sqrt", rc)
             self.assertAlmostEqual(aa16.pix2value(pix), sqrt(29), 2)
 
-            aa1.setOutputConnection(workingDir + tempDir + "/n000302_frommpr", "GTiff", "gdal")
-            aa1.store()
+            aa1.store(workingDir + tempDir + "/n000302_frommpr", "GTiff", "gdal")
 
         #@ut.skip("temporarily")
         def test_RasterCalculationsDifferentGeoref(self):
@@ -963,8 +960,7 @@ try:
             self.assertTrue(pix in rc1.size())
             self.assertEqual(rc1.pix2value(pix), 96.0)
             aa1 = rc1 + rc2
-            aa1.setOutputConnection(workingDir + rasterDir + "/kenya_frommpr", "map", "ilwis3")
-            aa1.store()
+            aa1.store(workingDir + rasterDir + "/kenya_frommpr", "map", "ilwis3")
             self.assertAlmostEqual(aa1.pix2value(pix), 96.0 + 0.201173, 1)
             aa2 = rc1 - rc2
             self.assertAlmostEqual(aa2.pix2value(pix), 96.0 - 0.201173, 1)
@@ -1004,8 +1000,7 @@ try:
             self.assertEqual(rcSelWKT.pix2value(pixSel), rc.pix2value(pix1))
             self.assertNotEqual(rcSelWKT.pix2value(pix2), rc.pix2value(pix2))
 
-            rcSelWKT.setOutputConnection(workingDir + rasterDir + "/aa_select_n000302", "map", "ilwis3")
-            rcSelWKT.store()
+            rcSelWKT.store(workingDir + rasterDir + "/aa_select_n000302", "map", "ilwis3")
 
         def test_RasterSelectionGeom(self):
             rc = RasterCoverage("n000302.mpr")
@@ -1027,8 +1022,7 @@ try:
             self.assertEqual(rcSel.pix2value(pixSel), rc.pix2value(pix1))
             self.assertNotEqual(rcSel.pix2value(pix2), rc.pix2value(pix2))
 
-            rcSel.setOutputConnection(workingDir + rasterDir + "/aa_select_n000302", "map", "ilwis3")
-            rcSel.store()
+            rcSel.store(workingDir + rasterDir + "/aa_select_n000302", "map", "ilwis3")
 
         #@ut.skip("temporarily")
         def test_Datadefinition(self):
@@ -1229,8 +1223,7 @@ try:
                         polygon.setAttribute("maxY", maxval)
                     #print(count)
 
-            polygongrid.setOutputConnection(workingDir + exampleDir + "/polygongrid", "vectormap", "ilwis3")
-            polygongrid.store()
+            polygongrid.store(workingDir + exampleDir + "/polygongrid", "vectormap", "ilwis3")
 
         #@ut.skip("temporarily")
         def test_claudio2(self):
@@ -1283,8 +1276,7 @@ try:
 
             rc.addBand(2, rc2.begin())
 
-            rc.setOutputConnection(workingDir + "/newRaster", "GTiff", "gdal")
-            rc.store()
+            rc.store(workingDir + "/newRaster", "GTiff", "gdal")
 
     #@ut.skip("temporarily")
     class TestBaby(ut.TestCase):
@@ -1300,8 +1292,7 @@ try:
         def test_helloRaster(self):
             rc = RasterCoverage("n000302.mpr")
             res = Engine.do("aggregateraster", rc, "Avg", 10, True)
-            res.setOutputConnection(workingDir + babyDir + "/avg_n000302", "map", "ilwis3")
-            res.store()
+            res.store(workingDir + babyDir + "/avg_n000302", "map", "ilwis3")
 
         def test_helloFeature(self):
             fc_soils = FeatureCoverage("aafsoils.shp")
@@ -1317,8 +1308,7 @@ try:
                 else:
                     feature["selected"] = False
             self.assertEqual(count, 3, msg="wrong count value!")
-            fc_soils.setOutputConnection(workingDir + babyDir + "/soils_select", "vectormap", "ilwis3")
-            fc_soils.store()
+            fc_soils.store(workingDir + babyDir + "/soils_select", "vectormap", "ilwis3")
 
     #@ut.skip("temporarily")
     class TestWorld(ut.TestCase):
@@ -1388,7 +1378,7 @@ try:
             fc.name("newName")
             self.assertEqual("newName", fc.name())
             self.assertTrue(fc.isInternal())
-            fc.setInputConnection(workingDir + worldDir + "/countries.mpa", "vectormap", "ilwis3")
+            fc.open(workingDir + worldDir + "/countries.mpa", "vectormap", "ilwis3")
             #fc = FeatureCoverage("countries.mpa")
             self.assertFalse(fc.isInternal())
             self.assertEqual("countries.mpa", fc.name())
@@ -1553,7 +1543,7 @@ try:
 
             childdom = ItemDomain(interrange)
 
-            self.assertEqual(interrange.listAll(), [('sealevel', '40.000 100.000'), ('dijks', '101.0 151.0')])
+            self.assertEqual(interrange.listAll(), [('sealevel', 'numericrange:40.0|100.0'), ('dijks', 'numericrange:101.0|151.0')])
 
             interrange.add(("by the sea", 152.0, 181.0, 5.0))
             parentdom = ItemDomain(interrange)
@@ -1792,7 +1782,7 @@ try:
             color2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
             color3 = Color(ColorModel.cmRGBA, (230.0, 60.0, 50.0, 240.0))
 
-            col = ContinousColorRange(color1, color2)
+            col = ContinuousColorRange(color1, color2)
             self.assertTrue(bool(col))
 
             col2 = col.clone()
@@ -1810,7 +1800,7 @@ try:
             color2 = Color(ColorModel.cmCYMKA, (0.9, 0.7, 0.5, 0.9, 1.0))
             color3 = Color(ColorModel.cmCYMKA, (0.77, 0.5, 0.4, 0.7, 1.0))
 
-            col = ContinousColorRange(color1, color2)
+            col = ContinuousColorRange(color1, color2)
             self.assertTrue(bool(col))
 
             col2 = col.clone()
@@ -1828,7 +1818,7 @@ try:
             color2 = Color(ColorModel.cmHSLA, (300.0, 0.7, 0.5, 1.0))
             color3 = Color(ColorModel.cmHSLA, (177.0, 0.5, 0.4, 1.0))
 
-            col = ContinousColorRange(color1, color2)
+            col = ContinuousColorRange(color1, color2)
             self.assertTrue(bool(col))
 
             col2 = col.clone()
@@ -1853,7 +1843,7 @@ try:
             self.assertEqual(colPal.count(), 1)
             colPal.add(col2)
             self.assertEqual(colPal.count(), 2)
-            self.assertEqual(str(colPal.item(0)), 'RGBA(0.862745,0.0784314,0.117647,0.784314)')
+            self.assertEqual(str(colPal.item(0)), 'RGBA(0.86,0.08,0.12,0.78)')
             name1 = colPal.itemByOrder(1).getName()
             self.assertFalse(colPal.containsColor(col3))
             colPal.add(col3)
@@ -1861,7 +1851,7 @@ try:
             self.assertEqual(colPal.count(), 3)
             colPal.remove(name1)
             self.assertEqual(colPal.count(), 2)
-            self.assertEqual(str(colPal.color(1)), 'RGBA(1,0.313725,0.270588,0.941176)')
+            self.assertEqual(str(colPal.color(1)), 'RGBA(1,0.31,0.27,0.94)')
 
             colPal.clear()
             self.assertEqual(colPal.count(), 0)
@@ -2068,7 +2058,7 @@ try:
         def test_datdefColor(self):
             color1 = Color(ColorModel.cmRGBA, (220.0, 20.0, 30.0, 200.0))
             color2 = Color(ColorModel.cmRGBA, (255.0, 80.0, 60.0, 240.0))
-            col = ContinousColorRange(color1, color2)
+            col = ContinuousColorRange(color1, color2)
             colDom = ColorDomain()
             colDom.setRange(col)
 
@@ -2089,7 +2079,7 @@ try:
 
             color3 = Color(ColorModel.cmRGBA, (130.0, 0.0, 10.0, 100.0))
             color4 = Color(ColorModel.cmRGBA, (230.0, 60.0, 50.0, 240.0))
-            colDiff = ContinousColorRange(color3, color4)
+            colDiff = ContinuousColorRange(color3, color4)
             colDomDiff = ColorDomain()
             colDomDiff.setRange(colDiff)
             datdef3 = DataDefinition(colDomDiff)
