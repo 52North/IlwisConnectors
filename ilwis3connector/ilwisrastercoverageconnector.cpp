@@ -518,15 +518,18 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
         localName = localGrfPath.absolutePath() + namePart;
 
     }
-    QFileInfo localGrf(localName);
+    QString destinationPath = QFileInfo(source().toLocalFile()).absolutePath();
+    QFileInfo sourceGrf(localName);
+    QString fileName (sourceGrf.fileName());
+    QFileInfo destGrf(destinationPath + '/' + fileName);
 
-    if ( !localGrf.exists()) { // if it is not an existing ilwis3 grf, we create one from scratch
-        QUrl url = QUrl::fromLocalFile(localName);
+    if ( !destGrf.exists()) { // if it is not an existing ilwis3 grf, we create one from scratch
+        QUrl url = QUrl::fromLocalFile(destGrf.absoluteFilePath());
         grf->connectTo(url, "georef", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
         grf->store({"storemode", IlwisObject::smMETADATA});
     }
 
-    return localName;
+    return destGrf.absoluteFilePath();
 }
 
 bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
