@@ -20,8 +20,8 @@ class IniFile
 {
 public:
     IniFile();
-    IniFile(const QFileInfo &file, bool loadfile=true);
-    bool setIniFile(const QFileInfo &file, bool loadfile=true);
+    IniFile(const QFileInfo &url, bool loadfile=true);
+    bool setIniFile(const QFileInfo &url, bool loadfile=true);
     virtual ~IniFile();
 
     void setKeyValue(const QString& section, const QString& key, const QString& value);
@@ -32,10 +32,11 @@ public:
 
     void removeKeyValue(const QString& section, const QString& key);
     void removeSection(const QString& section);
-    QString file()const;
+    QString url()const;
+    QString filepath() const;
     QStringList childKeys(const QString& section) const;
 
-    void store(const QString &ext, const QFileInfo& file);
+    void store(const QString &ext, const QFileInfo& url);
 
 private:
     QFileInfo _filename;

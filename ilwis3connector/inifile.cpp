@@ -115,9 +115,13 @@ void IniFile::removeSection(const QString& section)
     }
 }
 
-QString IniFile::file() const
+QString IniFile::url() const
 {
     return QUrl::fromLocalFile(_filename.absoluteFilePath()).toString();
+}
+
+QString IniFile::filepath() const{
+    return _filename.absoluteFilePath();
 }
 
 QStringList IniFile::childKeys(const QString &section) const
