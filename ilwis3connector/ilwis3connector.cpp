@@ -378,8 +378,8 @@ QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& 
                 QString loc = "file:///" + owner.container().toLocalFile() + "/" + localName;
                 return loc;
             }
-            int index = _odf->file().lastIndexOf("/");
-            QUrl loc = _odf->file().left(index) + "/" + localName;
+            int index = _odf->url().lastIndexOf("/");
+            QUrl loc = _odf->url().left(index) + "/" + localName;
             return loc.toString();
 
         }

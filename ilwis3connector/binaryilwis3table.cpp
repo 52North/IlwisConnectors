@@ -60,17 +60,17 @@ bool BinaryIlwis3Table::load(const ODF& odf, const QString& prfix){
     bool ok;
     _columns = odf->value(prefix + "Table","Columns").toLong(&ok);
     if (!ok) {
-        kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("column",odf->file()));
+        kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("column",odf->url()));
         return false;
     }
     _rows = odf->value(prefix + "Table","Records").toLong(&ok);
     if (!ok) {
-        kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("records",odf->file()));
+        kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("records",odf->url()));
         return false;
     }
     QString datafile = odf->value(prefix + "TableStore", "Data");
     //TODO: changes this container model
-    QUrl  url(odf->file());
+    QUrl  url(odf->url());
     QFileInfo inf = url.toLocalFile();
     datafile = inf.absolutePath() + "/" + datafile;
     QFile file(datafile);
@@ -117,7 +117,7 @@ void BinaryIlwis3Table::getColumnInfo(const ODF& odf, const QString& prefix) {
             // due to inconsistent spelling a different case has to be checked, the above case is most comon
             st = odf->value(section, "Storetype");
             if ( st == sUNDEF){
-                ERROR2(ERR_INVALID_PROPERTY_FOR_2, "column store type", odf->file());
+                ERROR2(ERR_INVALID_PROPERTY_FOR_2, "column store type", odf->url());
                 return ;
             }
         }
