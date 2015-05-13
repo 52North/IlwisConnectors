@@ -10,6 +10,7 @@ public:
     IlwisObject *create(const Ilwis::Resource &resource,const IOOptions& options=IOOptions()) const;
     bool canUse(const Resource &resource) const;
     bool prepare();
+    std::vector<Resource> loadResource(const QUrl &url, IlwisTypes types=itILWISOBJECT) const;
 private:
     void loadIlwis3Aliasses();
     void insertFile(const QString &filename, QSqlQuery &sqlPublic);
