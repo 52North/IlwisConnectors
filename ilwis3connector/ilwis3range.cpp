@@ -66,12 +66,12 @@ bool Ilwis3Range::minMax2minMax(const ODF &odf,const QString& minmax, double& vm
     if ( parts.size() >= 2) {
         vmin = parts[0].toDouble(&ok);
         if ( !ok) {
-            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Maximum", odf->file()));
+            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Maximum", odf->url()));
             return false;
         }
         vmax = parts[1].toDouble(&ok);
         if (!ok){
-            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Minimum", odf->file()));
+            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Minimum", odf->url()));
             return false;
         }
     }
@@ -86,7 +86,7 @@ bool Ilwis3Range::range2MinMax(const ODF &odf, const QString &range, double& vmi
         double v1 = parts[0].toDouble(&ok1);
         double v2 = parts[1].toDouble(&ok2);
         if ( ! ( ok1 && ok2)) {
-            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Range",odf->file()));
+            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Range",odf->url()));
             return false;
         }
         RawConverter conv = converter(odf,range);
@@ -135,7 +135,7 @@ RawConverter Ilwis3Range::converter(const ODF &odf, const QString &section)  {
 
         }
         if ( ! ( ok1 && ok2)) {
-            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Range",odf->file()));
+            kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("Range",odf->url()));
             return RawConverter();
         }
         return RawConverter(offset, scale,vmin, vmax, st);

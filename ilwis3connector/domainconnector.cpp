@@ -84,7 +84,7 @@ bool DomainConnector::handleItemDomains(IlwisObject* data) {
     tbl.load(_odf);
     quint32 indexName = tbl.index("Name");
     if (indexName == iUNDEF) { // no name column in the table ?
-        kernel()->issues()->log(TR(ERR_COLUMN_MISSING_2).arg("Name",_odf->file()));
+        kernel()->issues()->log(TR(ERR_COLUMN_MISSING_2).arg("Name",_odf->url()));
         return false;
     }
     quint32 indexCode = tbl.index("Code"); // not mandatory
@@ -237,7 +237,7 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes valueType)
     _odf->setKeyValue("Domain", "Type", typeName);
     _odf->setKeyValue( hasType(valueType,itTHEMATICITEM | itNUMERICITEM) ? "DomainClass" : "DomainIdentifier", "Nr", QString::number(iddomain->count()));
 
-    QFileInfo inf(QUrl(_odf->file()).toLocalFile());
+    QFileInfo inf(QUrl(_odf->url()).toLocalFile());
     QString dataName  = inf.baseName() + ".dm#";
     _odf->setKeyValue("TableStore", "Data", dataName);
     _odf->setKeyValue("TableStore", "Col0", "Name");

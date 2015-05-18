@@ -33,7 +33,8 @@ SOURCES += \
     ilwis3connector/RawConverter.cpp \
     ilwis3connector/ilwisrastercoverageconnector.cpp \
     ilwis3connector/ilwis3featureconnector.cpp \
-    ilwis3connector/ilwis3catalogexplorer.cpp
+    ilwis3connector/ilwis3catalogexplorer.cpp \
+    ilwis3connector/ilwis3representationconnector.cpp
 
 HEADERS += \
     ilwis3connector/ilwis3connector_global.h \
@@ -54,7 +55,8 @@ HEADERS += \
     ilwis3connector/ilwis3projectionconnector.h \
     ilwis3connector/ilwisrastercoverageconnector.h \
     ilwis3connector/ilwis3featureconnector.h \
-    ilwis3connector/ilwis3catalogexplorer.h
+    ilwis3connector/ilwis3catalogexplorer.h \
+    ilwis3connector/ilwis3representationconnector.h
 
 resources.files += ilwis3connector/resources/projection_allias.csv \
     ilwis3connector/resources/ellipsoid_allias.csv \

@@ -72,12 +72,12 @@ FeatureConnector::FeatureConnector(const Resource &resource, bool load, const IO
 bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& tbl) {
     BinaryIlwis3Table polTable;
     if ( !polTable.load(_odf)) {
-        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->file())    ;
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->url())    ;
     }
 
     BinaryIlwis3Table topTable;
     if ( !topTable.load(_odf,"top")) {
-        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->file())    ;
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->url())    ;
     }
 
     qint32 colValue = polTable.index("PolygonValue");
@@ -203,7 +203,7 @@ bool FeatureConnector::isForwardStartDirection(const BinaryIlwis3Table& topTable
 
 bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& tbl) {
     QString datafile = _odf->value("PolygonMapStore","DataPol");
-    datafile = QFileInfo(QUrl(_odf->file()).toLocalFile()).absolutePath() + "/" + datafile;
+    datafile = QFileInfo(QUrl(_odf->url()).toLocalFile()).absolutePath() + "/" + datafile;
     QFile file(datafile);
 
     if (!file.exists()){
@@ -342,7 +342,7 @@ bool FeatureConnector::loadBinaryPolygons(FeatureCoverage *fcoverage) {
 bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
     BinaryIlwis3Table mpsTable;
     if ( !mpsTable.load(_odf)) {
-        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->file())    ;
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->url())    ;
     }
     int colCoords = mpsTable.index("Coords");
     int colItemId = mpsTable.index("SegmentValue");
@@ -379,7 +379,7 @@ bool FeatureConnector::loadBinarySegments(FeatureCoverage *fcoverage) {
 bool FeatureConnector::loadBinaryPoints(FeatureCoverage *fcoverage) {
     BinaryIlwis3Table mppTable;
     if ( !mppTable.load(_odf)) {
-        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->file())    ;
+        return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_odf->url())    ;
     }
     // two cases; the old case; 2 columns for x and y. and the new case one column for coord
     int coordColumnX = mppTable.index("x");

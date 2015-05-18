@@ -61,7 +61,6 @@ std::vector<Resource> WfsCatalogExplorer::loadItems(const IOOptions &options)
 
     std::vector<Resource> wfsFeatures;
     parser.parseFeatures(wfsFeatures);
-    mastercatalog()->addItems(wfsFeatures);
     MESSAGE1("Added %1 objects through the wfs connector", QString::number(wfsFeatures.size()));
     return wfsFeatures;
 }

@@ -52,6 +52,8 @@
 #include "ilwiscontext.h"
 #include "dataformat.h"
 #include "ilwis3featureconnector.h"
+#include "representation.h"
+#include "ilwis3representationconnector.h"
 
 
 using namespace Ilwis;
@@ -85,7 +87,7 @@ void Ilwis3Module::prepare()
     factory->addCreator(itELLIPSOID,"ilwis3",Ilwis3::EllipsoidConnector::create);
     factory->addCreator(itCOORDSYSTEM,"ilwis3",Ilwis3::CoordinateSystemConnector::create);
     factory->addCreator(itFEATURE,"ilwis3",Ilwis3::FeatureConnector::create);
-    //factory->addCreator(itCATALOG,"ilwis3",Ilwis::CatalogConnector::create);
+    factory->addCreator(itREPRESENTATION,"ilwis3",Ilwis3::Ilwis3RepresentationConnector::create);
 
     factory->addCreator("map","ilwis3",Ilwis3::RasterCoverageConnector::create);
     factory->addCreator("georef","ilwis3",Ilwis3::GeorefConnector::create);
@@ -93,6 +95,7 @@ void Ilwis3Module::prepare()
     factory->addCreator("domain","ilwis3",Ilwis3::DomainConnector::create);
     factory->addCreator("coordsystem","ilwis3",Ilwis3::CoordinateSystemConnector::create);
     factory->addCreator("table","ilwis3",Ilwis3::TableConnector::create);
+    factory->addCreator("representation","ilwis3",Ilwis3::Ilwis3RepresentationConnector::create);
 
     IlwisObject::addTypeFunction(Ilwis3Connector::ilwisType);
 

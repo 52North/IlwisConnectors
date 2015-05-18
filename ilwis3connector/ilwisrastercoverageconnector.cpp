@@ -51,7 +51,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
 
     QString file = filename2FullPath(_odf->value("MapList","Map0"));
     if ( file == sUNDEF)
-        return ERROR2(ERR_COULD_NOT_LOAD_2,"RasterCoverage",_odf->file());
+        return ERROR2(ERR_COULD_NOT_LOAD_2,"RasterCoverage",_odf->url());
 
     IRasterCoverage mp;
     if (!mp.prepare(file))
@@ -486,9 +486,9 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         gcMap->size(Size<>(sz.xsize(), sz.ysize(),1));
         gcMap->name(mapName);
 
-        int index = _odf->file().lastIndexOf("/");
+        int index = _odf->url().lastIndexOf("/");
         gcMap->copyBinary(raster, i);
-        QString path = _odf->file().left(index);
+        QString path = _odf->url().left(index);
         QUrl url =  path + "/" + mapName;
         gcMap->connectTo(url, "map", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
         gcMap->store({"storemode",IlwisObject::smBINARYDATA | IlwisObject::smMETADATA});
@@ -607,7 +607,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
 
     ITable attTable = raster->attributeTable();
     if ( attTable.isValid() && attTable->columnCount() > 1) {
-        QFileInfo basename(QUrl(_odf->file()).toLocalFile());
+        QFileInfo basename(QUrl(_odf->url()).toLocalFile());
         QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, raster.ptr(), itRASTER,basename.baseName()));
         conn->storeMetaData(attTable.ptr());
     }

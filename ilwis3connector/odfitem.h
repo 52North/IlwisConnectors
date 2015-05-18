@@ -8,7 +8,7 @@ class ODFItem : public Resource
 public:
     ODFItem(const QFileInfo& file);
     bool resolveNames(const QHash<QString, quint64>& names);
-
+    std::vector<Resource> resolveNames();
 
     // bool isSystemObject(const QString &name) const;
 private:
@@ -30,7 +30,7 @@ private:
     QString findDomainName(const QString &path) const;
     IlwisTypes findDomainType(const QString &path) const;
     QString findCsyName(const QString &path) const;
-    IlwisTypes findCsyType(const QString &path) const;
+    IlwisTypes findCsyType(const QString &path);
     QString findGrfName() const;
     QString findDatumName() const;
     QString findProjectionName() const;
@@ -41,6 +41,7 @@ private:
     QString stripExtension(const QString &name) const;
     static bool isSystemObject(const QString &name);
     QString cleanName(const QString&) const;
+    Resource resolveName(const QString &name, IlwisTypes tp);
 
     IniFile _odf;
     QFileInfo _file;

@@ -49,7 +49,7 @@ GeorefConnector::GeorefConnector(const Resource &resource, bool load, const IOOp
 bool GeorefConnector::loadGeoref(const IniFile &odf, IlwisObject *data ) {
     QString type = odf.value("GeoRef","Type");
     if ( type == "?") {
-        kernel()->issues()->log(TR("Invalid Georef section in %1").arg(odf.file()));
+        kernel()->issues()->log(TR("Invalid Georef section in %1").arg(odf.url()));
         return false;
     }
     bool ok1, ok2;

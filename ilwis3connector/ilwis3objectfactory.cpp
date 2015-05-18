@@ -37,6 +37,7 @@
 #include "rawconverter.h"
 #include "coverageconnector.h"
 #include "ilwisrastercoverageconnector.h"
+#include "odfitem.h"
 #include "tableconnector.h"
 
 using namespace Ilwis;
@@ -64,6 +65,19 @@ IlwisObject *Ilwis3ObjectFactory::create(const Resource &resource, const IOOptio
 
     delete connector;
     return 0;
+}
+
+std::vector<Resource> Ilwis3ObjectFactory::loadResource(const QUrl& url, IlwisTypes types) const{
+    QFileInfo file = url.toLocalFile();
+    std::vector<Resource> items;
+    IlwisTypes tp = Ilwis3Connector::ilwisType(file.fileName());
+    if ( hasType(tp,types) ) {
+        ODFItem item(file);
+        items = item.resolveNames();
+        items.insert(items.begin(),item);
+        mastercatalog()->addItems(items);
+    }
+    return items;
 }
 
 bool Ilwis3ObjectFactory::canUse(const Resource &resource) const
