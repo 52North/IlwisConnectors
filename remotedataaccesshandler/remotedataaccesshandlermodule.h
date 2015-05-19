@@ -24,6 +24,7 @@ public:
 
     Q_PLUGIN_METADATA(IID "n52.ilwis.remotedataaccesshandler" FILE  "remotedataaccesshandler.json")
 
+    void prepare();
 signals:
 
 public slots:

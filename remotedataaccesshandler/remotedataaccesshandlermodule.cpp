@@ -50,6 +50,14 @@ void RemoteDataAccessHandlerModule::finalizePreparation()
     }
 }
 
+void RemoteDataAccessHandlerModule::prepare()
+{
+
+  kernel()->issues()->log("Loaded remote data access module",IssueObject::itMessage);
+
+}
+
+
 
 
 

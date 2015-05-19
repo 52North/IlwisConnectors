@@ -89,6 +89,8 @@ void StreamModule::prepare()
     cfactory->addCreator("table","stream",StreamConnector::create);
     cfactory->addCreator("catalog","stream",StreamConnector::create);
 
+    kernel()->issues()->log("Loaded streaming module",IssueObject::itMessage);
+
 
 
 }
