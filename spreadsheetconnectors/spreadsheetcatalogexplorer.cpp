@@ -42,6 +42,7 @@ std::vector<Ilwis::Resource> SpreadSheetCatalogExplorer::loadItems(const IOOptio
             resources.push_back(res);
         }else {
             Resource res(file, itCATALOG);
+            res.setExtendedType(itTABLE);
             resources.push_back(res);
             for (int worksheet_index = 0; worksheet_index < sheetCount;
                  worksheet_index++)
