@@ -67,6 +67,8 @@ ODFItem::ODFItem(const QFileInfo &file) : Resource(QUrl::fromLocalFile(file.abso
 
     if (_datumName != sUNDEF)
         _extendedType |= itGEODETICDATUM;
+    if ( file.suffix() == "mpl")
+        _extendedType |= itCATALOG;
 
     _size = findSize();
     _dimensions = findDimensions();
@@ -540,10 +542,16 @@ QString ODFItem::findDimensions() const
         {
             QString sSize = _odf.value( "Map", "Size");
             QStringList xy = sSize.split(" ");
-            if ( xy.size() != 2)
-                return "";
+            if ( xy.size() != 2){
+                sSize = _odf.value( "MapList", "Size");
+                QString zsize = _odf.value( "MapList", "Maps");
+                xy = sSize.split(" ");
+                if ( xy.size() != 2)
+                    return "";
+                return QString ("%1 %2 %3").arg( xy[0], xy[1],zsize);
+            }
 
-            return QString ("%1 x %2").arg( xy[0], xy[1]);
+            return QString ("%1 %2").arg( xy[0], xy[1]);
         }
         case itLINE:
             return _odf.value( "SegmentMapStore", "Segments");
