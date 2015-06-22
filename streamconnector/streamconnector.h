@@ -22,6 +22,7 @@ public:
     bool needFlush() const;
     void flush(bool last);
     bool isReadOnly() const;
+    bool isFileBased() const;
     static ConnectorInterface *create(const Resource &resource, bool load, const IOOptions &options);
 
 private:
