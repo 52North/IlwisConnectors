@@ -25,6 +25,7 @@
 #include "georefSerializerv1.h"
 #include "rasterSerializerv1.h"
 #include "catalogserializerv1.h"
+#include "dataformat.h"
 
 using namespace Ilwis;
 using namespace Stream;
@@ -88,6 +89,10 @@ void StreamModule::prepare()
     cfactory->addCreator("rastercoverage","stream",StreamConnector::create);
     cfactory->addCreator("table","stream",StreamConnector::create);
     cfactory->addCreator("catalog","stream",StreamConnector::create);
+
+    QFileInfo ilw = context()->ilwisFolder();
+    QString path = ilw.canonicalFilePath() + "/extensions/streamconnector/resources";
+    DataFormat::setFormatInfo(path + "/streamformats.config","ilwis3");
 
     kernel()->issues()->log("Loaded streaming module",IssueObject::itMessage);
 
