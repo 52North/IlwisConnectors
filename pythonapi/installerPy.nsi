@@ -171,6 +171,7 @@ Section "ILWIS Objects (required)" IOSecID
     File bin\Qt5Gui*.dll
     File bin\Qt5XmlPatterns*.dll
     File bin\Qt5Network*.dll
+    File bin\Qt5Concurrent*.dll
     File bin\${LICENCE_FILE}
 
     WriteUninstaller "$Instdir\ILWISObjectsUninstall.exe"
@@ -264,6 +265,7 @@ Section "un.ILWIS Objects"
     Delete $Instdir\Qt5Gui*.dll
     Delete $Instdir\Qt5XmlPatterns*.dll
     Delete $Instdir\Qt5Network*.dll
+    Delete $Instdir\Qt5Concurrent*.dll
     Delete $Instdir\${LICENCE_FILE}
     RmDir /REBOOTOK $Instdir
     DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
