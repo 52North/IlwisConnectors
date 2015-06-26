@@ -56,4 +56,6 @@ void SpreadSheetConnectorsModule::prepare()
 
     cfactory->addCreator("spreadsheet","spreadsheets",SpreadSheetTableConnector::create);
 
+  kernel()->issues()->log("Loaded spreadsheet module",IssueObject::itMessage);
+
 }

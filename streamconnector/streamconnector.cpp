@@ -71,6 +71,9 @@ bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options
         stream >> tp;
         stream >> version;
         std::unique_ptr<VersionedSerializer> serializer(factory->create(version,tp,stream));
+        if (!serializer)
+            return false;
+        serializer->connector(this);
         return serializer->loadMetaData(object,options);
 
     }else {
@@ -90,6 +93,9 @@ bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
         stream >> tp;
         stream >> version;
         std::unique_ptr<VersionedSerializer> serializer(factory->create(version, tp,stream));
+        if (!serializer)
+            return false;
+        serializer->connector(this);
         _binaryIsLoaded = serializer->loadData(object,options);
         return _binaryIsLoaded;
 
@@ -189,4 +195,9 @@ void StreamConnector::flush(bool last)
 bool StreamConnector::isReadOnly() const
 {
     return false;
+}
+
+bool StreamConnector::isFileBased() const
+{
+    return source().url(true).scheme() == "file";
 }

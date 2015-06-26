@@ -96,6 +96,8 @@ void GdalModule::prepare()
         cfactory->addCreator(name.toString(),"gdal", GdalFeatureConnector::create);
 
     IlwisObject::addTypeFunction(GdalConnector::ilwisType);
+
+    kernel()->issues()->log("Loaded module GdalConnector",IssueObject::itMessage);
 }
 
 QString GdalModule::getName() const

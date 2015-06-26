@@ -295,6 +295,9 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
                 return ERROR1(ERR_NO_INITIALIZED_1,TR("numeric range"));
             }
             SPNumericRange numrange = def.datadef().range<NumericRange>();
+            if ( numrange.isNull()){
+                numrange = def.datadef().domain()->range<NumericRange>();
+            }
             RawConverter conv(numrange->min(), numrange->max(), numrange->resolution());
             double resolution = numrange->resolution();
             if ( domName == sUNDEF) {

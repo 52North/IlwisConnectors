@@ -77,5 +77,8 @@ SOURCES += \
     streamconnector/catalogserializerv1.cpp \
     streamconnector/catalogconnection.cpp
 
+resources.files = streamconnector/resources/ogr_formats.config
+resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
+INSTALLS += resources
 

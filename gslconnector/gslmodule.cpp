@@ -43,7 +43,7 @@ QString GSLModule::getInterfaceVersion() const
 
 void GSLModule::prepare()
 {
-
+    kernel()->issues()->log("Loaded module Gnu Scientific Library (GSL) connector",IssueObject::itMessage);
 }
 
 QString GSLModule::getName() const

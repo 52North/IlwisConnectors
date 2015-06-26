@@ -37,6 +37,8 @@ void HttpServerModule::prepare()
 
     handlerFactory->addHandler("staticfilecontroller",StaticFileController::create);
 
+    kernel()->issues()->log("Loaded module HTTP server",IssueObject::itMessage);
+
 
 }
 

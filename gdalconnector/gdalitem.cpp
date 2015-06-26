@@ -165,12 +165,13 @@ quint64 GDALItems::numbertype2domainid(const QString& numbertype) const{
     return dom->id();
 }
 
-QString GDALItems::dimensions(GdalHandle* handle) const
+QString GDALItems::dimensions(GdalHandle* handle, bool & is3d) const
 {
     Size<> sz(gdal()->xsize(handle->handle()), gdal()->ysize(handle->handle()), gdal()->layerCount(handle->handle()));
-    QString dim = QString("%1 x %2").arg(sz.xsize()).arg(sz.ysize());
+    QString dim = QString("%1 %2").arg(sz.xsize()).arg(sz.ysize());
     if ( sz.zsize() != 1){
-        dim += " x " + QString::number(sz.zsize());
+        dim += " " + QString::number(sz.zsize());
+        is3d = true;
     }
 
     return dim;
@@ -180,7 +181,7 @@ quint64 GDALItems::addItem(GdalHandle* handle, const QUrl& url, quint64 csyid, q
     Resource gdalItem(url, tp);
     if ( sz != i64UNDEF)
         gdalItem.size(sz);
-    gdalItem.setExtendedType(extTypes);
+    bool is3D = false;
     if ( !hasType(tp,itCATALOG))
         gdalItem.addProperty("coordinatesystem", csyid);
     if ( tp == itFEATURE){
@@ -191,16 +192,21 @@ quint64 GDALItems::addItem(GdalHandle* handle, const QUrl& url, quint64 csyid, q
         Resource resValue = mastercatalog()->name2Resource("code=value",itNUMERICDOMAIN);
         gdalItem.addProperty("domain", resValue.id());
         gdalItem.addProperty("georeference", grfId);
-        QString dim = dimensions(handle);
+
+        QString dim = dimensions(handle, is3D);
         gdalItem.dimensions(dim);
+        if ( is3D)
+            extTypes |= itCATALOG;
+
     } else if (hasType(tp, itGEOREF)){
-        gdalItem.dimensions(dimensions(handle));
+        gdalItem.dimensions(dimensions(handle, is3D));
     }else{
         if ( tp == itCATALOG){
             QString dim = QString::number(csyid); // misuse of csyid :)
             gdalItem.dimensions(dim);
         }
     }
+    gdalItem.setExtendedType(extTypes);
 
     insert(gdalItem);
 

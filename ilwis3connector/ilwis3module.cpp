@@ -103,6 +103,8 @@ void Ilwis3Module::prepare()
     QString path = ilw.canonicalFilePath() + "/extensions/ilwis3connector/resources";
     DataFormat::setFormatInfo(path + "/ilwis3formats.config","ilwis3");
 
+    kernel()->issues()->log("Loaded module Ilwis3 connector",IssueObject::itMessage);
+
 
 }
 

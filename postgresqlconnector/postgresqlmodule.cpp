@@ -64,4 +64,6 @@ void PostgresqlModule::prepare()
     cfactory->addCreator(itTABLE, "postgresql", PostgresqlTableConnector::create);
     cfactory->addCreator(itFEATURE, "postgresql", PostgresqlFeatureConnector::create);
     cfactory->addCreator(itCATALOG, "postgresql", CatalogConnector::create);
+
+    kernel()->issues()->log("Loaded Postgresql Module",IssueObject::itMessage);
 }

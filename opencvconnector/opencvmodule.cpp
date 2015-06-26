@@ -33,5 +33,5 @@ QString OpenCVModule::getVersion() const
 
 void OpenCVModule::prepare()
 {
-
+    kernel()->issues()->log("Loaded OpenCV module",IssueObject::itMessage);
 }

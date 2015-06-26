@@ -68,6 +68,8 @@ void WfsModule::prepare()
 
     cfactory->addCreator(itCATALOG, "wfs", CatalogConnector::create);
     cfactory->addCreator(itFEATURE, "wfs", WfsFeatureConnector::create);
+
+    kernel()->issues()->log("Loaded wfs module",IssueObject::itMessage);
 }
 
 QString WfsModule::getName() const

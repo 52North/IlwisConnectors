@@ -49,17 +49,24 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
 
     std::set<ODFItem> odfitems;
     QHash<QString, quint64> names;
+    std::vector<Resource> finalList;
     UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
     trq->prepare("ilwis3 connector",source().toLocalFile(),files.size());
     kernel()->issues()->silent(true);  // error messages during scan are not needed
     try{
         foreach(const QUrl& url, files) {
             QFileInfo file = toLocalFile(url);
-            IlwisTypes tp = Ilwis3Connector::ilwisType(file.fileName());
-            if ( tp & itILWISOBJECT ) {
-                ODFItem item(file);
-                odfitems.insert(item);
-                names[url.toString().toLower()] = item.id();
+            if ( file.isFile()){
+                IlwisTypes tp = Ilwis3Connector::ilwisType(file.fileName());
+                if ( tp & itILWISOBJECT ) {
+                    ODFItem item(file);
+                    odfitems.insert(item);
+                    names[url.toString().toLower()] = item.id();
+                }
+            } else if ( file.isDir()){
+                Resource res(url,itCATALOG, true);
+                finalList.push_back(res);
+
             }
             if (!trq->update(1))
                 return std::vector<Resource>();
@@ -69,7 +76,7 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
         for( const auto& item : odfitems){
             items.push_back(item);
         }
-        std::vector<Resource> finalList;
+
         for(ODFItem& item : items) {
             if ( item.resolveNames(names)) {
                 finalList.push_back(item);
