@@ -60,5 +60,6 @@ SOURCES += \
     spreadsheetconnectors/spreadsheetcatalogexplorer.cpp \
     spreadsheetconnectors/xlsxformat.cpp
 
-
+resources.files = spreadsheetconnectors/resources/spreadsheetformats.config
+resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
