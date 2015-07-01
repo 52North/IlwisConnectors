@@ -41,16 +41,26 @@ SpreadSheetTableConnector::SpreadSheetTableConnector(const Ilwis::Resource &reso
 {
     QFileInfo odsinfo = resource.toLocalFile();
     QString sheetName;
-    if ( !knownSuffix(odsinfo.suffix())){
+    QString suffix =  odsinfo.suffix();
+    if ( !knownSuffix(suffix)){
         int index  = odsinfo.absoluteFilePath().lastIndexOf("/");
-        sheetName = odsinfo.absoluteFilePath().mid(index + 1);
-        odsinfo = QFileInfo(odsinfo.absolutePath());
+        int index2 = odsinfo.absoluteFilePath().lastIndexOf(".");
+        if ( index2 == -1 || index2 < index){
+            sheetName = odsinfo.absoluteFilePath().mid(index + 1);
+            odsinfo = QFileInfo(odsinfo.absolutePath());
+        }else if ( index2 != -1){
+            suffix = options["format"].toString();
+            QString correctName = odsinfo.absolutePath() + "/" + odsinfo.baseName() + "." + suffix;
+            QString correctUrl = QUrl::fromLocalFile(correctName).toString();
+            source().setUrl(correctUrl);
+            source().setUrl(correctUrl,true);
+        }
     }
-    if ( odsinfo.suffix().toLower() == "ods"){
+    if ( suffix.toLower() == "ods"){
         _spreadsheet.reset( new ODSFormat());
-    } else if ( odsinfo.suffix().toLower() == "xls"){
+    } else if ( suffix.toLower() == "xls"){
         _spreadsheet.reset( new XLSFormat());
-    } else if ( odsinfo.suffix().toLower() == "xlsx"){
+    } else if ( suffix.toLower() == "xlsx"){
         _spreadsheet.reset( new XLSXFormat());
     }
 
@@ -176,6 +186,10 @@ bool SpreadSheetTableConnector::loadData(IlwisObject *object, const IOOptions &o
 }
 
 bool SpreadSheetTableConnector::store(IlwisObject *object, const IOOptions &options ){
+    if ( !_spreadsheet){
+        ERROR2(ERR_NO_INITIALIZED_2,TR("Spreadsheet"), object->name());
+        return false;
+    }
     _spreadsheet->openSheet(_resource.toLocalFile(), false);
     if (!_spreadsheet->isValid())
         return false;
@@ -191,12 +205,19 @@ bool SpreadSheetTableConnector::store(IlwisObject *object, const IOOptions &opti
         }
     }
     int rowStart = allDeafultNames ? 0 : 1;
+    std::vector<ColumnDefinition *> coldefs(tbl->columnCount(),0);
+    for(int col = 0; col < tbl->columnCount(); ++col) {
+        if(hasType(tbl->columndefinition(col).datadef().domain()->ilwisType(), itITEMDOMAIN))
+            coldefs[col] = &tbl->columndefinitionRef(col);
+    }
     for(int row = 0; row < tbl->recordCount(); ++row){
+        const Record& rec = tbl->record(row);
         for(int col = 0; col < tbl->columnCount(); ++col) {
-            if ( hasType(tbl->columndefinition(col).datadef().domain()->ilwisType(), itITEMDOMAIN)){
-                _spreadsheet->cellValue(col, row + rowStart, tbl->cell(col, row,false), true);
+            if ( coldefs[col]){
+                QVariant v = coldefs[col]->datadef().domain<>()->impliedValue(rec.cell(col));
+                _spreadsheet->cellValue(col, row + rowStart, v, true);
             } else {
-                _spreadsheet->cellValue(col, row + rowStart, tbl->cell(col, row), true);
+                _spreadsheet->cellValue(col, row + rowStart, rec.cell(col), true);
             }
         }
     }
