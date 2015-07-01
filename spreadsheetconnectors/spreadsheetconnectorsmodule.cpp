@@ -13,6 +13,7 @@
 #include "ilwiscontext.h"
 #include "spreadsheettableconnector.h"
 #include "spreadsheetconnectorsmodule.h"
+#include "dataformat.h"
 
 
 using namespace Ilwis;
@@ -55,6 +56,14 @@ void SpreadSheetConnectorsModule::prepare()
     cfactory->addCreator(itTABLE,"spreadsheets",SpreadSheetTableConnector::create);
 
     cfactory->addCreator("spreadsheet","spreadsheets",SpreadSheetTableConnector::create);
+
+    QFileInfo ilw = context()->ilwisFolder();
+    QString path = ilw.canonicalFilePath() + "/extensions/spreadsheetconnectors/resources";
+    DataFormat::setFormatInfo(path + "/spreadsheetformats.config","spreadsheets");
+
+    QVariantList names = DataFormat::getFormatProperties(DataFormat::fpCODE,itTABLE,"spreadsheets");
+    for(const QVariant& name : names)
+        cfactory->addCreator(name.toString(),"spreadsheets", SpreadSheetTableConnector::create);
 
   kernel()->issues()->log("Loaded spreadsheet module",IssueObject::itMessage);
 
