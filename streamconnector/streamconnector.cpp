@@ -120,6 +120,13 @@ bool StreamConnector::openSource(bool reading){
     QString scheme = url.scheme();
     if ( scheme == "file"){
         QString filename = url.toLocalFile();
+        QFileInfo inf(filename);
+        if ( inf.suffix() != "ilwis"){
+            filename = inf.absolutePath() + "/" + inf.baseName() + ".ilwis";
+            QString correctUrl = QUrl::fromLocalFile(filename).toString();
+            source().setUrl(correctUrl);
+            source().setUrl(correctUrl,true);
+        }
         QFile *file = new QFile(filename);
 
         if ( reading){
