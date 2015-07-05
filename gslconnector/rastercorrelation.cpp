@@ -109,7 +109,7 @@ Ilwis::OperationImplementation::State RasterCorrelation::prepare(ExecutionContex
 
 quint64 RasterCorrelation::createMetadata()
 {
-    OperationResource operation({"ilwis://operations/correlation"});
+    OperationResource operation({"ilwis://operations/correlation"},"gsl");
     operation.setSyntax("correlation(inputraster1,inputraster2)");
     operation.setDescription(TR("calculate the correlation between the pixel value of a stack of rasters (bands); the raster must have equal dimensions"));
     operation.setInParameterCount({2});

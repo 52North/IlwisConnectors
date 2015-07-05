@@ -109,7 +109,7 @@ Ilwis::OperationImplementation::State RasterCovariance::prepare(ExecutionContext
 
 quint64 RasterCovariance::createMetadata()
 {
-    OperationResource operation({"ilwis://operations/covariance"});
+    OperationResource operation({"ilwis://operations/covariance"},"gsl");
     operation.setSyntax("covariance(inputraster1,inputraster2)");
     operation.setDescription(TR("calculate the covariance between the pixel value of a stack of rasters (bands); the raster must have equal dimensions"));
     operation.setInParameterCount({2});

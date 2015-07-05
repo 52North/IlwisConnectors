@@ -99,7 +99,7 @@ Ilwis::OperationImplementation::State RasterQuantile::prepare(ExecutionContext *
 
 quint64 RasterQuantile::createMetadata()
 {
-    OperationResource operation({"ilwis://operations/quantile"});
+    OperationResource operation({"ilwis://operations/quantile"},"gsl");
     operation.setSyntax("RasterQuantile(inputraster, quantile)");
     operation.setDescription(TR("calculates a raster with the quantile value of the sorted z columns of a raster coverage"));
     operation.setInParameterCount({2});

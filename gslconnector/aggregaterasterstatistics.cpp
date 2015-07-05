@@ -131,7 +131,7 @@ Ilwis::OperationImplementation::State AggregateRasterStatistics::prepare(Executi
 
 quint64 AggregateRasterStatistics::createMetadata()
 {
-    OperationResource operation({"ilwis://operations/aggregaterasterstatistics"});
+    OperationResource operation({"ilwis://operations/aggregaterasterstatistics"},"gsl");
     operation.setSyntax("aggregaterasterstatistics(inputraster,mean|variance|standarddev|totalsumsquares|absolutedeviation|skew|kurtosis|max|min|maxindex|minindex|median)");
     operation.setDescription(TR("transpose the raster according to the method indicated by the second parameter"));
     operation.setInParameterCount({2});
