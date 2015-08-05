@@ -95,6 +95,9 @@ void SpreadSheetTableConnector::setColumnDefinitions(Table * tbl, const std::vec
 
 bool SpreadSheetTableConnector::loadMetaData(IlwisObject *data, const Ilwis::IOOptions &options)
 {
+    if (!_spreadsheet)
+        return false;
+
     _spreadsheet->openSheet(_resource.toLocalFile());
     if (!_spreadsheet->isValid())
         return false;
