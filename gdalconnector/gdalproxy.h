@@ -3,9 +3,10 @@
 
 #include <QHash>
 #include <QLibrary>
-#include "ogr_api.h"
-#include "gdal.h"
-#include "cpl_vsi.h"
+
+#include "gdal/ogr_api.h"
+#include "gdal/gdal.h"
+#include "gdal/cpl_vsi.h"
 
 #include "geometries.h"
 

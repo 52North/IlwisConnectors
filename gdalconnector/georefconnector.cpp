@@ -18,7 +18,7 @@
 #include "georefimplementation.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
-#include "Eigen/LU"
+#include "eigen3/Eigen/LU"
 #include "mathhelper.h"
 #include "controlpoint.h"
 #include "ctpgeoreference.h"

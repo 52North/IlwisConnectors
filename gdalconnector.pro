@@ -52,7 +52,7 @@ OTHER_FILES += \
     gdalconnector/gdalconnector.json \
     gdalconnector/resources/ogr_formats.config
 
-INCLUDEPATH +=  $$PWD/../external/gdalheaders
+INCLUDEPATH +=  $$PWD/../external/gdal
 
 resources.files = gdalconnector/resources/ogr_formats.config
 resources.files += gdalconnector/resources/libraries.config
