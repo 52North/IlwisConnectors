@@ -69,7 +69,7 @@ quint64 HTTPServer::createMetadata()
     operation.setSyntax("httpserver([port]");
     operation.setDescription(TR("transpose the raster according to the method indicated by the second parameter"));
     operation.setInParameterCount({0,1});
-    operation.addInParameter(0,itUINT16,  TR("port number"));
+    operation.addOptionalInParameter(0,itUINT16,  TR("port number"));
 
     operation.setOutParameterCount({0});
     operation.setKeywords("server, http");

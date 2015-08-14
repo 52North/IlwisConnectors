@@ -76,9 +76,9 @@ quint64 PostgresqlConnection::createMetadata()
     operation.setDescription(TR("creates a url to access the catalog of a postgresql database"));
     operation.setInParameterCount({4,5,6});
     operation.addInParameter(0,itSTRING , TR("host address"),TR("identifies the host that is running the posgresql database"));
-    operation.addInParameter(1,itPOSITIVEINTEGER , TR("port number"),TR("port used on the remote server"));
+    operation.addOptionalInParameter(1,itPOSITIVEINTEGER , TR("port number"),TR("port used on the remote server"));
     operation.addInParameter(2,itSTRING , TR("database"),TR("The database name on the server"));
-    operation.addInParameter(3,itSTRING , TR("schema"),TR("The database schema in the database"));
+    operation.addOptionalInParameter(3,itSTRING , TR("schema"),TR("The database schema in the database"));
     operation.addInParameter(4,itSTRING , TR("username"),TR("username for authentication on the remote server"));
     operation.addInParameter(5,itSTRING , TR("password"),TR("password for authentication on the remote server"));
     operation.setOutParameterCount({1});

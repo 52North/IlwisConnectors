@@ -85,7 +85,7 @@ quint64 LaplaceFilter::createMetadata()
     operation.setDescription(TR("highlights regions of rapid intensity change, used in edge detection"));
     operation.setInParameterCount({1,2});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"),TR("input rastercoverage, color or image(grey) domain"));
-    operation.addInParameter(1,itPOSITIVEINTEGER , TR("Size of the kernel"),TR("size of the extended Sobel kernel; it must be 1, 3, 5, or 7"));
+    operation.addOptionalInParameter(1,itPOSITIVEINTEGER , TR("Size of the kernel"),TR("size of the extended Sobel kernel; it must be 1, 3, 5, or 7"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output raster with edges highlighted"));
     operation.setKeywords("image processing,raster,edge detection, filter");

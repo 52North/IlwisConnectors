@@ -65,7 +65,7 @@ quint64 BoxFilter::createMetadata()
     operation.addInParameter(0,itRASTER , TR("rastercoverage"));
     operation.addInParameter(1,itINTEGER , TR("kernel width"),TR("This is the neighborhood where the local variance will be calculated, and where pixels will contribute (in a weighted manner)"));
     operation.addInParameter(2,itINTEGER , TR("kernel height"),TR("This is the neighborhood where the local variance will be calculated, and where pixels will contribute (in a weighted manner)"));
-    operation.addInParameter(3,itBOOL , TR("normalized"),TR("specifying whether the kernel is normalized by its area or not.Unnormalized box filter for covariance matrices of image derivatives"));
+    operation.addOptionalInParameter(3,itBOOL , TR("normalized"),TR("specifying whether the kernel is normalized by its area or not.Unnormalized box filter for covariance matrices of image derivatives"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("a raster with blurred features and reduced noise"));
     operation.setKeywords("image processing,raster,noise reduction, filter");

@@ -64,8 +64,8 @@ quint64 CatalogConnection::createMetadata()
     operation.setInParameterCount({2,4});
     operation.addInParameter(0,itSTRING , TR("host address"),TR("identifies the host that is running the ilwis server"));
     operation.addInParameter(1,itPOSITIVEINTEGER , TR("port number"),TR("port used on the remote server"));
-    operation.addInParameter(2,itSTRING , TR("username"),TR("username for authentication on the remote server"));
-    operation.addInParameter(3,itSTRING , TR("password"),TR("password for authentication on the remote server"));
+    operation.addOptionalInParameter(2,itSTRING , TR("username"),TR("username for authentication on the remote server"));
+    operation.addOptionalInParameter(3,itSTRING , TR("password"),TR("password for authentication on the remote server"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itSTRING, TR("connection url"),TR("string that is sufficient to access the remote catalog"));
     operation.setKeywords("service,ilwisremote");

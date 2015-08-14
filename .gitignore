@@ -1,9 +1,0 @@
-*.pro.user*
-pythonapi/ilwisobjects.conf
-*/__pycache__/
-.idea
-/docs
-/Doxyfile
-wfsconnector/ConnectorWFS.cpp
-wfsconnector/ConnectorWFS.h
-/.project

@@ -90,8 +90,8 @@ quint64 ErodeFilter::createMetadata()
     operation.addInParameter(2,itSTRING , TR("kernel-shape"),TR("structuring element for the filter which can either be a rectangle, ellipse or cross"));
     operation.addInParameter(3,itPOSITIVEINTEGER , TR("kernel width"),TR("width of the structuring element used in the flter"));
     operation.addInParameter(4,itPOSITIVEINTEGER , TR("kernel height"),TR("height of the structuring element used in the flter"));
-    operation.addInParameter(5,itINTEGER , TR("anchors x-position"),TR("anchors position wihtin the kernel. the default is center"));
-    operation.addInParameter(6,itINTEGER , TR("anchors y-position"),TR("anchors position wihtin the kernel. the default is center"));
+    operation.addOptionalInParameter(5,itINTEGER , TR("anchors x-position"),TR("anchors position wihtin the kernel. the default is center"));
+    operation.addOptionalInParameter(6,itINTEGER , TR("anchors y-position"),TR("anchors position wihtin the kernel. the default is center"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("a raster with morphology changed of affected structures in the raster"));
     operation.setKeywords("image processing,raster,morphology, filter");
