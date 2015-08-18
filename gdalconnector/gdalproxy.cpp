@@ -51,7 +51,12 @@ GDALProxy::GDALProxy() {
     QString gdallibname = loader.order2name(100000);
     bool ok = false;
     if ( gdallibname != sUNDEF){
-        _libgdal.setFileName(path + "/" + gdallibname);
+        if (QFileInfo(gdallibname).exists()) {
+            _libgdal.setFileName(gdallibname);
+        } else {
+            // expect lib at ilwis folder
+            _libgdal.setFileName(path + "/" + gdallibname);
+        }
         ok = _libgdal.load();
     }
     if ( !ok){
