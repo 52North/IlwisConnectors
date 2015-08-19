@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "wfsConnector_global.h"
+#include "wfsconnector_global.h"
 
 class QTimer;
 class QVariant;

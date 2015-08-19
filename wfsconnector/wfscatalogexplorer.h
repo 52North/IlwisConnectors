@@ -1,7 +1,7 @@
 #ifndef WFSCATALOGCONNECTOR_H
 #define WFSCATALOGCONNECTOR_H
 
-#include "wfsConnector_global.h"
+#include "wfsconnector_global.h"
 
 namespace Ilwis {
 
