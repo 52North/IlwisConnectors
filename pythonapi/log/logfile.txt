@@ -1,0 +1,6 @@
+   0 ;   Message ;    ma 25. aug 10:42:56 2014 ; Ilwis started at 2014-08-25T10:42:56
+   1 ;  Critical ;    ma 25. aug 10:42:56 2014 ; Missing system file. can not open datums.csv
+   2 ;  Critical ;    ma 25. aug 10:42:56 2014 ; Missing system file. can not open ellipsoids.csv
+   3 ;  Critical ;    ma 25. aug 10:42:56 2014 ; Missing system file. can not open projections.csv
+   4 ;  Critical ;    ma 25. aug 10:42:56 2014 ; Missing system file. can not open numericdomains.csv
+   5 ;  Critical ;    ma 25. aug 10:42:56 2014 ; Missing system file. can not open filters.csv
