@@ -13,6 +13,9 @@ Default: <code>ilwisDir=F:/documents/ilwis/ilwisObjects/output/win32debug/bin/</
 <b>Output:</b>
 <li>The jar file is in <i>ilwisjava/target</i>.</li>
 <h3>Using the library</h3>
+<li>Win: 32 bit Java 8 <br>
+Linux: 64 bit Java 8 - tested with <a href="http://www.webupd8.org/2014/03/how-to-install-oracle-java-8-in-debian.html">this.</a> </li>
+<li>Linux: libgdal (1.18.0)
 <li>Ilwis location have to be in the <b>PATH variable</b>.<br>(Folder with ilwis.exe, development location: <i>D:\ilwisObjects\output\win32debug\bin;</i>).<br>
 On Linux, use <b>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ilwisobjects-location/libraries/genericrelease</b> </li>
 <li>Copy <b>ilwislocation.config</b> to the <i>projectfolder</i>.
