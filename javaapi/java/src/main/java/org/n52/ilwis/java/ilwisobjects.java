@@ -113,7 +113,7 @@ public class ilwisobjects {
 						+ "_ilwisobjects" + File.separator
 						+ "_ilwisobjects0.dll");
 			} else { // Linux
-				System.load(ilwisLocation + "lib_ilwisobjects.so");
+				System.load(ilwisLocation + "extensions/_ilwisobjects/lib_ilwisobjects.so");
 			}
 
 			ilwisobjects._initIlwisObjects(ilwisLocation);

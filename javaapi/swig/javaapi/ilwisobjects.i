@@ -23,7 +23,7 @@
 %}
 
 %{
-#include "core/kernel.h"
+#include "kernel.h"
 #include "ilwisdata.h"
 #include "../../IlwisCore/core/util/range.h"
 #include "itemrange.h"

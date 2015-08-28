@@ -13,8 +13,8 @@ Qt project, generates a Java API for <a href="https://github.com/52North/IlwisCo
 <h3>Build</h3>
 <li>Set <b>JAVADIR</b> in javaapi.pro to JDK location.
 <li>Set Qt <b>Projects / Build / Build Steps</b> to run SWIG:
-<a href="">Windows</a> <a href="">Linux</a></li>
-SWIG build parameters: <code>-java -c++ -package org.n52.ilwis.java -outdir ../java/src/main/java/org/n52/ilwis/java ilwisobjects.i</code><br>
+<a href="https://drive.google.com/open?id=0B0bWmJJYoWIpdjJsejZLVmthVTg">Windows</a> <a href="">Linux</a></li>
+SWIG build parameters: <code>-java -c++ -package org.n52.ilwis.java -outdir ../../java/src/main/java/org/n52/ilwis/java ilwisobjects.i</code><br>
 <b>Output:</b>
 <li>Java files in the swig outdir <i>(java/src/main/java/org/n52/ilwis/java)</i>.
 <li>_ilwisobjects.dll / lib_ilwisobjects.so in the <i>output/extensions/_ilwisobjects</i> folder.
