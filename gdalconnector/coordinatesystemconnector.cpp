@@ -66,9 +66,11 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const IOOptions 
 
                 QString projectionName(gdal()->getAttributeValue(srshandle,"Projection",0));
                 if ( projectionName != "") {
-                    IProjection projection;
-                    projection.prepare("code=wkt:" + projectionName);
-                    if ( projection.isValid()) {
+                   IProjection projection;
+                   IOOptions opt = options;
+                   opt << IOOptions::Option("proj4", _resource.code().mid(6));
+                   projection.prepare("code=wkt:" + projectionName, opt);
+                   if ( projection.isValid()) {
                         setProjectionParameter(srshandle, "false_easting", Projection::pvX0, projection);
                         setProjectionParameter(srshandle, "false_northing", Projection::pvY0, projection);
                         setProjectionParameter(srshandle, "scale_factor", Projection::pvK0, projection);
