@@ -10,8 +10,14 @@
 #include "domain.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
+#include "coverage.h"
+#include "attributedefinition.h"
+#include "featurecoverage.h"
+#include "featureiterator.h"
+#include "feature.h"
 #include "basetable.h"
 #include "flattable.h"
+#include "attributetable.h"
 #include "gdaltableloader.h"
 
 using namespace Ilwis;
@@ -25,6 +31,9 @@ ConnectorInterface *GdalFeatureTableConnector::create(const Resource &resource, 
 }
 
 IlwisObject* GdalFeatureTableConnector::create() const{
+    bool astable = ioOptions().contains("asflattable");
+    if ( astable == false && hasType(_resource.extendedType(), itFEATURE))
+        return new AttributeTable(_resource);
     return new FlatTable(_resource);
 }
 
