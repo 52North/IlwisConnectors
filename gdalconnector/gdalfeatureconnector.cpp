@@ -100,7 +100,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
         //attribute table
         ITable attTable;
         Resource resource(_filename, itFLATTABLE);
-        if(!attTable.prepare(resource)) {//will load whole meta data of the table
+        if(!attTable.prepare(resource,{"asflattable", true})) {//will load whole meta data of the table
             ERROR1(ERR_NO_INITIALIZED_1,resource.name());
             return false;
         }
