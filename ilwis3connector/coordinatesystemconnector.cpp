@@ -211,7 +211,7 @@ GeodeticDatum *CoordinateSystemConnector::getDatum(QString& ellipsoid) {
         return 0;
     }
 
-    QSqlQuery stmt(kernel()->database());
+    InternalDatabaseConnection stmt;
     QString query = QString("Select * from datum where code='%1'").arg(code);
 
     if (stmt.exec(query)) {

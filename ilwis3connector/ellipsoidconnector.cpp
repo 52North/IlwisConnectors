@@ -61,7 +61,7 @@ bool EllipsoidConnector::createEllipsoidFromDatum(const QString &name, IlwisObje
         kernel()->issues()->log(TR("No datum code for this alias, ellipsoid %1 can not be found").arg(datum));
         return false;
     }
-    QSqlQuery stmt(kernel()->database());
+    InternalDatabaseConnection stmt;
     QString query = QString("Select ellipsoid from datum where code='%1'").arg(code);
     if (stmt.exec(query)) {
         if ( stmt.next()) {
@@ -77,7 +77,7 @@ bool EllipsoidConnector::createEllipsoidFromDatum(const QString &name, IlwisObje
 
  bool EllipsoidConnector::createEllipsoidFromCode(const QString& code, IlwisObject *data) {
     QString query = QString("Select * from ellipsoid where code = '%1'").arg(code);
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     if (db.exec(query)) {
         if ( db.next()) {
            Ellipsoid *ellipsoid =  static_cast<Ellipsoid *>(data);
