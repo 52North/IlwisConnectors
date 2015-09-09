@@ -12,6 +12,7 @@
 #include "basetable.h"
 #include "flattable.h"
 #include "featurecoverage.h"
+#include "numericdomain.h"
 #include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -37,6 +38,8 @@ IlwisObject *StreamConnector::create() const
         return new RasterCoverage(_resource);
     case itTABLE:
         return new FlatTable(_resource);
+    case itNUMERICDOMAIN:
+        return new NumericDomain(_resource);
     default:
         return 0;
     }
