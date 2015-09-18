@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"

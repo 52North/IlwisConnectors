@@ -7,6 +7,9 @@
 
 namespace Ilwis {
 
+class CoordinateSystem;
+typedef IlwisData<CoordinateSystem> ICoordinateSystem;
+
 namespace Ilwis3 {
 
 class ILWIS3CONNECTORSHARED_EXPORT Ilwis3Connector : public Ilwis::IlwisObjectConnector {
@@ -40,6 +43,7 @@ protected:
     QString datum2Code(const QString& name, const QString& area) const;
     QString noExt(const QString& name);
     QString filename2FullPath(const QString &name, const Resource &owner=Resource()) const;
+    QString writeCsy(IlwisObject *obj, const Ilwis::ICoordinateSystem &csy) const;
 
     static IniFile *makeIni(const Resource& res, IlwisTypes type);
     static QString suffix(IlwisTypes type) ;

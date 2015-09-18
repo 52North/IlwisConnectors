@@ -10,9 +10,6 @@ class CoverageConnector : public Ilwis3Connector
 {
 public:
     CoverageConnector(const Resource& resource, bool load=true,const IOOptions& options=IOOptions());
-
-
-
 protected:
     bool getRawInfo(const QString &range, double &vmin, double &vmax, double &scale, double &offset) const;
     virtual void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const = 0;

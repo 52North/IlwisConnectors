@@ -12,9 +12,9 @@
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "inifile.h"
+#include "coordinatesystem.h"
 #include "ilwis3connector.h"
 #include "rawconverter.h"
-#include "coordinatesystem.h"
 #include "georeference.h"
 #include "georefimplementation.h"
 #include "simpelgeoreference.h"
@@ -158,27 +158,15 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
 {
     Ilwis3Connector::storeMetaData(obj, itGEOREF);
     GeoReference *grf = static_cast<GeoReference *>(obj);
-    QString localPath;
-    if ( grf->coordinateSystem()->code() == "unknown")
-        localPath = "unknown.csy";
-    else{
-        localPath = Resource::toLocalFile(grf->coordinateSystem()->source().url(),true, "csy");
-        if ( localPath == sUNDEF){
-            QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
-            QString name = grf->coordinateSystem()->name();
-            if ( !grf->coordinateSystem()->isAnonymous()) {
-                int index = name.indexOf(".csy");
-                if ( index != -1){
-                    name = QFileInfo(name).baseName();
-                    name = name.replace(QRegExp("[/ .'\"]"),"_");
-                    name += ".csy";
-                }else
-                    name = name.replace(QRegExp("[/ .'\"]"),"_");
-            }
-            localPath = path + name;
-        }
-    }
-    _odf->setKeyValue("GeoRef","CoordSystem", QFileInfo(localPath).fileName());
+    QString localPathCsy;
+
+    const ICoordinateSystem csy = grf->coordinateSystem();
+    if (csy.isValid()) {
+        // write the corresponding coordinate system
+        localPathCsy = writeCsy(obj, csy);
+    } else
+        localPathCsy = "unknown.csy";
+    _odf->setKeyValue("GeoRef","CoordSystem", QFileInfo(localPathCsy).fileName());
     Size<> sz = grf->size();
     _odf->setKeyValue("GeoRef","Lines", QString::number(sz.ysize()));
     _odf->setKeyValue("GeoRef","Columns", QString::number(sz.xsize()));
