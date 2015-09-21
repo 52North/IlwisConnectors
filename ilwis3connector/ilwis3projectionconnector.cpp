@@ -55,7 +55,7 @@ bool ProjectionConnector::loadMetaData(IlwisObject *data, const IOOptions &optio
         return false;
     }
     QString code = name2Code(prj,"projection");
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = QString("Select * from projection where code = '%1'").arg(code);
     if ( db.exec(query)) {
         if ( db.next()) {

@@ -43,7 +43,7 @@ std::vector<Ilwis::Resource> SpreadSheetCatalogFileExplorer::loadItems(const IOO
     }
     std::vector<Ilwis::Resource> result;
     QString query = QString("Select itemid from mastercatalog where container='%1'").arg(source().url().toString());
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     if (db.exec(query)) {
         while ( db.next()){
             quint64 id = db.value(0).toULongLong();

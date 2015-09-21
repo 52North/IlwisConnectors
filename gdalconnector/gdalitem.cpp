@@ -55,7 +55,7 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
                 int featureCount = gdal()->getFeatureCount(layerH, FALSE);
                 sz = findSize(file);
                 addItem(handle, url, csyId, featureCount, itFEATURE , itCOORDSYSTEM | itTABLE, sz);
-                addItem(handle, url, 0, iUNDEF, itTABLE , 0, sz);
+                addItem(handle, url, 0, iUNDEF, itTABLE , itFEATURE, sz);
                 if (! mastercatalog()->id2Resource(csyId).isValid())
                     addItem(handle, QUrl(url), 0, iUNDEF, itCONVENTIONALCOORDSYSTEM , 0, sz);
             }
@@ -71,7 +71,7 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
                             QString layerName(cname);
                             QString layerurl = url.toString() + "/" + layerName;
                             addItem(handle, QUrl(layerurl), csyId, featureCount, itFEATURE , itCOORDSYSTEM | itTABLE, sz);
-                            addItem(handle, QUrl(layerurl), 0, iUNDEF, itTABLE , 0, sz);
+                            addItem(handle, QUrl(layerurl), 0, iUNDEF, itTABLE , itFEATURE, sz);
                             if (! mastercatalog()->id2Resource(csyId).isValid())
                                 addItem(handle, QUrl(layerurl), 0, iUNDEF, itCONVENTIONALCOORDSYSTEM , 0, sz);
                         }

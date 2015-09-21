@@ -99,7 +99,7 @@ QString Ilwis3Connector::datum2Code(const QString &name, const QString &area) co
     QString id = name;
     if ( area != "")
         id += "." + area;
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = QString("Select code from aliasses where alias='%1' and type='datum' and source='ilwis3'").arg(id);
     if ( db.exec(query)) {
         if ( db.next())
@@ -147,7 +147,7 @@ bool Ilwis3Connector::isSystemObject(const QString& filename) {
 
 
 
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = QString("Select code from %1 where code='%2'").arg(table, fn);
     if ( !db.exec(query)) {
         kernel()->issues()->logSql(db.lastError());
@@ -168,7 +168,7 @@ QString Ilwis3Connector::name2Code(const QString& nameIn, const QString& type) {
             name = name.left(index).toLower();
     }
 
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = QString("Select code from aliasses where alias='%1' and type='%2' and source='ilwis3'").arg(name, type);
     if ( !db.exec(query)) {
         kernel()->issues()->logSql(db.lastError());
@@ -183,7 +183,7 @@ QString Ilwis3Connector::name2Code(const QString& nameIn, const QString& type) {
 }
 
 QString Ilwis3Connector::code2name(const QString& code, const QString& type) {
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = QString("Select alias from aliasses where code='%1' and type='%2' and source='ilwis3'").arg(code, type);
     if ( !db.exec(query)) {
         kernel()->issues()->logSql(db.lastError());

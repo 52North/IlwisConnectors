@@ -13,12 +13,12 @@ public:
     std::vector<Resource> loadResource(const QUrl &url, IlwisTypes types=itILWISOBJECT) const;
 private:
     void loadIlwis3Aliasses();
-    void insertFile(const QString &filename, QSqlQuery &sqlPublic);
-    bool fillEllipsoidRecord(const QStringList &parts, QSqlQuery &sqlPublic);
-    bool fillDatumRecord(const QStringList &parts, QSqlQuery &sqlPublic);
-    bool fillProjectionRecord(const QStringList &parts, QSqlQuery &sqlPublic);
-    bool fillDomainRecord(const QStringList &parts, QSqlQuery &sqlPublic);
-    bool doQuery(QString& query, QSqlQuery &sqlPublic);
+    void insertFile(const QString &filename, Ilwis::InternalDatabaseConnection &internalDb);
+    bool fillEllipsoidRecord(const QStringList &parts, InternalDatabaseConnection &internalDb);
+    bool fillDatumRecord(const QStringList &parts, InternalDatabaseConnection &internalDb);
+    bool fillProjectionRecord(const QStringList &parts, InternalDatabaseConnection &internalDb);
+    bool fillDomainRecord(const QStringList &parts, InternalDatabaseConnection &internalDb);
+    bool doQuery(QString& query, InternalDatabaseConnection &internalDb);
 
     QHash<IlwisTypes,CheckUsage> _types;
 };

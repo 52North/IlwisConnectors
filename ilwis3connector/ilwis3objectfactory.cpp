@@ -141,15 +141,15 @@ bool Ilwis3ObjectFactory::prepare()
 
 void Ilwis3ObjectFactory::loadIlwis3Aliasses() {
     kernel()->database().exec("BEGIN IMMEDIATE TRANSACTION");
-    QSqlQuery sqlPublic(kernel()->database());
-    insertFile("datum_allias.csv", sqlPublic);
-    insertFile("ellipsoid_allias.csv",sqlPublic);
-    insertFile("projection_allias.csv",sqlPublic);
-    insertFile("domain_allias.csv",sqlPublic);
+    InternalDatabaseConnection internalDb;
+    insertFile("datum_allias.csv", internalDb);
+    insertFile("ellipsoid_allias.csv",internalDb);
+    insertFile("projection_allias.csv",internalDb);
+    insertFile("domain_allias.csv",internalDb);
     kernel()->database().exec("COMMIT TRANSACTION");
 }
 
-void Ilwis3ObjectFactory::insertFile(const QString& filename, QSqlQuery& sqlPublic) {
+void Ilwis3ObjectFactory::insertFile(const QString& filename, InternalDatabaseConnection& internalDb) {
     QString basePath = context()->ilwisFolder().absoluteFilePath() + "/extensions/ilwis3connector/resources";
     QFileInfo fileInfo(basePath + "/" + filename);
     if ( !fileInfo.exists()) {
@@ -175,13 +175,13 @@ void Ilwis3ObjectFactory::insertFile(const QString& filename, QSqlQuery& sqlPubl
 
         bool ok = false;
         if ( filename == "datum_allias.csv")
-            ok = fillDatumRecord(parts, sqlPublic);
+            ok = fillDatumRecord(parts, internalDb);
         else if ( filename == "ellipsoid_allias.csv")
-            ok = fillEllipsoidRecord(parts, sqlPublic);
+            ok = fillEllipsoidRecord(parts, internalDb);
         else if ( filename == "projection_allias.csv")
-            ok = fillProjectionRecord(parts, sqlPublic);
+            ok = fillProjectionRecord(parts, internalDb);
         else if ( filename == "domain_allias.csv")
-            ok = fillDomainRecord(parts, sqlPublic);
+            ok = fillDomainRecord(parts, internalDb);
 
         if (!ok) {
             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(filename), IssueObject::itCritical);
@@ -191,7 +191,7 @@ void Ilwis3ObjectFactory::insertFile(const QString& filename, QSqlQuery& sqlPubl
     }
 }
 
-bool Ilwis3ObjectFactory::fillDomainRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
+bool Ilwis3ObjectFactory::fillDomainRecord(const QStringList& parts, InternalDatabaseConnection &internalDb) {
     if ( parts.size() == 1 && parts[0] == "") // empty line
         return true;
     if ( parts.size() != 2 || parts[0] == "" )
@@ -201,10 +201,10 @@ bool Ilwis3ObjectFactory::fillDomainRecord(const QStringList& parts, QSqlQuery &
    QString parms = QString("'%1','%2','domain','ilwis3'").arg(parts[1],parts[0]);
    QString stmt = QString("INSERT INTO aliasses VALUES(%1)").arg(parms);
 
-   return doQuery(stmt, sqlPublic);
+   return doQuery(stmt, internalDb);
 }
 
-bool Ilwis3ObjectFactory::fillEllipsoidRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
+bool Ilwis3ObjectFactory::fillEllipsoidRecord(const QStringList& parts, InternalDatabaseConnection &internalDb) {
     if ( parts.size() == 1 && parts[0] == "") // empty line
         return true;
     if ( parts.size() != 2 || parts[0] == "" )
@@ -214,10 +214,10 @@ bool Ilwis3ObjectFactory::fillEllipsoidRecord(const QStringList& parts, QSqlQuer
    QString parms = QString("'%1','%2','ellipsoid','ilwis3'").arg(parts[0],parts[1]);
    QString stmt = QString("INSERT INTO aliasses VALUES(%1)").arg(parms);
 
-   return doQuery(stmt, sqlPublic);
+   return doQuery(stmt, internalDb);
 }
 
-bool Ilwis3ObjectFactory::fillProjectionRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
+bool Ilwis3ObjectFactory::fillProjectionRecord(const QStringList& parts, InternalDatabaseConnection &internalDb) {
     if ( parts.size() == 1 && parts[0] == "") // empty line
         return true;
     if ( parts.size() != 2 || parts[0] == "" )
@@ -227,10 +227,10 @@ bool Ilwis3ObjectFactory::fillProjectionRecord(const QStringList& parts, QSqlQue
    QString parms = QString("'%1','%2','projection','ilwis3'").arg(parts[0],parts[1]);
    QString stmt = QString("INSERT INTO aliasses VALUES(%1)").arg(parms);
 
-   return doQuery(stmt, sqlPublic);
+   return doQuery(stmt, internalDb);
 }
 
-bool Ilwis3ObjectFactory::fillDatumRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
+bool Ilwis3ObjectFactory::fillDatumRecord(const QStringList& parts, InternalDatabaseConnection &internalDb) {
     if ( parts.size() == 1 && parts[0] == "") // empty line
         return true;
     if ( parts.size() != 3 || parts[0] == "" )
@@ -243,15 +243,15 @@ bool Ilwis3ObjectFactory::fillDatumRecord(const QStringList& parts, QSqlQuery &s
     QString parms = QString("'%1','%2','datum','ilwis3'").arg(id,parts[2]);
     QString stmt = QString("INSERT INTO aliasses VALUES(%1)").arg(parms);
 
-    return doQuery(stmt, sqlPublic);
+    return doQuery(stmt, internalDb);
 
 }
 
-bool Ilwis3ObjectFactory::doQuery(QString &query, QSqlQuery &sqlPublic)
+bool Ilwis3ObjectFactory::doQuery(QString &query, InternalDatabaseConnection &internalDb)
 {
-    bool ok = sqlPublic.exec(query);
+    bool ok = internalDb.exec(query);
     if (!ok) {
-        kernel()->issues()->logSql(sqlPublic.lastError());
+        kernel()->issues()->logSql(internalDb.lastError());
         return false;
     }
     return true;

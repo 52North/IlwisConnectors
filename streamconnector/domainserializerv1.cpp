@@ -34,6 +34,12 @@ bool DomainSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     }
     if ( dom->ilwisType() != itTEXTDOMAIN)
         dom->range()->store(_stream);
+    if ( dom->parent().isValid()){
+        _stream << dom->parent()->source().url().toString();
+    }else
+        _stream << sUNDEF;
+
+    _stream << dom->isStrict();
 
     return true;
 
@@ -61,6 +67,18 @@ bool DomainSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
         dom->range(range);
 
     }
+    QString parent;
+    _stream >> parent;
+    if ( parent != sUNDEF){
+        IDomain dom(parent);
+        if ( dom.isValid()){
+            dom->setParent(dom);
+        }
+    }
+    bool strict;
+    _stream >> strict;
+    dom->setStrict(strict);
+
 
     return true;
 }

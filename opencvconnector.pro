@@ -17,7 +17,7 @@ DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
 TEMPLATE = lib
 
-DEFINES += POSTGRESSQLCONNECTOR_LIBRARY
+DEFINES += OPENCVCONNECTOR_LIBRARY
 
 resources.files += opencvconnector/resources/libraries.config
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
