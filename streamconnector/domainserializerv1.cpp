@@ -21,8 +21,8 @@ DomainSerializerV1::DomainSerializerV1(QDataStream &stream) : VersionedSerialize
 bool DomainSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 {
     Domain *dom = static_cast<Domain *>(obj);
-    quint64 valueType = dom->valueType();
-    _stream << valueType;
+    //quint64 valueType = dom->valueType();
+//    _stream << valueType;
 
     if (!VersionedSerializer::store(obj, options))
         return false;
@@ -37,7 +37,7 @@ bool DomainSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     if ( dom->parent().isValid()){
         _stream << dom->parent()->source().url().toString();
     }else
-        _stream << sUNDEF;
+        _stream << QString(sUNDEF);
 
     _stream << dom->isStrict();
 
@@ -70,9 +70,9 @@ bool DomainSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
     QString parent;
     _stream >> parent;
     if ( parent != sUNDEF){
-        IDomain dom(parent);
-        if ( dom.isValid()){
-            dom->setParent(dom);
+        IDomain parentdom(parent);
+        if ( parentdom.isValid()){
+            dom->setParent(parentdom);
         }
     }
     bool strict;

@@ -12,8 +12,7 @@ include(global.pri)
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
-QT       -= gui
-QT += network
+QT += network gui
 
 TEMPLATE = lib
 

@@ -1,4 +1,5 @@
 #include <QBuffer>
+#include <QColor>
 #include "raster.h"
 #include "version.h"
 #include "connectorinterface.h"
@@ -13,6 +14,15 @@
 #include "flattable.h"
 #include "featurecoverage.h"
 #include "numericdomain.h"
+#include "domainitem.h"
+#include "identifieritem.h"
+#include "thematicitem.h"
+#include "interval.h"
+#include "coloritem.h"
+#include "identifierrange.h"
+#include "intervalrange.h"
+#include "colorrange.h"
+#include "itemdomain.h"
 #include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -42,6 +52,17 @@ IlwisObject *StreamConnector::create() const
         return new NumericDomain(_resource);
     case itGEOREF:
         return new GeoReference(_resource);
+    case itITEMDOMAIN:{
+        if ( hasType(_resource.extendedType(), itNUMERICITEM))
+            return new IntervalDomain(_resource);
+        if ( hasType(_resource.extendedType(), itIDENTIFIERITEM))
+            return new NamedIdDomain(_resource);
+        if ( hasType(_resource.extendedType(), itTHEMATICITEM))
+            return new ThematicDomain(_resource);
+        if ( hasType(_resource.extendedType(), itPALETTECOLOR))
+            return new ItemDomain<ColorItem>(_resource);
+
+    }
     default:
         return 0;
     }

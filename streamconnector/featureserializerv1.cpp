@@ -40,6 +40,7 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     for(int col = 0; col < defCount; ++col){
         const ColumnDefinition& coldef = fcoverage->attributeDefinitionsRef().columndefinitionRef(col);
         _stream << coldef.name();
+        _stream << coldef.datadef().domain()->valueType();
 
         std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
         if ( !domainStreamer)

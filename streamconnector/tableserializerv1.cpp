@@ -39,6 +39,7 @@ bool TableSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     for(int col = 0; col < tbl->columnCount(); ++col){
         const ColumnDefinition& coldef = tbl->columndefinitionRef(col);
         _stream << coldef.name();
+        _stream << coldef.datadef().domain()->valueType();
 
         std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
         if ( !domainStreamer)
