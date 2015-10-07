@@ -40,6 +40,8 @@ IlwisObject *StreamConnector::create() const
         return new FlatTable(_resource);
     case itNUMERICDOMAIN:
         return new NumericDomain(_resource);
+    case itGEOREF:
+        return new GeoReference(_resource);
     default:
         return 0;
     }

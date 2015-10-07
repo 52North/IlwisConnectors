@@ -89,7 +89,8 @@ void StreamModule::prepare()
     cfactory->addCreator("rastercoverage","stream",StreamConnector::create);
     cfactory->addCreator("table","stream",StreamConnector::create);
     cfactory->addCreator("catalog","stream",StreamConnector::create);
-     cfactory->addCreator("domain","stream",StreamConnector::create);
+    cfactory->addCreator("domain","stream",StreamConnector::create);
+    cfactory->addCreator("georeference","stream",StreamConnector::create);
 
     QFileInfo ilw = context()->ilwisFolder();
     QString path = ilw.canonicalFilePath() + "/extensions/streamconnector/resources";
