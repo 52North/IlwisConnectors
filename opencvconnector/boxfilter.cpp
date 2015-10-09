@@ -59,7 +59,7 @@ Ilwis::OperationImplementation::State BoxFilter::prepare(ExecutionContext *ctx, 
 quint64 BoxFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/boxfilter"},"opencv");
-    operation.setSyntax("boxfilter(inputraster, kernelsizeX, kernelsizeY[,normalized]");
+    operation.setSyntax("boxfilter(inputraster, kernelsizeX, kernelsizeY[,normalized])");
     operation.setDescription(TR("Blurs an image using the box filter"));
     operation.setInParameterCount({3,4});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"));

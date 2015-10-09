@@ -62,7 +62,7 @@ Ilwis::OperationImplementation::State AdaptiveBilateralFilter::prepare(Execution
 quint64 AdaptiveBilateralFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/adaptivebilateralfilter"},"opencv");
-    operation.setSyntax("adaptivebilateralfilter(inputraster, kernelsizeX, kernelsizeY, sigmaspace[, maxSigmaColor]");
+    operation.setSyntax("adaptivebilateralfilter(inputraster, kernelsizeX, kernelsizeY, sigmaspace[, maxSigmaColor])");
     operation.setDescription(TR("sharpens an image by increasing the slope of the edges without producing overshoot or undershoot"));
     operation.setInParameterCount({4,5});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"));

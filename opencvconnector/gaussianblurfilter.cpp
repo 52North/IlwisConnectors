@@ -66,7 +66,7 @@ Ilwis::OperationImplementation::State GaussianBlurFilter::prepare(ExecutionConte
 quint64 GaussianBlurFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/gaussianblurfilter"},"opencv");
-    operation.setSyntax("gaussianblurfilter(inputraster, kernelsizeX, kernelsizeY, sigmaX[,sigmaY]");
+    operation.setSyntax("gaussianblurfilter(inputraster, kernelsizeX, kernelsizeY, sigmaX[,sigmaY])");
     operation.setDescription(TR(" blurring an image by a Gaussian function to reduce image noise and reduce detail"));
     operation.setInParameterCount({4,5});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"));

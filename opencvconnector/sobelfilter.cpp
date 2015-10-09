@@ -91,7 +91,7 @@ Ilwis::OperationImplementation::State SobelFilter::prepare(ExecutionContext *ctx
 quint64 SobelFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/sobelfilter"},"opencv");
-    operation.setSyntax("sobelfilter(inputraster, x-order-derivative, y-order-derivative[, kernel-size]");
+    operation.setSyntax("sobelfilter(inputraster, x-order-derivative, y-order-derivative[, kernel-size])");
     operation.setDescription(TR("Calculates the first, second, third, or mixed image derivatives using an extended Sobel operator, used in edge detection"));
     operation.setInParameterCount({3,4});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"),TR("input rastercoverage, color or image(grey) domain"));

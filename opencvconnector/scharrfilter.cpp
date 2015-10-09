@@ -87,7 +87,7 @@ Ilwis::OperationImplementation::State ScharrFilter::prepare(ExecutionContext *ct
 quint64 ScharrFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/scharrfilter"},"opencv");
-    operation.setSyntax("scharrfilter(inputraster, x-order-derivative, y-order-derivative");
+    operation.setSyntax("scharrfilter(inputraster, x-order-derivative, y-order-derivative)");
     operation.setDescription(TR("Calculates the first, second, third, or mixed image derivatives using an extended scharr operator, it is more accurate than the Sobel operator"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"),TR("input rastercoverage, color or image(grey) domain"));

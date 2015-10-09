@@ -58,7 +58,7 @@ Ilwis::OperationImplementation::State MedianBlurFilter::prepare(ExecutionContext
 quint64 MedianBlurFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/medianblurfilter"},"opencv");
-    operation.setSyntax("medianblurfilter(inputraster, kernelsizeX, kernelsizeY");
+    operation.setSyntax("medianblurfilter(inputraster, kernelsizeX, kernelsizeY)");
     operation.setDescription(TR("smoothes an image using the median filter with the ksize  x ksize aperture"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"));

@@ -82,7 +82,7 @@ Ilwis::OperationImplementation::State ErodeFilter::prepare(ExecutionContext *ctx
 quint64 ErodeFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/erodefilter"},"opencv");
-    operation.setSyntax("erodefilter(inputraster,iterations, !rectangle|ellipse|cross,kernel-x-size, kernel-y-size[,x-anchor, y-anchor] ");
+    operation.setSyntax("erodefilter(inputraster,iterations, kerneltype!rectangle|ellipse|cross,kernel-x-size, kernel-y-size[,x-anchor, y-anchor])");
     operation.setDescription(TR("Erodes an image by using a specific structuring element."));
     operation.setInParameterCount({5,7});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"));
