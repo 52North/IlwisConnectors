@@ -89,7 +89,7 @@ bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options
 {
     if ( _resource.url(true).scheme() == "file"){
         VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
-        if (!openSource(false))
+        if (!openSource(true))
             return false;
         QDataStream stream(_datasource.get());
         IlwisTypes tp;

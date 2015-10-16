@@ -70,8 +70,8 @@ bool DomainSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
     QString parent;
     _stream >> parent;
     if ( parent != sUNDEF){
-        IDomain parentdom(parent);
-        if ( parentdom.isValid()){
+        IDomain parentdom;
+        if ( parentdom.prepare(parent, {"mustexist", true})){
             dom->setParent(parentdom);
         }
     }
