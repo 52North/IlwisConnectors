@@ -91,6 +91,7 @@ void StreamModule::prepare()
     cfactory->addCreator("catalog","stream",StreamConnector::create);
     cfactory->addCreator("domain","stream",StreamConnector::create);
     cfactory->addCreator("georeference","stream",StreamConnector::create);
+    cfactory->addCreator("coordinatesystem","stream",StreamConnector::create);
 
     QFileInfo ilw = context()->ilwisFolder();
     QString path = ilw.canonicalFilePath() + "/extensions/streamconnector/resources";
