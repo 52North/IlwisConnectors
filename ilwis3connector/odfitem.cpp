@@ -31,6 +31,15 @@ ODFItem::ODFItem(const QFileInfo &file) : Resource(QUrl::fromLocalFile(file.abso
     _file = file;
     name(_file.fileName(), false);
     addContainer(QUrl::fromLocalFile(_file.canonicalPath()));
+    if (file.suffix() == "mpr"){
+        QString mpl = _odf.value("Collection","Item0");
+        if( mpl != sUNDEF){
+            QString internalPath = _file.canonicalPath() + "/" + mpl;
+            if ( QFile::exists(internalPath)) {
+                addContainer(QUrl::fromLocalFile(internalPath));
+            }
+        }
+    }
     IlwisTypes csytp, domtp, grftp;
     csytp = domtp = grftp = itUNKNOWN;
 

@@ -50,6 +50,7 @@ private:
     QString _csyname;
     QString _datumName;
     QString _projectionName;
+    QString _mplcontainer;
 
     const static QString systemObjectNames;
 
