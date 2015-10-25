@@ -316,7 +316,13 @@ void RasterCoverageConnector::loadBlock(UPGrid& grid,QFile& file, quint32 blockI
         vector<double> values(noItems);
         for(quint32 i=0; i < noItems; ++i) {
             double v = value(bytes.data(), i);
-            values[i] = _converter.isNeutral() ? v :_converter.raw2real(v);
+            if ( _converter.isNeutral()){
+                if ( v != iILW3UNDEF && v != shILW3UNDEF)
+                    values[i] = v;
+                else
+                    values[i] = rUNDEF;
+            }else
+                values[i] = _converter.raw2real(v);
         }
         grid->setBlockData(blockIndex, values, true);
     }else
