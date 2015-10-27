@@ -72,7 +72,7 @@ bool Ilwis3CatalogFileExplorer::canUse(const Resource &resource) const
 
 QString Ilwis3CatalogFileExplorer::provider() const
 {
-    return "gdal";
+    return "ilwis3";
 }
 
 QFileInfo Ilwis3CatalogFileExplorer::toLocalFile(const QUrl &datasource) const
