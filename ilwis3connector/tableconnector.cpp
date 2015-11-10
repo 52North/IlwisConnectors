@@ -96,7 +96,7 @@ ColumnDefinition TableConnector::makeColumn(const QString& colName, quint64 inde
     }
     if ( domName.toLower() == "string.dom")
         domName = "code=domain:text";
-    if(!dom.prepare(domName)) {
+    if(!dom.prepare(domName,{"mustexist",true})) {
         return ColumnDefinition();
     }
     QString section = QString("Col:%1").arg(colName);
