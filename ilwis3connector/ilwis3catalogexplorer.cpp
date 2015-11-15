@@ -44,34 +44,41 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
     QStringList sfilters;
     for(QVariant& ext : filters)
         sfilters += "*." + ext.toString();
+
     std::vector<QUrl> files = FolderCatalogExplorer::loadFolders(source(),
                                                                  sfilters,
                                                                  CatalogConnector::foFULLPATHS | CatalogConnector::foEXTENSIONFILTER);
 
+    std::unordered_map<QString, IniFile> inifiles;
     std::set<ODFItem> odfitems;
     QHash<QString, quint64> names;
     std::vector<Resource> finalList;
+    kernel()->startClock();
     UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
     trq->prepare("ilwis3 connector",source().toLocalFile(),files.size());
     kernel()->issues()->silent(true);  // error messages during scan are not needed
     try{
+        // we construct the list of ini files in one go so that there is a list of ini files that only need to be loaded once.
+        // multiple files reusing the same ini files ( e.g. a csy) have now much faster access (already loaded)
         foreach(const QUrl& url, files) {
-            QFileInfo file = toLocalFile(url);
-            if ( file.isFile()){
-                IlwisTypes tp = Ilwis3Connector::ilwisType(file.fileName());
-                if ( tp & itILWISOBJECT ) {
-                    ODFItem item(file);
-                    odfitems.insert(item);
-                    names[url.toString().toLower()] = item.id();
-                }
-            } else if ( file.isDir()){
+            QFileInfo localfile = QFileInfo(url.toLocalFile());
+            if (localfile.isFile())
+                inifiles[url.toLocalFile().toLower()] = IniFile(localfile);
+            else{
                 Resource res(url,itCATALOG, true);
                 finalList.push_back(res);
-
             }
-            if (!trq->update(1))
-                return std::vector<Resource>();
         }
+
+        foreach(const auto& kvp, inifiles) {
+            ODFItem item(kvp.second, &inifiles);
+            odfitems.insert(item);
+            names[kvp.second.fileInfo().absoluteFilePath().toLower()] = item.id();
+        }
+        if (!trq->update(1))
+            return std::vector<Resource>();
+        kernel()->endClock(source().toLocalFile() + " read ");
+        kernel()->startClock();
         std::vector<ODFItem> items;
         trq->prepare(TR("Organizing data"),"",odfitems.size()*2);
         for( const auto& item : odfitems){
@@ -86,8 +93,7 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                  trq->update(1);
             }
         }
-
-        kernel()->issues()->silent(false);
+        kernel()->endClock(source().toLocalFile() + " admin ");
 
         if ( finalList.size() > 0)
             kernel()->issues()->log(QString(TR("Added %1 objects through the ilwis3 connector")).arg( finalList.size()),IssueObject::itMessage);

@@ -1,12 +1,15 @@
 #ifndef ODFITEM_H
 #define ODFITEM_H
 
+#include "inifile.h"
+
 namespace Ilwis {
 namespace Ilwis3{
+
 class ODFItem : public Resource
 {
 public:
-    ODFItem(const QFileInfo& file);
+    ODFItem(const IniFile& file, std::unordered_map<QString, IniFile> *knownInis = 0);
     bool resolveNames(const QHash<QString, quint64>& names);
     std::vector<Resource> resolveNames();
 
@@ -43,8 +46,8 @@ private:
     QString cleanName(const QString&) const;
     Resource resolveName(const QString &name, IlwisTypes tp);
 
-    IniFile _odf;
-    QFileInfo _file;
+    const IniFile _odf;
+    std::unordered_map<QString, IniFile> *_knownOdfs=0;
     QString _grfname;
     QString _domname;
     QString _csyname;
@@ -54,6 +57,7 @@ private:
 
     const static QString systemObjectNames;
 
+    bool getIni(IniFile &ini, const QString &localpath) const;
 };
 }
 }
