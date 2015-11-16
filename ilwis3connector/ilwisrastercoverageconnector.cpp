@@ -341,6 +341,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &optio
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
     UPGrid& grid = raster->gridRef();
+    //blocklimits; key = band number, value= blocks needed from this band
     std::map<quint32, std::vector<quint32> > blocklimits = grid->calcBlockLimits(iooptions);
 
     for(const auto& layer : blocklimits){
