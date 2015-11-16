@@ -57,27 +57,33 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
 
     if (_handle->type() == GdalHandle::etGDALDatasetH){
         Coordinate cMin, cMax;
-        Size<> rastersize(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), gdal()->layerCount(_handle->handle()));
+        bool isLayer;
+        int layer = source().code().toInt(&isLayer); // is it a layer then the code is set to the layer number
+        Size<> rastersize(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), isLayer ? 1 : gdal()->layerCount(_handle->handle()));
 
 
-        std::vector<double> bands(rastersize.zsize());
+        std::vector<double> bands(isLayer ? 1 : rastersize.zsize());
         for(int i =0; i < rastersize.zsize(); ++i){
             bands[i] = i;
         }
         raster->stackDefinitionRef().setSubDefinition(IDomain("count"),bands);
 
-        auto layerHandle = gdal()->getRasterBand(_handle->handle(), 1);
+        auto layerHandle = gdal()->getRasterBand(_handle->handle(), isLayer ? layer + 1 : 1);
         GDALColorInterp colorType = gdal()->colorInterpretation(layerHandle);
         bool ok = false;
-        if ( colorType >= 3 && colorType <= 12){
-            raster->size(Size<>(rastersize.xsize(), rastersize.ysize(), rastersize.zsize() / 3));
+        if ( isLayer){
+            raster->size(rastersize);
+            ok = handleNumericLayerCase(layer, raster);
+        }else if( colorType <=1 || isLayer){ // no colors + grayscale which equals image domain
+                    raster->size(rastersize);
+                    ok = handleNumericCase(rastersize, raster);
+        } else if ( colorType >= 3 && colorType <= 12){
+            raster->size(Size<>(rastersize.xsize(), rastersize.ysize(), isLayer ? 1 : rastersize.zsize() / 3));
             ok = handleColorCase(rastersize, raster,colorType);
         }else if (colorType == 2){ // color palette
             ok = handlePaletteCase(rastersize, raster);
-        }else if( colorType <=1){ // no colors + grayscale which equals image domain
-            raster->size(rastersize);
-            ok = handleNumericCase(rastersize, raster);
         }
+
 
         if (!ok)
             return false;
@@ -264,7 +270,30 @@ DataDefinition RasterCoverageConnector::createDataDefColor(std::map<int, int>& v
     return DataDefinition(IDomain("color"), colorRange);
 
 }
+bool RasterCoverageConnector::handleNumericLayerCase(int layer, RasterCoverage* raster) {
 
+    double vminRaster=rUNDEF, vmaxRaster=rUNDEF;
+    double resolution= 0;
+        auto layerHandle = gdal()->getRasterBand(_handle->handle(), layer+1);
+        if (!layerHandle) {
+            return ERROR2(ERR_COULD_NOT_LOAD_2, raster->name(),"layer");
+        }
+
+        int ok;
+        _gdalValueType = gdal()->rasterDataType(layerHandle);
+        resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
+        auto vmin = gdal()->minValue(layerHandle, &ok);
+        auto vmax = gdal()->maxValue(layerHandle, &ok);
+        vminRaster = Ilwis::min(vmin, vminRaster);
+        vmaxRaster = Ilwis::max(vmax, vmaxRaster);
+        raster->datadefRef(0) = createDataDef(vmin, vmax, resolution);
+
+    raster->datadefRef() = DataDefinition(raster->datadef(0).domain(), new NumericRange(vminRaster, vmaxRaster,resolution));
+    _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
+
+    return true;
+
+}
 bool RasterCoverageConnector::handleNumericCase(const Size<> &rastersize, RasterCoverage* raster) {
 
     double vminRaster=rUNDEF, vmaxRaster=rUNDEF;
@@ -376,8 +405,9 @@ bool RasterCoverageConnector::moveIndexes(quint32& linesPerBlock, quint64& lines
 }
 
 bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& options ){
-    IOOptions iooptions = options.isEmpty() ? ioOptions() : options;
-    auto layerHandle = gdal()->getRasterBand(_handle->handle(), 1);
+    bool isLayer;
+    quint32 layer = source().code().toInt(&isLayer); // is it a layer then the code is set to the layer number
+    auto layerHandle = gdal()->getRasterBand(_handle->handle(), isLayer ? layer + 1 : 1);
     if (!layerHandle) {
         ERROR2(ERR_COULD_NOT_LOAD_2, "GDAL","layer");
         return false;
@@ -390,7 +420,14 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& optio
     qint64 blockSizeBytes = grid->blockSize(0) * _typeSize;
     char *block = new char[blockSizeBytes];
     quint64 totalLines =grid->size().ysize();
-    std::map<quint32, std::vector<quint32> > blocklimits = grid->calcBlockLimits(iooptions);
+    std::map<quint32, std::vector<quint32> > blocklimits;
+    //blocklimits; key = band number, value= blocks needed from this band
+    if ( !isLayer)
+        blocklimits = grid->calcBlockLimits(options);
+    else{
+        for(int i = 0; i < totalLines / linesPerBlock; ++i)
+            blocklimits[layer].push_back(i);
+    }
 
     for(const auto& layer : blocklimits){
         quint64 linesLeft = totalLines; //std::min((quint64)grid->maxLines(), totalLines - grid->maxLines() * layer.second[0]);

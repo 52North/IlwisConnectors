@@ -391,10 +391,19 @@ GdalHandle* GDALProxy::openUrl(const QUrl& url, quint64 asker, GDALAccess mode, 
         setCPLErrorHandler(GDALProxy::cplErrorHandler);
     }else
         setCPLErrorHandler(GDALProxy::cplDummyHandler);
-
+    bool ok;
+    name.toInt(&ok);
     if (_openedDatasets.contains(name)){
         return _openedDatasets[name];
-    } else {
+    } else if ( ok){
+        Resource res = mastercatalog()->id2Resource(asker);
+        QString localFile = QFileInfo(res.container().toLocalFile()).absoluteFilePath();
+        handle = gdal()->open(localFile.toLocal8Bit(), mode);
+        if (handle){
+            return _openedDatasets[localFile] = new GdalHandle(handle, GdalHandle::etGDALDatasetH, asker);
+        }
+    }
+    else {
         handle = gdal()->ogrOpen(name.toLocal8Bit(), mode, NULL);
         if (handle){
             return _openedDatasets[name] = new GdalHandle(handle, GdalHandle::etOGRDataSourceH, asker);
@@ -408,7 +417,9 @@ GdalHandle* GDALProxy::openUrl(const QUrl& url, quint64 asker, GDALAccess mode, 
                 return NULL;
             }
         }
+
     }
+    return 0;
 }
 
 void GDALProxy::closeFile(const QString &filename, quint64 asker){

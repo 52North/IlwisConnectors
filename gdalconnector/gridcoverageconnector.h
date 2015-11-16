@@ -82,6 +82,7 @@ private:
 
     bool moveIndexes(quint32 &linesPerBlock, quint64 &linesLeft, int &gdalindex);
     bool storeColorRaster(RasterCoverage *raster, GDALDatasetH dataset);
+    bool handleNumericLayerCase(int layer, RasterCoverage *raster);
 };
 }
 }
