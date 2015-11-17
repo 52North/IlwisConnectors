@@ -285,6 +285,9 @@ IProjection CoordinateSystemConnector::getProjection(ConventionalCoordinateSyste
     double lattitudeOfTrueScale = _odf->value("Projection","Latitude of True Scale").toDouble(&ok);
     if ( ok)
         proj->setParameter(Projection::pvLATTS, lattitudeOfTrueScale);
+    double height = _odf->value("Projection","Height Persp. Center").toDouble(&ok);
+    if ( ok)
+        proj->setParameter(Projection::pvHEIGHT, height);
     double scaleFactor = _odf->value("Projection","Scale Factor").toDouble(&ok);
     if ( ok)
         proj->setParameter(Projection::pvK0, scaleFactor);
