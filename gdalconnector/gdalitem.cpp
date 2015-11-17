@@ -247,7 +247,7 @@ quint64 GDALItems::addItem(GdalHandle* handle, const QUrl& url, quint64 csyid, q
     }
     gdalItem.setExtendedType(extTypes);
     if ( layerindex != iUNDEF)
-        gdalItem.code(QString::number(layerindex));
+        gdalItem.addProperty("bandindex", layerindex);
 
     insert(gdalItem);
 
