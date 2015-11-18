@@ -273,19 +273,23 @@ bool RasterCoverageConnector::handleNumericLayerCase(int layer, RasterCoverage* 
 
     double vminRaster=rUNDEF, vmaxRaster=rUNDEF;
     double resolution= 0;
-        auto layerHandle = gdal()->getRasterBand(_handle->handle(), layer+1);
-        if (!layerHandle) {
-            return ERROR2(ERR_COULD_NOT_LOAD_2, raster->name(),"layer");
-        }
+    auto layerHandle = gdal()->getRasterBand(_handle->handle(), layer+1);
+    if (!layerHandle) {
+        return ERROR2(ERR_COULD_NOT_LOAD_2, raster->name(),"layer");
+    }
 
-        int ok;
-        _gdalValueType = gdal()->rasterDataType(layerHandle);
-        resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
-        auto vmin = gdal()->minValue(layerHandle, &ok);
-        auto vmax = gdal()->maxValue(layerHandle, &ok);
-        vminRaster = Ilwis::min(vmin, vminRaster);
-        vmaxRaster = Ilwis::max(vmax, vmaxRaster);
-        raster->datadefRef(0) = createDataDef(vmin, vmax, resolution);
+    int ok;
+    _gdalValueType = gdal()->rasterDataType(layerHandle);
+    resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
+    auto vmin = gdal()->minValue(layerHandle, &ok);
+    if ( std::isinf(vmin) || std::isinf(-vmin))
+        vmin = rUNDEF;
+    auto vmax = gdal()->maxValue(layerHandle, &ok);
+    if ( std::isinf(vmax) || std::isinf(-vmax))
+        vmin = rUNDEF;
+    vminRaster = Ilwis::min(vmin, vminRaster);
+    vmaxRaster = Ilwis::max(vmax, vmaxRaster);
+    raster->datadefRef(0) = createDataDef(vmin, vmax, resolution);
 
     raster->datadefRef() = DataDefinition(raster->datadef(0).domain(), new NumericRange(vminRaster, vmaxRaster,resolution));
     _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
@@ -308,6 +312,10 @@ bool RasterCoverageConnector::handleNumericCase(const Size<> &rastersize, Raster
         resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
         auto vmin = gdal()->minValue(layerHandle, &ok);
         auto vmax = gdal()->maxValue(layerHandle, &ok);
+        if ( std::isinf(vmin))
+            vmin = rUNDEF;
+        if ( std::isinf(vmax))
+            vmax = rUNDEF;
         vminRaster = Ilwis::min(vmin, vminRaster);
         vmaxRaster = Ilwis::max(vmax, vmaxRaster);
         raster->datadefRef(i) = createDataDef(vmin, vmax, resolution);
@@ -419,6 +427,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& optio
     char *block = new char[blockSizeBytes];
     quint64 totalLines =grid->size().ysize();
     std::map<quint32, std::vector<quint32> > blocklimits;
+
     //blocklimits; key = band number, value= blocks needed from this band
     if ( layer == iUNDEF)
         blocklimits = grid->calcBlockLimits(options);
@@ -433,7 +442,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& optio
             layerHandle = gdal()->getRasterBand(_handle->handle(), layer.first + 1);
             int inLayerBlockIndex = layer.second[0] % grid->blocksPerBand(); //
             for(const auto& index : layer.second) {
-                loadNumericBlock(layerHandle, index, inLayerBlockIndex, linesPerBlock, linesLeft, block, grid);
+                loadNumericBlock(layerHandle, index, inLayerBlockIndex, linesPerBlock, linesLeft, block, raster,layer.first);
 
                 if(!moveIndexes(linesPerBlock, linesLeft, inLayerBlockIndex))
                     break;
@@ -473,16 +482,42 @@ void RasterCoverageConnector::loadColorBlock(quint32 ilwisLayer, quint32 index, 
     grid->setBlockData(index, values, true);
 }
 
-void RasterCoverageConnector::loadNumericBlock(GDALRasterBandH layerHandle, quint32 index, quint32 inLayerBlockIndex, quint32 linesPerBlock, quint64 linesLeft,char *block, UPGrid& grid) const{
+void RasterCoverageConnector::loadNumericBlock(GDALRasterBandH layerHandle,
+                                               quint32 index,
+                                               quint32 inLayerBlockIndex,
+                                               quint32 linesPerBlock,
+                                               quint64 linesLeft,
+                                               char *block, RasterCoverage *raster,
+                                               int bandIndex) const{
+   UPGrid& grid = raster->gridRef();
     readData(grid, layerHandle, inLayerBlockIndex, linesPerBlock, block, linesLeft);
+
+
+    double vmin=1e300, vmax=-1e300;
+    int ok;
+    double nodata = gdal()->getUndefinedValue(layerHandle,&ok);
     quint32 noItems = grid->blockSize(index);
-     if ( noItems == iUNDEF)
+    if ( noItems == iUNDEF)
         return ;
     std::vector<double> values(noItems);
     for(quint32 i=0; i < noItems; ++i) {
         double v = value(block, i);
-        values[i] = std::isnan(v) || std::isinf(v) ? rUNDEF : v;
+        v = std::isnan(v) || std::isinf(v) ? rUNDEF : v;
+        if ( v != rUNDEF){
+            vmin = std::min(vmin, v);
+            vmax = std::max(vmax, v);
+        }
+        values[i] = v;
     }
+    SPNumericRange rng;
+    if ( raster->size().zsize() == 1){
+        rng = raster->datadefRef().range<NumericRange>();
+    }else
+        rng = raster->datadefRef(bandIndex).range<NumericRange>();
+
+    rng->min(rng->isValid() ? std::min(rng->min(), vmin) : vmin);
+    rng->max(rng->isValid() ? std::min(rng->max(), vmax) : vmax);
+
     grid->setBlockData(index, values, true);
 }
 
