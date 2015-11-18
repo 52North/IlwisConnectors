@@ -53,7 +53,6 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
     std::set<ODFItem> odfitems;
     QHash<QString, quint64> names;
     std::vector<Resource> finalList;
-    kernel()->startClock();
     UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
     trq->prepare("ilwis3 connector",source().toLocalFile(),files.size());
     kernel()->issues()->silent(true);  // error messages during scan are not needed
@@ -77,8 +76,6 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
         }
         if (!trq->update(1))
             return std::vector<Resource>();
-        kernel()->endClock(source().toLocalFile() + " read ");
-        kernel()->startClock();
         std::vector<ODFItem> items;
         trq->prepare(TR("Organizing data"),"",odfitems.size()*2);
         for( const auto& item : odfitems){
@@ -93,7 +90,6 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                  trq->update(1);
             }
         }
-        kernel()->endClock(source().toLocalFile() + " admin ");
 
         if ( finalList.size() > 0)
             kernel()->issues()->log(QString(TR("Added %1 objects through the ilwis3 connector")).arg( finalList.size()),IssueObject::itMessage);
