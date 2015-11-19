@@ -1,6 +1,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QRegExp>
+#include <QColor>
 
 #include "kernel.h"
 #include "raster.h"
@@ -29,6 +30,7 @@
 #include "geodeticdatum.h"
 #include "projection.h"
 #include "tableconnector.h"
+#include "colorrange.h"
 #include "coordinatesystemconnector.h"
 #include "coverageconnector.h"
 #include "odfitem.h"
@@ -322,13 +324,20 @@ DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const 
     QString filename;
     QString domname = odf->value("BaseMap","Domain");
     if (domname != sUNDEF) { // probe if domain is an external file
-        filename = filename2FullPath(domname, this->_resource); // use an eventual absolute-path supplied in domname, otherwise look for it in the same folder as the BaseMap
-        if (!QFileInfo(QUrl(filename).toLocalFile()).exists()) {
-            filename = context()->workingCatalog()->resolve(domname, itDOMAIN); // if it is also not there, look for it in the working catalog (it might be different than the location of the BaseMap)
-            if (!QFileInfo(QUrl(filename).toLocalFile()).exists())
-                filename = name2Code(domname, "domain"); // probe if it is a system file; note that this is a code, not a filename
-        } else { // handle the case whereby we open a loose coverage file that is not in the mastercatalog; the domain must be added to the mastercatalog at this point, otherwise it will not load correctly by the "prepare" that follows, due to an incomplete "Resource"
-            addToMasterCatalog(filename, itDOMAIN);
+        if ( domname == "Color.dom"){ // special case
+                QColor clrMin = QColor(0,0,0);
+                QColor clrMax = QColor(255,255,255);
+                Range *colorRange = new ContinuousColorRange( clrMin, clrMax, ColorRangeBase::cmRGBA);
+                return DataDefinition(IDomain("color"), colorRange);
+        }else {
+            filename = filename2FullPath(domname, this->_resource); // use an eventual absolute-path supplied in domname, otherwise look for it in the same folder as the BaseMap
+            if (!QFileInfo(QUrl(filename).toLocalFile()).exists()) {
+                filename = context()->workingCatalog()->resolve(domname, itDOMAIN); // if it is also not there, look for it in the working catalog (it might be different than the location of the BaseMap)
+                if (!QFileInfo(QUrl(filename).toLocalFile()).exists())
+                    filename = name2Code(domname, "domain"); // probe if it is a system file; note that this is a code, not a filename
+            } else { // handle the case whereby we open a loose coverage file that is not in the mastercatalog; the domain must be added to the mastercatalog at this point, otherwise it will not load correctly by the "prepare" that follows, due to an incomplete "Resource"
+                addToMasterCatalog(filename, itDOMAIN);
+            }
         }
     } else
         filename = odf->url(); // probe if it is an internal domain
