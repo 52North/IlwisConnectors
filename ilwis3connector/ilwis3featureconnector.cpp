@@ -126,30 +126,42 @@ bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, c
     qint32 colCoords = topTable.index("Coords");
     qint32 colForward = topTable.index("ForwardLink");
     qint32 colBackward = topTable.index("BackwardLink");
-    std::vector<geos::geom::Coordinate> *ring;
+    std::vector<geos::geom::Coordinate> *ring =  new std::vector<geos::geom::Coordinate>();
     bool forward = isForwardStartDirection(topTable,colForward, colBackward, colCoords, row);
     do{
         std::vector<Coordinate> coords;
         topTable.get(abs(row) - 1,colCoords,coords);
-        if( coords.size() == 0 ||coords.back() == coords.front()){
-            ring = new std::vector<geos::geom::Coordinate>(coords.size());
-            std::copy(coords.begin(), coords.end(), ring->begin());
+        int ringsize =  ring->size();
+        ring->reserve(ring->size() + coords.size());
+        double fwl, bwl;
+        topTable.get(abs(row) - 1,colForward, fwl);
+        topTable.get(abs(row) - 1,colBackward, bwl);
+        QString bb = QString("(%1 %2,%3) (%4,%5)  [%6/%7]").arg(abs(row)).arg(coords.front().x).arg(coords.front().y).arg(coords.back().x).arg(coords.back().y).arg(fwl).arg(bwl);
+        qDebug() << bb;
+
+        if( ringsize == 0 ||coords.front() == ring->back()){
+            for(int i = 0; i < coords.size() ; ++i){
+                if ( ring->size() > 0 && ring->back() == coords[i])
+                    continue;
+                ring->push_back(coords[i]);
+            }
         } else if ( ring->size() > 0 && coords.back() == ring->back()) {
-            ring = new std::vector<geos::geom::Coordinate>(coords.size());
-            std::reverse_copy(coords.begin(), coords.end(), ring->begin());
+            for(int i = 0; i < coords.size() ; ++i)
+                 ring->push_back(coords[coords.size() - i - 1]);
         } else if ( ring->size() > 0 && ring->front() == coords.front()) {
-            ring = new std::vector<geos::geom::Coordinate>(coords.size());
-            std::reverse_copy(coords.begin(), coords.end(), ring->begin());
+            for(int i = 0; i < coords.size() ; ++i)
+                 ring->push_back(coords[i]);
         } else if ( ring->size() > 0 && ring->front() == coords.back()) {
-            ring = new std::vector<geos::geom::Coordinate>(coords.size());
-            std::copy(coords.begin(), coords.end(), ring->begin());
+             for(int i = 0; i < coords.size() ; ++i)
+                 ring->push_back(coords[i]);
         }
 
         if ( ring->size() > 3 && ring->front() == ring->back()) {
+            ring->shrink_to_fit();
             geos::geom::CoordinateArraySequence * ringIn = new geos::geom::CoordinateArraySequence(ring);
             ringIn->removeRepeatedPoints();
             rings->push_back( fcoverage->geomfactory()->createLinearRing(ringIn));
-            coords.clear();
+            ring =  new std::vector<geos::geom::Coordinate>();
         }
         qint32 oldIndex = row;
         double v;
@@ -169,11 +181,11 @@ bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, c
 bool FeatureConnector::isForwardStartDirection(const BinaryIlwis3Table& topTable, qint32 colForward, qint32 colBackward, qint32 colCoords, long index) {
     qint32 fwl, bwl;
     double v;
-    topTable.get(abs(index),colForward, v );
+    topTable.get(abs(index) - 1,colForward, v );
     fwl = v;
    // if ( fwl != iUNDEF)
    //     --fwl; // due to being raw values
-    topTable.get(abs(index),colBackward, v );
+    topTable.get(abs(index)-1,colBackward, v );
     bwl = v;
    // if ( bwl != iUNDEF)
    //    --bwl;
@@ -184,8 +196,8 @@ bool FeatureConnector::isForwardStartDirection(const BinaryIlwis3Table& topTable
         return false;
     //qDebug() << fwl << bwl;
     std::vector<Coordinate> startLine, forwardLine;
-    topTable.get(abs(index), colCoords,startLine);
-    topTable.get(abs(fwl), colCoords, forwardLine);
+    topTable.get(abs(index) - 1, colCoords,startLine);
+    topTable.get(abs(fwl) - 1, colCoords, forwardLine);
 
     bool forward = false;
     if ( forwardLine.size() == 0 || startLine.size() == 0)
