@@ -133,11 +133,6 @@ bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, c
         topTable.get(abs(row) - 1,colCoords,coords);
         int ringsize =  ring->size();
         ring->reserve(ring->size() + coords.size());
-        double fwl, bwl;
-        topTable.get(abs(row) - 1,colForward, fwl);
-        topTable.get(abs(row) - 1,colBackward, bwl);
-        QString bb = QString("(%1 %2,%3) (%4,%5)  [%6/%7]").arg(abs(row)).arg(coords.front().x).arg(coords.front().y).arg(coords.back().x).arg(coords.back().y).arg(fwl).arg(bwl);
-        qDebug() << bb;
 
         if( ringsize == 0 ||coords.front() == ring->back()){
             for(int i = 0; i < coords.size() ; ++i){
