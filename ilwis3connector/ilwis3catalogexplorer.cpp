@@ -72,6 +72,12 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
         foreach(const auto& kvp, inifiles) {
             ODFItem item(kvp.second, &inifiles);
             odfitems.insert(item);
+            if ( item.isMapList()){
+                ODFItem mapList(item);
+                mapList.setIlwisType(itCATALOG);
+                mapList.setExtendedType(mapList.extendedType() | itRASTER);
+                odfitems.insert(mapList);
+            }
             names[kvp.second.fileInfo().absoluteFilePath().toLower()] = item.id();
         }
         if (!trq->update(1))

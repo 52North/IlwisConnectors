@@ -77,8 +77,9 @@ ODFItem::ODFItem(const IniFile &file, std::unordered_map<QString, IniFile> *know
 
     if (_datumName != sUNDEF)
         _extendedType |= itGEODETICDATUM;
-    if ( _odf.fileInfo().suffix() == "mpl")
-        _extendedType |= itCATALOG;
+    if ( _odf.fileInfo().suffix() == "mpl"){
+        _isMapList = true;
+    }
 
     _size = findSize();
     _dimensions = findDimensions();
@@ -130,6 +131,11 @@ std::vector<Resource> ODFItem::resolveNames(){
     }
 
     return resources;
+}
+
+bool ODFItem::isMapList() const
+{
+    return _isMapList;
 }
 
 bool ODFItem::resolveNames(const QHash<QString, quint64> &names)

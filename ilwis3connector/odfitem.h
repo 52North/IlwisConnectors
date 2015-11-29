@@ -13,7 +13,7 @@ public:
     bool resolveNames(const QHash<QString, quint64>& names);
     std::vector<Resource> resolveNames();
 
-    // bool isSystemObject(const QString &name) const;
+    bool isMapList() const;
 private:
     /*!
      \brief  tries to find a id for the name found in the catalog
@@ -54,6 +54,7 @@ private:
     QString _datumName;
     QString _projectionName;
     QString _mplcontainer;
+    bool _isMapList = false;
 
     const static QString systemObjectNames;
 
