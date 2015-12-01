@@ -25,6 +25,8 @@
 #include "georefSerializerv1.h"
 #include "rasterSerializerv1.h"
 #include "catalogserializerv1.h"
+#include "operationmetadataserializerv1.h"
+#include "workflowserializerv1.h"
 #include "dataformat.h"
 
 using namespace Ilwis;
@@ -75,6 +77,8 @@ void StreamModule::prepare()
     versionFactory->addCreator({"iv40",itGEOREF},GeorefSerializerV1::create);
     versionFactory->addCreator({"iv40",itRASTER},RasterSerializerV1::create);
     versionFactory->addCreator({"iv40",itCATALOG},CatalogserializerV1::create);
+    versionFactory->addCreator({"iv40",itOPERATIONMETADATA},OperationMetadataSerializerV1::create);
+    versionFactory->addCreator({"iv40",itWORKFLOW},WorkflowSerializerV1::create);
 
 
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
@@ -92,6 +96,8 @@ void StreamModule::prepare()
     cfactory->addCreator("domain","stream",StreamConnector::create);
     cfactory->addCreator("georeference","stream",StreamConnector::create);
     cfactory->addCreator("coordinatesystem","stream",StreamConnector::create);
+    cfactory->addCreator("operationmetadata","stream",StreamConnector::create);
+    cfactory->addCreator("workflow","stream",StreamConnector::create);
 
     QFileInfo ilw = context()->ilwisFolder();
     QString path = ilw.canonicalFilePath() + "/extensions/streamconnector/resources";
