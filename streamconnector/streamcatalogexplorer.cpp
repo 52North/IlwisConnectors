@@ -44,21 +44,41 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
                                                                  CatalogConnector::foFULLPATHS | CatalogConnector::foEXTENSIONFILTER);
     std::vector<Resource> items;
     for(auto url : files){
-        QFile file(url.toLocalFile());
-        QDataStream stream(&file);
-        IlwisTypes tp;
-        QString version;
-        stream >> tp;
-        stream >> version;
+        QString path = url.toLocalFile();
+        if ( QFileInfo(path).isDir())
+            continue;
 
-//        IlwisObject *obj = createType(tp);
-//        VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
-//        std::unique_ptr<VersionedSerializer> serializer(factory->create(version,tp,stream));
-//        if (!serializer)
-//            continue;
-//        serializer->loadMetaData(obj,IOOptions());
-        Resource res(url, tp);
-        items.push_back(res);
+        QFile file(path);
+        if ( file.open(QIODevice::ReadOnly)){
+            QDataStream stream(&file);
+            IlwisTypes tp;
+            QString version;
+
+            QString var;
+            stream >> var;
+            stream >> var;
+            stream >> var;
+            bool readonly;
+            stream >> readonly;
+            double time;
+            stream >> time;
+            stream >> time;
+            stream >> tp;
+            stream >> version;
+            if ( tp == itUNKNOWN)
+                continue;
+
+
+
+            //        IlwisObject *obj = createType(tp);
+            //        VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+            //        std::unique_ptr<VersionedSerializer> serializer(factory->create(version,tp,stream));
+            //        if (!serializer)
+            //            continue;
+            //        serializer->loadMetaData(obj,IOOptions());
+            Resource res(url, tp);
+            items.push_back(res);
+        }
 
     }
 
@@ -82,7 +102,7 @@ bool StreamCatalogExplorer::canUse(const Resource &resource) const
 {
     if ( resource.ilwisType() != itCATALOG)
         return false;
-    if ( QFileInfo(resource.url().toLocalFile()).suffix() == "ilwis") // no file can be an ods folder catalog.
+    if ( resource.url().scheme() == "file")
         return true;
     return false;
 }
