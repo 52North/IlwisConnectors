@@ -77,7 +77,7 @@ void StreamModule::prepare()
     versionFactory->addCreator({"iv40",itGEOREF},GeorefSerializerV1::create);
     versionFactory->addCreator({"iv40",itRASTER},RasterSerializerV1::create);
     versionFactory->addCreator({"iv40",itCATALOG},CatalogserializerV1::create);
-    versionFactory->addCreator({"iv40",itOPERATIONMETADATA},OperationMetadataSerializerV1::create);
+    versionFactory->addCreator({"iv40",itSINGLEOPERATION},OperationMetadataSerializerV1::create);
     versionFactory->addCreator({"iv40",itWORKFLOW},WorkflowSerializerV1::create);
 
 
