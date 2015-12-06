@@ -3,6 +3,7 @@
 #include "ilwisdata.h"
 #include "connectorinterface.h"
 #include "versionedserializer.h"
+#include "operationmetadataserializerv1.h"
 #include "workflowserializerv1.h"
 #include "workflow/workflow.h"
 
@@ -14,7 +15,7 @@ VersionedSerializer *WorkflowSerializerV1::create(QDataStream& stream)
     return new WorkflowSerializerV1(stream);
 }
 
-WorkflowSerializerV1::WorkflowSerializerV1(QDataStream &stream) : VersionedSerializer(stream)
+WorkflowSerializerV1::WorkflowSerializerV1(QDataStream &stream) : OperationMetadataSerializerV1(stream)
 {
 }
 
@@ -22,13 +23,14 @@ bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 {
     qDebug() << "YAYAAYYA";
     Workflow *workflow = static_cast<Workflow *>(obj);
-    if (!VersionedSerializer::store(obj, options))
+    if (!OperationMetadataSerializerV1::store(obj, options))
         return false;
 
     // Input asignments
     QMap<InputAssignment, SPAssignedInputData> asignments = workflow->getAllInputAssignments();
 
-    _stream << asignments.size();
+    int sz = asignments.size();
+    _stream << sz;
     for (const auto &key: asignments.keys()) {
         _stream << (int)key.first;
         _stream << key.second;
@@ -48,7 +50,7 @@ bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         NodeProperties nodeData = workflow->nodeProperties(*iter);
         _stream << *iter;
         _stream << nodeData._resourceProvider;
-        _stream << nodeData._resourceUrl;
+        _stream << nodeData._syntax;
         _stream << nodeData._x;
         _stream << nodeData._y;
     }
@@ -75,7 +77,7 @@ bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 bool WorkflowSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 {
     Workflow *workflow = static_cast<Workflow *>(obj);
-    if (!VersionedSerializer::loadMetaData(obj, options))
+    if (!OperationMetadataSerializerV1::loadMetaData(obj, options))
         return false;
     int size;
     _stream >> size;
@@ -101,18 +103,16 @@ bool WorkflowSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &optio
     for (int i = 0; i < nodesSize; ++i) {
         OVertex oldVertex;
         QString provider;
-        QUrl url;
+        QString syntax;
         quint16 x;
         quint16 y;
 
         _stream >> oldVertex;
         _stream >> provider;
-        _stream >> url;
+        _stream >> syntax;
         _stream >> x;
         _stream >> y;
-        // TODO: Add operation id
-
-        vertexMapping->insert(oldVertex, workflow->addOperation({url, provider, x, y}));
+        vertexMapping->insert(oldVertex, workflow->addOperation({syntax, provider, x, y}));
     }
     for (const auto &iter : vertexMapping->keys()) {
         int edgesSize;

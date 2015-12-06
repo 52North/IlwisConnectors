@@ -4,7 +4,7 @@
 namespace Ilwis {
 namespace Stream {
 
-class WorkflowSerializerV1 : public VersionedSerializer
+class WorkflowSerializerV1 : public OperationMetadataSerializerV1
 {
 public:
     WorkflowSerializerV1(QDataStream& stream);
