@@ -27,6 +27,7 @@
 #include "factory.h"
 #include "abstractfactory.h"
 #include "rawconverter.h"
+#include "workflow/workflow.h"
 #include "downloadmanager.h"
 #include "versioneddatastreamfactory.h"
 
@@ -52,6 +53,8 @@ IlwisObject *StreamConnector::create() const
         return new NumericDomain(_resource);
     case itGEOREF:
         return new GeoReference(_resource);
+    case itWORKFLOW:
+        return new Workflow(_resource);
     case itITEMDOMAIN:{
         if ( hasType(_resource.extendedType(), itNUMERICITEM))
             return new IntervalDomain(_resource);
