@@ -17,6 +17,7 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "factory.h"
+#include "workflow/workflow.h"
 #include "abstractfactory.h"
 #include "rawconverter.h"
 #include "ilwiscontext.h"
@@ -52,36 +53,23 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
         if ( file.open(QIODevice::ReadOnly)){
             QDataStream stream(&file);
             IlwisTypes tp;
-            QString version;
 
-            QString var;
-            stream >> var;
-            stream >> var;
-            stream >> var;
-            bool readonly;
-            stream >> readonly;
-            double time;
-            stream >> time;
-            stream >> time;
             stream >> tp;
-            stream >> version;
+            file.close();
+
             if ( tp == itUNKNOWN)
                 continue;
-
-
-
-            //        IlwisObject *obj = createType(tp);
-            //        VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
-            //        std::unique_ptr<VersionedSerializer> serializer(factory->create(version,tp,stream));
-            //        if (!serializer)
-            //            continue;
-            //        serializer->loadMetaData(obj,IOOptions());
             Resource res(url, tp);
-            items.push_back(res);
+            if ( tp == itWORKFLOW){
+                IWorkflow wf;
+                wf.prepare(res);
+                wf->createMetadata();
+                Resource res2 = wf->source();
+                res2.code(res.code()); //code comes from other machine or possibly older instance which might have different id's
+                items.push_back(res2);
+            }
         }
-
     }
-
     return items;
 
 }
@@ -94,6 +82,8 @@ IlwisObject *StreamCatalogExplorer::createType(IlwisTypes tp){
         return new RasterCoverage();
     case itTABLE:
         return new FlatTable();
+    case itWORKFLOW:
+        return new Workflow();
     }
     return 0;
 }
