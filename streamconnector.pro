@@ -61,7 +61,10 @@ HEADERS += \
     streamconnector/downloadmanager.h \    
     streamconnector/remotecatalogexplorer.h \
     streamconnector/catalogserializerv1.h \
-    streamconnector/catalogconnection.h
+    streamconnector/catalogconnection.h \
+    streamconnector/streamcatalogexplorer.h \
+    streamconnector/operationmetadataserializerv1.h \
+    streamconnector/workflowserializerv1.h
 
 SOURCES += \
     streamconnector/streammodule.cpp \
@@ -82,7 +85,10 @@ SOURCES += \
     streamconnector/downloadmanager.cpp \
     streamconnector/remotecatalogexplorer.cpp \
     streamconnector/catalogserializerv1.cpp \
-    streamconnector/catalogconnection.cpp
+    streamconnector/catalogconnection.cpp \
+    streamconnector/streamcatalogexplorer.cpp \
+    streamconnector/operationmetadataserializerv1.cpp \
+    streamconnector/workflowserializerv1.cpp
 
 resources.files = streamconnector/resources/ogr_formats.config
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
