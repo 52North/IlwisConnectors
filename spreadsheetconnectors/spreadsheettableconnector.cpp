@@ -11,7 +11,7 @@
 #include "table.h"
 #include "basetable.h"
 #include "flattable.h"
-#include "spreadsheet.h"
+#include "SpreadSheet.h"
 #include "odsformat.h"
 #include "xlsformat.h"
 #include "xlsxformat.h"

@@ -54,6 +54,12 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$C
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
                                               -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
+
+linux{
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+        -L$$GEOSLIB/ -lgeos-3.4.2
+}
+
 INCLUDEPATH += $$PWD/../external/geos
 
 OTHER_FILES += \
@@ -66,3 +72,10 @@ resources.files = \
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
 
+linux{
+    dependencies.files = $$GEOSLIB/libgeos-3.4.2.so
+    dependencies.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    INSTALLS += target dependencies
+}

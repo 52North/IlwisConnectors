@@ -27,11 +27,22 @@ linux{
     BOOST=/usr/include
     GEOSINCL=/usr/include
     GEOSLIB=/usr/lib
+    OPENCVLIB=/usr/local/lib
     SHAREDEXT=so
     PREFIXSHARED=lib
     INCLUDEPATH += $$GEOSINCL
     DEPENDPATH += $$GEOSINCL
     LIBS += -L$$GEOSLIB/ -lgeos-3.4.2
+}
+
+linux-g++{
+   !contains(QT_ARCH, x86_64){
+       LINUXLIB=/usr/lib/i386-linux-gnu/
+       LINUXSYSTEMLIB=/lib/i386-linux-gnu/
+    } else {
+       LINUXLIB=/usr/lib/x86_64-linux-gnu/
+       LINUXSYSTEMLIB=/lib/x86_64-linux-gnu/
+   }
 }
 
 QT += sql network

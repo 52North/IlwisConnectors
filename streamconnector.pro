@@ -21,9 +21,17 @@ DEFINES += STREAMCONNECTOR_LIBRARY
 OTHER_FILES += \
     streamconnector/streamconnector.json 
 
+win32{
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
-		
+}
+
+linux{
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+        -L$$GEOSLIB/ -lgeos-3.4.2
+}
+
+
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
@@ -53,10 +61,7 @@ HEADERS += \
     streamconnector/downloadmanager.h \    
     streamconnector/remotecatalogexplorer.h \
     streamconnector/catalogserializerv1.h \
-    streamconnector/catalogconnection.h \
-    streamconnector/streamcatalogexplorer.h \
-    streamconnector/operationmetadataserializerv1.h \
-    streamconnector/workflowserializerv1.h
+    streamconnector/catalogconnection.h
 
 SOURCES += \
     streamconnector/streammodule.cpp \
@@ -77,13 +82,18 @@ SOURCES += \
     streamconnector/downloadmanager.cpp \
     streamconnector/remotecatalogexplorer.cpp \
     streamconnector/catalogserializerv1.cpp \
-    streamconnector/catalogconnection.cpp \
-    streamconnector/streamcatalogexplorer.cpp \
-    streamconnector/operationmetadataserializerv1.cpp \
-    streamconnector/workflowserializerv1.cpp
+    streamconnector/catalogconnection.cpp
 
 resources.files = streamconnector/resources/ogr_formats.config
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
 INSTALLS += resources
 
+
+linux{
+    dependencies.files = $$GEOSLIB/libgeos-3.4.2.so
+    dependencies.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    INSTALLS += target dependencies
+}

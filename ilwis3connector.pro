@@ -38,7 +38,7 @@ SOURCES += \
     ilwis3connector/ilwis3catalogfileexplorer.cpp
 
 HEADERS += \
-    ilwis3connector/ilwis3connector_global.h \
+    ilwis3connector/Ilwis3Connector_global.h \
     ilwis3connector/ilwis3connector.h \
     ilwis3connector/ilwis3module.h \
     ilwis3connector/ilwis3objectfactory.h \
@@ -81,3 +81,9 @@ win32{
 }
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
+
+
+linux{
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    INSTALLS += target
+}

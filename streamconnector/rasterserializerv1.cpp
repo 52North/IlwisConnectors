@@ -124,7 +124,7 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         return false;
     domainStreamer->store( raster->stackDefinition().domain().ptr(), options);
     std::vector<QString> indexes = raster->stackDefinition().indexes();
-    _stream << indexes.size();
+    _stream << (quint32)indexes.size();
     for(auto index : indexes)
         _stream << index;
 
@@ -237,7 +237,7 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
         return false;
     IDomain dom(type);
     domainStreamer->loadMetaData( dom.ptr(), options);
-    size_t nrOfBands;
+    quint32 nrOfBands;
     _stream >> nrOfBands;
     std::vector<QString> variants(nrOfBands);
     for(int i =0; i < nrOfBands; ++i){

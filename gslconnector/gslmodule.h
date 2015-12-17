@@ -24,7 +24,7 @@ public:
     QString getVersion() const;
     void prepare();
 
-    Q_PLUGIN_METADATA(IID "n52.ilwis.GSLconnector" FILE  "GSLconnector.json")
+    Q_PLUGIN_METADATA(IID "n52.ilwis.GSLconnector" FILE  "gslconnector.json")
 
 private:
 

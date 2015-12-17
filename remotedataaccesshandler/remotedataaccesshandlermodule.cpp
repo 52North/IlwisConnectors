@@ -5,7 +5,7 @@
 #include "abstractfactory.h"
 #include "symboltable.h"
 #include "remotedataaccesshandlermodule.h"
-#include "OperationExpression.h"
+#include "operationExpression.h"
 #include "operationmetadata.h"
 #include "commandhandler.h"
 #include "operation.h"

@@ -48,7 +48,7 @@ bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     for (auto &iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
 
         NodeProperties nodeData = workflow->nodeProperties(*iter);
-        _stream << *iter;
+        _stream << (quint32)*iter;
         _stream << nodeData._resourceProvider;
         _stream << nodeData._syntax;
         _stream << nodeData._x;
@@ -101,7 +101,7 @@ bool WorkflowSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &optio
     _stream >> nodesSize;
     QMap<OVertex, OVertex> *vertexMapping = new QMap<OVertex, OVertex>();
     for (int i = 0; i < nodesSize; ++i) {
-        OVertex oldVertex;
+        quint32 oldVertex;
         QString provider;
         QString syntax;
         quint16 x;

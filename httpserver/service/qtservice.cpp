@@ -38,8 +38,8 @@
 **
 ****************************************************************************/
 
-#include "QtService.h"
-#include "QtService_p.h"
+#include "qtservice.h"
+#include "qtservice_p.h"
 #include <QCoreApplication>
 #include <QVariant>
 #include <stdio.h>
@@ -743,7 +743,7 @@ int QtService::exec(const std::map<QString, QVariant> &args)
 #if defined(Q_OS_UNIX)
     if (::getenv("QtService_RUN")) {
         // Means we're the detached, real service process.
-        int ec = d_ptr->run(true, d_ptr->args);
+        int ec = d_ptr->run();
         if (ec == -1)
             qErrnoWarning("The service failed to run.");
         return ec;

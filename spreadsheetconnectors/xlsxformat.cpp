@@ -5,7 +5,7 @@
 #include "errorobject.h"
 #include "ilwisdata.h"
 #include "domain.h"
-#include "spreadsheet.h"
+#include "SpreadSheet.h"
 #include "xlsxdocument.h"
 #include "xlsxworkbook.h"
 #include "xlsxformat.h"

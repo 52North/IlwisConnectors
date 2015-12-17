@@ -69,8 +69,6 @@ OTHER_FILES += \
 
 INCLUDEPATH +=  $$PWD/extensions/httpserver
 
-INSTALLS += resources
-
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
 win32{
@@ -78,3 +76,9 @@ win32{
 }
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
+
+linux{
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/
+    INSTALLS += target
+}
+

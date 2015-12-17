@@ -7,7 +7,7 @@
 #include "catalogconnector.h"
 #include "catalogexplorer.h"
 #include "foldercatalogexplorer.h"
-#include "spreadsheet.h"
+#include "SpreadSheet.h"
 #include "spreadsheettableconnector.h"
 #include "spreadsheetcatalogexplorer.h"
 

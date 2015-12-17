@@ -18,7 +18,7 @@ bool CatalogserializerV1::loadItems(std::vector<Resource>& items ) {
     if (!VersionedSerializer::loadItems(items))
         return false;
 
-    size_t sz;
+    quint32 sz;
     _stream >> sz;
     for(int i = 0; i < sz; ++i){
         Resource resource;
@@ -52,7 +52,7 @@ bool CatalogserializerV1::store(IlwisObject *obj, const Ilwis::IOOptions &option
         std::copy(operations.begin(), operations.end(), std::back_inserter(items));
     }
 
-    _stream << items.size();
+    _stream << (quint32)items.size();
 
     for(Resource resource : items){
         adaptResource(baseurl, resource);
