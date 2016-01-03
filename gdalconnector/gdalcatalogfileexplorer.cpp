@@ -61,7 +61,10 @@ std::vector<Ilwis::Resource> GdalCatalogFileExplorer::loadItems(const IOOptions 
             kernel()->issues()->silent(true); // error messages during scan are not needed
             GDALItems gdalitems(containerInf);
             std::vector<Resource> items;
-            for( const auto& resource : gdalitems){
+            for( const auto& res : gdalitems){
+                Resource resource(res);
+                resource.createTime(Time(containerInf.created()));
+                resource.modifiedTime(Time(containerInf.lastModified()));
                 items.push_back(resource);
             }
             mastercatalog()->addItems(items);

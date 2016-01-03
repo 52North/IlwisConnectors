@@ -30,6 +30,8 @@ ODFItem::ODFItem(const IniFile &file, std::unordered_map<QString, IniFile> *know
     _projectionName(sUNDEF)
 {
     name(_odf.fileInfo().fileName(), false);
+    createTime(Time(_odf.fileInfo().created()));
+    modifiedTime(Time(_odf.fileInfo().lastModified()));
     addContainer(QUrl::fromLocalFile(_odf.fileInfo().canonicalPath()));
     if (_odf.fileInfo().suffix() == "mpr"){
         QString mpl = _odf.value("Collection","Item0");

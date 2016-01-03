@@ -16,6 +16,7 @@
 #include "ilwiscontext.h"
 #include "dataformat.h"
 #include "tranquilizer.h"
+#include "mastercatalogcache.h"
 #include "foldercatalogexplorer.h"
 #include "ilwis3catalogexplorer.h"
 
@@ -61,8 +62,15 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
         // multiple files reusing the same ini files ( e.g. a csy) have now much faster access (already loaded)
         foreach(const QUrl& url, files) {
             QFileInfo localfile = QFileInfo(url.toLocalFile());
-            if (localfile.isFile())
-                inifiles[url.toLocalFile().toLower()] = IniFile(localfile);
+            if (localfile.isFile()){
+               std::vector<Resource> resources = CatalogConnector::cache()->find(url, Time(localfile.lastModified()));
+               if ( resources.size() == 0)
+                    inifiles[url.toLocalFile().toLower()] = IniFile(localfile);
+                else{
+                    for(auto resource : resources)
+                        finalList.push_back(resource);
+                }
+            }
             else{
                 Resource res(url,itCATALOG, true);
                 finalList.push_back(res);
@@ -74,6 +82,7 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
             odfitems.insert(item);
             if ( item.isMapList()){
                 ODFItem mapList(item);
+                mapList.newId();
                 mapList.setIlwisType(itCATALOG);
                 mapList.setExtendedType(mapList.extendedType() | itRASTER);
                 odfitems.insert(mapList);

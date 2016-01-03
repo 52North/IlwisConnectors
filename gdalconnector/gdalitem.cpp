@@ -29,22 +29,23 @@ GDALItems::GDALItems(const QFileInfo &localContainerFile){
         int count = layerCount(handle);
         if ( count == 0) {// could be a complex dataset
             handleComplexDataSet(handle->handle());
-            return;
-        }
-        quint64 csyId = addCsy(handle, file.absoluteFilePath(), url, false);
-        if ( handle->type() == GdalHandle::etGDALDatasetH) {
-            quint64 grfId = addItem(handle, url, csyId, 0, itGEOREF,itCOORDSYSTEM);
-            //addItem(handle, url, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM,sz);
-            for(int i = 0; i < count; ++i){
-                auto layerHandle = gdal()->getRasterBand(handle->handle(), i+1);
-                if ( layerHandle){
-                    QString layername = file.baseName() + "_" + QString::number(i);
-                    QString containerUrl = url.toString() + "/" + layername;
-                    addItem(handle, containerUrl, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM, sz/count, i);
+        }else {
+            quint64 csyId = addCsy(handle, file.absoluteFilePath(), url, false);
+            if ( handle->type() == GdalHandle::etGDALDatasetH) {
+                quint64 grfId = addItem(handle, url, csyId, 0, itGEOREF,itCOORDSYSTEM);
+                //addItem(handle, url, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM,sz);
+                for(int i = 0; i < count; ++i){
+                    auto layerHandle = gdal()->getRasterBand(handle->handle(), i+1);
+                    if ( layerHandle){
+                        QString layername = file.baseName() + "_" + QString::number(i);
+                        QString containerUrl = url.toString() + "/" + layername;
+                        addItem(handle, containerUrl, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM, sz/count, i);
+                    }
                 }
             }
+            gdal()->closeFile(file.absoluteFilePath(), i64UNDEF);
         }
-        gdal()->closeFile(file.absoluteFilePath(), i64UNDEF);
+
     }
 
 }
