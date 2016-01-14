@@ -49,6 +49,7 @@ bool TableSerializerV1::store(IlwisObject *obj, const IOOptions &options)
             coldef.datadef().range()->store(_stream);
         types.push_back(coldef.datadef().domain()->valueType());
     }
+    _stream <<  obj->ilwisType() << Version::IlwisVersion;
     for(int rec = 0; rec < tbl->recordCount(); ++rec){
         auto record = tbl->record(rec);
         record.storeData(types, _stream,options);
@@ -70,6 +71,7 @@ bool TableSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
     quint64 type;
     _stream >> columnCount;
     _stream >> recordCount;
+    tbl->recordCount(recordCount);
     for(int col =0; col < columnCount; ++col){
         QString columnName;
         _stream >> columnName;
@@ -100,7 +102,16 @@ bool TableSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 
     }
 
-    for(quint32 rec = 0; rec < recordCount; ++rec){
+    return true;
+}
+
+bool TableSerializerV1::loadData(IlwisObject* obj, const IOOptions& options){
+    Table *tbl = static_cast<Table *>(obj);
+    std::vector<IlwisTypes> types;
+    for(int col =0; col < tbl->columnCount(); ++col){
+        types.push_back(tbl->columndefinition(col).datadef().domain()->valueType());
+    }
+    for(quint32 rec = 0; rec < tbl->recordCount(); ++rec){
         Record& record = tbl->newRecord();
         record.loadData(types,_stream,options);
 
