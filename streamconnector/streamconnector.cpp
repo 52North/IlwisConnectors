@@ -48,6 +48,7 @@ IlwisObject *StreamConnector::create() const
     case itRASTER:
         return new RasterCoverage(_resource);
     case itTABLE:
+    case itFLATTABLE:
         return new FlatTable(_resource);
     case itNUMERICDOMAIN:
         return new NumericDomain(_resource);
@@ -117,6 +118,7 @@ bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
         //QFileInfo inf(_resource.url().toLocalFile());
         VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
         QDataStream stream(_datasource.get());
+        quint64 pos = stream.device()->pos();
         IlwisTypes tp;
         QString version;
         stream >> tp;
