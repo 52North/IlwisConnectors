@@ -133,7 +133,15 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
 
     QString attfile = _odf->value("BaseMap", "AttributeTable");
     QString basemaptype = _odf->value("BaseMap", "Type");
-    // feature coverages always have an attribute table; rasters might have
+    if ( attfile == sUNDEF){ // the attribute table might be in the domain
+            QString domname = _odf->value("BaseMap", "Domain");
+            domname = _odf->fileInfo().absolutePath() + "/" + domname;
+            QFileInfo inf(domname);
+            if ( inf.exists()){
+                IniFile ini(inf.absoluteFilePath());
+                attfile = ini.value("DomainSort","AttributeTable");
+            }
+    }
     if ( basemaptype != "Map" || attfile != sUNDEF) {
         ITable tbl = prepareAttributeTable(attfile, basemaptype, options);
         if ( tbl.isValid()){
