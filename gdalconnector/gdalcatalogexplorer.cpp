@@ -53,8 +53,8 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
                 filters += "*." + ext;
         }
     }
-    filters.removeOne("*.hdr");
     filters.removeDuplicates();
+    filters.removeOne("*.hdr");
 
     std::vector<QUrl> files = FolderCatalogExplorer::loadFolders(source(), filters ,CatalogConnector::foFULLPATHS | CatalogConnector::foEXTENSIONFILTER);
 
