@@ -102,6 +102,14 @@ bool DomainConnector::handleItemDomains(IlwisObject* data) {
             intervaldomain->addItem(item);
             oldBound = bound;
         }
+    }else if  (domtype == "DomainIdentifier"){
+        ItemDomain<NamedIdentifier> *tdomain = static_cast<ItemDomain<NamedIdentifier> *>(data);
+        QString itemName;
+        for(quint32 i = 0; i < tbl.rows(); ++i) {
+            tbl.get(i,indexName,itemName);
+            NamedIdentifier *item = new NamedIdentifier(itemName);
+            tdomain->addItem(item);
+        }
     }else {
         ItemDomain<ThematicItem> *tdomain = static_cast<ItemDomain<ThematicItem> *>(data);
         QString itemName, itemCode = sUNDEF;
