@@ -273,16 +273,15 @@ bool RasterCoverageConnector::handleNumericLayerCase(int layer, RasterCoverage* 
 
     _gdalValueType = gdal()->rasterDataType(layerHandle);
     double resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
-    int accurate;
-    auto vmin = gdal()->minValue(layerHandle, &accurate);
-    if ( !accurate || std::isinf(vmin) || std::isinf(-vmin))
-        vmin = rUNDEF;
-    auto vmax = gdal()->maxValue(layerHandle, &accurate);
-    if ( !accurate || std::isinf(vmax) || std::isinf(-vmax))
-        vmax = rUNDEF;
-    raster->datadefRef(0) = createDataDef(vmin, vmax, resolution);
-
-    raster->datadefRef() = DataDefinition(raster->datadef(0).domain(), new NumericRange(vmin, vmax, resolution));
+    int accurateMin;
+    int accurateMax;
+    auto vmin = gdal()->minValue(layerHandle, &accurateMin);
+    auto vmax = gdal()->maxValue(layerHandle, &accurateMax);
+    raster->datadefRef(0) = createDataDef(vmin, vmax, resolution, accurateMin && accurateMax);
+    if ( !accurateMin || !accurateMax || std::isinf(vmin) || std::isinf(-vmin) || std::isinf(vmax) || std::isinf(-vmax))
+        raster->datadefRef() = DataDefinition(raster->datadef(0).domain(), new NumericRange());
+    else
+        raster->datadefRef() = DataDefinition(raster->datadef(0).domain(), new NumericRange(vmin, vmax, resolution));
     _typeSize = gdal()->getDataTypeSize(_gdalValueType) / 8;
 
     return true;
@@ -298,18 +297,19 @@ bool RasterCoverageConnector::handleNumericCase(const Size<> &rastersize, Raster
             return ERROR2(ERR_COULD_NOT_LOAD_2, raster->name(),"layer");
         }
 
-        int accurate;
+        int accurateMin;
+        int accurateMax;
         _gdalValueType = gdal()->rasterDataType(layerHandle);
         resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
-        auto vmin = gdal()->minValue(layerHandle, &accurate);
-        auto vmax = gdal()->maxValue(layerHandle, &accurate);
-        if ( !accurate || std::isinf(vmin) || std::isinf(-vmin))
-            vmin = rUNDEF;
-        if ( !accurate || std::isinf(vmax) || std::isinf(-vmax))
-            vmax = rUNDEF;
-        vminRaster = Ilwis::min(vmin, vminRaster);
-        vmaxRaster = Ilwis::max(vmax, vmaxRaster); // Note that max(5,rUNDEF)=5 (probably unintentional), so this potentially gives a valid NumericRange to a multiband RasterCoverage if one of the bands have a valid range (while other bands don't have one). But it is unlikely to encounter such data. The goal of keeping the total range invalid is so we can test on it, in order to decide whether we need to compute the statistics() at a later stage.
-        raster->datadefRef(i) = createDataDef(vmin, vmax, resolution);
+        auto vmin = gdal()->minValue(layerHandle, &accurateMin);
+        auto vmax = gdal()->maxValue(layerHandle, &accurateMax);
+        if ( !accurateMin || !accurateMax || std::isinf(vmin) || std::isinf(-vmin) || std::isinf(vmax) || std::isinf(-vmax))
+            raster->datadefRef(i) = createDataDef(vmin, vmax, resolution, false);
+        else {
+            vminRaster = Ilwis::min(vmin, vminRaster);
+            vmaxRaster = Ilwis::max(vmax, vmaxRaster); // Note that potentially this gives a valid NumericRange to a multiband RasterCoverage if one of the bands have a valid range (while other bands don't have one). But it is unlikely to encounter such data. The goal of keeping the total range invalid is so we can test on it, in order to decide whether we need to compute the statistics() at a later stage.
+            raster->datadefRef(i) = createDataDef(vmin, vmax, resolution, true);
+        }
 
     }
     raster->datadefRef() = DataDefinition(raster->datadef(0).domain(), new NumericRange(vminRaster, vmaxRaster, resolution));
@@ -319,7 +319,7 @@ bool RasterCoverageConnector::handleNumericCase(const Size<> &rastersize, Raster
 
 }
 
-DataDefinition RasterCoverageConnector::createDataDef(double vmin, double vmax, double resolution){
+DataDefinition RasterCoverageConnector::createDataDef(double vmin, double vmax, double resolution, bool accurate){
 
     QString domName = NumericDomain::standardNumericDomainName(vmin, vmax,  resolution);
     IDomain dom;
@@ -330,7 +330,10 @@ DataDefinition RasterCoverageConnector::createDataDef(double vmin, double vmax, 
     }
     DataDefinition def;
     def.domain(dom);
-    def.range(new NumericRange(vmin, vmax, dom->range<NumericRange>()->resolution()));
+    if (accurate)
+        def.range(new NumericRange(vmin, vmax, dom->range<NumericRange>()->resolution()));
+    else
+        def.range(new NumericRange()); // invalid NumericRange, force computing raster statistics
     return def;
 }
 

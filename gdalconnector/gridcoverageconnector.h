@@ -72,7 +72,7 @@ private:
     }
 
     bool loadDriver();
-    DataDefinition createDataDef(double vmin, double vmax, double resolution);
+    DataDefinition createDataDef(double vmin, double vmax, double resolution, bool accurate);
     DataDefinition createDataDefColor(std::map<int, int> &vminRaster, std::map<int, int> &vmaxRaster);
     void loadNumericBlock(GDALRasterBandH bandhandle, quint32 index, quint32 gdalindex, quint32 linesPerBlock, quint64 linesLeft, char *block, Ilwis::RasterCoverage *raster, int bandIndex) const;
     void loadColorBlock(quint32 ilwisLayer, quint32 index, quint32 gdalindex, quint32 linesPerBlock, quint64 linesLeft, char *block, UPGrid &grid) const;
