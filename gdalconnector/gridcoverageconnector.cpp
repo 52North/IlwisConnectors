@@ -152,7 +152,7 @@ bool RasterCoverageConnector::handlePaletteCase(Size<> &rastersize, RasterCovera
         return false;
     ColorRangeBase::ColorModel model;
     GDALPaletteInterp colorType = gdal()->getPaletteColorInterpretation(paletteHandle);
-    for(int i = 0; i < count; ++i){
+    for(int i = 0; i < count; ++i) {
 
         GDALColorEntry *entry = gdal()->getColorPaletteEntry(paletteHandle, i);
         if ( !entry)
@@ -205,7 +205,6 @@ bool RasterCoverageConnector::handleColorCase(Size<> &rastersize, RasterCoverage
             _hasTransparency = true;
             break;
         }
-
      }
     quint32 noOfComponents = _hasTransparency ? 4 : 3;
     std::map<int, int> vminRasterAll, vmaxRasterAll;
@@ -429,7 +428,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& optio
     }
 
     for(const auto& layer : blocklimits){
-        quint64 linesLeft = totalLines; //std::min((quint64)grid->maxLines(), totalLines - grid->maxLines() * layer.second[0]);
+        quint64 linesLeft = totalLines - grid->maxLines() * layer.second[0]; //std::min((quint64)grid->maxLines(), totalLines - grid->maxLines() * layer.second[0]);
         if ( _colorModel == ColorRangeBase::cmNONE || raster->datadef().domain()->valueType() == itPALETTECOLOR){ // palette entries are just integers so we can use the numeric read for it
             layerHandle = gdal()->getRasterBand(_handle->handle(), layer.first + 1);
             int inLayerBlockIndex = layer.second[0] % grid->blocksPerBand(); //
