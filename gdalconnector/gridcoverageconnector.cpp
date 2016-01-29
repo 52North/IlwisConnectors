@@ -276,9 +276,13 @@ bool RasterCoverageConnector::handleNumericLayerCase(int layer, RasterCoverage* 
     int accurateMin;
     int accurateMax;
     auto vmin = gdal()->minValue(layerHandle, &accurateMin);
+    if (std::isinf(vmin) || std::isinf(-vmin))
+        vmin = rUNDEF;
     auto vmax = gdal()->maxValue(layerHandle, &accurateMax);
+    if (std::isinf(vmax) || std::isinf(-vmax))
+        vmax = rUNDEF;
     raster->datadefRef(0) = createDataDef(vmin, vmax, resolution, accurateMin && accurateMax);
-    if ( !accurateMin || !accurateMax || std::isinf(vmin) || std::isinf(-vmin) || std::isinf(vmax) || std::isinf(-vmax))
+    if ( !accurateMin || !accurateMax)
         raster->datadefRef() = DataDefinition(raster->datadef(0).domain(), new NumericRange());
     else
         raster->datadefRef() = DataDefinition(raster->datadef(0).domain(), new NumericRange(vmin, vmax, resolution));
@@ -302,8 +306,12 @@ bool RasterCoverageConnector::handleNumericCase(const Size<> &rastersize, Raster
         _gdalValueType = gdal()->rasterDataType(layerHandle);
         resolution =  _gdalValueType <= GDT_Int32 ? 1 : 0;
         auto vmin = gdal()->minValue(layerHandle, &accurateMin);
+        if (std::isinf(vmin) || std::isinf(-vmin))
+            vmin = rUNDEF;
         auto vmax = gdal()->maxValue(layerHandle, &accurateMax);
-        if ( !accurateMin || !accurateMax || std::isinf(vmin) || std::isinf(-vmin) || std::isinf(vmax) || std::isinf(-vmax))
+        if (std::isinf(vmax) || std::isinf(-vmax))
+            vmax = rUNDEF;
+        if ( !accurateMin || !accurateMax)
             raster->datadefRef(i) = createDataDef(vmin, vmax, resolution, false);
         else {
             vminRaster = Ilwis::min(vmin, vminRaster);
