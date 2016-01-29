@@ -94,17 +94,31 @@ bool PostgresqlTableLoader::loadData(Table *table) const
     QSqlQuery query = pgUtil.doQuery(select(allNonGeometryColumns), "tableloader.loadData");
 
     quint64 count = 0;
+    table->dataLoaded(true); // prevent any succesfull trying to load the table while its already loading
+    std::vector<QVariant> record(table->columnCount());
+    std::vector<quint32> columnMap;
+
     while (query.next()) {
-        std::vector<QVariant> record(table->columnCount());
         for (int i = 0; i < table->columnCount(); i++) {
-            ColumnDefinition& coldef = table->columndefinitionRef(i);
-            DataDefinition& datadef = coldef.datadef();
+            DataDefinition& datadef = table->columndefinitionRef(i).datadef();
             if( !datadef.domain().isValid()) {
+                ColumnDefinition& coldef = table->columndefinitionRef(i);
                 WARN2(ERR_NO_INITIALIZED_2, "domain", coldef.name());
                 record[i] = QVariant(); // empty
                 continue;
             }
-            record[i] = query.value(coldef.name());
+
+            if ( columnMap.size() == 0){
+                const QSqlRecord& sqlrecord = query.record();
+                columnMap.resize( table->columnCount());
+                for (int col = 0; col < table->columnCount(); col++) {
+                    ColumnDefinition& coldef = table->columndefinitionRef(col);
+                    int index = sqlrecord.indexOf(coldef.name());
+                    columnMap[col] = index;
+                }
+            }
+
+            record[i] = query.value(columnMap[i]);
         }
         table->record(count++, record);
     }
@@ -130,7 +144,7 @@ bool PostgresqlTableLoader::createColumnDefinition(Table *table, const QSqlQuery
         tdomain.prepare();
         tdomain->range(new TimeInterval(itDATE));
         domain = tdomain;
-    } else if (udtName.startsWith("float")) {
+    } else if (udtName.startsWith("float") || udtName == "numeric") {
         INumericDomain ndomain;
         ndomain.prepare("value");
         domain = ndomain;
