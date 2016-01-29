@@ -14,7 +14,7 @@ private:
     quint64 addCsy(GdalHandle* handle, const QString &path, const QUrl &url, bool message=true);
     QString dimensions(GdalHandle* handle, bool &is3d, int layerindex=iUNDEF) const;
     std::map<QString, QString> kvp2Map(char **kvplist);
-    void handleComplexDataSet(void *handle);
+    int handleComplexDataSet(void *handle);
     quint64 numbertype2domainid(const QString &numbertype) const;
     quint64 findSize(const QFileInfo &inf);
     int layerCount(GdalHandle* handle);

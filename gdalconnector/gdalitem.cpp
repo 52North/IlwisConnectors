@@ -71,7 +71,7 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
         quint64 sz = file.size();
         int count = layerCount(handle);
         if ( count == 0) {// could be a complex dataset
-            handleComplexDataSet(handle->handle());
+            addItem(handle, QUrl::fromLocalFile(file.absoluteFilePath()), handleComplexDataSet(handle->handle()), iUNDEF, itCATALOG, itFILE | itRASTER);
             return;
         }
         //TODO: at the moment simplistic approach; all is corners georef and domain value
@@ -136,15 +136,16 @@ quint64 GDALItems::findSize(const QFileInfo& inf){
     return size;
 }
 
-void GDALItems::handleComplexDataSet(void *handle){
+int GDALItems::handleComplexDataSet(void *handle){
     char **pdatasets = gdal()->getMetaData(handle, "SUBDATASETS");
     if ( pdatasets == 0)
-        return;
+        return iUNDEF;
 
     auto datasetdesc = kvp2Map(pdatasets);
 
     auto iter = datasetdesc.begin();
     // we know there is altijd  pairs SUBDATASET_<n>_DESC,SUBDATASET_<n>_NAME in the map
+    int count = 0;
     while(iter !=  datasetdesc.end()) {
         Size<> sz;
         QString shortname;
@@ -188,8 +189,10 @@ void GDALItems::handleComplexDataSet(void *handle){
         gdalitem.addProperty("domain",domid);
         insert(gdalitem);
         ++iter;
+        ++count;
 
     }
+    return count;
 }
 
 quint64 GDALItems::numbertype2domainid(const QString& numbertype) const{
@@ -220,6 +223,9 @@ QString GDALItems::dimensions(GdalHandle* handle, bool & is3d, int layerindex) c
 }
 
 quint64 GDALItems::addItem(GdalHandle* handle, const QUrl& url, quint64 csyid, quint64 grfId, IlwisTypes tp, IlwisTypes extTypes, quint64 sz, int layerindex) {
+    if ( csyid == iUNDEF)
+        return i64UNDEF;
+
     Resource gdalItem(url, tp);
     if ( sz != i64UNDEF)
         gdalItem.size(sz);
