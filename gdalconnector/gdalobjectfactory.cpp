@@ -48,6 +48,9 @@ bool GdalObjectFactory::canUse(const Resource &resource) const
     if ( resource.url().scheme() == "ilwis") // can't use anything marked as internal
         return false;
 
+    if ( resource.url().scheme() != "file") // can't read non file based data, for the moment. In theory gdal does some services but the quality of it is soso
+        return false;
+
     if (!gdal()->supports(resource))
         return false;
 
