@@ -21,7 +21,6 @@ WorkflowSerializerV1::WorkflowSerializerV1(QDataStream &stream) : OperationMetad
 
 bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 {
-    qDebug() << "YAYAAYYA";
     Workflow *workflow = static_cast<Workflow *>(obj);
     if (!OperationMetadataSerializerV1::store(obj, options))
         return false;
