@@ -372,7 +372,10 @@ QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& 
         return "code=georef:undetermined";
     if ( localName != sUNDEF) {
         if ( localName.contains(QRegExp("\\\\|/"))) {
-            return localName;
+            if (localName.indexOf("file://") == 0)
+                return localName;
+            else
+                return QUrl::fromLocalFile(localName).toString();
         }
         else {
             if ( owner.isValid())  {
