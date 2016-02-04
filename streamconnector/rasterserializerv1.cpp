@@ -196,26 +196,14 @@ bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions &options )
         storeBulk<qint32>(converter, _stream, _streamconnector, box, rcoverage); break;
     case itUINT32:
         storeBulk<quint32>(converter, _stream, _streamconnector, box, rcoverage); break;
+    case itDOUBLE:
+        storeBulk<double>(converter, _stream, _streamconnector, box, rcoverage); break;
+        break;
     case itINT64:
+    default:
         for(double v : rcoverage)
             _stream << (qint64)v;
         break;
-    default:
-    {
-        quint64 count = _streamconnector->position();
-        PixelIterator iter(rcoverage, box);
-        while(iter != iter.end()){
-            if ( count >= STREAMBLOCKSIZE - 9 ) {
-                _streamconnector->flush(false);
-                count = 0;
-
-            }
-            count += 8;
-            _stream << *iter;
-            ++iter;
-        }
-        break;
-    }
     }
 
     return true;
@@ -327,6 +315,8 @@ bool RasterSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
         loadBulk<qint32>(converter, _stream, _streamconnector, box, rcoverage); break;
     case itUINT32:
         loadBulk<quint32>(converter, _stream, _streamconnector, box, rcoverage); break;
+    case itDOUBLE:
+        loadBulk<double>(converter, _stream, _streamconnector, box, rcoverage); break;
     case itINT64:
     default:
             loadBulk<qint64>(converter, _stream, _streamconnector, box, rcoverage); break;
