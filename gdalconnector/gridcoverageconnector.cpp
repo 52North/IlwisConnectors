@@ -481,7 +481,7 @@ void RasterCoverageConnector::loadColorBlock(quint32 ilwisLayer, quint32 index, 
             values.resize(noItems);
         setColorValues(colorType, values, noItems, block);
     }
-    grid->setBlockData(index, values, true);
+    grid->setBlockData(index, values);
 }
 
 void RasterCoverageConnector::loadNumericBlock(GDALRasterBandH layerHandle,
@@ -505,7 +505,7 @@ void RasterCoverageConnector::loadNumericBlock(GDALRasterBandH layerHandle,
         values[i] = (ok && (nodata == v)) || std::isnan(v) || std::isinf(v) ? rUNDEF : v;
     }
 
-    grid->setBlockData(index, values, true);
+    grid->setBlockData(index, values);
 }
 
 bool RasterCoverageConnector::setGeotransform(RasterCoverage *raster,GDALDatasetH dataset) {

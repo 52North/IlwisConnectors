@@ -294,10 +294,9 @@ qint64  RasterCoverageConnector::conversion(QFile& file, Grid *grid, int& count)
         vector<double> values(noItems);
         for(quint32 i=0; i < noItems; ++i) {
             double v = value(block, i);
-
             values[i] = noconversionneeded ? v :_converter.raw2real(v);
         }
-        grid->setBlockData(count, values, true);
+        grid->setBlockData(count, values);
         totalRead += result;
         ++count;
         szLeft -= blockSizeBytes;
@@ -324,7 +323,7 @@ void RasterCoverageConnector::loadBlock(UPGrid& grid,QFile& file, quint32 blockI
             }else
                 values[i] = _converter.raw2real(v);
         }
-        grid->setBlockData(blockIndex, values, true);
+        grid->setBlockData(blockIndex, values);
     }else
         ERROR2(ERR_COULD_NOT_OPEN_READING_2,file.fileName(),TR("seek failed"));
 
