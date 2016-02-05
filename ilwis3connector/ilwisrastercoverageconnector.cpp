@@ -251,9 +251,9 @@ IlwisObject *RasterCoverageConnector::create() const
     return new RasterCoverage(_resource);
 }
 
-inline double RasterCoverageConnector::value(char *block, int index) const{
+inline double RasterCoverageConnector::value(const char *block, int index) const{
     double v = rUNDEF;
-    char *c = &(block[index * _storesize]);
+    const char *c = &(block[index * _storesize]);
     switch (_storetype) {
     case itUINT8:
         v = *(quint8 *)c; break;
@@ -314,7 +314,7 @@ void RasterCoverageConnector::loadBlock(UPGrid& grid,QFile& file, quint32 blockI
         quint32 noItems = grid->blockSize(blockIndex);
         vector<double> values(noItems);
         for(quint32 i=0; i < noItems; ++i) {
-            double v = value(bytes.data(), i);
+            double v = value(bytes.constData(), i);
             if ( _converter.isNeutral()){
                 if ( v != iILW3UNDEF && v != shILW3UNDEF)
                     values[i] = v;

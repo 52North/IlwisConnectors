@@ -25,7 +25,7 @@ public:
 private:
     qint64 conversion(QFile& file,Ilwis::Grid *grid, int &count);
     //qint64 noconversionneeded(QFile &file, Ilwis::Grid *grid, int &count);
-    double value(char *block, int index) const;
+    double value(const char *block, int index) const;
     void setStoreType(const QString &storeType);
     bool loadMapList(IlwisObject *data, const Ilwis::IOOptions &options);
     bool storeMetaDataMapList(Ilwis::IlwisObject *obj);
