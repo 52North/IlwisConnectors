@@ -118,13 +118,15 @@ void FeatureCoverage::attributesFromTable(const Table &otherTable){
     this->ptr()->as<Ilwis::FeatureCoverage>()->attributesFromTable(otherTable.ptr()->as<Ilwis::Table>());
 }
 
-bool FeatureCoverage::addColumn(const ColumnDefinition &coldef){
+void FeatureCoverage::addColumn(const ColumnDefinition &coldef){
     Ilwis::ColumnDefinition ilwDef = *(coldef.ptr());
-    return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().addColumn(ilwDef);
+    if (!this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().addColumn(ilwDef))
+        throw Ilwis::ErrorObject(QString("Could not add column '%1' of domain '%2' to the list of columns").arg(ilwDef.name()).arg(ilwDef.datadef().domain()->name()));
 }
 
-bool FeatureCoverage::addColumn(const std::string &name, const std::string &domainname){
-    return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().addColumn(QString::fromStdString(name), QString::fromStdString(domainname));
+void FeatureCoverage::addColumn(const std::string &name, const std::string &domainname){
+    if (!this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().addColumn(QString::fromStdString(name), QString::fromStdString(domainname)))
+        throw Ilwis::ErrorObject(QString("Could not add column '%1' of domain '%2' to the list of columns").arg(QString::fromStdString(name)).arg(QString::fromStdString(domainname)));
 }
 
 ColumnDefinition FeatureCoverage::columndefinition(const std::string &nme) const{

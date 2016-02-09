@@ -38,8 +38,8 @@ namespace pythonapi {
         Table attributeTable() ;
         void attributesFromTable(const Table &otherTable);
 
-        bool addColumn(const ColumnDefinition &coldef);
-        bool addColumn(const std::string &name, const std::string &domainname);
+        void addColumn(const ColumnDefinition &coldef);
+        void addColumn(const std::string &name, const std::string &domainname);
         ColumnDefinition columndefinition(const std::string &nme) const;
         ColumnDefinition columndefinition(quint32 index) const;
         void setColumndefinition(const ColumnDefinition &coldef);

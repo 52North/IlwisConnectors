@@ -59,13 +59,15 @@ namespace pythonapi {
         return this->ptr()->as<Ilwis::Table>()->columnCount();
     }
 
-    bool Table::addColumn(const std::string& name, const std::string& domain){
-        return this->ptr()->as<Ilwis::Table>()->addColumn(QString::fromStdString(name),QString::fromStdString(domain));
+    void Table::addColumn(const std::string& name, const std::string& domain) {
+        if (!this->ptr()->as<Ilwis::Table>()->addColumn(QString::fromStdString(name),QString::fromStdString(domain)))
+            throw Ilwis::ErrorObject(QString("Could not add column '%1' of domain '%2' to the list of columns").arg(QString::fromStdString(name)).arg(QString::fromStdString(domain)));
     }
 
-    bool Table::addColumn(ColumnDefinition& coldef){
+    void Table::addColumn(ColumnDefinition& coldef){
         Ilwis::ColumnDefinition* ilwDef = coldef.ptr().get();
-        return this->ptr()->as<Ilwis::Table>()->addColumn(*ilwDef);
+        if (!this->ptr()->as<Ilwis::Table>()->addColumn(*ilwDef))
+            throw Ilwis::ErrorObject(QString("Could not add column '%1' of domain '%2' to the list of columns").arg(ilwDef->name()).arg(ilwDef->datadef().domain()->name()));
     }
 
     PyObject* Table::columns() const{
