@@ -156,7 +156,7 @@ std::string Engine::getLocation(){
 
 PyObject* Engine::operations(const std::string& filter){
     Ilwis::CatalogView opCat(QUrl(QString("ilwis://operations")));
-    opCat.filter("type='OperationMetaData'");
+    opCat.filter("type='SingleOperation' or type='Workflow'");
     opCat.prepare();
     std::vector<Ilwis::Resource> ops = opCat.items();
     PyObject* list = newPyTuple(ops.size());
@@ -171,7 +171,7 @@ PyObject* Engine::operations(const std::string& filter){
 
 std::string Engine::operationMetaData(const std::string &name){
     Ilwis::CatalogView opCat(QUrl(QString("ilwis://operations")));
-    opCat.filter("type='OperationMetaData'");
+    opCat.filter("type='SingleOperation' or type='Workflow'");
     opCat.prepare();
     std::vector<Ilwis::Resource> ops = opCat.items();
     QString ret;
