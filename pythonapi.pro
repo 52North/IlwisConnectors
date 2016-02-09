@@ -45,7 +45,6 @@ HEADERS += \
     pythonapi/pythonapi_columndefinition.h \
     pythonapi/pythonapi_domainitem.h \
     pythonapi/pythonapi_vertexiterator.h \
-    pythonapi/pythonapi_attributedefinition.h
 
 
 SOURCES += \
@@ -118,15 +117,8 @@ mytarget.files = pythonapi/ilwisobjects.py \
 
 mytarget.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
 
-python_target.files = pythonapi/ilwisobjects.py \
-                      pythonapi/CHANGELOG
-
-python_target.path = $$PYTHONDIR/Lib/site-packages
-
 install_target.files = pythonapi/installerPy.nsi
 
 install_target.path = $$PWD/../output/$$PLATFORM$$CONF
 
-target.path = $$PYTHONDIR/Lib/site-packages
-
-INSTALLS += mytarget install_target python_target target
+INSTALLS += mytarget install_target
