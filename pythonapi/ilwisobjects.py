@@ -283,9 +283,12 @@ class Engine(_object):
         return _ilwisobjects.Engine_operations(self, *args)
 
 
-    def operationMetaData(self, name):
-        """operationMetaData(Engine self, std::string const & name) -> std::string"""
-        return _ilwisobjects.Engine_operationMetaData(self, name)
+    def operationMetaData(self, *args):
+        """
+        operationMetaData(Engine self, std::string const & name, std::string const & element) -> std::string
+        operationMetaData(Engine self, std::string const & name) -> std::string
+        """
+        return _ilwisobjects.Engine_operationMetaData(self, *args)
 
 
     def _catalogItems():
