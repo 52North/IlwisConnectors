@@ -23,6 +23,10 @@
 #include "intervalrange.h"
 #include "colorrange.h"
 #include "itemdomain.h"
+#include "coordinatesystem.h"
+#include "geodeticdatum.h"
+#include "projection.h"
+#include "conventionalcoordinatesystem.h"
 #include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -56,6 +60,8 @@ IlwisObject *StreamConnector::create() const
         return new GeoReference(_resource);
     case itWORKFLOW:
         return new Workflow(_resource);
+    case itCONVENTIONALCOORDSYSTEM:
+        return new ConventionalCoordinateSystem(_resource);
     case itITEMDOMAIN:{
         if ( hasType(_resource.extendedType(), itNUMERICITEM))
             return new IntervalDomain(_resource);
