@@ -155,6 +155,9 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
 
 QString CoordinateSystemConnector::prjParam2IlwisName(Projection::ProjectionParamValue parm)
 {
+
+
+
     switch(parm){
         case Projection::pvAZIMCLINE:
         return "Azim of Central Line of True Scale";
