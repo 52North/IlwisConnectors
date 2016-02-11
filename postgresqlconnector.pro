@@ -25,9 +25,19 @@ OTHER_FILES += \
     postgresqlconnector/postgresqlconnector.json \ 
     postgresqlconnector/scratch_pad.txt
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+
 		
+
+win32{
+    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+}
+
+linux{
+    LIBS +=  -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+        -L$$GEOSLIB/ -lgeos-3.4.2
+}
+
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
@@ -69,3 +79,10 @@ SOURCES += \
     postgresqlconnector/postgresqlrasterconnector.cpp \
     postgresqlconnector/postgresqlrastercoverageloader.cpp
 
+linux{
+    dependencies.files = $$GEOSLIB/libgeos-3.4.2.so
+    dependencies.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    INSTALLS += target dependencies
+}

@@ -11,25 +11,7 @@ include(global.pri)
 
 TEMPLATE = lib
 
-DEFINES += gslCONNECTOR_LIBRARY
-
-resources.files += gslconnector/resources/libraries.config
-resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
-
-INSTALLS += resources
-
-OTHER_FILES += \ 
-    gslconnector/gslconnector.json
-
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET -lgsl.dll
-
-INCLUDEPATH += $$PWD/../external/gsl
-
-win32{
-    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-}
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
+DEFINES += GSLCONNECTOR_LIBRARY
 
 HEADERS += \
     gslconnector/relativeaggregaterasterstatistics.h \
@@ -46,4 +28,43 @@ SOURCES += \
     gslconnector/aggregaterasterstatistics.cpp \
     gslconnector/rastercovariance.cpp \
     gslconnector/rasterquantile.cpp
+
+OTHER_FILES += \
+    gslconnector/gslconnector.json
+
+INCLUDEPATH += $$PWD/../external/gsl
+
+
+win32 {
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET -lgsl.dll
+}
+
+linux {
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+        -L/usr/lib -lgsl
+}
+
+
+resources.files += gslconnector/resources/libraries.config
+resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
+
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+}
+
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
+
+INSTALLS += resources
+
+linux{
+    dependencies.files = /usr/lib/libgslcblas.so \
+        /usr/lib/libgsl.so
+
+    dependencies.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    INSTALLS += target dependencies
+}
+
 

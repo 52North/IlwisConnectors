@@ -140,13 +140,12 @@ bool Ilwis3ObjectFactory::prepare()
 }
 
 void Ilwis3ObjectFactory::loadIlwis3Aliasses() {
-    kernel()->database().exec("BEGIN IMMEDIATE TRANSACTION");
-    InternalDatabaseConnection internalDb;
+    InternalDatabaseConnection internalDb("BEGIN IMMEDIATE TRANSACTION");
     insertFile("datum_allias.csv", internalDb);
     insertFile("ellipsoid_allias.csv",internalDb);
     insertFile("projection_allias.csv",internalDb);
     insertFile("domain_allias.csv",internalDb);
-    kernel()->database().exec("COMMIT TRANSACTION");
+    internalDb.exec("COMMIT TRANSACTION");
 }
 
 void Ilwis3ObjectFactory::insertFile(const QString& filename, InternalDatabaseConnection& internalDb) {

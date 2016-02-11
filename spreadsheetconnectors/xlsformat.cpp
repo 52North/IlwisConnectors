@@ -6,7 +6,7 @@
 #include "ilwisdata.h"
 #include "domain.h"
 #include "freexl.h"
-#include "spreadsheet.h"
+#include "SpreadSheet.h"
 #include "xlsformat.h"
 
 using namespace Ilwis;

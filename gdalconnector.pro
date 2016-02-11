@@ -67,3 +67,29 @@ win32{
 }
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
+
+
+linux{
+    dependencies.files = $$LINUXSYSTEMLIB/libz.so.1 \
+                        $$LINUXLIB/libsqlite3.so \
+                        $$LINUXLIB/libfreexl.so.1 \
+                        /usr/lib/libgdal.so.1 \
+                        /usr/lib/libpq.so \
+                        $$LINUXLIB/libcurl.so.4 \
+                        $$LINUXSYSTEMLIB/libexpat.so.1 \
+                        /usr/lib/libproj.so.0 \
+                        /usr/lib/libnetcdf.so.7 \
+                        $$LINUXLIB/libhdf5.so \
+                        $$LINUXLIB/libhdf5_hl.so \
+                        /usr/local/libiconv/lib/libcharset.so.1 \
+                        /usr/local/libiconv/lib/libiconv.so.2 \
+                        $$LINUXLIB/libcrypto.so \
+                        $$LINUXLIB/libssl.so
+
+
+
+    dependencies.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    INSTALLS += target dependencies
+}

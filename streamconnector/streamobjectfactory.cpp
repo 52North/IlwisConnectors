@@ -55,6 +55,8 @@ bool StreamObjectFactory::canUse(const Resource &resource) const
         return true;
     else if ( type & itTABLE)
         return true;
+    else if ( type & itWORKFLOW)
+        return true;
     return false;
 }
 

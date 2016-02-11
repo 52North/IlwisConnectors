@@ -3,20 +3,21 @@
 #include "../../IlwisCore/core/catalog/catalog.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
+#include "../../IlwisCore/core/util/range.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/domain.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/numericdomain.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/domainitem.h"
-#include "../../IlwisCore/core/ilwisobjects/domain/itemdomain.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/itemrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/interval.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/intervalrange.h"
+#include "../../IlwisCore/core/ilwisobjects/domain/itemdomain.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/identifieritem.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/identifierrange.h"
-#include "../../IlwisCore/core/ilwisobjects/domain/interval.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/identifieritem.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/thematicitem.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/colordomain.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/coloritem.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/textdomain.h"
-#include "../../IlwisCore/core/util/range.h"
 #include "../../IlwisCore/core/ilwisobjects/domain/coloritem.h"
 
 #include "pythonapi_pyobject.h"
@@ -24,7 +25,6 @@
 #include "pythonapi_domain.h"
 #include "pythonapi_qvariant.h"
 #include "pythonapi_error.h"
-
 
 using namespace pythonapi;
 
@@ -300,7 +300,7 @@ void ItemDomain::addItem(PyObject* item)
             if ( CppTupleElementCount(item) == 3){
                 description = QString::fromStdString(CppTupleElement2String(item,2));
             }
-            Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description});
+            Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description}, iUNDEF);
 
             this->ptr()->as<Ilwis::ThematicDomain>()->addItem(titem);
         }

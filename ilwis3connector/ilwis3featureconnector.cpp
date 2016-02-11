@@ -15,6 +15,7 @@
 #include "geos/geom/Coordinate.inl"
 #include "geos/geom/Envelope.inl"
 #endif
+#include "geos/algorithm/CGAlgorithms.h"
 #include "module.h"
 #include "connectorinterface.h"
 #include "mastercatalog.h"
@@ -99,12 +100,12 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
             if ( rings->size() == 0)
                 continue;
             geos::geom::LinearRing *outer = rings->front();
-            vector<geos::geom::Geometry *> *geoms = new vector<geos::geom::Geometry *>(rings->size() - 1);
+            vector<geos::geom::Geometry *> *inners = new vector<geos::geom::Geometry *>(rings->size() - 1);
             for(int j=1; j < rings->size(); ++j) {
-                (*geoms)[j-1] = rings->at(j);
+                (*inners)[j-1] = rings->at(j);
             }
 
-            geos::geom::Polygon *polygon = fcoverage->geomfactory()->createPolygon(outer, geoms);
+            geos::geom::Polygon *polygon = fcoverage->geomfactory()->createPolygon(outer, inners);
             //std::copy(rings[0].begin(), rings[0].end(), polygon.outer().begin());
             polTable.get(i, colValue, v);
             if ( isNumeric) {
@@ -126,30 +127,51 @@ bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, c
     qint32 colCoords = topTable.index("Coords");
     qint32 colForward = topTable.index("ForwardLink");
     qint32 colBackward = topTable.index("BackwardLink");
-    std::vector<geos::geom::Coordinate> *ring;
+    bool outerIsCCW = true;
+    std::vector<geos::geom::Coordinate> *ring =  new std::vector<geos::geom::Coordinate>();
     bool forward = isForwardStartDirection(topTable,colForward, colBackward, colCoords, row);
     do{
         std::vector<Coordinate> coords;
         topTable.get(abs(row) - 1,colCoords,coords);
-        if( coords.size() == 0 ||coords.back() == coords.front()){
-            ring = new std::vector<geos::geom::Coordinate>(coords.size());
-            std::copy(coords.begin(), coords.end(), ring->begin());
+        int ringsize =  ring->size();
+        ring->reserve(ring->size() + coords.size());
+
+        if( ringsize == 0 ||coords.front() == ring->back()){
+            for(int i = 0; i < coords.size() ; ++i){
+                if ( ring->size() > 0 && ring->back() == coords[i])
+                    continue;
+                ring->push_back(coords[i]);
+            }
         } else if ( ring->size() > 0 && coords.back() == ring->back()) {
-            ring = new std::vector<geos::geom::Coordinate>(coords.size());
-            std::reverse_copy(coords.begin(), coords.end(), ring->begin());
+            for(int i = 0; i < coords.size() ; ++i){
+                const auto& crd = coords[coords.size() - i - 1];
+                if ( ring->back() == crd)
+                    continue;
+                 ring->push_back(crd);
+            }
         } else if ( ring->size() > 0 && ring->front() == coords.front()) {
-            ring = new std::vector<geos::geom::Coordinate>(coords.size());
-            std::reverse_copy(coords.begin(), coords.end(), ring->begin());
+            for(int i = 0; i < coords.size() ; ++i)
+                 ring->push_back(coords[i]);
         } else if ( ring->size() > 0 && ring->front() == coords.back()) {
-            ring = new std::vector<geos::geom::Coordinate>(coords.size());
-            std::copy(coords.begin(), coords.end(), ring->begin());
+             for(int i = 0; i < coords.size() ; ++i)
+                 ring->push_back(coords[i]);
         }
 
         if ( ring->size() > 3 && ring->front() == ring->back()) {
+            ring->shrink_to_fit();
+
             geos::geom::CoordinateArraySequence * ringIn = new geos::geom::CoordinateArraySequence(ring);
             ringIn->removeRepeatedPoints();
+            if ( rings->size() == 0)  {
+                outerIsCCW = geos::algorithm::CGAlgorithms::isCCW(ringIn);
+            }else {
+                bool isCCW = geos::algorithm::CGAlgorithms::isCCW(ringIn);
+                if ( outerIsCCW && isCCW){ // holes must have a different turning direction
+                    geos::geom::CoordinateSequence::reverse(ringIn);
+                }
+            }
             rings->push_back( fcoverage->geomfactory()->createLinearRing(ringIn));
-            coords.clear();
+            ring =  new std::vector<geos::geom::Coordinate>();
         }
         qint32 oldIndex = row;
         double v;
@@ -169,11 +191,11 @@ bool FeatureConnector::getRings(FeatureCoverage *fcoverage, qint32 startIndex, c
 bool FeatureConnector::isForwardStartDirection(const BinaryIlwis3Table& topTable, qint32 colForward, qint32 colBackward, qint32 colCoords, long index) {
     qint32 fwl, bwl;
     double v;
-    topTable.get(abs(index),colForward, v );
+    topTable.get(abs(index) - 1,colForward, v );
     fwl = v;
    // if ( fwl != iUNDEF)
    //     --fwl; // due to being raw values
-    topTable.get(abs(index),colBackward, v );
+    topTable.get(abs(index)-1,colBackward, v );
     bwl = v;
    // if ( bwl != iUNDEF)
    //    --bwl;
@@ -184,8 +206,8 @@ bool FeatureConnector::isForwardStartDirection(const BinaryIlwis3Table& topTable
         return false;
     //qDebug() << fwl << bwl;
     std::vector<Coordinate> startLine, forwardLine;
-    topTable.get(abs(index), colCoords,startLine);
-    topTable.get(abs(fwl), colCoords, forwardLine);
+    topTable.get(abs(index) - 1, colCoords,startLine);
+    topTable.get(abs(fwl) - 1, colCoords, forwardLine);
 
     bool forward = false;
     if ( forwardLine.size() == 0 || startLine.size() == 0)

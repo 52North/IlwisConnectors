@@ -21,6 +21,7 @@
 #include "gdalproxy.h"
 #include "tranquilizer.h"
 #include "gdalcatalogexplorer.h"
+#include "mastercatalogcache.h"
 #include "gdalitem.h"
 #include "ilwiscontext.h"
 #include "mastercatalog.h"
@@ -52,8 +53,8 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
                 filters += "*." + ext;
         }
     }
-    filters.removeOne("*.hdr");
     filters.removeDuplicates();
+    filters.removeOne("*.hdr");
 
     std::vector<QUrl> files = FolderCatalogExplorer::loadFolders(source(), filters ,CatalogConnector::foFULLPATHS | CatalogConnector::foEXTENSIONFILTER);
 
@@ -71,11 +72,19 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
             if ( file.exists()){
 
                 if ( !file.isDir() ) {
-                    IlwisTypes extendedTypes = extendedType(formats, file.suffix());
-                    GDALItems items(url, file, extendedTypes);
-                    for(auto item : items) {
-                        gdalitems.insert(item);
-                    }
+                    std::vector<Resource> resources = CatalogConnector::cache()->find(url, Time(file.lastModified()));
+                    if ( resources.size() == 0){
+                        IlwisTypes extendedTypes = extendedType(formats, file.suffix());
+                        GDALItems items(url, file, extendedTypes);
+                        for(auto item : items) {
+                            item.createTime(Time(file.created()));
+                            item.modifiedTime(Time(file.lastModified()));
+                            gdalitems.insert(item);
+                        }
+                    } else
+                        for(const auto& resource : resources){
+                            gdalitems.insert(resource);
+                        }
                 }
             }
             if (!trq->update(1))

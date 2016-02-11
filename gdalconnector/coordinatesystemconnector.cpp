@@ -71,13 +71,13 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const IOOptions 
                    opt << IOOptions::Option("proj4", _resource.code().mid(6));
                    projection.prepare("code=wkt:" + projectionName, opt);
                    if ( projection.isValid()) {
-                        setProjectionParameter(srshandle, "false_easting", Projection::pvX0, projection);
-                        setProjectionParameter(srshandle, "false_northing", Projection::pvY0, projection);
-                        setProjectionParameter(srshandle, "scale_factor", Projection::pvK0, projection);
-                        setProjectionParameter(srshandle, "central_meridian", Projection::pvLON0, projection);
-                        setProjectionParameter(srshandle, "latitude_of_origin", Projection::pvLAT0, projection);
-                        setProjectionParameter(srshandle, "standard_parallel_1", Projection::pvLAT1, projection);
-                        setProjectionParameter(srshandle, "standard_parallel_2", Projection::pvLAT2, projection);
+                        setProjectionParameter(srshandle, "false_easting", Projection::pvFALSEEASTING, projection);
+                        setProjectionParameter(srshandle, "false_northing", Projection::pvFALSENORTHING, projection);
+                        setProjectionParameter(srshandle, "scale_factor", Projection::pvSCALE, projection);
+                        setProjectionParameter(srshandle, "central_meridian", Projection::pvCENTRALMERIDIAN, projection);
+                        setProjectionParameter(srshandle, "latitude_of_origin", Projection::pvCENTRALPARALLEL, projection);
+                        setProjectionParameter(srshandle, "standard_parallel_1", Projection::pvSTANDARDPARALLEL1, projection);
+                        setProjectionParameter(srshandle, "standard_parallel_2", Projection::pvSTANDARDPARALLEL2, projection);
                         setProjectionParameter(srshandle, "zone", Projection::pvZONE, projection);
                         csyp->setProjection(projection);
                         projection->setCoordinateSystem(csyp);

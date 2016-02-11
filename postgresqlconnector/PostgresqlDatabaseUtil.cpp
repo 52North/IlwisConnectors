@@ -27,6 +27,20 @@ using namespace Postgresql;
 
 PostgresqlDatabaseUtil::PostgresqlDatabaseUtil(const Resource &resource, const IOOptions &options): _resource(resource), _options(options)
 {
+//    int index = resource.url(true).toString().indexOf("postgresql://");
+//    if ( index == 0) {
+//        QString rest = resource.url(true).toString().mid(13);
+//        QStringList parts = rest.split("/");
+//        QStringList hostport = parts[0].split(":");
+//        _options.addOption("port", hostport[1]);
+//        _options.addOption("host", hostport[0]);
+//        _options.addOption("database", parts[1]);
+//        _options.addOption("pg.schema", parts[2]);
+//        QStringList userpass = parts[3].split("&");
+//        _options.addOption("pg.username", userpass[0].split("=")[1]);
+//        _options.addOption("pg.password", userpass[1].split("=")[1]);
+
+//    }
 }
 
 PostgresqlDatabaseUtil::~PostgresqlDatabaseUtil()
@@ -86,9 +100,10 @@ QString Ilwis::Postgresql::PostgresqlDatabaseUtil::tablenameFromResource() const
 {
    QStringList pathElements = _resource.url().path().split("/", QString::SkipEmptyParts);
 
-   return pathElements.size() == 2
-           ? pathElements.at(1) // schema omitted
-           : pathElements.at(2); // skip db and schema
+//   return pathElements.size() == 2
+//           ? pathElements.at(1) // schema omitted
+//           : pathElements.at(2); // skip db and schema
+   return pathElements.last();
 }
 
 QString Ilwis::Postgresql::PostgresqlDatabaseUtil::qTableFromTableResource() const
@@ -104,7 +119,7 @@ QString Ilwis::Postgresql::PostgresqlDatabaseUtil::qTableFromTableResource() con
        return  schema.append(".").append(tablename);
     } else {
        QString schema(pathElements.at(1)); // skip db name
-       QString tablename = pathElements.at(2);
+       QString tablename = pathElements.last();
        return schema.append(".").append(tablename);
     }
 }

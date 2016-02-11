@@ -4,14 +4,24 @@
 #include <QHash>
 #include <QString>
 #include <QFileInfo>
-#include <map>
+#include <unordered_map>
 
+namespace std{
+/* std::hash specialization for QString so it can be used
+     * as a key in std::unordered_map */
+template<class Key> struct hash;
+template<> struct hash<QString> {
+    typedef QString Key;
+    typedef uint result_type;
+    inline uint operator()(const QString &s) const { return qHash(s); }
+};
+}
 using namespace std;
 
 namespace Ilwis {
 
-typedef std::map<QString, QString> SectionEntries;
-typedef std::map<QString, SectionEntries> Sections;
+typedef std::unordered_map<QString, QString> SectionEntries;
+typedef std::unordered_map<QString, SectionEntries> Sections;
 
 class CatalogConnector;
 typedef std::unique_ptr<Ilwis::CatalogConnector> UPCatalogConnector;
@@ -37,7 +47,7 @@ public:
     QStringList childKeys(const QString& section) const;
 
     void store(const QString &ext, const QFileInfo& url);
-
+    const QFileInfo& fileInfo() const;
 private:
     QFileInfo _filename;
     Sections _sections;

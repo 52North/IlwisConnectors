@@ -9,7 +9,6 @@
 #include "ilwisobjectconnector.h"
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
-#include "inifile.h"
 #include "geometries.h"
 #include "identity.h"
 #include "resource.h"
@@ -25,26 +24,39 @@ using namespace Ilwis3;
 
 #include <typeinfo>
 
-ODFItem::ODFItem(const QFileInfo &file) : Resource(QUrl::fromLocalFile(file.absoluteFilePath()),itANY), _projectionName(sUNDEF)
+ODFItem::ODFItem(const IniFile &file, std::unordered_map<QString, IniFile> *knownInis) : Resource(QUrl::fromLocalFile(file.fileInfo().absoluteFilePath()),itANY),
+    _odf(file),
+    _knownOdfs(knownInis),
+    _projectionName(sUNDEF)
 {
-    _odf.setIniFile(file);
-    _file = file;
-    name(_file.fileName(), false);
-    addContainer(QUrl::fromLocalFile(_file.canonicalPath()));
+    name(_odf.fileInfo().fileName(), false);
+    createTime(Time(_odf.fileInfo().created()));
+    modifiedTime(Time(_odf.fileInfo().lastModified()));
+    addContainer(QUrl::fromLocalFile(_odf.fileInfo().canonicalPath()));
+    if (_odf.fileInfo().suffix() == "mpr"){
+        QString mpl = _odf.value("Collection","Item0");
+        if( mpl != sUNDEF){
+            QString internalPath = _odf.fileInfo().canonicalPath() + "/" + mpl;
+            if ( QFile::exists(internalPath)) {
+                addContainer(QUrl::fromLocalFile(internalPath));
+            }
+        }
+    }
     IlwisTypes csytp, domtp, grftp;
     csytp = domtp = grftp = itUNKNOWN;
 
     setDescription( _odf.value("Ilwis", "Description"));
 
-    _ilwtype = Ilwis3Connector::ilwisType(_file.absoluteFilePath());
-    _csyname = findCsyName(file.absoluteFilePath());
-    _domname = findDomainName(file.absoluteFilePath());
+    QString path = _odf.fileInfo().absoluteFilePath();
+    _ilwtype = Ilwis3Connector::ilwisType(path);
+    _csyname = findCsyName(path);
+    _domname = findDomainName(path);
     _grfname = findGrfName();
     _datumName = findDatumName();
 
 
-    csytp = findCsyType(file.absoluteFilePath());
-    domtp = findDomainType(file.absoluteFilePath());
+    csytp = findCsyType(path);
+    domtp = findDomainType(path);
 
 
     if ( csytp != itUNKNOWN && _ilwtype == itCOORDSYSTEM)
@@ -67,8 +79,9 @@ ODFItem::ODFItem(const QFileInfo &file) : Resource(QUrl::fromLocalFile(file.abso
 
     if (_datumName != sUNDEF)
         _extendedType |= itGEODETICDATUM;
-    if ( file.suffix() == "mpl")
-        _extendedType |= itCATALOG;
+    if ( _odf.fileInfo().suffix() == "mpl"){
+        _isMapList = true;
+    }
 
     _size = findSize();
     _dimensions = findDimensions();
@@ -88,7 +101,7 @@ Resource ODFItem::resolveName(const QString& name, IlwisTypes tp) {
     if ( res.isValid())
         return res;
 
-    ODFItem item(filepath);
+    Resource item(filepath, tp);
 
     return item;
 }
@@ -120,6 +133,11 @@ std::vector<Resource> ODFItem::resolveNames(){
     }
 
     return resources;
+}
+
+bool ODFItem::isMapList() const
+{
+    return _isMapList;
 }
 
 bool ODFItem::resolveNames(const QHash<QString, quint64> &names)
@@ -180,10 +198,8 @@ bool ODFItem::setFileId(const QHash<QString, quint64> &names, const QString& val
             return true;
         }
     }
-    QString completeName =  (value.contains(QRegExp("\\\\|/"))) ? value : _file.canonicalPath() + "/" + value;
-    QUrl url = QUrl::fromLocalFile(completeName.toLower());
-    QString dd = url.toLocalFile();
-    QHash<QString, quint64>::const_iterator iter = names.find(url.toString());
+    QString completeName =  (value.contains(QRegExp("\\\\|/"))) ? value : _odf.fileInfo().canonicalPath() + "/" + value;
+    QHash<QString, quint64>::const_iterator iter = names.find(completeName.toLower());
     if (iter != names.end()){
         fileid = iter.value();
     } else {
@@ -195,6 +211,7 @@ bool ODFItem::setFileId(const QHash<QString, quint64> &names, const QString& val
         if ( resource.isValid()) {
             fileid = resource.id();
         } else {
+            QUrl url = QUrl::fromLocalFile(completeName);
             fileid = mastercatalog()->url2id(url, tp);
             if ( fileid == i64UNDEF) {
                 kernel()->issues()->log(TR(ERR_MISSING_1).arg(completeName));
@@ -235,7 +252,7 @@ QString ODFItem::findDomainName(const QString& path) const
 
     QString name = sUNDEF;
     if(_ilwtype & itCOVERAGE) {
-        QString ext = _file.suffix().toLower();
+        QString ext = _odf.fileInfo().suffix().toLower();
         if(ext != "mpl")
             name = _odf.value("BaseMap","Domain");
         else {
@@ -248,17 +265,31 @@ QString ODFItem::findDomainName(const QString& path) const
             if ( rasmap.indexOf(".mpr") == -1)
                 rasmap += ".mpr";
             IniFile ini;
-            ini.setIniFile(rasmap);
+            getIni(ini, rasmap);
             name = ini.value("BaseMap","Domain");
         }
     }
     else if(_ilwtype & itTABLE)
         name = _odf.value("Table", "Domain");
     else if(_ilwtype & itDOMAIN)
-        name = _file.fileName();
+        name = _odf.fileInfo().fileName();
     else if(_ilwtype & itREPRESENTATION)
         name = _odf.value("Representation", "Domain");
     return cleanName(name);
+}
+
+bool ODFItem::getIni(IniFile& ini, const QString& localpath) const{
+    if ( _knownOdfs){
+        auto iter = (*_knownOdfs).find(localpath.toLower());
+        if ( iter != (*_knownOdfs).end()){
+            ini = (*iter).second;
+        }else if(!ini.setIniFile(localpath))
+            return false;
+
+    }else
+        if(!ini.setIniFile(localpath))
+            return false;
+   return true;
 }
 
 IlwisTypes ODFItem::findDomainType(const QString& path) const
@@ -287,8 +318,9 @@ IlwisTypes ODFItem::findDomainType(const QString& path) const
         return resource.ilwisType();
     IniFile dm;
     QString localpath = container().toLocalFile() + "/" + _domname;
-    if(!dm.setIniFile(localpath))
+    if(!getIni(dm, localpath))
         return itUNKNOWN;
+
 
     QString type =  dm.value("Domain", "Type");
     if ( type == "DomainValue")
@@ -313,7 +345,7 @@ QString ODFItem::findCsyName(const QString& path) const
 
     QString name = sUNDEF;
     if (_ilwtype & itCOVERAGE) {
-        QString ext = _file.suffix().toLower();
+        QString ext = _odf.fileInfo().suffix().toLower();
         if(ext != "mpl")
             name = _odf.value("BaseMap","CoordSystem");
         else {
@@ -325,7 +357,7 @@ QString ODFItem::findCsyName(const QString& path) const
                      QString grfpath = container().toLocalFile() + "/" + grf;
                      if ( grfpath != "none.grf"){
                         IniFile ini;
-                        ini.setIniFile(grfpath);
+                        getIni(ini, grfpath);
                         name = ini.value("GeoRef","CoordSystem");
                      }else {
                          name = "unknown.csy";
@@ -335,7 +367,7 @@ QString ODFItem::findCsyName(const QString& path) const
         }
     }
     else if ( _ilwtype & itCOORDSYSTEM)
-        name = _file.fileName();
+        name = _odf.fileInfo().fileName();
     else if ( _ilwtype & itGEOREF)
         name = _odf.value("GeoRef","CoordSystem");
 
@@ -366,7 +398,7 @@ IlwisTypes ODFItem::findCsyType(const QString& path)
     if ( _csyname == "unknown.csy")
         return itBOUNDSONLYCSY;
 
-    QString ext = _file.suffix().toLower();
+    QString ext = _odf.fileInfo().suffix().toLower();
     if(ext == "mpl") {
         QString grf = _odf.value("MapList","GeoRef");
         if ( grf != sUNDEF) {
@@ -377,14 +409,14 @@ IlwisTypes ODFItem::findCsyType(const QString& path)
                 grf = container().toLocalFile()+ "/" + grf;
             }
             IniFile ini;
-            ini.setIniFile(grf);
+            getIni(ini, grf);
             csyname = ini.value("GeoRef","CoordSystem");
             QFile file(csyname);
             if ( !file.exists()){
                 csyname = csyname.remove("\'");
                 csyname = container().toLocalFile() + "/" + csyname;
             }
-            csy.setIniFile(csyname);
+            getIni(csy, csyname);
 
         }
     } else {
@@ -440,7 +472,7 @@ QString ODFItem::findGrfName() const{
             name = _odf.value("MapList","GeoRef");
     }
     else if ( _ilwtype & itGEOREF)
-        name = _file.fileName();
+        name = _odf.fileInfo().fileName();
     return cleanName(name);
 
 }
@@ -455,6 +487,7 @@ quint64 ODFItem::partSize(const QUrl& file, const QString& section, const QStrin
     if ( section != "") {
         IniFile odf;
         odf.setIniFile(file.toLocalFile());
+        getIni(odf,file.toLocalFile());
         QString filename = odf.value(section,key);
         if ( !filename.contains(QRegExp("\\\\|/"))) {
             //TODO: changes this for files that are in non folder containers
@@ -518,9 +551,9 @@ quint64 ODFItem::objectSize() const {
     case itCOORDSYSTEM:
         sz += partSize(_odf.url(), "TableStore", "Data"); break;
 
-        if ( _file.suffix() == "isl")
+        if ( _odf.fileInfo().suffix() == "isl")
             sz += partSize(_odf.url(), "Script", "ScriptFile"); break;
-        if ( _file.suffix() == "fun")
+        if ( _odf.fileInfo().suffix() == "fun")
             sz += partSize(_odf.url(), "FuncUser", "FuncDeffile"); break;
     }
     return sz;

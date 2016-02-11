@@ -27,6 +27,20 @@ CatalogExplorer *PostgresqlCatalogExplorer::create(const Resource &resource, con
 
 PostgresqlCatalogExplorer::PostgresqlCatalogExplorer(const Resource &resource, const IOOptions &options) : CatalogExplorer(resource, options)
 {
+    int index = resource.url(true).toString().indexOf("postgresql://");
+    if ( index == 0) {
+        QString rest = resource.url(true).toString().mid(13);
+        QStringList parts = rest.split("/");
+        QStringList hostport = parts[0].split(":");
+        ioOptionsRef().addOption("port", hostport[1]);
+        ioOptionsRef().addOption("host", hostport[0]);
+        ioOptionsRef().addOption("database", parts[1]);
+        ioOptionsRef().addOption("pg.schema", parts[2]);
+        QStringList userpass = parts[3].split("&");
+        ioOptionsRef().addOption("pg.username", userpass[0].split("=")[1]);
+        ioOptionsRef().addOption("pg.password", userpass[1].split("=")[1]);
+
+    }
 }
 
 PostgresqlCatalogExplorer::~PostgresqlCatalogExplorer()
@@ -69,15 +83,15 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
             continue; // skip system table
         }
         QString resourceId = parentDatasourceNormalized;
-        resourceId.append(schema);
-        resourceId.append("/");
+        //resourceId.append(schema);
+       // resourceId.append("/");
         resourceId.append(tablename);
         //qDebug() << "create new resource: " << resourceId;
 
         IlwisTypes mainType;
         IlwisTypes extTypes;
         if ( hasGeometry) {
-            mainType = itCOVERAGE;
+            mainType = itFEATURE;
             extTypes = itFLATTABLE;
         } else {
             mainType = itFLATTABLE;

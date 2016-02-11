@@ -1,5 +1,6 @@
 #include  <stdio.h>
 #include  <stdlib.h>
+#include <QString>
 #include <QTextStream>
 #include <QRegExp>
 #include "catalog.h"
@@ -250,4 +251,9 @@ void IniFile::store(const QString& ext, const QFileInfo& file )
     text.flush();
     fileIni.close();
 
+}
+
+const QFileInfo &IniFile::fileInfo() const
+{
+    return _filename;
 }

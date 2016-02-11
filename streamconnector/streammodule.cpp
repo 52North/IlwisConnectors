@@ -15,16 +15,18 @@
 #include "streammodule.h"
 #include "versioneddatastreamfactory.h"
 #include "versionedserializer.h"
-#include "coordinatesystemSerializerv1.h"
-#include "domainSerializerv1.h"
-#include "coverageSerializerv1.h"
-#include "featureSerializerv1.h"
-#include "tableSerializerv1.h"
-#include "projectionSerializerv1.h"
-#include "ellipsoidSerializerv1.h"
-#include "georefSerializerv1.h"
-#include "rasterSerializerv1.h"
+#include "coordinatesystemserializerv1.h"
+#include "domainserializerv1.h"
+#include "coverageserializerv1.h"
+#include "featureserializerv1.h"
+#include "tableserializerv1.h"
+#include "projectionserializerv1.h"
+#include "ellipsoidserializerv1.h"
+#include "georefserializerv1.h"
+#include "rasterserializerv1.h"
 #include "catalogserializerv1.h"
+#include "operationmetadataserializerv1.h"
+#include "workflowserializerv1.h"
 #include "dataformat.h"
 
 using namespace Ilwis;
@@ -75,6 +77,8 @@ void StreamModule::prepare()
     versionFactory->addCreator({"iv40",itGEOREF},GeorefSerializerV1::create);
     versionFactory->addCreator({"iv40",itRASTER},RasterSerializerV1::create);
     versionFactory->addCreator({"iv40",itCATALOG},CatalogserializerV1::create);
+    versionFactory->addCreator({"iv40",itSINGLEOPERATION},OperationMetadataSerializerV1::create);
+    versionFactory->addCreator({"iv40",itWORKFLOW},WorkflowSerializerV1::create);
 
 
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
@@ -89,7 +93,11 @@ void StreamModule::prepare()
     cfactory->addCreator("rastercoverage","stream",StreamConnector::create);
     cfactory->addCreator("table","stream",StreamConnector::create);
     cfactory->addCreator("catalog","stream",StreamConnector::create);
-     cfactory->addCreator("domain","stream",StreamConnector::create);
+    cfactory->addCreator("domain","stream",StreamConnector::create);
+    cfactory->addCreator("georeference","stream",StreamConnector::create);
+    cfactory->addCreator("coordinatesystem","stream",StreamConnector::create);
+    cfactory->addCreator("operationmetadata","stream",StreamConnector::create);
+    cfactory->addCreator("workflow","stream",StreamConnector::create);
 
     QFileInfo ilw = context()->ilwisFolder();
     QString path = ilw.canonicalFilePath() + "/extensions/streamconnector/resources";

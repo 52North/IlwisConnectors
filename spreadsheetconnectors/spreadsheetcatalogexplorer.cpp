@@ -7,7 +7,7 @@
 #include "catalogconnector.h"
 #include "catalogexplorer.h"
 #include "foldercatalogexplorer.h"
-#include "spreadsheet.h"
+#include "SpreadSheet.h"
 #include "spreadsheettableconnector.h"
 #include "spreadsheetcatalogexplorer.h"
 
@@ -70,6 +70,8 @@ std::vector<Ilwis::Resource> SpreadSheetCatalogExplorer::loadItems(const IOOptio
 bool SpreadSheetCatalogExplorer::canUse(const Resource &resource) const
 {
     if ( resource.ilwisType() != itCATALOG)
+        return false;
+    if ( resource.url().scheme() != "file") // can't use anything marked as file
         return false;
     if (resource.url().scheme() == "ilwis")
         return false;

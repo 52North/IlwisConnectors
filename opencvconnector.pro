@@ -27,15 +27,27 @@ INSTALLS += resources
 OTHER_FILES += \
     opencvconnector/opencvconnector.json 
 
+win32{
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/opencvconnector -lopencv_imgproc249.dll \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/opencvconnector -lopencv_core249.dll
-		
+}
+
+linux{
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+        -L$$GEOSLIB -lgeos-3.4.2 \
+        -L$$OPENCVLIB -lopencv_core \
+        -L$$OPENCVLIB -lopencv_imgproc
+}
+
+
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
 
+
+win32{
 INCLUDEPATH +=  $$PWD/core \
                 $$PWD/../external/geos \
                 $$PWD/../external/opencv2 \
@@ -43,6 +55,17 @@ INCLUDEPATH +=  $$PWD/core \
 DEPENDPATH +=   $$PWD/core \
                 $$PWD/../external/geos \
                 $$PWD/../external/opencv2
+}
+
+
+linux{
+INCLUDEPATH +=  $$PWD/core \
+                /usr/local/include/opencv2
+
+DEPENDPATH +=   $$PWD/core \
+                /usr/local/include/opencv2
+}
+
 
 HEADERS += \
     opencvconnector/opencvmodule.h \
@@ -79,3 +102,15 @@ SOURCES += \
     opencvconnector/histogramequalization.cpp
 
 
+linux{
+    dependencies.files = $$GEOSLIB/libgeos-3.4.2.so \
+        $$OPENCVLIB/libopencv_core.so \
+        $$OPENCVLIB/libopencv_imgproc.so
+
+    dependencies.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+
+
+    INSTALLS += target dependencies
+}

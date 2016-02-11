@@ -14,7 +14,7 @@ namespace pythonapi {
         static void setWorkingCatalog(const std::string& location);
         static std::string getLocation();
         PyObject* operations(const std::string& filter = "*");
-        std::string operationMetaData(const std::string& name);
+        std::string operationMetaData(const std::string& name, const std::string &element = "syntax");
         static PyObject* _catalogItems();
     };
 

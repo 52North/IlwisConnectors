@@ -155,6 +155,9 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
 
 QString CoordinateSystemConnector::prjParam2IlwisName(Projection::ProjectionParamValue parm)
 {
+
+
+
     switch(parm){
         case Projection::pvAZIMCLINE:
         return "Azim of Central Line of True Scale";
@@ -162,17 +165,17 @@ QString CoordinateSystemConnector::prjParam2IlwisName(Projection::ProjectionPara
         return "Azim of Projection Y-Axis";
     case Projection::pvHEIGHT:
         return "Height Persp. Center";
-    case Projection::pvK0:
+    case Projection::pvSCALE:
         return "Scale Factor";
-    case Projection::pvLAT0:
+    case Projection::pvCENTRALPARALLEL:
         return "Central Parallel";
-    case Projection::pvLAT1:
+    case Projection::pvSTANDARDPARALLEL1:
         return "Standard Parallel 1";
-    case Projection::pvLAT2:
+    case Projection::pvSTANDARDPARALLEL2:
         return "Standard Parallel 2";
-    case Projection::pvLATTS:
+    case Projection::pvLATITUDEOFTRUESCALE:
         return "Latitude of True Scale";
-    case Projection::pvLON0:
+    case Projection::pvCENTRALMERIDIAN:
         return "Central Meridian";
     case Projection::pvNORIENTED:
         return "North Oriented XY Coord System";
@@ -184,9 +187,9 @@ QString CoordinateSystemConnector::prjParam2IlwisName(Projection::ProjectionPara
         return "Tilted/Rotated Projection Plane";
     case Projection::pvTILT:
         return "Tilt of Projection Plane";
-    case Projection::pvX0:
+    case Projection::pvFALSEEASTING:
         return "False Easting";
-    case Projection::pvY0:
+    case Projection::pvFALSENORTHING:
         return "False Northing";
     case Projection::pvZONE:
         return "Zone";
@@ -266,28 +269,31 @@ IProjection CoordinateSystemConnector::getProjection(ConventionalCoordinateSyste
     bool ok;
     double falseEasting = _odf->value("Projection","False Easting").toDouble(&ok);
     if ( ok)
-        proj->setParameter(Projection::pvX0, falseEasting);
+        proj->setParameter(Projection::pvFALSEEASTING, falseEasting);
     double falseNorthing = _odf->value("Projection","False Northing").toDouble(&ok);
     if ( ok)
-        proj->setParameter(Projection::pvY0, falseNorthing);
+        proj->setParameter(Projection::pvFALSENORTHING, falseNorthing);
     double centralMeridian = _odf->value("Projection","Central Meridian").toDouble(&ok);
     if ( ok)
-        proj->setParameter(Projection::pvLON0, centralMeridian);
+        proj->setParameter(Projection::pvCENTRALMERIDIAN, centralMeridian);
     double centralParllel = _odf->value("Projection","Central Parallel").toDouble(&ok);
     if ( ok)
-        proj->setParameter(Projection::pvLAT0, centralParllel);
+        proj->setParameter(Projection::pvCENTRALPARALLEL, centralParllel);
     double standardParllel = _odf->value("Projection","Standard Parallel 1").toDouble(&ok);
     if ( ok)
-        proj->setParameter(Projection::pvLAT1, standardParllel);
+        proj->setParameter(Projection::pvSTANDARDPARALLEL1, standardParllel);
     standardParllel = _odf->value("Projection","Standard Parallel 2").toDouble(&ok);
     if ( ok)
-        proj->setParameter(Projection::pvLAT2, standardParllel);
+        proj->setParameter(Projection::pvSTANDARDPARALLEL2, standardParllel);
     double lattitudeOfTrueScale = _odf->value("Projection","Latitude of True Scale").toDouble(&ok);
     if ( ok)
-        proj->setParameter(Projection::pvLATTS, lattitudeOfTrueScale);
+        proj->setParameter(Projection::pvLATITUDEOFTRUESCALE, lattitudeOfTrueScale);
+    double height = _odf->value("Projection","Height Persp. Center").toDouble(&ok);
+    if ( ok)
+        proj->setParameter(Projection::pvHEIGHT, height);
     double scaleFactor = _odf->value("Projection","Scale Factor").toDouble(&ok);
     if ( ok)
-        proj->setParameter(Projection::pvK0, scaleFactor);
+        proj->setParameter(Projection::pvSCALE, scaleFactor);
     int gzone = _odf->value("Projection","Zone").toInt(&ok);
     if ( ok)
         proj->setParameter(Projection::pvZONE, gzone);
@@ -354,26 +360,26 @@ bool CoordinateSystemConnector::storeMetaData(IlwisObject *data) {
             _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvAZIMYAXIS),projection->parameter(Projection::pvAZIMYAXIS).toDouble());
         if ( projection->isSet(Projection::pvHEIGHT))
             _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvHEIGHT),projection->parameter(Projection::pvHEIGHT).toDouble());
-        if ( projection->isSet(Projection::pvK0))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvK0),projection->parameter(Projection::pvK0).toDouble());
-        if ( projection->isSet(Projection::pvLAT0))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT0),projection->parameter(Projection::pvLAT0).toDouble());
-        if ( projection->isSet(Projection::pvLAT1))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT1),projection->parameter(Projection::pvLAT1).toDouble());
-        if ( projection->isSet(Projection::pvLAT2))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLAT2),projection->parameter(Projection::pvLAT2).toDouble());
-        if ( projection->isSet(Projection::pvLATTS))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLATTS),projection->parameter(Projection::pvLATTS).toDouble());
-        if ( projection->isSet(Projection::pvLON0))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLON0),projection->parameter(Projection::pvLON0).toDouble());
+        if ( projection->isSet(Projection::pvSCALE))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvSCALE),projection->parameter(Projection::pvSCALE).toDouble());
+        if ( projection->isSet(Projection::pvCENTRALPARALLEL))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvCENTRALPARALLEL),projection->parameter(Projection::pvCENTRALPARALLEL).toDouble());
+        if ( projection->isSet(Projection::pvSTANDARDPARALLEL1))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvSTANDARDPARALLEL1),projection->parameter(Projection::pvSTANDARDPARALLEL1).toDouble());
+        if ( projection->isSet(Projection::pvSTANDARDPARALLEL2))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvSTANDARDPARALLEL2),projection->parameter(Projection::pvSTANDARDPARALLEL2).toDouble());
+        if ( projection->isSet(Projection::pvLATITUDEOFTRUESCALE))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLATITUDEOFTRUESCALE),projection->parameter(Projection::pvLATITUDEOFTRUESCALE).toDouble());
+        if ( projection->isSet(Projection::pvCENTRALMERIDIAN))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvCENTRALMERIDIAN),projection->parameter(Projection::pvCENTRALMERIDIAN).toDouble());
         if ( projection->isSet(Projection::pvNORIENTED))
             _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORIENTED),projection->parameter(Projection::pvNORIENTED).toString());
         if ( projection->isSet(Projection::pvNORTH))
             _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORTH),projection->parameter(Projection::pvNORTH).toString());
-        if ( projection->isSet(Projection::pvX0))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvX0),projection->parameter(Projection::pvX0).toDouble());
-        if ( projection->isSet(Projection::pvY0))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvY0),projection->parameter(Projection::pvY0).toDouble());
+        if ( projection->isSet(Projection::pvFALSEEASTING))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvFALSEEASTING),projection->parameter(Projection::pvFALSEEASTING).toDouble());
+        if ( projection->isSet(Projection::pvFALSENORTHING))
+            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvFALSENORTHING),projection->parameter(Projection::pvFALSENORTHING).toDouble());
         if ( projection->isSet(Projection::pvZONE))
             _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvZONE),projection->parameter(Projection::pvZONE).toInt());
 

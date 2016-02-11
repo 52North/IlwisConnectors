@@ -84,6 +84,7 @@ bool VersionedSerializer::storeDataDefintion(const DataDefinition &def, QDataStr
     std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
     if ( !domainStreamer)
         return false;
+    _stream << def.domain()->valueType();
     domainStreamer->store(def.domain().ptr(), options);
     if ( !def.range().isNull()) // no range for textdomains
         def.range()->store(_stream);

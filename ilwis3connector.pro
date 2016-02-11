@@ -34,10 +34,11 @@ SOURCES += \
     ilwis3connector/ilwisrastercoverageconnector.cpp \
     ilwis3connector/ilwis3featureconnector.cpp \
     ilwis3connector/ilwis3catalogexplorer.cpp \
-    ilwis3connector/ilwis3representationconnector.cpp
+    ilwis3connector/ilwis3representationconnector.cpp \
+    ilwis3connector/ilwis3catalogfileexplorer.cpp
 
 HEADERS += \
-    ilwis3connector/ilwis3connector_global.h \
+    ilwis3connector/Ilwis3Connector_global.h \
     ilwis3connector/ilwis3connector.h \
     ilwis3connector/ilwis3module.h \
     ilwis3connector/ilwis3objectfactory.h \
@@ -56,7 +57,8 @@ HEADERS += \
     ilwis3connector/ilwisrastercoverageconnector.h \
     ilwis3connector/ilwis3featureconnector.h \
     ilwis3connector/ilwis3catalogexplorer.h \
-    ilwis3connector/ilwis3representationconnector.h
+    ilwis3connector/ilwis3representationconnector.h \
+    ilwis3connector/ilwis3catalogfileexplorer.h
 
 resources.files += ilwis3connector/resources/projection_allias.csv \
     ilwis3connector/resources/ellipsoid_allias.csv \
@@ -79,3 +81,9 @@ win32{
 }
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
+
+
+linux{
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    INSTALLS += target
+}

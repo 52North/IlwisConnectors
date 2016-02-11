@@ -81,7 +81,7 @@ Ilwis::OperationImplementation::State LaplaceFilter::prepare(ExecutionContext *c
 quint64 LaplaceFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/laplacefilter"},"opencv");
-    operation.setSyntax("laplacefilter(inputraster [, kernel-size]");
+    operation.setSyntax("laplacefilter(inputraster [, kernel-size])");
     operation.setDescription(TR("highlights regions of rapid intensity change, used in edge detection"));
     operation.setInParameterCount({1,2});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"),TR("input rastercoverage, color or image(grey) domain"));

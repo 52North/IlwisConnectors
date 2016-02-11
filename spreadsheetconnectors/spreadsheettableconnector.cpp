@@ -11,7 +11,7 @@
 #include "table.h"
 #include "basetable.h"
 #include "flattable.h"
-#include "spreadsheet.h"
+#include "SpreadSheet.h"
 #include "odsformat.h"
 #include "xlsformat.h"
 #include "xlsxformat.h"
@@ -42,6 +42,9 @@ SpreadSheetTableConnector::SpreadSheetTableConnector(const Ilwis::Resource &reso
     QFileInfo odsinfo = resource.toLocalFile();
     QString sheetName;
     QString suffix =  odsinfo.suffix();
+    if ( suffix == "" && options.contains("format")){
+        suffix = options["format"].toString();
+    }
     if ( !knownSuffix(suffix)){
         int index  = odsinfo.absoluteFilePath().lastIndexOf("/");
         int index2 = odsinfo.absoluteFilePath().lastIndexOf(".");
@@ -193,7 +196,11 @@ bool SpreadSheetTableConnector::store(IlwisObject *object, const IOOptions &opti
         ERROR2(ERR_NO_INITIALIZED_2,TR("Spreadsheet"), object->name());
         return false;
     }
-    _spreadsheet->openSheet(_resource.toLocalFile(), false);
+    QString file = _resource.toLocalFile();
+    if ( QFileInfo(file).suffix() == "")
+        if ( options.contains("format"))
+            file += "." + options["format"].toString();
+    _spreadsheet->openSheet(file, false);
     if (!_spreadsheet->isValid())
         return false;
 

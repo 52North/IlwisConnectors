@@ -16,10 +16,18 @@ TEMPLATE = lib
 
 DEFINES += REMOTEDATAACCESSHANDLER_LIBRARY
 
+win32{
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lhttpserver
-		
+}
+
+linux{
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+        -L$$GEOSLIB -lgeos-3.4.2 \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lhttpserver
+}
+
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
@@ -50,6 +58,10 @@ SOURCES += \
     remotedataaccesshandler/remoteoperationrequesthandler.cpp \
     remotedataaccesshandler/remoteoperation.cpp
 
+linux{
+    dependencies.files = $$GEOSLIB/libgeos-3.4.2.so
+    dependencies.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
-
-
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    INSTALLS += target dependencies
+}

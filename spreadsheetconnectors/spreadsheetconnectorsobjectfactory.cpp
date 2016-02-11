@@ -31,6 +31,9 @@ bool SpreadSheetConnectorsObjectFactory::canUse(const Resource &resource) const
     if ( resource.url().scheme() == "ilwis") // can't use anything marked as internal
         return false;
 
+    if ( resource.url().scheme() != "file") // can't use anything marked as file
+        return false;
+
     if ( !hasType(resource.ilwisType(), itTABLE))
         return false;
 

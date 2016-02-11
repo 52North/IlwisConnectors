@@ -6,7 +6,7 @@
 #include "ilwisdata.h"
 #include "domain.h"
 #include "ods/ods.h"
-#include "spreadsheet.h"
+#include "SpreadSheet.h"
 #include "odsformat.h"
 
 using namespace Ilwis;

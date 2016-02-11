@@ -12,12 +12,13 @@
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "inifile.h"
+#include "geometries.h"
+#include "coordinatesystem.h"
 #include "ilwis3connector.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
 #include "juliantime.h"
 #include "dataformat.h"
-
 
 using namespace Ilwis;
 using namespace Ilwis3;
@@ -371,7 +372,10 @@ QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& 
         return "code=georef:undetermined";
     if ( localName != sUNDEF) {
         if ( localName.contains(QRegExp("\\\\|/"))) {
-            return localName;
+            if (localName.indexOf("file://") == 0)
+                return localName;
+            else
+                return QUrl::fromLocalFile(localName).toString();
         }
         else {
             if ( owner.isValid())  {
@@ -385,6 +389,53 @@ QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& 
         }
     }
     return sUNDEF;
+}
+
+QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & csy) const
+{
+    QString csyName;
+    if ( csy->code() != "unknown"){
+        if ( csy->code() != "epsg:4326"){
+            csyName = Resource::toLocalFile(csy->source().url(),true, "csy");
+            if ( csy->isInternalObject()){
+                QString csyFile = Resource::toLocalFile(source().url(),false, "csy");
+                int index = csy->source().url().toString().lastIndexOf("/");
+                QString name = csy->source().url().toString().mid(index + 1);
+                csyName =  QFileInfo(csyFile).absolutePath() + "/" + name;
+            }
+            else if ( csyName == sUNDEF || csyName == "") {
+                QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
+                QString name = csy->name();
+                if ( !csy->isAnonymous()) {
+                    name = name.replace(QRegExp("[/ .'\"]"),"_");
+                }
+                csyName = path + name;
+                if ( !csyName.endsWith(".csy"))
+                    csyName += ".csy";
+                //return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
+            }
+
+            QFileInfo csyinf(csyName);
+            if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
+                if (!csyinf.isAbsolute()){
+                    QString destinationPath = QFileInfo(source().toLocalFile()).absolutePath();
+                    csyName = destinationPath + "/" + csyName;
+                }
+
+                QUrl url = QUrl::fromLocalFile(csyName); // new attempt to create a suitable path;
+                csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
+                if(!csy->store({"storemode",Ilwis::IlwisObject::smMETADATA})){ // fail, we default to unknown
+                    csyName = "Unknown.csy";
+                    WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
+                } else {
+                    csyName = url.toLocalFile();
+                }
+            }
+        }else
+            csyName = "LatLonWGS84.csy";
+    }else
+        csyName = "unknown.csy";
+    return csyName;
 }
 
 IniFile *Ilwis3Connector::makeIni(const Resource &resource, IlwisTypes type)

@@ -1,4 +1,5 @@
 #include <QBuffer>
+#include <QColor>
 #include "raster.h"
 #include "version.h"
 #include "connectorinterface.h"
@@ -13,10 +14,24 @@
 #include "flattable.h"
 #include "featurecoverage.h"
 #include "numericdomain.h"
+#include "domainitem.h"
+#include "identifieritem.h"
+#include "thematicitem.h"
+#include "interval.h"
+#include "coloritem.h"
+#include "identifierrange.h"
+#include "intervalrange.h"
+#include "colorrange.h"
+#include "itemdomain.h"
+#include "coordinatesystem.h"
+#include "geodeticdatum.h"
+#include "projection.h"
+#include "conventionalcoordinatesystem.h"
 #include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "rawconverter.h"
+#include "workflow/workflow.h"
 #include "downloadmanager.h"
 #include "versioneddatastreamfactory.h"
 
@@ -37,9 +52,27 @@ IlwisObject *StreamConnector::create() const
     case itRASTER:
         return new RasterCoverage(_resource);
     case itTABLE:
+    case itFLATTABLE:
         return new FlatTable(_resource);
     case itNUMERICDOMAIN:
         return new NumericDomain(_resource);
+    case itGEOREF:
+        return new GeoReference(_resource);
+    case itWORKFLOW:
+        return new Workflow(_resource);
+    case itCONVENTIONALCOORDSYSTEM:
+        return new ConventionalCoordinateSystem(_resource);
+    case itITEMDOMAIN:{
+        if ( hasType(_resource.extendedType(), itNUMERICITEM))
+            return new IntervalDomain(_resource);
+        if ( hasType(_resource.extendedType(), itIDENTIFIERITEM))
+            return new NamedIdDomain(_resource);
+        if ( hasType(_resource.extendedType(), itTHEMATICITEM))
+            return new ThematicDomain(_resource);
+        if ( hasType(_resource.extendedType(), itPALETTECOLOR))
+            return new ItemDomain<ColorItem>(_resource);
+
+    }
     default:
         return 0;
     }
@@ -66,7 +99,7 @@ bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options
 {
     if ( _resource.url(true).scheme() == "file"){
         VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
-        if (!openSource(false))
+        if (!openSource(true))
             return false;
         QDataStream stream(_datasource.get());
         IlwisTypes tp;
@@ -91,6 +124,7 @@ bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
         //QFileInfo inf(_resource.url().toLocalFile());
         VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
         QDataStream stream(_datasource.get());
+        quint64 pos = stream.device()->pos();
         IlwisTypes tp;
         QString version;
         stream >> tp;

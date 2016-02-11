@@ -1,6 +1,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QRegExp>
+#include <QColor>
 
 #include "kernel.h"
 #include "raster.h"
@@ -29,6 +30,7 @@
 #include "geodeticdatum.h"
 #include "projection.h"
 #include "tableconnector.h"
+#include "colorrange.h"
 #include "coordinatesystemconnector.h"
 #include "coverageconnector.h"
 #include "odfitem.h"
@@ -131,7 +133,15 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
 
     QString attfile = _odf->value("BaseMap", "AttributeTable");
     QString basemaptype = _odf->value("BaseMap", "Type");
-    // feature coverages always have an attribute table; rasters might have
+    if ( attfile == sUNDEF){ // the attribute table might be in the domain
+            QString domname = _odf->value("BaseMap", "Domain");
+            domname = _odf->fileInfo().absolutePath() + "/" + domname;
+            QFileInfo inf(domname);
+            if ( inf.exists()){
+                IniFile ini(inf.absoluteFilePath());
+                attfile = ini.value("DomainSort","AttributeTable");
+            }
+    }
     if ( basemaptype != "Map" || attfile != sUNDEF) {
         ITable tbl = prepareAttributeTable(attfile, basemaptype, options);
         if ( tbl.isValid()){
@@ -178,49 +188,9 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
     if (!csy.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
 
-    // create a suitable filepath
-    if ( csy->code() != "unknown"){
-        if ( csy->code() != "epsg:4326"){
-            _csyName = Resource::toLocalFile(csy->source().url(),true, "csy");
-            if ( csy->isInternalObject()){
-                QString csyFile = Resource::toLocalFile(source().url(),false, "csy");
-                int index = csy->source().url().toString().lastIndexOf("/");
-                QString name = csy->source().url().toString().mid(index + 1);
-                _csyName =  QFileInfo(csyFile).absolutePath() + "/" + name;
-            }
-            else if ( _csyName == sUNDEF || _csyName == "") {
-                QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
-                QString name = csy->name();
-                if ( !csy->isAnonymous()) {
-                    name = name.replace(QRegExp("[/ .'\"]"),"_");
-                }
-                _csyName = path + name;
-                if ( !_csyName.endsWith(".csy"))
-                    _csyName += ".csy";
-                //return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
-            }
-
-            QFileInfo csyinf(_csyName);
-            if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
-                if (!csyinf.isAbsolute()){
-                    QString destinationPath = QFileInfo(source().toLocalFile()).absolutePath();
-                    _csyName = destinationPath + "/" + _csyName;
-                }
-
-                QUrl url = QUrl::fromLocalFile(_csyName); // new attempt to create a suitable path;
-                csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
-                if(!csy->store({"storemode",Ilwis::IlwisObject::smMETADATA})){ // fail, we default to unknown
-                    _csyName = "Unknown.csy";
-                    WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
-                } else {
-                    _csyName = url.toLocalFile();
-                }
-            }
-            _odf->setKeyValue("BaseMap","CoordSystem", QFileInfo(_csyName).fileName());
-        }else
-            _odf->setKeyValue("BaseMap","CoordSystem", "LatLonWGS84");
-    }else
-        _odf->setKeyValue("BaseMap","CoordSystem", "unknown.csy");
+    // write the corresponding coordinate system
+    _csyName = writeCsy(obj, csy);
+    _odf->setKeyValue("BaseMap", "CoordSystem", QFileInfo(_csyName).fileName());
 
     Envelope bounds = coverage->envelope();
     if ( bounds.isNull())
@@ -362,13 +332,20 @@ DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const 
     QString filename;
     QString domname = odf->value("BaseMap","Domain");
     if (domname != sUNDEF) { // probe if domain is an external file
-        filename = filename2FullPath(domname, this->_resource); // use an eventual absolute-path supplied in domname, otherwise look for it in the same folder as the BaseMap
-        if (!QFileInfo(QUrl(filename).toLocalFile()).exists()) {
-            filename = context()->workingCatalog()->resolve(domname, itDOMAIN); // if it is also not there, look for it in the working catalog (it might be different than the location of the BaseMap)
-            if (!QFileInfo(QUrl(filename).toLocalFile()).exists())
-                filename = name2Code(domname, "domain"); // probe if it is a system file; note that this is a code, not a filename
-        } else { // handle the case whereby we open a loose coverage file that is not in the mastercatalog; the domain must be added to the mastercatalog at this point, otherwise it will not load correctly by the "prepare" that follows, due to an incomplete "Resource"
-            addToMasterCatalog(filename, itDOMAIN);
+        if ( domname == "Color.dom"){ // special case
+                QColor clrMin = QColor(0,0,0);
+                QColor clrMax = QColor(255,255,255);
+                Range *colorRange = new ContinuousColorRange( clrMin, clrMax, ColorRangeBase::cmRGBA);
+                return DataDefinition(IDomain("color"), colorRange);
+        }else {
+            filename = filename2FullPath(domname, this->_resource); // use an eventual absolute-path supplied in domname, otherwise look for it in the same folder as the BaseMap
+            if (!QFileInfo(QUrl(filename).toLocalFile()).exists()) {
+                filename = context()->workingCatalog()->resolve(domname, itDOMAIN); // if it is also not there, look for it in the working catalog (it might be different than the location of the BaseMap)
+                if (!QFileInfo(QUrl(filename).toLocalFile()).exists())
+                    filename = name2Code(domname, "domain"); // probe if it is a system file; note that this is a code, not a filename
+            } else { // handle the case whereby we open a loose coverage file that is not in the mastercatalog; the domain must be added to the mastercatalog at this point, otherwise it will not load correctly by the "prepare" that follows, due to an incomplete "Resource"
+                addToMasterCatalog(filename, itDOMAIN);
+            }
         }
     } else
         filename = odf->url(); // probe if it is an internal domain

@@ -40,6 +40,7 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     for(int col = 0; col < defCount; ++col){
         const ColumnDefinition& coldef = fcoverage->attributeDefinitionsRef().columndefinitionRef(col);
         _stream << coldef.name();
+        _stream << coldef.datadef().domain()->valueType();
 
         std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
         if ( !domainStreamer)
@@ -56,7 +57,7 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         domainStreamer->store( fcoverage->attributeDefinitions().domain().ptr(), options);
 
         std::vector<QString> indexes = fcoverage->attributeDefinitions().indexes();
-        _stream << indexes.size();
+        _stream << (quint32)indexes.size();
         for(auto index : indexes)
             _stream << index;
     }else{
@@ -128,7 +129,7 @@ bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &option
             return false;
         IDomain dom(type | valueType);
         domainStreamer->loadMetaData( dom.ptr(), options);
-        size_t nrOfVariants;
+        quint32 nrOfVariants;
         _stream >> nrOfVariants;
         std::vector<QString> variants(nrOfVariants);
         for(int i =0; i < nrOfVariants; ++i){

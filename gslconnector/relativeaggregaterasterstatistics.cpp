@@ -139,7 +139,7 @@ Ilwis::OperationImplementation::State RelativeAggregateRasterStatistics::prepare
 quint64 RelativeAggregateRasterStatistics::createMetadata()
 {
     OperationResource operation({"ilwis://operations/relativeaggregaterasterStatistics"},"gsl");
-    operation.setSyntax("relativeaggregaterasterStatistics(inputraster,variance|standarddev|totalsumsquares|variancefixedmean|standarddevfixedmean|absolutedeviation|max|min|autocorrelationlag1)");
+    operation.setSyntax("relativeaggregaterasterStatistics(inputraster,statisticalmarker=variance|standarddev|totalsumsquares|variancefixedmean|standarddevfixedmean|absolutedeviation|max|min|autocorrelationlag1)");
     operation.setDescription(TR("transpose the raster according to the method indicated by the second parameter"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itRASTER,  TR("input raster"),TR("set raster bands to be aggregated"));

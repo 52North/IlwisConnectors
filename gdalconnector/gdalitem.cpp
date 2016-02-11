@@ -20,6 +20,46 @@
 
 using namespace Ilwis;
 using namespace Gdal;
+GDALItems::GDALItems(const QFileInfo &localContainerFile){
+    QFileInfo file = localContainerFile;
+    GdalHandle* handle = gdal()->openFile(file.absoluteFilePath(), i64UNDEF , GA_ReadOnly, false);
+    if (handle){
+        QUrl url = QUrl::fromLocalFile(file.absoluteFilePath());
+        quint64 sz = file.size();
+        int count = layerCount(handle);
+        if ( count == 0) {// could be a complex dataset
+            handleComplexDataSet(handle->handle());
+        }else {
+            quint64 csyId = addCsy(handle, file.absoluteFilePath(), url, false);
+            if ( handle->type() == GdalHandle::etGDALDatasetH) {
+                quint64 grfId = addItem(handle, url, csyId, 0, itGEOREF,itCOORDSYSTEM);
+                //addItem(handle, url, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM,sz);
+                for(int i = 0; i < count; ++i){
+                    auto layerHandle = gdal()->getRasterBand(handle->handle(), i+1);
+                    if ( layerHandle){
+                        QString layername = file.baseName() + "_" + QString::number(i);
+                        QString containerUrl = url.toString() + "/" + layername;
+                        addItem(handle, containerUrl, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM, sz/count, i);
+                    }
+                }
+            }
+            gdal()->closeFile(file.absoluteFilePath(), i64UNDEF);
+        }
+
+    }
+
+}
+
+int GDALItems::layerCount(GdalHandle* handle)
+{
+    int count = 0;
+    if (handle->type() == GdalHandle::etGDALDatasetH){
+        count = gdal()->layerCount(handle->handle());
+    }else if(handle->type() == GdalHandle::etOGRDataSourceH){
+        count = gdal()->getLayerCount(handle->handle());
+    }
+    return count;
+}
 
 GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes extTypes)
 {
@@ -29,18 +69,9 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
     GdalHandle* handle = gdal()->openFile(file.absoluteFilePath(), i64UNDEF , GA_ReadOnly, false);
     if (handle){
         quint64 sz = file.size();
-        int count = 0;
-        if (handle->type() == GdalHandle::etGDALDatasetH){
-            count = gdal()->layerCount(handle->handle());
-        }else if(handle->type() == GdalHandle::etOGRDataSourceH){
-            count = gdal()->getLayerCount(handle->handle());
-        }
+        int count = layerCount(handle);
         if ( count == 0) {// could be a complex dataset
-            char **pdatasets = gdal()->getMetaData(handle->handle(), "SUBDATASETS");
-            if ( pdatasets != 0){
-                auto datasets = kvp2Map(pdatasets);
-                handleComplexDataSet(datasets);
-            }
+            addItem(handle, QUrl::fromLocalFile(file.absoluteFilePath()), handleComplexDataSet(handle->handle()), iUNDEF, itCATALOG, itFILE | itRASTER);
             return;
         }
         //TODO: at the moment simplistic approach; all is corners georef and domain value
@@ -48,7 +79,12 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
         quint64 csyId = addCsy(handle, file.absoluteFilePath(), url, false);
         if ( handle->type() == GdalHandle::etGDALDatasetH) {
             quint64 grfId = addItem(handle, url, csyId, 0, itGEOREF,itCOORDSYSTEM);
-            addItem(handle, url, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM,sz);
+            if ( count == 1)
+                addItem(handle, url, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM,sz);
+            else{
+                addItem(handle, url, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM,sz);
+                addItem(handle, url, count, iUNDEF, itCATALOG, itFILE | itRASTER);
+            }
         } else{
             if ( count == 1) {//  default case, one layer per object
                 OGRLayerH layerH = gdal()->getLayer(handle->handle(),0);
@@ -61,7 +97,7 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
             }
             else { // multiple layers, the file itself will be marked as container; internal layers will be added using this file as container
                 //TODO: atm the assumption is that all gdal containers are files. this is true in the majority of the cases but not in all. Without a proper testcase the non-file option will not(yet) be implemented
-                addItem(handle, url, count, iUNDEF, itCATALOG , extTypes | itFILE);
+                addItem(handle, url, count, iUNDEF, itCATALOG , extTypes | itFILE | itFEATURE);
                 for(int i = 0; i < count; ++i){
                     OGRLayerH layerH = gdal()->getLayer(handle->handle(),i);
                     if ( layerH){
@@ -100,9 +136,16 @@ quint64 GDALItems::findSize(const QFileInfo& inf){
     return size;
 }
 
-void GDALItems::handleComplexDataSet(const std::map<QString, QString>& datasetdesc){
+int GDALItems::handleComplexDataSet(void *handle){
+    char **pdatasets = gdal()->getMetaData(handle, "SUBDATASETS");
+    if ( pdatasets == 0)
+        return iUNDEF;
+
+    auto datasetdesc = kvp2Map(pdatasets);
+
     auto iter = datasetdesc.begin();
     // we know there is altijd  pairs SUBDATASET_<n>_DESC,SUBDATASET_<n>_NAME in the map
+    int count = 0;
     while(iter !=  datasetdesc.end()) {
         Size<> sz;
         QString shortname;
@@ -146,8 +189,10 @@ void GDALItems::handleComplexDataSet(const std::map<QString, QString>& datasetde
         gdalitem.addProperty("domain",domid);
         insert(gdalitem);
         ++iter;
+        ++count;
 
     }
+    return count;
 }
 
 quint64 GDALItems::numbertype2domainid(const QString& numbertype) const{
@@ -165,11 +210,11 @@ quint64 GDALItems::numbertype2domainid(const QString& numbertype) const{
     return dom->id();
 }
 
-QString GDALItems::dimensions(GdalHandle* handle, bool & is3d) const
+QString GDALItems::dimensions(GdalHandle* handle, bool & is3d, int layerindex) const
 {
     Size<> sz(gdal()->xsize(handle->handle()), gdal()->ysize(handle->handle()), gdal()->layerCount(handle->handle()));
     QString dim = QString("%1 %2").arg(sz.xsize()).arg(sz.ysize());
-    if ( sz.zsize() != 1){
+    if ( sz.zsize() != 1 && layerindex == iUNDEF){
         dim += " " + QString::number(sz.zsize());
         is3d = true;
     }
@@ -177,7 +222,10 @@ QString GDALItems::dimensions(GdalHandle* handle, bool & is3d) const
     return dim;
 }
 
-quint64 GDALItems::addItem(GdalHandle* handle, const QUrl& url, quint64 csyid, quint64 grfId, IlwisTypes tp, IlwisTypes extTypes, quint64 sz) {
+quint64 GDALItems::addItem(GdalHandle* handle, const QUrl& url, quint64 csyid, quint64 grfId, IlwisTypes tp, IlwisTypes extTypes, quint64 sz, int layerindex) {
+    if ( csyid == iUNDEF)
+        return i64UNDEF;
+
     Resource gdalItem(url, tp);
     if ( sz != i64UNDEF)
         gdalItem.size(sz);
@@ -193,10 +241,8 @@ quint64 GDALItems::addItem(GdalHandle* handle, const QUrl& url, quint64 csyid, q
         gdalItem.addProperty("domain", resValue.id());
         gdalItem.addProperty("georeference", grfId);
 
-        QString dim = dimensions(handle, is3D);
+        QString dim = dimensions(handle, is3D, layerindex);
         gdalItem.dimensions(dim);
-        if ( is3D)
-            extTypes |= itCATALOG;
 
     } else if (hasType(tp, itGEOREF)){
         gdalItem.dimensions(dimensions(handle, is3D));
@@ -207,6 +253,8 @@ quint64 GDALItems::addItem(GdalHandle* handle, const QUrl& url, quint64 csyid, q
         }
     }
     gdalItem.setExtendedType(extTypes);
+    if ( layerindex != iUNDEF)
+        gdalItem.addProperty("bandindex", layerindex);
 
     insert(gdalItem);
 

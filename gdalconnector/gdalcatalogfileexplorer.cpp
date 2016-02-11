@@ -48,12 +48,27 @@ std::vector<Ilwis::Resource> GdalCatalogFileExplorer::loadItems(const IOOptions 
     QString query = QString("Select itemid from mastercatalog where container='%1'").arg(source().url().toString());
     InternalDatabaseConnection db;
     if (db.exec(query)) {
-        while ( db.next()){
-            quint64 id = db.value(0).toULongLong();
-            Resource resource = mastercatalog()->id2Resource(id);
-            if ( resource.isValid())
-                result.push_back(resource);
+        if ( db.next()){
+            do{
+                quint64 id = db.value(0).toULongLong();
+                Resource resource = mastercatalog()->id2Resource(id);
+                if ( resource.isValid())
+                    result.push_back(resource);
 
+            }while ( db.next());
+        }else {
+            bool prev = kernel()->issues()->silent();
+            kernel()->issues()->silent(true); // error messages during scan are not needed
+            GDALItems gdalitems(containerInf);
+            std::vector<Resource> items;
+            for( const auto& res : gdalitems){
+                Resource resource(res);
+                resource.createTime(Time(containerInf.created()));
+                resource.modifiedTime(Time(containerInf.lastModified()));
+                items.push_back(resource);
+            }
+            mastercatalog()->addItems(items);
+            kernel()->issues()->silent(prev);
         }
     }
     return result;

@@ -251,9 +251,9 @@ IlwisObject *RasterCoverageConnector::create() const
     return new RasterCoverage(_resource);
 }
 
-inline double RasterCoverageConnector::value(char *block, int index) const{
+inline double RasterCoverageConnector::value(const char *block, int index) const{
     double v = rUNDEF;
-    char *c = &(block[index * _storesize]);
+    const char *c = &(block[index * _storesize]);
     switch (_storetype) {
     case itUINT8:
         v = *(quint8 *)c; break;
@@ -294,10 +294,9 @@ qint64  RasterCoverageConnector::conversion(QFile& file, Grid *grid, int& count)
         vector<double> values(noItems);
         for(quint32 i=0; i < noItems; ++i) {
             double v = value(block, i);
-
             values[i] = noconversionneeded ? v :_converter.raw2real(v);
         }
-        grid->setBlockData(count, values, true);
+        grid->setBlockData(count, values);
         totalRead += result;
         ++count;
         szLeft -= blockSizeBytes;
@@ -316,10 +315,16 @@ void RasterCoverageConnector::loadBlock(UPGrid& grid,QFile& file, quint32 blockI
         quint32 noItems = grid->blockSize(blockIndex);
         vector<double> values(noItems);
         for(quint32 i=0; i < noItems; ++i) {
-            double v = value(bytes.data(), i);
-            values[i] = _converter.isNeutral() ? v :_converter.raw2real(v);
+            double v = value(bytes.constData(), i);
+            if ( _converter.isNeutral()){
+                if ( v != iILW3UNDEF && v != shILW3UNDEF)
+                    values[i] = v;
+                else
+                    values[i] = rUNDEF;
+            }else
+                values[i] = _converter.raw2real(v);
         }
-        grid->setBlockData(blockIndex, values, true);
+        grid->setBlockData(blockIndex, values);
     }else
         ERROR2(ERR_COULD_NOT_OPEN_READING_2,file.fileName(),TR("seek failed"));
 
@@ -336,6 +341,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &optio
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
     UPGrid& grid = raster->gridRef();
+    //blocklimits; key = band number, value= blocks needed from this band
     std::map<quint32, std::vector<quint32> > blocklimits = grid->calcBlockLimits(iooptions);
 
     for(const auto& layer : blocklimits){

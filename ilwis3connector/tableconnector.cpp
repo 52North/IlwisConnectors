@@ -59,6 +59,7 @@ bool TableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 
     quint32 ncolumns = _odf->value("Table","Columns").toInt();
     quint32 rows = _odf->value("Table","Records").toInt();
+    _attributeDomain = _odf->value("Table","Domain");
     QVector<ColumnDefinition>  columns;
     ColumnDefinition key  = getKeyColumn();
     if ( key.isValid()) {
@@ -96,7 +97,7 @@ ColumnDefinition TableConnector::makeColumn(const QString& colName, quint64 inde
     }
     if ( domName.toLower() == "string.dom")
         domName = "code=domain:text";
-    if(!dom.prepare(domName)) {
+    if(!dom.prepare(domName,{"mustexist",true})) {
         return ColumnDefinition();
     }
     QString section = QString("Col:%1").arg(colName);
@@ -244,10 +245,14 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
 
     int reduceColumns = 0; // the featured_id column will not be go the ilwis3, useless info at that level
     quint32 reccount = _selected.size() > 0 ? _selected.size() :  tbl->recordCount();
-    QFileInfo inf(_attributeDomain);
+    QString fileUrl = context()->workingCatalog()->filesystemLocation().toString() + "/" + _attributeDomain;
+    QFileInfo inf(QUrl(fileUrl).toLocalFile());
+    QString domname = inf.fileName();
+    if ( domname == "" || !inf.exists())
+        domname = "none.dom";
     _odf->setKeyValue("Ilwis", "Type", "Table");
     _odf->setKeyValue("Ilwis", "Class", "Table");
-    _odf->setKeyValue("Table", "Domain", inf.fileName());
+    _odf->setKeyValue("Table", "Domain", domname);
     _odf->setKeyValue("Table", "DomainInfo", QString("%1;Long;UniqueID;0;;").arg(inf.fileName()));
     _odf->setKeyValue("Table", "Columns", QString::number(tbl->columnCount() - reduceColumns));
     _odf->setKeyValue("Table", "Records", QString::number(reccount));

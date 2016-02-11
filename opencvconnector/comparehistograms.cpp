@@ -100,7 +100,7 @@ Ilwis::OperationImplementation::State CompareHistograms::prepare(ExecutionContex
 quint64 CompareHistograms::createMetadata()
 {
     OperationResource operation({"ilwis://operations/comparehistograms"},"opencv");
-    operation.setSyntax("CompareHistograms(inputraster1, inputraster2,correlation | chi-square | intersection | bhattacharyya-distance | hellinger-distance[,accumulated");
+    operation.setSyntax("CompareHistograms(inputraster1, inputraster2,statisticalmarker=correlation | chi-square | intersection | bhattacharyya-distance | hellinger-distance[,accumulated)");
     operation.setDescription(TR("Blurs an image using the box filter"));
     operation.setInParameterCount({3,4});
     operation.addInParameter(0,itRASTER , TR("first rastercoverage"),TR("raster coverage with a numerical or color domain"));
