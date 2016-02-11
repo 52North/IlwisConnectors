@@ -35,24 +35,21 @@ PostgresqlCatalogExplorer::~PostgresqlCatalogExplorer()
 
 std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &options)
 {
-    //qDebug() << "PostgresqlCatalogExplorer::loadItems()";
-
     IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
     QString schema("public");
     if (iooptions.contains("pg.schema")) {
         schema = iooptions["pg.schema"].toString();
     }
-
     QString sqlBuilder;
     sqlBuilder.append("SELECT ");
     sqlBuilder.append(" meta.tablename, count(geom.typname) as hasGeometry ");
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(" pg_catalog.pg_tables AS meta,pg_catalog.pg_type AS geom ");
-    sqlBuilder.append(" WHERE ");
+    sqlBuilder.append(" WHEREGROUP ");
     sqlBuilder.append(" meta.schemaname = '").append(schema).append("' ");
     sqlBuilder.append(" AND ");
     sqlBuilder.append(" geom.typname = 'geometry' ");
-    sqlBuilder.append(" GROUP BY ");
+    sqlBuilder.append("  BY ");
     sqlBuilder.append(" meta.tablename;");
     //qDebug() << "SQL: " << sqlBuilder;
 

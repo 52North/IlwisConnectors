@@ -309,6 +309,7 @@ qint64  RasterCoverageConnector::conversion(QFile& file, Grid *grid, int& count)
 }
 void RasterCoverageConnector::loadBlock(UPGrid& grid,QFile& file, quint32 blockIndex, quint32 fileBlock) {
     qint64 blockSizeBytes = grid->blockSize(0) * _storesize;
+
     quint64 seekPos = fileBlock * blockSizeBytes;
     if (file.seek(seekPos)) {
         QByteArray bytes = file.read(blockSizeBytes);

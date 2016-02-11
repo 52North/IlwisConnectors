@@ -50,7 +50,9 @@ HEADERS += \
     postgresqlconnector/postgresqltableloader.h \
     postgresqlconnector/postgresqlfeaturecoverageloader.h \
     postgresqlconnector/sqlstatementhelper.h \
-    postgresqlconnector/postgresqlconnection.h
+    postgresqlconnector/postgresqlconnection.h \
+    postgresqlconnector/postgresqlrasterconnector.h \
+    postgresqlconnector/postgresqlrastercoverageloader.h
 
 SOURCES += \
     postgresqlconnector/postgresqlconnector.cpp \
@@ -63,5 +65,7 @@ SOURCES += \
     postgresqlconnector/postgresqlfeaturecoverageloader.cpp \
     postgresqlconnector/sqlstatementhelper.cpp \
     postgresqlconnector/postgresqlconnection.cpp \
-    postgresqlconnector/PostgresqlDatabaseUtil.cpp
+    postgresqlconnector/PostgresqlDatabaseUtil.cpp \
+    postgresqlconnector/postgresqlrasterconnector.cpp \
+    postgresqlconnector/postgresqlrastercoverageloader.cpp
 

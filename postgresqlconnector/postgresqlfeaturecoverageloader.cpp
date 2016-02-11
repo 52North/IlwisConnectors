@@ -123,9 +123,9 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
 
     QList<MetaGeometryColumn> metaGeometries;
     pgUtil.getMetaForGeometryColumns(metaGeometries);
-    QSqlQuery query = pgUtil.doQuery(selectGeometries(metaGeometries), "featurecoverageloader");
+    QString select = selectGeometries(metaGeometries);
+    QSqlQuery query = pgUtil.doQuery(select, "featurecoverageloader");
     quint32 geometriesPerFeature = metaGeometries.size();
-
     IDomain semantics;
     pgUtil.prepareSubFeatureSemantics(semantics, metaGeometries);
 
@@ -170,13 +170,14 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
     PostgresqlDatabaseUtil pgUtil(_resource, _options);
     SqlStatementHelper sqlHelper(pgUtil);
 
+
+
     IDomain semantics; // subfeature semantics
     QList<QString> primaryKeys; // readonly keys
     QList<MetaGeometryColumn> metaGeomColumns; // geometry columns
     pgUtil.getMetaForGeometryColumns(metaGeomColumns);
     pgUtil.prepareSubFeatureSemantics(semantics, metaGeomColumns);
     pgUtil.getPrimaryKeys(primaryKeys);
-
     // add geoms to update/insert data table
     FeatureIterator featureIter(fcoverage);
     featureIter.flow(FeatureIterator::fDEPTHFIRST);
@@ -189,9 +190,7 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
     while(featureIter != featureIter.end()) {
         SPFeatureI feature = (*featureIter);
         bool newFeature = !pgUtil.exists(feature);
-
         QString columnValuesCommaSeparated = sqlHelper.columnValuesCommaSeparated(feature);
-
         QString sqlStmt;
         if (newFeature) {
             sqlStmt = "INSERT INTO ";
@@ -310,11 +309,6 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
 
         pgUtil.doQuery(sqlStmt, "updategeometries");
     }
-
-    // "SELECT primaryKeysCsv FROM qtablename WHERE "
-
-
-    // TODO check count and delete deleted features
 
     bool featuresOk = true;
     return queryOk && featuresOk;

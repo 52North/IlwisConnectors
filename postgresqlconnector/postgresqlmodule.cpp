@@ -17,6 +17,7 @@
 #include "postgresqlconnector.h"
 #include "postgresqlcatalogexplorer.h"
 #include "postgresqlfeatureconnector.h"
+#include "postgresqlrasterconnector.h"
 #include "postgresqltableconnector.h"
 #include "postgresqlmodule.h"
 
@@ -49,21 +50,18 @@ QString PostgresqlModule::getVersion() const
 
 void PostgresqlModule::prepare()
 {
-    //qDebug() << "preparing postgresql module ...";
-
     PostgresqlObjectFactory *factory = new PostgresqlObjectFactory();
     factory->prepare();
     kernel()->addFactory(factory);
-
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (!cfactory)
         return ;
-
     cfactory->addCreator("table", "postgresql", PostgresqlTableConnector::create);
     cfactory->addCreator("simplefeatures", "postgresql", PostgresqlFeatureConnector::create);
+    cfactory->addCreator("map", "postgresql", PostgresqlRasterConnector::create);
     cfactory->addCreator(itTABLE, "postgresql", PostgresqlTableConnector::create);
     cfactory->addCreator(itFEATURE, "postgresql", PostgresqlFeatureConnector::create);
+    cfactory->addCreator(itRASTER, "postgresql", PostgresqlRasterConnector::create);
     cfactory->addCreator(itCATALOG, "postgresql", CatalogConnector::create);
-
     kernel()->issues()->log("Loaded Postgresql Module",IssueObject::itMessage);
 }

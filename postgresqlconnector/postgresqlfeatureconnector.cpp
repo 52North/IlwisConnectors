@@ -2,7 +2,6 @@
 #include <QSqlRecord>
 #include <QSqlQuery>
 #include <QSqlError>
-
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "geometries.h"
@@ -24,7 +23,6 @@
 #include "flattable.h"
 #include "coverage.h"
 #include "featurecoverage.h"
-
 #include "postgresqlconnector.h"
 #include "postgresqltableconnector.h"
 #include "postgresqltableloader.h"
@@ -45,7 +43,6 @@ PostgresqlFeatureConnector::~PostgresqlFeatureConnector()
 
 IlwisObject *PostgresqlFeatureConnector::create() const
 {
-    //qDebug() << "PostgresqlTableConnector::create() -> FeatureCoverage";
     return new FeatureCoverage(_resource);
 }
 
@@ -56,7 +53,6 @@ ConnectorInterface *PostgresqlFeatureConnector::create(const Ilwis::Resource &re
 
 bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
-    //qDebug() << "PostgresqlFeatureConnector::loadMetaData()";
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
@@ -71,15 +67,15 @@ bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions
 
 bool PostgresqlFeatureConnector::loadData(IlwisObject *data, const IOOptions& options)
 {
-    //qDebug() << "PostgresqlFeatureConnector::loadData()";
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
     PostgresqlFeatureCoverageLoader loader = PostgresqlFeatureCoverageLoader(source(), iooptions);
-
     bool ok = loader.loadData(fcoverage);
     _binaryIsLoaded = ok;
     return ok;
 }
+
+
 
 bool PostgresqlFeatureConnector::store(IlwisObject *data, const IOOptions& options)
 {

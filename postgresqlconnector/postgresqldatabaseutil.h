@@ -6,6 +6,9 @@
 #include "resource.h"
 #include "geometries.h"
 #include "coordinatesystem.h"
+#include "georeference.h"
+
+
 
 namespace Ilwis {
 
@@ -28,6 +31,20 @@ struct MetaGeometryColumn {
         return qtablename;
     }
 };
+
+struct MetaRasterColumn {
+    QString catalog;
+    QString schema = "public";
+    QString tableName;
+    QString rasterColumn;
+    ICoordinateSystem crs;
+    QString qtablename() {
+        QString qtablename = QString(schema);
+        qtablename.append(".").append(tableName);
+        return qtablename;
+    }
+};
+
 
 class PostgresqlDatabaseUtil {
 
@@ -58,6 +75,8 @@ public:
     QString qTableFromTableResource() const;
 
     QString getInternalNameFrom(QString name, quint64 id) const;
+
+    void getMetaForRasterColumns(QList<MetaRasterColumn> &columns) const;
 
     void getMetaForGeometryColumns(QList<MetaGeometryColumn> &columns) const;
 

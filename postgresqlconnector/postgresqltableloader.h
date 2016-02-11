@@ -5,6 +5,7 @@ namespace Ilwis {
 
 class Resource;
 class FeatureCoverage;
+class RasterCoverage;
 
 namespace Postgresql {
 

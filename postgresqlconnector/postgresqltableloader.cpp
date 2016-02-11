@@ -15,6 +15,8 @@
 #include "attributedefinition.h"
 #include "coverage.h"
 #include "featurecoverage.h"
+#include "rastercoverage.h"
+#include "raster.h"
 #include "feature.h"
 #include "table.h"
 

@@ -21,7 +21,7 @@ public:
 
 private:
     QString _host;
-    quint32 _port = iUNDEF;
+    quint32 _port = 5432;
     QString _database;
     QString _schema = "public";
     QString _table = sUNDEF;

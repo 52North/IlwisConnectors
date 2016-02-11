@@ -2,7 +2,6 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QList>
-
 #include "kernel.h"
 #include "resource.h"
 #include "geometries.h"
@@ -15,7 +14,9 @@
 #include "identifierrange.h"
 #include "coverage.h"
 #include "featurecoverage.h"
+#include "rastercoverage.h"
 #include "feature.h"
+#include "raster.h"
 #include "record.h"
 
 #include "postgresqldatabaseutil.h"
@@ -43,9 +44,7 @@ QSqlDatabase PostgresqlDatabaseUtil::openForResource(QString connectionname) con
     if (QSqlDatabase::contains(connectionname)) {
        db = QSqlDatabase::database(connectionname);
     } else {
-       //qDebug() << "add pg database connection" << connectionname;
        db = QSqlDatabase::addDatabase("QPSQL", connectionname);
-
        qint64 port = url.port();
        QString host = url.host();
        QString path = url.path().split('/',QString::SkipEmptyParts).at(0);
@@ -95,8 +94,12 @@ QString Ilwis::Postgresql::PostgresqlDatabaseUtil::tablenameFromResource() const
 QString Ilwis::Postgresql::PostgresqlDatabaseUtil::qTableFromTableResource() const
 {
     QStringList pathElements = _resource.url().path().split("/", QString::SkipEmptyParts);
+    QString iooptionschema = _options.contains("pg.schema")
+            ? _options["pg.schema"].toString()
+            : "public";
     if (pathElements.size() == 2) {
-       QString schema("public");
+
+       QString schema(iooptionschema);
        QString tablename(pathElements.at(1)); // skip db name
        return  schema.append(".").append(tablename);
     } else {
@@ -109,6 +112,44 @@ QString Ilwis::Postgresql::PostgresqlDatabaseUtil::qTableFromTableResource() con
 QString Ilwis::Postgresql::PostgresqlDatabaseUtil::getInternalNameFrom(QString name, quint64 id) const
 {
     return QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id);
+}
+
+void Ilwis::Postgresql::PostgresqlDatabaseUtil::getMetaForRasterColumns(QList<Ilwis::Postgresql::MetaRasterColumn> &columns) const
+{
+    QString qtablename = qTableFromTableResource();
+    QString sqlBuilder;
+    if ( !qtablename.isEmpty()) {
+        QStringList parts = qtablename.split(".");
+        QString schema;
+        QString table;
+        if (parts.size() == 1) {
+            schema = "public";
+            table = parts.at(0);
+        } else {
+            schema = parts.at(0);
+            table = parts.at(1);
+        }
+
+        QString selectSQL = QString("SELECT * FROM raster_columns WHERE r_table_schema ='%1' AND r_table_name='%2'").arg(schema, table);
+        //QString rast = "rast";
+        //QString rid = "1";
+        //QString string = QString("With metadata1 as (SELECT st_bandpixeltype(%1) as bandType, st_width (%1) as width ,st_height(%1) as height,st_scalex(%1),st_scaley(%1),st_bandnodatavalue(%1),st_numbands(%1),st_extent(%1::geometry) as env FROM %2.%3 GROUP BY rid), metadata2 as (Select srid, out_db,r_table_catalog,r_table_schema,r_table_name,r_raster_column From raster_columns WHERE r_table_schema='%2' and r_table_name='%3' and r_raster_column='%1'),metadata3 as (SELECT pg_type.typname FROM pg_proc, pg_type WHERE proname='st_asbinary' and pg_proc.proargtypes[1]=pg_type.oid and pg_type.typname='bool' limit 1) Select * from metadata1, metadata2 left outer join metadata3 on true").arg(rast,schema,table);
+        sqlBuilder.append(selectSQL);      
+    }
+    QSqlQuery query = doQuery(sqlBuilder, "tmp");
+
+    while (query.next()) {
+        MetaRasterColumn meta;
+        meta.catalog = query.value("r_table_catalog").toString();
+        meta.schema = query.value("r_table_schema").toString();
+        meta.tableName = query.value("r_table_name").toString();
+        meta.rasterColumn = query.value("r_raster_column").toString();
+        ICoordinateSystem crs;
+        QString srid = query.value("srid").toString();
+        prepareCoordinateSystem(srid, crs);
+        meta.crs = crs;
+        columns.push_back(meta);
+    }
 }
 
 void Ilwis::Postgresql::PostgresqlDatabaseUtil::getMetaForGeometryColumns(QList<Ilwis::Postgresql::MetaGeometryColumn> &columns) const
@@ -135,8 +176,8 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::getMetaForGeometryColumns(QList<
         sqlBuilder.append(" AND ");
         sqlBuilder.append(" f_table_name = '").append(table).append("' ");
     }
-    sqlBuilder.append(" ;");
-    //qDebug() << "SQL: " << sqlBuilder;
+    sqlBuilder.append("");
+
 
     QSqlQuery query = doQuery(sqlBuilder, "tmp");
 
@@ -191,7 +232,6 @@ bool Ilwis::Postgresql::PostgresqlDatabaseUtil::exists(Ilwis::SPFeatureI feature
     }
 
     QString sql = "SELECT ";
-    //sql.append(" count(").append(primaryKeys.at(0)).append(") ");
     sql.append(QStringList(primaryKeys).join(","));
     sql.append(" FROM ").append(qTableFromTableResource());
     sql.append(where);
@@ -220,10 +260,7 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::getPrimaryKeys(QList<QString> &p
     sqlBuilder.append(" AND ");
     sqlBuilder.append(" indisprimary"); // ignore indexed only columns
     sqlBuilder.append(" ;");
-    //qDebug() << "SQL: " << sqlBuilder;
-
     QSqlQuery query = doQuery(sqlBuilder, "tmp");
-
     while (query.next()) {
         primaryColumns.append(query.value(0).toString());
     }
@@ -254,7 +291,7 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::prepareSubFeatureSemantics(Ilwis
     QStringList orderedColumns = columns.split(",");
     NamedIdentifierRange priorities;
     foreach (QString column, orderedColumns) {
-        priorities << column.trimmed();
+        priorities << column.trimmed();         
     }
     IThematicDomain trackIdx;
     trackIdx.prepare();

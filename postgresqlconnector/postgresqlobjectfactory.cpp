@@ -20,6 +20,7 @@
 #include "postgresqlconnector.h"
 #include "postgresqltableconnector.h"
 #include "postgresqlfeatureconnector.h"
+#include "postgresqlrasterconnector.h"
 #include "postgresqlobjectfactory.h"
 
 using namespace Ilwis;
@@ -42,6 +43,9 @@ bool PostgresqlObjectFactory::canUse(const Resource &resource) const
         return true;
     if ( type & itCATALOG)
         return true;
+    if (type & itRASTER){
+        return true;
+    }
     return false;
 }
 
