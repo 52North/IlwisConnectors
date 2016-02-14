@@ -236,7 +236,7 @@ bool Ilwis3Connector::store(IlwisObject *obj, const IOOptions &options)
 bool Ilwis3Connector::willStore(const Ilwis::IlwisObject *obj) const
 {
     if ( !obj->hasChanged()) { // objects that have not changed and that are linked to a still existing source need no save
-        QUrl source = obj->source().url();
+        QUrl source = obj->resource().url();
         QFileInfo info(source.toLocalFile());
         if ( info.exists()){
             return false;
@@ -396,11 +396,11 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
     QString csyName;
     if ( csy->code() != "unknown"){
         if ( csy->code() != "epsg:4326"){
-            csyName = Resource::toLocalFile(csy->source().url(),true, "csy");
+            csyName = Resource::toLocalFile(csy->resource().url(),true, "csy");
             if ( csy->isInternalObject()){
                 QString csyFile = Resource::toLocalFile(source().url(),false, "csy");
-                int index = csy->source().url().toString().lastIndexOf("/");
-                QString name = csy->source().url().toString().mid(index + 1);
+                int index = csy->resource().url().toString().lastIndexOf("/");
+                QString name = csy->resource().url().toString().mid(index + 1);
                 csyName =  QFileInfo(csyFile).absolutePath() + "/" + name;
             }
             else if ( csyName == sUNDEF || csyName == "") {
@@ -475,13 +475,13 @@ QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name, IlwisTyp
 }
 
 QString Ilwis3Connector::outputNameFor(const IlwisObject *obj, bool isMulti, IlwisTypes type) {
-    QUrl url = obj->source(IlwisObject::cmOUTPUT).url();
+    QUrl url = obj->resource(IlwisObject::cmOUTPUT).url();
     QString outputName = sUNDEF;
     if ( url.isValid() && url.scheme() == "file") {
         QFileInfo inf(url.toLocalFile());
         outputName = inf.absolutePath() + "/"+ inf.baseName();
     } else {
-        QString dir = context()->workingCatalog()->source().toLocalFile();
+        QString dir = context()->workingCatalog()->resource().toLocalFile();
         outputName =  dir + "/" + obj->name();
     }
     if ( isMulti)
