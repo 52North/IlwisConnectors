@@ -64,7 +64,7 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
                 IWorkflow wf;
                 wf.prepare(res);
                 wf->createMetadata();
-                Resource res2 = wf->source();
+                Resource res2 = wf->resource();
                 res2.code(res.code()); //code comes from other machine or possibly older instance which might have different id's
                 items.push_back(res2);
             }
