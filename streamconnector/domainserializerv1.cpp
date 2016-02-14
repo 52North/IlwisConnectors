@@ -35,7 +35,7 @@ bool DomainSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     if ( dom->ilwisType() != itTEXTDOMAIN)
         dom->range()->store(_stream);
     if ( dom->parent().isValid()){
-        _stream << dom->parent()->source().url().toString();
+        _stream << dom->parent()->resource().url().toString();
     }else
         _stream << QString(sUNDEF);
 
