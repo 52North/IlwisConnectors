@@ -83,7 +83,7 @@ Ilwis::OperationImplementation::State RemoteOperation::prepare(ExecutionContext 
 
     QString operation = expr.mid(1,expr.size() - 3);
     _operationexpr = OperationExpression(operation);
-    QString workingcatalog = context()->workingCatalog()->source().url().toString();
+    QString workingcatalog = context()->workingCatalog()->resource().url().toString();
     QString urlexpr;
     bool startserver = false;
     for(int i = 0; i < _operationexpr.parameterCount(); ++i){

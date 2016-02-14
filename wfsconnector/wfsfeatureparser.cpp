@@ -363,7 +363,7 @@ void WfsFeatureParser::initCrs(ICoordinateSystem &crs) {
     if ( !crs.prepare(geomCrsCode, itCONVENTIONALCOORDSYSTEM)) {
         ERROR1("Could not prepare crs with code=%1.",_context.srsName());
     }
-    _swapAxesNeededToAlignInternXYOrder = WfsUtils::swapAxes(_fcoverage->source(), crs);
+    _swapAxesNeededToAlignInternXYOrder = WfsUtils::swapAxes(_fcoverage->resource(), crs);
     if (_swapAxesNeededToAlignInternXYOrder) {
         DEBUG0("XY axes order used internally. OGC respects lat/lon order, though.");
         DEBUG1("Will swap axes order for CRS '%1'.", _context.srsName());
