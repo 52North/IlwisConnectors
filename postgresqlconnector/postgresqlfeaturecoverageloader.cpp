@@ -112,7 +112,7 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
     Resource tableResource = pgUtil.resourceForType(itFLATTABLE);
     table.prepare(tableResource, _options);
 
-    PostgresqlTableLoader tableLoader(table->source(), _options);
+    PostgresqlTableLoader tableLoader(table->resource(), _options);
     if (!tableLoader.loadData(table.ptr())) {
         ERROR1("Could not load table data for table '%1'", table->name());
         return false;
