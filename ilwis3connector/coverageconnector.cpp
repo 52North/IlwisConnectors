@@ -246,7 +246,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
         }
     } if ( dom->ilwisType() == itITEMDOMAIN) {
          if ( hasType(dom->valueType(),itTHEMATICITEM | itNUMERICITEM) && coverage->ilwisType() == itRASTER) {
-            _domainName =  Resource::toLocalFile(dom->source().url(), true);
+            _domainName =  Resource::toLocalFile(dom->resource().url(), true);
             if ( _domainName == sUNDEF){
                 if ( baseName != sUNDEF)
                     _domainName = QFileInfo(baseName).baseName() + ".dom";
@@ -295,7 +295,7 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     QString attDom = dataFile;
     if ( hasType(tp,itRASTER)) {
         RasterCoverage *raster = static_cast<RasterCoverage *>(coverage);
-        Resource resource = raster->datadef().domain<>()->source();
+        Resource resource = raster->datadef().domain<>()->resource();
         QFileInfo inf(resource.toLocalFile());
         attDom = inf.fileName();
     }

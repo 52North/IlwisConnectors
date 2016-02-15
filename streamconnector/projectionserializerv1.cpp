@@ -45,7 +45,8 @@ bool ProjectionSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &opt
     Projection *proj = static_cast<Projection *>(obj);
     QString proj4Def;
     _stream >> proj4Def;
-    ProjectionImplementation *impl = factory->create(proj4Def) ;
+    QString projtype = proj->code();
+    ProjectionImplementation *impl = factory->create(projtype, proj4Def) ;
     if (!impl)
         return false;
     proj->setImplementation(impl);

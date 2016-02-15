@@ -399,7 +399,7 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
     if (!dom.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Domain", raster->name());
 
-    QFileInfo inf(obj->source(IlwisObject::cmOUTPUT).toLocalFile());
+    QFileInfo inf(obj->resource(IlwisObject::cmOUTPUT).toLocalFile());
     QString filename;
 
     filename = inf.absolutePath() + "/" + QString(inf.baseName()).replace(QRegExp("[/ .'\"]"),"_") + ".mp#";
@@ -514,9 +514,9 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
     if ( grf->code() == "undetermined"){
         return "none.grf";
     }
-    QString name = grf->source(IlwisObject::cmOUTPUT).url().toString();
+    QString name = grf->resource(IlwisObject::cmOUTPUT).url().toString();
     if ( grf->isAnonymous()) { // get a suitable output name
-        name = raster->source(IlwisObject::cmOUTPUT).url().toString();
+        name = raster->resource(IlwisObject::cmOUTPUT).url().toString();
     }
     QString localName = Resource::toLocalFile(QUrl(name),false, "grf");
     if ( localName == sUNDEF){

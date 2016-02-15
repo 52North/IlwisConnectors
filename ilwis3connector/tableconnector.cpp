@@ -229,7 +229,7 @@ QString TableConnector::getDomainName(const IDomain& dom, bool& isSystem) {
         return name;
     isSystem = dom->isSystemObject();
 
-    Resource res = dom->source();
+    Resource res = dom->resource();
     QString url = res.url().toString();
     QString filename = url.mid(url.lastIndexOf("/") + 1);
 
@@ -268,7 +268,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         bool isOldSystem = true;
         QString domName = getDomainName(dmColumn, isOldSystem);
         if ( !isOldSystem) {
-            Resource res = dmColumn->source();
+            Resource res = dmColumn->resource();
             QString url = res.url().toString();
             QString filename = url.mid(url.lastIndexOf("/"));
             QString fileUrl = context()->workingCatalog()->filesystemLocation().toString() + filename;
