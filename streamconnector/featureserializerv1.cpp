@@ -101,7 +101,7 @@ bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &option
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     std::vector<IlwisTypes> types;
 
-    //TODO per level, at the moment only flat featurecoverages
+    //TODO per level, at the moment only flat featurecoverages for later
     qint32 fcount;
     _stream >> fcount;
     fcoverage->setFeatureCount(itPOINT, fcount,0);
