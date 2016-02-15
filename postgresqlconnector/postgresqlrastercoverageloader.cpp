@@ -98,12 +98,7 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
 
     UPGrid& grid = coverage->gridRef();
     quint32 linesPerBlock = grid->maxLines();
-    qDebug()<<"Grid Count: "<<linesPerBlock;
-    qint64 blockSizeBytes = grid->blockSize(0) * 4;
-    qDebug()<<"Block size Bytes: "<<blockSizeBytes;
-    char *block = new char[blockSizeBytes];
     quint64 totalLines =grid->size().ysize();
-    qDebug()<<"Total lines: "<<totalLines;
 
 
     int startX = 0;
@@ -147,7 +142,9 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
             case itINT8:
                 {
                     result = result.substr(124,result.size());
-                    int size = 2;                     
+                    int size = 2;
+                    qint64 blockSizeBytes = grid->blockSize(0) * 2;
+                    char *block = new char[blockSizeBytes];
                     int chunks = result.length() / size + ((result.length() % size > 0) ? 1 : 0);
                     std::vector<std::string> arr(chunks);
                     int i = 0;
@@ -172,11 +169,7 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                             j++;
                         }
                     }
-
-                    std::cout<<"StartY :"<<startY<<", EndY :"<<endY<<std::endl;
-                    std::cout<<"StartX :"<<startX<<", EndX :"<<endX<<std::endl;
-                    std::cout<<count<<" ::"<<pixelsize<<std::endl;
-                    grid->setBlockData((count-1), values, true);
+                    grid->setBlockData((count-1), values);
 
 
                 }
@@ -185,6 +178,8 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                 {
                     result = result.substr(128,result.size());
                     int size = 4;
+                    qint64 blockSizeBytes = grid->blockSize(0) * 4;
+                    char *block = new char[blockSizeBytes];
                     int chunks = result.length() / size + ((result.length() % size > 0) ? 1 : 0);
                     std::vector<std::string> arr(chunks);
 
@@ -209,13 +204,15 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                             j++;
                         }
                     }
-                    grid->setBlockData((count-1), values, true);
+                    grid->setBlockData((count-1), values);
                 }
                 break;
             case itINT32:
                 {
                     result = result.substr(132,result.size());
                     int size = 8;
+                    qint64 blockSizeBytes = grid->blockSize(0) * 8;
+                    char *block = new char[blockSizeBytes];
                     int chunks = result.length() / size + ((result.length() % size > 0) ? 1 : 0);
                     std::vector<std::string> arr(chunks);
 
@@ -240,13 +237,15 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                             j++;
                         }
                     }
-                    grid->setBlockData((count-1), values, true);
+                    grid->setBlockData((count-1), values);
                 }
                 break;
             case itFLOAT:
                 {
                     result = result.substr(132,result.size());
                     int size = 8;
+                    qint64 blockSizeBytes = grid->blockSize(0) * 8;
+                    char *block = new char[blockSizeBytes];
                     int chunks = result.length() / size + ((result.length() % size > 0) ? 1 : 0);
                     std::vector<std::string> arr(chunks);
                     int i = 0;
@@ -270,7 +269,7 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                             j++;
                         }
                     }
-                    grid->setBlockData((count-1), values, true);
+                    grid->setBlockData((count-1), values);
                 }
                 break;
             case itDOUBLE:
@@ -279,7 +278,6 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                     int size = 16;
                     int chunks = result.length() / size + ((result.length() % size > 0) ? 1 : 0);
                     std::vector<std::string> arr(chunks);
-
                     int i = 0;
                     for(int m = startY; m < endY; m++){
                         pix.y = m;
