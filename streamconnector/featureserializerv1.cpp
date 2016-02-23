@@ -33,6 +33,14 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
 
     fcoverage.prepare(obj->id());
+    //TODO per level, at the moment only flat featurecoverages
+    qint32 fcount = fcoverage->featureCount(itPOINT);
+    _stream << fcount;
+    fcount = fcoverage->featureCount(itLINE);
+    _stream << fcount;
+    fcount = fcoverage->featureCount(itPOLYGON);
+   _stream << fcount;
+
 
     int defCount = fcoverage->attributeDefinitions().definitionCount();
     _stream << defCount;
@@ -92,6 +100,15 @@ bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &option
     IlwisTypes valueType;
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     std::vector<IlwisTypes> types;
+
+    //TODO per level, at the moment only flat featurecoverages for later
+    qint32 fcount;
+    _stream >> fcount;
+    fcoverage->setFeatureCount(itPOINT, fcount,0);
+    _stream >> fcount;
+    fcoverage->setFeatureCount(itLINE, fcount,0);
+    _stream >> fcount;
+    fcoverage->setFeatureCount(itPOLYGON, fcount,0);
 
     _stream >> columnCount;
     for(int col =0; col < columnCount; ++col){

@@ -237,6 +237,8 @@ bool RasterCoverageConnector::handleColorCase(Size<> &rastersize, RasterCoverage
     return true;
 }
 
+
+// todo: refactor this thing out of here!
 DataDefinition RasterCoverageConnector::createDataDefColor(std::map<int, int>& vminRaster, std::map<int, int>& vmaxRaster){
     QColor clrMin, clrMax;
     switch(_colorModel){

@@ -169,7 +169,7 @@ bool StreamConnector::openSource(bool reading){
         if ( reading){
             if ( !file->exists()){
                 delete file;
-                return ERROR1(ERR_MISSING_DATA_FILE_1,file->fileName());
+                return ERROR1(ERR_MISSING_DATA_FILE_1,filename);
             }
         }
         if (file->open(reading  ? QIODevice::ReadOnly : QIODevice::ReadWrite)) {
