@@ -81,7 +81,7 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
     IlwisTypes type;
     int headerSize = 61;
     int bandHeaderSize = 1;
-    int count = 0;
+    quint32 count = 0;
 
     IDomain dom = setDomain(bandPixelType);
     coverage->datadefRef().domain(dom);
@@ -94,11 +94,6 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
     int numx = xsize/w;
     int numy = ysize/h;
 
-    PixelIterator iter(coverage);
-
-    UPGrid& grid = coverage->gridRef();
-    quint32 linesPerBlock = grid->maxLines();
-    quint64 totalLines =grid->size().ysize();
 
 
     int startX = 0;
@@ -106,28 +101,30 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
     int startY = 0;
     int endY = ysize;
     Pixel pix;
+    UPGrid& grid = coverage->gridRef();
+    quint32 linesPerBlock = grid->maxLines();
+    quint64 totalLines =grid->size().ysize();
     while (query.next()) {
-        count++;
-        if(query.size() > 1){
-            if(count == 1){
+         if(query.size() > 1){
+            if(count == 0){
                 startX = 0;
                 endX = coverage->size().xsize()/numx;
                 startY = 0;
                 endY = coverage->size().ysize()/numy;
             }
-            if(count == 2){
+            if(count == 1){
                 startX = coverage->size().xsize()/numx;
                 endX = coverage->size().xsize();
                 startY = 0;
                 endY == coverage->size().ysize()/numy;
             }
-            if(count == 3){
+            if(count == 2){
                 startX = 0;
                 endX = coverage->size().xsize()/numx;
                 startY = coverage->size().ysize()/numy;
                 endY = coverage->size().ysize();
             }
-            if(count ==4 ){
+            if(count == 3 ){
                 startX = coverage->size().xsize()/numx;
                 endX = coverage->size().xsize();
                 startY = coverage->size().ysize()/numy;
@@ -143,13 +140,14 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                 {
                     result = result.substr(124,result.size());
                     int size = 2;
-                    qint64 blockSizeBytes = grid->blockSize(0) * 2;
+                    qint64 blockSizeBytes = grid->blockSize(0) * size;
                     char *block = new char[blockSizeBytes];
                     int chunks = result.length() / size + ((result.length() % size > 0) ? 1 : 0);
                     std::vector<std::string> arr(chunks);
                     int i = 0;
                     int pixelsize= (endY-startY)*(endX-startX);
                     std::vector<double> values(pixelsize);
+
                     for(int m = startY; m < endY; m++){
                         pix.y = m;
                         for(int n = startX; n < endX; n++){
@@ -163,13 +161,12 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                             char* buffer = arrayofBit;
                             unsigned long res = convtodecnum(buffer);
                             values[j] = res;
-                            //iter = pix;
-                            //*iter = res;
                             i +=size;
                             j++;
                         }
                     }
-                    grid->setBlockData((count-1), values);
+                    grid->setBlockData(count, values);
+
 
 
                 }
@@ -178,7 +175,7 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                 {
                     result = result.substr(128,result.size());
                     int size = 4;
-                    qint64 blockSizeBytes = grid->blockSize(0) * 4;
+                    qint64 blockSizeBytes = grid->blockSize(0) * size;
                     char *block = new char[blockSizeBytes];
                     int chunks = result.length() / size + ((result.length() % size > 0) ? 1 : 0);
                     std::vector<std::string> arr(chunks);
@@ -198,27 +195,37 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                             char* buffer = arrayofBit;
                             unsigned long res = convtodecnum(buffer);
                             values[j] = res;
-                            //iter = pix;
-                            //*iter = res;
                             i +=size;
                             j++;
                         }
                     }
-                    grid->setBlockData((count-1), values);
+
+                    grid->setBlockData(count, values);
                 }
                 break;
             case itINT32:
                 {
                     result = result.substr(132,result.size());
                     int size = 8;
-                    qint64 blockSizeBytes = grid->blockSize(0) * 8;
+                    qint64 blockSizeBytes = grid->blockSize(0) * size;
                     char *block = new char[blockSizeBytes];
                     int chunks = result.length() / size + ((result.length() % size > 0) ? 1 : 0);
                     std::vector<std::string> arr(chunks);
-
                     int i = 0;
-                    std::vector<double> values((endY-startY)*(endX-startX));
-                    for(int m = startY; m < endY; m++){
+                    std::vector<double> values(arr.size());
+                    for(int t = 0; t = arr.size(); t++){
+                        arr[t] = result.substr(i, size);
+                        std::string str = getString(arr[j]);
+                        int sizeofBits = str.size();
+                        char *arrayofBit=new char[sizeofBits+1];
+                        arrayofBit[sizeofBits]=0;
+                        memcpy(arrayofBit,str.c_str(),sizeofBits);
+                        char* buffer = arrayofBit;
+                        unsigned long res = convtodecnum(buffer);
+                        values[t] = res;
+                        i +=size;
+                    }
+                    /*for(int m = startY; m < endY; m++){
                         pix.y = m;
                         for(int n = startX; n < endX; n++){
                             pix.x = n;
@@ -231,20 +238,22 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                             char* buffer = arrayofBit;
                             unsigned long res = convtodecnum(buffer);
                             values[j] = res;
-                            //iter = pix;
-                            //*iter = res;
                             i +=size;
                             j++;
                         }
+                    }*/
+                    if(count == 0){
+                        grid->setBlockData(count, values);
                     }
-                    grid->setBlockData((count-1), values);
+
+
                 }
                 break;
             case itFLOAT:
                 {
                     result = result.substr(132,result.size());
                     int size = 8;
-                    qint64 blockSizeBytes = grid->blockSize(0) * 8;
+                    qint64 blockSizeBytes = grid->blockSize(0) * size;
                     char *block = new char[blockSizeBytes];
                     int chunks = result.length() / size + ((result.length() % size > 0) ? 1 : 0);
                     std::vector<std::string> arr(chunks);
@@ -263,41 +272,41 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
                             char* buffer = arrayofBit;
                             unsigned long res = convtodecnum(buffer);
                             values[j] = res;
-                            //iter = pix;
-                            //*iter = res;
                             i +=size;
                             j++;
                         }
                     }
-                    grid->setBlockData((count-1), values);
+                    grid->setBlockData(count, values);
                 }
                 break;
             case itDOUBLE:
                 {
-                    result = result.substr(140,result.size());
-                    int size = 16;
-                    int chunks = result.length() / size + ((result.length() % size > 0) ? 1 : 0);
-                    std::vector<std::string> arr(chunks);
-                    int i = 0;
-                    for(int m = startY; m < endY; m++){
-                        pix.y = m;
-                        for(int n = startX; n < endX; n++){
-                            pix.x = n;
-
-                            arr[j] = result.substr(i, size);
-                            std::string str = getString(arr[j]);
-                            int sizeofBits = str.size();
-                            char *arrayofBit=new char[sizeofBits+1];
-                            arrayofBit[sizeofBits]=0;
-                            memcpy(arrayofBit,str.c_str(),sizeofBits);
-                            char* buffer = arrayofBit;
-                            unsigned long res = convtodecnum(buffer);
-                            iter = pix;
-                            *iter = res;
-                            j++;
-                            i +=size;
-                        }
+                result = result.substr(140,result.size());
+                int size = 16;
+                qint64 blockSizeBytes = grid->blockSize(0) * size;
+                char *block = new char[blockSizeBytes];
+                int chunks = result.length() / size + ((result.length() % size > 0) ? 1 : 0);
+                std::vector<std::string> arr(chunks);
+                int i = 0;
+                std::vector<double> values((endY-startY)*(endX-startX));
+                for(int m = startY; m < endY; m++){
+                    pix.y = m;
+                    for(int n = startX; n < endX; n++){
+                        pix.x = n;
+                        arr[j] = result.substr(i, size);
+                        std::string str = getString(arr[j]);
+                        int sizeofBits = str.size();
+                        char *arrayofBit=new char[sizeofBits+1];
+                        arrayofBit[sizeofBits]=0;
+                        memcpy(arrayofBit,str.c_str(),sizeofBits);
+                        char* buffer = arrayofBit;
+                        unsigned long res = convtodecnum(buffer);
+                        values[j] = res;
+                        i +=size;
+                        j++;
                     }
+                }
+                grid->setBlockData(count, values);
                 }
                 break;
             default:
@@ -305,7 +314,9 @@ bool PostgresqlRasterCoverageLoader::loadData(RasterCoverage *coverage) const
 
             }
         }
+        count++;
     }
+
     return true;
 }
 
@@ -463,7 +474,7 @@ unsigned long PostgresqlRasterCoverageLoader::convtodecnum(char *hex) const
         }
         else
         {
-            decnum = decnum;
+            decnum = rUNDEF;
 
         }
     }
@@ -524,11 +535,14 @@ void PostgresqlRasterCoverageLoader::setSpatialMetadata(RasterCoverage *coverage
     Size<> size(width,height, 1);
 
     QString grfs = QString("code=georef:type=corners,csy=%1,envelope=%2,gridsize=%3").arg(crs->id()).arg(bbox.toString()).arg(size.toString());
+
     IGeoReference georeference(grfs);
+
     coverage->georeference(georeference);
     coverage->gridRef()->prepare(0,size);
     coverage->coordinateSystem(crs);
     coverage->envelope(bbox);
+
 }
 
 QString PostgresqlRasterCoverageLoader::getBandPixelType(const QList<MetaRasterColumn> &metaGeometry) const{

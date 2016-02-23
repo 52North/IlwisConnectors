@@ -41,6 +41,8 @@ PostgresqlCatalogExplorer::PostgresqlCatalogExplorer(const Resource &resource, c
         ioOptionsRef().addOption("pg.password", userpass[1].split("=")[1]);
 
     }
+
+
 }
 
 PostgresqlCatalogExplorer::~PostgresqlCatalogExplorer()
@@ -65,7 +67,7 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
     sqlBuilder.append(" geom.typname = 'geometry' ");
     sqlBuilder.append("  BY ");
     sqlBuilder.append(" meta.tablename;");
-    //qDebug() << "SQL: " << sqlBuilder;
+    qDebug() << "SQL: " << sqlBuilder;
 
     std::vector<Resource> resources;
     PostgresqlDatabaseUtil pgUtil(source(), iooptions);

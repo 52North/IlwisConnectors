@@ -54,6 +54,7 @@ QSqlDatabase PostgresqlDatabaseUtil::openForResource(QString connectionname) con
        connectionname = _resource.url().toString();
     }
 
+
     QSqlDatabase db;
     if (QSqlDatabase::contains(connectionname)) {
        db = QSqlDatabase::database(connectionname);
@@ -61,6 +62,7 @@ QSqlDatabase PostgresqlDatabaseUtil::openForResource(QString connectionname) con
        db = QSqlDatabase::addDatabase("QPSQL", connectionname);
        qint64 port = url.port();
        QString host = url.host();
+
        QString path = url.path().split('/',QString::SkipEmptyParts).at(0);
        validateNotNullOrEmpty("Host", host);
        validateNotNullOrEmpty("Path", path);
@@ -69,10 +71,10 @@ QSqlDatabase PostgresqlDatabaseUtil::openForResource(QString connectionname) con
        db.setHostName(host);
        db.setDatabaseName(path);
        db.setPort(port);
-
        QString username = _options.contains("pg.username")
                ? _options["pg.username"].toString()
                : "";
+
        QString password = _options.contains("pg.password")
                ? _options["pg.password"].toString()
                : "";
@@ -103,13 +105,14 @@ QString Ilwis::Postgresql::PostgresqlDatabaseUtil::tablenameFromResource() const
 //   return pathElements.size() == 2
 //           ? pathElements.at(1) // schema omitted
 //           : pathElements.at(2); // skip db and schema
+
    return pathElements.last();
 }
 
 QString Ilwis::Postgresql::PostgresqlDatabaseUtil::qTableFromTableResource() const
 {
     QStringList pathElements = _resource.url().path().split("/", QString::SkipEmptyParts);
-    QString iooptionschema = _options.contains("pg.schema")
+    /*QString iooptionschema = _options.contains("pg.schema")
             ? _options["pg.schema"].toString()
             : "public";
     if (pathElements.size() == 2) {
@@ -121,7 +124,18 @@ QString Ilwis::Postgresql::PostgresqlDatabaseUtil::qTableFromTableResource() con
        QString schema(pathElements.at(1)); // skip db name
        QString tablename = pathElements.last();
        return schema.append(".").append(tablename);
+    }*/
+    QString tablename(pathElements.at(1));
+    QString schema;
+    if(tablename.contains(".")){
+        schema.append(tablename);
+    }else{
+        schema.append("public");
+        schema.append(".");
+        schema.append(tablename);
     }
+    return  schema;
+
 }
 
 QString Ilwis::Postgresql::PostgresqlDatabaseUtil::getInternalNameFrom(QString name, quint64 id) const
@@ -152,7 +166,6 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::getMetaForRasterColumns(QList<Il
         sqlBuilder.append(selectSQL);      
     }
     QSqlQuery query = doQuery(sqlBuilder, "tmp");
-
     while (query.next()) {
         MetaRasterColumn meta;
         meta.catalog = query.value("r_table_catalog").toString();
@@ -192,8 +205,6 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::getMetaForGeometryColumns(QList<
         sqlBuilder.append(" f_table_name = '").append(table).append("' ");
     }
     sqlBuilder.append("");
-
-
     QSqlQuery query = doQuery(sqlBuilder, "tmp");
 
     while (query.next()) {
@@ -226,6 +237,7 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::getMetaForGeometryColumns(QList<
 
 bool Ilwis::Postgresql::PostgresqlDatabaseUtil::exists(Ilwis::SPFeatureI feature) const
 {
+
     PostgresqlDatabaseUtil pgUtil(_resource,_options);
     SqlStatementHelper sqlHelper(pgUtil);
 
@@ -275,10 +287,12 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::getPrimaryKeys(QList<QString> &p
     sqlBuilder.append(" AND ");
     sqlBuilder.append(" indisprimary"); // ignore indexed only columns
     sqlBuilder.append(" ;");
+
     QSqlQuery query = doQuery(sqlBuilder, "tmp");
     while (query.next()) {
         primaryColumns.append(query.value(0).toString());
     }
+
 }
 
 void Ilwis::Postgresql::PostgresqlDatabaseUtil::prepareCoordinateSystem(QString srid, Ilwis::ICoordinateSystem &crs) const
@@ -316,7 +330,9 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::prepareSubFeatureSemantics(Ilwis
 
 QSqlQuery Ilwis::Postgresql::PostgresqlDatabaseUtil::doQuery(QString stmt, QString connectionName) const
 {
+
     QSqlDatabase db = openForResource(connectionName);
+
     QSqlQuery query(db);
     bool ok = query.exec(stmt);
     if ( !query.isActive()) {

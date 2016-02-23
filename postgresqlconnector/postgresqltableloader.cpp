@@ -36,22 +36,21 @@ PostgresqlTableLoader::~PostgresqlTableLoader()
 
 bool PostgresqlTableLoader::loadMetadata(Table *table) const
 {
-    //qDebug() << "PostgresqlTableLoader::loadMetadata()";
+
 
     PostgresqlDatabaseUtil pgUtil(_resource, _options);
-    QString rawTablename(pgUtil.tablenameFromResource());
 
+    QString rawTablename(pgUtil.qTableFromTableResource());
+    QStringList tableNameList = rawTablename.split(".", QString::SkipEmptyParts);
+    QString tableName = tableNameList.at(1);
     QString sqlBuilder;
     sqlBuilder.append("SELECT ");
     sqlBuilder.append(" column_name,udt_name ");
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(" information_schema.columns ");
     sqlBuilder.append(" WHERE ");
-    sqlBuilder.append(" table_name='").append(rawTablename).append("';");
-    //qDebug() << "SQL: " << sqlBuilder;
-
+    sqlBuilder.append(" table_name='").append(tableName).append("';");
     QSqlQuery columnTypesQuery = pgUtil.doQuery(sqlBuilder, "tableloader");
-
     QList<QString> primaryKeys;
     pgUtil.getPrimaryKeys(primaryKeys);
 
@@ -61,7 +60,7 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
             if ( !columnTypesQuery.isValid()) {
                 WARN("no data record selected.");
             } else {
-                DEBUG2("Ignore column '%1' in table '%2'", columnName, rawTablename);
+                DEBUG2("Ignore column '%1' in table '%2'", columnName, tableName);
             }
         }
     }
@@ -74,17 +73,13 @@ QString PostgresqlTableLoader::select(QString columns) const
     sqlBuilder.append("SELECT ");
     sqlBuilder.append(columns);
     sqlBuilder.append(" FROM ");
-
     PostgresqlDatabaseUtil pgUtil(_resource, _options);
     sqlBuilder.append(pgUtil.qTableFromTableResource());
-    //qDebug() << "SQL: " << sqlBuilder;
     return sqlBuilder;
 }
 
 bool PostgresqlTableLoader::loadData(Table *table) const
 {
-    //qDebug() << "PostgresqlTableLoader::loadData()";
-
     QString allNonGeometryColumns;
     for (int i = 0; i < table->columnCount(); i++) {
         ColumnDefinition& coldef = table->columndefinitionRef(i);

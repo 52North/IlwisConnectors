@@ -504,7 +504,6 @@ void RasterCoverageConnector::loadNumericBlock(GDALRasterBandH layerHandle,
         double v = value(block, i);
         values[i] = (ok && (nodata == v)) || std::isnan(v) || std::isinf(v) ? rUNDEF : v;
     }
-
     grid->setBlockData(index, values);
 }
 

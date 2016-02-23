@@ -99,20 +99,17 @@ QString PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeomet
 
     PostgresqlDatabaseUtil pgUtil(_resource,_options);
     sqlBuilder.append(pgUtil.qTableFromTableResource());
-    //qDebug() << "SQL: " << sqlBuilder;
     return sqlBuilder;
 }
 
 bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
 {
-    //qDebug() << "PostgresqlFeatureCoverageLoader::loadData()";
-
     ITable table;
     PostgresqlDatabaseUtil pgUtil(_resource,_options);
     Resource tableResource = pgUtil.resourceForType(itFLATTABLE);
     table.prepare(tableResource, _options);
 
-    PostgresqlTableLoader tableLoader(table->source(), _options);
+    PostgresqlTableLoader tableLoader(table->resource(), _options);
     if (!tableLoader.loadData(table.ptr())) {
         ERROR1("Could not load table data for table '%1'", table->name());
         return false;
@@ -170,9 +167,7 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
     PostgresqlDatabaseUtil pgUtil(_resource, _options);
     SqlStatementHelper sqlHelper(pgUtil);
 
-
-
-    IDomain semantics; // subfeature semantics
+   IDomain semantics; // subfeature semantics
     QList<QString> primaryKeys; // readonly keys
     QList<MetaGeometryColumn> metaGeomColumns; // geometry columns
     pgUtil.getMetaForGeometryColumns(metaGeomColumns);
@@ -186,7 +181,9 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
 
     QString code = fcoverage->coordinateSystem()->code();
     QString srid = code.right(code.indexOf(":"));
-    QString qtablename = pgUtil.qTableFromTableResource();
+    QString rawTablename = pgUtil.qTableFromTableResource();
+    QStringList tableNameList = rawTablename.split(".", QString::SkipEmptyParts);
+    QString qtablename = tableNameList.at(1);
     while(featureIter != featureIter.end()) {
         SPFeatureI feature = (*featureIter);
         bool newFeature = !pgUtil.exists(feature);

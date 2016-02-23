@@ -25,13 +25,15 @@ public:
     QString getBandPixelType(const QList<MetaRasterColumn> &metaGeometry) const;
     QString getAdditionalInfo(const QList<MetaRasterColumn> &metaGeometry) const;
     IDomain setDomain(QString pixel_type) const;
-private:
-    Resource _resource;
-    IOOptions _options;
 
     void setSpatialMetadata(RasterCoverage *coverage) const;
     QString selectRasters(const QList<MetaRasterColumn> &metaGeometry) const;
     IlwisTypes setStoreType(QString pixel_type, DataDefinition inf) const;
+private:
+    Resource _resource;
+    IOOptions _options;
+
+
 
 
 };
