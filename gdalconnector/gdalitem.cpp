@@ -294,7 +294,7 @@ quint64 GDALItems::addCsy(GdalHandle* handle, const QString &path, const QUrl& u
                         res.setUrl(QUrl::fromLocalFile(path));
                     }
                     mastercatalog()->addItems({res});
-                    //Proj4Parameters::add2lookup(res.name(),sproj4,0);
+                    insert(res);
                     return res.id();
                 }
             }
