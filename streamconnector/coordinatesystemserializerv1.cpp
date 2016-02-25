@@ -84,8 +84,8 @@ bool CoordinateSystemSerializerV1::loadMetaData(IlwisObject *obj, const IOOption
             std::unique_ptr<DataInterface> projstreamer(factory->create(version, type,_stream));
             if ( !projstreamer)
                 return false;
-            Projection *proj = new Projection();
-            projstreamer->loadMetaData(proj, options );
+            IProjection proj(itPROJECTION);
+            projstreamer->loadMetaData(proj.ptr(), options );
             convCsy->setProjection(proj);
         }
         _stream >> type;
@@ -95,8 +95,9 @@ bool CoordinateSystemSerializerV1::loadMetaData(IlwisObject *obj, const IOOption
             std::unique_ptr<DataInterface> ellstreamer(factory->create(Version::IlwisVersion, itELLIPSOID,_stream));
             if ( !ellstreamer)
                 return false;
-            Ellipsoid *ellipsoid = new Ellipsoid();
-            ellstreamer->loadMetaData(ellipsoid, options);
+            IEllipsoid ellipsoid;
+            ellipsoid.prepare();
+            ellstreamer->loadMetaData(ellipsoid.ptr(), options);
             convCsy->setEllipsoid(ellipsoid);
         }
         _stream >> type;

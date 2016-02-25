@@ -135,10 +135,10 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
     if ( ell == "User Defined") {
         double invf = _odf->value("Ellipsoid","1/f").toDouble();
         double majoraxis = _odf->value("Ellipsoid","a").toDouble();
-        Ellipsoid *ellips = new Ellipsoid();
-        QString newName = ellips->setEllipsoid(majoraxis,invf);;
-        ellips->name(newName);
-        IEllipsoid ellipsoid(ellips);
+        IEllipsoid ellipsoid;
+        ellipsoid.prepare();
+        QString newName = ellipsoid->setEllipsoid(majoraxis,invf);;
+        ellipsoid->name(newName);
         return ellipsoid;
     }
     IEllipsoid ellipsoid;
