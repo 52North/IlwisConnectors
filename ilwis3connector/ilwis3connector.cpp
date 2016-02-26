@@ -41,8 +41,8 @@ bool Ilwis3Connector::loadMetaData(IlwisObject *data, const IOOptions &options)
         IniFile *ini = new IniFile();
         ini->setIniFile(inf);
         _odf.reset(ini);
-        data->name(inf.fileName());
-        data->setDescription(_odf->value("Ilwis","Description"));
+        data->name(setter(source().name(),inf.fileName(),QString("")));
+        data->setDescription(setter(source().description(), _odf->value("Ilwis","Description"),QString("")));
         // TODO : readonly at this stage will block setting al kind of properties
         //QString readOnlyStatus = _odf->value("Ilwis","DataReadOnly");
         //data->readOnly(readOnlyStatus.toLower() != "no" && readOnlyStatus != sUNDEF && readOnlyStatus != "");
