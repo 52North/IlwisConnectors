@@ -107,25 +107,31 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
 
     Coverage *coverage = static_cast<Coverage *>(data);
     QString csyName = _odf->value("BaseMap","CoordSystem");
-    if ( csyName == sUNDEF){
-        //due to inconsistent spelling we have to check other cases
-        csyName = _odf->value("BaseMap","Coordsystem");
-    }
-    if ( csyName.toLower() == "latlonwgs84.csy")
-        csyName = "code=epsg:4326";
-    else if ( csyName.toLower() == "unknown.csy")
-        csyName = "code=csy:unknown";
-    else{
-        csyName = filename2FullPath(csyName, this->_resource);
-        addToMasterCatalog(csyName, itCOORDSYSTEM);
-    }
     ICoordinateSystem csy;
-    if ( !csy.prepare(csyName, itCOORDSYSTEM, options)) {
-        kernel()->issues()->log(csyName,TR("Coordinate system couldnt be initialized, defaulting to 'unknown'"),IssueObject::itWarning);
-        QString resource = QString("code=csy:unknown");
-        if (!csy.prepare(resource)) {
-            kernel()->issues()->log(TR("Fallback to 'unknown' failed, corrupt system files defintion"));
-            return false;
+    if ( data->resource().hasProperty("coordinatesystem"))
+        csy.prepare(data->resource()["coordinatesystem"].toULongLong());
+
+    if (!csy.isValid()){
+        if ( csyName == sUNDEF){
+            //due to inconsistent spelling we have to check other cases
+            csyName = _odf->value("BaseMap","Coordsystem");
+        }
+        if ( csyName.toLower() == "latlonwgs84.csy")
+            csyName = "code=epsg:4326";
+        else if ( csyName.toLower() == "unknown.csy")
+            csyName = "code=csy:unknown";
+        else{
+            csyName = filename2FullPath(csyName, this->_resource);
+            addToMasterCatalog(csyName, itCOORDSYSTEM);
+        }
+
+        if ( !csy.prepare(csyName, itCOORDSYSTEM, options)) {
+            kernel()->issues()->log(csyName,TR("Coordinate system couldnt be initialized, defaulting to 'unknown'"),IssueObject::itWarning);
+            QString resource = QString("code=csy:unknown");
+            if (!csy.prepare(resource)) {
+                kernel()->issues()->log(TR("Fallback to 'unknown' failed, corrupt system files defintion"));
+                return false;
+            }
         }
     }
     coverage->coordinateSystem(csy);
