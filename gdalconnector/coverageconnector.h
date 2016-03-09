@@ -1,6 +1,7 @@
 #ifndef COVERAGECONNECTOR_H
 #define COVERAGECONNECTOR_H
 
+#include "rawconverter.h"
 namespace Ilwis {
 
 class Coverage;
@@ -17,6 +18,7 @@ protected:
     bool store(IlwisObject *obj, const IOOptions& options = IOOptions());
 
     OGRSpatialReferenceH createSRS(const ICoordinateSystem &coordsystem) const;
+
 private:
     //void setCsy(Coverage *coverage);
 };

@@ -167,6 +167,10 @@ bool GDALProxy::prepare() {
     addAttribute = add<IOGR_L_CreateField>("OGR_L_CreateField");
     getLayerSchema = add<IOGR_L_GetLayerDefn>("OGR_L_GetLayerDefn");
     addFeature2Layer = add<IOGR_L_CreateFeature>("OGR_L_CreateFeature");
+    getRasterOffset = add<IGDALGetRasterOffset>("GDALGetRasterOffset");
+    getRasterScale = add<IGDALGetRasterScale>("GDALGetRasterScale");
+
+
     //OGR FielDefinition
     getFieldCount = add<IGetFieldCount>("OGR_FD_GetFieldCount");
     getFieldDfn = add<IGetFieldDefn>("OGR_FD_GetFieldDefn");

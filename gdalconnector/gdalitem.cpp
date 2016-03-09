@@ -135,6 +135,69 @@ quint64 GDALItems::findSize(const QFileInfo& inf){
     }
     return size;
 }
+quint64 GDALItems::caseWithSquareBrackets(const QStringList& parts, Size<>& sz, QString& shortname){
+    QString metadata = parts[0];
+    QStringList metadataparts = metadata.split("]");
+    QString sizestring = metadataparts[0].mid(1);
+    QStringList sizeparts = sizestring.split("x");
+    sz = getSize(sizeparts);
+
+    // in the brackets case, y comes before x
+    sz = Size<>(sz.ysize(), sz.xsize(), sz.zsize());
+
+    return extractNameAndDomain(QStringList(metadataparts[1]), shortname);
+}
+
+Size<> GDALItems::getSize(const QStringList& szMembers)
+{
+    Size<> sz;
+    bool ok1, ok2, ok3;
+    if ( szMembers.size() == 2){
+        int x = szMembers[0].toInt(&ok1);
+        int y = szMembers[1].toInt(&ok2);
+        if ( ok1 && ok2)
+            sz = Size<>(x,y,1);
+    } else if ( szMembers.size() == 3){
+        int z = szMembers[0].toInt(&ok1);
+        int x = szMembers[1].toInt(&ok2);
+        int y = szMembers[2].toInt(&ok3);
+        if ( ok1 && ok2 && ok3)
+            sz = Size<>(x,y,z);
+    }
+    return sz;
+}
+
+quint64 GDALItems::extractNameAndDomain(const QStringList& parts, QString& shortname)
+{
+    QStringList secondPart = parts[0].split("(");
+    shortname = secondPart[0].trimmed();
+    QString numbertype = secondPart[1].left(secondPart[1].size() - 1);
+    return numbertype2domainid(numbertype);
+}
+
+quint64 GDALItems::caseWithurl(const QStringList& parts, Size<>& sz, QString& shortname)
+{
+
+    QString sizeString = parts[0].mid(1,parts[0].size() - 3);
+    QStringList szMembers = sizeString.split("x");
+    sz = getSize(szMembers);
+    quint64 domid = extractNameAndDomain(parts, shortname);
+
+    return domid;
+}
+
+void GDALItems::addOffsetScale(void *handle, const int count, Resource & gdalitem)
+{
+    GDALRasterBandH band = gdal()->getRasterBand(handle, count+1);
+    int ok;
+    double offset, scale;
+    offset = gdal()->getRasterOffset(band, &ok);
+    if (ok)
+        gdalitem.addProperty("offset", offset);
+    scale = gdal()->getRasterScale(band, &ok);
+    if (ok)
+        gdalitem.addProperty("scale", scale);
+}
 
 int GDALItems::handleComplexDataSet(void *handle){
     char **pdatasets = gdal()->getMetaData(handle, "SUBDATASETS");
@@ -149,27 +212,15 @@ int GDALItems::handleComplexDataSet(void *handle){
     while(iter !=  datasetdesc.end()) {
         Size<> sz;
         QString shortname;
+        quint64 domid        ;
         QStringList parts = iter->second.split("//");
-        QString sizeString = parts[0].mid(1,parts[0].size() - 3);
-        bool ok1, ok2, ok3;
-
-        QStringList szMembers = sizeString.split("x");
-        if ( szMembers.size() == 2){
-            int x = szMembers[0].toInt(&ok1);
-            int y = szMembers[1].toInt(&ok2);
-            if ( ok1 && ok2)
-                sz = Size<>(x,y,1);
-        } else if ( szMembers.size() == 3){
-            int z = szMembers[0].toInt(&ok1);
-            int x = szMembers[1].toInt(&ok2);
-            int y = szMembers[2].toInt(&ok3);
-            if ( ok1 && ok2 && ok3)
-                sz = Size<>(x,y,z);
+        if ( parts.size() == 2)
+            domid = caseWithurl(parts, sz, shortname);
+        else {
+            if ( iter->second[0] == '[' && iter->second.lastIndexOf(']') > 1){
+                domid = caseWithSquareBrackets(parts,sz, shortname);
+            }
         }
-        QStringList secondPart = parts[1].split("(");
-        shortname = secondPart[0].trimmed();
-        QString numbertype = secondPart[1].left(secondPart[1].size() - 1);
-        quint64 domid = numbertype2domainid(numbertype);
         ++iter;
         QString encodedUrl = QUrl::toPercentEncoding(iter->second,"/","\"");
         QString rawUrl = "gdal://"+ encodedUrl;
@@ -185,6 +236,7 @@ int GDALItems::handleComplexDataSet(void *handle){
         if ( csyid != i64UNDEF){
             gdalitem.addProperty("coordinatesystem", csyid);
         }
+        addOffsetScale(handle, count, gdalitem);
         gdal()->close(handle);
         gdalitem.addProperty("domain",domid);
         insert(gdalitem);
@@ -199,8 +251,10 @@ quint64 GDALItems::numbertype2domainid(const QString& numbertype) const{
     QString systemdomain="value";
     if ( numbertype.indexOf("integer") != -1)
         systemdomain = "integer";
+    if ( numbertype == "16-bit integer")
+        systemdomain = "integer";
     if ( numbertype == "8-bit integer"){
-        systemdomain = "image";
+            systemdomain = "image";
     } if ( numbertype == "16-bit unsigned integer"){
         systemdomain = "image16"    ;
     } else if ( numbertype == "32-bit unsigned integer"){

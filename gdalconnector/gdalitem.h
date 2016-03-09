@@ -9,6 +9,8 @@ public:
     GDALItems(const QUrl& path, const QFileInfo &localFile, IlwisTypes extTypes);
     GDALItems(const QFileInfo &localContainerFile);
 
+    quint64 extractNameAndDomain(const QStringList& parts, QString &shortname);
+
 private:
     quint64 addItem(GdalHandle* handle, const QUrl &url, quint64 csyid, quint64 grfId, IlwisTypes tp =itRASTER, IlwisTypes extTypes=itUNKNOWN, quint64 sz=i64UNDEF, int layerindex=iUNDEF);
     quint64 addCsy(GdalHandle* handle, const QString &path, const QUrl &url, bool message=true);
@@ -18,6 +20,10 @@ private:
     quint64 numbertype2domainid(const QString &numbertype) const;
     quint64 findSize(const QFileInfo &inf);
     int layerCount(GdalHandle* handle);
+    quint64 caseWithurl(const QStringList &parts, Size<> &sz, QString &shortname);
+    quint64 caseWithSquareBrackets(const QStringList &parts, Size<> &sz, QString &shortnames);
+    Size<> getSize(const QStringList& szMembers);
+    void addOffsetScale(void *handle, const int count, Ilwis::Resource &gdalitem);
 };
 }
 }

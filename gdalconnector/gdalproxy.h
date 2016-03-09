@@ -56,6 +56,10 @@ typedef  CPLErr (*IGDALSetRasterColorInterpretation)(GDALRasterBandH,GDALColorIn
 typedef CPLErr (*IGDALSetRasterNoDataValue)(GDALRasterBandH ,double);
 typedef double (*IGDALGetRasterNoDataValue)(GDALRasterBandH ,int * );
 
+
+typedef double (*IGDALGetRasterScale)	(	GDALRasterBandH , int *);
+typedef double (*IGDALGetRasterOffset)	(	GDALRasterBandH,int *);
+
 typedef OGRErr (*IOSRImportFromWkt )(OGRSpatialReferenceH, char **) ;
 typedef OGRErr (*IOSRSetWellKnownGeogCS )(OGRSpatialReferenceH, char *) ;
 typedef int (*IOSRIsProjectedFunc )(OGRSpatialReferenceH) ;
@@ -258,6 +262,9 @@ class GDALProxy {
         IGDALCreateColorTable createColorPalette;
         IGDALGetColorEntryCount getColorPaletteSize;
         IGDALGetPaletteInterpretation getPaletteColorInterpretation;
+
+        IGDALGetRasterOffset getRasterOffset;
+        IGDALGetRasterScale getRasterScale;
 
         //Open Spatial Reference
         IOSRNewSpatialReference newSpatialRef;
