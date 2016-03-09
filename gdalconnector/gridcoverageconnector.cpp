@@ -73,6 +73,12 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
         bool ok = false;
         if ( layer != iUNDEF){
             raster->size(rastersize);
+
+            if (source().hasProperty("scale") && source().hasProperty("offset")) {
+                _offsetScales[layer].offset = source()["offset"].toDouble();
+                _offsetScales[layer].scale = source()["scale"].toDouble();
+            }
+
             ok = handleNumericLayerCase(layer, raster);
         }else if( colorType <=1 || layer != iUNDEF){ // no colors + grayscale which equals image domain
                     raster->size(rastersize);
@@ -282,12 +288,7 @@ bool RasterCoverageConnector::handleNumericLayerCase(int layer, RasterCoverage* 
         vmin = rUNDEF;
     auto vmax = gdal()->maxValue(layerHandle, &accurateMax);
     if (std::isinf(vmax) || std::isinf(-vmax))
-        vmax = rUNDEF;
-
-    if (source().hasProperty("scale") && source().hasProperty("offset")) {
-        _offsetScales[layer].offset = source()["offset"].toDouble();
-        _offsetScales[layer].scale = source()["scale"].toDouble();
-    }
+        vmax = rUNDEF;    
 
     raster->datadefRef(0) = createDataDef(vmin, vmax, resolution, accurateMin && accurateMax, _offsetScales[0]);
 
@@ -530,10 +531,11 @@ void RasterCoverageConnector::loadNumericBlock(GDALRasterBandH layerHandle,
     if ( noItems == iUNDEF)
         return ;
     std::vector<double> values(noItems);
+    bool hasScaleOffset = _offsetScales[bandIndex].offset != rUNDEF && _offsetScales[bandIndex].scale != rUNDEF;
     for(quint32 i=0; i < noItems; ++i) {
         double v = value(block, i);
 
-        if (_offsetScales[bandIndex].offset != rUNDEF && _offsetScales[bandIndex].scale != rUNDEF)
+        if (hasScaleOffset)
             v = v * _offsetScales[bandIndex].scale + _offsetScales[bandIndex].offset;
 
         values[i] = (ok && (nodata == v)) || std::isnan(v) || std::isinf(v) ? rUNDEF : v;
