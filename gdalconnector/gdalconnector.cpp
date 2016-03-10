@@ -48,10 +48,10 @@ IlwisTypes GdalConnector::ilwisType(const QString &name)
     QString ext = inf.suffix();
     QString filter = "*." + ext;
     if ( gdal()->getExtensions(itRASTER).contains(filter,Qt::CaseInsensitive))
-        return itRASTER;
+        return itRASTER | itGEOREF | itCOORDSYSTEM;
 
     if ( gdal()->getExtensions(itFEATURE).contains(filter, Qt::CaseInsensitive))
-        return itFEATURE;
+        return itFEATURE | itCOORDSYSTEM | itTABLE;
 
     filename = name;
     if ( !name.contains(QRegExp("\\\\|/"))){
