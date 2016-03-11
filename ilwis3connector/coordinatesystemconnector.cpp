@@ -261,6 +261,7 @@ IProjection CoordinateSystemConnector::getProjection(ConventionalCoordinateSyste
         kernel()->issues()->log(TR("Couldnt find projection %1").arg(projection));
         return IProjection();
     }
+    resource.code(code);
 
     IProjection proj;
     if(!proj.prepare(resource))
