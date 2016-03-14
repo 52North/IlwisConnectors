@@ -1,7 +1,6 @@
 #ifndef COVERAGECONNECTOR_H
 #define COVERAGECONNECTOR_H
 
-#include "rawconverter.h"
 namespace Ilwis {
 
 class Coverage;

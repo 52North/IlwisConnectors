@@ -586,8 +586,6 @@ bool RasterCoverageConnector::store(IlwisObject *obj, const IOOptions & )
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
 
-    RawConverter converter;
-
     if (! hasType(raster->datadef().domain()->ilwisType(),itNUMERICDOMAIN | itCOLORDOMAIN)){
         IDomain dom;
         if(!dom.prepare("code=value")) { //TODO:  for the moment only value maps in gdal
