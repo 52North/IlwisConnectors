@@ -19,6 +19,7 @@ public:
 
     NEW_CATALOGEXPLORER(GdalCatalogFileExplorer);
 
+    CatalogExplorer::ExplorerType explorerType() const;
 private:
 };
 }

@@ -79,3 +79,8 @@ QFileInfo SpreadSheetCatalogFileExplorer::toLocalFile(const QUrl &datasource) co
 {
     return QFileInfo(datasource.toLocalFile());
 }
+
+CatalogExplorer::ExplorerType SpreadSheetCatalogFileExplorer::explorerType() const
+{
+    return etIMPLICIT;
+}

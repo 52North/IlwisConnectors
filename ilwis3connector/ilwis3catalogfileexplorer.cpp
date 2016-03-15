@@ -80,6 +80,11 @@ QFileInfo Ilwis3CatalogFileExplorer::toLocalFile(const QUrl &datasource) const
     return QFileInfo(datasource.toLocalFile());
 }
 
+CatalogExplorer::ExplorerType Ilwis3CatalogFileExplorer::explorerType() const
+{
+    return etIMPLICIT;
+}
+
 
 
 

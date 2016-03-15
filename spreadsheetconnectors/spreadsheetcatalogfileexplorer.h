@@ -20,6 +20,7 @@ public:
 
 
     NEW_CATALOGEXPLORER(SpreadSheetCatalogFileExplorer);
+    CatalogExplorer::ExplorerType explorerType() const;
 };
 }
 }

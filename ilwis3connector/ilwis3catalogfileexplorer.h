@@ -20,6 +20,7 @@ public:
 
     NEW_CATALOGEXPLORER(Ilwis3CatalogFileExplorer);
 
+    CatalogExplorer::ExplorerType explorerType() const;
 private:
 };
 }

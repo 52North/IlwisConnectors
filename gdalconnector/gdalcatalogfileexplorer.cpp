@@ -101,3 +101,7 @@ QFileInfo GdalCatalogFileExplorer::toLocalFile(const QUrl &datasource) const
 }
 
 
+CatalogExplorer::ExplorerType GdalCatalogFileExplorer::explorerType() const
+{
+    return etIMPLICIT;
+}
