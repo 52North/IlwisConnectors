@@ -44,7 +44,7 @@ bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     int size = nodeIterators.second - nodeIterators.first;
 
     _stream << size;
-    for (auto &iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
+    for (auto iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
 
         NodeProperties nodeData = workflow->nodeProperties(*iter);
         _stream << (quint32)*iter;
@@ -55,7 +55,7 @@ bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     }
 
     // Edges
-    for (auto &iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
+    for (auto iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
         std::pair<OutEdgeIterator, OutEdgeIterator> edgeIterators = workflow->getOutEdges(*iter);
         size = edgeIterators.second - edgeIterators.first;
         _stream << size;
@@ -69,7 +69,7 @@ bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
             _stream << edgeData._inputRectangleIndex;
         }
     }
-
+    _dataLoaded = true;
     return true;
 }
 
