@@ -166,5 +166,6 @@ bool FeatureSerializerV1::loadData(IlwisObject* obj, const IOOptions& options ){
         SPFeatureI feature = fcoverage->newFeature(0, false); // create an empty feature
         feature->load(fcoverage->attributeDefinitions(), _stream, options);
     }
+    _dataLoaded = true;
     return true;
 }

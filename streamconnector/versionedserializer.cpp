@@ -38,6 +38,11 @@ bool VersionedSerializer::loadItems(std::vector<Resource> &){
     return true;
 }
 
+bool VersionedSerializer::dataIsLoaded() const
+{
+    return _dataLoaded;
+}
+
 bool VersionedSerializer::loadMetaData(IlwisObject *obj, const IOOptions &)
 {
     if ( obj->isReadOnly())

@@ -321,6 +321,7 @@ bool RasterSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
     default:
             loadBulk<qint64>(converter, _stream, _streamconnector, box, rcoverage); break;
     }
+    _dataLoaded = true;
     return true;
 }
 
