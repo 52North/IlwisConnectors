@@ -145,7 +145,7 @@ quint64 GDALItems::caseWithSquareBrackets(const QStringList& parts, Size<>& sz, 
     // in the brackets case, y comes before x
     sz = Size<>(sz.ysize(), sz.xsize(), sz.zsize());
 
-    return extractNameAndDomain(QStringList(metadataparts[1]), shortname);
+    return extractNameAndDomain(metadataparts[1], shortname);
 }
 
 Size<> GDALItems::getSize(const QStringList& szMembers)
@@ -167,9 +167,9 @@ Size<> GDALItems::getSize(const QStringList& szMembers)
     return sz;
 }
 
-quint64 GDALItems::extractNameAndDomain(const QStringList& parts, QString& shortname)
+quint64 GDALItems::extractNameAndDomain(const QString& part, QString& shortname)
 {
-    QStringList secondPart = parts[0].split("(");
+    QStringList secondPart = part.split("(");
     shortname = secondPart[0].trimmed();
     QString numbertype = secondPart[1].left(secondPart[1].size() - 1);
     return numbertype2domainid(numbertype);
@@ -181,7 +181,7 @@ quint64 GDALItems::caseWithurl(const QStringList& parts, Size<>& sz, QString& sh
     QString sizeString = parts[0].mid(1,parts[0].size() - 3);
     QStringList szMembers = sizeString.split("x");
     sz = getSize(szMembers);
-    quint64 domid = extractNameAndDomain(parts, shortname);
+    quint64 domid = extractNameAndDomain(parts[1], shortname);
 
     return domid;
 }

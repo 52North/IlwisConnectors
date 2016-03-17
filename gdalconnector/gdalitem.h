@@ -9,7 +9,7 @@ public:
     GDALItems(const QUrl& path, const QFileInfo &localFile, IlwisTypes extTypes);
     GDALItems(const QFileInfo &localContainerFile);
 
-    quint64 extractNameAndDomain(const QStringList& parts, QString &shortname);
+    quint64 extractNameAndDomain(const QString &parts, QString &shortname);
 
 private:
     quint64 addItem(GdalHandle* handle, const QUrl &url, quint64 csyid, quint64 grfId, IlwisTypes tp =itRASTER, IlwisTypes extTypes=itUNKNOWN, quint64 sz=i64UNDEF, int layerindex=iUNDEF);
