@@ -26,7 +26,7 @@ protected:
     QString _csyName;
     int _itemCount = 0;
 private:
-    ITable prepareAttributeTable(const QString &file, const QString& basemaptype,const IOOptions &) const;
+    ITable prepareAttributeTable(const QString &file, const QString& basemaptype, const IOOptions &) const;
 
     /**
      * @brief addToMasterCatalog will check if the mastercatalog has a resource under this name, and add it if it doesn't;

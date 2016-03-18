@@ -139,6 +139,8 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
 
     QString attfile = _odf->value("BaseMap", "AttributeTable");
     QString basemaptype = _odf->value("BaseMap", "Type");
+
+
     if ( attfile == sUNDEF){ // the attribute table might be in the domain
             QString domname = _odf->value("BaseMap", "Domain");
             domname = _odf->fileInfo().absolutePath() + "/" + domname;
@@ -148,11 +150,23 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
                 attfile = ini.value("DomainSort","AttributeTable");
             }
     }
-    if ( basemaptype != "Map" || attfile != sUNDEF) {
+    bool isSortWithoutAtTab =  basemaptype == "Map" &&
+            hasType(static_cast<RasterCoverage *>(coverage)->datadef().domain()->ilwisType(),itITEMDOMAIN) &&
+            attfile == sUNDEF;
+    if ( basemaptype != "Map" || attfile != sUNDEF || isSortWithoutAtTab ) {
         ITable tbl = prepareAttributeTable(attfile, basemaptype, options);
         if ( tbl.isValid()){
             if ( basemaptype == "Map"){
-                static_cast<RasterCoverage *>(coverage)->attributeTable(tbl);
+                auto *raster = static_cast<RasterCoverage *>(coverage);
+                raster->attributeTable(tbl);
+                if ( isSortWithoutAtTab){
+                    IItemDomain domain = raster->datadef().domain().as<ItemDomain<DomainItem>>();
+                    std::vector<QVariant> values;
+                    for(auto item : domain){
+                        values.push_back(item->raw());
+                    }
+                    tbl->column(0,values);
+                }
             } else
                 static_cast<FeatureCoverage *>(coverage)->attributesFromTable(tbl);
         } else
