@@ -36,7 +36,7 @@ public:
 
     RawConverter(double offset, double scale, double low, double high, IlwisTypes st=itUNKNOWN) : _offset(offset), _scale(scale), _storeType(st){
         if ( st == itUNKNOWN)
-            _undefined = guessUndef(low, high);
+            _undefined = guessUndef(low, high, scale);
         else {
             switch(_storeType) {
                 case itINT16:
@@ -107,7 +107,7 @@ public:
     }
 
 private:
-    double guessUndef(double vmin, double vmax);
+    double guessUndef(double vmin, double vmax, double step);
     long rounding(double x) const;
     double determineOffset(double low, double high, double step, IlwisTypes st);
     void intRange(double low, double high, double step, double &minDivStep, double &maxDivStep) const;

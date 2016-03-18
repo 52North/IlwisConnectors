@@ -269,7 +269,7 @@ QString Ilwis3Connector::ilwis3ClassName(IlwisTypes type) const {
 
 IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
     QString filename = name;
-    if (name.contains("?") == 0) {
+    if (name.contains("?")) {
         filename = name.split("?").front();
     }
     if ( filename.indexOf("file://") == 0) {

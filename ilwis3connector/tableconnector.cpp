@@ -127,7 +127,7 @@ ColumnDefinition TableConnector::makeColumn(const QString& colName, quint64 inde
 
 ColumnDefinition TableConnector::getKeyColumn() {
     QString domain = _odf->value("Table","Domain");
-    if ( domain == "None")
+    if ( domain == "None" || domain == "none.dom" || domain == "none")
         return ColumnDefinition();
     IThematicDomain dom;
     dom.prepare(filename2FullPath(domain, this->_resource));

@@ -193,8 +193,9 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
     return true;
 }
 
-bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const Ilwis::IDomain &dom, const QString& baseName)
+bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const Ilwis::DataDefinition &datadef, const QString& baseName)
 {
+    Ilwis::IDomain dom = datadef.domain<>();
     if (!dom.isValid())
         return ERROR2(ERR_NO_INITIALIZED_2, "Domain", obj->name());
 
@@ -233,30 +234,31 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
         quint16 digits = coverage->statistics().significantDigits();
         qint32 delta = coverage->statistics()[NumericStatistics::pDELTA];
         _domainName = dom->name();
-        if ( delta >= 0 && delta < 256 && digits == 0){
-            if ( delta >= 0 && delta < 256 && digits == 0){
-                if ( dom->code() == "boolean"){
-                    _domainName = "bool";
-                    _domainInfo = QString("bool.dom;Byte;bool;0;;");
-                    _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
-                    _odf->setKeyValue("BaseMap","Range","0:1:offset=-1");
-                    _odf->setKeyValue("BaseMap","Domain","bool.dom");
-                }
-                else{
-                    _domainName = "image.dom";
-                    _domainInfo = QString("Image.dom;Byte;image;0;;");
-                    _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
-                    _odf->setKeyValue("BaseMap","Range","0:255:offset=0");
-                    _odf->setKeyValue("BaseMap","MinMax","0:255");
-                    _odf->setKeyValue("BaseMap","Domain","Image.dom");
-                }
+
+        double resolution = datadef.range()->as<NumericRange>()->resolution();
+
+        if ((resolution != 0) &&  delta >= 0 && delta < 256 && digits == 0){
+            if ( dom->code() == "boolean"){
+                _domainName = "bool";
+                _domainInfo = QString("bool.dom;Byte;bool;0;;");
+                _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
+                _odf->setKeyValue("BaseMap","Range","0:1:offset=-1");
+                _odf->setKeyValue("BaseMap","Domain","bool.dom");
+            }
+            else{
+                _domainName = "image.dom";
+                _domainInfo = QString("Image.dom;Byte;image;0;;");
+                _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
+                _odf->setKeyValue("BaseMap","Range","0:255:offset=0");
+                _odf->setKeyValue("BaseMap","MinMax","0:255");
+                _odf->setKeyValue("BaseMap","Domain","Image.dom");
             }
         }
         else {
             const NumericStatistics& stats = coverage->statistics();
-            int digits = stats.significantDigits();
-            RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX],pow(10, - digits));
-            _domainInfo = QString("%1:%2:%3:offset=%4").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]).arg(conv.scale()).arg(conv.offset());
+            int precision = (resolution == 0.0D) ? resolution : pow(10, -stats.significantDigits());
+            RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], precision);
+            _domainInfo = QString("%1:%2:%3:offset=%4").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]).arg(precision).arg(conv.offset());
             _odf->setKeyValue("BaseMap","Range",_domainInfo);
             _odf->setKeyValue("BaseMap","Domain",_domainName);
 
@@ -264,7 +266,8 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             QString _domainInfo = QString("%1;Long;value;0;-9999999.9:9999999.9:0.1:offset=0").arg(_domainName);
             _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
         }
-    } if ( dom->ilwisType() == itITEMDOMAIN) {
+    }
+    if ( dom->ilwisType() == itITEMDOMAIN) {
          if ( hasType(dom->valueType(),itTHEMATICITEM | itNUMERICITEM) && coverage->ilwisType() == itRASTER) {
             _domainName =  Resource::toLocalFile(dom->resource().url(), true);
             if ( _domainName == sUNDEF){

@@ -7,8 +7,8 @@ using namespace Ilwis3;
 RawConverter::RawConverter(double low, double high, double step)  {
     _storeType =  minNeededStoreType(low, high, step);
     _offset = determineOffset(low, high, step, _storeType);
-    _scale = step; // determineScale(low, high, step);
-    _undefined = guessUndef(low,high);
+    _scale = (step == 0.0D) ? 1.0 : step;
+    _undefined = guessUndef(low, high, step);
 
 }
 
@@ -45,6 +45,8 @@ void RawConverter::intRange(double low, double high, double step, double& minDiv
 }
 
 double RawConverter::determineScale(double low, double high, double step) const  {
+    if (step == 0.0D)
+        return 1.0;
     double minDivStep;
     double maxDivStep;
     intRange(low, high, step, minDivStep, maxDivStep );
@@ -87,15 +89,17 @@ double RawConverter::determineOffset(double low, double high, double step, Ilwis
   return r0;
 }
 
-double RawConverter::guessUndef(double vmin, double vmax) {
-    if ( vmin >= std::numeric_limits<byte>::min() && vmax <= std::numeric_limits<byte>::max())
-       return 0;
-    if ( vmin >= std::numeric_limits<short>::min() && vmax <= std::numeric_limits<short>::max())
-       return shILW3UNDEF;
-    else if ( vmin >= std::numeric_limits<long>::min() && vmax <= std::numeric_limits<long>::max())
-        return iILW3UNDEF;
-    if ( vmin >= std::numeric_limits<float>::min() && vmax <= std::numeric_limits<float>::max())
-        return flUNDEF;
+double RawConverter::guessUndef(double vmin, double vmax, double step) {
+    if (step != 0) {
+        if ( vmin >= std::numeric_limits<byte>::min() && vmax <= std::numeric_limits<byte>::max())
+           return 0;
+        if ( vmin >= std::numeric_limits<short>::min() && vmax <= std::numeric_limits<short>::max())
+           return shILW3UNDEF;
+        else if ( vmin >= std::numeric_limits<long>::min() && vmax <= std::numeric_limits<long>::max())
+            return iILW3UNDEF;
+        if ( vmin >= std::numeric_limits<float>::min() && vmax <= std::numeric_limits<float>::max())
+            return flUNDEF;
+    }
     return rUNDEF;
 }
 

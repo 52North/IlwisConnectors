@@ -269,8 +269,11 @@ QString ODFItem::findDomainName(const QString& path) const
             name = ini.value("BaseMap","Domain");
         }
     }
-    else if(_ilwtype & itTABLE)
+    else if(_ilwtype & itTABLE){
         name = _odf.value("Table", "Domain");
+        if ( name.toLower() == "none.dom")
+            return sUNDEF;
+    }
     else if(_ilwtype & itDOMAIN)
         name = _odf.fileInfo().fileName();
     else if(_ilwtype & itREPRESENTATION)

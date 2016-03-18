@@ -930,7 +930,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         baseName = baseName.left(index);
     }
 
-    bool ok = CoverageConnector::storeMetaData(fcov, type, datadef.domain(), baseName);
+    bool ok = CoverageConnector::storeMetaData(fcov, type, datadef, baseName);
     if ( !ok)
         return false;
 

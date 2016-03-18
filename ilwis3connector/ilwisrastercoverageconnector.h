@@ -49,6 +49,21 @@ private:
         return true;
     }
 
+    bool save(std::ofstream& output_file, const IRasterCoverage& raster, const Size<>& sz) const{
+        //TODO optimize this
+        PixelIterator pixiter(raster, BoundingBox(sz));
+        int  i=0;
+        double c = 0;
+        const char *ptr = reinterpret_cast<const char*>(&c);
+        //std::ofstream dum("d:/dummyout.txt",ios_base::out | ios_base::trunc);
+        for_each(pixiter, pixiter.end(), [&](double& v){
+            c = v;
+             ++i;
+            output_file.write(ptr, sizeof(double));
+       });
+        return true;
+    }
+
     vector<QUrl> _dataFiles;
     int _storesize;
     IlwisTypes _storetype;
