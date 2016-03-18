@@ -54,7 +54,7 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject* data, const IOOptions&
     IEllipsoid ell = getEllipsoid();
     GeodeticDatum *datum = getDatum(ellipsoideName);
     if ( !ell.isValid() && ellipsoideName != sUNDEF){
-        QString ellres = QString("ilwis://tables/ellipsoid?code=%1").arg(ellipsoideName);
+       QString ellres = QString("code=ellipsoid:%1").arg(ellipsoideName);
        if (!ell.prepare(ellres)) {
               return ERROR1("No ellipsoid for this code %1",ellipsoideName);
        }
