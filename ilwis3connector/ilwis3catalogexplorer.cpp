@@ -89,6 +89,9 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
             }
             names[kvp.second.fileInfo().absoluteFilePath().toLower()] = item.id();
         }
+        for(auto& resource : finalList){
+            names[OSHelper::neutralizeFileName(resource.url().toLocalFile())] = resource.id();
+        }
         if (!trq->update(1))
             return std::vector<Resource>();
         std::vector<ODFItem> items;
