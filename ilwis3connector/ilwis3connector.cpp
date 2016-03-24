@@ -401,7 +401,14 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
                 QString csyFile = Resource::toLocalFile(source().url(),false, "csy");
                 int index = csy->resource().url().toString().lastIndexOf("/");
                 QString name = csy->resource().url().toString().mid(index + 1);
-                csyName =  QFileInfo(csyFile).absolutePath() + "/" + name;
+                int invCharIdx = name.indexOf("?");
+                if (invCharIdx != -1)
+                    name = name.left(invCharIdx);
+                if (name.size() > 0) {
+                    if ( !name.endsWith(".csy"))
+                        name += ".csy";
+                    csyName =  QFileInfo(csyFile).absolutePath() + "/" + name;
+                }
             }
             else if ( csyName == sUNDEF || csyName == "") {
                 QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
