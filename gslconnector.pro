@@ -32,17 +32,20 @@ SOURCES += \
 OTHER_FILES += \
     gslconnector/gslconnector.json
 
-INCLUDEPATH += $$PWD/../external/gsl
 
 
 win32 {
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET -lgsl.dll
+    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lgsl.dll
+
+    INCLUDEPATH += $$PWD/../external/gsl
 }
 
 linux {
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L/usr/lib -lgsl
+
+    INCLUDEPATH += /usr/include/gsl
 }
 
 
