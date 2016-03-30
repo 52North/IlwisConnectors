@@ -29,6 +29,9 @@ VersionedDataStreamFactory::VersionedDataStreamFactory() : AbstractFactory("Vers
 
 VersionedSerializer *VersionedDataStreamFactory::create(const QString &version,IlwisTypes tp, QDataStream& stream)
 {
+    if ( version == "")
+        return 0;
+
     StreamerKey key(version, tp)    ;
 
     auto iter =  _dataStreamers.find(key);
