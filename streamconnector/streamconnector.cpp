@@ -245,3 +245,11 @@ bool StreamConnector::isFileBased() const
 {
     return source().url(true).scheme() == "file";
 }
+
+bool StreamConnector::dataIsLoaded() const
+{
+    if ( _versionedConnector){
+        _versionedConnector->dataIsLoaded();
+    }
+    return false;
+}
