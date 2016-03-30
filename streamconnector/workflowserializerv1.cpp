@@ -52,6 +52,7 @@ bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         _stream << nodeData._syntax;
         _stream << nodeData._x;
         _stream << nodeData._y;
+        //qDebug() << nodeData._x << nodeData._y << nodeData._syntax;
     }
 
     // Edges
@@ -103,8 +104,8 @@ bool WorkflowSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &optio
         quint32 oldVertex;
         QString provider;
         QString syntax;
-        quint16 x;
-        quint16 y;
+        qint32 x;
+        qint32 y;
 
         _stream >> oldVertex;
         _stream >> provider;
