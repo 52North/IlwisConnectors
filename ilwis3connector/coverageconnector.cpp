@@ -256,7 +256,8 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
         }
         else {
             const NumericStatistics& stats = coverage->statistics();
-            int precision = (resolution == 0.0D) ? resolution : pow(10, -stats.significantDigits());
+            double precision = (resolution == 0.0) ? resolution : pow(10, -stats.significantDigits());
+
             RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], precision);
             _domainInfo = QString("%1:%2:%3:offset=%4").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]).arg(precision).arg(conv.offset());
             _odf->setKeyValue("BaseMap","Range",_domainInfo);
@@ -394,7 +395,7 @@ DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const 
 
             }
             else {
-                def.range(new NumericRange(vmin, vmax));
+                def.range(new NumericRange(vmin, vmax, scale));
             }
         }
     }
