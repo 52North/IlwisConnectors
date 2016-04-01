@@ -65,7 +65,7 @@ public:
             return rUNDEF;
         return (raw + _offset) * _scale;
     }
-    long real2raw(double real) const {
+    double real2raw(double real) const {
         if ( real == rUNDEF)
             return _undefined;
         return real / _scale - _offset;
