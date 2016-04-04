@@ -7,7 +7,7 @@ using namespace Ilwis3;
 RawConverter::RawConverter(double low, double high, double step)  {
     _storeType =  minNeededStoreType(low, high, step);
     _offset = determineOffset(low, high, step, _storeType);
-    _scale = (step == 0.0D) ? 1.0 : step;
+    _scale = (step == 0.0) ? 1.0 : step;
     _undefined = guessUndef(low, high, step);
 
 }
@@ -45,7 +45,7 @@ void RawConverter::intRange(double low, double high, double step, double& minDiv
 }
 
 double RawConverter::determineScale(double low, double high, double step) const  {
-    if (step == 0.0D)
+    if (step == 0.0)
         return 1.0;
     double minDivStep;
     double maxDivStep;
@@ -91,13 +91,13 @@ double RawConverter::determineOffset(double low, double high, double step, Ilwis
 
 double RawConverter::guessUndef(double vmin, double vmax, double step) {
     if (step != 0) {
-        if ( vmin >= std::numeric_limits<byte>::min() && vmax <= std::numeric_limits<byte>::max())
+        if (_storeType == itUINT8)
            return 0;
-        if ( vmin >= std::numeric_limits<short>::min() && vmax <= std::numeric_limits<short>::max())
+        if ( _storeType == itINT16)
            return shILW3UNDEF;
-        else if ( vmin >= std::numeric_limits<long>::min() && vmax <= std::numeric_limits<long>::max())
+        else if ( _storeType == itINT32)
             return iILW3UNDEF;
-        if ( vmin >= std::numeric_limits<float>::min() && vmax <= std::numeric_limits<float>::max())
+        if ( _storeType == itFLOAT)
             return flUNDEF;
     }
     return rUNDEF;

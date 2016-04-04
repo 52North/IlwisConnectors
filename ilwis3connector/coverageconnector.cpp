@@ -256,9 +256,21 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
         }
         else {
             const NumericStatistics& stats = coverage->statistics();
-            double precision = (resolution == 0.0) ? resolution : pow(10, -stats.significantDigits());
+            double precision = (resolution == 0.0) ? resolution : pow(10, -stats.significantDigits());           
+            RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], precision);           
 
-            RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], precision);
+            if ( delta >= 0 && delta < 256 &&  resolution == 1){
+               _odf->setKeyValue("MapStore","Type","Byte");
+            } else if ( conv.storeType() == itUINT8){
+               _odf->setKeyValue("MapStore","Type","Byte");
+            } else if ( conv.storeType() == itINT16){
+                _odf->setKeyValue("MapStore","Type","Int");
+            } else if ( conv.storeType() == itINT32){
+                _odf->setKeyValue("MapStore","Type","Long");
+            } else if ( conv.storeType() == itDOUBLE){
+                _odf->setKeyValue("MapStore","Type","Real");
+            }
+
             _domainInfo = QString("%1:%2:%3:offset=%4").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]).arg(precision).arg(conv.offset());
             _odf->setKeyValue("BaseMap","Range",_domainInfo);
             _odf->setKeyValue("BaseMap","Domain",_domainName);
