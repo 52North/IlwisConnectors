@@ -36,10 +36,10 @@ RasterCoverage::RasterCoverage(Ilwis::IRasterCoverage *coverage):Coverage(new Il
 }
 
 RasterCoverage::RasterCoverage(){
-    Ilwis::IRasterCoverage fc;
-    fc.prepare();
-    if (fc.isValid())
-        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
+    Ilwis::IRasterCoverage rc;
+    rc.prepare();
+    if (rc.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(rc));
 }
 
 RasterCoverage::RasterCoverage(std::string resource){
@@ -61,9 +61,9 @@ RasterCoverage::RasterCoverage(std::string resource){
                 input = "file:///" + file;
         }
     }
-    Ilwis::IRasterCoverage fc(input, itRASTER);
-    if (fc.isValid())
-        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(fc));
+    Ilwis::IRasterCoverage rc(input, itRASTER);
+    if (rc.isValid())
+        this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(rc));
 }
 
 RasterCoverage::~RasterCoverage(){
