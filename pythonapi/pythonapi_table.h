@@ -14,6 +14,7 @@ typedef struct _object PyObject;
 namespace pythonapi {
     class ColumnDefinition;
     class Table : public IlwisObject{
+        friend class Engine;
         friend class Coverage;
         friend class Catalog;
         friend class FeatureCoverage;
