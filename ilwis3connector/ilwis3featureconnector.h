@@ -25,7 +25,7 @@ public:
 
     static ConnectorInterface *create(const Resource &resource, bool load,const IOOptions& options=IOOptions());
     Ilwis::IlwisObject *create() const;
-    void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
+    void calcStatistics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
 
 
     QString format() const;

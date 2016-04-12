@@ -1,4 +1,19 @@
+#include "kernel.h"
 #include "ilwis.h"
+#include "geometries.h"
+#include "ilwisdata.h"
+#include "coordinatesystem.h"
+#include "georeference.h"
+#include "georefimplementation.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "coordinatesystem.h"
+#include "georeference.h"
+#include "simpelgeoreference.h"
+#include "cornersgeoreference.h"
+#include "controlpoint.h"
+#include "ctpgeoreference.h"
+#include "mathhelper.h"
 #include "rawconverter.h"
 
 using namespace Ilwis;
@@ -8,7 +23,16 @@ RawConverter::RawConverter(double low, double high, double step)  {
     _storeType =  minNeededStoreType(low, high, step);
     _offset = determineOffset(low, high, step, _storeType);
     _scale = (step == 0.0) ? 1.0 : step;
-    _undefined = guessUndef(low, high, step);
+    //_scale = ( round (_scale * 1000.0) / 1000.0 );
+    _scale = MathHelper::roundTo3DecimalDigits (_scale);
+
+    // Note: determineScale() is not called here,
+    // because the _scale gets the value passed as step, which in this case is
+    // the resolution already calculated
+
+
+
+    _undefined = guessUndef(step);
 
 }
 
@@ -17,7 +41,7 @@ IlwisTypes RawConverter::minNeededStoreType(double low, double high, double step
     double maxDivStep;
     intRange(low, high, step, minDivStep, maxDivStep );
 
-    quint64 delta = abs(maxDivStep - minDivStep);//TODO change from quint32 to quint64 might change behaviour??
+    quint64 delta = rounding(abs(maxDivStep - minDivStep));//TODO change from quint32 to quint64 might change behaviour??
     if ( step != 0) {
         if ( delta <= 255)
             return itUINT8;
@@ -50,9 +74,10 @@ double RawConverter::determineScale(double low, double high, double step) const 
     double minDivStep;
     double maxDivStep;
     intRange(low, high, step, minDivStep, maxDivStep );
-    int r = log10(abs(maxDivStep - minDivStep)) + 1;
+    //int r = log10(abs(maxDivStep - minDivStep)) + 1;
+    // try this....
+    int r = log10(rounding(abs(maxDivStep - minDivStep)));
     return pow(10,-r);
-
 }
 
 double RawConverter::determineOffset(double low, double high, double step, IlwisTypes st)
@@ -71,13 +96,13 @@ double RawConverter::determineOffset(double low, double high, double step, Ilwis
        if (minDivStep < -LONG_MAX || maxDivStep > LONG_MAX)
          r0 = minDivStep / 2 + maxDivStep / 2 - 0.0001;
        else
-         r0 = 0;
+         r0 = -0.001;
        break;
      case itINT16:
        if (minDivStep < -SHRT_MAX || maxDivStep > SHRT_MAX)
          r0 = minDivStep / 2 + maxDivStep / 2 - 0.0001;
        else
-         r0 = 0;
+         r0 = -0.001;
        break;
      case itUINT8:
        if (minDivStep < 0 || maxDivStep > 255)
@@ -89,7 +114,7 @@ double RawConverter::determineOffset(double low, double high, double step, Ilwis
   return r0;
 }
 
-double RawConverter::guessUndef(double vmin, double vmax, double step) {
+double RawConverter::guessUndef(double step) {
     if (step != 0) {
         if (_storeType == itUINT8)
            return 0;

@@ -227,7 +227,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
 
 
-    calcStatics(obj,NumericStatistics::pBASIC);
+    calcStatistics(obj,NumericStatistics::pBASIC);
 
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
 
@@ -402,13 +402,7 @@ DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const 
                     vmax = parts[1].toDouble();
                 }
             }
-            if ( scale == 1.0) {
-                def.range(new NumericRange(vmin, vmax,1));
-
-            }
-            else {
-                def.range(new NumericRange(vmin, vmax, scale));
-            }
+            def.range(new NumericRange(vmin, vmax,scale));
         }
     }
     return def;
