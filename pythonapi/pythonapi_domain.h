@@ -27,7 +27,6 @@ namespace pythonapi {
     public:
         enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
 
-        Domain();
         virtual ~Domain();
 
         bool isStrict() const;
@@ -45,6 +44,7 @@ namespace pythonapi {
         static Domain* toDomain(Object* obj);
 
     protected:
+        Domain();
         Domain(Ilwis::IDomain *domain);
     };
 
@@ -66,7 +66,7 @@ namespace pythonapi {
         friend class DataDefinition;
         friend class ColumDefinition;
     public:
-        ItemDomain();
+        // There is no ItemDomain() constructor; first create the range, then the ItemDomain
         ItemDomain(const Range& rng);
         quint32 count();
         void setTheme(const std::string &theme);
@@ -75,11 +75,6 @@ namespace pythonapi {
         void addItem(PyObject* value);
         PyObject *item(int index, bool labelOnly);
         void range(const Range &rng);
-
-    protected:
-        ItemDomain(Ilwis::IDomain *domain);
-
-
     };
 
     class ColorDomain : public Domain {
