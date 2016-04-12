@@ -37,7 +37,6 @@
 using namespace pythonapi;
 
 FeatureCoverage::FeatureCoverage(Ilwis::IFeatureCoverage *coverage):Coverage(new Ilwis::ICoverage(*coverage)){
-    delete coverage;
 }
 
 FeatureCoverage::FeatureCoverage(){

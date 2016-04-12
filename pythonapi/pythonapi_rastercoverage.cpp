@@ -32,7 +32,6 @@ using namespace pythonapi;
 
 
 RasterCoverage::RasterCoverage(Ilwis::IRasterCoverage *coverage):Coverage(new Ilwis::ICoverage(*coverage)){
-//delete coverage;
 }
 
 RasterCoverage::RasterCoverage(){
