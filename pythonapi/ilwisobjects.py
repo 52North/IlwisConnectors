@@ -2860,19 +2860,14 @@ class Domain(IlwisObject):
     for _s in [IlwisObject]:
         __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
     __getattr__ = lambda self, name: _swig_getattr(self, Domain, name)
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     cSELF = _ilwisobjects.Domain_cSELF
     cPARENT = _ilwisobjects.Domain_cPARENT
     cDECLARED = _ilwisobjects.Domain_cDECLARED
     cNONE = _ilwisobjects.Domain_cNONE
-
-    def __init__(self):
-        """__init__(pythonapi::Domain self) -> Domain"""
-        this = _ilwisobjects.new_Domain()
-        try:
-            self.this.append(this)
-        except Exception:
-            self.this = this
     __swig_destroy__ = _ilwisobjects.delete_Domain
     __del__ = lambda self: None
 
@@ -2993,12 +2988,9 @@ class ItemDomain(Domain):
     __getattr__ = lambda self, name: _swig_getattr(self, ItemDomain, name)
     __repr__ = _swig_repr
 
-    def __init__(self, *args):
-        """
-        __init__(pythonapi::ItemDomain self) -> ItemDomain
-        __init__(pythonapi::ItemDomain self, Range rng) -> ItemDomain
-        """
-        this = _ilwisobjects.new_ItemDomain(*args)
+    def __init__(self, rng):
+        """__init__(pythonapi::ItemDomain self, Range rng) -> ItemDomain"""
+        this = _ilwisobjects.new_ItemDomain(rng)
         try:
             self.this.append(this)
         except Exception:
