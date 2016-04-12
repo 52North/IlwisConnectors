@@ -32,6 +32,7 @@ Domain::Domain(){
 }
 
 Domain::Domain(Ilwis::IDomain *domain) : IlwisObject(new Ilwis::IIlwisObject(*domain)){
+    delete domain;
 }
 
 Domain::~Domain(){
@@ -150,9 +151,6 @@ NumericDomain::NumericDomain(Ilwis::INumericDomain *domain): Domain(new Ilwis::I
 }
 
 //---------------------------------------------------------------
-
-ItemDomain::ItemDomain(){
-}
 
 ItemDomain::ItemDomain(const Range& rng){
     IlwisTypes vt = rng.valueType();
