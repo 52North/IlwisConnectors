@@ -7,9 +7,8 @@ using namespace Stream;
 RawConverter::RawConverter(double low, double high, double step)  {
     _storeType =  minNeededStoreType(low, high, step);
     _offset = determineOffset(low, high, step, _storeType);
-    _scale = step; // determineScale(low, high, step);
-    _undefined = guessUndef(low,high);
-
+    _scale = MathHelper::roundTo3DecimalDigits (step);
+    _undefined = guessUndef();
 }
 
 IlwisTypes RawConverter::minNeededStoreType(double low, double high, double step) const{
@@ -17,7 +16,7 @@ IlwisTypes RawConverter::minNeededStoreType(double low, double high, double step
     double maxDivStep;
     intRange(low, high, step, minDivStep, maxDivStep );
 
-    quint64 delta = abs(maxDivStep - minDivStep);//TODO change from quint32 to quint64 might change behaviour??
+    quint64 delta = rounding(abs(maxDivStep - minDivStep));//TODO change from quint32 to quint64 might change behaviour??
     if ( step != 0) {
         if ( delta <= 255)
             return itUINT8;
@@ -48,7 +47,9 @@ double RawConverter::determineScale(double low, double high, double step) const 
     double minDivStep;
     double maxDivStep;
     intRange(low, high, step, minDivStep, maxDivStep );
-    int r = log10(abs(maxDivStep - minDivStep)) + 1;
+    //int r = log10(abs(maxDivStep - minDivStep)) + 1;
+    // try this....
+    int r = log10(rounding(abs(maxDivStep - minDivStep)));
     return pow(10,-r);
 
 }
@@ -69,13 +70,13 @@ double RawConverter::determineOffset(double low, double high, double step, Ilwis
        if (minDivStep < -LONG_MAX || maxDivStep > LONG_MAX)
          r0 = minDivStep / 2 + maxDivStep / 2 - 0.0001;
        else
-         r0 = 0;
+         r0 = -0.001;
        break;
      case itINT16:
        if (minDivStep < -SHRT_MAX || maxDivStep > SHRT_MAX)
          r0 = minDivStep / 2 + maxDivStep / 2 - 0.0001;
        else
-         r0 = 0;
+         r0 = -0.001;
        break;
      case itUINT8:
        if (minDivStep < 0 || maxDivStep > 255)
@@ -88,12 +89,12 @@ double RawConverter::determineOffset(double low, double high, double step, Ilwis
 }
 
 
-double RawConverter::guessUndef(double vmin, double vmax) {
-    if ( vmin >  std::numeric_limits<short>::min() && vmax < std::numeric_limits<short>::max())
-       return shILW3UNDEF;
-    else if ( vmin >  std::numeric_limits<long>::min() && vmax < std::numeric_limits<long>::max())
+double RawConverter::guessUndef() {
+    if ( _storeType == itINT16)
+        return shILW3UNDEF;
+    else if ( _storeType == itINT32)
         return iILW3UNDEF;
-    if ( vmin >  std::numeric_limits<float>::min() && vmax < std::numeric_limits<float>::max())
+    if ( _storeType == itFLOAT)
         return flUNDEF;
     return rUNDEF;
 }

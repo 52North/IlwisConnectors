@@ -227,7 +227,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
 
 
-    calcStatics(obj,NumericStatistics::pBASIC);
+    calcStatistics(obj,NumericStatistics::pBASIC);
 
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
 
@@ -256,8 +256,21 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
         }
         else {
             const NumericStatistics& stats = coverage->statistics();
-            int precision = (resolution == 0.0D) ? resolution : pow(10, -stats.significantDigits());
-            RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], precision);
+            double precision = (resolution == 0.0) ? resolution : pow(10, -stats.significantDigits());           
+            RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], precision);           
+
+            if ( delta >= 0 && delta < 256 &&  resolution == 1){
+               _odf->setKeyValue("MapStore","Type","Byte");
+            } else if ( conv.storeType() == itUINT8){
+               _odf->setKeyValue("MapStore","Type","Byte");
+            } else if ( conv.storeType() == itINT16){
+                _odf->setKeyValue("MapStore","Type","Int");
+            } else if ( conv.storeType() == itINT32){
+                _odf->setKeyValue("MapStore","Type","Long");
+            } else if ( conv.storeType() == itDOUBLE){
+                _odf->setKeyValue("MapStore","Type","Real");
+            }
+
             _domainInfo = QString("%1:%2:%3:offset=%4").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]).arg(precision).arg(conv.offset());
             _odf->setKeyValue("BaseMap","Range",_domainInfo);
             _odf->setKeyValue("BaseMap","Domain",_domainName);
@@ -389,13 +402,7 @@ DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const 
                     vmax = parts[1].toDouble();
                 }
             }
-            if ( scale == 1.0) {
-                def.range(new NumericRange(vmin, vmax,1));
-
-            }
-            else {
-                def.range(new NumericRange(vmin, vmax));
-            }
+            def.range(new NumericRange(vmin, vmax,scale));
         }
     }
     return def;

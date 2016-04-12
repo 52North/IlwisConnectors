@@ -52,7 +52,8 @@ bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         _stream << nodeData._syntax;
         _stream << nodeData._x;
         _stream << nodeData._y;
-        //qDebug() << nodeData._x << nodeData._y << nodeData._syntax;
+        _stream << nodeData._id;
+        qDebug() << nodeData._x << nodeData._y << nodeData._syntax;
     }
 
     // Edges
@@ -106,13 +107,15 @@ bool WorkflowSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &optio
         QString syntax;
         qint32 x;
         qint32 y;
+        quint64 id;
 
         _stream >> oldVertex;
         _stream >> provider;
         _stream >> syntax;
         _stream >> x;
         _stream >> y;
-        vertexMapping->insert(oldVertex, workflow->addOperation({syntax, provider, x, y}));
+        _stream >> id;
+        vertexMapping->insert(oldVertex, workflow->addOperation({syntax, provider, x, y,id}));
     }
     for (const auto &iter : vertexMapping->keys()) {
         int edgesSize;

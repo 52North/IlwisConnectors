@@ -407,11 +407,10 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
     Size<> sz = raster->size();
     bool ok = false;
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
-        calcStatics(obj, NumericStatistics::pBASIC);
+        calcStatistics(obj, NumericStatistics::pBASIC);
         const NumericStatistics& stats = raster->statistics();
         double resolution = raster->datadef().range()->as<NumericRange>()->resolution();
         RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], resolution);
-
 
         std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
         if ( !output_file.is_open())
@@ -458,7 +457,7 @@ QString RasterCoverageConnector::format() const
     return "map";
 }
 
-void RasterCoverageConnector::calcStatics(const IlwisObject *obj, NumericStatistics::PropertySets set) const {
+void RasterCoverageConnector::calcStatistics(const IlwisObject *obj, NumericStatistics::PropertySets set) const {
     IRasterCoverage raster = mastercatalog()->get(obj->id());
     if ( !raster->statistics().isValid()) {
         PixelIterator iter(raster,BoundingBox(raster->size()));

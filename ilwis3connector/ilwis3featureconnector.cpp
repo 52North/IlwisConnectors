@@ -62,7 +62,7 @@ Ilwis::IlwisObject *FeatureConnector::create() const
     return new Ilwis::FeatureCoverage(_resource);
 }
 
-void FeatureConnector::calcStatics(const IlwisObject *obj, NumericStatistics::PropertySets set) const
+void FeatureConnector::calcStatistics(const IlwisObject *obj, NumericStatistics::PropertySets set) const
 {
 }
 

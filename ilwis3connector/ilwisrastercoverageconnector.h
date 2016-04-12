@@ -20,7 +20,7 @@ public:
     Ilwis::IlwisObject *create() const;
     static ConnectorInterface *create(const Ilwis::Resource &resource,bool load = true,const IOOptions& options=IOOptions());
 
-    void calcStatics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
+    void calcStatistics(const IlwisObject *obj,NumericStatistics::PropertySets set) const;
 
 private:
     qint64 conversion(QFile& file,Ilwis::Grid *grid, int &count);
