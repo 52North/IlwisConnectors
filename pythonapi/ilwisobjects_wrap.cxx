@@ -21100,7 +21100,7 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_subDomain(PyObject *SWIGUNUSEDPARM(se
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  pythonapi::Domain result;
+  SwigValueWrapper< pythonapi::Domain > result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_subDomain",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
@@ -25489,7 +25489,7 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_subDomain(PyObject *SWIGUNUSEDPARM(sel
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  pythonapi::Domain result;
+  SwigValueWrapper< pythonapi::Domain > result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_subDomain",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
@@ -26159,26 +26159,6 @@ SWIGINTERN PyObject *Catalog_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObje
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_wrap_new_Domain(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Domain *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)":new_Domain")) SWIG_fail;
-  {
-    try {
-      result = (pythonapi::Domain *)new pythonapi::Domain();
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__Domain, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_delete_Domain(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Domain *arg1 = (pythonapi::Domain *) 0 ;
@@ -26311,7 +26291,7 @@ SWIGINTERN PyObject *_wrap_Domain_parent(PyObject *SWIGUNUSEDPARM(self), PyObjec
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  pythonapi::Domain result;
+  SwigValueWrapper< pythonapi::Domain > result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:Domain_parent",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Domain, 0 |  0 );
@@ -26734,27 +26714,7 @@ SWIGINTERN PyObject *NumericDomain_swigregister(PyObject *SWIGUNUSEDPARM(self), 
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_wrap_new_ItemDomain__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::ItemDomain *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)":new_ItemDomain")) SWIG_fail;
-  {
-    try {
-      result = (pythonapi::ItemDomain *)new pythonapi::ItemDomain();
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__ItemDomain, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_ItemDomain__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_new_ItemDomain(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Range *arg1 = 0 ;
   void *argp1 = 0 ;
@@ -26783,39 +26743,6 @@ SWIGINTERN PyObject *_wrap_new_ItemDomain__SWIG_1(PyObject *SWIGUNUSEDPARM(self)
   return resultobj;
 fail:
   return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_ItemDomain(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[2] = {
-    0
-  };
-  Py_ssize_t ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 1) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 0) {
-    return _wrap_new_ItemDomain__SWIG_0(self, args);
-  }
-  if (argc == 1) {
-    int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_pythonapi__Range, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_new_ItemDomain__SWIG_1(self, args);
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_ItemDomain'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::ItemDomain::ItemDomain()\n"
-    "    pythonapi::ItemDomain::ItemDomain(pythonapi::Range const &)\n");
-  return 0;
 }
 
 
@@ -37565,7 +37492,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Catalog__getitem", _wrap_Catalog__getitem, METH_VARARGS, (char *)"Catalog__getitem(Catalog self, std::string const & name) -> Object"},
 	 { (char *)"Catalog_toCatalog", _wrap_Catalog_toCatalog, METH_VARARGS, (char *)"Catalog_toCatalog(Catalog self, Object obj) -> Catalog"},
 	 { (char *)"Catalog_swigregister", Catalog_swigregister, METH_VARARGS, NULL},
-	 { (char *)"new_Domain", _wrap_new_Domain, METH_VARARGS, (char *)"new_Domain() -> Domain"},
 	 { (char *)"delete_Domain", _wrap_delete_Domain, METH_VARARGS, (char *)"delete_Domain(Domain self)"},
 	 { (char *)"Domain_isStrict", _wrap_Domain_isStrict, METH_VARARGS, (char *)"Domain_isStrict(Domain self) -> bool"},
 	 { (char *)"Domain_setStrict", _wrap_Domain_setStrict, METH_VARARGS, (char *)"Domain_setStrict(Domain self, bool yesno)"},
@@ -37586,10 +37512,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"NumericDomain_toNumericDomain", _wrap_NumericDomain_toNumericDomain, METH_VARARGS, (char *)"NumericDomain_toNumericDomain(Object obj) -> NumericDomain"},
 	 { (char *)"delete_NumericDomain", _wrap_delete_NumericDomain, METH_VARARGS, (char *)"delete_NumericDomain(NumericDomain self)"},
 	 { (char *)"NumericDomain_swigregister", NumericDomain_swigregister, METH_VARARGS, NULL},
-	 { (char *)"new_ItemDomain", _wrap_new_ItemDomain, METH_VARARGS, (char *)"\n"
-		"ItemDomain()\n"
-		"new_ItemDomain(Range rng) -> ItemDomain\n"
-		""},
+	 { (char *)"new_ItemDomain", _wrap_new_ItemDomain, METH_VARARGS, (char *)"new_ItemDomain(Range rng) -> ItemDomain"},
 	 { (char *)"ItemDomain_count", _wrap_ItemDomain_count, METH_VARARGS, (char *)"ItemDomain_count(ItemDomain self) -> quint32"},
 	 { (char *)"ItemDomain_setTheme", _wrap_ItemDomain_setTheme, METH_VARARGS, (char *)"ItemDomain_setTheme(ItemDomain self, std::string const & theme)"},
 	 { (char *)"ItemDomain_theme", _wrap_ItemDomain_theme, METH_VARARGS, (char *)"ItemDomain_theme(ItemDomain self) -> std::string"},
