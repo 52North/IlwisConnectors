@@ -37,6 +37,7 @@
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_pyobject.h"
 #include "pythonapi_catalog.h"
+#include "pythonapi_table.h"
 
 using namespace pythonapi;
 
@@ -67,22 +68,22 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
                                 command = QString("script %1=%2(%3,%4,%5,%6,%7,%8)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str());
                             }
                         }else{
-                            command = QString("%1=%2(%3,%4,%5,%6,%7)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str());
+                            command = QString("script %1=%2(%3,%4,%5,%6,%7)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str());
                         }
                     }else{
-                        command = QString("%1=%2(%3,%4,%5,%6)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str());
+                        command = QString("script %1=%2(%3,%4,%5,%6)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str());
                     }
                 }else{
-                    command = QString("%1=%2(%3,%4,%5)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str());
+                    command = QString("script %1=%2(%3,%4,%5)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str());
                 }
             }else{
-                command = QString("%1=%2(%3,%4)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str());
+                command = QString("script %1=%2(%3,%4)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str());
             }
         }else{
-            command = QString("%1=%2(%3)").arg(output_name.c_str(),operation.c_str(),c3.c_str());
+            command = QString("script %1=%2(%3)").arg(output_name.c_str(),operation.c_str(),c3.c_str());
         }
     }else{
-        command = QString("%1=%2").arg(output_name.c_str(),operation.c_str());
+        command = QString("script %1=%2").arg(output_name.c_str(),operation.c_str());
     }
     if (Ilwis::commandhandler()->execute(command,&ctx, symtbl) && !ctx._results.empty()){
         Ilwis::Symbol result = symtbl.getSymbol(ctx._results[0]);
@@ -113,6 +114,13 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
                 if (rename)
                     (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
                 return new GeoReference(obj);
+            }
+        }else if (result._type & itTABLE){
+            if (result._var.canConvert<Ilwis::ITable>()){
+                Ilwis::ITable* obj = new Ilwis::ITable(result._var.value<Ilwis::ITable>());
+                if (rename)
+                    (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                return new Table(obj);
             }
         } else if (result._type == itBOOL){
 
