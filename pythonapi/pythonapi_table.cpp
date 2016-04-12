@@ -20,7 +20,11 @@
 
 namespace pythonapi {
 
-    Table::Table(){        
+    Table::Table(){
+        Ilwis::ITable t;
+        t.prepare();
+        if (t.isValid())
+            this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(t));
     }
 
     Table::Table(Ilwis::ITable *table):IlwisObject(new Ilwis::IIlwisObject(*table)){
