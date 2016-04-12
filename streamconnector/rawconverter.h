@@ -1,6 +1,23 @@
 #ifndef RAWCONVERTER_H
 #define RAWCONVERTER_H
 
+#include "kernel.h"
+#include "ilwis.h"
+#include "geometries.h"
+#include "ilwisdata.h"
+#include "coordinatesystem.h"
+#include "georeference.h"
+#include "georefimplementation.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "coordinatesystem.h"
+#include "georeference.h"
+#include "simpelgeoreference.h"
+#include "cornersgeoreference.h"
+#include "controlpoint.h"
+#include "ctpgeoreference.h"
+#include "mathhelper.h"
+
 namespace Ilwis {
 namespace Stream{
 
@@ -36,7 +53,7 @@ public:
 
     RawConverter(double offset, double scale, double low, double high, IlwisTypes st=itUNKNOWN) : _offset(offset), _scale(scale), _storeType(st){
         if ( st == itUNKNOWN)
-            _undefined = guessUndef(low, high);
+            _undefined = guessUndef();
         else {
             switch(_storeType) {
                 case itINT16:
@@ -63,12 +80,12 @@ public:
         }
         if ( (_item && raw == 0) || raw == _undefined)
             return rUNDEF;
-        return (raw + _offset) * _scale;
+        return (raw + _offset) * MathHelper::roundTo3DecimalDigits (_scale);
     }
     long real2raw(double real) const {
         if ( real == rUNDEF)
             return _undefined;
-        return real / _scale - _offset;
+        return real / MathHelper::roundTo3DecimalDigits (_scale)   - _offset;
     }
     bool isNeutral() const{
         if ( _storeType == itDOUBLE )
@@ -107,14 +124,14 @@ public:
     }
 
 private:
-    double guessUndef(double vmin, double vmax);
+    double guessUndef();
     long rounding(double x) const;
     double determineOffset(double low, double high, double step, IlwisTypes st);
     void intRange(double low, double high, double step, double &minDivStep, double &maxDivStep) const;
     double determineScale(double low, double high, double step) const;
     IlwisTypes minNeededStoreType(double low, double high, double step) const;
 
-    long _offset;
+    double _offset;
     double _scale;
     IlwisTypes _storeType;
     double _undefined;
