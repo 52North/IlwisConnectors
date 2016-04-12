@@ -22,18 +22,13 @@ using namespace Ilwis3;
 RawConverter::RawConverter(double low, double high, double step)  {
     _storeType =  minNeededStoreType(low, high, step);
     _offset = determineOffset(low, high, step, _storeType);
-    _scale = (step == 0.0) ? 1.0 : step;
-    //_scale = ( round (_scale * 1000.0) / 1000.0 );
-    _scale = MathHelper::roundTo3DecimalDigits (_scale);
+    _scale = MathHelper::roundTo3DecimalDigits ((step == 0.0) ? 1.0 : step);
 
     // Note: determineScale() is not called here,
-    // because the _scale gets the value passed as step, which in this case is
-    // the resolution already calculated
-
-
+    // because _scale gets the value passed-in as step, which in this case is
+    // the resolution calculated beforehand
 
     _undefined = guessUndef(step);
-
 }
 
 IlwisTypes RawConverter::minNeededStoreType(double low, double high, double step) const{
