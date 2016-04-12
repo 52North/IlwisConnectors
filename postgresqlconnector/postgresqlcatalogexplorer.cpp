@@ -61,11 +61,11 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
     sqlBuilder.append(" meta.tablename, count(geom.typname) as hasGeometry ");
     sqlBuilder.append(" FROM ");
     sqlBuilder.append(" pg_catalog.pg_tables AS meta,pg_catalog.pg_type AS geom ");
-    sqlBuilder.append(" WHEREGROUP ");
+    sqlBuilder.append(" WHERE ");
     sqlBuilder.append(" meta.schemaname = '").append(schema).append("' ");
     sqlBuilder.append(" AND ");
     sqlBuilder.append(" geom.typname = 'geometry' ");
-    sqlBuilder.append("  BY ");
+    sqlBuilder.append(" GROUP BY ");
     sqlBuilder.append(" meta.tablename;");
     qDebug() << "SQL: " << sqlBuilder;
 
