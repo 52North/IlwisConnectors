@@ -151,6 +151,7 @@ class it(_object):
     CONTINUOUSCOLOR = _ilwisobjects.it_CONTINUOUSCOLOR
     PALETTECOLOR = _ilwisobjects.it_PALETTECOLOR
     VALUERANGE = _ilwisobjects.it_VALUERANGE
+    COLLECTION = _ilwisobjects.it_COLLECTION
 
     def __init__(self):
         """__init__(pythonapi::it self) -> it"""
@@ -189,6 +190,8 @@ def object_cast(obj):
 #        return Ellipsoid.toEllipsoid(obj)
     elif it.CATALOG & type != 0:
         return Catalog.toCatalog(obj)
+    elif it.COLLECTION & type != 0:
+        return Collection.toCollection(obj)
     elif type == 0:
         raise TypeError("unknown IlwisType")
     else:
@@ -340,6 +343,67 @@ def Engine_getLocation():
 def Engine__catalogItems():
     """Engine__catalogItems() -> PyObject *"""
     return _ilwisobjects.Engine__catalogItems()
+
+class Collection(Object):
+    """Proxy of C++ pythonapi::Collection class."""
+
+    __swig_setmethods__ = {}
+    for _s in [Object]:
+        __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Collection, name, value)
+    __swig_getmethods__ = {}
+    for _s in [Object]:
+        __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
+    __getattr__ = lambda self, name: _swig_getattr(self, Collection, name)
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+
+    def __bool__(self):
+        """__bool__(Collection self) -> bool"""
+        return _ilwisobjects.Collection___bool__(self)
+
+
+    def __str__(self):
+        """__str__(Collection self) -> std::string"""
+        return _ilwisobjects.Collection___str__(self)
+
+
+    def ilwisType(self):
+        """ilwisType(Collection self) -> IlwisTypes"""
+        return _ilwisobjects.Collection_ilwisType(self)
+
+
+    def __len__(self):
+        """__len__(Collection self) -> int"""
+        return _ilwisobjects.Collection___len__(self)
+
+
+    def _getitem(self, colIndex):
+        """_getitem(Collection self, quint32 colIndex) -> Object"""
+        return _ilwisobjects.Collection__getitem(self, colIndex)
+
+
+    def toCollection(obj):
+        """toCollection(Object obj) -> Collection"""
+        return _ilwisobjects.Collection_toCollection(obj)
+
+    if _newclass:
+        toCollection = staticmethod(toCollection)
+    __swig_getmethods__["toCollection"] = lambda x: toCollection
+
+    def __getitem__(self, name):
+        return object_cast(self._getitem(name))
+
+    __swig_destroy__ = _ilwisobjects.delete_Collection
+    __del__ = lambda self: None
+Collection_swigregister = _ilwisobjects.Collection_swigregister
+Collection_swigregister(Collection)
+
+def Collection_toCollection(obj):
+    """Collection_toCollection(Object obj) -> Collection"""
+    return _ilwisobjects.Collection_toCollection(obj)
 
 class IlwisObject(Object):
     """Proxy of C++ pythonapi::IlwisObject class."""

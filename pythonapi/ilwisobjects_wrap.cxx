@@ -3035,69 +3035,70 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t swig_types[20]
 #define SWIGTYPE_p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t swig_types[21]
 #define SWIGTYPE_p_pythonapi__Catalog swig_types[22]
-#define SWIGTYPE_p_pythonapi__Color swig_types[23]
-#define SWIGTYPE_p_pythonapi__ColorDomain swig_types[24]
-#define SWIGTYPE_p_pythonapi__ColorModelNS swig_types[25]
-#define SWIGTYPE_p_pythonapi__ColorModelNS__Value swig_types[26]
-#define SWIGTYPE_p_pythonapi__ColorPalette swig_types[27]
-#define SWIGTYPE_p_pythonapi__ColorRange swig_types[28]
-#define SWIGTYPE_p_pythonapi__ColumnDefinition swig_types[29]
-#define SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t swig_types[30]
-#define SWIGTYPE_p_pythonapi__ContinuousColorRange swig_types[31]
-#define SWIGTYPE_p_pythonapi__Coordinate swig_types[32]
-#define SWIGTYPE_p_pythonapi__CoordinateSystem swig_types[33]
-#define SWIGTYPE_p_pythonapi__Coverage swig_types[34]
-#define SWIGTYPE_p_pythonapi__DataDefinition swig_types[35]
-#define SWIGTYPE_p_pythonapi__Domain swig_types[36]
-#define SWIGTYPE_p_pythonapi__DomainItem swig_types[37]
-#define SWIGTYPE_p_pythonapi__Engine swig_types[38]
-#define SWIGTYPE_p_pythonapi__Feature swig_types[39]
-#define SWIGTYPE_p_pythonapi__FeatureCoverage swig_types[40]
-#define SWIGTYPE_p_pythonapi__FeatureIterator swig_types[41]
-#define SWIGTYPE_p_pythonapi__FlowVal swig_types[42]
-#define SWIGTYPE_p_pythonapi__FlowVal__Value swig_types[43]
-#define SWIGTYPE_p_pythonapi__GeoReference swig_types[44]
-#define SWIGTYPE_p_pythonapi__Geometry swig_types[45]
-#define SWIGTYPE_p_pythonapi__IOOptions swig_types[46]
-#define SWIGTYPE_p_pythonapi__IlwisObject swig_types[47]
-#define SWIGTYPE_p_pythonapi__IndexedIdentifier swig_types[48]
-#define SWIGTYPE_p_pythonapi__IndexedItemRange swig_types[49]
-#define SWIGTYPE_p_pythonapi__Interval swig_types[50]
-#define SWIGTYPE_p_pythonapi__ItemDomain swig_types[51]
-#define SWIGTYPE_p_pythonapi__ItemRange swig_types[52]
-#define SWIGTYPE_p_pythonapi__NamedIdentifier swig_types[53]
-#define SWIGTYPE_p_pythonapi__NamedItemRange swig_types[54]
-#define SWIGTYPE_p_pythonapi__NumericDomain swig_types[55]
-#define SWIGTYPE_p_pythonapi__NumericItemRange swig_types[56]
-#define SWIGTYPE_p_pythonapi__NumericRange swig_types[57]
-#define SWIGTYPE_p_pythonapi__Object swig_types[58]
-#define SWIGTYPE_p_pythonapi__PixelIterator swig_types[59]
-#define SWIGTYPE_p_pythonapi__PixelTemplateT_double_t swig_types[60]
-#define SWIGTYPE_p_pythonapi__PixelTemplateT_int_t swig_types[61]
-#define SWIGTYPE_p_pythonapi__Properties swig_types[62]
-#define SWIGTYPE_p_pythonapi__Properties__Values swig_types[63]
-#define SWIGTYPE_p_pythonapi__Range swig_types[64]
-#define SWIGTYPE_p_pythonapi__RangeIteratorT_double_pythonapi__NumericRange_double_Ilwis__NumericRange_t swig_types[65]
-#define SWIGTYPE_p_pythonapi__RasterCoverage swig_types[66]
-#define SWIGTYPE_p_pythonapi__SizeTemplateT_double_t swig_types[67]
-#define SWIGTYPE_p_pythonapi__SizeTemplateT_unsigned_int_t swig_types[68]
-#define SWIGTYPE_p_pythonapi__Table swig_types[69]
-#define SWIGTYPE_p_pythonapi__TextDomain swig_types[70]
-#define SWIGTYPE_p_pythonapi__ThematicItem swig_types[71]
-#define SWIGTYPE_p_pythonapi__ThematicRange swig_types[72]
-#define SWIGTYPE_p_pythonapi__TimeDomain swig_types[73]
-#define SWIGTYPE_p_pythonapi__TimeInterval swig_types[74]
-#define SWIGTYPE_p_pythonapi__VertexIterator swig_types[75]
-#define SWIGTYPE_p_pythonapi__it swig_types[76]
-#define SWIGTYPE_p_short swig_types[77]
-#define SWIGTYPE_p_signed_char swig_types[78]
-#define SWIGTYPE_p_std__string swig_types[79]
-#define SWIGTYPE_p_unsigned_char swig_types[80]
-#define SWIGTYPE_p_unsigned_int swig_types[81]
-#define SWIGTYPE_p_unsigned_long_long swig_types[82]
-#define SWIGTYPE_p_unsigned_short swig_types[83]
-static swig_type_info *swig_types[85];
-static swig_module_info swig_module = {swig_types, 84, 0, 0, 0, 0};
+#define SWIGTYPE_p_pythonapi__Collection swig_types[23]
+#define SWIGTYPE_p_pythonapi__Color swig_types[24]
+#define SWIGTYPE_p_pythonapi__ColorDomain swig_types[25]
+#define SWIGTYPE_p_pythonapi__ColorModelNS swig_types[26]
+#define SWIGTYPE_p_pythonapi__ColorModelNS__Value swig_types[27]
+#define SWIGTYPE_p_pythonapi__ColorPalette swig_types[28]
+#define SWIGTYPE_p_pythonapi__ColorRange swig_types[29]
+#define SWIGTYPE_p_pythonapi__ColumnDefinition swig_types[30]
+#define SWIGTYPE_p_pythonapi__ContainerStatisticsT_double_t swig_types[31]
+#define SWIGTYPE_p_pythonapi__ContinuousColorRange swig_types[32]
+#define SWIGTYPE_p_pythonapi__Coordinate swig_types[33]
+#define SWIGTYPE_p_pythonapi__CoordinateSystem swig_types[34]
+#define SWIGTYPE_p_pythonapi__Coverage swig_types[35]
+#define SWIGTYPE_p_pythonapi__DataDefinition swig_types[36]
+#define SWIGTYPE_p_pythonapi__Domain swig_types[37]
+#define SWIGTYPE_p_pythonapi__DomainItem swig_types[38]
+#define SWIGTYPE_p_pythonapi__Engine swig_types[39]
+#define SWIGTYPE_p_pythonapi__Feature swig_types[40]
+#define SWIGTYPE_p_pythonapi__FeatureCoverage swig_types[41]
+#define SWIGTYPE_p_pythonapi__FeatureIterator swig_types[42]
+#define SWIGTYPE_p_pythonapi__FlowVal swig_types[43]
+#define SWIGTYPE_p_pythonapi__FlowVal__Value swig_types[44]
+#define SWIGTYPE_p_pythonapi__GeoReference swig_types[45]
+#define SWIGTYPE_p_pythonapi__Geometry swig_types[46]
+#define SWIGTYPE_p_pythonapi__IOOptions swig_types[47]
+#define SWIGTYPE_p_pythonapi__IlwisObject swig_types[48]
+#define SWIGTYPE_p_pythonapi__IndexedIdentifier swig_types[49]
+#define SWIGTYPE_p_pythonapi__IndexedItemRange swig_types[50]
+#define SWIGTYPE_p_pythonapi__Interval swig_types[51]
+#define SWIGTYPE_p_pythonapi__ItemDomain swig_types[52]
+#define SWIGTYPE_p_pythonapi__ItemRange swig_types[53]
+#define SWIGTYPE_p_pythonapi__NamedIdentifier swig_types[54]
+#define SWIGTYPE_p_pythonapi__NamedItemRange swig_types[55]
+#define SWIGTYPE_p_pythonapi__NumericDomain swig_types[56]
+#define SWIGTYPE_p_pythonapi__NumericItemRange swig_types[57]
+#define SWIGTYPE_p_pythonapi__NumericRange swig_types[58]
+#define SWIGTYPE_p_pythonapi__Object swig_types[59]
+#define SWIGTYPE_p_pythonapi__PixelIterator swig_types[60]
+#define SWIGTYPE_p_pythonapi__PixelTemplateT_double_t swig_types[61]
+#define SWIGTYPE_p_pythonapi__PixelTemplateT_int_t swig_types[62]
+#define SWIGTYPE_p_pythonapi__Properties swig_types[63]
+#define SWIGTYPE_p_pythonapi__Properties__Values swig_types[64]
+#define SWIGTYPE_p_pythonapi__Range swig_types[65]
+#define SWIGTYPE_p_pythonapi__RangeIteratorT_double_pythonapi__NumericRange_double_Ilwis__NumericRange_t swig_types[66]
+#define SWIGTYPE_p_pythonapi__RasterCoverage swig_types[67]
+#define SWIGTYPE_p_pythonapi__SizeTemplateT_double_t swig_types[68]
+#define SWIGTYPE_p_pythonapi__SizeTemplateT_unsigned_int_t swig_types[69]
+#define SWIGTYPE_p_pythonapi__Table swig_types[70]
+#define SWIGTYPE_p_pythonapi__TextDomain swig_types[71]
+#define SWIGTYPE_p_pythonapi__ThematicItem swig_types[72]
+#define SWIGTYPE_p_pythonapi__ThematicRange swig_types[73]
+#define SWIGTYPE_p_pythonapi__TimeDomain swig_types[74]
+#define SWIGTYPE_p_pythonapi__TimeInterval swig_types[75]
+#define SWIGTYPE_p_pythonapi__VertexIterator swig_types[76]
+#define SWIGTYPE_p_pythonapi__it swig_types[77]
+#define SWIGTYPE_p_short swig_types[78]
+#define SWIGTYPE_p_signed_char swig_types[79]
+#define SWIGTYPE_p_std__string swig_types[80]
+#define SWIGTYPE_p_unsigned_char swig_types[81]
+#define SWIGTYPE_p_unsigned_int swig_types[82]
+#define SWIGTYPE_p_unsigned_long_long swig_types[83]
+#define SWIGTYPE_p_unsigned_short swig_types[84]
+static swig_type_info *swig_types[86];
+static swig_module_info swig_module = {swig_types, 85, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3215,6 +3216,7 @@ namespace swig {
 #include "pythonapi_extension.h"
 #include "pythonapi_object.h"
 #include "pythonapi_engine.h"
+#include "pythonapi_collection.h"
 #include "pythonapi_ilwisobject.h"
 #include "pythonapi_coordinatesystem.h"
 #include "pythonapi_table.h"
@@ -3366,10 +3368,32 @@ SWIGINTERNINLINE PyObject*
 }
 
 
-SWIGINTERNINLINE PyObject*
-  SWIG_From_int  (int value)
+  #define SWIG_From_long   PyLong_FromLong 
+
+
+#include <limits.h>
+#if !defined(SWIG_NO_LLONG_MAX)
+# if !defined(LLONG_MAX) && defined(__GNUC__) && defined (__LONG_LONG_MAX__)
+#   define LLONG_MAX __LONG_LONG_MAX__
+#   define LLONG_MIN (-LLONG_MAX - 1LL)
+#   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
+# endif
+#endif
+
+
+SWIGINTERNINLINE PyObject* 
+SWIG_From_long_SS_long  (long long value)
 {
-  return PyInt_FromLong((long) value);
+  return ((value < LONG_MIN) || (value > LONG_MAX)) ?
+    PyLong_FromLongLong(value) : PyLong_FromLong(static_cast< long >(value)); 
+}
+
+
+SWIGINTERNINLINE PyObject* 
+SWIG_From_unsigned_SS_long_SS_long  (unsigned long long value)
+{
+  return (value > LONG_MAX) ?
+    PyLong_FromUnsignedLongLong(value) : PyLong_FromLong(static_cast< long >(value)); 
 }
 
 
@@ -3405,35 +3429,6 @@ SWIG_From_std_string  (const std::string& s)
 }
 
 
-  #define SWIG_From_long   PyLong_FromLong 
-
-
-#include <limits.h>
-#if !defined(SWIG_NO_LLONG_MAX)
-# if !defined(LLONG_MAX) && defined(__GNUC__) && defined (__LONG_LONG_MAX__)
-#   define LLONG_MAX __LONG_LONG_MAX__
-#   define LLONG_MIN (-LLONG_MAX - 1LL)
-#   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
-# endif
-#endif
-
-
-SWIGINTERNINLINE PyObject* 
-SWIG_From_long_SS_long  (long long value)
-{
-  return ((value < LONG_MIN) || (value > LONG_MAX)) ?
-    PyLong_FromLongLong(value) : PyLong_FromLong(static_cast< long >(value)); 
-}
-
-
-SWIGINTERNINLINE PyObject* 
-SWIG_From_unsigned_SS_long_SS_long  (unsigned long long value)
-{
-  return (value > LONG_MAX) ?
-    PyLong_FromUnsignedLongLong(value) : PyLong_FromLong(static_cast< long >(value)); 
-}
-
-
 SWIGINTERN int
 SWIG_AsPtr_std_string (PyObject * obj, std::string **val) 
 {
@@ -3462,6 +3457,13 @@ SWIG_AsPtr_std_string (PyObject * obj, std::string **val)
     }
   }
   return SWIG_ERROR;
+}
+
+
+SWIGINTERNINLINE PyObject*
+  SWIG_From_int  (int value)
+{
+  return PyInt_FromLong((long) value);
 }
 
 
@@ -3596,6 +3598,22 @@ SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val)
 
 
 SWIGINTERN int
+SWIG_AsVal_unsigned_SS_int (PyObject * obj, unsigned int *val)
+{
+  unsigned long v;
+  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v > UINT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< unsigned int >(v);
+    }
+  }  
+  return res;
+}
+
+
+SWIGINTERN int
 SWIG_AsVal_unsigned_SS_long_SS_long (PyObject *obj, unsigned long long *val)
 {
   int res = SWIG_TypeError;
@@ -3628,22 +3646,6 @@ SWIG_AsVal_unsigned_SS_long_SS_long (PyObject *obj, unsigned long long *val)
     res = SWIG_TypeError;
   }
 #endif
-  return res;
-}
-
-
-SWIGINTERN int
-SWIG_AsVal_unsigned_SS_int (PyObject * obj, unsigned int *val)
-{
-  unsigned long v;
-  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if ((v > UINT_MAX)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = static_cast< unsigned int >(v);
-    }
-  }  
   return res;
 }
 
@@ -5335,6 +5337,224 @@ SWIGINTERN PyObject *Engine_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObjec
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
   SWIG_TypeNewClientData(SWIGTYPE_p_pythonapi__Engine, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_Collection___bool__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Collection *arg1 = (pythonapi::Collection *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Collection___bool__",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Collection, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Collection___bool__" "', argument " "1"" of type '" "pythonapi::Collection const *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Collection * >(argp1);
+  {
+    try {
+      result = (bool)((pythonapi::Collection const *)arg1)->__bool__();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Collection___str__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Collection *arg1 = (pythonapi::Collection *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Collection___str__",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Collection, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Collection___str__" "', argument " "1"" of type '" "pythonapi::Collection *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Collection * >(argp1);
+  {
+    try {
+      result = (arg1)->__str__();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Collection_ilwisType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Collection *arg1 = (pythonapi::Collection *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  IlwisTypes result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Collection_ilwisType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Collection, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Collection_ilwisType" "', argument " "1"" of type '" "pythonapi::Collection *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Collection * >(argp1);
+  {
+    try {
+      result = (IlwisTypes)(arg1)->ilwisType();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Collection___len__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Collection *arg1 = (pythonapi::Collection *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Collection___len__",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Collection, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Collection___len__" "', argument " "1"" of type '" "pythonapi::Collection *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Collection * >(argp1);
+  {
+    try {
+      result = (int)(arg1)->__len__();
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Collection__getitem(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Collection *arg1 = (pythonapi::Collection *) 0 ;
+  quint32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  pythonapi::Object *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Collection__getitem",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Collection, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Collection__getitem" "', argument " "1"" of type '" "pythonapi::Collection *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Collection * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Collection__getitem" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  {
+    try {
+      result = (pythonapi::Object *)(arg1)->_getitem(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__Object, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Collection_toCollection(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Object *arg1 = (pythonapi::Object *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  pythonapi::Collection *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Collection_toCollection",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Object, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Collection_toCollection" "', argument " "1"" of type '" "pythonapi::Object *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Object * >(argp1);
+  {
+    try {
+      result = (pythonapi::Collection *)pythonapi::Collection::toCollection(arg1);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_pythonapi__Collection, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_Collection(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::Collection *arg1 = (pythonapi::Collection *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_Collection",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Collection, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_Collection" "', argument " "1"" of type '" "pythonapi::Collection *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::Collection * >(argp1);
+  {
+    try {
+      delete arg1;
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *Collection_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_pythonapi__Collection, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
@@ -36885,6 +37105,14 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Engine__catalogItems", _wrap_Engine__catalogItems, METH_VARARGS, (char *)"Engine__catalogItems() -> PyObject *"},
 	 { (char *)"delete_Engine", _wrap_delete_Engine, METH_VARARGS, (char *)"delete_Engine(Engine self)"},
 	 { (char *)"Engine_swigregister", Engine_swigregister, METH_VARARGS, NULL},
+	 { (char *)"Collection___bool__", _wrap_Collection___bool__, METH_VARARGS, (char *)"Collection___bool__(Collection self) -> bool"},
+	 { (char *)"Collection___str__", _wrap_Collection___str__, METH_VARARGS, (char *)"Collection___str__(Collection self) -> std::string"},
+	 { (char *)"Collection_ilwisType", _wrap_Collection_ilwisType, METH_VARARGS, (char *)"Collection_ilwisType(Collection self) -> IlwisTypes"},
+	 { (char *)"Collection___len__", _wrap_Collection___len__, METH_VARARGS, (char *)"Collection___len__(Collection self) -> int"},
+	 { (char *)"Collection__getitem", _wrap_Collection__getitem, METH_VARARGS, (char *)"Collection__getitem(Collection self, quint32 colIndex) -> Object"},
+	 { (char *)"Collection_toCollection", _wrap_Collection_toCollection, METH_VARARGS, (char *)"Collection_toCollection(Object obj) -> Collection"},
+	 { (char *)"delete_Collection", _wrap_delete_Collection, METH_VARARGS, (char *)"delete_Collection(Collection self)"},
+	 { (char *)"Collection_swigregister", Collection_swigregister, METH_VARARGS, NULL},
 	 { (char *)"delete_IlwisObject", _wrap_delete_IlwisObject, METH_VARARGS, (char *)"delete_IlwisObject(IlwisObject self)"},
 	 { (char *)"IlwisObject_open", _wrap_IlwisObject_open, METH_VARARGS, (char *)"\n"
 		"open(std::string const & url, std::string const & format, std::string const & fnamespace, IOOptions options)\n"
@@ -37966,6 +38194,9 @@ static void *_p_pythonapi__ColorRangeTo_p_pythonapi__Range(void *x, int *SWIGUNU
 static void *_p_pythonapi__ContinuousColorRangeTo_p_pythonapi__Range(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Range *) (pythonapi::ColorRange *) ((pythonapi::ContinuousColorRange *) x));
 }
+static void *_p_pythonapi__CollectionTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((pythonapi::Object *)  ((pythonapi::Collection *) x));
+}
 static void *_p_pythonapi__CatalogTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Object *)  ((pythonapi::Catalog *) x));
 }
@@ -38014,14 +38245,14 @@ static void *_p_pythonapi__ThematicItemTo_p_pythonapi__Object(void *x, int *SWIG
 static void *_p_pythonapi__TableTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Object *) (pythonapi::IlwisObject *) ((pythonapi::Table *) x));
 }
-static void *_p_pythonapi__ColorDomainTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((pythonapi::Object *) (pythonapi::IlwisObject *)(pythonapi::Domain *) ((pythonapi::ColorDomain *) x));
-}
 static void *_p_pythonapi__DomainTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Object *) (pythonapi::IlwisObject *) ((pythonapi::Domain *) x));
 }
 static void *_p_pythonapi__CoordinateSystemTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Object *) (pythonapi::IlwisObject *) ((pythonapi::CoordinateSystem *) x));
+}
+static void *_p_pythonapi__ColorDomainTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((pythonapi::Object *) (pythonapi::IlwisObject *)(pythonapi::Domain *) ((pythonapi::ColorDomain *) x));
 }
 static void *_p_pythonapi__TextDomainTo_p_pythonapi__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((pythonapi::Object *) (pythonapi::IlwisObject *)(pythonapi::Domain *) ((pythonapi::TextDomain *) x));
@@ -38094,6 +38325,7 @@ static swig_type_info _swigt__p_long_long = {"_p_long_long", "qint64 *|long long
 static swig_type_info _swigt__p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t = {"_p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t", "pythonapi::Envelope *|pythonapi::BoxTemplate< Ilwis::Coordinate,pythonapi::Coordinate,double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t = {"_p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t", "pythonapi::BoxTemplate< Ilwis::Location< int,false >,pythonapi::PixelTemplate< int >,unsigned int > *|pythonapi::BoxTemplate< Ilwis::Location< int,false >,pythonapi::PixelTemplate< qint32 >,unsigned int > *|pythonapi::Box *|pythonapi::BoxTemplate< Ilwis::Location< qint32,false >,pythonapi::PixelTemplate< qint32 >,quint32 > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__Catalog = {"_p_pythonapi__Catalog", "pythonapi::Catalog *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_pythonapi__Collection = {"_p_pythonapi__Collection", "pythonapi::Collection *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__Color = {"_p_pythonapi__Color", "pythonapi::Color *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__ColorDomain = {"_p_pythonapi__ColorDomain", "pythonapi::ColorDomain *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_pythonapi__ColorModelNS = {"_p_pythonapi__ColorModelNS", "pythonapi::ColorModelNS *", 0, 0, (void*)0, 0};
@@ -38180,6 +38412,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t,
   &_swigt__p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t,
   &_swigt__p_pythonapi__Catalog,
+  &_swigt__p_pythonapi__Collection,
   &_swigt__p_pythonapi__Color,
   &_swigt__p_pythonapi__ColorDomain,
   &_swigt__p_pythonapi__ColorModelNS,
@@ -38266,6 +38499,7 @@ static swig_cast_info _swigc__p_long_long[] = {  {&_swigt__p_long_long, 0, 0, 0}
 static swig_cast_info _swigc__p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t[] = {  {&_swigt__p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t[] = {  {&_swigt__p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__Catalog[] = {  {&_swigt__p_pythonapi__Catalog, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_pythonapi__Collection[] = {  {&_swigt__p_pythonapi__Collection, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__Color[] = {  {&_swigt__p_pythonapi__Color, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__ColorDomain[] = {  {&_swigt__p_pythonapi__ColorDomain, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__ColorModelNS[] = {  {&_swigt__p_pythonapi__ColorModelNS, 0, 0, 0},{0, 0, 0, 0}};
@@ -38301,7 +38535,7 @@ static swig_cast_info _swigc__p_pythonapi__NamedItemRange[] = {  {&_swigt__p_pyt
 static swig_cast_info _swigc__p_pythonapi__NumericDomain[] = {  {&_swigt__p_pythonapi__NumericDomain, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__NumericItemRange[] = {  {&_swigt__p_pythonapi__NumericItemRange, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__NumericRange[] = {  {&_swigt__p_pythonapi__NumericRange, 0, 0, 0},  {&_swigt__p_pythonapi__TimeInterval, _p_pythonapi__TimeIntervalTo_p_pythonapi__NumericRange, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_pythonapi__Object[] = {  {&_swigt__p_pythonapi__Catalog, _p_pythonapi__CatalogTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__DomainItem, _p_pythonapi__DomainItemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Feature, _p_pythonapi__FeatureTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Range, _p_pythonapi__RangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Interval, _p_pythonapi__IntervalTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TimeInterval, _p_pythonapi__TimeIntervalTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__GeoReference, _p_pythonapi__GeoReferenceTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ColorRange, _p_pythonapi__ColorRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ContinuousColorRange, _p_pythonapi__ContinuousColorRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TimeDomain, _p_pythonapi__TimeDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericDomain, _p_pythonapi__NumericDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ItemDomain, _p_pythonapi__ItemDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Domain, _p_pythonapi__DomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NamedIdentifier, _p_pythonapi__NamedIdentifierTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IndexedIdentifier, _p_pythonapi__IndexedIdentifierTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ThematicItem, _p_pythonapi__ThematicItemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ThematicRange, _p_pythonapi__ThematicRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ColorPalette, _p_pythonapi__ColorPaletteTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericRange, _p_pythonapi__NumericRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ColorDomain, _p_pythonapi__ColorDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TextDomain, _p_pythonapi__TextDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Table, _p_pythonapi__TableTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__CoordinateSystem, _p_pythonapi__CoordinateSystemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__RasterCoverage, _p_pythonapi__RasterCoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__FeatureCoverage, _p_pythonapi__FeatureCoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Coverage, _p_pythonapi__CoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NamedItemRange, _p_pythonapi__NamedItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IndexedItemRange, _p_pythonapi__IndexedItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericItemRange, _p_pythonapi__NumericItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ItemRange, _p_pythonapi__ItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Object, 0, 0, 0},  {&_swigt__p_pythonapi__Geometry, _p_pythonapi__GeometryTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IlwisObject, _p_pythonapi__IlwisObjectTo_p_pythonapi__Object, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_pythonapi__Object[] = {  {&_swigt__p_pythonapi__Feature, _p_pythonapi__FeatureTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Table, _p_pythonapi__TableTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Range, _p_pythonapi__RangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__DomainItem, _p_pythonapi__DomainItemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Catalog, _p_pythonapi__CatalogTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__GeoReference, _p_pythonapi__GeoReferenceTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__RasterCoverage, _p_pythonapi__RasterCoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__FeatureCoverage, _p_pythonapi__FeatureCoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Coverage, _p_pythonapi__CoverageTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ThematicRange, _p_pythonapi__ThematicRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericRange, _p_pythonapi__NumericRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ColorDomain, _p_pythonapi__ColorDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TextDomain, _p_pythonapi__TextDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ColorRange, _p_pythonapi__ColorRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ContinuousColorRange, _p_pythonapi__ContinuousColorRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Collection, _p_pythonapi__CollectionTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Geometry, _p_pythonapi__GeometryTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ColorPalette, _p_pythonapi__ColorPaletteTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ThematicItem, _p_pythonapi__ThematicItemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NamedIdentifier, _p_pythonapi__NamedIdentifierTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IndexedIdentifier, _p_pythonapi__IndexedIdentifierTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TimeDomain, _p_pythonapi__TimeDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ItemDomain, _p_pythonapi__ItemDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericDomain, _p_pythonapi__NumericDomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Domain, _p_pythonapi__DomainTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__ItemRange, _p_pythonapi__ItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NumericItemRange, _p_pythonapi__NumericItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IndexedItemRange, _p_pythonapi__IndexedItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__NamedItemRange, _p_pythonapi__NamedItemRangeTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Interval, _p_pythonapi__IntervalTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__TimeInterval, _p_pythonapi__TimeIntervalTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__CoordinateSystem, _p_pythonapi__CoordinateSystemTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__IlwisObject, _p_pythonapi__IlwisObjectTo_p_pythonapi__Object, 0, 0},  {&_swigt__p_pythonapi__Object, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__PixelIterator[] = {  {&_swigt__p_pythonapi__PixelIterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__PixelTemplateT_double_t[] = {  {&_swigt__p_pythonapi__PixelTemplateT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_pythonapi__PixelTemplateT_int_t[] = {  {&_swigt__p_pythonapi__PixelTemplateT_int_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -38352,6 +38586,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_pythonapi__BoxTemplateT_Ilwis__Coordinate_pythonapi__Coordinate_double_t,
   _swigc__p_pythonapi__BoxTemplateT_Ilwis__LocationT_int_false_t_pythonapi__PixelTemplateT_qint32_t_unsigned_int_t,
   _swigc__p_pythonapi__Catalog,
+  _swigc__p_pythonapi__Collection,
   _swigc__p_pythonapi__Color,
   _swigc__p_pythonapi__ColorDomain,
   _swigc__p_pythonapi__ColorModelNS,
@@ -39122,23 +39357,24 @@ SWIG_init(void) {
   PyModule_AddObject(m, "InvalidObjectException", pythonapi::invalidObjectException);//m is SWIG declaration for Python C API modul creation
   atexit(exitPython);
   
-  SWIG_Python_SetConstant(d, "it_FEATURE",SWIG_From_int(static_cast< int >(pythonapi::it::FEATURE)));
-  SWIG_Python_SetConstant(d, "it_RASTER",SWIG_From_int(static_cast< int >(pythonapi::it::RASTER)));
-  SWIG_Python_SetConstant(d, "it_COVERAGE",SWIG_From_int(static_cast< int >(pythonapi::it::COVERAGE)));
-  SWIG_Python_SetConstant(d, "it_TABLE",SWIG_From_int(static_cast< int >(pythonapi::it::TABLE)));
-  SWIG_Python_SetConstant(d, "it_GEOREF",SWIG_From_int(static_cast< int >(pythonapi::it::GEOREF)));
-  SWIG_Python_SetConstant(d, "it_COORDSYSTEM",SWIG_From_int(static_cast< int >(pythonapi::it::COORDSYSTEM)));
-  SWIG_Python_SetConstant(d, "it_DOMAIN",SWIG_From_int(static_cast< int >(pythonapi::it::DOMAIN)));
-  SWIG_Python_SetConstant(d, "it_NUMERICDOMAIN",SWIG_From_int(static_cast< int >(pythonapi::it::NUMERICDOMAIN)));
-  SWIG_Python_SetConstant(d, "it_ITEMDOMAIN",SWIG_From_int(static_cast< int >(pythonapi::it::ITEMDOMAIN)));
-  SWIG_Python_SetConstant(d, "it_SINGLEOPERATION",SWIG_From_int(static_cast< int >(pythonapi::it::SINGLEOPERATION)));
-  SWIG_Python_SetConstant(d, "it_WORKFLOW",SWIG_From_int(static_cast< int >(pythonapi::it::WORKFLOW)));
-  SWIG_Python_SetConstant(d, "it_PROJECTION",SWIG_From_int(static_cast< int >(pythonapi::it::PROJECTION)));
-  SWIG_Python_SetConstant(d, "it_ELLIPSOID",SWIG_From_int(static_cast< int >(pythonapi::it::ELLIPSOID)));
-  SWIG_Python_SetConstant(d, "it_CATALOG",SWIG_From_int(static_cast< int >(pythonapi::it::CATALOG)));
-  SWIG_Python_SetConstant(d, "it_CONTINUOUSCOLOR",SWIG_From_int(static_cast< int >(pythonapi::it::CONTINUOUSCOLOR)));
-  SWIG_Python_SetConstant(d, "it_PALETTECOLOR",SWIG_From_int(static_cast< int >(pythonapi::it::PALETTECOLOR)));
-  SWIG_Python_SetConstant(d, "it_VALUERANGE",SWIG_From_int(static_cast< int >(pythonapi::it::VALUERANGE)));
+  SWIG_Python_SetConstant(d, "it_FEATURE",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::FEATURE)));
+  SWIG_Python_SetConstant(d, "it_RASTER",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::RASTER)));
+  SWIG_Python_SetConstant(d, "it_COVERAGE",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::COVERAGE)));
+  SWIG_Python_SetConstant(d, "it_TABLE",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::TABLE)));
+  SWIG_Python_SetConstant(d, "it_GEOREF",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::GEOREF)));
+  SWIG_Python_SetConstant(d, "it_COORDSYSTEM",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::COORDSYSTEM)));
+  SWIG_Python_SetConstant(d, "it_DOMAIN",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::DOMAIN)));
+  SWIG_Python_SetConstant(d, "it_NUMERICDOMAIN",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::NUMERICDOMAIN)));
+  SWIG_Python_SetConstant(d, "it_ITEMDOMAIN",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::ITEMDOMAIN)));
+  SWIG_Python_SetConstant(d, "it_SINGLEOPERATION",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::SINGLEOPERATION)));
+  SWIG_Python_SetConstant(d, "it_WORKFLOW",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::WORKFLOW)));
+  SWIG_Python_SetConstant(d, "it_PROJECTION",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::PROJECTION)));
+  SWIG_Python_SetConstant(d, "it_ELLIPSOID",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::ELLIPSOID)));
+  SWIG_Python_SetConstant(d, "it_CATALOG",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::CATALOG)));
+  SWIG_Python_SetConstant(d, "it_CONTINUOUSCOLOR",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::CONTINUOUSCOLOR)));
+  SWIG_Python_SetConstant(d, "it_PALETTECOLOR",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::PALETTECOLOR)));
+  SWIG_Python_SetConstant(d, "it_VALUERANGE",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::VALUERANGE)));
+  SWIG_Python_SetConstant(d, "it_COLLECTION",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::COLLECTION)));
   SWIG_Python_SetConstant(d, "IlwisObject_cmINPUT",SWIG_From_int(static_cast< int >(pythonapi::IlwisObject::cmINPUT)));
   SWIG_Python_SetConstant(d, "IlwisObject_cmOUTPUT",SWIG_From_int(static_cast< int >(pythonapi::IlwisObject::cmOUTPUT)));
   SWIG_Python_SetConstant(d, "IlwisObject_cmEXTENDED",SWIG_From_int(static_cast< int >(pythonapi::IlwisObject::cmEXTENDED)));
