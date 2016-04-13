@@ -22,6 +22,7 @@
 #include "pythonapi_extension.h"
 #include "pythonapi_object.h"
 #include "pythonapi_engine.h"
+#include "pythonapi_collection.h"
 #include "pythonapi_ilwisobject.h"
 #include "pythonapi_coordinatesystem.h"
 #include "pythonapi_table.h"
@@ -115,6 +116,8 @@ def object_cast(obj):
 #        return Ellipsoid.toEllipsoid(obj)
     elif it.CATALOG & type != 0:
         return Catalog.toCatalog(obj)
+    elif it.COLLECTION & type != 0:
+        return Collection.toCollection(obj)
     elif type == 0:
         raise TypeError("unknown IlwisType")
     else:
@@ -137,6 +140,14 @@ def object_cast(obj):
     @staticmethod
     def catalogItems():
         return sorted(Engine__catalogItems(), key = str.lower)
+%}
+}
+
+%include "pythonapi_collection.h"
+%extend pythonapi::Collection {
+%insert("python") %{
+def __getitem__(self, name):
+    return object_cast(self._getitem(name))
 %}
 }
 
