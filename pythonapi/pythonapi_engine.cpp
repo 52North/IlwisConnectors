@@ -33,6 +33,7 @@
 
 #include "pythonapi_object.h"
 #include "pythonapi_engine.h"
+#include "pythonapi_collection.h"
 #include "pythonapi_rastercoverage.h"
 #include "pythonapi_featurecoverage.h"
 #include "pythonapi_pyobject.h"
@@ -86,46 +87,55 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
         command = QString("script %1=%2").arg(output_name.c_str(),operation.c_str());
     }
     if (Ilwis::commandhandler()->execute(command,&ctx, symtbl) && !ctx._results.empty()){
-        Ilwis::Symbol result = symtbl.getSymbol(ctx._results[0]);
-        if (result._type == itRASTER){
-            if (result._var.canConvert<Ilwis::IRasterCoverage>()){
-                Ilwis::IRasterCoverage* obj = new Ilwis::IRasterCoverage(result._var.value<Ilwis::IRasterCoverage>());
-                if (rename)
-                    (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
-                return new RasterCoverage(obj);
-            }
-        }else if (result._type == itFEATURE){
-            if (result._var.canConvert<Ilwis::IFeatureCoverage>()){
-                Ilwis::IFeatureCoverage* obj = new Ilwis::IFeatureCoverage(result._var.value<Ilwis::IFeatureCoverage>());
-                if (rename)
-                    (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
-                return new FeatureCoverage(obj);
-            }
-        }else if (result._type == itCOORDSYSTEM){
-            if (result._var.canConvert<Ilwis::ICoordinateSystem>()){
-                Ilwis::ICoordinateSystem* obj = new Ilwis::ICoordinateSystem(result._var.value<Ilwis::ICoordinateSystem>());
-                if (rename)
-                    (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
-                return new CoordinateSystem(obj);
-            }
-        }else if (result._type == itGEOREF){
-            if (result._var.canConvert<Ilwis::IGeoReference>()){
-                Ilwis::IGeoReference* obj = new Ilwis::IGeoReference(result._var.value<Ilwis::IGeoReference>());
-                if (rename)
-                    (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
-                return new GeoReference(obj);
-            }
-        }else if (result._type & itTABLE){
-            if (result._var.canConvert<Ilwis::ITable>()){
-                Ilwis::ITable* obj = new Ilwis::ITable(result._var.value<Ilwis::ITable>());
-                if (rename)
-                    (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
-                return new Table(obj);
-            }
-        } else if (result._type == itBOOL){
+        std::vector<Object*> results;
+        for (int i = 0; i < ctx._results.size(); ++i) {
+            Ilwis::Symbol result = symtbl.getSymbol(ctx._results[i]);
+            if (result._type == itRASTER){
+                if (result._var.canConvert<Ilwis::IRasterCoverage>()){
+                    Ilwis::IRasterCoverage* obj = new Ilwis::IRasterCoverage(result._var.value<Ilwis::IRasterCoverage>());
+                    if (rename)
+                        (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                    results.push_back(new RasterCoverage(obj));
+                }
+            }else if (result._type == itFEATURE){
+                if (result._var.canConvert<Ilwis::IFeatureCoverage>()){
+                    Ilwis::IFeatureCoverage* obj = new Ilwis::IFeatureCoverage(result._var.value<Ilwis::IFeatureCoverage>());
+                    if (rename)
+                        (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                    results.push_back(new FeatureCoverage(obj));
+                }
+            }else if (result._type == itCOORDSYSTEM){
+                if (result._var.canConvert<Ilwis::ICoordinateSystem>()){
+                    Ilwis::ICoordinateSystem* obj = new Ilwis::ICoordinateSystem(result._var.value<Ilwis::ICoordinateSystem>());
+                    if (rename)
+                        (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                    results.push_back(new CoordinateSystem(obj));
+                }
+            }else if (result._type == itGEOREF){
+                if (result._var.canConvert<Ilwis::IGeoReference>()){
+                    Ilwis::IGeoReference* obj = new Ilwis::IGeoReference(result._var.value<Ilwis::IGeoReference>());
+                    if (rename)
+                        (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                    results.push_back(new GeoReference(obj));
+                }
+            }else if (result._type & itTABLE){
+                if (result._var.canConvert<Ilwis::ITable>()){
+                    Ilwis::ITable* obj = new Ilwis::ITable(result._var.value<Ilwis::ITable>());
+                    if (rename)
+                        (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                    results.push_back(new Table(obj));
+                }
+            } else if (result._type == itBOOL){
 
+            }
         }
-        throw Ilwis::ErrorObject(QString("couldn't handle return type of do(%1)").arg(command));
+        if (results.size() == 0)
+            throw Ilwis::ErrorObject(QString("couldn't handle return type of do(%1)").arg(command));
+        else if (results.size() == 1)
+            return results[0];
+        else {
+            return new Collection(results);
+        }
     }else{
         throw Ilwis::ErrorObject(QString("couldn't do(%1)").arg(command));
     }
