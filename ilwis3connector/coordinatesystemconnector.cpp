@@ -155,9 +155,6 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
 
 QString CoordinateSystemConnector::prjParam2IlwisName(Projection::ProjectionParamValue parm)
 {
-
-
-
     switch(parm){
         case Projection::pvAZIMCLINE:
         return "Azim of Central Line of True Scale";
@@ -341,10 +338,10 @@ bool CoordinateSystemConnector::storeMetaData(IlwisObject *data) {
                 ERROR2(ERR_NO_INITIALIZED_2, "Ellipsoid/Projection", csy->name());
                 return sUNDEF;
         }
-        QString projectionName = Ilwis3Connector::code2name(projectedCsy->projection()->name(), "projection");
+        QString projectionName = Ilwis3Connector::code2name(projectedCsy->projection()->code(), "projection");
         _odf->setKeyValue("CoordSystem","Type","Projection");
         _odf->setKeyValue("CoordSystem","Projection",projectionName);
-        QString ellipsoidName = projectedCsy->ellipsoid()->name();
+        QString ellipsoidName = projectedCsy->ellipsoid()->code();
         //ellipsoidName = Ilwis3Connector::name2Code(ellipsoidName, "ellipsoid");
         if ( ellipsoidName == sUNDEF){
             ellipsoidName = "User Defined";

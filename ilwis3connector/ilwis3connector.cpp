@@ -424,18 +424,33 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
 
             QFileInfo csyinf(csyName);
             if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
+
+                bool mustWriteCsyFile = true;
+
                 if (!csyinf.isAbsolute()){
                     QString destinationPath = QFileInfo(source().toLocalFile()).absolutePath();
                     csyName = destinationPath + "/" + csyName;
                 }
 
-                QUrl url = QUrl::fromLocalFile(csyName); // new attempt to create a suitable path;
-                csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
-                if(!csy->store({"storemode",Ilwis::IlwisObject::smMETADATA})){ // fail, we default to unknown
-                    csyName = "Unknown.csy";
-                    WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
+                QFileInfo csyFileInfo(csyName);
+                Resource resource = mastercatalog()->name2Resource(csyFileInfo.fileName(), itCOORDSYSTEM );
+                ICoordinateSystem existingCsy(resource);
+
+                if (csyFileInfo.exists() && !csy->isEqual(existingCsy.ptr()) ) {
+                    csyName = OSHelper::ensureUniqueFilename(csyName);
                 } else {
-                    csyName = url.toLocalFile();
+                    mustWriteCsyFile = false;
+                }
+
+                if (mustWriteCsyFile) {
+                    QUrl url = QUrl::fromLocalFile(csyName); // new attempt to create a suitable path;
+                    csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
+                    if(!csy->store({"storemode",Ilwis::IlwisObject::smMETADATA})){ // fail, we default to unknown
+                        csyName = "Unknown.csy";
+                        WARN2(ERR_NO_INITIALIZED_2,"CoordinateSystem",obj->name());
+                    } else {
+                        csyName = url.toLocalFile();
+                    }
                 }
             }
         }else
@@ -444,6 +459,7 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
         csyName = "unknown.csy";
     return csyName;
 }
+
 
 IniFile *Ilwis3Connector::makeIni(const Resource &resource, IlwisTypes type)
 {
