@@ -426,20 +426,20 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
             if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
 
                 bool mustWriteCsyFile = true;
+
                 if (!csyinf.isAbsolute()){
                     QString destinationPath = QFileInfo(source().toLocalFile()).absolutePath();
-                    QString tempCsyName = destinationPath + "/" + csyName;
+                    csyName = destinationPath + "/" + csyName;
+                }
 
-                    QFileInfo csyFileInfo(tempCsyName);
-                    Resource resource = mastercatalog()->name2Resource(csyFileInfo.fileName(), itCOORDSYSTEM );
-                    ICoordinateSystem existingCsy(resource);
+                QFileInfo csyFileInfo(csyName);
+                Resource resource = mastercatalog()->name2Resource(csyFileInfo.fileName(), itCOORDSYSTEM );
+                ICoordinateSystem existingCsy(resource);
 
-                    if (csyFileInfo.exists() && !csy->isEqual(existingCsy.ptr()) ) {
-                        csyName = OSHelper::ensureUniqueFilename(destinationPath, csyName);
-                    } else {
-                        csyName = tempCsyName;
-                        mustWriteCsyFile = false;
-                    }
+                if (csyFileInfo.exists() && !csy->isEqual(existingCsy.ptr()) ) {
+                    csyName = OSHelper::ensureUniqueFilename(csyName);
+                } else {
+                    mustWriteCsyFile = false;
                 }
 
                 if (mustWriteCsyFile) {
