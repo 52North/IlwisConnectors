@@ -435,7 +435,7 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
                     ICoordinateSystem existingCsy(resource);
 
                     if (csyFileInfo.exists() && !csy->isEqual(existingCsy.ptr()) ) {
-                        csyName = determineNewFilename(destinationPath, csyName);
+                        csyName = OSHelper::ensureUniqueFilename(destinationPath, csyName);
                     } else {
                         csyName = tempCsyName;
                         mustWriteCsyFile = false;
@@ -460,22 +460,6 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
     return csyName;
 }
 
-QString Ilwis3Connector::determineNewFilename(QString destinationPath, QString csyName)
-{
-    quint16 idx = 1;
-
-    while (idx < std::numeric_limits<quint16>::max()) {
-        QString tempFilename = QString("%1/%2%3").arg(destinationPath).arg(idx).arg(csyName);
-        QFileInfo fileInfo(tempFilename);
-
-        if (!fileInfo.exists()) {
-            return tempFilename;
-        }
-        ++idx;
-    }
-
-    return QString("");
-}
 
 IniFile *Ilwis3Connector::makeIni(const Resource &resource, IlwisTypes type)
 {

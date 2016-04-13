@@ -52,7 +52,6 @@ protected:
 
     QUrl makeUrl(const QString &path, const QString &name=sUNDEF, IlwisTypes type=itUNKNOWN);
     static QString type2humanName(IlwisTypes tp);
-    static QString determineNewFilename(QString destinationPath, QString csyName);
 };
 }
 
