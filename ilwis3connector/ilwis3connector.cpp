@@ -275,10 +275,11 @@ IlwisTypes Ilwis3Connector::ilwisType(const QString &name) {
     if ( filename.indexOf("file://") == 0) {
         filename = QUrl(filename).toLocalFile();
     }
+    // Special case: system domain value often does not have an extension
+    if (filename.toLower() == "value") {
+        filename.append(".dom");
+    }
     QFileInfo inf(filename);
-//    bool isCatalog =  inf.isDir();
-//    if ( isCatalog)
-//        return itCATALOG;
 
     QString ext = inf.suffix();
     if ( ext == "mpr")
