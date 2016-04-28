@@ -119,7 +119,7 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 
     }
 
-    std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
+    std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
     if ( !domainStreamer)
         return false;
     domainStreamer->store( raster->stackDefinition().domain().ptr(), options);
@@ -128,7 +128,7 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     for(auto index : indexes)
         _stream << index;
 
-    std::unique_ptr<DataInterface> grfstreamer(factory->create(Version::IlwisVersion, itGEOREF,_stream));
+    std::unique_ptr<DataInterface> grfstreamer(factory->create(Version::interfaceVersion, itGEOREF,_stream));
     if ( !grfstreamer)
         return false;
 
@@ -136,7 +136,7 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         return false;
     _stream << raster->hasAttributes();
     if ( raster->hasAttributes()){
-        std::unique_ptr<DataInterface> tblstreamer(factory->create(Version::IlwisVersion, itTABLE,_stream));
+        std::unique_ptr<DataInterface> tblstreamer(factory->create(Version::interfaceVersion, itTABLE,_stream));
         if ( !tblstreamer)
             return false;
 
@@ -150,7 +150,7 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions &options )
 {
     _stream << itRASTER;
-    _stream << Version::IlwisVersion;
+    _stream << Version::interfaceVersion;
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
     RawConverter converter;
     if ( hasType(raster->datadef().domain()->ilwisType() , itNUMERICDOMAIN)){
@@ -234,7 +234,7 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
     _stream >> type;
     _stream >> version;
 
-    std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
+    std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
     if ( !domainStreamer)
         return false;
     IDomain dom(type);

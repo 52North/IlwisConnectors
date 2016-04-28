@@ -50,7 +50,7 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         _stream << coldef.name();
         _stream << coldef.datadef().domain()->valueType();
 
-        std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
+        std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
         if ( !domainStreamer)
             return false;
         domainStreamer->store(coldef.datadef().domain().ptr(), options);
@@ -59,7 +59,7 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     }
 
     if (fcoverage->attributeDefinitions().domain().isValid()){
-        std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
+        std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
         if ( !domainStreamer)
             return false;
         domainStreamer->store( fcoverage->attributeDefinitions().domain().ptr(), options);
@@ -71,7 +71,7 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     }else{
         _stream << itUNKNOWN;
         _stream << itUNKNOWN;
-        _stream << Version::IlwisVersion;
+        _stream << Version::interfaceVersion;
     }
 
 
@@ -80,7 +80,7 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 bool FeatureSerializerV1::storeData(IlwisObject *obj, const IOOptions& options){
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
     _stream << itFEATURE;
-    _stream << Version::IlwisVersion;
+    _stream << Version::interfaceVersion;
     _stream << fcoverage->featureCount();
     for(const SPFeatureI& feature : fcoverage){
         feature->store(fcoverage->attributeDefinitions(),_stream, options);

@@ -41,7 +41,7 @@ bool TableSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         _stream << coldef.name();
         _stream << coldef.datadef().domain()->valueType();
 
-        std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
+        std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
         if ( !domainStreamer)
             return false;
         domainStreamer->store(coldef.datadef().domain().ptr(), options);
@@ -49,7 +49,7 @@ bool TableSerializerV1::store(IlwisObject *obj, const IOOptions &options)
             coldef.datadef().range()->store(_stream);
         types.push_back(coldef.datadef().domain()->valueType());
     }
-    _stream <<  obj->ilwisType() << Version::IlwisVersion;
+    _stream <<  obj->ilwisType() << Version::interfaceVersion;
     for(int rec = 0; rec < tbl->recordCount(); ++rec){
         auto record = tbl->record(rec);
         record.storeData(types, _stream,options);

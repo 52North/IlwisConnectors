@@ -189,7 +189,7 @@ bool StreamConnector::store(IlwisObject *obj, const IOOptions &options){
 
     const VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     if (factory){
-        _versionedConnector.reset( factory->create(Version::IlwisVersion,_resource.ilwisType(),stream));
+        _versionedConnector.reset( factory->create(Version::interfaceVersion,_resource.ilwisType(),stream));
     }
 
     if (!_versionedConnector)
