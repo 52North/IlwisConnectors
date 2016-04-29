@@ -30,7 +30,7 @@ bool CoverageSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     if (!factory)
         return false;
-    std::unique_ptr<DataInterface> csyStreamer(factory->create(Version::IlwisVersion, itCOORDSYSTEM,_stream));
+    std::unique_ptr<DataInterface> csyStreamer(factory->create(Version::interfaceVersion, itCOORDSYSTEM,_stream));
     if ( !csyStreamer)
         return false;
     Coverage *coverage = static_cast<Coverage *>(obj);

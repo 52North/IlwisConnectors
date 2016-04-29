@@ -71,7 +71,7 @@ bool VersionedSerializer::store(IlwisObject *obj, const IOOptions &options)
 {
     double mtime = (double)obj->modifiedTime();
     double ctime = (double)obj->createTime();
-    _stream <<  obj->ilwisType() << Version::IlwisVersion << obj->name() << obj->code() << obj->description() << obj->isReadOnly() << mtime << ctime;
+    _stream <<  obj->ilwisType() << Version::interfaceVersion << obj->name() << obj->code() << obj->description() << obj->isReadOnly() << mtime << ctime;
 
     return true;
 }
@@ -86,7 +86,7 @@ bool VersionedSerializer::storeDataDefintion(const DataDefinition &def, QDataStr
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     if (!factory)
         return false;
-    std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::IlwisVersion, itDOMAIN,_stream));
+    std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
     if ( !domainStreamer)
         return false;
     _stream << def.domain()->valueType();

@@ -166,12 +166,23 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
         localPathCsy = writeCsy(obj, csy);
     } else
         localPathCsy = "unknown.csy";
+
     _odf->setKeyValue("GeoRef","CoordSystem", QFileInfo(localPathCsy).fileName());
     Size<> sz = grf->size();
     _odf->setKeyValue("GeoRef","Lines", QString::number(sz.ysize()));
     _odf->setKeyValue("GeoRef","Columns", QString::number(sz.xsize()));
     //CornersGeoReference *cgrf = dynamic_cast<CornersGeoReference *>(grf);
+
     if ( grf->grfType<CornersGeoReference>()) {
+        QString georefFilename(source().toLocalFile());
+        QFileInfo georefFileInfo(georefFilename);
+        IGeoReference existingGeoref(source());
+        if (georefFileInfo.exists() ) {
+            if (!grf->isCompatible(existingGeoref.ptr())) {
+                georefFilename = OSHelper::ensureUniqueFilename(georefFilename);
+            } else
+                return true; // no need to rewrite the georef file with the same information
+        }
         QSharedPointer<CornersGeoReference> cgrf = grf->as<CornersGeoReference>();
         _odf->setKeyValue("GeoRef","CornersOfCorners", cgrf->centerOfPixel() ? "No" : "Yes");
         _odf->setKeyValue("GeoRef","Type", "GeoRefCorners");
@@ -192,9 +203,9 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
          _odf->setKeyValue("GeoRefSmpl", "b1", QString::number(support[0]));
          _odf->setKeyValue("GeoRefSmpl", "b2", QString::number(support[1]));
 
-         _odf->store("grf", source().toLocalFile());
-        return true;
+         _odf->store("grf", georefFilename);
 
+        return true;
     }
 
     return false;

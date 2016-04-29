@@ -39,12 +39,12 @@ bool CoordinateSystemSerializerV1::store(IlwisObject *obj, const IOOptions &opti
         VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
         if (!factory)
             return false;
-        std::unique_ptr<DataInterface> projstreamer(factory->create(Version::IlwisVersion, itPROJECTION,_stream));
+        std::unique_ptr<DataInterface> projstreamer(factory->create(Version::interfaceVersion, itPROJECTION,_stream));
         if ( !projstreamer)
             return false;
         ConventionalCoordinateSystem *ccsy = static_cast<ConventionalCoordinateSystem *>(csy);
         projstreamer->store(ccsy->projection().ptr(),options);
-        std::unique_ptr<DataInterface> ellstreamer(factory->create(Version::IlwisVersion, itELLIPSOID,_stream));
+        std::unique_ptr<DataInterface> ellstreamer(factory->create(Version::interfaceVersion, itELLIPSOID,_stream));
         if ( !ellstreamer)
             return false;
         ellstreamer->store(ccsy->ellipsoid().ptr(),options);
@@ -92,7 +92,7 @@ bool CoordinateSystemSerializerV1::loadMetaData(IlwisObject *obj, const IOOption
         if ( type != itUNKNOWN){
             _stream >> version;
 
-            std::unique_ptr<DataInterface> ellstreamer(factory->create(Version::IlwisVersion, itELLIPSOID,_stream));
+            std::unique_ptr<DataInterface> ellstreamer(factory->create(Version::interfaceVersion, itELLIPSOID,_stream));
             if ( !ellstreamer)
                 return false;
             IEllipsoid ellipsoid;

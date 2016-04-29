@@ -38,7 +38,7 @@ bool GeorefSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         return false;
 
     GeoReference *grf = static_cast<GeoReference *>(obj);
-    std::unique_ptr<DataInterface> csyStreamer(factory->create(Version::IlwisVersion, itCOORDSYSTEM,_stream));
+    std::unique_ptr<DataInterface> csyStreamer(factory->create(Version::interfaceVersion, itCOORDSYSTEM,_stream));
     if ( !csyStreamer)
         return false;
     csyStreamer->store(grf->coordinateSystem().ptr(),options);
