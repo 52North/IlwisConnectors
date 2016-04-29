@@ -30,7 +30,6 @@ PostgresqlObjectFactory::PostgresqlObjectFactory() : IlwisObjectFactory("IlwisOb
 {
 }
 
-
 bool PostgresqlObjectFactory::canUse(const Resource &resource) const
 {
     if ( resource.url().scheme() != "postgresql")
