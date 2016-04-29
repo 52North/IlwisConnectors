@@ -68,8 +68,8 @@ PostgresqlParameters::PostgresqlParameters(const QString & str)
                 }
             }
         }
+        warnEmptyBasics();
     }
-    warnEmptyBasics();
 }
 
 PostgresqlParameters::~PostgresqlParameters()
