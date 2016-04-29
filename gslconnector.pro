@@ -36,7 +36,7 @@ OTHER_FILES += \
 
 win32 {
     LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lgsl.dll
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/gslconnector -lgsl.dll
 
     INCLUDEPATH += $$PWD/../external/gsl
 }
