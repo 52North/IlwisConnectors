@@ -33,6 +33,7 @@
 #include "postgresqltableloader.h"
 #include "postgresqldatabaseutil.h"
 #include "sqlstatementhelper.h"
+#include "postgresqlparameters.h"
 
 using namespace Ilwis;
 using namespace Postgresql;
@@ -62,9 +63,10 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
 
     IDomain semantics;
     QList<MetaGeometryColumn> metaGeometries;
-    PostgresqlDatabaseUtil pgUtil(_resource,_options);
+    PostgresqlParameters params (_resource.url(true).toString());
+    PostgresqlDatabaseUtil pgUtil(params);
     pgUtil.getMetaForGeometryColumns(metaGeometries);
-    pgUtil.prepareSubFeatureSemantics(semantics, metaGeometries);
+    pgUtil.prepareSubFeatureSemantics(semantics, metaGeometries, _options);
     setSubfeatureSemantics(fcoverage, semantics);
 
     return true;
@@ -97,15 +99,16 @@ QString PostgresqlFeatureCoverageLoader::selectGeometries(const QList<MetaGeomet
     sqlBuilder.append(columns);
     sqlBuilder.append(" FROM ");
 
-    PostgresqlDatabaseUtil pgUtil(_resource,_options);
-    sqlBuilder.append(pgUtil.qTableFromTableResource());
+    PostgresqlParameters params (_resource.url(true).toString());
+    sqlBuilder.append(params.schema() + "." + params.table());
     return sqlBuilder;
 }
 
 bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
 {
     ITable table;
-    PostgresqlDatabaseUtil pgUtil(_resource,_options);
+    PostgresqlParameters params (_resource.url(true).toString());
+    PostgresqlDatabaseUtil pgUtil(params);
     Resource tableResource = pgUtil.resourceForType(itFLATTABLE);
     table.prepare(tableResource, _options);
 
@@ -121,10 +124,10 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
     QList<MetaGeometryColumn> metaGeometries;
     pgUtil.getMetaForGeometryColumns(metaGeometries);
     QString select = selectGeometries(metaGeometries);
-    QSqlQuery query = pgUtil.doQuery(select, "featurecoverageloader");
+    QSqlQuery query = pgUtil.doQuery(select);
     quint32 geometriesPerFeature = metaGeometries.size();
     IDomain semantics;
-    pgUtil.prepareSubFeatureSemantics(semantics, metaGeometries);
+    pgUtil.prepareSubFeatureSemantics(semantics, metaGeometries, _options);
 
     while (query.next()) {
         if (geometriesPerFeature == 0) {
@@ -164,14 +167,15 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
 {
     bool queryOk = true;
     ITable baseData = fcoverage->attributeTable();
-    PostgresqlDatabaseUtil pgUtil(_resource, _options);
-    SqlStatementHelper sqlHelper(pgUtil);
+    PostgresqlParameters params (_resource.url(true).toString());
+    PostgresqlDatabaseUtil pgUtil(params);
+    SqlStatementHelper sqlHelper(params);
 
    IDomain semantics; // subfeature semantics
     QList<QString> primaryKeys; // readonly keys
     QList<MetaGeometryColumn> metaGeomColumns; // geometry columns
     pgUtil.getMetaForGeometryColumns(metaGeomColumns);
-    pgUtil.prepareSubFeatureSemantics(semantics, metaGeomColumns);
+    pgUtil.prepareSubFeatureSemantics(semantics, metaGeomColumns, _options);
     pgUtil.getPrimaryKeys(primaryKeys);
     // add geoms to update/insert data table
     FeatureIterator featureIter(fcoverage);
@@ -181,9 +185,7 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
 
     QString code = fcoverage->coordinateSystem()->code();
     QString srid = code.right(code.indexOf(":"));
-    QString rawTablename = pgUtil.qTableFromTableResource();
-    QStringList tableNameList = rawTablename.split(".", QString::SkipEmptyParts);
-    QString qtablename = tableNameList.at(1);
+    QString qtablename = params.table();
     while(featureIter != featureIter.end()) {
         SPFeatureI feature = (*featureIter);
         bool newFeature = !pgUtil.exists(feature);
@@ -304,7 +306,7 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
             sqlStmt.append("; ");
         }
 
-        pgUtil.doQuery(sqlStmt, "updategeometries");
+        pgUtil.doQuery(sqlStmt);
     }
 
     bool featuresOk = true;
@@ -329,9 +331,10 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
 
     IDomain semantics;
     QList<MetaGeometryColumn> metaGeometries;
-    PostgresqlDatabaseUtil pgUtil(_resource, _options);
+    PostgresqlParameters params (_resource.url(true).toString());
+    PostgresqlDatabaseUtil pgUtil(params);
     pgUtil.getMetaForGeometryColumns(metaGeometries);
-    pgUtil.prepareSubFeatureSemantics(semantics, metaGeometries);
+    pgUtil.prepareSubFeatureSemantics(semantics, metaGeometries, _options);
 
     int level = -1;
     QSqlQuery query;
@@ -352,7 +355,7 @@ void PostgresqlFeatureCoverageLoader::setFeatureCount(FeatureCoverage *fcoverage
         sqlBuilder.append(" ) AS not_null ;");
         //qDebug() << "SQL: " << sqlBuilder;
 
-        query = pgUtil.doQuery(sqlBuilder, "featurecoverageloader");
+        query = pgUtil.doQuery(sqlBuilder);
 
         if (semantics.isValid()) {
             NamedIdentifierRange *range = semantics->range<NamedIdentifierRange>().data();
@@ -382,7 +385,8 @@ void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcover
     //qDebug() << "PostgresqlFeatureCoverageLoader::setSpatialMetadata()";
 
     QList<MetaGeometryColumn> metaGeometries;
-    PostgresqlDatabaseUtil pgUtil(_resource, _options);
+    PostgresqlParameters params (_resource.url(true).toString());
+    PostgresqlDatabaseUtil pgUtil(params);
     pgUtil.getMetaForGeometryColumns(metaGeometries);
 
     Envelope bbox;
@@ -399,7 +403,7 @@ void PostgresqlFeatureCoverageLoader::setSpatialMetadata(FeatureCoverage *fcover
         sqlBuilder.append(";");
         //qDebug() << "SQL: " << sqlBuilder;
 
-        QSqlQuery envelopeQuery = pgUtil.doQuery(sqlBuilder, "featurecoverageloader");
+        QSqlQuery envelopeQuery = pgUtil.doQuery(sqlBuilder);
 
         if (envelopeQuery.next()) {
 

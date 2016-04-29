@@ -14,6 +14,7 @@
 
 #include "postgresqldatabaseutil.h"
 #include "postgresqlcatalogexplorer.h"
+#include "postgresqlparameters.h"
 
 using namespace Ilwis;
 using namespace Postgresql;
@@ -27,22 +28,9 @@ CatalogExplorer *PostgresqlCatalogExplorer::create(const Resource &resource, con
 
 PostgresqlCatalogExplorer::PostgresqlCatalogExplorer(const Resource &resource, const IOOptions &options) : CatalogExplorer(resource, options)
 {
-    int index = resource.url(true).toString().indexOf("postgresql://");
-    if ( index == 0) {
-        QString rest = resource.url(true).toString().mid(13);
-        QStringList parts = rest.split("/");
-        QStringList hostport = parts[0].split(":");
-        ioOptionsRef().addOption("port", hostport[1]);
-        ioOptionsRef().addOption("host", hostport[0]);
-        ioOptionsRef().addOption("database", parts[1]);
-        ioOptionsRef().addOption("pg.schema", parts[2]);
-        QStringList userpass = parts[3].split("&");
-        ioOptionsRef().addOption("pg.username", userpass[0].split("=")[1]);
-        ioOptionsRef().addOption("pg.password", userpass[1].split("=")[1]);
-
-    }
-
-
+    PostgresqlParameters params (resource.url(true).toString());
+    if (params.valid())
+        params.toIOOptions(ioOptionsRef());
 }
 
 PostgresqlCatalogExplorer::~PostgresqlCatalogExplorer()
@@ -52,59 +40,157 @@ PostgresqlCatalogExplorer::~PostgresqlCatalogExplorer()
 std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &options)
 {
     IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
-    QString schema("public");
-    if (iooptions.contains("pg.schema")) {
-        schema = iooptions["pg.schema"].toString();
-    }
-    QString sqlBuilder;
-    sqlBuilder.append("SELECT ");
-    sqlBuilder.append(" meta.tablename, count(geom.typname) as hasGeometry ");
-    sqlBuilder.append(" FROM ");
-    sqlBuilder.append(" pg_catalog.pg_tables AS meta,pg_catalog.pg_type AS geom ");
-    sqlBuilder.append(" WHERE ");
-    sqlBuilder.append(" meta.schemaname = '").append(schema).append("' ");
-    sqlBuilder.append(" AND ");
-    sqlBuilder.append(" geom.typname = 'geometry' ");
-    sqlBuilder.append(" GROUP BY ");
-    sqlBuilder.append(" meta.tablename;");
-    qDebug() << "SQL: " << sqlBuilder;
-
+    PostgresqlParameters params (iooptions);
     std::vector<Resource> resources;
-    PostgresqlDatabaseUtil pgUtil(source(), iooptions);
-    QSqlQuery query = pgUtil.doQuery(sqlBuilder, "exploreitems");
+    QString sqlBuilder;
+    if (!params.database().isEmpty()) {
+        if (!params.schema().isEmpty()) {
+            if (!params.table().isEmpty()) { // enumerate raster records in multiraster table, adds one rastercoverage for each record
+                PostgresqlDatabaseUtil pgUtil(params);
+                sqlBuilder = "SELECT rid FROM " + params.schema() + "." + params.table() + " WHERE " + (params.column().isEmpty() ? "rast" : params.column()) + " IS NOT NULL";
+                qDebug() << "SQL: " << sqlBuilder;
+                QSqlQuery query = pgUtil.doQuery(sqlBuilder);
+                while (query.next()) {
+                    QString id = query.value(0).toString();
+                    params.setRasterID(id);
+                    QString resourceId = params.toString();
+                    QUrl url(resourceId);
+                    Resource rastertable(url, itRASTER);
+                    rastertable.setExtendedType(itFLATTABLE);
+                    resources.push_back(rastertable);
+                }
+            } else { // discover tables
+                PostgresqlDatabaseUtil pgUtil(params);
+                // add as whole-table FeatureCoverages
+                sqlBuilder = "SELECT DISTINCT table_name FROM INFORMATION_SCHEMA.Columns WHERE table_schema='" + params.schema() + "' and udt_name='geometry'";
+                qDebug() << "SQL: " << sqlBuilder;
+                QSqlQuery query = pgUtil.doQuery(sqlBuilder);
+                while (query.next()) {
+                    QString tablename = query.value(0).toString();
+                    params.setTable(tablename);
+                    QString resourceId = params.toString();
+                    QUrl url(resourceId);
+                    Resource featuretable(url, itFEATURE);
+                    featuretable.setExtendedType(itFLATTABLE);
+                    resources.push_back(featuretable);
+                }
 
-    QString parentDatasourceNormalized = source().url().toString();
-    parentDatasourceNormalized = !parentDatasourceNormalized.endsWith("/")
-            ? parentDatasourceNormalized.append("/")
-            : parentDatasourceNormalized;
+                // add as whole-table RasterCoverages
+                sqlBuilder = "SELECT DISTINCT table_name FROM INFORMATION_SCHEMA.Columns WHERE table_schema='" + params.schema() + "' and udt_name='raster'";
+                qDebug() << "SQL: " << sqlBuilder;
+                query = pgUtil.doQuery(sqlBuilder);
+                while (query.next()) {
+                    QString tablename = query.value(0).toString();
+                    params.setTable(tablename);
+                    QString resourceId = params.toString();
+                    QUrl url(resourceId);
+                    Resource rastertable(url, itRASTER);
+                    rastertable.setExtendedType(itFLATTABLE);
+                    resources.push_back(rastertable);
+                }
 
-    while (query.next()) {
-        QString tablename = query.value(0).toString();
-        bool hasGeometry = query.value(1).toBool();
-        if (tablename == "spatial_ref_sys") {
-            continue; // skip system table
+                // add per-geometry-column FeatureCoverages
+                sqlBuilder = "SELECT table_name,column_name FROM INFORMATION_SCHEMA.Columns WHERE table_schema='" + params.schema() + "' and udt_name='geometry'";
+                qDebug() << "SQL: " << sqlBuilder;
+                query = pgUtil.doQuery(sqlBuilder);
+                while (query.next()) {
+                    QString tablename = query.value(0).toString();
+                    QString columnname = query.value(1).toString();
+                    params.setTable(tablename);
+                    params.setColumn(columnname);
+                    QString resourceId = params.toString();
+                    QUrl url(resourceId);
+                    Resource featuretable(url, itFEATURE);
+                    featuretable.setExtendedType(itFLATTABLE);
+                    resources.push_back(featuretable);
+                }
+
+                // add per-raster-column RasterCoverages
+                sqlBuilder = "SELECT table_name,column_name FROM INFORMATION_SCHEMA.Columns WHERE table_schema='" + params.schema() + "' and udt_name='raster'";
+                qDebug() << "SQL: " << sqlBuilder;
+                query = pgUtil.doQuery(sqlBuilder);
+                while (query.next()) {
+                    QString tablename = query.value(0).toString();
+                    QString columnname = query.value(1).toString();
+                    params.setTable(tablename);
+                    params.setColumn(columnname);
+                    QString resourceId = params.toString();
+                    QUrl url(resourceId);
+                    // Probe whether we're dealing with a single-raster-table or a multiraster table whereby each record is one raster; Note that for performance reasons we only check the first 100 records.
+                    sqlBuilder = "WITH refrast AS (SELECT " + columnname + " AS rast FROM " + params.schema() + "." + tablename + " WHERE " + columnname + " IS NOT NULL AND ST_ScaleX(" + columnname + ") != 0 AND ST_ScaleY(" + columnname + ") != 0 LIMIT 1), crossrast AS (SELECT " + columnname + " AS rast FROM " + params.schema() + "." + tablename + " WHERE " + columnname + " IS NOT NULL AND ST_ScaleX(" + columnname + ") != 0 AND ST_ScaleY(" + columnname + ") != 0 OFFSET 1 LIMIT 100), conditions AS (SELECT ST_SameAlignment(crossrast.rast,refrast.rast) AS same, (ST_UpperLeftX(refrast.rast) / ST_ScaleX(refrast.rast) - ST_UpperLeftX(crossrast.rast) / ST_ScaleX(crossrast.rast))::integer % ST_Width(refrast.rast) AS modX, (ST_UpperLeftY(refrast.rast) / ST_ScaleY(refrast.rast) - ST_UpperLeftY(crossrast.rast) / ST_ScaleY(crossrast.rast))::integer % ST_Height(refrast.rast) AS modY, ST_Touches(ST_Envelope(crossrast.rast), ST_Envelope(refrast.rast)) OR NOT ST_Intersects(ST_Envelope(crossrast.rast), ST_Envelope(refrast.rast)) AS disjoint FROM crossrast, refrast GROUP BY same, modX, modY, disjoint) SELECT same AND modX=0 AND modY=0 AND disjoint AS singleraster FROM conditions GROUP BY singleraster ORDER BY singleraster";
+                    qDebug() << "SQL: " << sqlBuilder;
+                    QSqlQuery query2 = pgUtil.doQuery(sqlBuilder);
+                    if (query2.next()) {
+                        bool fSingleRaster = query2.value(0).toBool();
+                        if (fSingleRaster) { // Officially we should test on same_alignment and regular_blocking, however currently (postgis 2.x / AddRasterConstraints may not have been called) the result of above query is more reliable than "SELECT scale_x, scale_y, blocksize_x, blocksize_y, extent FROM raster_columns WHERE r_table_schema='schema' AND r_table_name='tablename' AND r_raster_column='columnname'"
+                            Resource rastertable(url, itRASTER);
+                            rastertable.setExtendedType(itFLATTABLE);
+                            resources.push_back(rastertable);
+                        } else {
+                            Resource rastercatalog(url, itCATALOG);
+                            resources.push_back(rastercatalog);
+                        }
+                    } else { // There are 0 or 1 records in the results; probe again.
+                        sqlBuilder = "SELECT COUNT(" + columnname + ") FROM " + params.schema() + "." + tablename + " WHERE " + columnname + " IS NOT NULL";
+                        qDebug() << "SQL: " << sqlBuilder;
+                        query2 = pgUtil.doQuery(sqlBuilder);
+                        if (query2.next()) {
+                            qlonglong count = query2.value(0).toLongLong();
+                            if (count == 1) { // Table with a single raster record; we treat the whole table as a single raster (is that a good decision?)
+                                Resource rastertable(url, itRASTER);
+                                rastertable.setExtendedType(itFLATTABLE);
+                                resources.push_back(rastertable);
+                            } else if (count > 1) {
+                                Resource rastercatalog(url, itCATALOG);
+                                resources.push_back(rastercatalog);
+                            }
+                        }
+                    }
+                }
+
+                // add the remaining tables (non-geometry and non-raster) as plain tables
+                params.setColumn("");
+                sqlBuilder = "WITH geoms AS (SELECT DISTINCT table_name FROM INFORMATION_SCHEMA.Columns WHERE table_schema='" + params.schema() + "' AND (udt_name = 'geometry' OR udt_name = 'raster')) SELECT DISTINCT table_name FROM INFORMATION_SCHEMA.Columns WHERE table_schema='" + params.schema() + "' AND table_name NOT IN (SELECT * FROM geoms)";
+                qDebug() << "SQL: " << sqlBuilder;
+                query = pgUtil.doQuery(sqlBuilder);
+                while (query.next()) {
+                    QString tablename = query.value(0).toString();
+                    params.setTable(tablename);
+                    QString resourceId = params.toString();
+                    QUrl url(resourceId);
+                    Resource plaintable(url, itFLATTABLE);
+                    resources.push_back(plaintable);
+                }
+            }
+        } else { // discover schemas
+            sqlBuilder = "SELECT distinct table_schema FROM INFORMATION_SCHEMA.Columns";
+            qDebug() << "SQL: " << sqlBuilder;
+            PostgresqlDatabaseUtil pgUtil(params);
+            QSqlQuery query = pgUtil.doQuery(sqlBuilder);
+            while (query.next()) {
+                QString schemaname = query.value(0).toString();
+                params.setSchema(schemaname);
+                QString resourceId = params.toString();
+                QUrl url(resourceId);
+                Resource schema(url, itCATALOG);
+                resources.push_back(schema);
+            }
         }
-        QString resourceId = parentDatasourceNormalized;
-        //resourceId.append(schema);
-       // resourceId.append("/");
-        resourceId.append(tablename);
-        //qDebug() << "create new resource: " << resourceId;
-
-        IlwisTypes mainType;
-        IlwisTypes extTypes;
-        if ( hasGeometry) {
-            mainType = itFEATURE;
-            extTypes = itFLATTABLE;
-        } else {
-            mainType = itFLATTABLE;
+    } else { // discover databases
+        sqlBuilder = "SELECT datname FROM pg_database WHERE NOT datistemplate order by datname;";
+        qDebug() << "SQL: " << sqlBuilder;
+        params.setDatabase("postgres"); // the maintenance database where all other databases are registered
+        PostgresqlDatabaseUtil pgUtil(params);
+        QSqlQuery query = pgUtil.doQuery(sqlBuilder);
+        while (query.next()) {
+            QString databasename = query.value(0).toString();
+            params.setDatabase(databasename);
+            QString resourceId = params.toString();
+            QUrl url(resourceId);
+            Resource database(url, itCATALOG);
+            resources.push_back(database);
         }
-
-        QUrl url(resourceId);
-        Resource table(url, mainType);
-        table.setExtendedType(extTypes);
-        resources.push_back(table);
     }
-
     return resources;
 }
 
@@ -114,10 +200,8 @@ bool PostgresqlCatalogExplorer::canUse(const Resource &resource) const
         return false;
     if ( resource.ilwisType() != itCATALOG)
         return false;
-    QString dbName = resource.url().path();
-    return dbName.startsWith("/")
-            ? dbName.length() > 1
-            : dbName.length() > 0;
+    PostgresqlParameters params (resource.url(true).toString());
+    return params.valid();
 }
 
 QString PostgresqlCatalogExplorer::provider() const

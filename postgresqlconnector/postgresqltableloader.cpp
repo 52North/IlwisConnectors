@@ -36,11 +36,10 @@ PostgresqlTableLoader::~PostgresqlTableLoader()
 
 bool PostgresqlTableLoader::loadMetadata(Table *table) const
 {
+    PostgresqlParameters params (_resource.url(true).toString());
+    PostgresqlDatabaseUtil pgUtil(params);
 
-
-    PostgresqlDatabaseUtil pgUtil(_resource, _options);
-
-    QString rawTablename(pgUtil.qTableFromTableResource());
+    QString rawTablename(params.schema() + "." + params.table());
     QStringList tableNameList = rawTablename.split(".", QString::SkipEmptyParts);
     QString tableName = tableNameList.at(1);
     QString sqlBuilder;
@@ -50,7 +49,7 @@ bool PostgresqlTableLoader::loadMetadata(Table *table) const
     sqlBuilder.append(" information_schema.columns ");
     sqlBuilder.append(" WHERE ");
     sqlBuilder.append(" table_name='").append(tableName).append("';");
-    QSqlQuery columnTypesQuery = pgUtil.doQuery(sqlBuilder, "tableloader");
+    QSqlQuery columnTypesQuery = pgUtil.doQuery(sqlBuilder);
     QList<QString> primaryKeys;
     pgUtil.getPrimaryKeys(primaryKeys);
 
@@ -73,8 +72,8 @@ QString PostgresqlTableLoader::select(QString columns) const
     sqlBuilder.append("SELECT ");
     sqlBuilder.append(columns);
     sqlBuilder.append(" FROM ");
-    PostgresqlDatabaseUtil pgUtil(_resource, _options);
-    sqlBuilder.append(pgUtil.qTableFromTableResource());
+    PostgresqlParameters params (_resource.url(true).toString());
+    sqlBuilder.append(params.schema() + "." + params.table());
     return sqlBuilder;
 }
 
@@ -87,8 +86,9 @@ bool PostgresqlTableLoader::loadData(Table *table) const
     }
     allNonGeometryColumns = allNonGeometryColumns.left(allNonGeometryColumns.length() - 1);
 
-    PostgresqlDatabaseUtil pgUtil(_resource, _options);
-    QSqlQuery query = pgUtil.doQuery(select(allNonGeometryColumns), "tableloader.loadData");
+    PostgresqlParameters params (_resource.url(true).toString());
+    PostgresqlDatabaseUtil pgUtil(params);
+    QSqlQuery query = pgUtil.doQuery(select(allNonGeometryColumns));
 
     quint64 count = 0;
     table->dataLoaded(true); // prevent any succesfull trying to load the table while its already loading

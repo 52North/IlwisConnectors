@@ -1,21 +1,18 @@
 #ifndef POSTGRESQLDATABASEUTIL_H
 #define POSTGRESQLDATABASEUTIL_H
 
-
 #include "kernel.h"
 #include "resource.h"
 #include "geometries.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
-
-
+#include "postgresqlparameters.h"
 
 namespace Ilwis {
 
 class SPFeatureI;
 
 namespace Postgresql {
-
 
 struct MetaGeometryColumn {
     QString catalog;
@@ -45,12 +42,11 @@ struct MetaRasterColumn {
     }
 };
 
-
 class PostgresqlDatabaseUtil {
 
 public:
 
-    PostgresqlDatabaseUtil(const Resource &resource, const IOOptions &options=IOOptions());
+    PostgresqlDatabaseUtil(const PostgresqlParameters & params);
     ~PostgresqlDatabaseUtil();
 
     /**
@@ -60,22 +56,6 @@ public:
      */
     Resource resourceForType(IlwisTypes newType) const;
 
-    /**
-     * @brief tablenameFromResource extracts the raw tablename (without schema qualifier) from
-     * a given resource, by parsing the appropriate parts from its URL.
-     * @return the unqualified table name
-     */
-    QString tablenameFromResource() const;
-
-    /**
-     * @brief qTableFromTableResource extracts the qualified tablename (with schema qualifier)
-     * from a given resource, by parsing the appropriate parts from its URL.
-     * @return the qualified table name (e.g. schema.tablename)
-     */
-    QString qTableFromTableResource() const;
-
-    QString getInternalNameFrom(QString name, quint64 id) const;
-
     void getMetaForRasterColumns(QList<MetaRasterColumn> &columns) const;
 
     void getMetaForGeometryColumns(QList<MetaGeometryColumn> &columns) const;
@@ -84,32 +64,20 @@ public:
 
     void getPrimaryKeys(QList<QString> &primaryColumns) const;
 
-    void prepareCoordinateSystem(QString srid, ICoordinateSystem &crs) const;
+    void prepareSubFeatureSemantics(IDomain &domain, const QList<MetaGeometryColumn> &geomColumns, const IOOptions &options) const;
 
-    void prepareSubFeatureSemantics(IDomain &domain, const QList<MetaGeometryColumn> &geomColumns) const;
-
-    QSqlQuery doQuery(QString stmt, QString connectionname="") const;
+    QSqlQuery doQuery(QString stmt) const;
 
 private:
-    Resource _resource;
-    IOOptions _options;
+    void prepareCoordinateSystem(QString srid, ICoordinateSystem &crs) const;
+
+    PostgresqlParameters _params;
 
     /**
-     * @brief openForResource creates a named database connection.
-     *
-     * Creates a named database connection. The connection is being opened by default. Logs a warning
-     * if expected user credentials are missing or empty. Database can be retrieved by
-     * \code{.cpp}
-     *  QSqlDatabase::database("connectionname");
-     * \endcode
-     * A connectionname can be empty, then the default connection is being used.
-     * @param connectionname the name of the connection.
+     * @brief open creates a database connection, or re-uses a previously opened connection.
      * @return a database connection setup with the given user credentials.
      */
-    QSqlDatabase openForResource(QString connectionname="") const;
-
-    void validateNotNullOrEmpty(QString parameter, QVariant value) const;
-
+    QSqlDatabase open() const;
 };
 
 }

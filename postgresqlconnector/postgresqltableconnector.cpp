@@ -29,7 +29,6 @@ PostgresqlTableConnector::PostgresqlTableConnector(const Ilwis::Resource &resour
 
 IlwisObject *PostgresqlTableConnector::create() const
 {
-    //qDebug() << "PostgresqlTableConnector::create() -> FlatTable";
     return new FlatTable(source());
 }
 
@@ -40,7 +39,6 @@ ConnectorInterface *PostgresqlTableConnector::create(const Ilwis::Resource &reso
 
 bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions& options)
 {
-    //qDebug() << "PostgresqlTableConnector::loadMetaData()";
     Table *table = static_cast<Table *>(data);
     IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
     PostgresqlTableLoader loader = PostgresqlTableLoader(source(), iooptions);
@@ -49,21 +47,23 @@ bool PostgresqlTableConnector::loadMetaData(IlwisObject *data, const IOOptions& 
 
 bool PostgresqlTableConnector::store(IlwisObject *data, const IOOptions& options)
 {
-    //qDebug() << "PostgresqlTableConnector::store()";
     Table *table = static_cast<Table *>(data);
     IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
-    PostgresqlDatabaseUtil pgUtil(source(), iooptions);
-    SqlStatementHelper sqlHelper(pgUtil);
+    PostgresqlParameters params (_resource.url(true).toString());
+    PostgresqlDatabaseUtil pgUtil(params);
+    SqlStatementHelper sqlHelper(params);
+    QList<QString> primaryKeys;
+    pgUtil.getPrimaryKeys(primaryKeys);
     sqlHelper.addCreateTempTableStmt("data_level_0");
     sqlHelper.addInsertChangedDataToTempTableStmt("data_level_0", table);
-    sqlHelper.addUpdateStmt("data_level_0", table);
-    sqlHelper.addInsertStmt("data_level_0", table);
+    sqlHelper.addUpdateStmt(primaryKeys, "data_level_0", table);
+    sqlHelper.addInsertStmt(primaryKeys, "data_level_0", table);
 
     // TODO delete deleted rows
 
     //qDebug() << "SQL: " << sqlHelper->sql();
 
-    pgUtil.doQuery(sqlHelper.sql(), "upserting_table");
+    pgUtil.doQuery(sqlHelper.sql());
 
     return true;
 }
@@ -107,7 +107,6 @@ QString PostgresqlTableConnector::createInsertValueString(QVariant value, const 
 
 bool PostgresqlTableConnector::loadData(IlwisObject *data,const IOOptions& options)
 {
-    //qDebug() << "PostgresqlTableConnector::loadData()";
     Table *table = static_cast<Table *>(data);
     IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
     PostgresqlTableLoader loader = PostgresqlTableLoader(source(), iooptions);

@@ -26,19 +26,7 @@ bool PostgresqlConnection::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    QString expression = "postgresql://"+ _host;
-    if ( _port != 0)
-        expression += ":" + QString::number(_port);
-    if ( _database != "") {
-        expression += "/" + _database;
-    }
-    if ( _schema != "") {
-        expression += "/" + _schema;
-    }
-
-    if ( _username != "" && _password != ""){
-        expression += QString("?pg.username=%1&pg.password=%2").arg(_username).arg(_password);
-    }
+    QString expression = _params.toString();
     QVariant value;
     value.setValue<QString>(expression);
     ctx->setOutput(symTable, value, "connectionstring", itSTRING, Resource());
@@ -53,39 +41,52 @@ Ilwis::OperationImplementation *PostgresqlConnection::create(quint64 metaid, con
 
 Ilwis::OperationImplementation::State PostgresqlConnection::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-
-    _host = _expression.input<QString>(0);
-    //_port = _expression.input<quint32>(1);
-    _database = _expression.input<QString>(1);
-    //_schema = _expression.input<QString>(3);
-    _username = _expression.input<QString>(2);
-    _password = _expression.input<QString>(3);
-
-    if ( _host == "")
+    if (_expression.parameterCount() > 3) {
+        QString user = _expression.input<QString>(0);
+        QString pass = _expression.input<QString>(1);
+        QString host = _expression.input<QString>(2);
+        quint32 port = _expression.input<quint32>(3);
+        QString database = "";
+        QString schema = "";
+        QString table = "";
+        QString column = "";
+        if (_expression.parameterCount() > 4) {
+            database = _expression.input<QString>(4);
+            if (_expression.parameterCount() > 5) {
+                schema = _expression.input<QString>(5);
+                if (_expression.parameterCount() > 6) {
+                    table = _expression.input<QString>(6);
+                    if (_expression.parameterCount() > 7) {
+                        column = _expression.input<QString>(7);
+                    }
+                }
+            }
+        }
+        _params = PostgresqlParameters(user, pass, host, port, database, schema, table, column);
+        return sPREPARED;
+    } else
         return sPREPAREFAILED;
-    if ( _database == "")
-        return sPREPAREFAILED;
-
-    return sPREPARED;
 }
 
 quint64 PostgresqlConnection::createMetadata()
 {
     OperationResource operation({"ilwis://operations/postgresqlcatalog"});
     operation.setLongName("PostgreSQL Catalog");
-    operation.setSyntax("postgresqlcatalog(host,database,username, password)");
+    operation.setSyntax("postgresqlcatalog(username,password,host,port,database,schema,table,column,rasterid)");
     operation.setDescription(TR("creates a url to access the catalog of a postgresql database"));
-    operation.setInParameterCount({4});
-    operation.addInParameter(0,itSTRING , TR("host address"),TR("identifies the host that is running the posgresql database"));
-    //operation.addOptionalInParameter(1,itPOSITIVEINTEGER , TR("port number"),TR("port used on the remote server"));
-    operation.addInParameter(1,itSTRING , TR("database"),TR("The database name on the server"));
-    //operation.addOptionalInParameter(3,itSTRING , TR("schema"),TR("The database schema in the database"));
-    operation.addInParameter(2,itSTRING , TR("username"),TR("username for authentication on the remote server"));
-    operation.addInParameter(3,itSTRING , TR("password"),TR("password for authentication on the remote server"));
+    operation.setInParameterCount({9});
+    operation.addInParameter(0, itSTRING, TR("username"),TR("username for authentication on the remote server"));
+    operation.addInParameter(1, itSTRING, TR("password"),TR("password for authentication on the remote server"));
+    operation.addInParameter(2, itSTRING, TR("host address"),TR("identifies the host that is running the posgresql database"));
+    operation.addInParameter(3, itPOSITIVEINTEGER, TR("port number"),TR("port used on the remote server"));
+    operation.addOptionalInParameter(4,itSTRING , TR("database"),TR("The database name on the server"));
+    operation.addOptionalInParameter(5,itSTRING , TR("schema"),TR("The database schema in the database"));
+    operation.addOptionalInParameter(6,itSTRING , TR("table"),TR("The table in the specified schema"));
+    operation.addOptionalInParameter(7,itSTRING , TR("column"),TR("The geometry or raster column in the table"));
+    operation.addOptionalInParameter(8,itSTRING , TR("rasterid"),TR("The rasterid of a multiraster column in the table"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itSTRING, TR("connection url"),TR("string that is sufficient to access the remote catalog"));
     operation.setKeywords("service,postgresql,postgis,database");
     mastercatalog()->addItems({operation});
     return operation.id();
 }
-

@@ -23,7 +23,9 @@
 using namespace Ilwis;
 using namespace Postgresql;
 
-SqlStatementHelper::SqlStatementHelper(const PostgresqlDatabaseUtil &pgUtil): _pgUtil(pgUtil), _tmpTables( {0} )
+SqlStatementHelper::SqlStatementHelper(const PostgresqlParameters &params)
+: _params(params)
+, _tmpTables( {0} )
 {
 }
 
@@ -41,7 +43,7 @@ void SqlStatementHelper::addCreateTempTableStmt(const QString &tmpTableName)
     }
 
     _tmpTables.push_back(tmpTableName);
-    QString templateTable = _pgUtil.qTableFromTableResource();
+    QString templateTable = _params.schema() + "." + _params.table();
     QString sqlBuilder;
     sqlBuilder.append(" CREATE TEMP TABLE ");
     sqlBuilder.append(tmpTableName);
@@ -85,16 +87,15 @@ void SqlStatementHelper::addInsertChangedDataToTempTableStmt(const QString &tmpT
     _sqlBuilder.append(sqlBuilder);
 }
 
-void SqlStatementHelper::addUpdateStmt(const QString &tmpTable, const Table *table)
+void SqlStatementHelper::addUpdateStmt(const QList<QString> & primaryKeys, const QString &tmpTable, const Table *table)
 {
-
     if ( !_tmpTables.contains(tmpTable)) {
         ERROR1("No data table '%1' present.", tmpTable);
         return;
     }
 
     QString sqlBuilder;
-    QString qtablename = _pgUtil.qTableFromTableResource();
+    QString qtablename = _params.schema() + "." + _params.table();
     sqlBuilder.append(" UPDATE ");
     sqlBuilder.append(qtablename);
     sqlBuilder.append(" AS current");
@@ -120,12 +121,12 @@ void SqlStatementHelper::addUpdateStmt(const QString &tmpTable, const Table *tab
     sqlBuilder.append(columns);
     sqlBuilder.append(" ) ");
 
-    sqlBuilder.append(createWhereComparingPrimaryKeys("updated", "current"));
+    sqlBuilder.append(createWhereComparingPrimaryKeys(primaryKeys, "updated", "current"));
     sqlBuilder.append(" ; ");
     _sqlBuilder.append(sqlBuilder);
 }
 
-void SqlStatementHelper::addInsertStmt(const QString &tmpTable, const Table *table)
+void SqlStatementHelper::addInsertStmt(const QList<QString> & primaryKeys, const QString &tmpTable, const Table *table)
 {
     if ( !_tmpTables.contains(tmpTable)) {
         ERROR1("No data table '%1' present.", tmpTable);
@@ -133,7 +134,7 @@ void SqlStatementHelper::addInsertStmt(const QString &tmpTable, const Table *tab
     }
 
     QString sqlBuilder;
-    QString qtablename = _pgUtil.qTableFromTableResource();
+    QString qtablename = _params.schema() + "." + _params.table();
     sqlBuilder.append(" INSERT INTO ");
     sqlBuilder.append(qtablename);
     QString columns = columnNamesCommaSeparated(table);
@@ -142,7 +143,7 @@ void SqlStatementHelper::addInsertStmt(const QString &tmpTable, const Table *tab
     sqlBuilder.append(tmpTable).append(" AS new ");
     sqlBuilder.append(" WHERE NOT EXISTS ( SELECT NULL FROM ");
     sqlBuilder.append(qtablename).append(" AS existing");
-    sqlBuilder.append(createWhereComparingPrimaryKeys("new", "existing"));
+    sqlBuilder.append(createWhereComparingPrimaryKeys(primaryKeys, "new", "existing"));
     sqlBuilder.append(" ) ;");
     _sqlBuilder.append(sqlBuilder);
 }
@@ -155,18 +156,15 @@ void SqlStatementHelper::addDeleteStmt(const QString &tmpTable, const Table *tab
     }
 }
 
-
 QString SqlStatementHelper::sql()
 {
     kernel()->issues()->log(_sqlBuilder, IssueObject::itDebug);
     return _sqlBuilder;
 }
 
-QString SqlStatementHelper::createWhereComparingPrimaryKeys(const QString &aliasfirst, const QString &aliassecond) const
+QString SqlStatementHelper::createWhereComparingPrimaryKeys(const QList<QString> & primaryKeys, const QString &aliasfirst, const QString &aliassecond) const
 {
     QString whereClause;
-    QList<QString> primaryKeys;
-    _pgUtil.getPrimaryKeys(primaryKeys);
     for (QString primaryKey : primaryKeys) {
         if (whereClause.isEmpty()) {
             whereClause.append(" WHERE ");

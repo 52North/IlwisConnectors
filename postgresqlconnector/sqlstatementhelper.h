@@ -2,7 +2,7 @@
 #define SQLSTATEMENTHELPER_H
 
 
-#include "postgresqldatabaseutil.h"
+#include "postgresqlparameters.h"
 
 namespace Ilwis {
 
@@ -13,14 +13,13 @@ namespace Postgresql {
 class SqlStatementHelper
 {
 public:
-    SqlStatementHelper(const PostgresqlDatabaseUtil &pgUtil);
+    SqlStatementHelper(const PostgresqlParameters &params);
     ~SqlStatementHelper();
 
     void addCreateTempTableStmt(const QString &tmpTableName);
-    QString createWhereComparingPrimaryKeys(const QString &first, const QString &second) const;
     void addInsertChangedDataToTempTableStmt(const QString &tmpTable, const Table *table);
-    void addUpdateStmt(const QString &tmpTable, const Table *table);
-    void addInsertStmt(const QString &tmpTable, const Table *table);
+    void addUpdateStmt(const QList<QString> & primaryKeys, const QString &tmpTable, const Table *table);
+    void addInsertStmt(const QList<QString> & primaryKeys, const QString &tmpTable, const Table *table);
     void addDeleteStmt(const QString &tmpTable, const Table *table);
 
     QString columnNamesCommaSeparated(const Table *table) const;
@@ -31,7 +30,8 @@ public:
     QString sql();
 
 private:
-    PostgresqlDatabaseUtil _pgUtil;
+    QString createWhereComparingPrimaryKeys(const QList<QString> & primaryKeys, const QString &first, const QString &second) const;
+    PostgresqlParameters _params;
     QList<QString> _tmpTables;
     QString _sqlBuilder;
 };
