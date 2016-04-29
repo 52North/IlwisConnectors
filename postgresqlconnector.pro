@@ -62,7 +62,7 @@ HEADERS += \
     postgresqlconnector/sqlstatementhelper.h \
     postgresqlconnector/postgresqlconnection.h \
     postgresqlconnector/postgresqlrasterconnector.h \
-    postgresqlconnector/postgresqlrastercoverageloader.h
+    postgresqlconnector/postgresqlparameters.h
 
 SOURCES += \
     postgresqlconnector/postgresqlconnector.cpp \
@@ -77,7 +77,7 @@ SOURCES += \
     postgresqlconnector/postgresqlconnection.cpp \
     postgresqlconnector/PostgresqlDatabaseUtil.cpp \
     postgresqlconnector/postgresqlrasterconnector.cpp \
-    postgresqlconnector/postgresqlrastercoverageloader.cpp
+    postgresqlconnector/postgresqlparameters.cpp
 
 linux{
     dependencies.files = $$GEOSLIB/libgeos-3.4.2.so
