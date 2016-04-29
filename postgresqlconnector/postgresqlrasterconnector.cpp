@@ -183,7 +183,7 @@ bool PostgresqlRasterConnector::loadData(IlwisObject *data, const IOOptions &opt
         for(int i = 0; i < totalLines / linesPerBlock; ++i)
             blocklimits[layer].push_back(i);
     }
-    std::vector<double> values(grid->blockSize(0));
+    std::vector<double> values;;
     for(const auto& layer : blocklimits) { // loop over layers
         quint32 linesLeft = totalLines - grid->maxLines() * layer.second[0];
         quint32 layerNr = layer.first;
@@ -192,6 +192,8 @@ bool PostgresqlRasterConnector::loadData(IlwisObject *data, const IOOptions &opt
             quint32 noItems = grid->blockSize(blockIndex);
             if ( noItems == iUNDEF)
                 continue;
+
+            values.resize(noItems);
 
             quint32 gridblock_x_start = 0;
             quint32 gridblock_y_start = inLayerBlockIndex * linesPerBlock;
@@ -237,7 +239,7 @@ bool PostgresqlRasterConnector::loadData(IlwisObject *data, const IOOptions &opt
                     for (quint32 jy = jMinY; jy < jMaxY; ++jy) {
                         for (quint32 jx = jMinX; jx < jMaxX; ++jx) {
                             char b = hex2dec(&tileHex[2 * jy * _x_pixels_tile + 2 * jx]);
-                            values[jy * _y_pixels_tile + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == b)) || std::isnan(b) || std::isinf(b) ? rUNDEF : b;
+                            values[tilerow * _y_pixels_tile * gridblock_x_size + tilecol * _x_pixels_tile + jy * gridblock_x_size + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == b)) || std::isnan(b) || std::isinf(b) ? rUNDEF : b;
                         }
                     }
                     break;
@@ -246,7 +248,7 @@ bool PostgresqlRasterConnector::loadData(IlwisObject *data, const IOOptions &opt
                     for (quint32 jy = jMinY; jy < jMaxY; ++jy) {
                         for (quint32 jx = jMinX; jx < jMaxX; ++jx) {
                             unsigned char b = hex2dec(&tileHex[2 * jy * _x_pixels_tile + 2 * jx]);
-                            values[jy * _y_pixels_tile + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == b)) || std::isnan(b) || std::isinf(b) ? rUNDEF : b;
+                            values[tilerow * _y_pixels_tile * gridblock_x_size + tilecol * _x_pixels_tile + jy * gridblock_x_size + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == b)) || std::isnan(b) || std::isinf(b) ? rUNDEF : b;
                         }
                     }
                     break;
@@ -259,7 +261,7 @@ bool PostgresqlRasterConnector::loadData(IlwisObject *data, const IOOptions &opt
                             for (quint32 jx = jMinX; jx < jMaxX; ++jx) {
                                 c[0] = hex2dec(&tileHex[4 * jy * _x_pixels_tile + 4 * jx]);
                                 c[1] = hex2dec(&tileHex[4 * jy * _x_pixels_tile + 4 * jx + 2]);
-                                values[jy * _y_pixels_tile + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == hl)) || std::isnan(hl) || std::isinf(hl) ? rUNDEF : hl;
+                                values[tilerow * _y_pixels_tile * gridblock_x_size + tilecol * _x_pixels_tile + jy * gridblock_x_size + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == hl)) || std::isnan(hl) || std::isinf(hl) ? rUNDEF : hl;
                             }
                         }
                     }
@@ -273,7 +275,7 @@ bool PostgresqlRasterConnector::loadData(IlwisObject *data, const IOOptions &opt
                             for (quint32 jx = jMinX; jx < jMaxX; ++jx) {
                                 c[0] = hex2dec(&tileHex[4 * jy * _x_pixels_tile + 4 * jx]);
                                 c[1] = hex2dec(&tileHex[4 * jy * _x_pixels_tile + 4 * jx + 2]);
-                                values[jy * _y_pixels_tile + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == hl)) || std::isnan(hl) || std::isinf(hl) ? rUNDEF : hl;
+                                values[tilerow * _y_pixels_tile * gridblock_x_size + tilecol * _x_pixels_tile + jy * gridblock_x_size + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == hl)) || std::isnan(hl) || std::isinf(hl) ? rUNDEF : hl;
                             }
                         }
                     }
@@ -289,7 +291,7 @@ bool PostgresqlRasterConnector::loadData(IlwisObject *data, const IOOptions &opt
                                 c[1] = hex2dec(&tileHex[8 * jy * _x_pixels_tile + 8 * jx + 2]);
                                 c[2] = hex2dec(&tileHex[8 * jy * _x_pixels_tile + 8 * jx + 4]);
                                 c[3] = hex2dec(&tileHex[8 * jy * _x_pixels_tile + 8 * jx + 6]);
-                                values[jy * _y_pixels_tile + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == hl)) || std::isnan(hl) || std::isinf(hl) ? rUNDEF : hl;
+                                values[tilerow * _y_pixels_tile * gridblock_x_size + tilecol * _x_pixels_tile + jy * gridblock_x_size + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == hl)) || std::isnan(hl) || std::isinf(hl) ? rUNDEF : hl;
                             }
                         }
                     }
@@ -305,7 +307,7 @@ bool PostgresqlRasterConnector::loadData(IlwisObject *data, const IOOptions &opt
                                 c[1] = hex2dec(&tileHex[8 * jy * _x_pixels_tile + 8 * jx + 2]);
                                 c[2] = hex2dec(&tileHex[8 * jy * _x_pixels_tile + 8 * jx + 4]);
                                 c[3] = hex2dec(&tileHex[8 * jy * _x_pixels_tile + 8 * jx + 6]);
-                                values[jy * _y_pixels_tile + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == hl)) || std::isnan(hl) || std::isinf(hl) ? rUNDEF : hl;
+                                values[tilerow * _y_pixels_tile * gridblock_x_size + tilecol * _x_pixels_tile + jy * gridblock_x_size + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == hl)) || std::isnan(hl) || std::isinf(hl) ? rUNDEF : hl;
                             }
                         }
                     }
@@ -321,7 +323,7 @@ bool PostgresqlRasterConnector::loadData(IlwisObject *data, const IOOptions &opt
                                 c[1] = hex2dec(&tileHex[8 * jy * _x_pixels_tile + 8 * jx + 2]);
                                 c[2] = hex2dec(&tileHex[8 * jy * _x_pixels_tile + 8 * jx + 4]);
                                 c[3] = hex2dec(&tileHex[8 * jy * _x_pixels_tile + 8 * jx + 6]);
-                                values[jy * _y_pixels_tile + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == f)) || std::isnan(f) || std::isinf(f) ? rUNDEF : f;
+                                values[tilerow * _y_pixels_tile * gridblock_x_size + tilecol * _x_pixels_tile + jy * gridblock_x_size + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == f)) || std::isnan(f) || std::isinf(f) ? rUNDEF : f;
                             }
                         }
                     }
@@ -341,7 +343,7 @@ bool PostgresqlRasterConnector::loadData(IlwisObject *data, const IOOptions &opt
                                 c[5] = hex2dec(&tileHex[16 * jy * _x_pixels_tile + 16 * jx + 10]);
                                 c[6] = hex2dec(&tileHex[16 * jy * _x_pixels_tile + 16 * jx + 12]);
                                 c[7] = hex2dec(&tileHex[16 * jy * _x_pixels_tile + 16 * jx + 14]);
-                                values[jy * _y_pixels_tile + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == d)) || std::isnan(d) || std::isinf(d) ? rUNDEF : d;
+                                values[tilerow * _y_pixels_tile * gridblock_x_size + tilecol * _x_pixels_tile + jy * gridblock_x_size + jx] = (_hasNodataValue[layerNr] && (_noDataValues[layerNr] == d)) || std::isnan(d) || std::isinf(d) ? rUNDEF : d;
                             }
                         }
                     }
