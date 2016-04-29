@@ -26336,30 +26336,21 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Catalog_toCatalog(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  pythonapi::Catalog *arg1 = (pythonapi::Catalog *) 0 ;
-  pythonapi::Object *arg2 = (pythonapi::Object *) 0 ;
+  pythonapi::Object *arg1 = (pythonapi::Object *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
   PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
   pythonapi::Catalog *result = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:Catalog_toCatalog",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Catalog, 0 |  0 );
+  if (!PyArg_ParseTuple(args,(char *)"O:Catalog_toCatalog",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Object, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Catalog_toCatalog" "', argument " "1"" of type '" "pythonapi::Catalog *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Catalog_toCatalog" "', argument " "1"" of type '" "pythonapi::Object *""'"); 
   }
-  arg1 = reinterpret_cast< pythonapi::Catalog * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_pythonapi__Object, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Catalog_toCatalog" "', argument " "2"" of type '" "pythonapi::Object *""'"); 
-  }
-  arg2 = reinterpret_cast< pythonapi::Object * >(argp2);
+  arg1 = reinterpret_cast< pythonapi::Object * >(argp1);
   {
     try {
-      result = (pythonapi::Catalog *)(arg1)->toCatalog(arg2);
+      result = (pythonapi::Catalog *)pythonapi::Catalog::toCatalog(arg1);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -37718,7 +37709,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Catalog_ilwisType", _wrap_Catalog_ilwisType, METH_VARARGS, (char *)"Catalog_ilwisType(Catalog self) -> IlwisTypes"},
 	 { (char *)"Catalog_items", _wrap_Catalog_items, METH_VARARGS, (char *)"Catalog_items(Catalog self) -> PyObject *"},
 	 { (char *)"Catalog__getitem", _wrap_Catalog__getitem, METH_VARARGS, (char *)"Catalog__getitem(Catalog self, std::string const & name) -> Object"},
-	 { (char *)"Catalog_toCatalog", _wrap_Catalog_toCatalog, METH_VARARGS, (char *)"Catalog_toCatalog(Catalog self, Object obj) -> Catalog"},
+	 { (char *)"Catalog_toCatalog", _wrap_Catalog_toCatalog, METH_VARARGS, (char *)"Catalog_toCatalog(Object obj) -> Catalog"},
 	 { (char *)"Catalog_swigregister", Catalog_swigregister, METH_VARARGS, NULL},
 	 { (char *)"delete_Domain", _wrap_delete_Domain, METH_VARARGS, (char *)"delete_Domain(Domain self)"},
 	 { (char *)"Domain_isStrict", _wrap_Domain_isStrict, METH_VARARGS, (char *)"Domain_isStrict(Domain self) -> bool"},

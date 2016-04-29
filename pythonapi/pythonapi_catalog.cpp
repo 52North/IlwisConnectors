@@ -5,6 +5,7 @@
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/catalog/resource.h"
 #include "../../IlwisCore/core/catalog/catalogview.h"
+#include "../../IlwisCore/core/catalog/mastercatalog.h"
 
 #include "pythonapi_catalog.h"
 
@@ -56,10 +57,14 @@ namespace pythonapi {
                     input = "file:///" + file;
             }
         }
-        QUrl location (input);
+        QString loc = input; // see MasterCatalog::addContainer(); url must match the _container that gets into the mastercatalog
+        if (loc.size() > 2 && loc[loc.size() - 1] == '/' && loc[loc.size() - 2] != '/')
+            loc = loc.left(loc.size() - 1);
+        QUrl location (loc);
         Ilwis::CatalogView* cat = new Ilwis::CatalogView(location);
         cat->filter(QString::fromStdString(filter));
         this->_data.reset(cat);
+        Ilwis::mastercatalog()->addContainer(location); // this will do the actual scan of "location" and add the sub-items to the mastercatalog
     }
 
     Catalog::~Catalog(){
@@ -124,6 +129,7 @@ namespace pythonapi {
                 }else if (hasType(type,itCATALOG)){
                     Ilwis::CatalogView* cat = new Ilwis::CatalogView(it->url());
                     cat->prepare();
+                    Ilwis::mastercatalog()->addContainer(it->url()); // also scan and add the sub-items to the mastercatalog
                     return new Catalog(cat);
                 }else{
                     return new IlwisObject(new Ilwis::IIlwisObject(*it));

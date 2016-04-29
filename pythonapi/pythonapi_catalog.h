@@ -23,7 +23,7 @@ namespace pythonapi {
             PyObject* items();
             Object* _getitem(const std::string &name);
 
-            Catalog* toCatalog(Object* obj);
+            static Catalog* toCatalog(Object* obj);
     protected:
             Catalog(Ilwis::CatalogView* cat);
             std::unique_ptr<Ilwis::CatalogView> _data;

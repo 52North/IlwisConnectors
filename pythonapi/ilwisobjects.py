@@ -2902,16 +2902,23 @@ class Catalog(Object):
         return _ilwisobjects.Catalog__getitem(self, name)
 
 
-    def toCatalog(self, obj):
-        """toCatalog(Catalog self, Object obj) -> Catalog"""
-        return _ilwisobjects.Catalog_toCatalog(self, obj)
+    def toCatalog(obj):
+        """toCatalog(Object obj) -> Catalog"""
+        return _ilwisobjects.Catalog_toCatalog(obj)
 
+    if _newclass:
+        toCatalog = staticmethod(toCatalog)
+    __swig_getmethods__["toCatalog"] = lambda x: toCatalog
 
     def __getitem__(self, name):
         return object_cast(self._getitem(name))
 
 Catalog_swigregister = _ilwisobjects.Catalog_swigregister
 Catalog_swigregister(Catalog)
+
+def Catalog_toCatalog(obj):
+    """Catalog_toCatalog(Object obj) -> Catalog"""
+    return _ilwisobjects.Catalog_toCatalog(obj)
 
 class Domain(IlwisObject):
     """Proxy of C++ pythonapi::Domain class."""
