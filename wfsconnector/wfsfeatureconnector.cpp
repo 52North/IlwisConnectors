@@ -57,7 +57,7 @@ bool WfsFeatureConnector::loadMetaData(Ilwis::IlwisObject *data, const IOOptions
         qWarning() << "IOOptions not empty .. not handled for now.";
     }
 
-    QUrl featureUrl = source().url(true);
+    QUrl featureUrl = sourceRef().url(true);
     WebFeatureService wfs(featureUrl);
     QUrlQuery queryFeatureType(featureUrl);
     SPWfsResponse featureDescriptionResponse = wfs.describeFeatureType(queryFeatureType);
@@ -78,7 +78,7 @@ bool WfsFeatureConnector::loadData(IlwisObject *data, const IOOptions &options)
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
 
-    QUrl featureUrl = source().url(true);
+    QUrl featureUrl = sourceRef().url(true);
     WebFeatureService wfs(featureUrl);
 
     QUrlQuery queryFeature(featureUrl);

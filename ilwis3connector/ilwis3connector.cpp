@@ -41,8 +41,8 @@ bool Ilwis3Connector::loadMetaData(IlwisObject *data, const IOOptions &options)
         IniFile *ini = new IniFile();
         ini->setIniFile(inf);
         _odf.reset(ini);
-        data->name(setter(source().name(),inf.fileName(),QString("")));
-        data->setDescription(setter(source().description(), _odf->value("Ilwis","Description"),QString("")));
+        data->name(setter(sourceRef().name(),inf.fileName(),QString("")));
+        data->setDescription(setter(sourceRef().description(), _odf->value("Ilwis","Description"),QString("")));
         // TODO : readonly at this stage will block setting al kind of properties
         //QString readOnlyStatus = _odf->value("Ilwis","DataReadOnly");
         //data->readOnly(readOnlyStatus.toLower() != "no" && readOnlyStatus != sUNDEF && readOnlyStatus != "");
@@ -399,7 +399,7 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
         if ( csy->code() != "epsg:4326"){
             csyName = Resource::toLocalFile(csy->resource().url(),true, "csy");
             if ( csy->isInternalObject()){
-                QString csyFile = Resource::toLocalFile(source().url(),false, "csy");
+                QString csyFile = Resource::toLocalFile(sourceRef().url(),false, "csy");
                 int index = csy->resource().url().toString().lastIndexOf("/");
                 QString name = csy->resource().url().toString().mid(index + 1);
                 int invCharIdx = name.indexOf("?");
@@ -429,7 +429,7 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
                 bool mustWriteCsyFile = true;
 
                 if (!csyinf.isAbsolute()){
-                    QString destinationPath = QFileInfo(source().toLocalFile()).absolutePath();
+                    QString destinationPath = QFileInfo(sourceRef().toLocalFile()).absolutePath();
                     csyName = destinationPath + "/" + csyName;
                 }
 

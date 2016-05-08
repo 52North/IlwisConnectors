@@ -174,9 +174,9 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj)
     //CornersGeoReference *cgrf = dynamic_cast<CornersGeoReference *>(grf);
 
     if ( grf->grfType<CornersGeoReference>()) {
-        QString georefFilename(source().toLocalFile());
+        QString georefFilename(sourceRef().toLocalFile());
         QFileInfo georefFileInfo(georefFilename);
-        IGeoReference existingGeoref(source());
+        IGeoReference existingGeoref(sourceRef());
         if (georefFileInfo.exists() ) {
             if (!grf->isCompatible(existingGeoref.ptr())) {
                 georefFilename = OSHelper::ensureUniqueFilename(georefFilename);

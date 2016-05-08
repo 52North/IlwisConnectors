@@ -78,10 +78,10 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
     QFileInfo fileinf (_filename.toLocalFile());
     _handle = gdal()->openFile(fileinf, data->id(), GA_ReadOnly,false); // no messages here
     if (!_handle){ // could be a container based object
-        QString code = source().code();
+        QString code = sourceRef().code();
         if ( code != sUNDEF){
             _handle = gdal()->openUrl(code,data->id(), GA_ReadOnly,false);
-            data->name(source().name());
+            data->name(sourceRef().name());
         } else {
             // scan our container (parent) and insert it into the mastercatalog
             QFileInfo file = fileinf.absolutePath(); // strip-off the /subdataset at the end, and check if it is a file
@@ -100,13 +100,13 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
                 IlwisTypes tp = data->ilwisType();
                 auto resource = mastercatalog()->name2Resource(_filename.toString(),tp );
                 if (resource.isValid()) {
-                    source() = resource;
-                    code = source().code();
+                    sourceRef() = resource;
+                    code = sourceRef().code();
                 }
             }
             if ( code != sUNDEF) { // re-try with new code
                 _handle = gdal()->openUrl(code,data->id(), GA_ReadOnly,false);
-                data->name(source().name());
+                data->name(sourceRef().name());
             } else { // last resort: attempt opening the parent container, but this will probably fail; if we reached here it is because we encountered a new type gdal-container-file, which is not handled correctly in GDALItems
                 _handle = gdal()->openFile(file, data->id(), GA_ReadOnly);
                 data->name(fileinf.fileName());
@@ -203,7 +203,7 @@ OGRFieldType GdalConnector::ilwisType2GdalFieldType(IlwisTypes tp) {
 QString GdalConnector::constructOutputName(GDALDriverH hdriver) const
 {
     const char *cext = gdal()->getMetaDataItem(hdriver,GDAL_DMD_EXTENSION,NULL);
-    QFileInfo fileinfo =source().toLocalFile();
+    QFileInfo fileinfo =sourceRef().toLocalFile();
     QString filename = fileinfo.absoluteFilePath();
     if ( cext != 0 ) {
         QString ext(cext);
@@ -221,7 +221,7 @@ QString GdalConnector::constructOutputName(GDALDriverH hdriver) const
 
 OGRLayerH GdalConnector::getLayerHandle() const{
     int layer = 0;
-    QFileInfo inf(source().toLocalFile());
+    QFileInfo inf(sourceRef().toLocalFile());
     OGRLayerH hLayer = gdal()->getLayerByName(_handle->handle(), inf.fileName().toLatin1());
     if ( !hLayer) // so this was not a gdal container connector url, then the one layer per source case
          hLayer = gdal()->getLayer(_handle->handle(), layer);

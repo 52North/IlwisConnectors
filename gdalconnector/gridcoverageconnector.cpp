@@ -57,7 +57,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
 
     if (_handle->type() == GdalHandle::etGDALDatasetH){
         Coordinate cMin, cMax;
-        quint32 layer = source().hasProperty("bandindex")? source()["bandindex"].toUInt(): iUNDEF;
+        quint32 layer = sourceRef().hasProperty("bandindex")? sourceRef()["bandindex"].toUInt(): iUNDEF;
         Size<> rastersize(gdal()->xsize(_handle->handle()), gdal()->ysize(_handle->handle()), layer != iUNDEF ? 1 : gdal()->layerCount(_handle->handle()));
 
         _offsetScales.resize(rastersize.zsize());
@@ -74,9 +74,9 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
         if ( layer != iUNDEF){
             raster->size(rastersize);
 
-            if (source().hasProperty("scale") && source().hasProperty("offset")) {
-                _offsetScales[layer].offset = source()["offset"].toDouble();
-                _offsetScales[layer].scale = source()["scale"].toDouble();
+            if (sourceRef().hasProperty("scale") && sourceRef().hasProperty("offset")) {
+                _offsetScales[layer].offset = sourceRef()["offset"].toDouble();
+                _offsetScales[layer].scale = sourceRef()["scale"].toDouble();
             }
 
             ok = handleNumericLayerCase(layer, raster);
@@ -323,9 +323,9 @@ bool RasterCoverageConnector::handleNumericCase(const Size<> &rastersize, Raster
         if (std::isinf(vmax) || std::isinf(-vmax))
             vmax = rUNDEF;
 
-        if (source().hasProperty("scale") && source().hasProperty("offset")) {
-            _offsetScales[i].offset = source()["offset"].toDouble();
-            _offsetScales[i].scale = source()["scale"].toDouble();
+        if (sourceRef().hasProperty("scale") && sourceRef().hasProperty("offset")) {
+            _offsetScales[i].offset = sourceRef()["offset"].toDouble();
+            _offsetScales[i].scale = sourceRef()["scale"].toDouble();
         }
 
         if ( !accurateMin || !accurateMax)
@@ -445,7 +445,7 @@ bool RasterCoverageConnector::moveIndexes(quint32& linesPerBlock, quint64& lines
 }
 
 bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& options ){
-    quint32 layer = source().hasProperty("bandindex") ? source()["bandindex"].toUInt(): iUNDEF;
+    quint32 layer = sourceRef().hasProperty("bandindex") ? sourceRef()["bandindex"].toUInt(): iUNDEF;
     auto layerHandle = gdal()->getRasterBand(_handle->handle(), layer != iUNDEF ? layer + 1 : 1);
     if (!layerHandle) {
         ERROR2(ERR_COULD_NOT_LOAD_2, "GDAL","layer");

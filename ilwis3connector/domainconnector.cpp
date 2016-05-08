@@ -375,7 +375,7 @@ bool DomainConnector::storeMetaData(IlwisObject *data)
     } else if ( dom->ilwisType() == itCOORDDOMAIN) {
     }
 
-    _odf->store("dom", source().toLocalFile());
+    _odf->store("dom", sourceRef().toLocalFile());
     return true;
 }
 

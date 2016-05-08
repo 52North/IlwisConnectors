@@ -345,7 +345,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
         _odf->setKeyValue(colName, "DomainInfo", domainInfo);
     }
     _odf->setKeyValue("TableStore", "StoreTime", Time::now().toString());
-    _odf->store("tbt", source().toLocalFile());
+    _odf->store("tbt", sourceRef().toLocalFile());
     return true;
 }
 

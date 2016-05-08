@@ -382,7 +382,7 @@ bool CoordinateSystemConnector::storeMetaData(IlwisObject *data) {
             _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvZONE),projection->parameter(Projection::pvZONE).toInt());
 
     }
-    _odf->store("csy", source().toLocalFile());
+    _odf->store("csy", sourceRef().toLocalFile());
     return true;
 
 

@@ -55,8 +55,8 @@ SpreadSheetTableConnector::SpreadSheetTableConnector(const Ilwis::Resource &reso
             suffix = options["format"].toString();
             QString correctName = odsinfo.absolutePath() + "/" + odsinfo.baseName() + "." + suffix;
             QString correctUrl = QUrl::fromLocalFile(correctName).toString();
-            source().setUrl(correctUrl);
-            source().setUrl(correctUrl,true);
+            sourceRef().setUrl(correctUrl);
+            sourceRef().setUrl(correctUrl,true);
         }
     }
     if ( suffix.toLower() == "ods"){

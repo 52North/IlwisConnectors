@@ -56,9 +56,9 @@ bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions
 
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
-    PostgresqlFeatureCoverageLoader loader = PostgresqlFeatureCoverageLoader(source(), iooptions);
+    PostgresqlFeatureCoverageLoader loader = PostgresqlFeatureCoverageLoader(sourceRef(), iooptions);
     if ( !loader.loadMetadata(fcoverage)) {
-        ERROR1(ERR_NO_INITIALIZED_1, source().name());
+        ERROR1(ERR_NO_INITIALIZED_1, sourceRef().name());
         return false;
     }
 
@@ -69,7 +69,7 @@ bool PostgresqlFeatureConnector::loadData(IlwisObject *data, const IOOptions& op
 {
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
-    PostgresqlFeatureCoverageLoader loader = PostgresqlFeatureCoverageLoader(source(), iooptions);
+    PostgresqlFeatureCoverageLoader loader = PostgresqlFeatureCoverageLoader(sourceRef(), iooptions);
     bool ok = loader.loadData(fcoverage);
     _binaryIsLoaded = ok;
     return ok;
@@ -82,7 +82,7 @@ bool PostgresqlFeatureConnector::store(IlwisObject *data, const IOOptions& optio
     //qDebug() << "PostgresqlFeatureConnector::store()";
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
-    PostgresqlFeatureCoverageLoader loader = PostgresqlFeatureCoverageLoader(source(), iooptions);
+    PostgresqlFeatureCoverageLoader loader = PostgresqlFeatureCoverageLoader(sourceRef(), iooptions);
     bool ok = loader.storeData(fcoverage);
     return ok;
 }

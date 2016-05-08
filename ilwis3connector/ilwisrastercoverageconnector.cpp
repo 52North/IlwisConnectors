@@ -500,7 +500,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         gcMap->store({"storemode",IlwisObject::smBINARYDATA | IlwisObject::smMETADATA});
     }
 
-    _odf->store("mpl",source().toLocalFile());
+    _odf->store("mpl",sourceRef().toLocalFile());
     return true;
 }
 
@@ -524,7 +524,7 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
         localName = localGrfPath.absolutePath() + namePart;
 
     }
-    QString destinationPath = QFileInfo(source().toLocalFile()).absolutePath();
+    QString destinationPath = QFileInfo(sourceRef().toLocalFile()).absolutePath();
     QFileInfo sourceGrf(localName);
     QString fileName (sourceGrf.fileName());
     QFileInfo destGrf(destinationPath + '/' + fileName);
@@ -632,7 +632,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     _odf->setKeyValue("MapStore","SwapBytes","No");
     _odf->setKeyValue("MapStore","UseAs","No");
 
-    _odf->store("mpr", source().toLocalFile());
+    _odf->store("mpr", sourceRef().toLocalFile());
 
 
     return true;

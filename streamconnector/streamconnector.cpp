@@ -81,12 +81,12 @@ IlwisObject *StreamConnector::create() const
 
 StreamConnector::StreamConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource,load,options)
 {
-    QUrlQuery query(source().url());
-    QString url =QString(source().url(true).toString(QUrl::RemoveQuery));
+    QUrlQuery query(sourceRef().url());
+    QString url =QString(sourceRef().url(true).toString(QUrl::RemoveQuery));
     if ( query.hasQueryItem("datasource")){
         QString item = query.queryItemValue("datasource");
         url += "/" + item;
-        source().setUrl(url);
+        sourceRef().setUrl(url);
     }
 }
 
@@ -161,8 +161,8 @@ bool StreamConnector::openSource(bool reading){
         if ( inf.suffix() != "ilwis"){
             filename = inf.absolutePath() + "/" + inf.baseName();
             QString correctUrl = QUrl::fromLocalFile(filename).toString();
-            source().setUrl(correctUrl);
-            source().setUrl(correctUrl,true);
+            sourceRef().setUrl(correctUrl);
+            sourceRef().setUrl(correctUrl,true);
         }
         QFile *file = new QFile(filename);
 
@@ -243,7 +243,7 @@ bool StreamConnector::isReadOnly() const
 
 bool StreamConnector::isFileBased() const
 {
-    return source().url(true).scheme() == "file";
+    return sourceRef().url(true).scheme() == "file";
 }
 
 bool StreamConnector::dataIsLoaded() const
