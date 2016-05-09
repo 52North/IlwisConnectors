@@ -160,6 +160,7 @@ bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &option
 
 bool FeatureSerializerV1::loadData(IlwisObject* obj, const IOOptions& options ){
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
+    fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // reset counts as they are set by loadmetadata and are agains et by adding new features
     quint32 featureCount;
     _stream >> featureCount;
     for(quint32 f = 0; f < featureCount; ++f){
