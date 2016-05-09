@@ -248,8 +248,5 @@ bool StreamConnector::isFileBased() const
 
 bool StreamConnector::dataIsLoaded() const
 {
-    if ( _versionedConnector){
-        _versionedConnector->dataIsLoaded();
-    }
-    return false;
+    return _binaryIsLoaded;
 }
