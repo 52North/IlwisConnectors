@@ -75,6 +75,8 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                 Resource res(url,itCATALOG, true);
                 finalList.push_back(res);
             }
+            if (!trq->update(1))
+                return std::vector<Resource>();
         }
 
         foreach(const auto& kvp, inifiles) {
@@ -92,8 +94,7 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
         for(auto& resource : finalList){
             names[OSHelper::neutralizeFileName(resource.url().toLocalFile())] = resource.id();
         }
-//        if (!trq->update(1))
-//            return std::vector<Resource>();
+
         std::vector<ODFItem> items;
         trq->prepare(TR("Organizing data"),"",odfitems.size()*2);
         for( const auto& item : odfitems){
