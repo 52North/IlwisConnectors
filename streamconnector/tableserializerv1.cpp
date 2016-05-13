@@ -111,7 +111,9 @@ bool TableSerializerV1::loadData(IlwisObject* obj, const IOOptions& options){
     for(int col =0; col < tbl->columnCount(); ++col){
         types.push_back(tbl->columndefinition(col).datadef().domain()->valueType());
     }
-    for(quint32 rec = 0; rec < tbl->recordCount(); ++rec){
+    int n = tbl->recordCount();
+    tbl->recordCount(0); // we reset the record count as we will be creating the records now which again will up the count
+    for(quint32 rec = 0; rec < n; ++rec){
         Record& record = tbl->newRecord();
         record.loadData(types,_stream,options);
 
