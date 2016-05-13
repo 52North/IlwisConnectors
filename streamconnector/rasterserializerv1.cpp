@@ -267,12 +267,13 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
         std::unique_ptr<DataInterface> tableStreamer(factory->create(version, itTABLE,_stream));
         if ( !tableStreamer)
             return false;
-        FlatTable *tbl = new FlatTable();
+        ITable tbl;
+        tbl.prepare();
 
-        tableStreamer->loadMetaData(tbl,options);
+        tableStreamer->loadMetaData(tbl.ptr(),options);
         _stream >> type;
         _stream >> version;
-        tableStreamer->loadData(tbl,options);
+        tableStreamer->loadData(tbl.ptr(),options);
         raster->attributeTable(tbl);
     }
 
