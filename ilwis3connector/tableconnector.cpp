@@ -64,6 +64,12 @@ bool TableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
     ColumnDefinition key  = getKeyColumn();
     if ( key.isValid()) {
         columns.push_back(key);
+        if ( !options.contains("attributetable")) {
+            _primaryKey = key.name();
+        }else if (!options["attributetable"].toBool() == true){
+             _primaryKey = key.name();
+        }
+
     }
 
     Table *tbl = static_cast<Table *>(data);
@@ -72,6 +78,10 @@ bool TableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
         ColumnDefinition col = makeColumn(colName, index);
         tbl->addColumn(col);
 
+
+    }
+    if ( _primaryKey != sUNDEF){
+        tbl->addColumn(key);
     }
     tbl->recordCount(rows);
     return true;
@@ -135,10 +145,11 @@ ColumnDefinition TableConnector::getKeyColumn() {
         kernel()->issues()->log(TR(ERR_NO_INITIALIZED_1).arg(domain));
         return ColumnDefinition();
     }
-    IDomain dmkey;
-    dmkey.prepare("count");
-    ColumnDefinition colKey(dom->name()+"_raw", dmkey, 0);
-    colKey.datadef().range(new NumericRange(0,dom->count(),1));
+    QString name = dom->name();
+    int index = name.indexOf(".");
+    if ( index != -1)
+        name = name.left(index);
+    ColumnDefinition colKey(name, dom, 0);
     return colKey;
 
 }
@@ -182,6 +193,20 @@ bool TableConnector::loadData(IlwisObject* data , const IOOptions &) {
             table->column(colName,varlist);
         }
         colindex++;
+    }
+    if ( _primaryKey != sUNDEF){
+        QString domain = _odf->value("Table","Domain").toLower();
+        if (domain != "none.dom" && domain != "none"){
+            IDomain dom;
+            dom.prepare(filename2FullPath(domain, this->_resource));
+            IItemDomain itemdom = dom.as<ItemDomain<DomainItem>>();
+            std::vector<QVariant> varlist(tbl.rows());
+            for(int i =0; i<itemdom->count(); ++i){
+                Raw raw = itemdom->item(i)->raw();
+                varlist[i] = raw;
+            }
+            table->column(_primaryKey,varlist);
+        }
     }
     _binaryIsLoaded = true;
 

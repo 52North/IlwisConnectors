@@ -31,6 +31,7 @@ private:
     QHash<QString, RawConverter> _converters;
     QString _attributeDomain;
     std::vector<quint32> _selected;
+    QString _primaryKey = sUNDEF;
 };
 }
 }
