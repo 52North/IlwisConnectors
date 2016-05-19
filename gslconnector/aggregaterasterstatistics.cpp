@@ -14,6 +14,14 @@ using namespace GSL;
 
 REGISTER_OPERATION(AggregateRasterStatistics)
 
+double sumfunc(const double data[], size_t step, size_t count){
+    double sum = 0;
+    for(int i=0; i < count; i+=step){
+        sum += data[i];
+    }
+    return sum;
+}
+
 AggregateRasterStatistics::AggregateRasterStatistics()
 {
 }
@@ -67,7 +75,7 @@ Ilwis::OperationImplementation::State AggregateRasterStatistics::prepare(Executi
         {ERR_COULD_NOT_LOAD_2,_expression.input<QString>(0), "" } );
 
         std::vector<QString> operations = {"mean","variance","standarddev","totalsumsquares","absolutedeviation",
-                                           "skew","kurtosis","max","min","maxindex","minindex","median","autocorrelationlag1"};
+                                           "skew","kurtosis","max","min","maxindex","minindex","median","autocorrelationlag1","sum"};
 
         OperationHelper::check([&] ()->bool { return std::find(operations.begin(), operations.end(),_expression.input<QString>(1)) != operations.end(); },
         {ERR_ILLEGAL_VALUE_2,TR("statistical operation"),_expression.input<QString>(1) } );
@@ -81,6 +89,9 @@ Ilwis::OperationImplementation::State AggregateRasterStatistics::prepare(Executi
            ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
            return sPREPAREFAILED;
        }
+       Envelope env = _inputRaster->envelope().twoD();
+       _outputRaster->envelope(env);
+
        if ( _operationName == "median" || _operationName == "min" || _operationName == "max")
            _outputRaster->datadefRef() = DataDefinition(_inputRaster->datadef().domain(),_inputRaster->datadef().range()->clone());
        else if ( _operationName == "maxindex" || _operationName == "minindex"){
@@ -118,6 +129,8 @@ Ilwis::OperationImplementation::State AggregateRasterStatistics::prepare(Executi
                _statisticsFunction1 = gsl_stats_mean;
            } if ( _operationName == "autocorrelationlag1"){
                _statisticsFunction1 = gsl_stats_lag1_autocorrelation ;
+           } if ( _operationName == "sum"){
+               _statisticsFunction1 = sumfunc ;
            }
        }
 
@@ -132,7 +145,7 @@ Ilwis::OperationImplementation::State AggregateRasterStatistics::prepare(Executi
 quint64 AggregateRasterStatistics::createMetadata()
 {
     OperationResource operation({"ilwis://operations/aggregaterasterstatistics"},"gsl");
-    operation.setSyntax("aggregaterasterstatistics(inputraster,statisticalmarker=mean|variance|standarddev|totalsumsquares|absolutedeviation|skew|kurtosis|max|min|maxindex|minindex|median)");
+    operation.setSyntax("aggregaterasterstatistics(inputraster,statisticalmarker=mean|variance|standarddev|totalsumsquares|absolutedeviation|skew|kurtosis|max|min|maxindex|minindex|median|sum)");
     operation.setDescription(TR("transpose the raster according to the method indicated by the second parameter"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER,  TR("input raster"),TR("set raster bands to be aggregated"));
