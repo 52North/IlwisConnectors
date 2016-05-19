@@ -78,7 +78,7 @@ public:
             return ( (quint32)raw | 0xFF000000); // setting transparency bit to 255 as this is by default not present
 
         }        
-        if (( _item && raw == 0) || (raw == _undefined))
+        if (( _item && raw == 0) || (raw == iILW3UNDEF || raw == shILW3UNDEF))
             return rUNDEF;
         return (raw + _offset) * MathHelper::roundTo3DecimalDigits (_scale);
     }
