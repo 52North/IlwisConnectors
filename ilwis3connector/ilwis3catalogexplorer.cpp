@@ -99,14 +99,12 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
         trq->prepare(TR("Organizing data"),"",odfitems.size()*2);
         for( const auto& item : odfitems){
             items.push_back(item);
-//             trq->update(1);
         }
 
 
         for(ODFItem& item : items) {
             if ( item.resolveNames(names)) {
                 finalList.push_back(item);
-//                 trq->update(1);
             }
         }
 
