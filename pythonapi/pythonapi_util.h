@@ -204,7 +204,7 @@ namespace pythonapi {
         }
 
         void findSignificantDigits(double distance){
-            this->data().findSignificantDigits(distance);
+            //this->data().findSignificantDigits(distance);
         }
 
         void binCount(quint32 value){
