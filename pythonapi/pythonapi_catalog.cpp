@@ -61,7 +61,7 @@ namespace pythonapi {
         if (loc.size() > 2 && loc[loc.size() - 1] == '/' && loc[loc.size() - 2] != '/')
             loc = loc.left(loc.size() - 1);
         QUrl location (loc);
-        Ilwis::CatalogView* cat = new Ilwis::CatalogView(location);
+        Ilwis::CatalogView* cat = new Ilwis::CatalogView({location, itCATALOG});
         cat->filter(QString::fromStdString(filter));
         this->_data.reset(cat);
         Ilwis::mastercatalog()->addContainer(location); // this will do the actual scan of "location" and add the sub-items to the mastercatalog
@@ -127,8 +127,7 @@ namespace pythonapi {
 //                }else if (hasType(type,itELLIPSOID)){
 //                    return new Ellipsoid(new Ilwis::IEllipsoid(*it));
                 }else if (hasType(type,itCATALOG)){
-                    Ilwis::CatalogView* cat = new Ilwis::CatalogView(it->url());
-                    cat->prepare();
+                    Ilwis::CatalogView* cat = new Ilwis::CatalogView({it->url(), itCATALOG});
                     Ilwis::mastercatalog()->addContainer(it->url()); // also scan and add the sub-items to the mastercatalog
                     return new Catalog(cat);
                 }else{
