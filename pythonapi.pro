@@ -14,7 +14,7 @@ win32{
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
-PYTHONDIR = C:/Python34
+PYTHONDIR = F:/Python351
 
 HEADERS += \
     pythonapi/pythonapi_util.h \
@@ -98,7 +98,7 @@ OTHER_FILES += \
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
-        -L$$PYTHONDIR/libs -lpython34
+        -L$$PYTHONDIR/libs -lpython35
 
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2

@@ -114,7 +114,7 @@ Table FeatureCoverage::attributeTable(){
 }
 
 void FeatureCoverage::attributesFromTable(const Table &otherTable){
-    this->ptr()->as<Ilwis::FeatureCoverage>()->attributesFromTable(otherTable.ptr()->as<Ilwis::Table>());
+    this->ptr()->as<Ilwis::FeatureCoverage>()->setAttributes(otherTable.ptr()->as<Ilwis::Table>());
 }
 
 void FeatureCoverage::addColumn(const ColumnDefinition &coldef){

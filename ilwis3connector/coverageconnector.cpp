@@ -156,10 +156,10 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
     if ( basemaptype != "Map" || attfile != sUNDEF || isSortWithoutAtTab ) {
         ITable tbl = prepareAttributeTable(attfile, basemaptype, options);
         if ( tbl.isValid()){
+            coverage->setAttributes(tbl);
             if ( basemaptype == "Map"){
-                auto *raster = static_cast<RasterCoverage *>(coverage);
-                raster->attributeTable(tbl);
-                if ( isSortWithoutAtTab){
+                  if ( isSortWithoutAtTab){
+                    auto *raster = static_cast<RasterCoverage *>(coverage);
                     IItemDomain domain = raster->datadef().domain().as<ItemDomain<DomainItem>>();
                     std::vector<QVariant> values;
                     for(auto item : domain){
@@ -167,8 +167,8 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
                     }
                     tbl->column(0,values);
                 }
-            } else
-                static_cast<FeatureCoverage *>(coverage)->attributesFromTable(tbl);
+            }
+
         } else
             return false;
     }

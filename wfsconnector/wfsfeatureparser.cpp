@@ -96,7 +96,7 @@ void WfsFeatureParser::parseFeatureMembers()
             }
         }
     }
-    _fcoverage->attributesFromTable(table);
+    _fcoverage->setAttributes(table);
 }
 
 bool WfsFeatureParser::parseFeature(std::vector<QVariant> &record, ITable& table)

@@ -59,7 +59,7 @@ bool PostgresqlFeatureCoverageLoader::loadMetadata(FeatureCoverage *fcoverage) c
 
     setFeatureCount(fcoverage);
     setSpatialMetadata(fcoverage);
-    fcoverage->attributesFromTable(featureTable);
+    fcoverage->setAttributes(featureTable);
 
     IDomain semantics;
     QList<MetaGeometryColumn> metaGeometries;
@@ -158,7 +158,7 @@ bool PostgresqlFeatureCoverageLoader::loadData(FeatureCoverage *fcoverage) const
             }
         }
     }
-    fcoverage->attributesFromTable(table);
+    fcoverage->setAttributes(table);
 
     return true;
 }

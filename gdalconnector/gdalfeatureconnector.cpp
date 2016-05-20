@@ -104,7 +104,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
             ERROR1(ERR_NO_INITIALIZED_1,resource.name());
             return false;
         }
-        fcoverage->attributesFromTable(attTable);
+        fcoverage->setAttributes(attTable);
 
         //layer envelopes/extents
         Envelope bbox;

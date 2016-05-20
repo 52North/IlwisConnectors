@@ -274,7 +274,7 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
         _stream >> type;
         _stream >> version;
         tableStreamer->loadData(tbl.ptr(),options);
-        raster->attributeTable(tbl);
+        raster->setAttributes(tbl);
     }
 
     return true;
