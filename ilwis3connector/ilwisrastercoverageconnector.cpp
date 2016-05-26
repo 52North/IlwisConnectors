@@ -482,6 +482,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
     _odf->setKeyValue("MapList","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
     _odf->setKeyValue("MapList","Maps",QString::number(sz.zsize()));
 
+    QString mpl_name = obj->name();
     for(int i = 0; i < sz.zsize(); ++i) {
         QString mapName = QString("%1_band_%2").arg(obj->name()).arg(i);
         mapName = mapName.replace(QRegExp("[/ .'\"]"),"_");
@@ -497,7 +498,10 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
         QString path = _odf->url().left(index);
         QUrl url =  path + "/" + mapName;
         gcMap->connectTo(url, "map", "ilwis3", Ilwis::IlwisObject::cmOUTPUT);
-        gcMap->store({"storemode",IlwisObject::smBINARYDATA | IlwisObject::smMETADATA});
+        IOOptions options;
+        options.addOption({"storemode",IlwisObject::smBINARYDATA | IlwisObject::smMETADATA});
+        options.addOption({"collection", mpl_name});
+        gcMap->store(options);
     }
 
     _odf->store("mpl",sourceRef().toLocalFile());
@@ -538,7 +542,7 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
     return destGrf.absoluteFilePath();
 }
 
-bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
+bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, QString coll_name)  {
     Locker<> lock(_mutex);
 
     IRasterCoverage raster = mastercatalog()->get(obj->id());
@@ -632,8 +636,13 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj)  {
     _odf->setKeyValue("MapStore","SwapBytes","No");
     _odf->setKeyValue("MapStore","UseAs","No");
 
-    _odf->store("mpr", sourceRef().toLocalFile());
+    if (coll_name == sUNDEF)
+        return true;    // done
 
+    _odf->setKeyValue("Collection", "NrOfItems", "1");
+    _odf->setKeyValue("Collection", "Item0", coll_name);
+
+    _odf->store("mpr", sourceRef().toLocalFile());
 
     return true;
 }

@@ -12,7 +12,7 @@ public:
     RasterCoverageConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
     bool loadMetaData(IlwisObject *data, const IOOptions &options);
-    bool storeMetaData(Ilwis::IlwisObject *obj);
+    bool storeMetaData(Ilwis::IlwisObject *obj, QString coll_name = sUNDEF);
     bool loadData(Ilwis::IlwisObject *, const IOOptions& options = IOOptions()) ;
     bool storeBinaryData(Ilwis::IlwisObject *obj);
     QString format() const;

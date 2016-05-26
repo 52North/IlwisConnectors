@@ -33,10 +33,7 @@ bool WorkflowConnectorObjectFactory::canUse(const Resource &resource) const
     if ( resource.url().scheme() != "file") // can't use anything marked as file
         return false;
 
-    if ( !hasType(resource.ilwisType(), itWORKFLOW))
-        return false;
-
-    return false;
+    return hasType(resource.ilwisType(), itWORKFLOW);
 }
 
 IlwisObject *WorkflowConnectorObjectFactory::create(const Resource &resource, const IOOptions &options) const
@@ -58,6 +55,7 @@ IlwisObject *WorkflowConnectorObjectFactory::create(const Resource &resource, co
        return object;
 
    delete connector;
+
    return 0;
 }
 

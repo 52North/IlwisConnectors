@@ -12,7 +12,7 @@
 #include "connectorinterface.h"
 #include "ilwiscontext.h"
 #include "workflowconnectormodule.h"
-
+#include "workflowjsonconnector.h"
 
 using namespace Ilwis;
 using namespace WorkflowConnector;
@@ -29,7 +29,7 @@ QString WorkflowConnectorModule::getInterfaceVersion() const
 
 QString WorkflowConnectorModule::getName() const
 {
-    return "Spread sheet plugin";
+    return "JSonWorkflow plugin";
 }
 
 QString WorkflowConnectorModule::getVersion() const
@@ -50,11 +50,10 @@ void WorkflowConnectorModule::prepare()
 
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (!cfactory)
-        return ;
-  //  cfactory->addCreator(itWORKFLOW,"workflow",WorkflowJSONConnector::create);
+        return;
 
-
-  //  cfactory->addCreator("workflow","Workflows", WorkflowJSONConnector::create);
+    cfactory->addCreator(itWORKFLOW, "Json", WorkflowJSONConnector::create);
+    cfactory->addCreator("workflow", "Json", WorkflowJSONConnector::create);
 
     kernel()->issues()->log("Loaded Workflow module",IssueObject::itMessage);
 
