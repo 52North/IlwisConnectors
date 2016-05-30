@@ -132,13 +132,14 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
     QString ell = _odf->value("CoordSystem","Ellipsoid");
     if ( ell == "?")
         return IEllipsoid();
-    if ( ell == "User Defined") {
+    if ( ell.toLower() == "user uefined") {
         double invf = _odf->value("Ellipsoid","1/f").toDouble();
         double majoraxis = _odf->value("Ellipsoid","a").toDouble();
         IEllipsoid ellipsoid;
         ellipsoid.prepare();
         QString newName = ellipsoid->setEllipsoid(majoraxis,invf);;
-        ellipsoid->name(newName);
+        if ( newName.toLower() != "user defined") // which is basically anonymous
+            ellipsoid->name(newName);
         return ellipsoid;
     }
     IEllipsoid ellipsoid;

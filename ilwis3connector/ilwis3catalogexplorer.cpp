@@ -58,61 +58,65 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
     trq->prepare("ilwis3 connector",source().toLocalFile(),files.size());
     kernel()->issues()->silent(true);  // error messages during scan are not needed
     try{
-        // we construct the list of ini files in one go so that there is a list of ini files that only need to be loaded once.
-        // multiple files reusing the same ini files ( e.g. a csy) have now much faster access (already loaded)
-        foreach(const QUrl& url, files) {
-            QFileInfo localfile = QFileInfo(url.toLocalFile());
-            if (localfile.isFile()){
-               std::vector<Resource> resources = CatalogConnector::cache()->find(url, Time(localfile.lastModified()));
-               if ( resources.size() == 0)
-                    inifiles[url.toLocalFile().toLower()] = IniFile(localfile);
-                else{
-                    for(auto resource : resources)
-                        finalList.push_back(resource);
-                }
-            }
-            else{
-                Resource res(url,itCATALOG, true);
-                finalList.push_back(res);
-            }
-            if (!trq->update(1))
-                return std::vector<Resource>();
-        }
+           // we construct the list of ini files in one go so that there is a list of ini files that only need to be loaded once.
+           // multiple files reusing the same ini files ( e.g. a csy) have now much faster access (already loaded)
+           foreach(const QUrl& url, files) {
+               QFileInfo localfile = QFileInfo(url.toLocalFile());
+               if (localfile.isFile()){
+                  std::vector<Resource> resources = CatalogConnector::cache()->find(url, Time(localfile.lastModified()));
+                  if ( resources.size() == 0)
+                       inifiles[url.toLocalFile().toLower()] = IniFile(localfile);
+                   else{
+                       for(auto resource : resources)
+                           finalList.push_back(resource);
+                   }
+               }
+               else{
+                   Resource res(url,itCATALOG, true);
+                   finalList.push_back(res);
+               }
+           }
 
-        foreach(const auto& kvp, inifiles) {
-            ODFItem item(kvp.second, &inifiles);
-            odfitems.insert(item);
-            if ( item.isMapList()){
-                ODFItem mapList(item);
-                mapList.newId();
-                mapList.setIlwisType(itCATALOG);
-                mapList.setExtendedType(mapList.extendedType() | itRASTER);
-                odfitems.insert(mapList);
-            }
-            names[kvp.second.fileInfo().absoluteFilePath().toLower()] = item.id();
-        }
-        for(auto& resource : finalList){
-            names[OSHelper::neutralizeFileName(resource.url().toLocalFile())] = resource.id();
-        }
+           foreach(const auto& kvp, inifiles) {
+               ODFItem item(kvp.second, &inifiles);
+               odfitems.insert(item);
+               if (!trq->update(1))
+                   return std::vector<Resource>();
 
-        std::vector<ODFItem> items;
-        trq->prepare(TR("Organizing data"),"",odfitems.size()*2);
-        for( const auto& item : odfitems){
-            items.push_back(item);
-        }
+               if ( item.isMapList()){
+                   ODFItem mapList(item);
+                   mapList.newId();
+                   mapList.setIlwisType(itCATALOG);
+                   mapList.setExtendedType(mapList.extendedType() | itRASTER);
+                   odfitems.insert(mapList);
+               }
+               names[kvp.second.fileInfo().absoluteFilePath().toLower()] = item.id();
+           }
+           for(auto& resource : finalList){
+               names[OSHelper::neutralizeFileName(resource.url().toLocalFile())] = resource.id();
+           }
+           if (!trq->update(1))
+               return std::vector<Resource>();
+
+           std::vector<ODFItem> items;
+           trq->prepare(TR("Organizing data"),"",odfitems.size()*2);
+           for( const auto& item : odfitems){
+               items.push_back(item);
+           }
 
 
-        for(ODFItem& item : items) {
-            if ( item.resolveNames(names)) {
-                finalList.push_back(item);
-            }
-        }
+           for(ODFItem& item : items) {
+               if ( item.resolveNames(names)) {
+                   finalList.push_back(item);
+                    trq->update(1);
+               }
+           }
 
-        if ( finalList.size() > 0)
-            kernel()->issues()->log(QString(TR("Added %1 objects through the ilwis3 connector")).arg( finalList.size()),IssueObject::itMessage);
+           if ( finalList.size() > 0)
+               kernel()->issues()->log(QString(TR("Added %1 objects through the ilwis3 connector")).arg( finalList.size()),IssueObject::itMessage);
 
-        return finalList;
-    }
+           return finalList;
+       }
     catch(const ErrorObject& err){
         kernel()->issues()->silent(false);
         throw err;
