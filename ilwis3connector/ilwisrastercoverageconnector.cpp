@@ -636,11 +636,10 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, QString coll_name
     _odf->setKeyValue("MapStore","SwapBytes","No");
     _odf->setKeyValue("MapStore","UseAs","No");
 
-    if (coll_name == sUNDEF)
-        return true;    // done
-
-    _odf->setKeyValue("Collection", "NrOfItems", "1");
-    _odf->setKeyValue("Collection", "Item0", coll_name);
+    if (coll_name != sUNDEF) {
+        _odf->setKeyValue("Collection", "NrOfItems", "1");
+        _odf->setKeyValue("Collection", "Item0", coll_name);
+    }
 
     _odf->store("mpr", sourceRef().toLocalFile());
 
