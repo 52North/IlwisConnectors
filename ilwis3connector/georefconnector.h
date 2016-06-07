@@ -8,7 +8,7 @@ class GeorefConnector : public Ilwis3Connector
 public:
     GeorefConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     bool loadMetaData(IlwisObject *data, const IOOptions &options);
-    bool storeMetaData(IlwisObject *obj);
+    bool storeMetaData(IlwisObject *obj, const IOOptions &options);
     IlwisObject *create() const;
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());

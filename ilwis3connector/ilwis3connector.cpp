@@ -225,11 +225,9 @@ bool Ilwis3Connector::store(IlwisObject *obj, const IOOptions &options)
 
     bool ok = true;
     int storemode = options.contains("storemode") ? options["storemode"].toInt() : IlwisObject::smMETADATA | IlwisObject::smBINARYDATA;
-    QString coll_name = sUNDEF;
-    if (options.contains("collection"))
-        coll_name = options["collection"].toString();
+
     if ( storemode & IlwisObject::smMETADATA)
-        ok &= storeMetaData(obj, coll_name);
+        ok &= storeMetaData(obj, options);
     if ( ok && storemode & IlwisObject::smBINARYDATA)
         ok &= storeBinaryData(obj);
 

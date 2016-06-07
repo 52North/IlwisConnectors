@@ -154,7 +154,7 @@ bool GeorefConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
     return loadGeoref(*odf, data);
 }
 
-bool GeorefConnector::storeMetaData(IlwisObject *obj)
+bool GeorefConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
 {
     Ilwis3Connector::storeMetaData(obj, itGEOREF);
     GeoReference *grf = static_cast<GeoReference *>(obj);

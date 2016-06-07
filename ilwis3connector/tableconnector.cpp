@@ -261,7 +261,7 @@ QString TableConnector::getDomainName(const IDomain& dom, bool& isSystem) {
     return filename;
 }
 
-bool TableConnector::storeMetaData(IlwisObject *obj)
+bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
 {
     const Table *tbl = static_cast<const Table *>(obj);
 
@@ -300,7 +300,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj)
             res.setUrl(fileUrl);
 
             DomainConnector conn(res, itDOMAIN);
-            conn.storeMetaData(dmColumn.ptr());
+            conn.storeMetaData(dmColumn.ptr(), options);
         }
         QString colpostfix = def.name();
         if ( colpostfix.indexOf(QRegExp("[.]")) != -1)

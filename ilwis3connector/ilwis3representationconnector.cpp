@@ -36,7 +36,7 @@ bool Ilwis3RepresentationConnector::loadMetaData(IlwisObject *data, const IOOpti
     return false;
 }
 
-bool Ilwis3RepresentationConnector::storeMetaData(IlwisObject *obj)
+bool Ilwis3RepresentationConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
 {
     return false;
 }

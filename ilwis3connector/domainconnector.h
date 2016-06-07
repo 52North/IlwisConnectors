@@ -12,7 +12,7 @@ class DomainConnector : public Ilwis3Connector
 public:
     DomainConnector(const Resource& resource, bool load=true,const IOOptions& options=IOOptions());
     bool loadMetaData(Ilwis::IlwisObject *data, const IOOptions&);
-    bool storeMetaData(Ilwis::IlwisObject *data);
+    bool storeMetaData(Ilwis::IlwisObject *data, const IOOptions &options=IOOptions());
     IlwisObject *create() const;
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());

@@ -8,7 +8,7 @@ class CoordinateSystemConnector : public Ilwis3Connector
 public:
     CoordinateSystemConnector(const Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     bool loadMetaData(IlwisObject *data, const IOOptions &options);
-    bool storeMetaData(IlwisObject *data);
+    bool storeMetaData(IlwisObject *data, const IOOptions &options=IOOptions());
 
     static bool canUse(const Ilwis::Resource &resource, const UPCatalogConnector &container);
 

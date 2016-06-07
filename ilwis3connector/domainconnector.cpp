@@ -332,7 +332,7 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes valueType)
 
 }
 
-bool DomainConnector::storeMetaData(IlwisObject *data)
+bool DomainConnector::storeMetaData(IlwisObject *data, const IOOptions &options)
 {
     Domain *dom = static_cast<Domain *>(data);
     QString dmName = dom->name();

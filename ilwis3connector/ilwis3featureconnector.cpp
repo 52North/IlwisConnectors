@@ -967,7 +967,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     return ok;
 }
 
-bool FeatureConnector::storeMetaData(IlwisObject *obj)
+bool FeatureConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
 {
     FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
     IlwisTypes featureTypes = fcov->featureTypes();

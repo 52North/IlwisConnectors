@@ -542,7 +542,7 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
     return destGrf.absoluteFilePath();
 }
 
-bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, QString coll_name)  {
+bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, const IOOptions& options)  {
     Locker<> lock(_mutex);
 
     IRasterCoverage raster = mastercatalog()->get(obj->id());
@@ -578,7 +578,10 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, QString coll_name
                           arg(-bounds.min_corner().y,0,'f',10));
     }
 
-    _odf->setKeyValue("Map","GeoRef",QFileInfo(localName).fileName());
+    QFileInfo grfInf(localName);
+
+    bool storeGrf = true;
+    _odf->setKeyValue("Map","GeoRef",grfInf.fileName());
     Size<> sz = raster->size();
     _odf->setKeyValue("Map","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
     _odf->setKeyValue("Map","Type","MapStore");
@@ -619,7 +622,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, QString coll_name
     if ( attTable.isValid() && attTable->columnCount() > 1) {
         QFileInfo basename(QUrl(_odf->url()).toLocalFile());
         QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, raster.ptr(), itRASTER,basename.baseName()));
-        conn->storeMetaData(attTable.ptr());
+        conn->storeMetaData(attTable.ptr(),options);
     }
 
     QFileInfo inf(_resource.toLocalFile());
@@ -636,7 +639,10 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, QString coll_name
     _odf->setKeyValue("MapStore","SwapBytes","No");
     _odf->setKeyValue("MapStore","UseAs","No");
 
-    if (coll_name != sUNDEF) {
+    QString coll_name = sUNDEF;
+    if (options.contains("collection"))
+        coll_name = options["collection"].toString();
+    if (coll_name != sUNDEF){
         _odf->setKeyValue("Collection", "NrOfItems", "1");
         _odf->setKeyValue("Collection", "Item0", coll_name);
     }

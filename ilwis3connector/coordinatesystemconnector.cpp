@@ -303,7 +303,7 @@ IProjection CoordinateSystemConnector::getProjection(ConventionalCoordinateSyste
     return proj;
 }
 
-bool CoordinateSystemConnector::storeMetaData(IlwisObject *data) {
+bool CoordinateSystemConnector::storeMetaData(IlwisObject *data, const IOOptions &options) {
     bool ok = true;
     if ((ok = Ilwis3Connector::storeMetaData(data, itCOORDSYSTEM)) == false){
         return false;

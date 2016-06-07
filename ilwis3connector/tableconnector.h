@@ -11,7 +11,7 @@ class TableConnector : public Ilwis3Connector
 public:
     TableConnector(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
     bool loadMetaData(IlwisObject* data,const IOOptions&);
-    bool storeMetaData(Ilwis::IlwisObject *obj);
+    bool storeMetaData(Ilwis::IlwisObject *obj, const IOOptions& options = IOOptions());
     QString type() const;
     virtual IlwisObject *create() const;
     bool loadData(IlwisObject *, const IOOptions& options = IOOptions());

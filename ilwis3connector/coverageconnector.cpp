@@ -108,8 +108,12 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
     Coverage *coverage = static_cast<Coverage *>(data);
     QString csyName = _odf->value("BaseMap","CoordSystem");
     ICoordinateSystem csy;
-    if ( data->resource().hasProperty("coordinatesystem"))
-        csy.prepare(data->resource()["coordinatesystem"].toULongLong());
+    if ( data->resource().hasProperty("coordinatesystem")){
+        quint64 id = data->resource()["coordinatesystem"].toULongLong();
+        Resource res = mastercatalog()->id2Resource(id);
+        if ( res.isValid())
+            csy.prepare(res);
+    }
 
     if (!csy.isValid()){
         if ( csyName == sUNDEF){

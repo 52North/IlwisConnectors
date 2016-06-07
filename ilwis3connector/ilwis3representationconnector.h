@@ -10,7 +10,7 @@ public:
 
     Ilwis3RepresentationConnector(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     bool loadMetaData(IlwisObject *data, const IOOptions &options);
-    bool storeMetaData(IlwisObject *obj);
+    bool storeMetaData(IlwisObject *obj, const Ilwis::IOOptions &options);
     IlwisObject *create() const;
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     QString format() const;
