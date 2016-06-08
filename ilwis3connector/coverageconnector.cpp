@@ -304,13 +304,24 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
                 _odf->setKeyValue("BaseMap","Domain",_domainName);
             }
             _itemCount = themdom->count();
-        } else if(dom->valueType() == itINDEXEDITEM) {
-            _domainName = QFileInfo(QUrl(_odf->url()).toLocalFile()).fileName();
-            _domainInfo = QString("%1;Long;UniqueID;0;;").arg(_domainName);
-            _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
-            _odf->setKeyValue("BaseMap","Domain",_domainName);
-        } else if ( dom->valueType() == itNAMEDITEM) {
-            INamedIdDomain iddom = dom.as<NamedIdDomain>();
+         } else if(dom->valueType() == itINDEXEDITEM) {
+             if ( hasType(type, itFEATURE)){
+                 _domainName = QFileInfo(QUrl(_odf->url()).toLocalFile()).fileName();
+                 _domainInfo = QString("%1;Long;UniqueID;0;;").arg(_domainName);
+                 _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
+                 _odf->setKeyValue("BaseMap","Domain",_domainName);
+             }else {
+                QFileInfo inf(QUrl(_odf->url()).toLocalFile());
+                QString domName = inf.baseName() + ".dom";
+                QUrl domPath = QUrl::fromLocalFile(inf.absoluteDir().absolutePath() + "/" + domName);
+                dom->connectTo(domPath, "domain", "ilwis3", IlwisObject::cmOUTPUT);
+                dom->store();
+                _domainInfo = QString("%1;Long;UniqueID;0;;").arg(domName);
+                _odf->setKeyValue("BaseMap","DomainInfo",domName);
+                _odf->setKeyValue("BaseMap","Domain",domName);
+             }
+         } else if ( dom->valueType() == itNAMEDITEM) {
+             INamedIdDomain iddom = dom.as<NamedIdDomain>();
             _domainName = baseName + ".dom"; // Resource::toLocalFile(dom->source().url(), true);
             _domainName = QFileInfo(_domainName).fileName();
             _domainInfo = QString("%1;Int;id;%2;;").arg(_domainName).arg(iddom->count());
@@ -336,32 +347,41 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     if ( hasType(tp,itRASTER)) {
         RasterCoverage *raster = static_cast<RasterCoverage *>(coverage);
         Resource resource = raster->datadef().domain<>()->resource();
-        QFileInfo inf(resource.toLocalFile());
-        attDom = inf.fileName();
+        if ( hasType(raster->datadef().domain<>()->ilwisType(),itITEMDOMAIN)){
+            attDom = baseName + ".dom";
+        }else {
+            QFileInfo inf(resource.toLocalFile());
+            attDom = inf.fileName();
+        }
     }
     int index = dataFile.lastIndexOf(".");
     if ( index != -1) {
         dataFile = dataFile.left(index);
     }else{
-        if ( tp == itPOLYGON)
-            attDom += ".mpa";
-        else if ( tp == itRASTER)
-            attDom += ".mpr";
-        else if ( tp == itPOINT)
-            attDom += ".mpp";
-        else if ( tp == itLINE)
-            attDom += ".mps";
-        else
-            attDom  += ".dom";
+        int idx = attDom.lastIndexOf(".");
+        if ( idx == -1){
+            if ( tp == itPOLYGON)
+                attDom += ".mpa";
+            else if ( tp == itRASTER)
+                attDom += ".mpr";
+            else if ( tp == itPOINT)
+                attDom += ".mpp";
+            else if ( tp == itLINE)
+                attDom += ".mps";
+            else
+                attDom  += ".dom";
+        }
     }
     if ( attTable->columnCount() > 0) { // one column means only featurid which we dont save.
+        QString dataFilePath = context()->workingCatalog()->filesystemLocation().toString() + "/" + dataFile + ".tbt";
         QFileInfo inf(dataFile);
-        QString filename = dataFile + ".tbt";
-        _odf->setKeyValue("BaseMap","AttributeTable",filename);
+        _odf->setKeyValue("BaseMap","AttributeTable",dataFile + ".tbt");
 //        attTable->setName(inf.baseName()); // why should we chance the name of the table to a local filename here ?
-        TableConnector *conn = new TableConnector(Resource(QUrl::fromLocalFile(filename), itTABLE), false);
-        conn->attributeDomain(attDom);
 
+        IOOptions opt({"attributedomain"}, attDom);
+        attTable->connectTo(QUrl(dataFilePath),"table","ilwis3", IlwisObject::cmOUTPUT,opt);
+        TableConnector *conn = tp == itRASTER ? 0 : new TableConnector(Resource(dataFilePath, itTABLE), false);
+        //TableConnector *conn = new TableConnector(Resource(dataFilePath, itTABLE), false);
         return conn;
     }
     return 0;

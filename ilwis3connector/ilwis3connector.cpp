@@ -220,8 +220,14 @@ QString Ilwis3Connector::unquote(const QString &name) const
 
 bool Ilwis3Connector::store(IlwisObject *obj, const IOOptions &options)
 {
-    if(!willStore(obj))
-        return false;
+    bool mustStore = false;
+    if ( options.contains("storemode")){
+        mustStore = ((IlwisObject::StoreMode) options["storemode"].toInt()) == IlwisObject::smBINARYDATA;
+    }
+    if (!mustStore){
+        if(!willStore(obj) )
+            return false;
+    }
 
     bool ok = true;
     int storemode = options.contains("storemode") ? options["storemode"].toInt() : IlwisObject::smMETADATA | IlwisObject::smBINARYDATA;
@@ -237,7 +243,7 @@ bool Ilwis3Connector::store(IlwisObject *obj, const IOOptions &options)
 bool Ilwis3Connector::willStore(const Ilwis::IlwisObject *obj) const
 {
     if ( !obj->hasChanged()) { // objects that have not changed and that are linked to a still existing source need no save
-        QUrl source = obj->resource().url();
+        QUrl source = obj->resource(_mode).url();
         QFileInfo info(source.toLocalFile());
         if ( info.exists()){
             return false;

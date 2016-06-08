@@ -428,7 +428,7 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
         output_file.close();
 
     } else if ( dom->ilwisType() == itITEMDOMAIN ){
-        if ( hasType(dom->valueType(), itTHEMATICITEM | itNAMEDITEM | itNUMERICITEM)) {
+        if ( hasType(dom->valueType(), itTHEMATICITEM | itNAMEDITEM | itNUMERICITEM | itINDEXEDITEM)) {
             std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
             if ( !output_file.is_open()){
                 return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
@@ -580,7 +580,6 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, const IOOptions& 
 
     QFileInfo grfInf(localName);
 
-    bool storeGrf = true;
     _odf->setKeyValue("Map","GeoRef",grfInf.fileName());
     Size<> sz = raster->size();
     _odf->setKeyValue("Map","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
@@ -608,7 +607,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, const IOOptions& 
     } if ( hasType(dom->ilwisType(),itITEMDOMAIN)) {
         if ( hasType(dom->valueType(), itTHEMATICITEM | itNUMERICITEM)  )
             _odf->setKeyValue("MapStore","Type","Byte");
-        else if ( hasType(dom->valueType(), itNAMEDITEM)) {
+        else if ( hasType(dom->valueType(), itNAMEDITEM | itINDEXEDITEM)) {
             _odf->setKeyValue("MapStore","Type","Int");
         }
         if ( _domainName.indexOf(".dom") != -1 && !dom->isSystemObject()){
@@ -621,8 +620,10 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, const IOOptions& 
     ITable attTable = raster->attributeTable();
     if ( attTable.isValid() && attTable->columnCount() > 1) {
         QFileInfo basename(QUrl(_odf->url()).toLocalFile());
-        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, raster.ptr(), itRASTER,basename.baseName()));
-        conn->storeMetaData(attTable.ptr(),options);
+        //QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, raster.ptr(), itRASTER,basename.baseName()));
+        //conn->storeMetaData(attTable.ptr(),options);
+        createTableStoreConnector(attTable, raster.ptr(), itRASTER,basename.baseName());
+        attTable->store({"storemode",IlwisObject::smMETADATA});
     }
 
     QFileInfo inf(_resource.toLocalFile());

@@ -45,7 +45,8 @@ ConnectorInterface *TableConnector::create(const Resource &resource, bool load, 
 
 TableConnector::TableConnector(const Resource &resource, bool load, const IOOptions &options) : Ilwis3Connector(resource, load, options)
 {
-   // _type = itTABLE;
+   if ( options.contains("attributedomain"))
+       attributeDomain(options["attributedomain"].toString());
 }
 
 bool TableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
@@ -299,7 +300,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
             QString fileUrl = context()->workingCatalog()->filesystemLocation().toString() + filename;
             res.setUrl(fileUrl);
 
-            DomainConnector conn(res, itDOMAIN);
+            DomainConnector conn(res, false);
             conn.storeMetaData(dmColumn.ptr(), options);
         }
         QString colpostfix = def.name();

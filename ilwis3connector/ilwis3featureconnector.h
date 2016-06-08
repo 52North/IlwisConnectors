@@ -20,7 +20,7 @@ public:
     FeatureConnector(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
     bool loadMetaData(Ilwis::IlwisObject *data, const IOOptions &options);
     bool loadData(Ilwis::IlwisObject *obj, const IOOptions& options = IOOptions());
-    bool storeMetaData(IlwisObject *obj, const Ilwis::IOOptions &options=IOOptions()) ;
+    bool storeMetaData(IlwisObject *obj, const IOOptions &options) ;
     bool storeBinaryData(IlwisObject *obj);
 
     static ConnectorInterface *create(const Resource &resource, bool load,const IOOptions& options=IOOptions());
