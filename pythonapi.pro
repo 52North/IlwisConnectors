@@ -4,17 +4,17 @@ QT += core
 
 TARGET = _ilwisobjects
 
+TARGETDIR = pythonapi
+
 QMAKE_EXTENSION_SHLIB = pyd
 
 TEMPLATE = lib
 
 win32{
-    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGETDIR
 }
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
-
-PYTHONDIR = F:/Python351
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGETDIR
 
 HEADERS += \
     pythonapi/pythonapi_util.h \
@@ -47,7 +47,6 @@ HEADERS += \
     pythonapi/pythonapi_domainitem.h \
     pythonapi/pythonapi_vertexiterator.h \
 
-
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
     pythonapi/pythonapi_util.cpp \
@@ -78,17 +77,10 @@ SOURCES += \
     pythonapi/pythonapi_domainitem.cpp \
     pythonapi/pythonapi_vertexiterator.cpp
 
-
 OTHER_FILES += \
     pythonapi/test.py \
     pythonapi/setup.py \
     pythonapi/ilwisobjects.i \
-    pythonapi/test.sh \
-    pythonapi/test.bat \
-    pythonapi/qt.conf \
-    pythonapi/ilwisobjects.conf \
-    pythonapi/prepare_PATH.bat \
-    pythonapi/prepare_PATH.sh \
     pythonapi/paths.py \
     pythonapi/installerPy.nsi \
     pythonapi/LICENSE-2.0.txt \
@@ -96,22 +88,46 @@ OTHER_FILES += \
     pythonapi/UPDATE \
     pythonapi/CHANGELOG
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
-        -L$$PYTHONDIR/libs -lpython35
+PYMINORVERSION = 0
+PYVERLIST = 1 2 3 4 5 6 7 8 9
+for (VER, PYVERLIST): exists($$PWD/../external/Python3$$VER/include/Python.h) {
+    PYMINORVERSION = $$VER
+}
+equals(PYMINORVERSION, 0) {
+    for (VER, PYVERLIST): exists(C:/Python3$$VER/include/Python.h) {
+        PYMINORVERSION = $$VER
+    }
+    equals(PYMINORVERSION, 0) {
+        message("Error: Python not found in $$clean_path($$PWD/../external/) or in C:/")
+    } else {
+        message("Configuring for Python 3.$$PYMINORVERSION found in C:/Python3$$PYMINORVERSION")
+        LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+                -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
+                -LC:/Python3$$PYMINORVERSION/libs -lpython3$$PYMINORVERSION
+
+        INCLUDEPATH += $$PWD/../ilwiscore/core \
+                       $$PWD/../external/geos \
+                       C:/Python3$$PYMINORVERSION/include/
+    }
+} else {
+    message("Configuring for Python 3.$$PYMINORVERSION found in $$clean_path($$PWD/../external/Python3$$PYMINORVERSION/include)/ and in $$clean_path($$DESTDIR)/")
+    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+            -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
+            -L$$DESTDIR -lpython3$$PYMINORVERSION
+
+    INCLUDEPATH += $$PWD/../ilwiscore/core \
+                   $$PWD/../external/geos \
+                   $$PWD/../external/Python3$$PYMINORVERSION/include/
+}
+
+DEPENDPATH += $$PWD/../ilwiscore/core \
+              $$PWD/../external/geos
 
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
 
-INCLUDEPATH += $$PWD/../ilwiscore/core \
-               $$PWD/../external/geos \
-               $$PYTHONDIR/include/
-DEPENDPATH += $$PWD/../ilwiscore/core \
-              $$PWD/../external/geos
-
 mytarget.files = pythonapi/ilwisobjects.py \
-                 $$PWD/../libraries/$$PLATFORM$$CONF/extensions/_ilwisobjects/_ilwisobjects.pyd \
                  pythonapi/test.py \
                  pythonapi/README \
                  pythonapi/UPDATE \
