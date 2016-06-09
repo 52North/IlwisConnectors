@@ -65,9 +65,6 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
     if ( obj == nullptr)
         return ERROR1(ERR_NO_INITIALIZED_1,"Object");
 
-    if(!willStore(obj))
-        return false;
-
     if ( obj->isReadOnly()) {
         kernel()->issues()->log(QString(WARN_HAS_STATUS2).arg(obj->name().arg("read-only")));
         return false;
@@ -220,15 +217,6 @@ QString Ilwis3Connector::unquote(const QString &name) const
 
 bool Ilwis3Connector::store(IlwisObject *obj, const IOOptions &options)
 {
-    bool mustStore = false;
-    if ( options.contains("storemode")){
-        mustStore = ((IlwisObject::StoreMode) options["storemode"].toInt()) == IlwisObject::smBINARYDATA;
-    }
-    if (!mustStore){
-        if(!willStore(obj) )
-            return false;
-    }
-
     bool ok = true;
     int storemode = options.contains("storemode") ? options["storemode"].toInt() : IlwisObject::smMETADATA | IlwisObject::smBINARYDATA;
 
