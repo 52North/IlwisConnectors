@@ -1,6 +1,8 @@
 #ifndef WORKFLOWJSONCONNECTOR_H
 #define WORKFLOWJSONCONNECTOR_H
 
+#include "workflow/workflow.h"
+
 namespace Ilwis {
 namespace WorkflowConnector {
 
@@ -25,9 +27,9 @@ namespace WorkflowConnector {
         QJsonObject createJSONWorkflowMetaData(const Resource& res);
         QJsonObject createJSONOperationMetadata(const Resource &res);
         QJsonObject createJSONOperationList(const Resource &res);
-        QJsonObject createJSONOperationInputList(const Resource &res);
-        QJsonObject createJSONOperationOutputList(const Resource &res);
-        QJsonObject createJSONOperationConnectionList(const Resource &res);
+        QJsonArray createJSONOperationInputList(const IOperationMetaData &meta);
+        QJsonArray createJSONOperationOutputList(const IOperationMetaData &meta);
+        QJsonArray createJSONOperationConnectionList(const Resource &res);
         bool openTarget();
 
         std::unique_ptr<QIODevice> _datasource;

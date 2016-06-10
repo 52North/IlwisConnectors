@@ -1,5 +1,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QJsonValue>
 #include "kernel.h"
 #include "ilwisdata.h"
@@ -63,23 +64,49 @@ bool WorkflowJSONConnector::loadData(IlwisObject *, const IOOptions &options)
 bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
 {
     Workflow *workflow = static_cast<Workflow *>(object);
-//    QJsonDocument document;
-//    QJsonObject obj = createJSONWorkflowMetaData(workflow->resource());
-//    document.setObject(obj);
+    QJsonDocument document;
+    QJsonObject allworkflows;
+    QJsonArray workflows;   // top-level object, contains array of workflows
 
-//    QList<OVertex> nodes = workflow->getNodesWithExternalInput();
-//    for(OVertex vid: nodes) {
-//        NodeProperties props = workflow->nodeProperties(vid);
-//        Resource metadata = mastercatalog()->id2Resource(props._operationid);
-//        if ( metadata.isValid()){
-//            obj = createJSONOperationMetadata(metadata);
-//            document.object().insert("operations", obj);
-//            boost::graph_traits<WorkflowGraph>::out_edge_iterator ei, ei_end;
-//            for (boost::tie(ei,ei_end) = workflow->getOutEdges(vid); ei != ei_end; ++ei) {
-//            }
-//        }
+    QJsonObject single = createJSONWorkflow(workflow->resource());
+    single["metadata"] = createJSONWorkflowMetaData(workflow->resource());
 
-//    }
+    std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = workflow->getNodeIterators();
+    int size = nodeIterators.second - nodeIterators.first;
+
+    QJsonArray operations;
+    for (auto iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
+        NodeProperties nodeData = workflow->nodeProperties(*iter);
+        Resource res = mastercatalog()->id2Resource(nodeData._operationid);
+        IOperationMetaData metadata;
+        metadata.prepare(res);
+        if ( res.isValid()){
+            QJsonObject operation;
+            QJsonObject obj = createJSONOperationMetadata(res);
+            operation["id"] = QString::number(nodeData._id);
+            operation["metadata"] = obj;
+            operation["inputs"] = createJSONOperationInputList(metadata);
+            operation["outputs"] = createJSONOperationOutputList(metadata);
+            operations.append(operation);
+        }
+    }
+    single["operations"] = operations;
+
+    QJsonArray connect;
+    single["connections"] = connect;
+
+    workflows.append(single);
+
+    allworkflows["workflows"] = workflows;
+    document.setObject(allworkflows);
+
+    // open output file, and write Json stream to it
+    if (!openTarget())
+        return false;
+
+    QTextStream stream(_datasource.get());
+    stream << document.toJson();
+    stream.device()->close();
 
     return true;
 }
@@ -116,33 +143,37 @@ ConnectorInterface *WorkflowJSONConnector::create(const Ilwis::Resource &resourc
 
 QJsonObject WorkflowJSONConnector::createJSONWorkflow(const Resource &res)
 {
+    QJsonObject workflow;
+
+    workflow["id"] = QString("0");
+    return workflow;
 }
 
 QJsonObject WorkflowJSONConnector::createJSONWorkflowMetaData(const Resource& res){
-    QJsonObject obj;
-    obj.insert("longname", res.name());
-    obj.insert("description", res.description());
-    obj.insert("syntax", res["syntax"].toString());
-    obj.insert("resource", QString("Ilwis"));
-    obj.insert("keywords", res["keywords"].toString());
-    obj.insert("inputparametercount", res["inparameters"].toString());
-    obj.insert("outputparametercount", res["outparameters"].toString());
+    QJsonObject meta;
+    meta.insert("longname", res.name());
+    meta.insert("description", res.description());
+    meta.insert("syntax", res["syntax"].toString());
+    meta.insert("resource", QString("Ilwis"));
+    meta.insert("keywords", res["keywords"].toString());
+    meta.insert("inputparametercount", res["inparameters"].toString());
+    meta.insert("outputparametercount", res["outparameters"].toString());
 
-    return obj;
+    return meta;
 }
 
 QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const Resource &res) {
-    QJsonObject obj;
-    obj.insert("longname", res.name());
-    obj.insert("description",res.description());
-    obj.insert("syntax", res["syntax"].toString());
-    obj.insert("resource", QString("Ilwis"));
-    obj.insert("keywords", res["keywords"].toString());
-    obj.insert("inputparametercount", res["inparameters"].toString());
-    obj.insert("outputparametercount", res["outparameters"].toString());
-    obj.insert("final", res["final"].toString());
+    QJsonObject meta;
+    meta["longname"] = res.name();
+    meta["description"] = res.description();
+    meta["syntax"] = res["syntax"].toString();
+    meta["resource"] = QString("Ilwis");
+    meta["keywords"] = res["keywords"].toString();
+    meta["inputparametercount"] = res["inparameters"].toString();
+    meta["outputparametercount"] = res["outparameters"].toString();
+    meta["final"] = res["final"].toString();
 
-    return obj;
+    return meta;
 }
 
 QJsonObject WorkflowJSONConnector::createJSONOperationList(const Resource& res) {
@@ -151,20 +182,33 @@ QJsonObject WorkflowJSONConnector::createJSONOperationList(const Resource& res) 
     return obj;
 }
 
-QJsonObject WorkflowJSONConnector::createJSONOperationInputList(const Resource &res) {
-    QJsonObject obj;
+QJsonArray WorkflowJSONConnector::createJSONOperationInputList(const IOperationMetaData &meta) {
+    QJsonArray inputs;
 
-    return obj;
+    std::vector<SPOperationParameter> params = meta->getInputParameters();
+    foreach (SPOperationParameter parameter, params) {
+        QJsonObject input;
+        input["term"] = parameter->term();
+        input["name"] = parameter->name();
+        input["type"] = Ilwis::TypeHelper::type2HumanReadable(parameter->type());
+        input["id"] = QString("%1").arg(parameter->id());
+        input["optional"] = parameter->isOptional();
+        input["description"] = parameter->description();
+
+        inputs.append(input);
+    }
+
+    return inputs;
 }
 
-QJsonObject WorkflowJSONConnector::createJSONOperationOutputList(const Resource &res) {
-    QJsonObject obj;
+QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(const IOperationMetaData &meta) {
+    QJsonArray outputs;
 
-    return obj;
+    return outputs;
 }
 
-QJsonObject WorkflowJSONConnector::createJSONOperationConnectionList(const Resource &res) {
-    QJsonObject obj;
+QJsonArray WorkflowJSONConnector::createJSONOperationConnectionList(const Resource &res) {
+    QJsonArray connections;
 
-    return obj;
+    return connections;
 }
