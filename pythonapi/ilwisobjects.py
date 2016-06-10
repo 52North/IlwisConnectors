@@ -278,12 +278,9 @@ class Engine(_object):
         getLocation = staticmethod(getLocation)
     __swig_getmethods__["getLocation"] = lambda x: getLocation
 
-    def operations(self, *args):
-        """
-        operations(Engine self, std::string const & filter) -> PyObject
-        operations(Engine self) -> PyObject *
-        """
-        return _ilwisobjects.Engine_operations(self, *args)
+    def operations(self):
+        """operations(Engine self) -> PyObject *"""
+        return _ilwisobjects.Engine_operations(self)
 
 
     def operationMetaData(self, *args):

@@ -172,10 +172,9 @@ std::string Engine::getLocation(){
     return location.toString().toStdString();
 }
 
-PyObject* Engine::operations(const std::string& filter){
-    Ilwis::CatalogView opCat(Ilwis::Resource("ilwis://operations", itCATALOG));
-    opCat.filter("type='SingleOperation' or type='Workflow'");
-    std::vector<Ilwis::Resource> ops = opCat.items();
+PyObject* Engine::operations(){
+    QString filter = QString("(type=%1 or type=%2)").arg(itSINGLEOPERATION).arg(itWORKFLOW);
+    std::vector<Ilwis::Resource> ops = Ilwis::mastercatalog()->select(filter);
     PyObject* list = newPyTuple(ops.size());
     int i = 0;
     for(auto it = ops.begin(); it != ops.end(); it++){
@@ -187,9 +186,8 @@ PyObject* Engine::operations(const std::string& filter){
 }
 
 std::string Engine::operationMetaData(const std::string &name, const std::string &element){
-    Ilwis::CatalogView opCat(Ilwis::Resource("ilwis://operations", itCATALOG));
-    opCat.filter("type='SingleOperation' or type='Workflow'");
-    std::vector<Ilwis::Resource> ops = opCat.items();
+    QString filter = QString("(type=%1 or type=%2)").arg(itSINGLEOPERATION).arg(itWORKFLOW);
+    std::vector<Ilwis::Resource> ops = Ilwis::mastercatalog()->select(filter);
     QString ret;
     for(auto it = ops.begin();it != ops.end(); it++){
         if (QString::fromStdString(name).compare(it->name(),Qt::CaseInsensitive) == 0){

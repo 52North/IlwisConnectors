@@ -5009,52 +5009,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Engine_operations__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Engine *arg1 = (pythonapi::Engine *) 0 ;
-  std::string *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Engine_operations",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Engine, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Engine_operations" "', argument " "1"" of type '" "pythonapi::Engine *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Engine * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Engine_operations" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Engine_operations" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  {
-    try {
-      result = (PyObject *)(arg1)->operations((std::string const &)*arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = result;
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Engine_operations__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Engine_operations(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::Engine *arg1 = (pythonapi::Engine *) 0 ;
   void *argp1 = 0 ;
@@ -5080,50 +5035,6 @@ SWIGINTERN PyObject *_wrap_Engine_operations__SWIG_1(PyObject *SWIGUNUSEDPARM(se
   return resultobj;
 fail:
   return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Engine_operations(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[3] = {
-    0
-  };
-  Py_ssize_t ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Engine, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_Engine_operations__SWIG_1(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Engine, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_Engine_operations__SWIG_0(self, args);
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'Engine_operations'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::Engine::operations(std::string const &)\n"
-    "    pythonapi::Engine::operations()\n");
-  return 0;
 }
 
 
@@ -37085,10 +36996,7 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { (char *)"Engine_setWorkingCatalog", _wrap_Engine_setWorkingCatalog, METH_VARARGS, (char *)"Engine_setWorkingCatalog(std::string const & location)"},
 	 { (char *)"Engine_getLocation", _wrap_Engine_getLocation, METH_VARARGS, (char *)"Engine_getLocation() -> std::string"},
-	 { (char *)"Engine_operations", _wrap_Engine_operations, METH_VARARGS, (char *)"\n"
-		"operations(std::string const & filter) -> PyObject\n"
-		"Engine_operations(Engine self) -> PyObject *\n"
-		""},
+	 { (char *)"Engine_operations", _wrap_Engine_operations, METH_VARARGS, (char *)"Engine_operations(Engine self) -> PyObject *"},
 	 { (char *)"Engine_operationMetaData", _wrap_Engine_operationMetaData, METH_VARARGS, (char *)"\n"
 		"operationMetaData(std::string const & name, std::string const & element) -> std::string\n"
 		"Engine_operationMetaData(Engine self, std::string const & name) -> std::string\n"
