@@ -4,17 +4,13 @@ QT += core
 
 TARGET = _ilwisobjects
 
-TARGETDIR = pythonapi
+PYTHONAPI_FOLDER = pythonapi
 
 QMAKE_EXTENSION_SHLIB = pyd
 
 TEMPLATE = lib
 
-win32{
-    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGETDIR
-}
-
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGETDIR
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$PYTHONAPI_FOLDER
 
 HEADERS += \
     pythonapi/pythonapi_util.h \
@@ -81,6 +77,7 @@ OTHER_FILES += \
     pythonapi/test.py \
     pythonapi/setup.py \
     pythonapi/ilwisobjects.i \
+    pythonapi/ilwisobjects.py \
     pythonapi/paths.py \
     pythonapi/installerPy.nsi \
     pythonapi/LICENSE-2.0.txt \
@@ -127,16 +124,32 @@ win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
 
-mytarget.files = pythonapi/ilwisobjects.py \
-                 pythonapi/test.py \
-                 pythonapi/README \
-                 pythonapi/UPDATE \
-                 pythonapi/CHANGELOG
+installer_target.files = pythonapi/installerPy.nsi
+installer_target.path = $$PWD/../output/$$PLATFORM$$CONF
+INSTALLS += installer_target
 
-mytarget.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonapi
+COPY_FILES = ilwisobjects.py test.py README UPDATE CHANGELOG
+SOURCE_DIR = $$clean_path($$PWD/$$PYTHONAPI_FOLDER)
 
-install_target.files = pythonapi/installerPy.nsi
+linux {
+    DEST_DIR = $$clean_path($$DESTDIR)
+    QMAKE_PRE_LINK += $$quote(cat $$SOURCE_DIR/paths.py $$SOURCE_DIR/ilwisobjects.py > $$SOURCE_DIR/temp.py$$escape_expand(\n\t))
+    QMAKE_PRE_LINK += $$quote(mv -f $$SOURCE_DIR/temp.py $$SOURCE_DIR/ilwisobjects.py$$escape_expand(\n\t))
+    QMAKE_POST_LINK +=$$quote(test -d $$DEST_DIR || mkdir -p $$DEST_DIR$$escape_expand(\n\t))
+    for(FILE,COPY_FILES){
+        QMAKE_POST_LINK += $$quote(cp $$SOURCE_DIR/$$FILE $$DEST_DIR$$escape_expand(\n\t))
+    }
+}
 
-install_target.path = $$PWD/../output/$$PLATFORM$$CONF
-
-INSTALLS += mytarget install_target
+win32 {
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$PYTHONAPI_FOLDER
+    SOURCE_DIR = $$replace(SOURCE_DIR,/,\\)
+    DEST_DIR = $$clean_path($$DLLDESTDIR)
+    DEST_DIR = $$replace(DEST_DIR,/,\\)
+    QMAKE_PRE_LINK += $$quote(copy /y /b $$SOURCE_DIR\\paths.py + $$SOURCE_DIR\\ilwisobjects.py $$SOURCE_DIR\\temp.py$$escape_expand(\n\t))
+    QMAKE_PRE_LINK += $$quote(move /y $$SOURCE_DIR\\temp.py $$SOURCE_DIR\\ilwisobjects.py$$escape_expand(\n\t))
+    QMAKE_POST_LINK +=$$quote(if not exist $$DEST_DIR mkdir $$DEST_DIR$$escape_expand(\n\t))
+    for(FILE,COPY_FILES){
+        QMAKE_POST_LINK +=$$quote(copy /y $$SOURCE_DIR\\$$FILE $$DEST_DIR$$escape_expand(\n\t))
+    }
+}
