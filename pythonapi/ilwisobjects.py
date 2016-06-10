@@ -541,12 +541,9 @@ class CoordinateSystem(IlwisObject):
         return _ilwisobjects.CoordinateSystem___ne__(self, csy)
 
 
-    def toWKT(self, spaces=0):
-        """
-        toWKT(CoordinateSystem self, quint32 spaces=0) -> std::string
-        toWKT(CoordinateSystem self) -> std::string
-        """
-        return _ilwisobjects.CoordinateSystem_toWKT(self, spaces)
+    def toWKT(self):
+        """toWKT(CoordinateSystem self) -> std::string"""
+        return _ilwisobjects.CoordinateSystem_toWKT(self)
 
 
     def toProj4(self):

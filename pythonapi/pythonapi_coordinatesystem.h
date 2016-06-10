@@ -27,7 +27,7 @@ namespace pythonapi {
         bool operator==(const CoordinateSystem& csy);
         bool operator!=(const CoordinateSystem& csy);
 
-        std::string toWKT(quint32 spaces=0) const;
+        std::string toWKT() const;
         std::string toProj4() const;
         pythonapi::Envelope convertEnvelope(const CoordinateSystem& pyCsy, const pythonapi::Envelope& pyEnv);
 

@@ -6831,45 +6831,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_CoordinateSystem_toWKT__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::CoordinateSystem *arg1 = (pythonapi::CoordinateSystem *) 0 ;
-  quint32 arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  unsigned int val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:CoordinateSystem_toWKT",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__CoordinateSystem, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CoordinateSystem_toWKT" "', argument " "1"" of type '" "pythonapi::CoordinateSystem const *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::CoordinateSystem * >(argp1);
-  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CoordinateSystem_toWKT" "', argument " "2"" of type '" "quint32""'");
-  } 
-  arg2 = static_cast< quint32 >(val2);
-  {
-    try {
-      result = ((pythonapi::CoordinateSystem const *)arg1)->toWKT(arg2);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CoordinateSystem_toWKT__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_CoordinateSystem_toWKT(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::CoordinateSystem *arg1 = (pythonapi::CoordinateSystem *) 0 ;
   void *argp1 = 0 ;
@@ -6895,52 +6857,6 @@ SWIGINTERN PyObject *_wrap_CoordinateSystem_toWKT__SWIG_1(PyObject *SWIGUNUSEDPA
   return resultobj;
 fail:
   return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CoordinateSystem_toWKT(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[3] = {
-    0
-  };
-  Py_ssize_t ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__CoordinateSystem, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_CoordinateSystem_toWKT__SWIG_1(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__CoordinateSystem, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_CoordinateSystem_toWKT__SWIG_0(self, args);
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'CoordinateSystem_toWKT'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pythonapi::CoordinateSystem::toWKT(quint32) const\n"
-    "    pythonapi::CoordinateSystem::toWKT() const\n");
-  return 0;
 }
 
 
@@ -37044,10 +36960,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"CoordinateSystem_setEnvelope", _wrap_CoordinateSystem_setEnvelope, METH_VARARGS, (char *)"CoordinateSystem_setEnvelope(CoordinateSystem self, Envelope env)"},
 	 { (char *)"CoordinateSystem___eq__", _wrap_CoordinateSystem___eq__, METH_VARARGS, (char *)"CoordinateSystem___eq__(CoordinateSystem self, CoordinateSystem csy) -> bool"},
 	 { (char *)"CoordinateSystem___ne__", _wrap_CoordinateSystem___ne__, METH_VARARGS, (char *)"CoordinateSystem___ne__(CoordinateSystem self, CoordinateSystem csy) -> bool"},
-	 { (char *)"CoordinateSystem_toWKT", _wrap_CoordinateSystem_toWKT, METH_VARARGS, (char *)"\n"
-		"toWKT(quint32 spaces=0) -> std::string\n"
-		"CoordinateSystem_toWKT(CoordinateSystem self) -> std::string\n"
-		""},
+	 { (char *)"CoordinateSystem_toWKT", _wrap_CoordinateSystem_toWKT, METH_VARARGS, (char *)"CoordinateSystem_toWKT(CoordinateSystem self) -> std::string"},
 	 { (char *)"CoordinateSystem_toProj4", _wrap_CoordinateSystem_toProj4, METH_VARARGS, (char *)"CoordinateSystem_toProj4(CoordinateSystem self) -> std::string"},
 	 { (char *)"CoordinateSystem_convertEnvelope", _wrap_CoordinateSystem_convertEnvelope, METH_VARARGS, (char *)"CoordinateSystem_convertEnvelope(CoordinateSystem self, CoordinateSystem pyCsy, Envelope pyEnv) -> Envelope"},
 	 { (char *)"CoordinateSystem_coord2coord", _wrap_CoordinateSystem_coord2coord, METH_VARARGS, (char *)"CoordinateSystem_coord2coord(CoordinateSystem self, CoordinateSystem pyCsy, Coordinate pyCoord) -> Coordinate"},

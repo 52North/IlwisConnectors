@@ -64,7 +64,7 @@ bool CoordinateSystem::operator!=(const CoordinateSystem &csy){
     return !this->operator==(csy);
 }
 
-std::string CoordinateSystem::toWKT(quint32 spaces) const{
+std::string CoordinateSystem::toWKT() const{
     QString ilwStr = this->ptr()->as<Ilwis::CoordinateSystem>()->toWKT();
     return ilwStr.toStdString();
 }
