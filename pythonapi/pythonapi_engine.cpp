@@ -1,7 +1,6 @@
 #include "../../IlwisCore/core/kernel.h"
 #include "../../IlwisCore/core/ilwiscontext.h"
 #include "../../IlwisCore/core/catalog/catalog.h"
-#include "../../IlwisCore/core/catalog/catalogview.h"
 
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/ilwisobjects/operation/operationmetadata.h"
