@@ -386,10 +386,10 @@ IlwisTypes ODFItem::findCsyType(const QString& path)
     if ( _csyname == "")
         return itUNKNOWN;
 
-    //Resource resource = mastercatalog()->name2Resource(stripExtension(_csyname),itCOORDSYSTEM);
-    Resource resource = mastercatalog()->name2Resource(_csyname,itCOORDSYSTEM);
-    if ( resource.isValid())
-        return resource.ilwisType();
+//    Resource resource = mastercatalog()->name2Resource(_csyname,itCOORDSYSTEM);
+//    if ( resource.isValid()){
+//        return  resource.ilwisType();
+//    }
     IniFile csy;
     if ( _csyname == "latlonwgs84.csy"){
 
@@ -432,7 +432,7 @@ IlwisTypes ODFItem::findCsyType(const QString& path)
             path = inf.absoluteFilePath();
         }
 
-        if(!csy.setIniFile(path)){
+        if(!getIni(csy,path)){
             return itUNKNOWN;
         }
     }
