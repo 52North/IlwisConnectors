@@ -50,7 +50,7 @@ ODFItem::ODFItem(const IniFile &file, std::unordered_map<QString, IniFile> *know
     QString path = _odf.fileInfo().absoluteFilePath();
     _ilwtype = Ilwis3Connector::ilwisType(path);
     _csyname = findCsyName(path);
-    _domname = findDomainName(path);
+     _domname = findDomainName(path);
     _grfname = findGrfName();
     _datumName = findDatumName();
 
@@ -315,10 +315,6 @@ IlwisTypes ODFItem::findDomainType(const QString& path) const
     if ( _domname == "color.dom")
         return itCOLORDOMAIN;
 
-    //Resource resource = mastercatalog()->name2Resource(stripExtension(_domname),itDOMAIN);
-    Resource resource = mastercatalog()->name2Resource(_domname,itDOMAIN);
-    if ( resource.isValid())
-        return resource.ilwisType();
     IniFile dm;
     QString localpath = container().toLocalFile() + "/" + _domname;
     if(!getIni(dm, localpath))
