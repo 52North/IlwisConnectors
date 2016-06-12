@@ -83,7 +83,7 @@ ODFItem::ODFItem(const IniFile &file, std::unordered_map<QString, IniFile> *know
         _isMapList = true;
     }
 
-    _size = findSize();
+   _size = findSize();
     _dimensions = findDimensions();
 }
 
@@ -358,7 +358,7 @@ QString ODFItem::findCsyName(const QString& path) const
                  QFileInfo infgrf(grf);
                  if ( !infgrf.exists()) {
                      QString grfpath = container().toLocalFile() + "/" + grf;
-                     if ( grfpath != "none.grf"){
+                     if ( grf != "none.grf"){
                         IniFile ini;
                         getIni(ini, grfpath);
                         name = ini.value("GeoRef","CoordSystem");
