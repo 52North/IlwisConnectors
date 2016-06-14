@@ -161,6 +161,7 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
         ITable tbl = prepareAttributeTable(attfile, basemaptype, options);
         if ( tbl.isValid()){
             coverage->setAttributes(tbl);
+            addProperty("TableRecordCount", tbl->recordCount()); // pass to caller; this is the correct featureCount for ilwis3 vector files
             if ( basemaptype == "Map"){
                   if ( isSortWithoutAtTab){
                     auto *raster = static_cast<RasterCoverage *>(coverage);

@@ -237,7 +237,7 @@ bool FeatureConnector::loadBinaryPolygons37(FeatureCoverage *fcoverage, ITable& 
         return false;
     }
     QDataStream stream(&file);
-    int nrPolygons = fcoverage->featureCount(itPOLYGON);
+    int nrPolygons = _odf->value("PolygonMapStore","Polygons").toInt();
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     map<quint32,vector<geos::geom::Geometry *>> polygons;
     std::vector<double> featureValues(isNumeric ? nrPolygons : 0);
@@ -467,10 +467,12 @@ bool FeatureConnector::loadData(Ilwis::IlwisObject *obj, const IOOptions &) {
 
          if ( ok && extTable.isValid()) {
              ITable attTbl = fcoverage->attributeTable();
+             quint32 nrAttrCols = std::min(attTbl->columnCount(),extTable->columnCount());
             // quint32 keyIndex = extTable->columnIndex(COVERAGEKEYCOLUMN);
              for(quint32 rowExt=0; rowExt < extTable->recordCount(); ++rowExt) {
                  if ( rowExt < fcoverage->featureCount()){
                      vector<QVariant> rec = extTable->record(rowExt);
+                     rec.resize(nrAttrCols); // extTable received an extra "Domain" column, which is not there (and will not be there) in attTbl
                      attTbl->record(rowExt,rec);
                  }
              }
@@ -502,6 +504,9 @@ bool FeatureConnector::loadMetaData(Ilwis::IlwisObject *obj,const IOOptions& opt
     }
 
     if (ok){
+        // overwrite with the correct value from the attribute table if available (without computing it by reading the binary data!)
+        if (hasProperty("TableRecordCount"))
+            features = getProperty("TableRecordCount").toInt();
         fcoverage->featureTypes(coverageType);
         fcoverage->setFeatureCount(coverageType, features,0);
     }
@@ -803,13 +808,17 @@ bool FeatureConnector::storeMetaLine(FeatureCoverage *fcov, const QString& filep
     _odf->setKeyValue("SegmentMapStore","DeletedPolygons",QString::number(0));
     _odf->setKeyValue("Ilwis","Class","ILWIS::Segment Map");
 
-    int noOfLines = fcov->featureCount(itLINE);
-    _odf->setKeyValue("SegmentMapStore", "Segments", QString::number(noOfLines));
+    quint32 points;
+    quint32 segments;
+    quint32 polygons;
+    countPlainGeometries(fcov, points, segments, polygons);
+    _odf->setKeyValue("SegmentMapStore", "Segments", QString::number(segments));
 
     _odf->setKeyValue("Table", "Domain", "None.dom");
     _odf->setKeyValue("Table", "DomainInfo", "None.dom;Byte;none;0;;");
     _odf->setKeyValue("Table", "Columns", QString::number(5));
-    _odf->setKeyValue("Table", "Records", QString::number(noOfLines));
+    quint32 noOfFeatures = fcov->featureCount(itLINE);
+    _odf->setKeyValue("Table", "Records", QString::number(noOfFeatures));
     _odf->setKeyValue("Table", "Type", "TableStore");
 
     _odf->setKeyValue("TableStore", "Data", dataFile + ".mps#");
@@ -838,13 +847,17 @@ bool FeatureConnector::storeMetaPoint(FeatureCoverage *fcov, const QString& file
     _odf->setKeyValue("PointMapStore","Format",QString::number(2));
     _odf->setKeyValue("Ilwis","Class","ILWIS::Point Map");
 
-    int noOfPoints = fcov->featureCount(itPOINT);
-    _odf->setKeyValue("PointMap", "Points", QString::number(noOfPoints));
+    quint32 points;
+    quint32 segments;
+    quint32 polygons;
+    countPlainGeometries(fcov, points, segments, polygons);
+    _odf->setKeyValue("PointMap", "Points", QString::number(points));
 
     _odf->setKeyValue("Table", "Domain", "None.dom");
     _odf->setKeyValue("Table", "DomainInfo", "None.dom;Byte;none;0;;");
     _odf->setKeyValue("Table", "Columns", QString::number(2));
-    _odf->setKeyValue("Table", "Records", QString::number(noOfPoints));
+    quint32 noOfFeatures = fcov->featureCount(itPOINT);
+    _odf->setKeyValue("Table", "Records", QString::number(noOfFeatures));
     _odf->setKeyValue("Table", "Type", "TableStore");
 
     _odf->setKeyValue("TableStore", "Data", dataFile + ".pt#");
@@ -871,28 +884,60 @@ bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& fi
 
     QString localFile = dataFile + ".mpz#";
     _odf->setKeyValue("PolygonMapStore","DataPol", localFile);
-
-    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(countPolygons(fcov)));
+    quint32 points;
+    quint32 segments;
+    quint32 polygons;
+    countPlainGeometries(fcov, points, segments, polygons);
+    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(polygons));
 
     return true;
 }
 
-quint32  FeatureConnector::countPolygons(FeatureCoverage *fcov){
-    quint32 count = 0;
+void FeatureConnector::countPlainGeometries(FeatureCoverage *fcov, quint32 & points, quint32 & segments, quint32 & polygons){
+    points = 0;
+    segments = 0;
+    polygons = 0;
     IFeatureCoverage features(fcov) ;
     for(const auto& feature : features){
         if ( feature->geometry().get() != 0){
-            const UPGeometry& geom = feature->geometry();
-            geos::geom::GeometryTypeId geostype = geom->getGeometryTypeId();
-            if ( geostype == geos::geom::GEOS_POLYGON ){
-                ++count;
-            }else {
-                const geos::geom::Geometry *polygons = geom.get();
-                count += polygons->getNumGeometries();}
+            const UPGeometry& geometry = feature->geometry();
+            geos::geom::GeometryTypeId geostype = geometry->getGeometryTypeId();
+            switch (geostype) {
+            case geos::geom::GEOS_POINT:
+                ++points;
+                break;
+            case geos::geom::GEOS_LINESTRING:
+            case geos::geom::GEOS_LINEARRING:
+                ++segments;
+                break;
+            case geos::geom::GEOS_POLYGON:
+                ++polygons;
+                break;
+            case geos::geom::GEOS_MULTIPOINT:
+                {
+                    const geos::geom::Geometry *geometries = geometry.get();
+                    points += geometries->getNumGeometries();
+                }
+                break;
+            case geos::geom::GEOS_MULTILINESTRING:
+                {
+                    const geos::geom::Geometry *geometries = geometry.get();
+                    segments += geometries->getNumGeometries();
+                }
+                break;
+            case geos::geom::GEOS_MULTIPOLYGON:
+                {
+                    const geos::geom::Geometry *geometries = geometry.get();
+                    polygons += geometries->getNumGeometries();
+                }
+                break;
+            case geos::geom::GEOS_GEOMETRYCOLLECTION:
+                { // TODO
+                }
+                break;
+            }
         }
     }
-
-    return count;
 }
 
 bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
