@@ -85,6 +85,11 @@ OTHER_FILES += \
     pythonapi/UPDATE \
     pythonapi/CHANGELOG
 
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+INCLUDEPATH += $$PWD/../ilwiscore/core \
+               $$PWD/../external/geos
+
 PYMINORVERSION = 0
 PYVERLIST = 1 2 3 4 5 6 7 8 9
 for (VER, PYVERLIST): exists($$PWD/../external/Python3$$VER/include/Python.h) {
@@ -98,23 +103,20 @@ equals(PYMINORVERSION, 0) {
         message("Error: Python not found in $$clean_path($$PWD/../external/) or in C:/")
     } else {
         message("Configuring for Python 3.$$PYMINORVERSION found in C:/Python3$$PYMINORVERSION")
-        LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
-                -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
-                -LC:/Python3$$PYMINORVERSION/libs -lpython3$$PYMINORVERSION
-
-        INCLUDEPATH += $$PWD/../ilwiscore/core \
-                       $$PWD/../external/geos \
-                       C:/Python3$$PYMINORVERSION/include/
+        LIBS += -LC:/Python3$$PYMINORVERSION/libs -lpython3$$PYMINORVERSION
+        INCLUDEPATH += C:/Python3$$PYMINORVERSION/include/
     }
 } else {
     message("Configuring for Python 3.$$PYMINORVERSION found in $$clean_path($$PWD/../external/Python3$$PYMINORVERSION/include)/ and in $$clean_path($$DESTDIR)/")
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
-            -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
-            -L$$DESTDIR -lpython3$$PYMINORVERSION
-
-    INCLUDEPATH += $$PWD/../ilwiscore/core \
-                   $$PWD/../external/geos \
-                   $$PWD/../external/Python3$$PYMINORVERSION/include/
+    exists($$DESTDIR/python3$$PYMINORVERSION*) {
+    } else {
+        exists($$DESTDIR/libpython3$$PYMINORVERSION*) {
+        } else {
+            message("Check!! Missing $$clean_path($$DESTDIR/python3$$PYMINORVERSION)*.lib or $$clean_path($$DESTDIR/libpython3$$PYMINORVERSION).a")
+        }
+    }
+    LIBS += -L$$DESTDIR -lpython3$$PYMINORVERSION
+    INCLUDEPATH += $$PWD/../external/Python3$$PYMINORVERSION/include/
 }
 
 DEPENDPATH += $$PWD/../ilwiscore/core \
