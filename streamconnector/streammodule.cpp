@@ -101,7 +101,7 @@ void StreamModule::prepare()
 
     QFileInfo ilw = context()->ilwisFolder();
     QString path = ilw.canonicalFilePath() + "/extensions/streamconnector/resources";
-    DataFormat::setFormatInfo(path + "/streamformats.config","ilwis3");
+    DataFormat::setFormatInfo(path + "/streamformats.config","stream");
 
     kernel()->issues()->log("Loaded streaming module",IssueObject::itMessage);
 

@@ -50,7 +50,7 @@ ODFItem::ODFItem(const IniFile &file, std::unordered_map<QString, IniFile> *know
     QString path = _odf.fileInfo().absoluteFilePath();
     _ilwtype = Ilwis3Connector::ilwisType(path);
     _csyname = findCsyName(path);
-    _domname = findDomainName(path);
+     _domname = findDomainName(path);
     _grfname = findGrfName();
     _datumName = findDatumName();
 
@@ -83,7 +83,7 @@ ODFItem::ODFItem(const IniFile &file, std::unordered_map<QString, IniFile> *know
         _isMapList = true;
     }
 
-    _size = findSize();
+   _size = findSize();
     _dimensions = findDimensions();
 }
 
@@ -315,10 +315,6 @@ IlwisTypes ODFItem::findDomainType(const QString& path) const
     if ( _domname == "color.dom")
         return itCOLORDOMAIN;
 
-    //Resource resource = mastercatalog()->name2Resource(stripExtension(_domname),itDOMAIN);
-    Resource resource = mastercatalog()->name2Resource(_domname,itDOMAIN);
-    if ( resource.isValid())
-        return resource.ilwisType();
     IniFile dm;
     QString localpath = container().toLocalFile() + "/" + _domname;
     if(!getIni(dm, localpath))
@@ -358,7 +354,7 @@ QString ODFItem::findCsyName(const QString& path) const
                  QFileInfo infgrf(grf);
                  if ( !infgrf.exists()) {
                      QString grfpath = container().toLocalFile() + "/" + grf;
-                     if ( grfpath != "none.grf"){
+                     if ( grf != "none.grf"){
                         IniFile ini;
                         getIni(ini, grfpath);
                         name = ini.value("GeoRef","CoordSystem");
@@ -386,10 +382,10 @@ IlwisTypes ODFItem::findCsyType(const QString& path)
     if ( _csyname == "")
         return itUNKNOWN;
 
-    //Resource resource = mastercatalog()->name2Resource(stripExtension(_csyname),itCOORDSYSTEM);
-    Resource resource = mastercatalog()->name2Resource(_csyname,itCOORDSYSTEM);
-    if ( resource.isValid())
-        return resource.ilwisType();
+//    Resource resource = mastercatalog()->name2Resource(_csyname,itCOORDSYSTEM);
+//    if ( resource.isValid()){
+//        return  resource.ilwisType();
+//    }
     IniFile csy;
     if ( _csyname == "latlonwgs84.csy"){
 
@@ -432,7 +428,7 @@ IlwisTypes ODFItem::findCsyType(const QString& path)
             path = inf.absoluteFilePath();
         }
 
-        if(!csy.setIniFile(path)){
+        if(!getIni(csy,path)){
             return itUNKNOWN;
         }
     }
