@@ -100,40 +100,40 @@ bool WorkflowSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &optio
 
     int nodesSize;
     _stream >> nodesSize;
-    QMap<OVertex, OVertex> *vertexMapping = new QMap<OVertex, OVertex>();
+    QMap<OVertex, OVertex> vertexMapping;
     for (int i = 0; i < nodesSize; ++i) {
-        quint32 oldVertex;
+        quint32 currentVertex;
         QString provider;
         QString syntax;
         qint32 x;
         qint32 y;
         quint64 id;
 
-        _stream >> oldVertex;
+        _stream >> currentVertex;
         _stream >> provider;
         _stream >> syntax;
         _stream >> x;
         _stream >> y;
         _stream >> id;
-        vertexMapping->insert(oldVertex, workflow->addOperation({syntax, provider, x, y,id}));
+        vertexMapping.insert(currentVertex, workflow->addOperation({syntax, provider, x, y,id}));
     }
-    for (const auto &iter : vertexMapping->keys()) {
+    for (const auto &fromVertex : vertexMapping.keys()) {
         int edgesSize;
         _stream >> edgesSize;
         for (int i = 0; i < edgesSize; ++i) {
-            int inVertex;
+            int toVertex;
             int outParmIndex;
             int inParmIndex;
             int outRectIndex;
             int inRectIndex;
 
-            _stream >> inVertex; //TODO cast to OVertex
-            inVertex = vertexMapping->value(inVertex);
+            _stream >> toVertex; //TODO cast to OVertex
+            toVertex = vertexMapping.value(toVertex);
             _stream >> outParmIndex;
             _stream >> inParmIndex;
             _stream >> outRectIndex;
             _stream >> inRectIndex;
-            workflow->addOperationFlow(iter, inVertex, {outParmIndex, inParmIndex, outRectIndex, inRectIndex});
+            workflow->addOperationFlow(fromVertex, toVertex, {outParmIndex, inParmIndex, outRectIndex, inRectIndex});
         }
     }
     return true;
