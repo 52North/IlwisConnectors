@@ -367,10 +367,6 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &optio
     }
     if ( raster->attributeTable().isValid()) {
         ITable tbl = raster->attributeTable();
-        IDomain covdom;
-        if (!covdom.prepare("count")){
-            return false;
-        }
         for(quint32 i=0; i < tbl->recordCount() ; ++i) {
             tbl->setCell(COVERAGEKEYCOLUMN,i, QVariant(i));
         }
