@@ -31,8 +31,9 @@ bool StreamObjectFactory::canUse(const Resource &resource) const
     QUrlQuery query(resource.url());
     if ( query.queryItemValue("service") != "ilwisobjects") {
         if ( resource.url(true).scheme() == "file") { // we might have a streamed object
-            QFileInfo inf(resource.url(true).toLocalFile());
-            if ( resource.container() == QUrl("ilwis://internalcatalog") && inf.exists())
+            QString file = resource.url(true).toLocalFile();
+            QFileInfo inf(file);
+            if ( resource.container().toString().indexOf("ilwis://internalcatalog") == 0 && inf.exists())
                 return true;
             if ( inf.suffix() != "ilwis"){
                 return false;

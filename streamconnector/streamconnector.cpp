@@ -16,6 +16,7 @@
 #include "numericdomain.h"
 #include "domainitem.h"
 #include "identifieritem.h"
+#include "catalog.h"
 #include "thematicitem.h"
 #include "interval.h"
 #include "coloritem.h"
@@ -62,6 +63,11 @@ IlwisObject *StreamConnector::create() const
         return new Workflow(_resource);
     case itCONVENTIONALCOORDSYSTEM:
         return new ConventionalCoordinateSystem(_resource);
+    case itCATALOG:{
+        if ( hasType(_resource.extendedType(), itRASTER))
+            return new RasterCoverage(_resource);
+        return new Catalog(_resource);
+    }
     case itITEMDOMAIN:{
         if ( hasType(_resource.extendedType(), itNUMERICITEM))
             return new IntervalDomain(_resource);
