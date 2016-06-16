@@ -23,6 +23,7 @@ namespace pythonapi {
              */
             Feature __next__();
             Feature current();
+            Feature __getitem__(quint32 pos);
             FeatureIterator* __iter__();
 
             std::string __str__();

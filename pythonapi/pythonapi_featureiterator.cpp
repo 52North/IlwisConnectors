@@ -45,6 +45,14 @@ Feature FeatureIterator::current(){
     return Feature(new Ilwis::SPFeatureI(*this->ptr()), this->_coverage);
 }
 
+Feature FeatureIterator::__getitem__(quint32 pos){
+    if (pos < _coverage->featureCount()) {
+        FeatureIterator positer = FeatureIterator(this->_coverage) + pos;
+        return positer.current();
+    } else
+        return Feature(Ilwis::SPFeatureI(), this->_coverage);
+}
+
 FeatureIterator *FeatureIterator::__iter__(){
     return this;
 }
