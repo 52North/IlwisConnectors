@@ -445,8 +445,9 @@ RasterCoverage RasterCoverage::select(std::string selectionQ){
 
         Ilwis::PixelIterator iterOut(map2, geom);
 
-        Ilwis::PixelIterator iterEnd = iterIn.end();
-        while( iterIn != iterEnd) {
+        Ilwis::PixelIterator iterInEnd = iterIn.end();
+        Ilwis::PixelIterator iterOutEnd = iterOut.end();
+        while( iterIn != iterInEnd && iterOut != iterOutEnd) {
             *iterOut = *iterIn;
             ++iterOut;
             ++iterIn;
