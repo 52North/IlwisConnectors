@@ -123,11 +123,15 @@ PixelIterator& PixelIterator::__getitem__(const Pixel &vox){
 }
 
 double PixelIterator::__getitem__(quint32 linearPosition){
-    return this->ptr()[linearPosition];
+    if (linearPosition < _endposition)
+        return this->ptr()[linearPosition];
+    else
+        return rUNDEF;
 }
 
 void PixelIterator::__setitem__(quint32 linearPosition, double value){
-    this->ptr()[linearPosition] = value;
+    if (linearPosition < _endposition)
+        this->ptr()[linearPosition] = value;
 }
 
 PixelIterator PixelIterator::operator+ (int n){
