@@ -19321,6 +19321,44 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_FeatureIterator___getitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  pythonapi::FeatureIterator *arg1 = (pythonapi::FeatureIterator *) 0 ;
+  quint32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  SwigValueWrapper< pythonapi::Feature > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FeatureIterator___getitem__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureIterator, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureIterator___getitem__" "', argument " "1"" of type '" "pythonapi::FeatureIterator *""'"); 
+  }
+  arg1 = reinterpret_cast< pythonapi::FeatureIterator * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "FeatureIterator___getitem__" "', argument " "2"" of type '" "quint32""'");
+  } 
+  arg2 = static_cast< quint32 >(val2);
+  {
+    try {
+      result = (arg1)->__getitem__(arg2);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new pythonapi::Feature(static_cast< const pythonapi::Feature& >(result))), SWIGTYPE_p_pythonapi__Feature, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_FeatureIterator___iter__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::FeatureIterator *arg1 = (pythonapi::FeatureIterator *) 0 ;
@@ -37323,6 +37361,7 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { (char *)"FeatureIterator___next__", _wrap_FeatureIterator___next__, METH_VARARGS, (char *)"FeatureIterator___next__(FeatureIterator self) -> Feature"},
 	 { (char *)"FeatureIterator_current", _wrap_FeatureIterator_current, METH_VARARGS, (char *)"FeatureIterator_current(FeatureIterator self) -> Feature"},
+	 { (char *)"FeatureIterator___getitem__", _wrap_FeatureIterator___getitem__, METH_VARARGS, (char *)"FeatureIterator___getitem__(FeatureIterator self, quint32 pos) -> Feature"},
 	 { (char *)"FeatureIterator___iter__", _wrap_FeatureIterator___iter__, METH_VARARGS, (char *)"FeatureIterator___iter__(FeatureIterator self) -> FeatureIterator"},
 	 { (char *)"FeatureIterator___str__", _wrap_FeatureIterator___str__, METH_VARARGS, (char *)"FeatureIterator___str__(FeatureIterator self) -> std::string"},
 	 { (char *)"FeatureIterator___bool__", _wrap_FeatureIterator___bool__, METH_VARARGS, (char *)"FeatureIterator___bool__(FeatureIterator self) -> bool"},

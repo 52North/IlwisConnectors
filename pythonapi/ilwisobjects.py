@@ -2053,6 +2053,11 @@ class FeatureIterator(_object):
         return _ilwisobjects.FeatureIterator_current(self)
 
 
+    def __getitem__(self, pos):
+        """__getitem__(FeatureIterator self, quint32 pos) -> Feature"""
+        return _ilwisobjects.FeatureIterator___getitem__(self, pos)
+
+
     def __iter__(self):
         """__iter__(FeatureIterator self) -> FeatureIterator"""
         return _ilwisobjects.FeatureIterator___iter__(self)
