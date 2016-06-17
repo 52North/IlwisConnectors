@@ -421,7 +421,7 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
         } else if ( conv.storeType() == itINT16) {
             ok = save<qint16>(output_file,conv, raster,sz);
         } else if ( conv.storeType() == itINT32) {
-            save<qint32>(output_file,conv, raster,sz);
+            ok = save<qint32>(output_file,conv, raster,sz);
         } else { // itDOUBLE
             ok = save(output_file, raster, sz);
         }
