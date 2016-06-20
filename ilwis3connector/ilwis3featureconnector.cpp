@@ -830,8 +830,8 @@ bool FeatureConnector::storeMetaLine(FeatureCoverage *fcov, const QString& filep
     _odf->setKeyValue("TableStore", "Col3", "Deleted");
     _odf->setKeyValue("TableStore", "Col4", "SegmentValue");
 
-    storeColumn("Col:MinCoords","eth.csy","eth.csy;Coord;coord;0;;", "Coord");
-    storeColumn("Col:MaxCoords","eth.csy","eth.csy;Coord;coord;0;;", "Coord");
+    storeColumn("Col:MinCoords",_csyName,_csyName + ";Coord;coord;0;;", "Coord");
+    storeColumn("Col:MaxCoords",_csyName,_csyName + ";Coord;coord;0;;", "Coord");
     storeColumn("Col:Coords","CoordBuf.dom","CoordBuf.dom;?;coordbuf;0;;", "CoordBuf");
     storeColumn("Col:Deleted","bool.dom","bool.dom;Byte;bool;0;;", "Long");
     storeColumn("Col:SegmentValue",_domainName,_domainInfo, "Long");
@@ -1002,7 +1002,8 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         ext = "mpp";
     }
     if ( attTable.isValid() && attTable->columnCount() > 0) {
-        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, fcov, type,baseName));
+        QFileInfo basename (baseName);
+        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, fcov, type, basename.baseName()));
         std::vector<quint32> recs(_itemCount);
         conn->selectedRecords(recs);
         conn->storeMetaData(attTable.ptr());
@@ -1031,7 +1032,8 @@ bool FeatureConnector::storeBinaryDataTable(IlwisObject *obj, IlwisTypes tp, con
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
     ITable attTable = fcoverage->attributeTable();
     if ( attTable.isValid() && attTable->columnCount() > 0) {
-        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, fcoverage, tp, baseName));
+        QFileInfo basename (baseName);
+        QScopedPointer<TableConnector> conn(createTableStoreConnector(attTable, fcoverage, tp, basename.baseName()));
         IFeatureCoverage cov(fcoverage);
         FeatureIterator iter(cov);
         quint32 i = 0;
