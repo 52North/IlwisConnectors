@@ -77,6 +77,7 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                }
            }
 
+           kernel()->startClock();
            foreach(const auto& kvp, inifiles) {
                ODFItem item(kvp.second, &inifiles);
                odfitems.insert(item);
@@ -95,9 +96,10 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
            for(auto& resource : finalList){
                names[OSHelper::neutralizeFileName(resource.url().toLocalFile())] = resource.id();
            }
-//           if (!trq->update(1))
-//               return std::vector<Resource>();
+           QString lbl = QString("odf loading:%1  items:%2 provider:%3").arg(source().url().toString()).arg(odfitems.size()).arg(provider());
+           kernel()->endClock(lbl);
 
+           kernel()->startClock();
            std::vector<ODFItem> items;
            trq->prepare(TR("Organizing data"),"",odfitems.size()*2);
            for( const auto& item : odfitems){
@@ -111,6 +113,9 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                     trq->update(1);
                }
            }
+
+           lbl = QString("organize loading:%1  items:%2 provider:%3").arg(source().url().toString()).arg(odfitems.size()).arg(provider());
+           kernel()->endClock(lbl);
 
            if ( finalList.size() > 0)
                kernel()->issues()->log(QString(TR("Added %1 objects through the ilwis3 connector")).arg( finalList.size()),IssueObject::itMessage);

@@ -47,6 +47,7 @@ inline uint qHash(const QFileInfo& inf ){
 std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
 {
     QStringList filters; //gdal()->getRasterExtensions();
+    kernel()->startClock();
     std::multimap<QString, DataFormat>  formats = DataFormat::getSelectedBy(DataFormat::fpEXTENSION, "connector='gdal'");
     for(const auto& element : formats){
         for(const auto& ext : element.second.property(DataFormat::fpEXTENSION).toString().split(",",QString::SkipEmptyParts)){
@@ -63,15 +64,18 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
         ERROR1(ERR_NO_INITIALIZED_1,"gdal library");
         return std::vector<Resource>();
     }
+
     kernel()->issues()->silent(true); // error messages during scan are not needed
     try{
         UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
         trq->prepare("gdal connector",source().toLocalFile(),files.size());
-        for(const QUrl& url : files) {
-            QFileInfo file = toLocalFile(url);
-            if ( file.exists()){
 
-                if ( !file.isDir() ) {
+        for(const QUrl& url : files) {
+
+            QFileInfo file = toLocalFile(url);
+
+            if ( file.exists()){
+                  if ( !file.isDir() ) {
                     std::vector<Resource> resources = CatalogConnector::cache()->find(url, Time(file.lastModified()));
                     if ( resources.size() == 0){
                         IlwisTypes extendedTypes = extendedType(formats, file.suffix());
@@ -86,16 +90,21 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
                             gdalitems.insert(resource);
                         }
                 }
+
             }
             if (!trq->update(1))
                 return std::vector<Resource>();
+
         }
+
+
 
         std::vector<Resource> items;
         for( const auto& resource : gdalitems){
             items.push_back(resource);
         }
         kernel()->issues()->silent(false);
+
 
         if (items.size() > 0)
             kernel()->issues()->log(QString(TR("Added %1 objects through the gdal connector")).arg( items.size()),IssueObject::itMessage);
