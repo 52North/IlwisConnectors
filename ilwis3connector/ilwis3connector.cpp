@@ -395,16 +395,12 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
             csyName = Resource::toLocalFile(csy->resource().url(),true, "csy");
             if ( csy->isInternalObject()){
                 QString csyFile = Resource::toLocalFile(sourceRef().url(),false, "csy");
-                int index = csy->resource().url().toString().lastIndexOf("/");
-                QString name = csy->resource().url().toString().mid(index + 1);
-                int invCharIdx = name.indexOf("?");
-                if (invCharIdx != -1)
-                    name = name.left(invCharIdx);
-                if (name.size() > 0) {
-                    if ( !name.endsWith(".csy"))
-                        name += ".csy";
-                    csyName =  QFileInfo(csyFile).absolutePath() + "/" + name;
-                }
+                QString name = csy->name().trimmed();
+                if (name.size() > 3 && !csy->isAnonymous()) { // threshold of min 4 chars for a credible csy name
+                    name = name.replace(QRegExp("[/ .'\"]"),"_");
+                    csyName =  QFileInfo(csyFile).absolutePath() + "/" + name + ".csy";
+                } else
+                    csyName = csyFile;
             }
             else if ( csyName == sUNDEF || csyName == "") {
                 QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
@@ -432,10 +428,12 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
                 Resource resource = mastercatalog()->name2Resource(csyFileInfo.fileName(), itCOORDSYSTEM );
                 ICoordinateSystem existingCsy(resource);
 
-                if (csyFileInfo.exists() && !csy->isEqual(existingCsy.ptr()) ) {
-                    csyName = OSHelper::ensureUniqueFilename(csyName);
-                } else {
-                    mustWriteCsyFile = false;
+                if (csyFileInfo.exists()) {
+                    if (!csy->isEqual(existingCsy.ptr()) ) {
+                        csyName = OSHelper::ensureUniqueFilename(csyName);
+                    } else {
+                        mustWriteCsyFile = false;
+                    }
                 }
 
                 if (mustWriteCsyFile) {
