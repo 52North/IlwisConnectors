@@ -40,6 +40,10 @@ namespace pythonapi {
         RasterCoverage* __truediv__ (RasterCoverage &rc);
         RasterCoverage* __truediv__ (double value);
         RasterCoverage* __rtruediv__(double value);
+        RasterCoverage* operator>(double value);
+        RasterCoverage* operator<(double value);
+        RasterCoverage* operator>(RasterCoverage &rc);
+        RasterCoverage* operator<(RasterCoverage &rc);
         //RasterCoverage* sin();
         PixelIterator __iter__();
         double coord2value(const Coordinate& c);

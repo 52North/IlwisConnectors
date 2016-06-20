@@ -2679,6 +2679,22 @@ class RasterCoverage(Coverage):
         return _ilwisobjects.RasterCoverage___rtruediv__(self, value)
 
 
+    def __gt__(self, *args):
+        """
+        __gt__(RasterCoverage self, double value) -> RasterCoverage
+        __gt__(RasterCoverage self, RasterCoverage rc) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage___gt__(self, *args)
+
+
+    def __lt__(self, *args):
+        """
+        __lt__(RasterCoverage self, double value) -> RasterCoverage
+        __lt__(RasterCoverage self, RasterCoverage rc) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage___lt__(self, *args)
+
+
     def __iter__(self):
         """__iter__(RasterCoverage self) -> PixelIterator"""
         return _ilwisobjects.RasterCoverage___iter__(self)

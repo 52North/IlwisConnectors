@@ -189,6 +189,46 @@ RasterCoverage *RasterCoverage::__rtruediv__(double value){
             );
 }
 
+RasterCoverage* RasterCoverage::operator>(double value){
+    return (RasterCoverage*)Engine::_do(
+                QString("greater_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "greater"
+            );
+}
+
+RasterCoverage* RasterCoverage::operator<(double value){
+    return (RasterCoverage*)Engine::_do(
+                QString("less_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "less"
+            );
+}
+
+RasterCoverage* RasterCoverage::operator>(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(
+                QString("greater_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                rc.__str__(),
+                "greater"
+            );
+}
+
+RasterCoverage* RasterCoverage::operator<(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(
+                QString("less_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                rc.__str__(),
+                "less"
+            );
+}
+
 double RasterCoverage::coord2value(const Coordinate& c){
     return this->ptr()->as<Ilwis::RasterCoverage>()->coord2value(c.data()).value<QVariantMap>()[PIXELVALUE].toDouble();
 }
