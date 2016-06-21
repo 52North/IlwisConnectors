@@ -10,6 +10,7 @@ public:
 
     bool store(IlwisObject *obj, const Ilwis::IOOptions &options= IOOptions());
     bool loadMetaData(IlwisObject*obj, const IOOptions & options);
+    bool loadData(IlwisObject*, const IOOptions& options = IOOptions()) { return true; }
     bool loadItems(std::vector<Resource> &items);
     static VersionedSerializer *create(QDataStream &stream);
 private:
