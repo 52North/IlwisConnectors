@@ -161,6 +161,7 @@ void Engine::setWorkingCatalog(const std::string& location) {
     cat.prepare(loc);
     if(cat.isValid()){
         Ilwis::context()->setWorkingCatalog(cat);
+        Ilwis::mastercatalog()->addContainer(QUrl(loc));
     }else
         throw Ilwis::ErrorObject(QString("invalid container location: '%1'").arg(location.c_str()));
 }
