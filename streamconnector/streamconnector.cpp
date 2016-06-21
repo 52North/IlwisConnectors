@@ -64,8 +64,6 @@ IlwisObject *StreamConnector::create() const
     case itCONVENTIONALCOORDSYSTEM:
         return new ConventionalCoordinateSystem(_resource);
     case itCATALOG:{
-        if ( hasType(_resource.extendedType(), itRASTER))
-            return new RasterCoverage(_resource);
         return new Catalog(_resource);
     }
     case itITEMDOMAIN:{
@@ -112,7 +110,7 @@ bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options
         QString version;
         stream >> tp;
         stream >> version;
-        std::unique_ptr<VersionedSerializer> serializer(factory->create(version,tp,stream));
+        std::unique_ptr<VersionedSerializer> serializer(factory->create(version,source().ilwisType(),stream));
         if (!serializer)
             return false;
         serializer->connector(this);
@@ -135,7 +133,7 @@ bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
         QString version;
         stream >> tp;
         stream >> version;
-        std::unique_ptr<VersionedSerializer> serializer(factory->create(version, tp,stream));
+        std::unique_ptr<VersionedSerializer> serializer(factory->create(version, source().ilwisType(),stream));
         if (!serializer)
             return false;
         serializer->connector(this);
