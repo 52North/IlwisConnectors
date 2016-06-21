@@ -70,6 +70,7 @@ RequestExecutionLevel admin
 #======Callback functions====================
 Function .onInit
     ReadRegStr $pythonDir HKLM "SOFTWARE\Wow6432Node\Python\PythonCore\3.4\InstallPath" ""
+    # ReadRegStr $pythonDir HKCU "SOFTWARE\Python\PythonCore\3.5-32\InstallPath" ""
     ReadRegStr $0 HKLM "${REGKEY}" "InstallPath" # workaround for InstallDirRegKey!!
     StrCmp $0 "" done
         StrCpy $Instdir $0
