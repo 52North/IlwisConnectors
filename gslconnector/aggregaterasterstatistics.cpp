@@ -42,7 +42,6 @@ bool AggregateRasterStatistics::execute(ExecutionContext *ctx, SymbolTable &symT
     zcolumn.reserve(_inputRaster->size().zsize());
     PixelIterator iterIn(_inputRaster, BoundingBox(),PixelIterator::fZXY);
     int count = 0;
-    trq()->prepare(name(),description(), _outputRaster->size().linearSize());
     double minv=1e308;
     double maxv=-1e308;
     for(auto& value : _outputRaster){
