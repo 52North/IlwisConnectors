@@ -5,6 +5,7 @@
 #include "connectorinterface.h"
 #include "versionedserializer.h"
 #include "catalog.h"
+#include "oshelper.h"
 #include "catalogserializerv1.h"
 
 using namespace Ilwis;
@@ -110,6 +111,10 @@ QString CatalogserializerV1::adaptedUrl(const QString& baseUrl, const Resource& 
 
 bool CatalogserializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 {
+    if ( hasType(obj->resource().extendedType(), itRASTER)){
+        _stream.device()->seek(0); // reset the position for next reads
+        return true;
+    }
     std::vector<Resource> items;
     if(!loadItems(items))
         return false;

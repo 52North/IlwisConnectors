@@ -41,7 +41,9 @@ bool AggregateRasterStatistics::execute(ExecutionContext *ctx, SymbolTable &symT
     std::vector<double> zcolumn;
     zcolumn.reserve(_inputRaster->size().zsize());
     PixelIterator iterIn(_inputRaster, BoundingBox(),PixelIterator::fZXY);
-    //PixelIterator iterIn(_inputRaster);
+    int count = 0;
+    double minv=1e308;
+    double maxv=-1e308;
     for(auto& value : _outputRaster){
         while(!xchanged){
             if(( inValue = *iterIn) != rUNDEF)
@@ -49,12 +51,18 @@ bool AggregateRasterStatistics::execute(ExecutionContext *ctx, SymbolTable &symT
             ++iterIn;
             xchanged = iterIn.xchanged();
         }
+        updateTranquilizer(++count, 100);
         if ( _operationName == "median" && zcolumn.size() > 0)
             std::sort(zcolumn.begin(), zcolumn.end());
         value = zcolumn.size() > 0 ? _statisticsFunction1(&zcolumn[0],1,zcolumn.size()) : rUNDEF;
+        minv = Ilwis::min(value,minv);
+        maxv = Ilwis::max(value,maxv);
         zcolumn.clear(); // next column
         xchanged = false; // reset flag as we are in the next column now
     }
+    auto rng = _outputRaster->datadef().range()->as<NumericRange>();
+    rng->min(minv);
+    rng->max(maxv);
     if ( ctx != 0) {
         QVariant value;
         value.setValue<IRasterCoverage>(_outputRaster);
@@ -133,7 +141,7 @@ Ilwis::OperationImplementation::State AggregateRasterStatistics::prepare(Executi
                _statisticsFunction1 = sumfunc ;
            }
        }
-
+        initialize(_outputRaster->size().linearSize());
         return sPREPARED;
 
     } catch(const CheckExpressionError& err){

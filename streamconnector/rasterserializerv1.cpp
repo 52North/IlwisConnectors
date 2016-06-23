@@ -7,6 +7,7 @@
 #include "basetable.h"
 #include "flattable.h"
 #include "pixeliterator.h"
+#include "grid.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "versioneddatastreamfactory.h"
@@ -58,6 +59,13 @@ template<typename T> void loadBulk(const RawConverter& converter, QDataStream& s
         //const UPGrid& grid = raster->grid();
         quint32 blockCount;
         stream >> blockCount;
+        if ( !box.isNull()){
+            //for the moment we only accept whole layers as possible subsets, might improve this in the future
+            int layer = box.min_corner().z;
+            blockCount =  raster->grid()->blocksPerBand();
+            int seekPos = layer * (raster->size().xsize() * raster->size().ysize() * sizeof(double) + sizeof(quint32) + sizeof(quint64));
+            stream.device()->seek(seekPos);
+        }
         for(int i = 0; i < blockCount; ++i){
             quint32 blockIndex;
             quint64 blockByteSize;
@@ -284,7 +292,7 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
 bool RasterSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
 {
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
-    const BoundingBox box;
+    BoundingBox box;
     RawConverter converter;
     if ( hasType(raster->datadef().domain()->ilwisType(), itNUMERICDOMAIN)){
         double mmin, mmax, mscale;
@@ -303,6 +311,16 @@ bool RasterSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
 
     quint32 layerIndex, minLines, maxLines; //only defined in some cases, if not defined it assumed that the whole coverage is there
     _stream >> layerIndex >> minLines >> maxLines;
+    Resource resource = data->resource();
+    if ( resource.code().indexOf("band=") == 0){
+        bool ok;
+        QString part = resource.code().mid(5);
+        int band = part.toInt(&ok);
+        if ( ok){
+            Size<> sz = raster->size();
+            box = BoundingBox(Pixel(0,0,band),Pixel(sz.xsize(),sz.ysize(),band));
+        }
+    }
 
     IRasterCoverage rcoverage(raster);
     switch (converter.storeType()){
