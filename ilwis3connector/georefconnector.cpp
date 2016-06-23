@@ -169,8 +169,8 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
 
     _odf->setKeyValue("GeoRef","CoordSystem", QFileInfo(localPathCsy).fileName());
     Size<> sz = grf->size();
-    _odf->setKeyValue("GeoRef","Lines", QString::number(sz.ysize()));
-    _odf->setKeyValue("GeoRef","Columns", QString::number(sz.xsize()));
+    _odf->setKeyValue("GeoRef","Lines", IniFile::FormatElement(sz.ysize()));
+    _odf->setKeyValue("GeoRef","Columns", IniFile::FormatElement(sz.xsize()));
     //CornersGeoReference *cgrf = dynamic_cast<CornersGeoReference *>(grf);
 
     if ( grf->grfType<CornersGeoReference>()) {
@@ -188,20 +188,20 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
         _odf->setKeyValue("GeoRef","Type", "GeoRefCorners");
         Coordinate cmin = cgrf->envelope().min_corner();
         Coordinate cmax = cgrf->envelope().max_corner();
-        _odf->setKeyValue("GeoRefCorners", "MinX", QString::number(cmin.x));
-        _odf->setKeyValue("GeoRefCorners", "MinY", QString::number(cmin.y));
-        _odf->setKeyValue("GeoRefCorners", "MaxX", QString::number(cmax.x));
-        _odf->setKeyValue("GeoRefCorners", "MaxY", QString::number(cmax.y));
+        _odf->setKeyValue("GeoRefCorners", "MinX", IniFile::FormatElement(cmin.x));
+        _odf->setKeyValue("GeoRefCorners", "MinY", IniFile::FormatElement(cmin.y));
+        _odf->setKeyValue("GeoRefCorners", "MaxX", IniFile::FormatElement(cmax.x));
+        _odf->setKeyValue("GeoRefCorners", "MaxY", IniFile::FormatElement(cmax.y));
 
         std::vector<double> matrix = cgrf->matrix();
-        _odf->setKeyValue("GeoRefSmpl", "a11", QString::number(matrix[0]));
-        _odf->setKeyValue("GeoRefSmpl", "a22", QString::number(matrix[3]));
+        _odf->setKeyValue("GeoRefSmpl", "a11", IniFile::FormatElement(matrix[0]));
+        _odf->setKeyValue("GeoRefSmpl", "a22", IniFile::FormatElement(matrix[3]));
         _odf->setKeyValue("GeoRefSmpl", "a12", "0");
         _odf->setKeyValue("GeoRefSmpl", "a21", "0");
 
          std::vector<double> support = cgrf->support();
-         _odf->setKeyValue("GeoRefSmpl", "b1", QString::number(support[0]));
-         _odf->setKeyValue("GeoRefSmpl", "b2", QString::number(support[1]));
+         _odf->setKeyValue("GeoRefSmpl", "b1", IniFile::FormatElement(support[0]));
+         _odf->setKeyValue("GeoRefSmpl", "b2", IniFile::FormatElement(support[1]));
 
          _odf->store("grf", georefFilename);
 

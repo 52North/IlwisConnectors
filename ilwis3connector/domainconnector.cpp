@@ -229,8 +229,8 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes valueType)
         nrOfColumns = 5;
     if ( valueType == itNUMERICITEM)
         nrOfColumns = 6;
-    _odf->setKeyValue("Table","Columns",QString::number(nrOfColumns));
-    _odf->setKeyValue("Table","Records", QString::number(iddomain->count()));
+    _odf->setKeyValue("Table","Columns",IniFile::FormatElement(nrOfColumns));
+    _odf->setKeyValue("Table","Records", IniFile::FormatElement(iddomain->count()));
     _odf->setKeyValue("DomainSort","Prefix", "");
     _odf->setKeyValue("DomainSort","Sorting","Alphabetical");
     QString typeName = "DomainIdentifier";
@@ -240,7 +240,7 @@ bool DomainConnector::storeMetaDataSortDomain(Domain *dom, IlwisTypes valueType)
         typeName = "DomainGroup";
 
     _odf->setKeyValue("Domain", "Type", typeName);
-    _odf->setKeyValue( hasType(valueType,itTHEMATICITEM | itNUMERICITEM) ? "DomainClass" : "DomainIdentifier", "Nr", QString::number(iddomain->count()));
+    _odf->setKeyValue( hasType(valueType,itTHEMATICITEM | itNUMERICITEM) ? "DomainClass" : "DomainIdentifier", "Nr", IniFile::FormatElement(iddomain->count()));
 
     QFileInfo inf(QUrl(_odf->url()).toLocalFile());
     QString dataName  = inf.baseName() + ".dm#";
@@ -344,22 +344,22 @@ bool DomainConnector::storeMetaData(IlwisObject *data, const IOOptions &options)
         SPNumericRange numRange = dom->range<NumericRange>();
         int width=12;
         QString type = "DomainValueInt";
-        if ( dom->valueType() & (itINT8 & itUINT8)){
+        if ( dom->valueType() & (itINT8 | itUINT8)){
             width=3;
-        } else if ( dom->valueType() & (itINT16 & itUINT16) ){
+        } else if ( dom->valueType() & (itINT16 | itUINT16) ){
             width = 8;
-        } else if ( dom->valueType() & (itINT32 & itUINT32) ){
+        } else if ( dom->valueType() & (itINT32 | itUINT32) ){
             width=10;
         } else
             type = "DomainValueReal";
 
         _odf->setKeyValue("Domain", "Type", "DomainValue");
-        _odf->setKeyValue("Domain", "Width", QString::number(width));
+        _odf->setKeyValue("Domain", "Width", IniFile::FormatElement(width));
         _odf->setKeyValue("DomainValue", "Type", type);
-        _odf->setKeyValue(type, "Min", QString::number(numRange->min()));
-        _odf->setKeyValue(type, "Max", QString::number(numRange->max()));
+        _odf->setKeyValue(type, "Min", (type == "DomainValueReal") ? IniFile::FormatElement(numRange->min()) : IniFile::FormatElement((long)(numRange->min())));
+        _odf->setKeyValue(type, "Max", (type == "DomainValueReal") ? IniFile::FormatElement(numRange->max()) : IniFile::FormatElement((long)(numRange->max())));
         if ( numRange->resolution() != 1) {
-            _odf->setKeyValue(type, "Step", QString::number(numRange->resolution()));
+            _odf->setKeyValue(type, "Step", IniFile::FormatElement(numRange->resolution()));
         }
     } else if ( dom->valueType() == itTHEMATICITEM) {
         storeMetaDataSortDomain(dom, itTHEMATICITEM);

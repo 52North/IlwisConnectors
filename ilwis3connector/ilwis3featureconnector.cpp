@@ -804,21 +804,21 @@ bool FeatureConnector::storeMetaLine(FeatureCoverage *fcov, const QString& filep
 
     _odf->setKeyValue("BaseMap","Type","SegmentMap");
     _odf->setKeyValue("SegmentMap","Type","SegmentMapStore");
-    _odf->setKeyValue("SegmentMapStore","Format",QString::number(2));
-    _odf->setKeyValue("SegmentMapStore","DeletedPolygons",QString::number(0));
+    _odf->setKeyValue("SegmentMapStore","Format",IniFile::FormatElement(2));
+    _odf->setKeyValue("SegmentMapStore","DeletedPolygons",IniFile::FormatElement(0));
     _odf->setKeyValue("Ilwis","Class","ILWIS::Segment Map");
 
     quint32 points;
     quint32 segments;
     quint32 polygons;
     countPlainGeometries(fcov, points, segments, polygons);
-    _odf->setKeyValue("SegmentMapStore", "Segments", QString::number(segments));
+    _odf->setKeyValue("SegmentMapStore", "Segments", IniFile::FormatElement(segments));
 
     _odf->setKeyValue("Table", "Domain", "None.dom");
     _odf->setKeyValue("Table", "DomainInfo", "None.dom;Byte;none;0;;");
-    _odf->setKeyValue("Table", "Columns", QString::number(5));
+    _odf->setKeyValue("Table", "Columns", IniFile::FormatElement(5));
     quint32 noOfFeatures = fcov->featureCount(itLINE);
-    _odf->setKeyValue("Table", "Records", QString::number(noOfFeatures));
+    _odf->setKeyValue("Table", "Records", IniFile::FormatElement(noOfFeatures));
     _odf->setKeyValue("Table", "Type", "TableStore");
 
     _odf->setKeyValue("TableStore", "Data", dataFile + ".mps#");
@@ -844,20 +844,20 @@ bool FeatureConnector::storeMetaPoint(FeatureCoverage *fcov, const QString& file
 
     _odf->setKeyValue("BaseMap","Type","PointMap");
     _odf->setKeyValue("PointMap","Type","PointMapStore");
-    _odf->setKeyValue("PointMapStore","Format",QString::number(2));
+    _odf->setKeyValue("PointMapStore","Format",IniFile::FormatElement(2));
     _odf->setKeyValue("Ilwis","Class","ILWIS::Point Map");
 
     quint32 points;
     quint32 segments;
     quint32 polygons;
     countPlainGeometries(fcov, points, segments, polygons);
-    _odf->setKeyValue("PointMap", "Points", QString::number(points));
+    _odf->setKeyValue("PointMap", "Points", IniFile::FormatElement(points));
 
     _odf->setKeyValue("Table", "Domain", "None.dom");
     _odf->setKeyValue("Table", "DomainInfo", "None.dom;Byte;none;0;;");
-    _odf->setKeyValue("Table", "Columns", QString::number(2));
+    _odf->setKeyValue("Table", "Columns", IniFile::FormatElement(2));
     quint32 noOfFeatures = fcov->featureCount(itPOINT);
-    _odf->setKeyValue("Table", "Records", QString::number(noOfFeatures));
+    _odf->setKeyValue("Table", "Records", IniFile::FormatElement(noOfFeatures));
     _odf->setKeyValue("Table", "Type", "TableStore");
 
     _odf->setKeyValue("TableStore", "Data", dataFile + ".pt#");
@@ -878,8 +878,8 @@ bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& fi
     _odf->setKeyValue("BaseMap","Type","PolygonMap");
     _odf->setKeyValue("PolygonMap","Type","PolygonMapStore");
     _odf->setKeyValue("PolygonMap","Toplogical","No");
-    _odf->setKeyValue("PolygonMapStore","Format",QString::number(5));
-    _odf->setKeyValue("PolygonMapStore","DeletedPolygons",QString::number(0));
+    _odf->setKeyValue("PolygonMapStore","Format",IniFile::FormatElement(5));
+    _odf->setKeyValue("PolygonMapStore","DeletedPolygons",IniFile::FormatElement(0));
     _odf->setKeyValue("Ilwis","Class","ILWIS::Polygon Map");
 
     QString localFile = dataFile + ".mpz#";
@@ -888,7 +888,7 @@ bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& fi
     quint32 segments;
     quint32 polygons;
     countPlainGeometries(fcov, points, segments, polygons);
-    _odf->setKeyValue("PolygonMapStore", "Polygons", QString::number(polygons));
+    _odf->setKeyValue("PolygonMapStore", "Polygons", IniFile::FormatElement(polygons));
 
     return true;
 }
@@ -986,7 +986,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         _odf->setKeyValue("DomainSort","Sorting","AlphaNumeric");
         _odf->setKeyValue("DomainSort","Prefix","feature");
         _odf->setKeyValue("DomainSort","Class","Domain UniqueID");
-        _odf->setKeyValue("DomainIdentifier","Nr",QString::number(fcov->featureCount(type)));
+        _odf->setKeyValue("DomainIdentifier","Nr",IniFile::FormatElement(fcov->featureCount(type)));
     }
 
     QString ext = "mpa";

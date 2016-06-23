@@ -48,6 +48,11 @@ public:
 
     void store(const QString &ext, const QFileInfo& url);
     const QFileInfo& fileInfo() const;
+    static QString FormatElement(double value);
+    static QString FormatElement(long value);
+    static QString FormatElement(bool value);
+    static QString FormatElement(int value); // ilwis3 doesn't have those, but they ease the auto-cast
+    static QString FormatElement(quint32 value);
 private:
     QFileInfo _filename;
     Sections _sections;

@@ -67,12 +67,12 @@ void IniFile::setKeyValue(const QString& section, const QString& key, const QStr
 
 void IniFile::setKeyValue(const QString& section, const QString& key, double value)
 {
-    setValue(section, key, QString::number(value)) ;
+    setValue(section, key, FormatElement(value)) ;
 }
 
 void IniFile::setKeyValue(const QString& section, const QString& key, int value)
 {
-    setValue(section, key, QString::number(value)) ;
+    setValue(section, key, FormatElement(value)) ;
 }
 
 QString IniFile::value(const QString& section, const QString& key) const
@@ -256,4 +256,40 @@ void IniFile::store(const QString& ext, const QFileInfo& file )
 const QFileInfo &IniFile::fileInfo() const
 {
     return _filename;
+}
+
+QString IniFile::FormatElement(double value)
+{
+    if (value == rUNDEF)
+        return "?";
+    else if (abs(value) < 1e12)
+        return QString::number(value, 'f', 12);
+    else
+        return QString::number(value, 'e', 6); // see Ilwis3 WriteElement() and printf spec
+}
+
+QString IniFile::FormatElement(long value)
+{
+    if (value == iUNDEF)
+        return "?";
+    else
+        return QString::number(value);
+}
+
+QString IniFile::FormatElement(int value)
+{
+    return FormatElement((long)value);
+}
+
+QString IniFile::FormatElement(quint32 value)
+{
+    return FormatElement((long)value);
+}
+
+QString IniFile::FormatElement(bool value)
+{
+    if (value)
+        return "Yes";
+    else
+        return "No";
 }

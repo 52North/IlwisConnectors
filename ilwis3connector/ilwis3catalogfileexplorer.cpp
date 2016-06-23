@@ -46,7 +46,7 @@ std::vector<Ilwis::Resource> Ilwis3CatalogFileExplorer::loadItems(const IOOption
     IniFile odf(containerInf);
     int nrOfMaps = odf.value("MapList","Maps").toInt();
     for(int i=0; i < nrOfMaps; ++i){
-        QString mp = odf.value("MapList","Map" + QString::number(i));
+        QString mp = odf.value("MapList","Map" + IniFile::FormatElement(i));
         QString fullpath = containerInf.absolutePath() + "\\" + mp;
         QUrl url = QUrl::fromLocalFile(fullpath);
         Resource res = mastercatalog()->name2Resource(url.toString(), itRASTER);

@@ -476,7 +476,7 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
     _odf->setKeyValue("MapList","GeoRef",QFileInfo(localName).fileName());
     Size<> sz = raster->size();
     _odf->setKeyValue("MapList","Size",QString("%1 %2").arg(sz.ysize()).arg(sz.xsize()));
-    _odf->setKeyValue("MapList","Maps",QString::number(sz.zsize()));
+    _odf->setKeyValue("MapList","Maps",IniFile::FormatElement(sz.zsize()));
 
     QString mpl_name = obj->name();
     for(int i = 0; i < sz.zsize(); ++i) {
@@ -631,7 +631,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, const IOOptions& 
     _odf->setKeyValue("MapStore","Data",file);
     _odf->setKeyValue("MapStore","Structure","Line");
     _odf->setKeyValue("MapStore","StartOffset","0");
-    _odf->setKeyValue("MapStore","RowLength",QString::number(sz.xsize()));
+    _odf->setKeyValue("MapStore","RowLength",IniFile::FormatElement(sz.xsize()));
     _odf->setKeyValue("MapStore","PixelInterLeaved","No");
     _odf->setKeyValue("MapStore","SwapBytes","No");
     _odf->setKeyValue("MapStore","UseAs","No");
