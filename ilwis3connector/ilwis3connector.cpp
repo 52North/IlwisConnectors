@@ -65,11 +65,6 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
     if ( obj == nullptr)
         return ERROR1(ERR_NO_INITIALIZED_1,"Object");
 
-    if ( obj->isReadOnly()) {
-        kernel()->issues()->log(QString(WARN_HAS_STATUS2).arg(obj->name().arg("read-only")));
-        return false;
-    }
-
     _odf.reset(makeIni(_resource, type));
 
     _odf->setKeyValue("Ilwis","Description", obj->description());
