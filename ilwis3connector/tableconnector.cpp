@@ -280,8 +280,8 @@ bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
     _odf->setKeyValue("Ilwis", "Class", "Table");
     _odf->setKeyValue("Table", "Domain", domname);
     _odf->setKeyValue("Table", "DomainInfo", QString("%1;Long;UniqueID;0;;").arg(inf.fileName()));
-    _odf->setKeyValue("Table", "Columns", QString::number(tbl->columnCount() - reduceColumns));
-    _odf->setKeyValue("Table", "Records", QString::number(reccount));
+    _odf->setKeyValue("Table", "Columns", IniFile::FormatElement(tbl->columnCount() - reduceColumns));
+    _odf->setKeyValue("Table", "Records", IniFile::FormatElement(reccount));
     _odf->setKeyValue("Table", "Type", "TableStore");
     _odf->setKeyValue("TableStore", "Type", "TableBinary");
     _odf->setKeyValue("TableStore", "UseAs", "No");
@@ -294,12 +294,18 @@ bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
         bool isOldSystem = true;
         QString domName = getDomainName(dmColumn, isOldSystem);
         if ( !isOldSystem) {
+            if (domName.indexOf("?code=") > -1)
+                domName = def.name() + ".dom";
+            QString fileUrl = context()->workingCatalog()->filesystemLocation().toString() + "/" + domName;
+            if (QFileInfo(QUrl(fileUrl).toLocalFile()).exists()) {
+                IDomain existingDomain(fileUrl);
+                if (!dmColumn->isCompatibleWith(existingDomain.ptr(), true))
+                    fileUrl = OSHelper::ensureUniqueFilename(QUrl(fileUrl).toLocalFile());
+            }
+            int lastSlash = fileUrl.lastIndexOf("/");
+            domName = fileUrl.right(fileUrl.length() - lastSlash - 1);
             Resource res = dmColumn->resource();
-            QString url = res.url().toString();
-            QString filename = url.mid(url.lastIndexOf("/"));
-            QString fileUrl = context()->workingCatalog()->filesystemLocation().toString() + filename;
             res.setUrl(fileUrl);
-
             DomainConnector conn(res, false);
             conn.storeMetaData(dmColumn.ptr(), options);
         }
