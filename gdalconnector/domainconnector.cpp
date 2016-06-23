@@ -16,6 +16,7 @@
 #include "itemrange.h"
 #include "identifierrange.h"
 #include "gdalproxy.h"
+#include "dataformat.h"
 #include "gdalconnector.h"
 #include "numericdomain.h"
 #include "domainconnector.h"

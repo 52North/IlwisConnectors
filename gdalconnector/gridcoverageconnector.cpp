@@ -20,6 +20,7 @@
 #include "ilwiscontext.h"
 #include "gdalproxy.h"
 #include "ilwisobjectconnector.h"
+#include "dataformat.h"
 #include "gdalconnector.h"
 #include "coverageconnector.h"
 #include "domainitem.h"

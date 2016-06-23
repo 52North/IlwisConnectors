@@ -88,8 +88,11 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
             if ( file.exists() && !file.isDir() ) {
                 bool prev = kernel()->issues()->silent();
                 kernel()->issues()->silent(true); // error messages during scan are not needed
-                IlwisTypes extendedTypes = 0; // from GDALItems: IlwisTypes extendedTypes = extendedType(formats, file.suffix());
-                GDALItems gdalitems(QUrl::fromLocalFile(file.absoluteFilePath()), file, extendedTypes);
+                std::multimap<QString, DataFormat>  formats = DataFormat::getSelectedBy(DataFormat::fpEXTENSION, QString("connector='gdal' and extension = '%1'").arg(file.suffix()));
+                IlwisTypes tp;
+                IlwisTypes extendedTypes; // from GDALItems: IlwisTypes extendedTypes = extendedType(formats, file.suffix());
+                getTypes(formats, tp, extendedTypes);
+                GDALItems gdalitems(QUrl::fromLocalFile(file.absoluteFilePath()), file, tp, extendedTypes);
                 std::vector<Resource> items;
                 for( const auto& resource : gdalitems){
                     items.push_back(resource);
@@ -97,7 +100,7 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
                 mastercatalog()->addItems(items);
                 kernel()->issues()->silent(prev);
                 // read ourselves back out of the mastercatalog, and overwrite our resource
-                IlwisTypes tp = data->ilwisType();
+                tp = data->ilwisType();
                 auto resource = mastercatalog()->name2Resource(_filename.toString(),tp );
                 if (resource.isValid()) {
                     sourceRef() = resource;
@@ -144,7 +147,6 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
 
     return true;
 }
-
 
 QString GdalConnector::provider() const
 {
@@ -231,4 +233,13 @@ OGRLayerH GdalConnector::getLayerHandle() const{
 bool GdalConnector::isReadOnly() const
 {
     return _readOnly;
+}
+
+void GdalConnector::getTypes(const std::multimap<QString, DataFormat>& formats, IlwisTypes & tp, IlwisTypes & extendedType) const {
+    tp = itUNKNOWN;
+    extendedType = itUNKNOWN;
+    for(auto iter : formats) {
+        tp |= iter.second.property(DataFormat::fpDATATYPE).toULongLong();
+        extendedType |= iter.second.property(DataFormat::fpEXTENDEDTYPE).toULongLong();
+    }
 }

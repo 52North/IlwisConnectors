@@ -5,6 +5,7 @@
 #include "ilwisobjectconnector.h"
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
+#include "dataformat.h"
 #include "gdalconnector.h"
 #include "gdalfeaturetableconnector.h"
 #include "domain.h"

@@ -21,7 +21,7 @@ protected:
     IlwisTypes _type;
 
 private:
-    IlwisTypes extendedType(const std::multimap<QString, DataFormat> &formats, const QString &ext) const;
+    void getTypes(const std::multimap<QString, DataFormat> &formats, const QString &ext, IlwisTypes & tp, IlwisTypes & extendedType) const;
 
     NEW_CATALOGEXPLORER(GdalCatalogExplorer);
 };

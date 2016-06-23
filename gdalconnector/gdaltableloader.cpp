@@ -18,6 +18,7 @@
 #include "gdalproxy.h"
 #include "connectorinterface.h"
 #include "ilwisobjectconnector.h"
+#include "dataformat.h"
 #include "gdalconnector.h"
 #include "juliantime.h"
 #include "domainhelper.h"

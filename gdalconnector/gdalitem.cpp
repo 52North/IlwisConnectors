@@ -61,7 +61,7 @@ int GDALItems::layerCount(GdalHandle* handle)
     return count;
 }
 
-GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes extTypes)
+GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes tp, IlwisTypes extTypes)
 {
     if ( localFile.isRoot())
         return ;
@@ -90,10 +90,13 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes ext
                 OGRLayerH layerH = gdal()->getLayer(handle->handle(),0);
                 int featureCount = gdal()->getFeatureCount(layerH, FALSE);
                 sz = findSize(file);
-                addItem(handle, url, csyId, featureCount, itFEATURE , itCOORDSYSTEM | itTABLE, sz);
-                addItem(handle, url, 0, iUNDEF, itTABLE , itFEATURE, sz);
-                if (! mastercatalog()->id2Resource(csyId).isValid())
-                    addItem(handle, QUrl(url), 0, iUNDEF, itCONVENTIONALCOORDSYSTEM , 0, sz);
+                if (tp & itFEATURE) {
+                    addItem(handle, url, csyId, featureCount, itFEATURE , itCOORDSYSTEM | itTABLE, sz);
+                    addItem(handle, url, 0, iUNDEF, itTABLE , itFEATURE, sz);
+                    if (! mastercatalog()->id2Resource(csyId).isValid())
+                        addItem(handle, QUrl(url), 0, iUNDEF, itCONVENTIONALCOORDSYSTEM , 0, sz);
+                } else if (tp & itTABLE)
+                    addItem(handle, url, 0, iUNDEF, itTABLE , 0, sz);
             }
             else { // multiple layers, the file itself will be marked as container; internal layers will be added using this file as container
                 //TODO: atm the assumption is that all gdal containers are files. this is true in the majority of the cases but not in all. Without a proper testcase the non-file option will not(yet) be implemented

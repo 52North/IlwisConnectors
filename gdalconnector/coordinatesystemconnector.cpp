@@ -19,6 +19,7 @@
 #include "coordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
 #include "gdalproxy.h"
+#include "dataformat.h"
 #include "gdalconnector.h"
 #include "coordinatesystemconnector.h"
 

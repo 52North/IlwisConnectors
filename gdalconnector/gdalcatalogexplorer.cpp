@@ -78,8 +78,10 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
                   if ( !file.isDir() ) {
                     std::vector<Resource> resources = CatalogConnector::cache()->find(url, Time(file.lastModified()));
                     if ( resources.size() == 0){
-                        IlwisTypes extendedTypes = extendedType(formats, file.suffix());
-                        GDALItems items(url, file, extendedTypes);
+                        IlwisTypes tp;
+                        IlwisTypes extendedTypes;
+                        getTypes(formats, file.suffix(), tp, extendedTypes);
+                        GDALItems items(url, file, tp, extendedTypes);
                         for(auto item : items) {
                             item.createTime(Time(file.created()));
                             item.modifiedTime(Time(file.lastModified()));
@@ -115,13 +117,14 @@ std::vector<Resource> GdalCatalogExplorer::loadItems(const IOOptions &)
     }
 }
 
-IlwisTypes GdalCatalogExplorer::extendedType(const std::multimap<QString, DataFormat>& formats, const QString& ext) const{
-    IlwisTypes types= itUNKNOWN;
+void GdalCatalogExplorer::getTypes(const std::multimap<QString, DataFormat>& formats, const QString& ext, IlwisTypes & tp, IlwisTypes & extendedType) const {
+    tp = itUNKNOWN;
+    extendedType = itUNKNOWN;
     auto collection = formats.equal_range(ext);
-    for(auto iter = collection.first; iter != collection.second; ++iter){
-        types |= (*iter).second.property(DataFormat::fpEXTENDEDTYPE).toULongLong();
+    for(auto iter = collection.first; iter != collection.second; ++iter) {
+        tp |= (*iter).second.property(DataFormat::fpDATATYPE).toULongLong();
+        extendedType |= (*iter).second.property(DataFormat::fpEXTENDEDTYPE).toULongLong();
     }
-    return types;
 }
 
 bool GdalCatalogExplorer::canUse(const Resource &resource) const

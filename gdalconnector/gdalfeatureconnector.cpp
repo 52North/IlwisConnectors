@@ -31,6 +31,7 @@
 #include "ilwisobjectconnector.h"
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
+#include "dataformat.h"
 #include "gdalconnector.h"
 #include "coverageconnector.h"
 #include "juliantime.h"

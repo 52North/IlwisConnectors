@@ -6,7 +6,7 @@ namespace Gdal {
 class GDALItems : public std::set<Resource>
 {
 public:
-    GDALItems(const QUrl& path, const QFileInfo &localFile, IlwisTypes extTypes);
+    GDALItems(const QUrl& path, const QFileInfo &localFile, IlwisTypes tp, IlwisTypes extTypes);
     GDALItems(const QFileInfo &localContainerFile);
 
     quint64 extractNameAndDomain(const QString &parts, QString &shortname);

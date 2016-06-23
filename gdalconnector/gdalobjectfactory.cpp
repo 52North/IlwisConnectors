@@ -15,6 +15,7 @@
 #include "catalogconnector.h"
 #include "connectorfactory.h"
 #include "gdalproxy.h"
+#include "dataformat.h"
 #include "gdalconnector.h"
 #include "gdalobjectfactory.h"
 

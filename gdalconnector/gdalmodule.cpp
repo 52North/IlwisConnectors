@@ -16,6 +16,7 @@
 #include "gdalproxy.h"
 #include "ilwisobjectconnector.h"
 #include "catalogconnector.h"
+#include "dataformat.h"
 #include "gdalconnector.h"
 #include "coordinatesystemconnector.h"
 #include "coverageconnector.h"

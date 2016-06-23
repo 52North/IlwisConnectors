@@ -12,6 +12,7 @@
 #include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "gdalproxy.h"
+#include "dataformat.h"
 #include "gdalconnector.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
