@@ -267,23 +267,23 @@ PyObject* FeatureCoverage::select(const std::string& spatialQuery){
 }
 
 void FeatureCoverage::reprojectFeatures(const CoordinateSystem& csy){
-    Ilwis::IFeatureCoverage fc = this->ptr()->as<Ilwis::FeatureCoverage>();
     Ilwis::ICoordinateSystem ilwCsy = csy.ptr()->as<Ilwis::CoordinateSystem>();
-    for(const auto &feat : fc ){
-        const Ilwis::UPGeometry& geom = feat->geometry();
-        if(!geom)
-            continue;
-        if ( ilwCsy.isValid() && !ilwCsy->isEqual(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>().ptr())){
+    if ( ilwCsy.isValid() && !ilwCsy->isEqual(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>().ptr())) {
+        Ilwis::IFeatureCoverage fc = this->ptr()->as<Ilwis::FeatureCoverage>();
+        for(const auto &feat : fc ){
+            const Ilwis::UPGeometry& geom = feat->geometry();
+            if(!geom)
+                continue;
             Ilwis::CsyTransform trans(coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>(), ilwCsy);
             geom->apply_rw(&trans);
             geom->geometryChangedAction();
+            Ilwis::GeometryHelper::setCoordinateSystem(geom.get(), ilwCsy.ptr());
         }
-        Ilwis::GeometryHelper::setCoordinateSystem(geom.get(), ilwCsy.ptr());
+        Ilwis::ICoordinateSystem oldCsy = coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>();
+        Ilwis::Envelope newEnv = ilwCsy->convertEnvelope(oldCsy, fc->envelope());
+        fc->coordinateSystem(ilwCsy);
+        fc->envelope(newEnv);
     }
-    Ilwis::ICoordinateSystem oldCsy = coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>();
-    Ilwis::Envelope newEnv = ilwCsy->convertEnvelope(oldCsy, fc->envelope());
-    fc->coordinateSystem(ilwCsy);
-    fc->envelope(newEnv);
 }
 
 FeatureCoverage *FeatureCoverage::clone(){
