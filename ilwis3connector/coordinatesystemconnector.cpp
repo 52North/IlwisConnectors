@@ -49,16 +49,9 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject* data, const IOOptions&
 {
     Ilwis3Connector::loadMetaData(data, options);
     CoordinateSystem *csy = static_cast<CoordinateSystem *>(data);
-    QString ellipsoideName;
 
     IEllipsoid ell = getEllipsoid();
-    GeodeticDatum *datum = getDatum(ellipsoideName);
-    if ( !ell.isValid() && ellipsoideName != sUNDEF){
-       QString ellres = QString("code=ellipsoid:%1").arg(ellipsoideName);
-       if (!ell.prepare(ellres)) {
-              return ERROR1("No ellipsoid for this code %1",ellipsoideName);
-       }
-    }
+    GeodeticDatum *datum = getDatum(ell);
 
     QString cb = _odf->value("CoordSystem", "CoordBounds");
     QStringList cbparts = cb.split(" ");
@@ -137,9 +130,7 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
         double majoraxis = _odf->value("Ellipsoid","a").toDouble();
         IEllipsoid ellipsoid;
         ellipsoid.prepare();
-        QString newName = ellipsoid->setEllipsoid(majoraxis,invf);;
-        if ( newName.toLower() != "user defined") // which is basically anonymous
-            ellipsoid->name(newName);
+        ellipsoid->setEllipsoid(majoraxis,invf);
         return ellipsoid;
     }
     IEllipsoid ellipsoid;
@@ -197,14 +188,14 @@ QString CoordinateSystemConnector::prjParam2IlwisName(Projection::ProjectionPara
     return sUNDEF;
 }
 
-GeodeticDatum *CoordinateSystemConnector::getDatum(QString& ellipsoid) {
+GeodeticDatum *CoordinateSystemConnector::getDatum(IEllipsoid& ell) {
     QString datum =_odf->value("CoordSystem","Datum");
     if ( datum == sUNDEF)
         return 0; // not an error; simply no datum with this csy
 
     QString area = _odf->value("CoordSystem","Datum Area");
     if ( area != sUNDEF && area != "" )
-        datum = datum + "." + area;
+        datum = datum + "|" + area;
     QString code = name2Code(datum,"datum");
 
     if ( code == "?"){
@@ -225,8 +216,15 @@ GeodeticDatum *CoordinateSystemConnector::getDatum(QString& ellipsoid) {
             double dz = stmt.value(stmt.record().indexOf("dz")).toDouble();
             gdata->setArea(area);
             gdata->code(code);
-            gdata->set3TransformationParameters(dx, dy, dz);
-            ellipsoid = stmt.value(stmt.record().indexOf("ellipsoid")).toString();
+            QString ellipsoid = stmt.value(stmt.record().indexOf("ellipsoid")).toString();
+            if ( !ell.isValid() && ellipsoid != sUNDEF){
+               QString ellres = QString("code=ellipsoid:%1").arg(ellipsoid);
+               if (!ell.prepare(ellres)) {
+                    kernel()->issues()->log(TR("No ellipsoid for this code %1").arg(ellipsoid),IssueObject::itWarning);
+               }
+            }
+
+            gdata->set3TransformationParameters(dx, dy, dz, ell);
 
             return gdata;
 
@@ -312,6 +310,7 @@ bool CoordinateSystemConnector::storeMetaData(IlwisObject *data, const IOOptions
     if (!csy.isValid() || !csy->isValid()){
         return ERROR1(ERR_NO_INITIALIZED_1, "CoordinateSystem");
     }
+    /*
     Envelope bounds = csy->envelope();
     if(!bounds.isValid()){
         ERROR2(ERR_NO_INITIALIZED_2, "Bounds", csy->name());
@@ -323,70 +322,136 @@ bool CoordinateSystemConnector::storeMetaData(IlwisObject *data, const IOOptions
                       arg(bounds.min_corner().y,10,'f').
                       arg(bounds.max_corner().x,10,'f').
                       arg(bounds.max_corner().y,10,'f'));
-
-    if ( csy->isLatLon()) {
-        _odf->setKeyValue("CoordSystem", "Datum", "WGS 1984");
-        _odf->setKeyValue("CoordSystem","Type","LatLon");
-        if ( csy.as<ConventionalCoordinateSystem>()->ellipsoid().isValid()){
-            IEllipsoid ell = csy.as<ConventionalCoordinateSystem>()->ellipsoid();
-            _odf->setKeyValue("CoordSystem","Ellipsoid","User Defined");
-            _odf->setKeyValue("Ellipsoid","1/f", 1.0 / ell->flattening());
-            _odf->setKeyValue("Ellipsoid","a", ell->majorAxis());
+    */
+    if (csy->ilwisType() == itCONVENTIONALCOORDSYSTEM) {
+        IConventionalCoordinateSystem cCsy = csy.as<ConventionalCoordinateSystem>();
+        if ( csy->isLatLon()) {
+            _odf->setKeyValue("CoordSystem","Type","LatLon");
+            _odf->setKeyValue("Ilwis","Class","Coordinate System LatLon"); // overrule Ilwis3Connector::storeMetaData() because only here we can distinguish between projected and latlon
+        } else if( cCsy->projection().isValid()) {
+            QString projectionName = Ilwis3Connector::code2name(cCsy->projection()->code(), "projection");
+            _odf->setKeyValue("CoordSystem","Type","Projection");
+            _odf->setKeyValue("Ilwis","Class","Coordinate System Projection");
+            _odf->setKeyValue("CoordSystem","Projection",projectionName);
+            _odf->setKeyValue("CoordSystem", "UnitSize", 1);
+            IProjection projection = cCsy->projection();
+            if ( projection->isSet(Projection::pvAZIMCLINE))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvAZIMCLINE),projection->parameter(Projection::pvAZIMCLINE).toDouble());
+            if ( projection->isSet(Projection::pvAZIMYAXIS))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvAZIMYAXIS),projection->parameter(Projection::pvAZIMYAXIS).toDouble());
+            if ( projection->isSet(Projection::pvHEIGHT))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvHEIGHT),projection->parameter(Projection::pvHEIGHT).toDouble());
+            if ( projection->isSet(Projection::pvSCALE))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvSCALE),projection->parameter(Projection::pvSCALE).toDouble());
+            if ( projection->isSet(Projection::pvCENTRALPARALLEL))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvCENTRALPARALLEL),projection->parameter(Projection::pvCENTRALPARALLEL).toDouble());
+            if ( projection->isSet(Projection::pvSTANDARDPARALLEL1))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvSTANDARDPARALLEL1),projection->parameter(Projection::pvSTANDARDPARALLEL1).toDouble());
+            if ( projection->isSet(Projection::pvSTANDARDPARALLEL2))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvSTANDARDPARALLEL2),projection->parameter(Projection::pvSTANDARDPARALLEL2).toDouble());
+            if ( projection->isSet(Projection::pvLATITUDEOFTRUESCALE))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLATITUDEOFTRUESCALE),projection->parameter(Projection::pvLATITUDEOFTRUESCALE).toDouble());
+            if ( projection->isSet(Projection::pvCENTRALMERIDIAN))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvCENTRALMERIDIAN),projection->parameter(Projection::pvCENTRALMERIDIAN).toDouble());
+            if ( projection->isSet(Projection::pvNORIENTED))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORIENTED),projection->parameter(Projection::pvNORIENTED).toString());
+            if ( projection->isSet(Projection::pvNORTH))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORTH),projection->parameter(Projection::pvNORTH).toString());
+            if ( projection->isSet(Projection::pvFALSEEASTING))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvFALSEEASTING),projection->parameter(Projection::pvFALSEEASTING).toDouble());
+            if ( projection->isSet(Projection::pvFALSENORTHING))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvFALSENORTHING),projection->parameter(Projection::pvFALSENORTHING).toDouble());
+            if ( projection->isSet(Projection::pvZONE))
+                _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvZONE),projection->parameter(Projection::pvZONE).toInt());
         }
-    }else{
-        IConventionalCoordinateSystem projectedCsy = csy.as<ConventionalCoordinateSystem>();
-        if( !projectedCsy->ellipsoid().isValid() || !projectedCsy->projection().isValid()){
-                ERROR2(ERR_NO_INITIALIZED_2, "Ellipsoid/Projection", csy->name());
-                return sUNDEF;
-        }
-        QString projectionName = Ilwis3Connector::code2name(projectedCsy->projection()->code(), "projection");
-        _odf->setKeyValue("CoordSystem","Type","Projection");
-        _odf->setKeyValue("CoordSystem","Projection",projectionName);
-        QString ellipsoidName = projectedCsy->ellipsoid()->code();
-        //ellipsoidName = Ilwis3Connector::name2Code(ellipsoidName, "ellipsoid");
-        if ( ellipsoidName == sUNDEF){
-            ellipsoidName = "User Defined";
-            _odf->setKeyValue("Ellipsoid","a",projectedCsy->ellipsoid()->majorAxis() );
-            _odf->setKeyValue("Ellipsoid","1/f",projectedCsy->ellipsoid()->flattening() );
 
-        }else
-            ellipsoidName = Ilwis3Connector::code2name(ellipsoidName, "ellipsoid");
-        _odf->setKeyValue("CoordSystem","Ellipsoid",ellipsoidName);
-        IProjection projection = projectedCsy->projection();
-        if ( projection->isSet(Projection::pvAZIMCLINE))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvAZIMCLINE),projection->parameter(Projection::pvAZIMCLINE).toDouble());
-        if ( projection->isSet(Projection::pvAZIMYAXIS))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvAZIMYAXIS),projection->parameter(Projection::pvAZIMYAXIS).toDouble());
-        if ( projection->isSet(Projection::pvHEIGHT))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvHEIGHT),projection->parameter(Projection::pvHEIGHT).toDouble());
-        if ( projection->isSet(Projection::pvSCALE))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvSCALE),projection->parameter(Projection::pvSCALE).toDouble());
-        if ( projection->isSet(Projection::pvCENTRALPARALLEL))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvCENTRALPARALLEL),projection->parameter(Projection::pvCENTRALPARALLEL).toDouble());
-        if ( projection->isSet(Projection::pvSTANDARDPARALLEL1))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvSTANDARDPARALLEL1),projection->parameter(Projection::pvSTANDARDPARALLEL1).toDouble());
-        if ( projection->isSet(Projection::pvSTANDARDPARALLEL2))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvSTANDARDPARALLEL2),projection->parameter(Projection::pvSTANDARDPARALLEL2).toDouble());
-        if ( projection->isSet(Projection::pvLATITUDEOFTRUESCALE))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvLATITUDEOFTRUESCALE),projection->parameter(Projection::pvLATITUDEOFTRUESCALE).toDouble());
-        if ( projection->isSet(Projection::pvCENTRALMERIDIAN))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvCENTRALMERIDIAN),projection->parameter(Projection::pvCENTRALMERIDIAN).toDouble());
-        if ( projection->isSet(Projection::pvNORIENTED))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORIENTED),projection->parameter(Projection::pvNORIENTED).toString());
-        if ( projection->isSet(Projection::pvNORTH))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvNORTH),projection->parameter(Projection::pvNORTH).toString());
-        if ( projection->isSet(Projection::pvFALSEEASTING))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvFALSEEASTING),projection->parameter(Projection::pvFALSEEASTING).toDouble());
-        if ( projection->isSet(Projection::pvFALSENORTHING))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvFALSENORTHING),projection->parameter(Projection::pvFALSENORTHING).toDouble());
-        if ( projection->isSet(Projection::pvZONE))
-            _odf->setKeyValue("Projection",prjParam2IlwisName(Projection::pvZONE),projection->parameter(Projection::pvZONE).toInt());
-
+        const std::unique_ptr<Ilwis::GeodeticDatum> & datum = cCsy->datum();
+        if (datum->isValid()) {
+            QString datumName = datum->code();
+            if (datumName.length() > 0 && datumName != sUNDEF) { // a predefined datum in ilwis3 includes the ellipsoid definition
+                datumName = Ilwis3Connector::code2name(datumName, "datum");
+                if (datumName != sUNDEF) {
+                    QStringList nameArea = datumName.split("|");
+                    _odf->setKeyValue("CoordSystem","Datum",nameArea[0]);
+                    if (nameArea.length() > 1)
+                        _odf->setKeyValue("CoordSystem","Datum Area",nameArea[1]);
+                    else
+                        _odf->setKeyValue("CoordSystem","Datum Area","");
+                } else // no datum found; defaulting to wgs84
+                    _odf->setKeyValue("CoordSystem", "Datum", "WGS 1984");
+            } else { // user defined
+                if ( cCsy->ellipsoid().isValid()) { // write out ellipsoid for user-defined datum
+                    QString ellipsoidName = cCsy->ellipsoid()->code();
+                    if ( ellipsoidName != sUNDEF) {
+                        ellipsoidName = Ilwis3Connector::code2name(ellipsoidName, "ellipsoid");
+                        if (ellipsoidName.length() == 0 || ellipsoidName == sUNDEF)
+                            ellipsoidName = "WGS 84";
+                    } else {
+                        ellipsoidName = "User Defined";
+                        _odf->setKeyValue("Ellipsoid","a", cCsy->ellipsoid()->majorAxis() );
+                        _odf->setKeyValue("Ellipsoid","1/f", 1.0 / cCsy->ellipsoid()->flattening() );
+                    }
+                    _odf->setKeyValue("CoordSystem","Ellipsoid",ellipsoidName);
+                } else
+                    _odf->setKeyValue("CoordSystem","Ellipsoid","WGS 84");
+                _odf->setKeyValue("CoordSystem", "Datum", "User Defined");
+                switch(datum->getTransformationMode()) {
+                case GeodeticDatum::dtMolodensky:
+                    _odf->setKeyValue("Datum", "dx", datum->parameter(GeodeticDatum::dmDX));
+                    _odf->setKeyValue("Datum", "dy", datum->parameter(GeodeticDatum::dmDY));
+                    _odf->setKeyValue("Datum", "dz", datum->parameter(GeodeticDatum::dmDZ));
+                    break;
+                case GeodeticDatum::dtBursaWolf:
+                    _odf->setKeyValue("Datum", "dx", datum->parameter(GeodeticDatum::dmDX));
+                    _odf->setKeyValue("Datum", "dy", datum->parameter(GeodeticDatum::dmDY));
+                    _odf->setKeyValue("Datum", "dz", datum->parameter(GeodeticDatum::dmDZ));
+                    _odf->setKeyValue("Datum", "rotX", datum->parameter(GeodeticDatum::dmRX));
+                    _odf->setKeyValue("Datum", "rotY", datum->parameter(GeodeticDatum::dmRY));
+                    _odf->setKeyValue("Datum", "rotZ", datum->parameter(GeodeticDatum::dmRZ));
+                    _odf->setKeyValue("Datum", "dS", datum->parameter(GeodeticDatum::dmSCALE));
+                    _odf->setKeyValue("Datum", "Type", "User Defined BursaWolf");
+                    break;
+                case GeodeticDatum::dtBadekas:
+                    _odf->setKeyValue("Datum", "dx", datum->parameter(GeodeticDatum::dmDX));
+                    _odf->setKeyValue("Datum", "dy", datum->parameter(GeodeticDatum::dmDY));
+                    _odf->setKeyValue("Datum", "dz", datum->parameter(GeodeticDatum::dmDZ));
+                    _odf->setKeyValue("Datum", "rotX", datum->parameter(GeodeticDatum::dmRX));
+                    _odf->setKeyValue("Datum", "rotY", datum->parameter(GeodeticDatum::dmRY));
+                    _odf->setKeyValue("Datum", "rotZ", datum->parameter(GeodeticDatum::dmRZ));
+                    _odf->setKeyValue("Datum", "dS", datum->parameter(GeodeticDatum::dmSCALE));
+                    _odf->setKeyValue("Datum", "X0", datum->parameter(GeodeticDatum::dmCENTERXR));
+                    _odf->setKeyValue("Datum", "Y0", datum->parameter(GeodeticDatum::dmCENTERYR));
+                    _odf->setKeyValue("Datum", "Z0", datum->parameter(GeodeticDatum::dmCENTERXR));
+                    _odf->setKeyValue("Datum", "Type", "User Defined Badekas");
+                    break;
+                }
+            }
+        } else if ( cCsy->ellipsoid().isValid()) { // no datum known: write out ellipsoid
+            QString ellipsoidName = cCsy->ellipsoid()->code();
+            if ( ellipsoidName != sUNDEF) {
+                ellipsoidName = Ilwis3Connector::code2name(ellipsoidName, "ellipsoid");
+                if (ellipsoidName.length() == 0 || ellipsoidName == sUNDEF)
+                    ellipsoidName = "WGS 84";
+            } else {
+                ellipsoidName = "User Defined";
+                _odf->setKeyValue("Ellipsoid","a", cCsy->ellipsoid()->majorAxis() );
+                _odf->setKeyValue("Ellipsoid","1/f", 1.0 / cCsy->ellipsoid()->flattening() );
+            }
+            _odf->setKeyValue("CoordSystem","Ellipsoid",ellipsoidName);
+        } else // both datum and ellipsoid unknown: defaulting to datum wgs84
+            _odf->setKeyValue("CoordSystem", "Datum", "WGS 1984");
     }
+
+    _odf->setKeyValue("CoordSystem","Width",28);
+    _odf->setKeyValue("CoordSystem","Decimals",2);
+    _odf->setKeyValue("Domain", "Type", "DomainCoord");
     _odf->store("csy", sourceRef().toLocalFile());
     return true;
+}
 
-
+bool CoordinateSystemConnector::storeBinaryData(IlwisObject* )
+{
+    return true;
 }
 
 QString CoordinateSystemConnector::format() const
