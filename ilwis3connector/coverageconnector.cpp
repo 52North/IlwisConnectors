@@ -161,7 +161,8 @@ bool CoverageConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& o
         ITable tbl = prepareAttributeTable(attfile, basemaptype, options);
         if ( tbl.isValid()){
             coverage->setAttributes(tbl);
-            addProperty("TableRecordCount", tbl->recordCount()); // pass to caller; this is the correct featureCount for ilwis3 vector files
+            if ( attfile != sUNDEF)
+                addProperty("TableRecordCount", tbl->recordCount()); // pass to caller; this is the correct featureCount for ilwis3 vector files
             if ( basemaptype == "Map"){
                   if ( isSortWithoutAtTab){
                     auto *raster = static_cast<RasterCoverage *>(coverage);
@@ -323,7 +324,13 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
              }
          } else if ( dom->valueType() == itNAMEDITEM) {
              INamedIdDomain iddom = dom.as<NamedIdDomain>();
-            _domainName = baseName + ".dom"; // Resource::toLocalFile(dom->source().url(), true);
+             if ( baseName != sUNDEF)
+                 _domainName = baseName + ".dom"; // Resource::toLocalFile(dom->source().url(), true);
+             else{
+                 _domainName = !iddom->isAnonymous() ? dom->name() : coverage->name();
+                 if (_domainName.indexOf(".dom") == -1)
+                     _domainName += ".dom";
+             }
             _domainName = QFileInfo(_domainName).fileName();
             _domainInfo = QString("%1;Int;id;%2;;").arg(_domainName).arg(iddom->count());
             _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
