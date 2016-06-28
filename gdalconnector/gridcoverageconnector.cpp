@@ -28,9 +28,9 @@
 #include "coloritem.h"
 #include "colorrange.h"
 #include "gridcoverageconnector.h"
+#include "ellipsoid.h"
 #include "geodeticdatum.h"
 #include "projection.h"
-#include "ellipsoid.h"
 #include "conventionalcoordinatesystem.h"
 
 using namespace Ilwis;
