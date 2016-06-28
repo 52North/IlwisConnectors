@@ -216,8 +216,9 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
 
     // write the corresponding coordinate system
     _csyName = writeCsy(obj, csy);
-    _odf->setKeyValue("BaseMap", "CoordSystem", QFileInfo(_csyName).fileName());
+    _odf->setKeyValue("BaseMap", "CoordSystem", _csyName);
 
+    /*
     Envelope bounds = coverage->envelope();
     if ( bounds.isNull())
         bounds = coverage->coordinateSystem()->envelope();
@@ -229,8 +230,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
                       arg(bounds.min_corner().y,0,'f').
                       arg(bounds.max_corner().x,0,'f').
                       arg(bounds.max_corner().y,0,'f'));
-
-
+     */
 
     calcStatistics(obj,NumericStatistics::pBASIC);
 
@@ -381,7 +381,7 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
 
         IOOptions opt({"attributedomain"}, attDom);
         attTable->connectTo(QUrl(dataFilePath),"table","ilwis3", IlwisObject::cmOUTPUT,opt);
-        TableConnector *conn = tp == itRASTER ? 0 : new TableConnector(Resource(dataFilePath, itTABLE), false);
+        TableConnector *conn = tp == itRASTER ? 0 : new TableConnector(Resource(dataFilePath, itTABLE), false, opt);
         //TableConnector *conn = new TableConnector(Resource(dataFilePath, itTABLE), false);
         return conn;
     }
