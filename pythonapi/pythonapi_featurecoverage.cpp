@@ -281,8 +281,8 @@ void FeatureCoverage::reprojectFeatures(const CoordinateSystem& csy){
         Ilwis::GeometryHelper::setCoordinateSystem(geom.get(), ilwCsy.ptr());
     }
     Ilwis::ICoordinateSystem oldCsy = coordinateSystem().ptr()->as<Ilwis::CoordinateSystem>();
+    Ilwis::Envelope newEnv = ilwCsy->convertEnvelope(oldCsy, fc->envelope());
     fc->coordinateSystem(ilwCsy);
-    Ilwis::Envelope newEnv = oldCsy->convertEnvelope(ilwCsy, fc->envelope());
     fc->envelope(newEnv);
 }
 
