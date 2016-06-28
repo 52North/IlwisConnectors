@@ -271,15 +271,13 @@ bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
 
     int reduceColumns = 0; // the featured_id column will not be go the ilwis3, useless info at that level
     quint32 reccount = _selected.size() > 0 ? _selected.size() :  tbl->recordCount();
-    QString fileUrl = context()->workingCatalog()->filesystemLocation().toString() + "/" + _attributeDomain;
-    QFileInfo inf(QUrl(fileUrl).toLocalFile());
-    QString domname = inf.fileName();
-    if ( domname == "" || !inf.exists())
+    QString domname = _attributeDomain;
+    if ( domname == "" )
         domname = "none.dom";
     _odf->setKeyValue("Ilwis", "Type", "Table");
     _odf->setKeyValue("Ilwis", "Class", "Table");
     _odf->setKeyValue("Table", "Domain", domname);
-    _odf->setKeyValue("Table", "DomainInfo", QString("%1;Long;UniqueID;0;;").arg(inf.fileName()));
+    _odf->setKeyValue("Table", "DomainInfo", QString("%1;Long;UniqueID;0;;").arg(_attributeDomain));
     _odf->setKeyValue("Table", "Columns", IniFile::FormatElement(tbl->columnCount() - reduceColumns));
     _odf->setKeyValue("Table", "Records", IniFile::FormatElement(reccount));
     _odf->setKeyValue("Table", "Type", "TableStore");
@@ -359,8 +357,8 @@ bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
                  storeType = "Byte"  ;
             domainInfo = QString("%1;%2;value;0;%3;%4;0.1;offset=%5").arg(domName).
                     arg(storeType).
-                    arg(numdmrange->min()).
-                    arg(numdmrange->max()).
+                    arg(IniFile::FormatElement(numdmrange->min())).
+                    arg(IniFile::FormatElement(numdmrange->max())).
                     arg(conv.offset());
             _odf->setKeyValue(colName, "StoreType", storeType == "Real" ? "Real" : "Long");
         } else if ( dmColumn->valueType() == itTHEMATICITEM) {
