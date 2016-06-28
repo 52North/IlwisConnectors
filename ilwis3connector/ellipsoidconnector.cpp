@@ -55,7 +55,7 @@ bool EllipsoidConnector::createEllipsoidFromDatum(const QString &name, IlwisObje
     QString datum = name;
     QString area = _odf->value("CoordSystem","Datum Area");
     if ( area != sUNDEF )
-        datum = datum + "." + area;
+        datum = datum + "|" + area;
     QString code = name2Code(datum,"datum");
     if ( code == "?"){
         kernel()->issues()->log(TR("No datum code for this alias, ellipsoid %1 can not be found").arg(datum));
