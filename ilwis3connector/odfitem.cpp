@@ -237,7 +237,7 @@ QString ODFItem::findDatumName() const {
         QString name = _odf.value("CoordSystem", "Datum");
         QString area = _odf.value("CoordSystem", "Datum Area");
         if ( name != sUNDEF) {
-            name = Ilwis3Connector::name2Code(name + ( (area!= sUNDEF && area != "") ? "." + area : ""),"datum");
+            name = Ilwis3Connector::name2Code(name + ( (area!= sUNDEF && area != "") ? "|" + area : ""),"datum");
             return cleanName(name);
         }
     }
