@@ -238,7 +238,7 @@ bool Ilwis3ObjectFactory::fillDatumRecord(const QStringList& parts, InternalData
         return true;
     QString id = parts[0];
     if ( parts[1] != "")
-       id += "." + parts[1];
+       id += "|" + parts[1];
     QString parms = QString("'%1','%2','datum','ilwis3'").arg(id,parts[2]);
     QString stmt = QString("INSERT INTO aliasses VALUES(%1)").arg(parms);
 
