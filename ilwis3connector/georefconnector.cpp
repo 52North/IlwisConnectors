@@ -167,7 +167,7 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
     } else
         localPathCsy = "unknown.csy";
 
-    _odf->setKeyValue("GeoRef","CoordSystem", QFileInfo(localPathCsy).fileName());
+    _odf->setKeyValue("GeoRef","CoordSystem", localPathCsy);
     Size<> sz = grf->size();
     _odf->setKeyValue("GeoRef","Lines", IniFile::FormatElement(sz.ysize()));
     _odf->setKeyValue("GeoRef","Columns", IniFile::FormatElement(sz.xsize()));
