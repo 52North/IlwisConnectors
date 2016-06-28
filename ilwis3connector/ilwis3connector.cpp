@@ -68,7 +68,7 @@ bool Ilwis3Connector::storeMetaData(const IlwisObject *obj, IlwisTypes type) con
     _odf.reset(makeIni(_resource, type));
 
     _odf->setKeyValue("Ilwis","Description", obj->description());
-    _odf->setKeyValue("Ilwis","Time", obj->createTime().toString());
+    _odf->setKeyValue("Ilwis","Time", IniFile::FormatElement(obj->createTime().toTime_t()));
     _odf->setKeyValue("Ilwis","Version", "3.1");
     _odf->setKeyValue("Ilwis","Class", ilwis3ClassName(obj->ilwisType()));
     if ( obj->ilwisType() & itCOVERAGE)
@@ -90,7 +90,7 @@ QString Ilwis3Connector::datum2Code(const QString &name, const QString &area) co
 {
     QString id = name;
     if ( area != "")
-        id += "." + area;
+        id += "|" + area;
     InternalDatabaseConnection db;
     QString query = QString("Select code from aliasses where alias='%1' and type='datum' and source='ilwis3'").arg(id);
     if ( db.exec(query)) {
@@ -446,7 +446,7 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
             csyName = "LatLonWGS84.csy";
     }else
         csyName = "unknown.csy";
-    return csyName;
+    return QFileInfo(csyName).fileName();
 }
 
 
