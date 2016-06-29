@@ -37814,7 +37814,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"RasterCoverage_subDomain", _wrap_RasterCoverage_subDomain, METH_VARARGS, (char *)"RasterCoverage_subDomain(RasterCoverage self) -> Domain"},
 	 { (char *)"RasterCoverage_clear", _wrap_RasterCoverage_clear, METH_VARARGS, (char *)"RasterCoverage_clear(RasterCoverage self)"},
 	 { (char *)"RasterCoverage_select", _wrap_RasterCoverage_select, METH_VARARGS, (char *)"\n"
-		"select(std::string selectionQ) -> RasterCoverage\n"
+		"select(std::string geomWkt) -> RasterCoverage\n"
 		"RasterCoverage_select(RasterCoverage self, Geometry geom) -> RasterCoverage\n"
 		""},
 	 { (char *)"RasterCoverage_reprojectRaster", _wrap_RasterCoverage_reprojectRaster, METH_VARARGS, (char *)"RasterCoverage_reprojectRaster(RasterCoverage self, std::string newName, quint32 epsg, std::string interpol) -> RasterCoverage"},

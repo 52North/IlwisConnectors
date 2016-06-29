@@ -84,7 +84,7 @@ namespace pythonapi {
         Domain subDomain() const;
         void clear();
 
-        RasterCoverage select(std::string selectionQ);
+        RasterCoverage select(std::string geomWkt);
         RasterCoverage select(Geometry& geom);
         RasterCoverage* reprojectRaster(std::string newName, quint32 epsg, std::string interpol);
 

@@ -463,47 +463,40 @@ void RasterCoverage::clear(){
     this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().clearSubFeatureDefinitions();
 }
 
-RasterCoverage RasterCoverage::select(std::string selectionQ){
-    QString selectGeom = QString::fromStdString(selectionQ);
-    geos::geom::Geometry *geom = Ilwis::GeometryHelper::fromWKT(selectGeom, this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
-
-    if(geom) {
-        Ilwis::PixelIterator iterIn(this->ptr()->as<Ilwis::RasterCoverage>(), geom);
-        const geos::geom::Envelope *env = geom->getEnvelopeInternal();
-        Ilwis::Envelope envelope(Ilwis::Coordinate(env->getMinX(), env->getMinY()),Ilwis::Coordinate(env->getMaxX(), env->getMaxY()));
-        Ilwis::BoundingBox box = this->ptr()->as<Ilwis::RasterCoverage>()->georeference()->coord2Pixel(envelope);
-        QString grfcode = QString("code=georef:type=corners,csy=%1,envelope=%2,gridsize=%3").arg(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem()->id()).arg(envelope.toString()).arg(box.size().toString());
-        Ilwis::IGeoReference grf(grfcode);
-
-        Ilwis::IRasterCoverage map2;
-        map2.prepare();
-
-        map2->coordinateSystem(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
-        map2->georeference(grf);
-        map2->datadefRef() = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
-
-        Ilwis::PixelIterator iterOut(map2, geom);
-
-        Ilwis::PixelIterator iterInEnd = iterIn.end();
-        Ilwis::PixelIterator iterOutEnd = iterOut.end();
-        while( iterIn != iterInEnd && iterOut != iterOutEnd) {
-            *iterOut = *iterIn;
-            ++iterOut;
-            ++iterIn;
-        }
-
-        return RasterCoverage(&map2);
-    }
-    else{
-        throw InvalidObject("Not a valid geometry description");
-    }
-
-    delete geom;
-    return RasterCoverage();
+RasterCoverage RasterCoverage::select(std::string geomWkt){
+    Geometry geom (geomWkt, coordinateSystem());
+    if (geom.__bool__())
+        return select(geom);
+    else
+        return RasterCoverage();
 }
 
 RasterCoverage RasterCoverage::select(Geometry& geom){
-    return select(geom.toWKT());
+    Ilwis::PixelIterator iterIn(this->ptr()->as<Ilwis::RasterCoverage>(), geom.ptr().get());
+    const geos::geom::Envelope *env = geom.ptr()->getEnvelopeInternal();
+    Ilwis::Envelope envelope(Ilwis::Coordinate(env->getMinX(), env->getMinY()),Ilwis::Coordinate(env->getMaxX(), env->getMaxY()));
+    Ilwis::BoundingBox box = this->ptr()->as<Ilwis::RasterCoverage>()->georeference()->coord2Pixel(envelope);
+    QString grfcode = QString("code=georef:type=corners,csy=%1,envelope=%2,gridsize=%3").arg(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem()->id()).arg(envelope.toString()).arg(box.size().toString());
+    Ilwis::IGeoReference grf(grfcode);
+
+    Ilwis::IRasterCoverage map2;
+    map2.prepare();
+
+    map2->coordinateSystem(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
+    map2->georeference(grf);
+    map2->datadefRef() = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
+
+    Ilwis::PixelIterator iterOut(map2, geom.ptr().get());
+
+    Ilwis::PixelIterator iterInEnd = iterIn.end();
+    Ilwis::PixelIterator iterOutEnd = iterOut.end();
+    while( iterIn != iterInEnd && iterOut != iterOutEnd) {
+        *iterOut = *iterIn;
+        ++iterOut;
+        ++iterIn;
+    }
+
+    return RasterCoverage(&map2);
 }
 
 RasterCoverage* RasterCoverage::reprojectRaster(std::string newName, quint32 epsg, std::string interpol){
