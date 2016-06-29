@@ -184,10 +184,10 @@ bool GeorefConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
                 return true; // no need to rewrite the georef file with the same information
         }
         QSharedPointer<CornersGeoReference> cgrf = grf->as<CornersGeoReference>();
-        _odf->setKeyValue("GeoRef","CornersOfCorners", cgrf->centerOfPixel() ? "No" : "Yes");
         _odf->setKeyValue("GeoRef","Type", "GeoRefCorners");
         Coordinate cmin = cgrf->envelope().min_corner();
         Coordinate cmax = cgrf->envelope().max_corner();
+        _odf->setKeyValue("GeoRefCorners","CornersOfCorners", cgrf->centerOfPixel() ? "No" : "Yes");
         _odf->setKeyValue("GeoRefCorners", "MinX", IniFile::FormatElement(cmin.x));
         _odf->setKeyValue("GeoRefCorners", "MinY", IniFile::FormatElement(cmin.y));
         _odf->setKeyValue("GeoRefCorners", "MaxX", IniFile::FormatElement(cmax.x));
