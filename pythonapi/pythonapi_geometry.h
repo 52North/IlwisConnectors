@@ -20,6 +20,7 @@ namespace pythonapi {
     class Geometry : public Object{
         friend class Feature;
         friend class FeatureCoverage;
+        friend class RasterCoverage;
         friend class PixelIterator;
         friend class VertexIterator;
     public:
