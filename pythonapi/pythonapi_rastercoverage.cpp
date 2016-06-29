@@ -467,13 +467,12 @@ RasterCoverage RasterCoverage::select(std::string selectionQ){
     QString selectGeom = QString::fromStdString(selectionQ);
     geos::geom::Geometry *geom = Ilwis::GeometryHelper::fromWKT(selectGeom, this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem());
 
-
-    if(geom){
+    if(geom) {
         Ilwis::PixelIterator iterIn(this->ptr()->as<Ilwis::RasterCoverage>(), geom);
         const geos::geom::Envelope *env = geom->getEnvelopeInternal();
         Ilwis::Envelope envelope(Ilwis::Coordinate(env->getMinX(), env->getMinY()),Ilwis::Coordinate(env->getMaxX(), env->getMaxY()));
         Ilwis::BoundingBox box = this->ptr()->as<Ilwis::RasterCoverage>()->georeference()->coord2Pixel(envelope);
-        QString grfcode = QString("code=georef:type=corners,csy=%1,envelope=%2,gridsize=%3,name=selection").arg(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem()->id()).arg(envelope.toString()).arg(box.size().toString());
+        QString grfcode = QString("code=georef:type=corners,csy=%1,envelope=%2,gridsize=%3").arg(this->ptr()->as<Ilwis::RasterCoverage>()->coordinateSystem()->id()).arg(envelope.toString()).arg(box.size().toString());
         Ilwis::IGeoReference grf(grfcode);
 
         Ilwis::IRasterCoverage map2;
