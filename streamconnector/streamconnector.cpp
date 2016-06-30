@@ -25,6 +25,7 @@
 #include "colorrange.h"
 #include "itemdomain.h"
 #include "coordinatesystem.h"
+#include "ellipsoid.h"
 #include "geodeticdatum.h"
 #include "projection.h"
 #include "conventionalcoordinatesystem.h"
