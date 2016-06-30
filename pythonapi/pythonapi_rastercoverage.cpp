@@ -472,7 +472,6 @@ RasterCoverage RasterCoverage::select(std::string geomWkt){
 }
 
 RasterCoverage RasterCoverage::select(Geometry& geom){
-    Ilwis::PixelIterator iterIn(this->ptr()->as<Ilwis::RasterCoverage>(), geom.ptr().get());
     const geos::geom::Envelope *env = geom.ptr()->getEnvelopeInternal();
     Ilwis::Envelope envelope(Ilwis::Coordinate(env->getMinX(), env->getMinY()),Ilwis::Coordinate(env->getMaxX(), env->getMaxY()));
     Ilwis::BoundingBox box = this->ptr()->as<Ilwis::RasterCoverage>()->georeference()->coord2Pixel(envelope);
@@ -491,10 +490,18 @@ RasterCoverage RasterCoverage::select(Geometry& geom){
     map2->georeference(grf);
     map2->datadefRef() = this->ptr()->as<Ilwis::RasterCoverage>()->datadef();
 
-    Ilwis::PixelIterator iterOut(map2, geom.ptr().get());
-
-    Ilwis::PixelIterator iterInEnd = iterIn.end();
+    // prefill all pixels with nodata
+    Ilwis::PixelIterator iterOut(map2);
     Ilwis::PixelIterator iterOutEnd = iterOut.end();
+    while(iterOut != iterOutEnd) {
+        *iterOut = rUNDEF;
+        ++iterOut;
+    }
+
+    // now fill with clip
+    Ilwis::PixelIterator iterIn(this->ptr()->as<Ilwis::RasterCoverage>(), geom.ptr().get());
+    iterOut = Ilwis::PixelIterator(map2, geom.ptr().get());
+    Ilwis::PixelIterator iterInEnd = iterIn.end();
     while( iterIn != iterInEnd && iterOut != iterOutEnd) {
         *iterOut = *iterIn;
         ++iterOut;
