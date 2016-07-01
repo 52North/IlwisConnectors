@@ -4,7 +4,7 @@ from concurrent.futures.process import _WorkItem
 from unittest.case import skip
 
 try:
-    from ilwisobjects import *
+    from ilwis import *
     from datetime import *
     from math import *
 
