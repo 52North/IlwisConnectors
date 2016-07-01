@@ -29,7 +29,7 @@
 
 using namespace pythonapi;
 
-RasterCoverage::RasterCoverage(Ilwis::IRasterCoverage *coverage):Coverage(new Ilwis::ICoverage(*coverage)){
+RasterCoverage::RasterCoverage(const Ilwis::IRasterCoverage &coverage):Coverage(Ilwis::ICoverage(coverage)){
 }
 
 RasterCoverage::RasterCoverage(){
@@ -263,11 +263,11 @@ RasterCoverage* RasterCoverage::toRasterCoverage(Object* obj){
 }
 
 CoordinateSystem RasterCoverage::coordinateSystem(){
-    return CoordinateSystem(new Ilwis::ICoordinateSystem(this->ptr()->as<Ilwis::RasterCoverage>()->georeference()->coordinateSystem()));
+    return CoordinateSystem(Ilwis::ICoordinateSystem(this->ptr()->as<Ilwis::RasterCoverage>()->georeference()->coordinateSystem()));
 }
 
 GeoReference RasterCoverage::geoReference(){
-    return GeoReference(new Ilwis::IGeoReference(this->ptr()->as<Ilwis::RasterCoverage>()->georeference()));
+    return GeoReference(Ilwis::IGeoReference(this->ptr()->as<Ilwis::RasterCoverage>()->georeference()));
 }
 
 void RasterCoverage::setGeoReference(const GeoReference& gr){
@@ -506,17 +506,16 @@ RasterCoverage RasterCoverage::select(Geometry& geom){
         ++iterIn;
     }
 
-    return RasterCoverage(&map2);
+    return RasterCoverage(map2);
 }
 
 RasterCoverage* RasterCoverage::reprojectRaster(std::string newName, quint32 epsg, std::string interpol){
-    CoordinateSystem* targetPyCsy = new CoordinateSystem("code=epsg:" + std::to_string(epsg));
-    Ilwis::ICoordinateSystem targetIlwCsy = targetPyCsy->ptr()->as<Ilwis::CoordinateSystem>();
+    CoordinateSystem targetPyCsy ("code=epsg:" + std::to_string(epsg));
+    Ilwis::ICoordinateSystem targetIlwCsy = targetPyCsy.ptr()->as<Ilwis::CoordinateSystem>();
     Ilwis::IGeoReference georef = this->geoReference().ptr()->as<Ilwis::GeoReference>();
     Ilwis::ICoordinateSystem sourceCsy = georef->coordinateSystem();
     if(sourceCsy->name() == "unknown"){
-        this->geoReference().setCoordinateSystem(*targetPyCsy);
-        delete targetPyCsy;
+        this->geoReference().setCoordinateSystem(targetPyCsy);
         return this;
     }
     Ilwis::Envelope env  = this->ptr()->as<Ilwis::RasterCoverage>()->envelope();
@@ -535,13 +534,13 @@ RasterCoverage* RasterCoverage::reprojectRaster(std::string newName, quint32 eps
     Ilwis::commandhandler()->execute(expr,&ctx,syms);
     QString path;
     path = path.fromStdString("ilwis://internalcatalog/" + newName);
-    Ilwis::IRasterCoverage* raster = new Ilwis::IRasterCoverage(path);
+    Ilwis::IRasterCoverage raster (path);
     return new RasterCoverage(raster);
 }
 
 RasterCoverage* RasterCoverage::clone(){
     Ilwis::IRasterCoverage ilwRc = this->ptr()->as<Ilwis::RasterCoverage>()->clone();
-    return new RasterCoverage(&ilwRc);
+    return new RasterCoverage(ilwRc);
 }
 
 Envelope RasterCoverage::envelope(){

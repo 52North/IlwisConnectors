@@ -119,7 +119,7 @@ std::string Geometry::toWKT(){
 }
 
 CoordinateSystem Geometry::coordinateSystem(){
-    return CoordinateSystem(new Ilwis::ICoordinateSystem(Ilwis::GeometryHelper::getCoordinateSystem(this->ptr().get())));
+    return CoordinateSystem(Ilwis::ICoordinateSystem(Ilwis::GeometryHelper::getCoordinateSystem(this->ptr().get())));
 }
 
 void Geometry::setCoordinateSystem(const CoordinateSystem &cs){

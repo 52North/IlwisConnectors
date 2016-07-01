@@ -18,12 +18,11 @@ using namespace pythonapi;
 
 Coverage::Coverage():IlwisObject(){}
 
-Coverage::Coverage(Ilwis::ICoverage *coverage):IlwisObject(new Ilwis::IIlwisObject(*coverage)){
-    delete coverage;
+Coverage::Coverage(const Ilwis::ICoverage &coverage):IlwisObject(new Ilwis::IIlwisObject(coverage)){
 }
 
 CoordinateSystem Coverage::coordinateSystem(){
-    return CoordinateSystem(new Ilwis::ICoordinateSystem(this->ptr()->as<Ilwis::Coverage>()->coordinateSystem()));
+    return CoordinateSystem(Ilwis::ICoordinateSystem(this->ptr()->as<Ilwis::Coverage>()->coordinateSystem()));
 }
 
 Envelope Coverage::envelope(){

@@ -23,7 +23,7 @@ namespace pythonapi{
             enum AttributeType{atCOVERAGE, atINDEX};
         protected:
             Coverage();
-            Coverage(Ilwis::ICoverage* coverage);
+            Coverage(const Ilwis::ICoverage& coverage);
         public:
             virtual ~Coverage(){}
             CoordinateSystem coordinateSystem();

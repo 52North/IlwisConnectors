@@ -103,29 +103,28 @@ namespace pythonapi {
     }
 
     Object* Catalog::_getitem(const std::string &name){
-        Ilwis::Resource res;
         std::vector<Ilwis::Resource> itms = this->_data->items();
         for(auto it = itms.begin(); it < itms.end(); it++ ){
             if(it->name().compare(QString::fromStdString(name), Qt::CaseInsensitive) == 0){
                 IlwisTypes type = it->ilwisType();
                 if (hasType(type,itFEATURE)){
-                    return new FeatureCoverage(new Ilwis::IFeatureCoverage(*it));
+                    return new FeatureCoverage(Ilwis::IFeatureCoverage(*it));
                 }else if (hasType(type,itRASTER)){
-                    return new RasterCoverage(new Ilwis::IRasterCoverage(*it));
+                    return new RasterCoverage(Ilwis::IRasterCoverage(*it));
                 }else if (hasType(type,itTABLE)){
-                    return new Table(new Ilwis::ITable(*it));
+                    return new Table(Ilwis::ITable(*it));
                 }else if (hasType(type,itNUMERICDOMAIN)){
-                    return new NumericDomain(new Ilwis::INumericDomain(*it));
+                    return new NumericDomain(Ilwis::INumericDomain(*it));
                 }else if (hasType(type,itCOORDSYSTEM)){
-                    return new CoordinateSystem(new Ilwis::ICoordinateSystem(*it));
+                    return new CoordinateSystem(Ilwis::ICoordinateSystem(*it));
                 }else if (hasType(type,itGEOREF)){
-                    return new GeoReference(new Ilwis::IGeoReference(*it));
+                    return new GeoReference(Ilwis::IGeoReference(*it));
 //                }else if (hasType(type,itOPERATIONMETADATA)){
-//                    return new OperationMetaData(new Ilwis::IOperationMetaData(*it));
+//                    return new OperationMetaData(Ilwis::IOperationMetaData(*it));
 //                }else if (hasType(type,itPROJECTION)){
-//                    return new Projection(new Ilwis::IProjection(*it));
+//                    return new Projection(Ilwis::IProjection(*it));
 //                }else if (hasType(type,itELLIPSOID)){
-//                    return new Ellipsoid(new Ilwis::IEllipsoid(*it));
+//                    return new Ellipsoid(Ilwis::IEllipsoid(*it));
                 }else if (hasType(type,itCATALOG)){
                     Ilwis::CatalogView* cat = new Ilwis::CatalogView({it->url(), itCATALOG});
                     Ilwis::mastercatalog()->addContainer(it->url()); // also scan and add the sub-items to the mastercatalog

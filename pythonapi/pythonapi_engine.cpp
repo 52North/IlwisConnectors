@@ -91,37 +91,37 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
             Ilwis::Symbol result = symtbl.getSymbol(ctx._results[i]);
             if (result._type == itRASTER){
                 if (result._var.canConvert<Ilwis::IRasterCoverage>()){
-                    Ilwis::IRasterCoverage* obj = new Ilwis::IRasterCoverage(result._var.value<Ilwis::IRasterCoverage>());
+                    Ilwis::IRasterCoverage obj (result._var.value<Ilwis::IRasterCoverage>());
                     if (rename)
-                        (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                        obj->name(QString("%1_%2").arg(operation.c_str()).arg(obj->id()));
                     results.push_back(new RasterCoverage(obj));
                 }
             }else if (result._type == itFEATURE){
                 if (result._var.canConvert<Ilwis::IFeatureCoverage>()){
-                    Ilwis::IFeatureCoverage* obj = new Ilwis::IFeatureCoverage(result._var.value<Ilwis::IFeatureCoverage>());
+                    Ilwis::IFeatureCoverage obj (result._var.value<Ilwis::IFeatureCoverage>());
                     if (rename)
-                        (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                        obj->name(QString("%1_%2").arg(operation.c_str()).arg(obj->id()));
                     results.push_back(new FeatureCoverage(obj));
                 }
             }else if (result._type == itCOORDSYSTEM){
                 if (result._var.canConvert<Ilwis::ICoordinateSystem>()){
-                    Ilwis::ICoordinateSystem* obj = new Ilwis::ICoordinateSystem(result._var.value<Ilwis::ICoordinateSystem>());
+                    Ilwis::ICoordinateSystem obj (result._var.value<Ilwis::ICoordinateSystem>());
                     if (rename)
-                        (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                        obj->name(QString("%1_%2").arg(operation.c_str()).arg(obj->id()));
                     results.push_back(new CoordinateSystem(obj));
                 }
             }else if (result._type == itGEOREF){
                 if (result._var.canConvert<Ilwis::IGeoReference>()){
-                    Ilwis::IGeoReference* obj = new Ilwis::IGeoReference(result._var.value<Ilwis::IGeoReference>());
+                    Ilwis::IGeoReference obj (result._var.value<Ilwis::IGeoReference>());
                     if (rename)
-                        (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                        obj->name(QString("%1_%2").arg(operation.c_str()).arg(obj->id()));
                     results.push_back(new GeoReference(obj));
                 }
             }else if (result._type & itTABLE){
                 if (result._var.canConvert<Ilwis::ITable>()){
-                    Ilwis::ITable* obj = new Ilwis::ITable(result._var.value<Ilwis::ITable>());
+                    Ilwis::ITable obj (result._var.value<Ilwis::ITable>());
                     if (rename)
-                        (*obj)->name(QString("%1_%2").arg(operation.c_str()).arg((*obj)->id()));
+                        obj->name(QString("%1_%2").arg(operation.c_str()).arg(obj->id()));
                     results.push_back(new Table(obj));
                 }
             } else if (result._type == itBOOL){

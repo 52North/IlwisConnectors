@@ -19,7 +19,7 @@ namespace pythonapi {
         friend class Catalog;
         friend class RasterCoverage;
     private:
-        CoordinateSystem(Ilwis::ICoordinateSystem* cs);
+        CoordinateSystem(const Ilwis::ICoordinateSystem& cs);
     public:
         CoordinateSystem(const std::string &resource);
         pythonapi::Envelope envelope();

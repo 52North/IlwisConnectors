@@ -20,7 +20,7 @@ namespace pythonapi {
         friend class Engine;
         friend class Catalog;
     private:
-        FeatureCoverage(Ilwis::IFeatureCoverage* coverage);
+        FeatureCoverage(const Ilwis::IFeatureCoverage& coverage);
     public:
         FeatureCoverage();
         FeatureCoverage(const std::string& resource);

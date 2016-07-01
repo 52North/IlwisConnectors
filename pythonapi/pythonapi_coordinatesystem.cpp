@@ -19,8 +19,7 @@
 
 using namespace pythonapi;
 
-CoordinateSystem::CoordinateSystem(Ilwis::ICoordinateSystem *cs): IlwisObject(new Ilwis::IIlwisObject(*cs)){
-    delete cs;
+CoordinateSystem::CoordinateSystem(const Ilwis::ICoordinateSystem &cs): IlwisObject(new Ilwis::IIlwisObject(cs)){
 }
 
 CoordinateSystem::CoordinateSystem(const std::string& resource){

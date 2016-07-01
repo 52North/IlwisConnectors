@@ -21,7 +21,7 @@ namespace pythonapi {
          friend class Engine;
          friend class Catalog;
     private:
-         RasterCoverage(Ilwis::IRasterCoverage* coverage);
+         RasterCoverage(const Ilwis::IRasterCoverage& coverage);
          QVariant resolveIndex(PyObject* pyTrackIndex);
          std::string dateToString(int datepart);
     public:

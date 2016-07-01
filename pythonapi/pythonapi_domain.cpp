@@ -145,8 +145,7 @@ NumericDomain *NumericDomain::toNumericDomain(Object *obj){
     return ptr;
 }
 
-NumericDomain::NumericDomain(Ilwis::INumericDomain *domain): Domain(Ilwis::IDomain(*domain)){
-    delete domain;
+NumericDomain::NumericDomain(const Ilwis::INumericDomain &domain): Domain(Ilwis::IDomain(domain)){
 }
 
 //---------------------------------------------------------------

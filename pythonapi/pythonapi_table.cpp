@@ -27,8 +27,7 @@ namespace pythonapi {
             this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(t));
     }
 
-    Table::Table(Ilwis::ITable *table):IlwisObject(new Ilwis::IIlwisObject(*table)){
-        delete table;
+    Table::Table(const Ilwis::ITable & table):IlwisObject(new Ilwis::IIlwisObject(table)){
     }
 
     Table::Table(std::string resource, const IOOptions& opt){

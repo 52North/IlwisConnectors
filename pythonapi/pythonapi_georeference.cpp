@@ -13,8 +13,7 @@
 
 namespace pythonapi {
 
-    GeoReference::GeoReference(Ilwis::IGeoReference* gr): IlwisObject(new Ilwis::IIlwisObject(*gr)){
-        delete gr;
+    GeoReference::GeoReference(const Ilwis::IGeoReference& gr): IlwisObject(new Ilwis::IIlwisObject(gr)){
     }
 
     GeoReference::GeoReference(const std::string& resource){
@@ -49,7 +48,7 @@ namespace pythonapi {
     }
 
     CoordinateSystem GeoReference::coordinateSystem() const{
-        return CoordinateSystem(new Ilwis::ICoordinateSystem(this->ptr()->as<Ilwis::GeoReference>()->coordinateSystem()));
+        return CoordinateSystem(Ilwis::ICoordinateSystem(this->ptr()->as<Ilwis::GeoReference>()->coordinateSystem()));
     }
 
     void GeoReference::setCoordinateSystem(const CoordinateSystem &csy){

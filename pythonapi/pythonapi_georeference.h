@@ -17,7 +17,7 @@ namespace pythonapi {
         friend class RasterCoverage;
         friend class Catalog;
         private:
-            GeoReference(Ilwis::IGeoReference* gr);
+            GeoReference(const Ilwis::IGeoReference& gr);
         public:
             GeoReference(const std::string &resource);
             static GeoReference* toGeoReference(Object *obj);

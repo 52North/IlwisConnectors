@@ -54,7 +54,7 @@ namespace pythonapi {
             void setColumnDefinition(quint32 index, ColumnDefinition* coldef);
 
         private:
-            Table(Ilwis::ITable* table);
+            Table(const Ilwis::ITable& table);
     };
 
 } // namespace pythonapi

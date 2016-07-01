@@ -36,7 +36,7 @@
 
 using namespace pythonapi;
 
-FeatureCoverage::FeatureCoverage(Ilwis::IFeatureCoverage *coverage):Coverage(new Ilwis::ICoverage(*coverage)){
+FeatureCoverage::FeatureCoverage(const Ilwis::IFeatureCoverage &coverage):Coverage(Ilwis::ICoverage(coverage)){
 }
 
 FeatureCoverage::FeatureCoverage(){
@@ -110,7 +110,7 @@ Feature FeatureCoverage::newFeatureFrom(const Feature& feat, const CoordinateSys
 
 Table FeatureCoverage::attributeTable(){
     Ilwis::ITable ilwTab = this->ptr()->as<Ilwis::FeatureCoverage>()->attributeTable();
-    return Table(new Ilwis::ITable(ilwTab));
+    return Table(Ilwis::ITable(ilwTab));
 }
 
 void FeatureCoverage::attributesFromTable(const Table &otherTable){
@@ -288,7 +288,7 @@ void FeatureCoverage::reprojectFeatures(const CoordinateSystem& csy){
 
 FeatureCoverage *FeatureCoverage::clone(){
     Ilwis::IFeatureCoverage ilwFc = this->ptr()->as<Ilwis::FeatureCoverage>()->clone();
-    return new FeatureCoverage(&ilwFc);
+    return new FeatureCoverage(ilwFc);
 }
 
 IlwisTypes FeatureCoverage::geometryType(const Geometry& geom){

@@ -41,7 +41,7 @@ PixelIterator::PixelIterator(Ilwis::PixelIterator* ilwIt){
     if ((bool)this->_ilwisPixelIterator && this->_ilwisPixelIterator->isValid())
     {
         this->_endposition = this->_ilwisPixelIterator->end().linearPosition();
-        RasterCoverage* rc = new RasterCoverage(const_cast<Ilwis::IRasterCoverage*>(&(_ilwisPixelIterator->raster())));
+        RasterCoverage* rc = new RasterCoverage(_ilwisPixelIterator->raster());
         this->_coverage = rc;
     }
 
