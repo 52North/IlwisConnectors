@@ -148,7 +148,7 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
         if (found)
             throw Ilwis::ErrorObject(QString("Failed to execute command \"%1\"; Please check the parameters provided.").arg(command.mid(8 + output_name.size())));
         else
-            throw Ilwis::ErrorObject(QString("Command \"%1\" does not exist; See Engine.operations() for the full list.").arg(operation.c_str()));
+            throw Ilwis::ErrorObject(QString("Command \"%1\" does not exist; See ilwis.Engine.operations() for the full list.").arg(operation.c_str()));
     }
 }
 
