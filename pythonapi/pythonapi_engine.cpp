@@ -129,14 +129,26 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
             }
         }
         if (results.size() == 0)
-            throw Ilwis::ErrorObject(QString("couldn't handle return type of do(%1)").arg(command));
+            throw Ilwis::ErrorObject(QString("couldn't handle return type of \"%1\"").arg(command.mid(8 + output_name.size())));
         else if (results.size() == 1)
             return results[0];
         else {
             return new Collection(results);
         }
     }else{
-        throw Ilwis::ErrorObject(QString("couldn't do(%1)").arg(command));
+        QString filter = QString("(type=%1 or type=%2)").arg(itSINGLEOPERATION).arg(itWORKFLOW);
+        std::vector<Ilwis::Resource> ops = Ilwis::mastercatalog()->select(filter);
+        bool found = false;
+        for(auto it = ops.begin(); it != ops.end(); it++){
+            if (it->name().toStdString() == operation) {
+                found = true;
+                break;
+            }
+        }
+        if (found)
+            throw Ilwis::ErrorObject(QString("Failed to execute command \"%1\"; Please check the parameters provided.").arg(command.mid(8 + output_name.size())));
+        else
+            throw Ilwis::ErrorObject(QString("Command \"%1\" does not exist; See Engine.operations() for the full list.").arg(operation.c_str()));
     }
 }
 
@@ -192,7 +204,7 @@ std::string Engine::operationMetaData(const std::string &name, const std::string
     for(auto it = ops.begin();it != ops.end(); it++){
         if (QString::fromStdString(name).compare(it->name(),Qt::CaseInsensitive) == 0){
             if(!ret.isEmpty())
-                ret.append("\n");
+                ret.append("; ");
             if (element.compare("description") == 0)
                 ret.append(it->description());
             else

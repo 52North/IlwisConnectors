@@ -5011,21 +5011,12 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Engine_operations(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  pythonapi::Engine *arg1 = (pythonapi::Engine *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
   PyObject *result = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:Engine_operations",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Engine, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Engine_operations" "', argument " "1"" of type '" "pythonapi::Engine *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Engine * >(argp1);
+  if (!PyArg_ParseTuple(args,(char *)":Engine_operations")) SWIG_fail;
   {
     try {
-      result = (PyObject *)(arg1)->operations();
+      result = (PyObject *)pythonapi::Engine::operations();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -5040,82 +5031,26 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Engine_operationMetaData__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  pythonapi::Engine *arg1 = (pythonapi::Engine *) 0 ;
+  std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
-  std::string *arg3 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  int res3 = SWIG_OLDOBJ ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:Engine_operationMetaData",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Engine, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Engine_operationMetaData" "', argument " "1"" of type '" "pythonapi::Engine *""'"); 
-  }
-  arg1 = reinterpret_cast< pythonapi::Engine * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(obj1, &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Engine_operationMetaData" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Engine_operationMetaData" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    res3 = SWIG_AsPtr_std_string(obj2, &ptr);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Engine_operationMetaData" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Engine_operationMetaData" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    arg3 = ptr;
-  }
-  {
-    try {
-      result = (arg1)->operationMetaData((std::string const &)*arg2,(std::string const &)*arg3);
-    }catch (std::exception& e) {
-      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
-      SWIG_fail;
-    }
-  }
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Engine_operationMetaData__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  pythonapi::Engine *arg1 = (pythonapi::Engine *) 0 ;
-  std::string *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
   int res2 = SWIG_OLDOBJ ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   std::string result;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:Engine_operationMetaData",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__Engine, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Engine_operationMetaData" "', argument " "1"" of type '" "pythonapi::Engine *""'"); 
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(obj0, &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Engine_operationMetaData" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Engine_operationMetaData" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
   }
-  arg1 = reinterpret_cast< pythonapi::Engine * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(obj1, &ptr);
@@ -5129,60 +5064,88 @@ SWIGINTERN PyObject *_wrap_Engine_operationMetaData__SWIG_1(PyObject *SWIGUNUSED
   }
   {
     try {
-      result = (arg1)->operationMetaData((std::string const &)*arg2);
+      result = pythonapi::Engine::operationMetaData((std::string const &)*arg1,(std::string const &)*arg2);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
     }
   }
   resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  if (SWIG_IsNewObj(res1)) delete arg1;
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
   if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Engine_operationMetaData__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::string *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Engine_operationMetaData",&obj0)) SWIG_fail;
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(obj0, &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Engine_operationMetaData" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Engine_operationMetaData" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  {
+    try {
+      result = pythonapi::Engine::operationMetaData((std::string const &)*arg1);
+    }catch (std::exception& e) {
+      PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
   return NULL;
 }
 
 
 SWIGINTERN PyObject *_wrap_Engine_operationMetaData(PyObject *self, PyObject *args) {
   Py_ssize_t argc;
-  PyObject *argv[4] = {
+  PyObject *argv[3] = {
     0
   };
   Py_ssize_t ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_Engine_operationMetaData__SWIG_1(self, args);
+    }
   }
   if (argc == 2) {
     int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Engine, 0);
+    int res = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
     _v = SWIG_CheckState(res);
     if (_v) {
       int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_Engine_operationMetaData__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_pythonapi__Engine, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        int res = SWIG_AsPtr_std_string(argv[2], (std::string**)(0));
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          return _wrap_Engine_operationMetaData__SWIG_0(self, args);
-        }
+        return _wrap_Engine_operationMetaData__SWIG_0(self, args);
       }
     }
   }
@@ -37204,10 +37167,10 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { (char *)"Engine_setWorkingCatalog", _wrap_Engine_setWorkingCatalog, METH_VARARGS, (char *)"Engine_setWorkingCatalog(std::string const & location)"},
 	 { (char *)"Engine_getLocation", _wrap_Engine_getLocation, METH_VARARGS, (char *)"Engine_getLocation() -> std::string"},
-	 { (char *)"Engine_operations", _wrap_Engine_operations, METH_VARARGS, (char *)"Engine_operations(Engine self) -> PyObject *"},
+	 { (char *)"Engine_operations", _wrap_Engine_operations, METH_VARARGS, (char *)"Engine_operations() -> PyObject *"},
 	 { (char *)"Engine_operationMetaData", _wrap_Engine_operationMetaData, METH_VARARGS, (char *)"\n"
 		"operationMetaData(std::string const & name, std::string const & element) -> std::string\n"
-		"Engine_operationMetaData(Engine self, std::string const & name) -> std::string\n"
+		"Engine_operationMetaData(std::string const & name) -> std::string\n"
 		""},
 	 { (char *)"Engine__catalogItems", _wrap_Engine__catalogItems, METH_VARARGS, (char *)"Engine__catalogItems() -> PyObject *"},
 	 { (char *)"delete_Engine", _wrap_delete_Engine, METH_VARARGS, (char *)"delete_Engine(Engine self)"},

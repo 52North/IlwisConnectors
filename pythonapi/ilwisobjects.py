@@ -278,18 +278,24 @@ class Engine(_object):
         getLocation = staticmethod(getLocation)
     __swig_getmethods__["getLocation"] = lambda x: getLocation
 
-    def operations(self):
-        """operations(Engine self) -> PyObject *"""
-        return _ilwisobjects.Engine_operations(self)
+    def operations():
+        """operations() -> PyObject *"""
+        return _ilwisobjects.Engine_operations()
 
+    if _newclass:
+        operations = staticmethod(operations)
+    __swig_getmethods__["operations"] = lambda x: operations
 
-    def operationMetaData(self, *args):
+    def operationMetaData(*args):
         """
-        operationMetaData(Engine self, std::string const & name, std::string const & element) -> std::string
-        operationMetaData(Engine self, std::string const & name) -> std::string
+        operationMetaData(std::string const & name, std::string const & element) -> std::string
+        operationMetaData(std::string const & name) -> std::string
         """
-        return _ilwisobjects.Engine_operationMetaData(self, *args)
+        return _ilwisobjects.Engine_operationMetaData(*args)
 
+    if _newclass:
+        operationMetaData = staticmethod(operationMetaData)
+    __swig_getmethods__["operationMetaData"] = lambda x: operationMetaData
 
     def _catalogItems():
         """_catalogItems() -> PyObject *"""
@@ -336,6 +342,17 @@ def Engine_setWorkingCatalog(location):
 def Engine_getLocation():
     """Engine_getLocation() -> std::string"""
     return _ilwisobjects.Engine_getLocation()
+
+def Engine_operations():
+    """Engine_operations() -> PyObject *"""
+    return _ilwisobjects.Engine_operations()
+
+def Engine_operationMetaData(*args):
+    """
+    operationMetaData(std::string const & name, std::string const & element) -> std::string
+    Engine_operationMetaData(std::string const & name) -> std::string
+    """
+    return _ilwisobjects.Engine_operationMetaData(*args)
 
 def Engine__catalogItems():
     """Engine__catalogItems() -> PyObject *"""
