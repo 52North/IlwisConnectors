@@ -192,12 +192,12 @@ Section "Python Extension" pySecID
     Call StrSlash
     Pop $R0
 
-    SetOutPath $pythonDir\Lib\site-packages\ilwisobjects
-    DetailPrint "Create $pythonDir\Lib\site-packages\ilwisobjects\ilwislocation.config"
-    WriteINIStr $pythonDir\Lib\site-packages\ilwisobjects\ilwislocation.config Paths ilwisDir "$R0/"
-    DetailPrint "Copy to $pythonDir\Lib\site-packages\ilwisobjects\_ilwisobjects.pyd"
+    SetOutPath $pythonDir\Lib\site-packages\ilwis
+    DetailPrint "Create $pythonDir\Lib\site-packages\ilwis\ilwislocation.config"
+    WriteINIStr $pythonDir\Lib\site-packages\ilwis\ilwislocation.config Paths ilwisDir "$R0/"
+    DetailPrint "Copy to $pythonDir\Lib\site-packages\ilwis\_ilwisobjects.pyd"
     File bin\extensions\pythonapi\_ilwisobjects.pyd
-    DetailPrint "Copy to $pythonDir\Lib\site-packages\ilwisobjects\__init__.py"
+    DetailPrint "Copy to $pythonDir\Lib\site-packages\ilwis\__init__.py"
     File bin\extensions\pythonapi\ilwisobjects.py
     Rename ilwisobjects.py __init__.py
 
@@ -222,14 +222,14 @@ Section "un.Python Extension"
     DeleteRegValue HKLM "${REGKEY}\python" Path
     DeleteRegKey /IfEmpty HKLM "${REGKEY}\python"
 
-    DetailPrint "Delete $pythonDir\Lib\site-packages\ilwisobjects\ilwislocation.config"
-    Delete /REBOOTOK $pythonDir\Lib\site-packages\ilwisobjects\ilwislocation.config
+    DetailPrint "Delete $pythonDir\Lib\site-packages\ilwis\ilwislocation.config"
+    Delete /REBOOTOK $pythonDir\Lib\site-packages\ilwis\ilwislocation.config
 
-    DetailPrint "Delete $pythonDir\Lib\site-packages\ilwisobjects\_ilwisobjects.pyd"
-    Delete /REBOOTOK $pythonDir\Lib\site-packages\ilwisobjects\_ilwisobjects.pyd
-    DetailPrint "Delete $pythonDir\Lib\site-packages\ilwisobjects\__init__.py"
-    Delete /REBOOTOK $pythonDir\Lib\site-packages\ilwisobjects\__init__.py
-    RmDir /REBOOTOK $pythonDir\Lib\site-packages\ilwisobjects
+    DetailPrint "Delete $pythonDir\Lib\site-packages\ilwis\_ilwisobjects.pyd"
+    Delete /REBOOTOK $pythonDir\Lib\site-packages\ilwis\_ilwisobjects.pyd
+    DetailPrint "Delete $pythonDir\Lib\site-packages\ilwis\__init__.py"
+    Delete /REBOOTOK $pythonDir\Lib\site-packages\ilwis\__init__.py
+    RmDir /REBOOTOK $pythonDir\Lib\site-packages\ilwis
 SectionEnd
 
 Section "un.Log and config files"
