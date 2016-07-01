@@ -45,7 +45,7 @@ namespace pythonapi {
 
     protected:
         Domain();
-        Domain(Ilwis::IDomain *domain);
+        Domain(const Ilwis::IDomain &domain);
     };
 
     class NumericDomain : public Domain{

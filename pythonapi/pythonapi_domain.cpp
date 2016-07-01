@@ -31,8 +31,7 @@ using namespace pythonapi;
 Domain::Domain(){
 }
 
-Domain::Domain(Ilwis::IDomain *domain) : IlwisObject(new Ilwis::IIlwisObject(*domain)){
-    delete domain;
+Domain::Domain(const Ilwis::IDomain &domain) : IlwisObject(new Ilwis::IIlwisObject(domain)){
 }
 
 Domain::~Domain(){
@@ -51,11 +50,11 @@ PyObject* Domain::impliedValue(PyObject *value) const{
 }
 
 Domain Domain::parent() const{
-    Ilwis::IDomain *domain = new Ilwis::IDomain();
     if(this->ptr()->as<Ilwis::Domain>()->parent().isValid()){
         unsigned long long id = this->ptr()->as<Ilwis::Domain>()->parent()->id();
-        (*domain).prepare(id);
-        return Domain( domain);
+        Ilwis::IDomain domain;
+        domain.prepare(id);
+        return Domain (domain);
     } else {
         throw Ilwis::ErrorObject(QString("No parent domain found"));
     }
@@ -146,7 +145,7 @@ NumericDomain *NumericDomain::toNumericDomain(Object *obj){
     return ptr;
 }
 
-NumericDomain::NumericDomain(Ilwis::INumericDomain *domain): Domain(new Ilwis::IDomain(*domain)){
+NumericDomain::NumericDomain(Ilwis::INumericDomain *domain): Domain(Ilwis::IDomain(*domain)){
     delete domain;
 }
 

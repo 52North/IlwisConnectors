@@ -454,7 +454,7 @@ quint32 RasterCoverage::countStackDomainItems() const{
 
 Domain RasterCoverage::stackDomain() const{
     Ilwis::IDomain ilwDom =  this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().domain();
-    return Domain(new Ilwis::IDomain(ilwDom));
+    return Domain(Ilwis::IDomain(ilwDom));
 }
 
 void RasterCoverage::clear(){

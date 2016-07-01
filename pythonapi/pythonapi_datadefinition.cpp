@@ -89,7 +89,7 @@ Range* DataDefinition::range() const{
 Domain* DataDefinition::domain() const{
     Ilwis::IDomain ilwDom = (this->ptr().domain());
     if(ilwDom.isValid()){
-        return new Domain(&ilwDom);
+        return new Domain(ilwDom);
     }else
         return NULL;
 }

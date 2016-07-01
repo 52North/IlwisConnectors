@@ -243,7 +243,7 @@ quint32 FeatureCoverage::countStackDomainItems() const{
 
 Domain FeatureCoverage::stackDomain() const{
     Ilwis::IDomain ilwDom =  this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().domain();
-    return Domain(new Ilwis::IDomain(ilwDom));
+    return Domain(Ilwis::IDomain(ilwDom));
 }
 
 void FeatureCoverage::clear(){
