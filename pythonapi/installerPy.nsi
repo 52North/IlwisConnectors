@@ -1,7 +1,7 @@
 Name "ILWIS Objects"
 
 #=======General Symbol Definitions==========
-!define VERSION "2.4.0 Beta"
+!define VERSION "3.0.0 Beta"
 !define COMPANY "52North GmbH"
 !define URL www.52n.org
 !define REGKEY "SOFTWARE\$(^Name)"
@@ -50,13 +50,13 @@ Var verifyDir
 !insertmacro MUI_LANGUAGE English
 
 #=======Installer attributes=================
-OutFile "ILWISObjects-beta2.4-forPython3.4-32bit.exe"
+OutFile "ILWISObjects-beta3.0-forPython3.4-32bit.exe"
 InstallDir $PROGRAMFILES32\n52\ILWISObjects
 #InstallDirRegKey HKLM "${REGKEY}" "InstallPath" <-- doesn't work!
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 2.4.0.0
+VIProductVersion 3.0.0.0
 VIAddVersionKey ProductName ILWIS
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
