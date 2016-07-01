@@ -20825,7 +20825,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_FeatureCoverage_setSubDefinition(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_FeatureCoverage_setStackDefinition(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
   pythonapi::Domain *arg2 = 0 ;
@@ -20838,24 +20838,24 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_setSubDefinition(PyObject *SWIGUNUSED
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOO:FeatureCoverage_setSubDefinition",&obj0,&obj1,&obj2)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOO:FeatureCoverage_setStackDefinition",&obj0,&obj1,&obj2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_setSubDefinition" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_setStackDefinition" "', argument " "1"" of type '" "pythonapi::FeatureCoverage *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
   res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Domain,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_setSubDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FeatureCoverage_setStackDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_setSubDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FeatureCoverage_setStackDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
   }
   arg2 = reinterpret_cast< pythonapi::Domain * >(argp2);
   arg3 = obj2;
   {
     try {
-      (arg1)->setSubDefinition((pythonapi::Domain const &)*arg2,arg3);
+      (arg1)->setStackDefinition((pythonapi::Domain const &)*arg2,arg3);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -21113,7 +21113,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_FeatureCoverage_countSubs(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_FeatureCoverage_countStackDomainItems(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
   void *argp1 = 0 ;
@@ -21121,15 +21121,15 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_countSubs(PyObject *SWIGUNUSEDPARM(se
   PyObject * obj0 = 0 ;
   quint32 result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_countSubs",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_countStackDomainItems",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_countSubs" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_countStackDomainItems" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
   {
     try {
-      result = (quint32)((pythonapi::FeatureCoverage const *)arg1)->countSubs();
+      result = (quint32)((pythonapi::FeatureCoverage const *)arg1)->countStackDomainItems();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -21142,7 +21142,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_FeatureCoverage_subDomain(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_FeatureCoverage_stackDomain(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::FeatureCoverage *arg1 = (pythonapi::FeatureCoverage *) 0 ;
   void *argp1 = 0 ;
@@ -21150,15 +21150,15 @@ SWIGINTERN PyObject *_wrap_FeatureCoverage_subDomain(PyObject *SWIGUNUSEDPARM(se
   PyObject * obj0 = 0 ;
   SwigValueWrapper< pythonapi::Domain > result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_subDomain",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:FeatureCoverage_stackDomain",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__FeatureCoverage, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_subDomain" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FeatureCoverage_stackDomain" "', argument " "1"" of type '" "pythonapi::FeatureCoverage const *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::FeatureCoverage * >(argp1);
   {
     try {
-      result = ((pythonapi::FeatureCoverage const *)arg1)->subDomain();
+      result = ((pythonapi::FeatureCoverage const *)arg1)->stackDomain();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -25468,7 +25468,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RasterCoverage_setSubDefinition(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_RasterCoverage_setStackDefinition(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
   pythonapi::Domain *arg2 = 0 ;
@@ -25481,24 +25481,24 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_setSubDefinition(PyObject *SWIGUNUSEDP
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOO:RasterCoverage_setSubDefinition",&obj0,&obj1,&obj2)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOO:RasterCoverage_setStackDefinition",&obj0,&obj1,&obj2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_setSubDefinition" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_setStackDefinition" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
   res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__Domain,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "RasterCoverage_setSubDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "RasterCoverage_setStackDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "RasterCoverage_setSubDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "RasterCoverage_setStackDefinition" "', argument " "2"" of type '" "pythonapi::Domain const &""'"); 
   }
   arg2 = reinterpret_cast< pythonapi::Domain * >(argp2);
   arg3 = obj2;
   {
     try {
-      (arg1)->setSubDefinition((pythonapi::Domain const &)*arg2,arg3);
+      (arg1)->setStackDefinition((pythonapi::Domain const &)*arg2,arg3);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -25756,7 +25756,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RasterCoverage_countSubs(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_RasterCoverage_countStackDomainItems(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
   void *argp1 = 0 ;
@@ -25764,15 +25764,15 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_countSubs(PyObject *SWIGUNUSEDPARM(sel
   PyObject * obj0 = 0 ;
   quint32 result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_countSubs",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_countStackDomainItems",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_countSubs" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_countStackDomainItems" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
   {
     try {
-      result = (quint32)((pythonapi::RasterCoverage const *)arg1)->countSubs();
+      result = (quint32)((pythonapi::RasterCoverage const *)arg1)->countStackDomainItems();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -25785,7 +25785,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RasterCoverage_subDomain(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_RasterCoverage_stackDomain(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
   void *argp1 = 0 ;
@@ -25793,15 +25793,15 @@ SWIGINTERN PyObject *_wrap_RasterCoverage_subDomain(PyObject *SWIGUNUSEDPARM(sel
   PyObject * obj0 = 0 ;
   SwigValueWrapper< pythonapi::Domain > result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_subDomain",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_stackDomain",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_subDomain" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_stackDomain" "', argument " "1"" of type '" "pythonapi::RasterCoverage const *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
   {
     try {
-      result = ((pythonapi::RasterCoverage const *)arg1)->subDomain();
+      result = ((pythonapi::RasterCoverage const *)arg1)->stackDomain();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -37622,7 +37622,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"FeatureCoverage___getitem__", _wrap_FeatureCoverage___getitem__, METH_VARARGS, (char *)"FeatureCoverage___getitem__(FeatureCoverage self, quint32 index) -> ColumnDefinition"},
 	 { (char *)"FeatureCoverage_checkInput", _wrap_FeatureCoverage_checkInput, METH_VARARGS, (char *)"FeatureCoverage_checkInput(FeatureCoverage self, PyObject * inputVar, quint32 columnIndex) -> PyObject *"},
 	 { (char *)"FeatureCoverage_definitionCount", _wrap_FeatureCoverage_definitionCount, METH_VARARGS, (char *)"FeatureCoverage_definitionCount(FeatureCoverage self) -> quint32"},
-	 { (char *)"FeatureCoverage_setSubDefinition", _wrap_FeatureCoverage_setSubDefinition, METH_VARARGS, (char *)"FeatureCoverage_setSubDefinition(FeatureCoverage self, Domain dom, PyObject * items)"},
+	 { (char *)"FeatureCoverage_setStackDefinition", _wrap_FeatureCoverage_setStackDefinition, METH_VARARGS, (char *)"FeatureCoverage_setStackDefinition(FeatureCoverage self, Domain dom, PyObject * items)"},
 	 { (char *)"FeatureCoverage_indexOf", _wrap_FeatureCoverage_indexOf, METH_VARARGS, (char *)"\n"
 		"indexOf(std::string const & variantId) -> quint32\n"
 		"indexOf(double domainItem) -> quint32\n"
@@ -37630,8 +37630,8 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { (char *)"FeatureCoverage_atIndex", _wrap_FeatureCoverage_atIndex, METH_VARARGS, (char *)"FeatureCoverage_atIndex(FeatureCoverage self, quint32 idx) -> std::string"},
 	 { (char *)"FeatureCoverage_indexes", _wrap_FeatureCoverage_indexes, METH_VARARGS, (char *)"FeatureCoverage_indexes(FeatureCoverage self) -> PyObject *"},
-	 { (char *)"FeatureCoverage_countSubs", _wrap_FeatureCoverage_countSubs, METH_VARARGS, (char *)"FeatureCoverage_countSubs(FeatureCoverage self) -> quint32"},
-	 { (char *)"FeatureCoverage_subDomain", _wrap_FeatureCoverage_subDomain, METH_VARARGS, (char *)"FeatureCoverage_subDomain(FeatureCoverage self) -> Domain"},
+	 { (char *)"FeatureCoverage_countStackDomainItems", _wrap_FeatureCoverage_countStackDomainItems, METH_VARARGS, (char *)"FeatureCoverage_countStackDomainItems(FeatureCoverage self) -> quint32"},
+	 { (char *)"FeatureCoverage_stackDomain", _wrap_FeatureCoverage_stackDomain, METH_VARARGS, (char *)"FeatureCoverage_stackDomain(FeatureCoverage self) -> Domain"},
 	 { (char *)"FeatureCoverage_clear", _wrap_FeatureCoverage_clear, METH_VARARGS, (char *)"FeatureCoverage_clear(FeatureCoverage self)"},
 	 { (char *)"FeatureCoverage_toFeatureCoverage", _wrap_FeatureCoverage_toFeatureCoverage, METH_VARARGS, (char *)"FeatureCoverage_toFeatureCoverage(Object obj) -> FeatureCoverage"},
 	 { (char *)"FeatureCoverage_select", _wrap_FeatureCoverage_select, METH_VARARGS, (char *)"FeatureCoverage_select(FeatureCoverage self, std::string const & spatialQuery) -> PyObject *"},
@@ -37765,7 +37765,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"RasterCoverage_band", _wrap_RasterCoverage_band, METH_VARARGS, (char *)"RasterCoverage_band(RasterCoverage self, PyObject * pyTrackIndex) -> PixelIterator"},
 	 { (char *)"RasterCoverage_addBand", _wrap_RasterCoverage_addBand, METH_VARARGS, (char *)"RasterCoverage_addBand(RasterCoverage self, PyObject * pyTrackIndex, PixelIterator pyIter)"},
 	 { (char *)"RasterCoverage_setBandDefinition", _wrap_RasterCoverage_setBandDefinition, METH_VARARGS, (char *)"RasterCoverage_setBandDefinition(RasterCoverage self, PyObject * pyTrackIndex, DataDefinition datdef)"},
-	 { (char *)"RasterCoverage_setSubDefinition", _wrap_RasterCoverage_setSubDefinition, METH_VARARGS, (char *)"RasterCoverage_setSubDefinition(RasterCoverage self, Domain dom, PyObject * items)"},
+	 { (char *)"RasterCoverage_setStackDefinition", _wrap_RasterCoverage_setStackDefinition, METH_VARARGS, (char *)"RasterCoverage_setStackDefinition(RasterCoverage self, Domain dom, PyObject * items)"},
 	 { (char *)"RasterCoverage_indexOf", _wrap_RasterCoverage_indexOf, METH_VARARGS, (char *)"\n"
 		"indexOf(std::string const & variantId) -> quint32\n"
 		"indexOf(double domainItem) -> quint32\n"
@@ -37773,8 +37773,8 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { (char *)"RasterCoverage_atIndex", _wrap_RasterCoverage_atIndex, METH_VARARGS, (char *)"RasterCoverage_atIndex(RasterCoverage self, quint32 idx) -> std::string"},
 	 { (char *)"RasterCoverage_indexes", _wrap_RasterCoverage_indexes, METH_VARARGS, (char *)"RasterCoverage_indexes(RasterCoverage self) -> PyObject *"},
-	 { (char *)"RasterCoverage_countSubs", _wrap_RasterCoverage_countSubs, METH_VARARGS, (char *)"RasterCoverage_countSubs(RasterCoverage self) -> quint32"},
-	 { (char *)"RasterCoverage_subDomain", _wrap_RasterCoverage_subDomain, METH_VARARGS, (char *)"RasterCoverage_subDomain(RasterCoverage self) -> Domain"},
+	 { (char *)"RasterCoverage_countStackDomainItems", _wrap_RasterCoverage_countStackDomainItems, METH_VARARGS, (char *)"RasterCoverage_countStackDomainItems(RasterCoverage self) -> quint32"},
+	 { (char *)"RasterCoverage_stackDomain", _wrap_RasterCoverage_stackDomain, METH_VARARGS, (char *)"RasterCoverage_stackDomain(RasterCoverage self) -> Domain"},
 	 { (char *)"RasterCoverage_clear", _wrap_RasterCoverage_clear, METH_VARARGS, (char *)"RasterCoverage_clear(RasterCoverage self)"},
 	 { (char *)"RasterCoverage_select", _wrap_RasterCoverage_select, METH_VARARGS, (char *)"\n"
 		"select(std::string geomWkt) -> RasterCoverage\n"

@@ -1242,12 +1242,12 @@ try:
             rc = RasterCoverage("storetest")
             rc.setGeoReference(rcl.geoReference())
             rc.setDataDef(rcl.datadef())
-            rc.setSubDefinition(subDomain, (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+            rc.setStackDefinition(subDomain, (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 
             rc2 = RasterCoverage()
             rc2.setGeoReference(rcl.geoReference())
             rc2.setDataDef(rcl.datadef())
-            rc2.setSubDefinition(subDomain, (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+            rc2.setStackDefinition(subDomain, (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
             rc2.setBandDefinition(0, rc.datadef())
             rc2.setBandDefinition(1, rc.datadef())
             rc2.setBandDefinition(2, rc.datadef())
@@ -2109,7 +2109,7 @@ try:
             numRan = NumericRange(0.0, 100.0)
             numDom = NumericDomain()
             numDom.setRange(numRan)
-            rc2.setSubDefinition(numDom, (0, 1))
+            rc2.setStackDefinition(numDom, (0, 1))
 
             band3 = rc.band(3)
             band4 = rc.band(4)
@@ -2136,7 +2136,7 @@ try:
 
             interval = TimeInterval(date(2014, 2, 17), date(2016, 2, 17))
             timeDom = TimeDomain(interval)
-            rc2.setSubDefinition(timeDom, (date(2015, 2, 17), date(2015, 3, 17)))
+            rc2.setStackDefinition(timeDom, (date(2015, 2, 17), date(2015, 3, 17)))
 
             band3 = rc.band(3)
             band4 = rc.band(4)

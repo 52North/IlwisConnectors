@@ -29,8 +29,6 @@
 
 using namespace pythonapi;
 
-
-
 RasterCoverage::RasterCoverage(Ilwis::IRasterCoverage *coverage):Coverage(new Ilwis::ICoverage(*coverage)){
 }
 
@@ -376,7 +374,7 @@ std::string RasterCoverage::dateToString(int datepart){
     return dateStr;
 }
 
-void RasterCoverage::setSubDefinition(const Domain& dom, PyObject* items){
+void RasterCoverage::setStackDefinition(const Domain& dom, PyObject* items){
     if(PyTupleCheckExact(items)){
         int sz = PyTupleSize(items);
         if(PyFloatCheckExact(PyTupleGetItem(items, 0))){
@@ -450,11 +448,11 @@ PyObject* RasterCoverage::indexes() const{
     return pyTup;
 }
 
-quint32 RasterCoverage::countSubs() const{
+quint32 RasterCoverage::countStackDomainItems() const{
     return this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().count();
 }
 
-Domain RasterCoverage::subDomain() const{
+Domain RasterCoverage::stackDomain() const{
     Ilwis::IDomain ilwDom =  this->ptr()->as<Ilwis::RasterCoverage>()->stackDefinitionRef().domain();
     return Domain(new Ilwis::IDomain(ilwDom));
 }

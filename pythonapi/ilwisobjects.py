@@ -2236,9 +2236,9 @@ class FeatureCoverage(Coverage):
         return _ilwisobjects.FeatureCoverage_definitionCount(self)
 
 
-    def setSubDefinition(self, dom, items):
-        """setSubDefinition(FeatureCoverage self, Domain dom, PyObject * items)"""
-        return _ilwisobjects.FeatureCoverage_setSubDefinition(self, dom, items)
+    def setStackDefinition(self, dom, items):
+        """setStackDefinition(FeatureCoverage self, Domain dom, PyObject * items)"""
+        return _ilwisobjects.FeatureCoverage_setStackDefinition(self, dom, items)
 
 
     def indexOf(self, *args):
@@ -2260,14 +2260,14 @@ class FeatureCoverage(Coverage):
         return _ilwisobjects.FeatureCoverage_indexes(self)
 
 
-    def countSubs(self):
-        """countSubs(FeatureCoverage self) -> quint32"""
-        return _ilwisobjects.FeatureCoverage_countSubs(self)
+    def countStackDomainItems(self):
+        """countStackDomainItems(FeatureCoverage self) -> quint32"""
+        return _ilwisobjects.FeatureCoverage_countStackDomainItems(self)
 
 
-    def subDomain(self):
-        """subDomain(FeatureCoverage self) -> Domain"""
-        return _ilwisobjects.FeatureCoverage_subDomain(self)
+    def stackDomain(self):
+        """stackDomain(FeatureCoverage self) -> Domain"""
+        return _ilwisobjects.FeatureCoverage_stackDomain(self)
 
 
     def clear(self):
@@ -2815,9 +2815,9 @@ class RasterCoverage(Coverage):
         return _ilwisobjects.RasterCoverage_setBandDefinition(self, pyTrackIndex, datdef)
 
 
-    def setSubDefinition(self, dom, items):
-        """setSubDefinition(RasterCoverage self, Domain dom, PyObject * items)"""
-        return _ilwisobjects.RasterCoverage_setSubDefinition(self, dom, items)
+    def setStackDefinition(self, dom, items):
+        """setStackDefinition(RasterCoverage self, Domain dom, PyObject * items)"""
+        return _ilwisobjects.RasterCoverage_setStackDefinition(self, dom, items)
 
 
     def indexOf(self, *args):
@@ -2839,14 +2839,14 @@ class RasterCoverage(Coverage):
         return _ilwisobjects.RasterCoverage_indexes(self)
 
 
-    def countSubs(self):
-        """countSubs(RasterCoverage self) -> quint32"""
-        return _ilwisobjects.RasterCoverage_countSubs(self)
+    def countStackDomainItems(self):
+        """countStackDomainItems(RasterCoverage self) -> quint32"""
+        return _ilwisobjects.RasterCoverage_countStackDomainItems(self)
 
 
-    def subDomain(self):
-        """subDomain(RasterCoverage self) -> Domain"""
-        return _ilwisobjects.RasterCoverage_subDomain(self)
+    def stackDomain(self):
+        """stackDomain(RasterCoverage self) -> Domain"""
+        return _ilwisobjects.RasterCoverage_stackDomain(self)
 
 
     def clear(self):

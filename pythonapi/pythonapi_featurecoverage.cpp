@@ -163,7 +163,7 @@ quint32 FeatureCoverage::definitionCount() const{
     return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().definitionCount();
 }
 
-void FeatureCoverage::setSubDefinition(const Domain& dom, PyObject* items){
+void FeatureCoverage::setStackDefinition(const Domain& dom, PyObject* items){
     if(PyTupleCheckExact(items)){
         int sz = PyTupleSize(items);
         if(PyFloatCheckExact(PyTupleGetItem(items, 0))){
@@ -237,11 +237,11 @@ PyObject* FeatureCoverage::indexes() const{
     return pyTup;
 }
 
-quint32 FeatureCoverage::countSubs() const{
+quint32 FeatureCoverage::countStackDomainItems() const{
     return this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().count();
 }
 
-Domain FeatureCoverage::subDomain() const{
+Domain FeatureCoverage::stackDomain() const{
     Ilwis::IDomain ilwDom =  this->ptr()->as<Ilwis::FeatureCoverage>()->attributeDefinitionsRef().domain();
     return Domain(new Ilwis::IDomain(ilwDom));
 }

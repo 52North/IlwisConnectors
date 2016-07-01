@@ -49,14 +49,14 @@ namespace pythonapi {
         PyObject* checkInput(PyObject* inputVar, quint32 columnIndex) const;
         quint32 definitionCount() const;
 
-        void setSubDefinition(const Domain& dom, PyObject* items);
+        void setStackDefinition(const Domain& dom, PyObject* items);
         quint32 indexOf(const std::string& variantId) const;
         quint32 indexOf(double domainItem) const;
         quint32 indexOf(PyObject* obj) const;
         std::string atIndex(quint32 idx) const;
         PyObject* indexes() const;
-        quint32 countSubs() const;
-        Domain subDomain() const;
+        quint32 countStackDomainItems() const;
+        Domain stackDomain() const;
         void clear();
 
         static FeatureCoverage* toFeatureCoverage(Object *obj);
