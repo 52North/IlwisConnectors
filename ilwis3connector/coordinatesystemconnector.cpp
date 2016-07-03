@@ -366,7 +366,7 @@ bool CoordinateSystemConnector::storeMetaData(IlwisObject *data, const IOOptions
         }
 
         const std::unique_ptr<Ilwis::GeodeticDatum> & datum = cCsy->datum();
-        if (datum->isValid()) {
+        if (datum && datum->isValid()) {
             QString datumName = datum->code();
             if (datumName.length() > 0 && datumName != sUNDEF) { // a predefined datum in ilwis3 includes the ellipsoid definition
                 datumName = Ilwis3Connector::code2name(datumName, "datum");
