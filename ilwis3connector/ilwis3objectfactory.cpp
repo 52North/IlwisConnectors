@@ -29,6 +29,7 @@
 #include "table.h"
 #include "containerstatistics.h"
 #include "pixeliterator.h"
+#include "proj4parameters.h"
 #include "conventionalcoordinatesystem.h"
 #include "coordinatesystemconnector.h"
 #include "ellipsoidconnector.h"

@@ -6,6 +6,7 @@
 #include "projection.h"
 #include "geodeticdatum.h"
 #include "coordinatesystem.h"
+#include "proj4parameters.h"
 #include "conventionalcoordinatesystem.h"
 #include "factory.h"
 #include "abstractfactory.h"

@@ -17,6 +17,7 @@
 #include "projection.h"
 //#include "domain.h"
 #include "coordinatesystem.h"
+#include "proj4parameters.h"
 #include "conventionalcoordinatesystem.h"
 #include "gdalproxy.h"
 #include "dataformat.h"

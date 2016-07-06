@@ -31,6 +31,7 @@
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
 #include "projection.h"
+#include "proj4parameters.h"
 #include "conventionalcoordinatesystem.h"
 
 using namespace Ilwis;
