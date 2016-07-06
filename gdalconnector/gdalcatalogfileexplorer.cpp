@@ -59,7 +59,11 @@ std::vector<Ilwis::Resource> GdalCatalogFileExplorer::loadItems(const IOOptions 
         }else {
             bool prev = kernel()->issues()->silent();
             kernel()->issues()->silent(true); // error messages during scan are not needed
-            GDALItems gdalitems(containerInf);
+            IlwisTypes tp;
+            IlwisTypes extendedTypes;
+            std::multimap<QString, DataFormat> formats = DataFormat::getSelectedBy(DataFormat::fpEXTENSION, "connector='gdal'");
+            getTypes(formats, containerInf.suffix(), tp, extendedTypes);
+            GDALItems gdalitems(containerInf, tp, extendedTypes);
             std::vector<Resource> items;
             for( const auto& res : gdalitems){
                 Resource resource(res);
@@ -104,4 +108,14 @@ QFileInfo GdalCatalogFileExplorer::toLocalFile(const QUrl &datasource) const
 CatalogExplorer::ExplorerType GdalCatalogFileExplorer::explorerType() const
 {
     return etIMPLICIT;
+}
+
+void GdalCatalogFileExplorer::getTypes(const std::multimap<QString, DataFormat>& formats, const QString& ext, IlwisTypes & tp, IlwisTypes & extendedType) const {
+    tp = itUNKNOWN;
+    extendedType = itUNKNOWN;
+    auto collection = formats.equal_range(ext);
+    for(auto iter = collection.first; iter != collection.second; ++iter) {
+        tp |= (*iter).second.property(DataFormat::fpDATATYPE).toULongLong();
+        extendedType |= (*iter).second.property(DataFormat::fpEXTENDEDTYPE).toULongLong();
+    }
 }

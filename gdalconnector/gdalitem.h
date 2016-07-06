@@ -7,7 +7,7 @@ class GDALItems : public std::set<Resource>
 {
 public:
     GDALItems(const QUrl& path, const QFileInfo &localFile, IlwisTypes tp, IlwisTypes extTypes);
-    GDALItems(const QFileInfo &localContainerFile);
+    GDALItems(const QFileInfo &localContainerFile, IlwisTypes tp, IlwisTypes extTypes);
 
     quint64 extractNameAndDomain(const QString &parts, QString &shortname);
 

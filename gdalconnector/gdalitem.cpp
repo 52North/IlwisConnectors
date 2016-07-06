@@ -20,7 +20,7 @@
 
 using namespace Ilwis;
 using namespace Gdal;
-GDALItems::GDALItems(const QFileInfo &localContainerFile){
+GDALItems::GDALItems(const QFileInfo &localContainerFile, IlwisTypes tp, IlwisTypes extTypes){
     QFileInfo file = localContainerFile;
     GdalHandle* handle = gdal()->openFile(file.absoluteFilePath(), i64UNDEF , GA_ReadOnly, false);
     if (handle){
@@ -42,12 +42,42 @@ GDALItems::GDALItems(const QFileInfo &localContainerFile){
                         addItem(handle, containerUrl, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM, sz/count, i);
                     }
                 }
+            } else {
+                if ( count == 1) {//  default case, one layer per object
+                    OGRLayerH layerH = gdal()->getLayer(handle->handle(),0);
+                    int featureCount = gdal()->getFeatureCount(layerH, FALSE);
+                    sz = findSize(file);
+                    if (tp & itFEATURE) {
+                        addItem(handle, url, csyId, featureCount, itFEATURE , itCOORDSYSTEM | itTABLE, sz);
+                        addItem(handle, url, 0, iUNDEF, itTABLE , itFEATURE, sz);
+                        if (! mastercatalog()->id2Resource(csyId).isValid())
+                            addItem(handle, QUrl(url), 0, iUNDEF, itCONVENTIONALCOORDSYSTEM , 0, sz);
+                    } else if (tp & itTABLE)
+                        addItem(handle, url, 0, iUNDEF, itTABLE , 0, sz);
+                }
+                else { // multiple layers, the file itself will be marked as container; internal layers will be added using this file as container
+                    //TODO: atm the assumption is that all gdal containers are files. this is true in the majority of the cases but not in all. Without a proper testcase the non-file option will not(yet) be implemented
+                    addItem(handle, url, count, iUNDEF, itCATALOG , extTypes | itFILE | itFEATURE);
+                    for(int i = 0; i < count; ++i){
+                        OGRLayerH layerH = gdal()->getLayer(handle->handle(),i);
+                        if ( layerH){
+                            const char *cname = gdal()->getLayerName(layerH);
+                            int featureCount = gdal()->getFeatureCount(layerH, FALSE);
+                            if ( cname){
+                                QString layerName(cname);
+                                QString layerurl = url.toString() + "/" + layerName;
+                                addItem(handle, QUrl(layerurl), csyId, featureCount, itFEATURE , itCOORDSYSTEM | itTABLE, sz);
+                                addItem(handle, QUrl(layerurl), 0, iUNDEF, itTABLE , itFEATURE, sz);
+                                if (! mastercatalog()->id2Resource(csyId).isValid())
+                                    addItem(handle, QUrl(layerurl), 0, iUNDEF, itCONVENTIONALCOORDSYSTEM , 0, sz);
+                            }
+                        }
+                    }
+                }
             }
             gdal()->closeFile(file.absoluteFilePath(), i64UNDEF);
         }
-
     }
-
 }
 
 int GDALItems::layerCount(GdalHandle* handle)
@@ -81,11 +111,11 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes tp,
             quint64 grfId = addItem(handle, url, csyId, 0, itGEOREF,itCOORDSYSTEM);
             if ( count == 1)
                 addItem(handle, url, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM,sz);
-            else{
+            else {
                 addItem(handle, url, csyId, grfId, itRASTER,itGEOREF | itNUMERICDOMAIN | itCONVENTIONALCOORDSYSTEM,sz);
                 addItem(handle, url, count, iUNDEF, itCATALOG, itFILE | itRASTER);
             }
-        } else{
+        } else {
             if ( count == 1) {//  default case, one layer per object
                 OGRLayerH layerH = gdal()->getLayer(handle->handle(),0);
                 int featureCount = gdal()->getFeatureCount(layerH, FALSE);
@@ -114,14 +144,10 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes tp,
                             if (! mastercatalog()->id2Resource(csyId).isValid())
                                 addItem(handle, QUrl(layerurl), 0, iUNDEF, itCONVENTIONALCOORDSYSTEM , 0, sz);
                         }
-
                     }
-
                 }
             }
         }
-
-
         gdal()->closeFile(file.absoluteFilePath(), i64UNDEF);
     }
 }

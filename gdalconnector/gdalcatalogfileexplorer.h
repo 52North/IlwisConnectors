@@ -21,6 +21,7 @@ public:
 
     CatalogExplorer::ExplorerType explorerType() const;
 private:
+    void getTypes(const std::multimap<QString, DataFormat> &formats, const QString &ext, IlwisTypes & tp, IlwisTypes & extendedType) const;
 };
 }
 }
