@@ -161,7 +161,7 @@ QString Ilwis3Connector::name2Code(const QString& nameIn, const QString& type) {
     }
 
     InternalDatabaseConnection db;
-    QString query = QString("Select code from aliasses where alias='%1' and type='%2' and source='ilwis3'").arg(name, type);
+    QString query = QString("Select code from aliasses where lower(alias)=lower('%1') and type='%2' and source='ilwis3'").arg(name, type);
     if ( !db.exec(query)) {
         kernel()->issues()->logSql(db.lastError());
         return sUNDEF;
