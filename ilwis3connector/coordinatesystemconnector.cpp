@@ -18,6 +18,7 @@
 #include "geodeticdatum.h"
 #include "projection.h"
 #include "coordinatesystem.h"
+#include "proj4parameters.h"
 #include "conventionalcoordinatesystem.h"
 #include "boundsonlycoordinatesystem.h"
 #include "coordinatesystemconnector.h"
@@ -125,7 +126,7 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
     QString ell = _odf->value("CoordSystem","Ellipsoid");
     if ( ell == "?")
         return IEllipsoid();
-    if ( ell.toLower() == "user uefined") {
+    if ( ell.toLower() == "user defined") {
         double invf = _odf->value("Ellipsoid","1/f").toDouble();
         double majoraxis = _odf->value("Ellipsoid","a").toDouble();
         IEllipsoid ellipsoid;
