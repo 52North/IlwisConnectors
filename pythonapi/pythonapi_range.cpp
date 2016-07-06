@@ -371,7 +371,7 @@ void ThematicRange::add(std::string name, std::string id, std::string descr){
     if(descr != "")
         description = QString::fromStdString(descr);
 
-    Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description}, iUNDEF);
+    Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description}, count());
     static_cast<Ilwis::ItemRange*>(_range.get())->add(titem);
 }
 
@@ -390,7 +390,7 @@ void ThematicRange::add(PyObject *item)
         if ( elements == 3){
             description = QString::fromStdString(CppTupleElement2String(item,2));
         }
-        Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description}, iUNDEF);
+        Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description}, count());
         static_cast<Ilwis::ItemRange*>(_range.get())->add(titem);
     }
 }

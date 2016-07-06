@@ -296,7 +296,7 @@ void ItemDomain::addItem(PyObject* item)
             if ( CppTupleElementCount(item) == 3){
                 description = QString::fromStdString(CppTupleElement2String(item,2));
             }
-            Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description}, iUNDEF);
+            Ilwis::ThematicItem *titem = new Ilwis::ThematicItem({label, code, description}, count());
 
             this->ptr()->as<Ilwis::ThematicDomain>()->addItem(titem);
         }
