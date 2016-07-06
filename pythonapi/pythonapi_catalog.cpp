@@ -4,7 +4,6 @@
 #include "../../IlwisCore/core/catalog/catalog.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/catalog/resource.h"
-#include "../../IlwisCore/core/catalog/catalogview.h"
 #include "../../IlwisCore/core/catalog/mastercatalog.h"
 
 #include "pythonapi_catalog.h"
@@ -61,17 +60,15 @@ namespace pythonapi {
         if (loc.size() > 2 && loc[loc.size() - 1] == '/' && loc[loc.size() - 2] != '/')
             loc = loc.left(loc.size() - 1);
         QUrl location (loc);
-        Ilwis::CatalogView* cat = new Ilwis::CatalogView({location, itCATALOG});
-        cat->filter(QString::fromStdString(filter));
-        this->_data.reset(cat);
         Ilwis::mastercatalog()->addContainer(location); // this will do the actual scan of "location" and add the sub-items to the mastercatalog
+        _catalog.prepare(location.toString());
     }
 
     Catalog::~Catalog(){
     }
 
     bool Catalog::__bool__() const{
-        return this->_data->isValid();
+        return this->_catalog.isValid() && this->_catalog->isValid();
     }
 
     std::string Catalog::__str__(){
@@ -87,7 +84,7 @@ namespace pythonapi {
 
     PyObject* Catalog::items(){
         if (this->__bool__()){
-            std::vector<Ilwis::Resource> itms = this->_data->items();
+            std::vector<Ilwis::Resource> itms = this->_catalog->items();
             PyObject* ret = newPyTuple(itms.size());
             int i = 0;
             for(auto it = itms.begin(); it < itms.end(); it++ ){
@@ -103,7 +100,7 @@ namespace pythonapi {
     }
 
     Object* Catalog::_getitem(const std::string &name){
-        std::vector<Ilwis::Resource> itms = this->_data->items();
+        std::vector<Ilwis::Resource> itms = this->_catalog->items();
         for(auto it = itms.begin(); it < itms.end(); it++ ){
             if(it->name().compare(QString::fromStdString(name), Qt::CaseInsensitive) == 0){
                 IlwisTypes type = it->ilwisType();
@@ -126,8 +123,9 @@ namespace pythonapi {
 //                }else if (hasType(type,itELLIPSOID)){
 //                    return new Ellipsoid(Ilwis::IEllipsoid(*it));
                 }else if (hasType(type,itCATALOG)){
-                    Ilwis::CatalogView* cat = new Ilwis::CatalogView({it->url(), itCATALOG});
-                    Ilwis::mastercatalog()->addContainer(it->url()); // also scan and add the sub-items to the mastercatalog
+
+                    Ilwis::mastercatalog()->addContainer(it->url()); // this will do the actual scan of "location" and add the sub-items to the mastercatalog
+                    Ilwis::ICatalog cat (it->url().toString());
                     return new Catalog(cat);
                 }else{
                     return new IlwisObject(new Ilwis::IIlwisObject(*it));
@@ -144,8 +142,8 @@ namespace pythonapi {
         return ptr;
     }
 
-    Catalog::Catalog(Ilwis::CatalogView *cat){
-        this->_data.reset(cat);
+    Catalog::Catalog(Ilwis::ICatalog & cat){
+        _catalog = cat;
     }
 
 } // namespace pythonapi

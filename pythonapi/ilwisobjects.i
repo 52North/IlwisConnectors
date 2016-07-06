@@ -16,6 +16,7 @@
 #include "ilwisdata.h"
 #include "../../IlwisCore/core/util/range.h"
 #include "itemrange.h"
+#include "catalog.h"
 
 #include "pythonapi_pyobject.h"
 #include "pythonapi_error.h"

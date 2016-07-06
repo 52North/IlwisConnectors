@@ -2,10 +2,11 @@
 #define PYTHONAPI_CATALOG_H
 
 #include "pythonapi_ilwisobject.h"
-
+/*
 namespace Ilwis {
-    class CatalogView;
+    class ICatalog;
 }
+*/
 
 typedef struct _object PyObject;
 
@@ -25,8 +26,8 @@ namespace pythonapi {
 
             static Catalog* toCatalog(Object* obj);
     protected:
-            Catalog(Ilwis::CatalogView* cat);
-            std::unique_ptr<Ilwis::CatalogView> _data;
+            Catalog(Ilwis::ICatalog & cat);
+            Ilwis::ICatalog _catalog;
     };
 
 } // namespace pythonapi
