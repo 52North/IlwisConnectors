@@ -47,31 +47,31 @@ bool VersionedSerializer::loadMetaData(IlwisObject *obj, const IOOptions &)
 {
     if ( obj->isReadOnly())
         return false;
-    bool alreadyThere =  obj->resource().isValid();
-
+    bool skip =  obj->resource().isValid();
+    skip = skip && hasType(obj->ilwisType(), itCATALOG | itCOVERAGE);
     // we are not going to replace info in the resource if not needed.
     // reason is that this can be a container object (e.g multiband raster) and we are reading here the container
     // and not the actual object embedded in the container
     QString var;
     _stream >> var;
-    if (!alreadyThere)
+    if (!skip )
         obj->name(var);
     _stream >> var;
-    if (!alreadyThere)
+    if (!skip)
         obj->code(var);
     _stream >> var;
-    if (!alreadyThere)
+    if (!skip)
         obj->setDescription(var);
     bool readonly;
      _stream >> readonly;
-    if (!alreadyThere)
+    if (!skip)
         obj->readOnly(readonly);
     double time;
     _stream >> time;
-    if (!alreadyThere)
+    if (!skip)
         obj->modifiedTime(time);
     _stream >> time;
-    if (!alreadyThere)
+    if (!skip)
         obj->createTime(time);
 
     return true;
