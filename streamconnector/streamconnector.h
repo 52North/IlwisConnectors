@@ -24,6 +24,7 @@ public:
     bool isReadOnly() const;
     bool isFileBased() const;
     bool dataIsLoaded() const;
+    QString format() const;
     static ConnectorInterface *create(const Resource &resource, bool load, const IOOptions &options);
 
 private:
