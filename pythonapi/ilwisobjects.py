@@ -2740,9 +2740,9 @@ class RasterCoverage(Coverage):
         return _ilwisobjects.RasterCoverage_setSize(self, sz)
 
 
-    def unloadBinary(self):
-        """unloadBinary(RasterCoverage self)"""
-        return _ilwisobjects.RasterCoverage_unloadBinary(self)
+    def unload(self):
+        """unload(RasterCoverage self)"""
+        return _ilwisobjects.RasterCoverage_unload(self)
 
 
     def coordinateSystem(self):

@@ -24803,22 +24803,22 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RasterCoverage_unloadBinary(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_RasterCoverage_unload(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   pythonapi::RasterCoverage *arg1 = (pythonapi::RasterCoverage *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_unloadBinary",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:RasterCoverage_unload",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__RasterCoverage, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_unloadBinary" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RasterCoverage_unload" "', argument " "1"" of type '" "pythonapi::RasterCoverage *""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::RasterCoverage * >(argp1);
   {
     try {
-      (arg1)->unloadBinary();
+      (arg1)->unload();
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -37746,7 +37746,7 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { (char *)"RasterCoverage_size", _wrap_RasterCoverage_size, METH_VARARGS, (char *)"RasterCoverage_size(RasterCoverage self) -> Size"},
 	 { (char *)"RasterCoverage_setSize", _wrap_RasterCoverage_setSize, METH_VARARGS, (char *)"RasterCoverage_setSize(RasterCoverage self, Size sz)"},
-	 { (char *)"RasterCoverage_unloadBinary", _wrap_RasterCoverage_unloadBinary, METH_VARARGS, (char *)"RasterCoverage_unloadBinary(RasterCoverage self)"},
+	 { (char *)"RasterCoverage_unload", _wrap_RasterCoverage_unload, METH_VARARGS, (char *)"RasterCoverage_unload(RasterCoverage self)"},
 	 { (char *)"RasterCoverage_coordinateSystem", _wrap_RasterCoverage_coordinateSystem, METH_VARARGS, (char *)"RasterCoverage_coordinateSystem(RasterCoverage self) -> CoordinateSystem"},
 	 { (char *)"RasterCoverage_geoReference", _wrap_RasterCoverage_geoReference, METH_VARARGS, (char *)"RasterCoverage_geoReference(RasterCoverage self) -> GeoReference"},
 	 { (char *)"RasterCoverage_setGeoReference", _wrap_RasterCoverage_setGeoReference, METH_VARARGS, (char *)"RasterCoverage_setGeoReference(RasterCoverage self, GeoReference gr)"},
