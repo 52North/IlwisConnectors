@@ -46,6 +46,7 @@ namespace pythonapi {
     protected:
         Domain();
         Domain(const Ilwis::IDomain &domain);
+        virtual const QString getStoreFormat() const;
     };
 
     class NumericDomain : public Domain{

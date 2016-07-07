@@ -18,6 +18,8 @@ namespace pythonapi {
         friend class Catalog;
         private:
             GeoReference(const Ilwis::IGeoReference& gr);
+        protected:
+            virtual const QString getStoreFormat() const;
         public:
             GeoReference(const std::string &resource);
             static GeoReference* toGeoReference(Object *obj);

@@ -251,8 +251,8 @@ void RasterCoverage::setSize(const Size &sz){
     this->ptr()->as<Ilwis::RasterCoverage>()->size(sz.data());
 }
 
-void RasterCoverage::unloadBinary(){
-    this->ptr()->as<Ilwis::RasterCoverage>()->unloadBinary();
+void RasterCoverage::unload(){
+    this->ptr()->as<Ilwis::RasterCoverage>()->unload();
 }
 
 RasterCoverage* RasterCoverage::toRasterCoverage(Object* obj){
@@ -545,4 +545,8 @@ RasterCoverage* RasterCoverage::clone(){
 
 Envelope RasterCoverage::envelope(){
     return Envelope(this->ptr()->as<Ilwis::RasterCoverage>()->envelope());
+}
+
+const QString RasterCoverage::getStoreFormat() const {
+    return "map";
 }

@@ -20,6 +20,8 @@ namespace pythonapi {
         friend class RasterCoverage;
     private:
         CoordinateSystem(const Ilwis::ICoordinateSystem& cs);
+    protected:
+        virtual const QString getStoreFormat() const;
     public:
         CoordinateSystem(const std::string &resource);
         pythonapi::Envelope envelope();

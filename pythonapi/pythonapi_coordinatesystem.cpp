@@ -95,3 +95,7 @@ CoordinateSystem *CoordinateSystem::toCoordinateSystem(Object *obj){
         throw InvalidObject("cast to CoordinateSystem not possible");
     return ptr;
 }
+
+const QString CoordinateSystem::getStoreFormat() const {
+    return "coordsystem";
+}

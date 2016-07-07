@@ -298,3 +298,8 @@ IlwisTypes FeatureCoverage::geometryType(const Geometry& geom){
 void FeatureCoverage::setCoordinateSystem(const CoordinateSystem &cs){
     this->ptr()->as<Ilwis::FeatureCoverage>()->coordinateSystem(cs.ptr()->as<Ilwis::CoordinateSystem>());
 }
+
+const QString FeatureCoverage::getStoreFormat() const {
+    return "vectormap";
+}
+

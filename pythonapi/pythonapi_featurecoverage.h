@@ -21,6 +21,8 @@ namespace pythonapi {
         friend class Catalog;
     private:
         FeatureCoverage(const Ilwis::IFeatureCoverage& coverage);
+    protected:
+        virtual const QString getStoreFormat() const;
     public:
         FeatureCoverage();
         FeatureCoverage(const std::string& resource);

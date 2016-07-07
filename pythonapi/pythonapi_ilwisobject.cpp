@@ -50,7 +50,15 @@ void IlwisObject::store(const std::string& url, const std::string& format, const
         else // file without path
             output = "file:///" + Ilwis::context()->workingCatalog()->filesystemLocation().toLocalFile() + '/' + output;
     }
-    (*this->ptr())->connectTo(QUrl(output), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
+    const std::vector<std::string> ilwis3formats = {"vectormap", "map", "georef", "georeference", "domain", "coordsystem", "table", "representation"};
+    if (format.length() == 0) // ilwis3
+        (*this->ptr())->connectTo(QUrl(output), getStoreFormat(), "ilwis3", Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
+    else if ((std::find(ilwis3formats.begin(), ilwis3formats.end(), format) != ilwis3formats.end()) && (fnamespace.length() == 0 || fnamespace == "ilwis3")) // ilwis3
+        (*this->ptr())->connectTo(QUrl(output), QString::fromStdString(format), "ilwis3", Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
+    else if (fnamespace.length() == 0) // gdal
+        (*this->ptr())->connectTo(QUrl(output), QString::fromStdString(format), "gdal", Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
+    else
+        (*this->ptr())->connectTo(QUrl(output), QString::fromStdString(format), QString::fromStdString(fnamespace), Ilwis::IlwisObject::ConnectorMode::cmOUTPUT, options.ptr());
     if (!(*this->ptr())->store(options.ptr()))
         throw OSError(std::string("IOError on attempt to store ")+this->name());
 }
@@ -128,4 +136,8 @@ quint64 IlwisObject::ilwisID() const{
 
 IlwisTypes IlwisObject::ilwisType(){
     return (*this->ptr())->ilwisType();
+}
+
+const QString IlwisObject::getStoreFormat() const {
+    return "";
 }

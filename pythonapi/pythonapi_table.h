@@ -53,6 +53,9 @@ namespace pythonapi {
             void setColumnDefinition(const std::string& name, ColumnDefinition* coldef);
             void setColumnDefinition(quint32 index, ColumnDefinition* coldef);
 
+        protected:
+            virtual const QString getStoreFormat() const;
+
         private:
             Table(const Ilwis::ITable& table);
     };

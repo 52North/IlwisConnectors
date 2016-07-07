@@ -207,5 +207,8 @@ namespace pythonapi {
         ilwdef = Ilwis::ColumnDefinition(*newDef, ilwdef.columnindex());
     }
 
+    const QString Table::getStoreFormat() const {
+        return "table";
+    }
 
 } // namespace pythonapi

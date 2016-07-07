@@ -107,4 +107,8 @@ namespace pythonapi {
         return itGEOREF;
     }
 
+    const QString GeoReference::getStoreFormat() const {
+        return "georef";
+    }
+
 } // namespace pythonapi

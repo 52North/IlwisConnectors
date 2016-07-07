@@ -24,6 +24,8 @@ namespace pythonapi {
          RasterCoverage(const Ilwis::IRasterCoverage& coverage);
          QVariant resolveIndex(PyObject* pyTrackIndex);
          std::string dateToString(int datepart);
+    protected:
+         virtual const QString getStoreFormat() const;
     public:
         RasterCoverage();
         RasterCoverage(std::string resource);
@@ -52,7 +54,7 @@ namespace pythonapi {
 
         Size size();
         void setSize(const Size& sz);
-        void unloadBinary();
+        void unload();
 
         CoordinateSystem coordinateSystem();
 

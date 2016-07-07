@@ -105,6 +105,10 @@ Domain *Domain::toDomain(Object *obj){
     return ptr;
 }
 
+const QString Domain::getStoreFormat() const {
+    return "domain";
+}
+
 //--------------------------------------------------------------
 
 NumericDomain::NumericDomain(){
