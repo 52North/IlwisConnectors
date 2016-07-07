@@ -49,7 +49,7 @@ public:
     }
 
     static QString getInternalNameFrom(QString name, quint64 id) {
-        return QString("ilwis://internalcatalog/%1_%2").arg(name).arg(id);
+        return QString(INTERNAL_CATALOG + "/%1_%2").arg(name).arg(id);
     }
 
 
