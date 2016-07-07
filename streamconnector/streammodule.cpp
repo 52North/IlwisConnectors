@@ -86,7 +86,9 @@ void StreamModule::prepare()
         return ;
 
     //inputconnectors
-    cfactory->addCreator(itILWISOBJECT  ,"stream", StreamConnector::create);
+    cfactory->addCreator(itCOVERAGE|itDOMAIN|itGEOREF|itCOORDSYSTEM|itREPRESENTATION|itELLIPSOID|itPROJECTION|itTABLE|
+                         itOPERATIONMETADATA  ,"stream", StreamConnector::create);
+    cfactory->addCreator(itCATALOG,"stream", CatalogConnector::create);
 
     //outputconnectors
     cfactory->addCreator("featurecoverage","stream",StreamConnector::create);
