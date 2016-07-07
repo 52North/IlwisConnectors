@@ -32,6 +32,7 @@ private:
     QString getGrfName(const IRasterCoverage &raster);
     bool setDataType(IlwisObject *data, const Ilwis::IOOptions &options);
     void loadBlock(UPGrid &grid, QFile &file, quint32 blockIndex, quint32 fileBlock);
+    void updateConverter(const IniFile & odf);
 
     template<typename T> bool save(std::ofstream& output_file,const RawConverter& conv, const IRasterCoverage& raster, const Size<>& sz) const{
         //TODO optimize this

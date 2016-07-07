@@ -96,9 +96,6 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
     if (!odf.setIniFile(QUrl(file).toLocalFile()))
         return ERROR2(ERR_COULD_NOT_LOAD_2,"files","maplist");
 
-    QString storeType = odf.value("MapStore","Type");
-    setStoreType(storeType);
-
     gcoverage->datadefRef().domain(mp->datadef().domain<>());
 
     double vmax,vmin,scale,offset;
@@ -113,6 +110,12 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
             }
         }
     }
+
+    QString storeType = odf.value("MapStore","Type");
+    setStoreType(storeType);
+    const DataDefinition & def = gcoverage->datadef(0);
+    if ( def.domain<>()->valueType() & itNUMBER)
+        updateConverter(odf);
 
     gcoverage->georeference(mp->georeference());
     gcoverage->size(sz);
@@ -145,6 +148,36 @@ void RasterCoverageConnector::setStoreType(const QString& storeType) {
     _converter.storeType(_storetype);
 }
 
+void RasterCoverageConnector::updateConverter(const IniFile & odf)
+{
+    QString dminfo = odf.value("BaseMap","DomainInfo");
+    if ( dminfo != sUNDEF) {
+        int index = dminfo.indexOf("class;");
+        if ( index != -1) {
+            _converter = RawConverter("class");
+        }else {
+            index = dminfo.indexOf("group;");
+            if ( index != -1) {
+                _converter = RawConverter("group");
+            }else {
+                index = dminfo.indexOf("id;");
+                if ( index != -1) {
+                    _converter = RawConverter("id");
+                } else {
+                    index = dminfo.indexOf("UniqueID;");
+                    if ( index != -1) {
+                        _converter = RawConverter("UniqueID");
+                    }
+                    index = dminfo.indexOf("color;");
+                    if ( index != -1) {
+                        _converter = RawConverter("color");
+                    }
+                }
+            }
+        }
+    }
+}
+
 bool RasterCoverageConnector::setDataType(IlwisObject *data, const IOOptions &options) {
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
@@ -152,35 +185,6 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data, const IOOptions &op
     DataDefinition def = determineDataDefintion(_odf, options);
     if ( !def.isValid()) {
         return false;
-    }
-    if ( def.domain<>()->valueType() != itNUMBER){
-        QString dminfo = _odf->value("BaseMap","DomainInfo");
-        if ( dminfo != sUNDEF) {
-            int index = dminfo.indexOf("class;");
-            if ( index != -1) {
-                _converter = RawConverter("class");
-            }else {
-                index = dminfo.indexOf("group;");
-                if ( index != -1) {
-                    _converter = RawConverter("group");
-                }else {
-                    index = dminfo.indexOf("id;");
-                    if ( index != -1) {
-                        _converter = RawConverter("id");
-                    } else {
-                        index = dminfo.indexOf("UniqueID;");
-                        if ( index != -1) {
-                            _converter = RawConverter("UniqueID");
-                        }
-                        index = dminfo.indexOf("color;");
-                        if ( index != -1) {
-                            _converter = RawConverter("color");
-                        }
-                    }
-                }
-
-            }
-        }
     }
 
     raster->datadefRef() = def;
@@ -233,6 +237,9 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
     gcoverage->setBandDefinition(0, gcoverage->datadef());
 
     setStoreType(storeType);
+    const DataDefinition & def = gcoverage->datadef();
+    if ( def.domain<>()->valueType() & itNUMBER)
+        updateConverter(*_odf);
 
     gcoverage->gridRef()->prepare(gcoverage, grf->size());
 

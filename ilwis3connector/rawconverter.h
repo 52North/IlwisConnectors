@@ -80,6 +80,8 @@ public:
         }        
         if (( _item && raw == 0) || (raw == iILW3UNDEF || raw == shILW3UNDEF))
             return rUNDEF;
+        if (raw == _undefined)
+            return rUNDEF;
         return (raw + _offset) * MathHelper::roundTo3DecimalDigits (_scale);
     }
     double real2raw(double real) const {
