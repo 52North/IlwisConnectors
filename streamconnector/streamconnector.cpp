@@ -165,10 +165,10 @@ bool StreamConnector::openSource(bool reading){
         QString filename = url.toLocalFile();
         QFileInfo inf(filename);
         if ( inf.suffix() != "ilwis"){
-            filename = inf.absolutePath() + "/" + inf.baseName();
+            filename = inf.absolutePath() + "/" + inf.baseName() + ".ilwis";
             QString correctUrl = QUrl::fromLocalFile(filename).toString();
-            sourceRef().setUrl(correctUrl);
-            sourceRef().setUrl(correctUrl,true);
+            sourceRef().setUrl(correctUrl,false,false);
+            sourceRef().setUrl(correctUrl,true,false);
         }
         QFile *file = new QFile(filename);
 
@@ -255,4 +255,9 @@ bool StreamConnector::isFileBased() const
 bool StreamConnector::dataIsLoaded() const
 {
     return _binaryIsLoaded;
+}
+
+QString StreamConnector::format() const
+{
+    return IlwisObject::type2Name(source().ilwisType());
 }
