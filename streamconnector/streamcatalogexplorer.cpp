@@ -67,6 +67,10 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
                 Resource res2 = wf->resource();
                 res2.code(res.code()); //code comes from other machine or possibly older instance which might have different id's
                 items.push_back(res2);
+            }else if (hasType(tp, itILWISOBJECT)){
+                IIlwisObject obj(res);
+                Resource res2 = obj->resource();
+                items.push_back(res);
             }
         }
     }
@@ -93,6 +97,8 @@ bool StreamCatalogExplorer::canUse(const Resource &resource) const
     if ( resource.ilwisType() != itCATALOG)
         return false;
     if ( resource.url().scheme() == "file")
+        return true;
+    if (resource.url().toString() == INTERNAL_CATALOG)
         return true;
     return false;
 }
