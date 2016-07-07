@@ -90,7 +90,7 @@ SOURCES += \
     streamconnector/operationmetadataserializerv1.cpp \
     streamconnector/workflowserializerv1.cpp
 
-resources.files = streamconnector/resources/ogr_formats.config
+resources.files = streamconnector/resources/streamformats.config
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
 
 INSTALLS += resources
