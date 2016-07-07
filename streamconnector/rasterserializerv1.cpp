@@ -30,12 +30,14 @@ template<typename T> void storeBulk(const RawConverter& converter, QDataStream& 
         const UPGrid& grid = raster->grid();
         quint32 blockCount = grid->blocks();
         stream << blockCount;
+        std::vector<T> rawData(grid->blockSize(0));
         for(quint32 i = 0; i < blockCount; ++i){
-            const char * data = grid->blockAsMemory(i);
-            quint64 blockSize = 8 * grid->blockSize(i);
+            quint64 blockSize = grid->blockSize(i);
             stream << i;
             stream << blockSize;
-            stream.writeRawData(data, blockSize);
+            for(int j = 0; j < blockSize; ++j)
+                rawData[j] = converter.real2raw(grid->value(i,j));
+            stream.writeRawData((const char *)rawData.data(), blockSize * sizeof(T));
         }
         streamconnector->flush(true);
     }else {
@@ -63,19 +65,32 @@ template<typename T> void loadBulk(const RawConverter& converter, QDataStream& s
             //for the moment we only accept whole layers as possible subsets, might improve this in the future
             int layer = box.min_corner().z;
             blockCount =  raster->grid()->blocksPerBand();
-            int seekPos = layer * (raster->size().xsize() * raster->size().ysize() * sizeof(double) + sizeof(quint32) + sizeof(quint64));
+            int seekPos = layer * (raster->size().xsize() * raster->size().ysize() * sizeof(T) + sizeof(quint32) + sizeof(quint64));
             stream.device()->seek(seekPos);
         }
-        for(int i = 0; i < blockCount; ++i){
-            quint32 blockIndex;
-            quint64 blockByteSize;
+        quint32 blockIndex;
+        quint64 blockSize, initBlockSize;
 
-            stream >> blockIndex;
-            stream >> blockByteSize;
-            int pixelCount = blockByteSize / 8;
-            std::vector<double> data(pixelCount);
-            stream.readRawData((char *)&data[0],blockByteSize );
-            raster->gridRef()->setBlockData(i, data);
+        stream >> blockIndex;
+        stream >> blockSize;
+        initBlockSize = blockSize;
+
+        std::vector<T> rawdata(blockSize);
+        std::vector<double> realdata(blockSize);
+
+        for(int i = 0; i < blockCount; ++i){
+
+            stream.readRawData((char *)&rawdata[0],blockSize * sizeof(T) );
+            for( int j = 0; j < blockSize; ++j)
+                realdata[j] = converter.raw2real(rawdata[j]);
+            raster->gridRef()->setBlockData(i, realdata);
+            if ( i < blockCount - 1){
+                stream >> blockIndex;
+                stream >> blockSize;
+                if ( blockSize != initBlockSize)
+                    realdata.resize(blockSize);
+            }
+
         }
     streamconnector->flush(true);
     } else {
