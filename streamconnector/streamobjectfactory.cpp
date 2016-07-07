@@ -30,10 +30,15 @@ bool StreamObjectFactory::canUse(const Resource &resource) const
 {
     QUrlQuery query(resource.url());
     if ( query.queryItemValue("service") != "ilwisobjects") {
+        if ( hasType(resource.ilwisType(), itCATALOG)){
+            if ( resource.url().toString() == INTERNAL_CATALOG){
+                return true;
+            }
+        }
         if ( resource.url(true).scheme() == "file") { // we might have a streamed object
             QString file = resource.url(true).toLocalFile();
             QFileInfo inf(file);
-            if ( resource.container().toString().indexOf("ilwis://internalcatalog") == 0 && inf.exists())
+            if ( resource.container().toString().indexOf(INTERNAL_CATALOG) == 0 && inf.exists())
                 return true;
             if ( inf.suffix() != "ilwis"){
                 return false;
@@ -64,7 +69,7 @@ bool StreamObjectFactory::canUse(const Resource &resource) const
 IlwisObject *StreamObjectFactory::create(const Resource &resource, const IOOptions &options) const
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    StreamConnector *connector = factory->createFromResource<StreamConnector>(resource, "stream", options);
+    IlwisObjectConnector *connector = factory->createFromResource<IlwisObjectConnector>(resource, "stream", options);
 
    if(!connector) {
        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
