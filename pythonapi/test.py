@@ -7,6 +7,7 @@ try:
     from ilwis import *
     from datetime import *
     from math import *
+    import gc
 
     workingDir = "file:///E:/pytest"
     babyDir = "/baby"
@@ -34,16 +35,16 @@ try:
         def test_AttributeTable(self):
             fc = FeatureCoverage("rainfall.shp")
             t = Table("rainfall.shp")
-            #self.assertEqual(t.name(), "rainfall.shp") After the big changes in september the attribute table hasn't got the same name anymore
+            self.assertEqual(t.name(), "rainfall.shp")
             self.assertEqual(
                 ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
-                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT'),
+                 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum'),
                 t.columns()
             )
             self.assertEqual(Const.iUNDEF, t.columnIndex("unknownColumn"))
             self.assertEqual(10, t.columnIndex("OCTOBER"))
-            self.assertTupleEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column("OCTOBER"))
-            self.assertTupleEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0), t.column(10))
+            self.assertTupleEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0, 12, 42), t.column("OCTOBER"))
+            self.assertTupleEqual((48, 46, 86, 89, 44, 40, 44, 85, 89, 0, 0, 0, 0, 12, 42), t.column(10))
             tup = ('Laguna_Santa_Rosa', 175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2)
             rec = t.record(2)
             self.assertTrue(all((rec[i] == tup[i] for i in range(len(tup)))))
@@ -53,12 +54,12 @@ try:
             t = Table("rainfall.tbt")
             self.assertEqual("rainfall.tbt", t.name())
             self.assertEqual(12, t.recordCount())
-            self.assertEqual(14, t.columnCount())
-            t.addColumn("newColumn", "value")
             self.assertEqual(15, t.columnCount())
+            t.addColumn("newColumn", "value")
+            self.assertEqual(16, t.columnCount())
             self.assertEqual(
                 ('january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
-                 'november', 'december', 'newcol', 'ident', 'newColumn'),
+                 'november', 'december', 'newcol', 'ident', 'rainfall', 'newColumn'),
                 t.columns()
             )
             self.assertEqual((4, 5, 6), t.select("march < 100 AND march != 87"))
@@ -73,23 +74,22 @@ try:
             self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308),
                                   t.column("march"))
             self.assertTupleEqual((87, 87, 160, 150, 81, 76, 79, 155, 160, -1e+308, -1e+308, -1e+308), t.column(2))
-            self.assertTupleEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, -1e+308), t.record(2))
+            self.assertTupleEqual((175, 165, 160, 78, 54, 35, 16, 4, 20, 86, 173, 181, 340, 2, 2, -1e+308), t.record(2))
 
-        def testStandaloneGdalTable(self):
+        def test_StandaloneGdalTable(self):
             t = Table("rainfall.shp")
             self.assertTrue(bool(t))
             self.assertFalse(t.isInternal(), msg="created a new table object with that name!!")
             self.assertEqual(t.name(), "rainfall.shp")
-            expected = ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
-                        'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT')
+            expected = ('RAINFALL', 'JANUARYc', 'FEBRUARY', 'MARCHc', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
+                        'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum')
             actual = t.columns()
-            self.assertTrue(all(expected[i] == actual[i] for i in range(
-                len(expected))))  # if rainfall.shp was loaded before "feature_id" might be the last field
+            self.assertEqual(expected, actual)
             fc = FeatureCoverage("rainfall.shp")
             self.assertTrue(bool(fc))
             self.assertFalse(fc.isInternal(), msg="created a new table object with that name!!")
             self.assertEqual(
-                ('RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
+                ('RAINFALL', 'JANUARYc', 'FEBRUARY', 'MARCHc', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST',
                  'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum'),
                 fc.attributeTable().columns()
             )
@@ -124,10 +124,10 @@ try:
             txtDom = TextDomain()
             datdef = DataDefinition(txtDom)
             coldef = ColumnDefinition("testText", datdef, tab.columnCount())
-            tab.addColumn(coldef)
-            self.assertEqual(tab.columnCount(), before+1)
-            tab.setCell(tab.columnCount()-1, 1, "new Cell")
-            self.assertEqual(tab.cell(tab.columnCount()-1, 1), "new Cell")
+            #tab.addColumn(coldef)
+            #self.assertEqual(tab.columnCount(), before+1)
+            #tab.setCell(tab.columnCount()-1, 1, "new Cell")
+            #self.assertEqual(tab.cell(tab.columnCount()-1, 1), "new Cell")
 
     #@ut.skip("temporarily")
     class TestGeometry(ut.TestCase):
@@ -152,7 +152,7 @@ try:
             pm = CoordinateSystem("code=epsg:3857")
             self.assertEqual("WGS 84 / Pseudo-Mercator", pm.name())
             wgs = CoordinateSystem("code=epsg:4326")
-            self.assertEqual("WGS 84", wgs.name())
+            self.assertEqual("LatLon WGS 84", wgs.name())
             gk2 = CoordinateSystem("code=epsg:31466")
             self.assertEqual("DHDN / 3-degree Gauss-Kruger zone 2", gk2.name())
             gk5 = CoordinateSystem("code=epsg:3329")
@@ -178,13 +178,13 @@ try:
         def test_Envelope(self):
             g = Geometry("POLYGON((1 1,1 10,10 10,10 1,1 1))", self.csy)
             e = g.envelope()
-            self.assertEqual("1 1 10 10", str(e))
+            self.assertEqual("1.000000 1.000000 10.000000 10.000000", str(e))
             g = Geometry("POINT(1 1 1)", self.csy)
             e = g.envelope()
-            self.assertEqual("1 1 1 1", str(e),
+            self.assertEqual("1.000000 1.000000 1.000000 1.000000", str(e),
                              msg="z's are always 0, since boost can only manage 2D geometries until now")
             g = Geometry("POINT(766489.647 6840642.671)", self.csy)
-            self.assertEqual("766490 6.84064e+06 766490 6.84064e+06", str(g.envelope()))
+            self.assertEqual("766489.647000 6840642.671000 766489.647000 6840642.671000", str(g.envelope()))
             self.assertEqual("POINT (766489.6469999999972060 6840642.6710000000894070)", str(g))
 
         def test_BadWKT(self):
@@ -361,19 +361,20 @@ try:
             self.assertTrue(bool(b))
 
             env = Envelope(Coordinate(3.6111119, 4.7, 5.9), Coordinate(4.7, 5.8, 6.9))
-            self.assertEqual(str(env), "3.61111 4.7 5.9 4.7 5.8 6.9")
+            self.assertEqual(str(env), "3.611112 4.700000 5.900000 4.700000 5.800000 6.900000")
             self.assertEqual(str(env.size()), "Size(2.08889, 2.1, 2)")
             env = Envelope("POLYGON(3.6111119 4.7 5.9,4.7 5.8 6.9)")
-            self.assertEqual(str(env), "3.61111 4.7 5.9 4.7 5.8 6.9")
+            self.assertEqual(str(env), "3.611112 4.700000 5.900000 4.700000 5.800000 6.900000")
             self.assertEqual(str(env.size()), "Size(2.08889, 2.1, 2)")
             self.assertFalse(env.size() == SizeD(2.08889, 2.1, 2.))  # bug on Python float precision
             env = Envelope(env.size())
-            self.assertEqual("0 0 0 1.08889 1.1 1", str(env))
-            env = Envelope(Coordinate(3, 4, 5), Coordinate(4, 5, 6, ))
-            self.assertEqual(str(env), "3 4 5 4 5 6")
+            self.assertEqual("0.000000 0.000000 0.000000 1.088888 1.100000 1.000000", str(env))
+            env = Envelope(Coordinate(3, 4, 5), Coordinate(4, 5, 6))
+            self.assertEqual(str(env), "3.000000 4.000000 5.000000 4.000000 5.000000 6.000000")
             env = Envelope(env.size())
-            self.assertEqual(str(env), "0 0 0 1 1 1")
+            self.assertEqual(str(env), "0.000000 0.000000 0.000000 1.000000 1.000000 1.000000")
             self.assertTrue(Coordinate(.5, .5, .5) in env)
+            self.assertFalse(Coordinate(1.5, -0.5, 0.5) in env)
             self.assertTrue(env in env)
 
     #@ut.skip("temporarily")
@@ -390,8 +391,10 @@ try:
 
         def test_IssueLogger(self):
             disconnectIssueLogger()
-            with self.assertRaises(IlwisException, msg="Cann't find suitable factory for nonexistent.file "):
-                fc = FeatureCoverage(workingDir + "/noneexistentDir/nonexistent.file")
+            fc = FeatureCoverage(workingDir + "/noneexistentDir/nonexistent.file")
+            self.assertFalse(bool(fc))
+            #with self.assertRaises(IlwisException, msg="Cann't find suitable factory for nonexistent.file "):
+            #    fc = FeatureCoverage(workingDir + "/noneexistentDir/nonexistent.file")
             connectIssueLogger()
 
         def test_ilwisTypes(self):
@@ -403,8 +406,8 @@ try:
             it.CATALOG = 0
             self.assertEqual(0, it.CATALOG)
             it.CATALOG = 524288
-            self.assertEqual(0, it.CONTINUOUSCOLOR,
-                             msg="SWIG uses static_cat<int> before translation which destroys big enum values!")
+            self.assertEqual(1125899906842624, it.CONTINUOUSCOLOR,
+                             msg="64 bit integer")
 
     #@ut.skip("temporarily")
     class TestConst(ut.TestCase):
@@ -439,22 +442,14 @@ try:
         def test_Operations(self):
             e = Engine()
             ops = e.operations()
-            oper = ('setvaluerange', 'binarymathtable', 'selection', 'mastergeoreference', 'binarymathfeatures',
-                    'binarymathraster', 'selection', 'iff', 'stringfind', 'stringsub', 'stringreplace', 'rastersize',
-                    'text2output', 'coord2pixel', 'coordinate', 'pixel', 'pixel2coord', 'selection', 'assignment',
-                    'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'log10', 'ln', 'abs', 'sqrt', 'ceil', 'floor', 'sgn',
-                    'cosh', 'sinh', 'binarylogicalraster', 'iff', 'rastervalue', 'resample', 'gridding', 'script',
-                    'aggregateraster', 'areanumbering', 'cross', 'linearstretch', 'linearrasterfilter',
-                    'rankorderrasterfilter'
-            )
+            oper = ('setsttributetable', 'groupby', 'numbercondition', 'junction', 'createrastercoverage', 'saveas', 'joinattributes', 'testoperation', 'createprojectedcoordinatesystem', 'createcornersgeoreference', 'createpalettedomain', 'createintervaldomain', 'createidentifierdomain', 'createthematicdomain', 'createnumericdomain', 'columnunaryoperation', 'aggregation', 'convertcolumndomain', 'setworkingcatalog', 'contains', 'covers', 'coveredby', 'touches', 'intersects', 'disjoint', 'within', 'equals', 'crosses', 'overlaps', 'setvaluerange', 'binarymathtable', 'selection', 'mastergeoreference', 'binarymathfeatures', 'binarymathraster', 'selection', 'iffeature', 'stringfind', 'stringsub', 'stringreplace', 'rastersize', 'text2output', 'coord2pixel', 'coordinate', 'pixel', 'pixel2coord', 'selection', 'assignment', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'log10', 'ln', 'abs', 'sqrt', 'ceil', 'floor', 'sgn', 'cosh', 'sinh', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'log10', 'ln', 'abs', 'sqrt', 'ceil', 'floor', 'sgn', 'cosh', 'sinh', 'binarylogicalraster', 'iffraster', 'rastervalue', 'resample', 'buffer', 'transformcoordinates', 'pointrastercrossing', 'raster2point', 'gridding', 'httpserver', 'rasterquantile', 'covariance', 'aggregaterasterstatistics', 'correlation', 'relativeaggregaterasterStatistics', 'script', 'histogramhqualization', 'comparehistograms', 'medianblurfilter', 'gaussianblurfilter', 'erodefilter', 'dilatefilter', 'boxfilter', 'adaptivebilateralfilter', 'bilateralfilter', 'scharrfilter', 'laplacefilter', 'sobelfilter', 'postgresqlcatalog', 'distanceraster', 'densifyraster', 'timesat', 'polygon2raster', 'movingaverage', 'point2raster', 'clusterraster', 'mirrorrotateraster', 'linearrasterfilter', 'rankorderrasterfilter', 'areanumbering', 'sliceraster', 'boxclassification', 'aggregateraster', 'cross', 'linearstretch', 'remoteoperation', 'ilwisremotecatalog', 'wfscatalog')
             self.assertTrue(all((op in ops) for op in oper))
-            self.assertEqual("gridsize(rastercoverage,xsize|ysize|zsize)", e.operationMetaData("rastersize"))
+            self.assertEqual("gridsize(rastercoverage,dimension=xsize|ysize|zsize)", e.operationMetaData("rastersize"))
             self.assertEqual(
                 "gridding(coordinatesyste,top-coordinate,x-cell-size, y-cell-size, horizontal-cells, vertical-cells)",
                 e.operationMetaData("gridding"))
-            self.assertEqual(("iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)\n"
-                              "iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)"),
-                             e.operationMetaData("iff"))
+            self.assertEqual(("iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)"),
+                             e.operationMetaData("iffraster"))
 
         def test_Gridding(self):
             polygongrid = Engine.do("gridding", self.cs, Coordinate(225358.6605, 3849480.5700), 1000.0, 1000.0, 12, 12)
@@ -492,29 +487,32 @@ try:
             self.assertTrue(fc, msg="FeatureCoverage(rainfall.shp) not loaded correctly!")
             self.assertEqual(fc.name(), "rainfall.shp", msg="internal FeatureCoverage name wrong!")
             self.assertEqual(fc.featureCount(), 13, msg="feature count wrong")
-            self.assertTrue(fc.addColumn("sum", "value"), msg="FeatureCoverage.addAttribute failed!")
-            # att = fc.attributes()
-            # self.assertTupleEqual(att, (
-            #     'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY',
-            #     'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum'
-            # ), msg="wrong list of attributes!")
-            #self.assertEqual(len(att), 16, msg="wrong number of attributes")
+            fc.addColumn("sum", "value")
+            att = fc.attributeTable().columns()
+            self.assertTupleEqual(att, (
+                'RAINFALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY',
+                'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER', 'NEWCOL', 'IDENT', 'sum'
+            ), msg="wrong list of attributes!")
+            self.assertEqual(len(att), 16, msg="wrong number of attributes")
             g = Geometry("POINT(5.4 6 9.0)", fc.coordinateSystem())
             newfeature = fc.newFeature(g)
             newfeature2 = fc.newFeature("POINT(5.4 6 9.0)", fc.coordinateSystem())
             self.assertTrue(bool(newfeature), msg="newfeature creation failed!")
-            # for c in att:
-            #     newfeature[c] = "12"
-            #     newfeature2[c] = "42"
-            #     self.assertEqual(int(newfeature[c]), 12, msg="new value of feature attribute not correct!")
-            #     self.assertEqual(int(newfeature2[c]), 42, msg="new value of feature attribute not correct!")
+            for c in att:
+                newfeature[c] = "12"
+                newfeature2[c] = "42"
+                self.assertEqual(int(newfeature[c]), 12, msg="new value of feature attribute not correct!")
+                self.assertEqual(int(newfeature2[c]), 42, msg="new value of feature attribute not correct!")
             self.assertEqual(fc.featureCount(), 15, msg="new feature count wrong")
 
-            fc_invalid = FeatureCoverage("newFC")
+            fc_invalid = FeatureCoverage() # new empty featurecoverage without coordinate system
+            fc_invalid.name("newFC")
             self.assertTrue(fc_invalid.isInternal())
             g = Geometry("POINT(5.4 6 9.0)", CoordinateSystem("code=epsg:23035"))
             with self.assertRaises(FeatureCreationError, msg="should raise FeatureCreationError"):
                 newfeature = fc_invalid.newFeature(g)
+            fc_invalid.setCoordinateSystem(CoordinateSystem("code=epsg:23035"))
+            newfeature = fc_invalid.newFeature(g)
 
         def test_FeatureIterator(self):
             fc = FeatureCoverage("rainfall.shp")
@@ -529,7 +527,10 @@ try:
                 self.assertRegex(str(f.geometry()),
                                  r"POINT\s\(([0-9\.\-]+|\-1e\+308|5\.4)\s([0-9\.\-]+|\-1e\+308|[0-9]+\.[0-9]+e\+[0-9]+)\)",
                                  msg="wrong geometry representation")
-            if fc.featureCount() == 14:
+            self.assertEqual(fc.attributeTable().column("MAY"), (10, 15, 54, 59, 14, 9, 10, 55, 60, 0, 0, 0, 0, 12, 42))
+            if fc.featureCount() == 15:
+                self.assertEqual(summ, 340.0, msg="wrong sum over rainfall in MAY!")
+            elif fc.featureCount() == 14:
                 self.assertEqual(summ, 298.0, msg="wrong sum over rainfall in MAY!")
             else:
                 self.assertEqual(summ, 286.0, msg="wrong sum over rainfall in MAY!")
@@ -563,7 +564,7 @@ try:
             self.assertEqual(f.geometry().toWKT(), "POINT (5.4000000000000004 6.0000000000000000)",
                              msg="not typecheck! butunsuccessfully altered geometry")
 
-            with self.assertRaises(IndexError, msg="no IndexError on call of wrong attribute"):
+            with self.assertRaises(IndexError, msg="IndexError: No attribute 'wrongColum' found"):
                 v = f["wrongColum"]
             v = f["String"]
             self.assertTrue(type(v) is str)
@@ -573,20 +574,20 @@ try:
                              msg="no real type check here since it could be converted back and forth")
 
             self.assertEqual(f["Integer"], 4123045)
-            f["Integer"] = -1e+15  # -9223372036854775808
-            self.assertEqual(-1e+15, f["Integer"])  # MIN(qlonglong)
-            f["Integer"] = -1e+15 - 1
-            self.assertEqual(Const.rUNDEF, f["Integer"])  # MIN(qlonglong)
-            f["Integer"] = -9223372036854775809
-            self.assertEqual(-1, f["Integer"])  # overflow(MIN-1)
-            f["Integer"] = 1e+15  # 9223372036854775807
-            self.assertEqual(1e+15, f["Integer"])  # MAX(qlonglong)
-            f["Integer"] = 1e+15 + 1
-            self.assertEqual(Const.rUNDEF, f["Integer"])  # overflow(MAX+1)
-            f["Integer"] = 9223372036854775808
-            self.assertEqual(-1, f["Integer"])  # overflow(MAX+1)
-            f["Integer"] = "9223372036854775808"
-            self.assertEqual(Const.rUNDEF, f["Integer"])  # overflow(MAX+1)
+            f["Integer"] = -2147483648 # MIN (qint32)
+            self.assertEqual(-2147483648, f["Integer"])
+            f["Integer"] = -2147483649 # MIN (qint32) - 1
+            self.assertEqual(Const.rUNDEF, f["Integer"])
+            # f["Integer"] = -9223372036854775809
+            # self.assertEqual(-1, f["Integer"])  # overflow(MIN-1)
+            f["Integer"] = 2147483647 # MAX (qint32)
+            self.assertEqual(2147483647, f["Integer"])
+            f["Integer"] = 2147483648 # MAX (qint32) + 1
+            self.assertEqual(Const.rUNDEF, f["Integer"])
+            # f["Integer"] = 9223372036854775808
+            # self.assertEqual(-1, f["Integer"])  # overflow(MAX+1)
+            # f["Integer"] = "9223372036854775808"
+            # self.assertEqual(Const.rUNDEF, f["Integer"])  # overflow(MAX+1)
 
             f["Float"] = "9223372036854775808"
             self.assertEqual("9223372036854775808", f["Float"])
@@ -794,10 +795,10 @@ try:
             box = Box(gr.size())
             env = gr.box2Envelope(box)
             self.assertEqual("0 0 0 1151 1151 0", str(box))
-            self.assertEqual("-4.61199e+06 -4.60397e+06 4.60401e+06 4.61203e+06", str(env))
+            self.assertEqual("-4611990.248000 -4603967.493500 4604009.752000 4612032.506500", str(env))
             subenv = Envelope(Coordinate(-1e+06, -1e+06), Coordinate(1e+06, 1e+06))
             subbox = gr.envelope2Box(subenv)
-            self.assertEqual("-1e+06 -1e+06 1e+06 1e+06", str(subenv))
+            self.assertEqual("-1000000.000000 -1000000.000000 1000000.000000 1000000.000000", str(subenv))
             self.assertEqual("451 451 701 701", str(subbox))
             self.assertEqual("pixel(536.599,478.436)", str(gr.coord2Pixel(Coordinate(-319195.47, 784540.64))))
             self.assertEqual("coordinate(-319198.248000,784544.506500)", str(gr.pixel2Coord(PixelD(536.599, 478.436))))
@@ -915,7 +916,7 @@ try:
             self.assertEqual(rctif.pix2value(pix), 29.0)
 
             aa7 = Engine.do("sin", rc)
-            self.assertAlmostEqual(aa7.pix2value(pix), -0.663, 3)
+            self.assertAlmostEqual(aa7.pix2value(pix), -0.6636, 3)
 
             aa1 = rc + rctif
             self.assertEqual(aa1.pix2value(pix), 29.0 + 29.0)
@@ -951,35 +952,52 @@ try:
             self.assertAlmostEqual(aa16.pix2value(pix), sqrt(29), 2)
 
             aa1.store(workingDir + tempDir + "/n000302_frommpr", "GTiff", "gdal")
+            aa16 = None
+            aa15 = None
+            aa14 = None
+            aa13 = None
+            aa12 = None
+            aa11 = None
+            aa10 = None
+            aa9 = None
 
         #@ut.skip("temporarily")
         def test_RasterCalculationsDifferentGeoref(self):
             rc1 = RasterCoverage("subkenya.mpr")
             rc2 = RasterCoverage("kenya_2009ndvi_cor_22.mpr")
-            pix = Pixel(120, 120, 0)
+            pix = Pixel(120, 120, 0) # offset is (0, 0, 0), thus in ilwis3 terms this is pixel (121, 121)
             self.assertTrue(pix in rc1.size())
             self.assertEqual(rc1.pix2value(pix), 96.0)
-            aa1 = rc1 + rc2
+            aa1 = rc1 + rc2 # rc2 is automatically resampled to rc1; the value at Pixel(120,120,0) is 0.201146909738264 (probably the Ilwis4 "resample" shifts the image right-down by one pixel.
+            valrc1 = 96.0
+            valrc2 = 0.201146909738264
             aa1.store(workingDir + rasterDir + "/kenya_frommpr", "map", "ilwis3")
-            self.assertAlmostEqual(aa1.pix2value(pix), 96.0 + 0.201173, 1)
+            self.assertAlmostEqual(aa1.pix2value(pix), valrc1 + valrc2, 4)
             aa2 = rc1 - rc2
-            self.assertAlmostEqual(aa2.pix2value(pix), 96.0 - 0.201173, 1)
+            self.assertAlmostEqual(aa2.pix2value(pix), valrc1 - valrc2, 4)
             aa3 = rc1 * rc2
-            self.assertAlmostEqual(aa3.pix2value(pix), 96.0 * 0.201173, 1)
+            self.assertAlmostEqual(aa3.pix2value(pix), valrc1 * valrc2, 4)
             aa4 = rc1 / rc2
-            self.assertAlmostEqual(aa4.pix2value(pix), 96.0 / 0.201173, 1)
+            self.assertAlmostEqual(aa4.pix2value(pix), valrc1 / valrc2, 4)
             aa5 = rc1 + rc2 / 3
-            self.assertAlmostEqual(aa5.pix2value(pix), 96.0 + 0.1915 / 3, 1)
+            self.assertAlmostEqual(aa5.pix2value(pix), valrc1 + valrc2 / 3, 4)
             aa5 = rc1 / 3 + rc2
-            self.assertAlmostEqual(aa5.pix2value(pix), 96.0 / 3 + 0.201173, 1)
+            self.assertAlmostEqual(aa5.pix2value(pix), valrc1 / 3 + valrc2, 4)
             aa6 = 2 * rc1 - rc2
-            self.assertAlmostEqual(aa6.pix2value(pix), 2 * 96.0 - 0.201173, 1)
+            self.assertAlmostEqual(aa6.pix2value(pix), 2 * valrc1 - valrc2, 4)
             aa7 = rc1 + rc2 - 2
-            self.assertAlmostEqual(aa7.pix2value(pix), 96.0 + 0.201173 - 2, 1)
+            self.assertAlmostEqual(aa7.pix2value(pix), valrc1 + valrc2 - 2, 4)
             aa8 = rc1 + rc2 + 2
-            self.assertAlmostEqual(aa8.pix2value(pix), 96.0 + 0.201173 + 2, 1)
-
-
+            self.assertAlmostEqual(aa8.pix2value(pix), valrc1 + valrc2 + 2, 4)
+            aa8 = None
+            aa7 = None
+            aa6 = None
+            aa5 = None
+            aa4 = None
+            aa3 = None
+            aa2 = None
+            aa1 = None
+            gc.collect()
 
         #@ut.skip("temporarily")
         def test_RasterSelectionWKT(self):
@@ -1032,14 +1050,15 @@ try:
 
             dat = rc.datadef()
             self.assertTrue(bool(dat), msg="couldn't load datadefinition")
-            dat2 = rc3.datadef()
+            dat2 = rc2.datadef()
             dat3 = rc3.datadef()
 
             self.assertTrue(bool(dat2))
+            self.assertTrue(bool(dat3))
             self.assertTrue(dat.isCompatibleWith(dat2), msg="datadefinitions are not compatible")
             self.assertTrue(dat.isCompatibleWith(dat3), msg="datadefinition of submap is not compatible")
 
-            datmerge = dat.merge(dat, dat2)
+            datmerge = DataDefinition.merge(dat, dat2)
             self.assertTrue(bool(datmerge), msg="couldn't merge datadefinitions")
 
             dat3 = dat
@@ -1195,6 +1214,18 @@ try:
             rcReproj2 = rc.reprojectRaster("newraster", 2050, "bilinear")
             self.assertTrue(bool(rcReproj2))
 
+            rc = None
+            sz = None
+            bo = None
+            targetEnv = None
+            sourceCsy = None
+            sourceGeoref = None
+            newGeoRefStr = None
+            targetGeoRef = None
+            rcReproj2 = None
+            rcReproj = None
+            gc.collect()
+
     #@ut.skip("temporarily")
     class TestExample(ut.TestCase):  # and martins solution proposal <== example code for presentation
         def setUp(self):
@@ -1225,7 +1256,7 @@ try:
 
             polygongrid.store(workingDir + exampleDir + "/polygongrid", "vectormap", "ilwis3")
 
-        #@ut.skip("temporarily")
+        @ut.skip("temporarily")
         def test_claudio2(self):
             import numpy as np
             Engine.setWorkingCatalog(workingDir + rasterDir)
@@ -1325,7 +1356,7 @@ try:
             world = FeatureCoverage("countries.mpa")
             if bool(world) and not world.isInternal():
                 population_ranking = {}
-                self.assertEqual(286, world.featureCount())
+                self.assertEqual(177, world.featureCount())
                 for country in world:
                     name = country["iso_a2"]
                     if name not in population_ranking:
@@ -1373,7 +1404,8 @@ try:
 
         #@ut.skip("temporarily")
         def test_IlwisObject(self):
-            fc = FeatureCoverage("newFC")
+            fc = FeatureCoverage()
+            fc.name("newFC")
             self.assertEqual("newFC", fc.name())
             fc.name("newName")
             self.assertEqual("newName", fc.name())
@@ -1395,9 +1427,9 @@ try:
             recCount = table.recordCount()
             self.assertEqual(177, recCount)
             colCount = table.columnCount()
-            self.assertEqual(63, colCount)
+            self.assertEqual(64, colCount)
             columns = table.columns()  # ('column1','column2',...)
-            self.assertEqual(63, len(columns))
+            self.assertEqual(64, len(columns))
             self.assertEqual(42, table.columnIndex("iso_a2"))
             self.assertEqual(Const.iUNDEF, table.columnIndex("ihfg"))
             column = table.column(42)
@@ -1405,9 +1437,9 @@ try:
             column1 = table.column("iso_a2")
             self.assertEqual(column, column1)
             record = table.record(4)
-            self.assertEqual(63, len(record))
+            self.assertEqual(64, len(record))
             table.addColumn("newCol", "value")
-            self.assertEqual(64, table.columnCount())
+            self.assertEqual(65, table.columnCount())
 
     #@ut.skip("temporarily")
     class TestIntegration(ut.TestCase):
@@ -1474,6 +1506,7 @@ try:
             parentnumdom.setRange(nr2)
 
             childnumdom.setParent(parentnumdom)
+            childnumdom.setStrict(False)
 
             self.assertEqual(childnumdom.contains(20), "cSELF")
             self.assertEqual(childnumdom.contains(80), "cPARENT")
@@ -1495,6 +1528,7 @@ try:
             parentnumdom.setRange(nr2)
 
             childnumdom.setParent(parentnumdom)
+            childnumdom.setStrict(False)
 
             self.assertEqual(childnumdom.contains(12.8), "cSELF")
             self.assertEqual(childnumdom.contains(72.2), "cPARENT")
@@ -2118,16 +2152,31 @@ try:
             rc2.addBand(1, band4)
             self.assertEqual(str(rc2.indexes()), "('0', '1')")
 
-            vals1 = []
+            # vals1 = []
+            vals1 = 0
             for val1 in band3:
-                vals1.append(val1)
+            #    vals1.append(val1)
+                vals1 += val1
 
-            vals2 = []
+            # vals2 = []
+            vals2 = 0
             rc2Band0 = rc2.band(0)
             for val2 in rc2Band0:
-                vals2.append(val2)
+            #    vals2.append(val2)
+                vals2 += val2
 
             self.assertTrue(vals1 == vals2)
+
+            vals1 = None
+            vals2 = None
+            band3 = None
+            band4 = None
+            rc2Band0 = None
+            rc2 = None
+            rc = None
+            numRan = None
+            numDom = None
+            gc.collect()
 
         def test_timeIndex(self):
             rc = RasterCoverage("average_monthly_temperature.mpl")
@@ -2145,16 +2194,32 @@ try:
             rc2.addBand(date(2015, 3, 17), band4)
             #self.assertEqual(str(rc2.indexes()), "(datetime.date(2015, 2, 17), datetime.date(2015, 3, 17))")
 
-            vals1 = []
+            # vals1 = []
+            vals1 = 0
             for val1 in band3:
-                vals1.append(val1)
+            #    vals1.append(val1)
+                vals1 += val1
 
-            vals2 = []
+            # vals2 = []
+            vals2 = 0
             rc2Band0 = rc2.band(date(2015, 2, 17))
             for val2 in rc2Band0:
-                vals2.append(val2)
+            #    vals2.append(val2)
+                vals2+= val2
 
             self.assertTrue(vals1 == vals2)
+
+            vals1 = None
+            vals2 = None
+            band3 = None
+            band4 = None
+            rc2Band0 = None
+            rc2 = None
+            rc = None
+            numRan = None
+            numDom = None
+            gc.collect()
+
 
     #@ut.skip("temporarily")
     class TestSpreadsheet(ut.TestCase):
