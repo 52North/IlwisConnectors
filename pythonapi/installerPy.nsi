@@ -255,6 +255,7 @@ Section "un.ILWIS Objects"
     RmDir /r $Instdir\plugins
     RmDir /r $Instdir\resources
     Delete $Instdir\libgeos*.dll
+    Delete $Instdir\httpserver.dll
     Delete $Instdir\icudt51.dll
     Delete $Instdir\icuin51.dll
     Delete $Instdir\icuuc51.dll
