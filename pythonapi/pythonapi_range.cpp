@@ -270,7 +270,7 @@ qint32 NumericItemRange::gotoIndex(qint32 index, qint32 step) const
 NumericItemRange *NumericItemRange::clone()
 {
     NumericItemRange* newRange = new NumericItemRange();
-    newRange->_range.reset(static_cast<Ilwis::IntervalRange*>(this->_range.get()));
+    newRange->_range.reset(static_cast<Ilwis::IntervalRange*>(this->_range.get()->clone()));
     return newRange;
 }
 
@@ -313,7 +313,7 @@ qint32 IndexedItemRange::gotoIndex(qint32 index, qint32 step) const
 IndexedItemRange *IndexedItemRange::clone()
 {
     IndexedItemRange* newRange = new IndexedItemRange();
-    newRange->_range.reset(static_cast<Ilwis::IndexedIdentifierRange*>(this->_range.get()));
+    newRange->_range.reset(static_cast<Ilwis::IndexedIdentifierRange*>(this->_range.get()->clone()));
     return newRange;
 }
 
@@ -349,7 +349,7 @@ qint32 NamedItemRange::gotoIndex(qint32 index, qint32 step) const
 NamedItemRange *NamedItemRange::clone()
 {
     NamedItemRange* newRange = new NamedItemRange();
-    newRange->_range.reset(static_cast<Ilwis::NamedIdentifierRange*>(this->_range.get()));
+    newRange->_range.reset(static_cast<Ilwis::NamedIdentifierRange*>(this->_range.get()->clone()));
     return newRange;
 }
 
@@ -414,7 +414,7 @@ PyObject* ThematicRange::listAll(){
 ThematicRange *ThematicRange::clone()
 {
     ThematicRange* newRange = new ThematicRange();
-    newRange->_range.reset(static_cast<Ilwis::ThematicRange*>(this->_range.get()));
+    newRange->_range.reset(static_cast<Ilwis::ThematicRange*>(this->_range.get()->clone()));
     return newRange;
 }
 
