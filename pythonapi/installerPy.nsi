@@ -160,6 +160,7 @@ Section "ILWIS Objects (required)" IOSecID
     File /r bin\resources\*
     SetOutPath "$Instdir"
     File bin\libgeos*.dll
+    File bin\httpserver.dll
     File bin\icudt51.dll
     File bin\icuin51.dll
     File bin\icuuc51.dll
