@@ -18,7 +18,9 @@ namespace pythonapi {
 
     //=======std::exception->PyError==========
     void log(std::string message){
+#ifdef QT_DEBUG
         PySys_WriteStderr("ILWIS %s \n",message.c_str());
+#endif
     }
 
     PyObject* ilwisException;
