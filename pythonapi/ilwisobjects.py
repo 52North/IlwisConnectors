@@ -3938,10 +3938,13 @@ class DataDefinition(_object):
         return _ilwisobjects.DataDefinition_isCompatibleWith(self, datdef)
 
 
-    def merge(self, datdef1, datdef2):
-        """merge(DataDefinition self, DataDefinition datdef1, DataDefinition datdef2) -> DataDefinition"""
-        return _ilwisobjects.DataDefinition_merge(self, datdef1, datdef2)
+    def merge(datdef1, datdef2):
+        """merge(DataDefinition datdef1, DataDefinition datdef2) -> DataDefinition"""
+        return _ilwisobjects.DataDefinition_merge(datdef1, datdef2)
 
+    if _newclass:
+        merge = staticmethod(merge)
+    __swig_getmethods__["merge"] = lambda x: merge
 
     def __set__(self, datdef):
         """__set__(DataDefinition self, DataDefinition datdef) -> DataDefinition"""
@@ -3965,6 +3968,10 @@ class DataDefinition(_object):
 
 DataDefinition_swigregister = _ilwisobjects.DataDefinition_swigregister
 DataDefinition_swigregister(DataDefinition)
+
+def DataDefinition_merge(datdef1, datdef2):
+    """DataDefinition_merge(DataDefinition datdef1, DataDefinition datdef2) -> DataDefinition"""
+    return _ilwisobjects.DataDefinition_merge(datdef1, datdef2)
 
 class ColumnDefinition(_object):
     """Proxy of C++ pythonapi::ColumnDefinition class."""

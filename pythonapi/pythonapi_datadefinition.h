@@ -30,7 +30,7 @@ public:
     void range(const Range &rng);
     void domain(const Domain &dm);
     bool isCompatibleWith(const DataDefinition& datdef);
-    DataDefinition* merge(const DataDefinition& datdef1, const DataDefinition& datdef2);
+    static DataDefinition* merge(const DataDefinition& datdef1, const DataDefinition& datdef2);
     DataDefinition* __set__(const DataDefinition& datdef);
 
     Range* range() const;

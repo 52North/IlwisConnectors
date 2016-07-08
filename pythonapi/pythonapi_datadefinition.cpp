@@ -68,9 +68,9 @@ bool DataDefinition::isCompatibleWith(const DataDefinition& datdef){
 DataDefinition* DataDefinition::merge(const DataDefinition& datdef1, const DataDefinition& datdef2){
     DataDefinition* newDatdef = new DataDefinition();
 
-    Ilwis::DataDefinition ilwdef = this->ptr().merge(datdef1.ptr(), datdef2.ptr());
+    Ilwis::DataDefinition ilwdef = Ilwis::DataDefinition::merge(datdef1.ptr(), datdef2.ptr());
 
-    newDatdef->_ilwisDatadef.reset(&ilwdef);
+    newDatdef->_ilwisDatadef.reset(new Ilwis::DataDefinition(ilwdef));
     return newDatdef;
 }
 

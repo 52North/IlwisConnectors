@@ -33593,24 +33593,23 @@ fail:
 
 SWIGINTERN PyObject *_wrap_DataDefinition_merge(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  pythonapi::DataDefinition *arg1 = (pythonapi::DataDefinition *) 0 ;
+  pythonapi::DataDefinition *arg1 = 0 ;
   pythonapi::DataDefinition *arg2 = 0 ;
-  pythonapi::DataDefinition *arg3 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
   int res2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
   pythonapi::DataDefinition *result = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOO:DataDefinition_merge",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_pythonapi__DataDefinition, 0 |  0 );
+  if (!PyArg_ParseTuple(args,(char *)"OO:DataDefinition_merge",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_pythonapi__DataDefinition,  0  | 0);
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataDefinition_merge" "', argument " "1"" of type '" "pythonapi::DataDefinition *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataDefinition_merge" "', argument " "1"" of type '" "pythonapi::DataDefinition const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataDefinition_merge" "', argument " "1"" of type '" "pythonapi::DataDefinition const &""'"); 
   }
   arg1 = reinterpret_cast< pythonapi::DataDefinition * >(argp1);
   res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_pythonapi__DataDefinition,  0  | 0);
@@ -33621,17 +33620,9 @@ SWIGINTERN PyObject *_wrap_DataDefinition_merge(PyObject *SWIGUNUSEDPARM(self), 
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataDefinition_merge" "', argument " "2"" of type '" "pythonapi::DataDefinition const &""'"); 
   }
   arg2 = reinterpret_cast< pythonapi::DataDefinition * >(argp2);
-  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_pythonapi__DataDefinition,  0  | 0);
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "DataDefinition_merge" "', argument " "3"" of type '" "pythonapi::DataDefinition const &""'"); 
-  }
-  if (!argp3) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataDefinition_merge" "', argument " "3"" of type '" "pythonapi::DataDefinition const &""'"); 
-  }
-  arg3 = reinterpret_cast< pythonapi::DataDefinition * >(argp3);
   {
     try {
-      result = (pythonapi::DataDefinition *)(arg1)->merge((pythonapi::DataDefinition const &)*arg2,(pythonapi::DataDefinition const &)*arg3);
+      result = (pythonapi::DataDefinition *)pythonapi::DataDefinition::merge((pythonapi::DataDefinition const &)*arg1,(pythonapi::DataDefinition const &)*arg2);
     }catch (std::exception& e) {
       PyErr_SetString(pythonapi::translate_Exception_type(e),pythonapi::get_err_message(e));
       SWIG_fail;
@@ -38027,7 +38018,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"DataDefinition___str__", _wrap_DataDefinition___str__, METH_VARARGS, (char *)"DataDefinition___str__(DataDefinition self) -> std::string"},
 	 { (char *)"DataDefinition___bool__", _wrap_DataDefinition___bool__, METH_VARARGS, (char *)"DataDefinition___bool__(DataDefinition self) -> bool"},
 	 { (char *)"DataDefinition_isCompatibleWith", _wrap_DataDefinition_isCompatibleWith, METH_VARARGS, (char *)"DataDefinition_isCompatibleWith(DataDefinition self, DataDefinition datdef) -> bool"},
-	 { (char *)"DataDefinition_merge", _wrap_DataDefinition_merge, METH_VARARGS, (char *)"DataDefinition_merge(DataDefinition self, DataDefinition datdef1, DataDefinition datdef2) -> DataDefinition"},
+	 { (char *)"DataDefinition_merge", _wrap_DataDefinition_merge, METH_VARARGS, (char *)"DataDefinition_merge(DataDefinition datdef1, DataDefinition datdef2) -> DataDefinition"},
 	 { (char *)"DataDefinition___set__", _wrap_DataDefinition___set__, METH_VARARGS, (char *)"DataDefinition___set__(DataDefinition self, DataDefinition datdef) -> DataDefinition"},
 	 { (char *)"DataDefinition_range", _wrap_DataDefinition_range, METH_VARARGS, (char *)"\n"
 		"range(Range rng)\n"
