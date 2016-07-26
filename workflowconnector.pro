@@ -30,7 +30,8 @@ win32:CONFIG(release, debug|release): {
 
 INCLUDEPATH +=  $$PWD/core \
                 $$PWD/../external/geos \
-                $$PWD/extensions/workflow
+                $$PWD/core\ilwisobjects\operation \
+                $$PWD/core\ilwisobjects\workflow
 
 DEPENDPATH +=   $$PWD/core \
                 $$PWD/../external/geos 
@@ -45,13 +46,15 @@ HEADERS += \
     workflowconnector/workflowconnectormodule.h \ 
     workflowconnector/workflowcatalogexplorer.h \
     workflowconnector/workflowconnectorobjectfactory.h \
-    workflowconnector/workflowjsonconnector.h
+    workflowconnector/workflowjsonconnector.h \
+    workflowconnector/jsonconfig.h
 
 SOURCES += \
     workflowconnector/workflowconnectormodule.cpp \ 
     workflowconnector/workflowcatalogexplorer.cpp \
     workflowconnector/workflowconnectorobjectfactory.cpp \
-    workflowconnector/workflowjsonconnector.cpp
+    workflowconnector/workflowjsonconnector.cpp \
+    workflowconnector/jsonconfig.cpp
 
 linux{
     dependencies.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET

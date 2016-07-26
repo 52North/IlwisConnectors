@@ -11,8 +11,8 @@
 #include "operationmetadata.h"
 #include "operationExpression.h"
 #include "operation.h"
+#include "jsonconfig.h"
 #include "workflow/workflow.h"
-#include "workflow/workflowoperationimplementation.h"
 #include "WorkflowJSONConnector.h"
 
 using namespace Ilwis;
@@ -68,38 +68,20 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
     QJsonObject allworkflows;
     QJsonArray workflows;   // top-level object, contains array of workflows
 
+    QString workflowPath = workflow->resourceRef().container(true).toLocalFile();
+    _config.loadSystemConfig(QString("%1/config.json").arg(workflowPath));
+    _config.loadUserConfig(QString("%1/userconfig.json").arg(workflowPath));
+
     QJsonObject single = createJSONWorkflow(workflow->resource());
     single["metadata"] = createJSONWorkflowMetaData(workflow->resource());
 
     // deal with all the operations
     QJsonArray operations;
-    int operID = 0;
 
     QList<OVertex> inputOperations = workflow->getNodesWithExternalInput();
     parseInputNodeArguments(workflow, inputOperations);
 
-/*
-    QList<OVertex> outputOperations = workflow->getNodesWithExternalOutputs();
-    for (int operIndex = 0; operIndex < outputOperations.size(); ++operIndex) {
-        QJsonObject operation;
-        QJsonObject obj = createJSONOperationMetadata(operIndex);
-        operation["id"] = QString::number(operID);
-        operation["metadata"] = obj;
-        operations.append(operation);
-
-        bool ok = reverseFollowPath(workflow, outputOperations[operIndex], completedOutput, operations, operIndex);
-        if (!ok)
-        {
-            ERROR0("Workflow deduction failed, probably incomplete!");
-            return false;
-        }
-    }
-    // TODO: replace unknown inputs, outputs
-
-    return true;
-*/
     std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = workflow->getNodeIterators();
-//    int size = nodeIterators.second - nodeIterators.first;
 
     for (auto iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
         OVertex v = *iter;
@@ -110,7 +92,7 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
         if (res.isValid()) {
             QJsonObject operation;
             QJsonObject obj = createJSONOperationMetadata(res);
-            operation["id"] = QString::number(operID);
+            operation["id"] = QString::number(v);
             operation["metadata"] = obj;
             operation["inputs"] = createJSONOperationInputList(workflow, v);
             operation["outputs"] = createJSONOperationOutputList(workflow, v);
@@ -119,8 +101,7 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
     }
     single["operations"] = operations;
 
-    QJsonArray connect;
-    single["connections"] = connect;
+    single["connections"] = createJSONOperationConnectionList(workflow);
 
     workflows.append(single);
 
@@ -138,16 +119,8 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
     return true;
 }
 
-/*
- * // copy of python connector
-bool WorkflowJSONConnector::store(IlwisObject *obj, const IOOptions &options)
+void WorkflowJSONConnector::parseOutputNames(OperationExpression expression)
 {
-    Workflow *workflow = static_cast<Workflow *>(obj);
-
-    if ( !options.contains("expression"))
-        return false;
-
-    auto expression = options["expression"].value<OperationExpression>();
     QString expr = expression.input<QString>(0); // we dont want the script command, just its tail
     int assignIndex = expr.indexOf("=");
     QString rightTerm = expr.mid(assignIndex + 1);
@@ -165,45 +138,8 @@ bool WorkflowJSONConnector::store(IlwisObject *obj, const IOOptions &options)
         _outputNames.append(res);
     }
     _expression = rightTerm;
-
-    QStringList names, script;
-    QList<OVertex> inputNodes = workflow->getNodesWithExternalInput();
-    parseInputNodeArguments(workflow, inputNodes);
-
-    QList<OVertex> outputNodes = workflow->getNodesWithExternalOutputs();
-    for (int i = 0; i<outputNodes.size(); ++i) {
-        bool ok = reverseFollowPath(workflow, outputNodes[i], names, script,i);
-        if (!ok) {
-            ERROR0("Workflow deduction failed, probably incomplete!");
-            return false;
-        }
-
-   }
-
-    if (!openTarget())
-        return false;
-    QTextStream stream(_datasource.get());
-    QString txt = script.join("\n");
-    int parmIndex;
-    int count = 1;
-    while((parmIndex = txt.indexOf("?input_")) != -1){
-        QString front = txt.left(parmIndex);
-        QString back = txt.mid(parmIndex + 8);
-        txt = front + "argv[" + QString::number(count) + "]" + back;
-        ++count;
-    }
-    while((parmIndex = txt.indexOf("?output_")) != -1){
-        QString front = txt.left(parmIndex);
-        QString back = txt.mid(parmIndex + 9);
-        txt = front + "argv[" + QString::number(count) + "]" + back;
-        ++count;
-    }
-    stream << txt;
-    stream.device()->close();
-    return true;
-
 }
-*/
+
 void WorkflowJSONConnector::parseInputNodeArguments(Workflow *workflow, const QList<OVertex> &inputNodes)
 {
     // cache inputs, might go into multiple operations
@@ -367,7 +303,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         input["value"] = QString("");
         input["name"] = parameter->term();  // weird naming!!
         input["type"] = parameter->name();  // weird naming!!
-        input["id"] = QString("");
+        input["id"] = QString("");  // filled in in the coming sections
         input["optional"] = parameter->isOptional();
         input["description"] = parameter->description();
 
@@ -441,15 +377,41 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workfl
     // get the metadata from the operation
     IOperationMetaData meta = workflow->getOperationMetadata(v);
     std::vector<SPOperationParameter> params = meta->getOutputParameters();
+    QStringList names;
+    addGeneratedNames(v, names, meta);
+
+    // Identify the parameters that are actual workflow outputs
+    std::vector<int> actual(params.size());
+    int n = 0;
+    std::generate(actual.begin(), actual.end(), [&n]{ return n++; });
+    std::pair<OutEdgeIterator, OutEdgeIterator> ei = workflow->getOutEdges(v);
+    for (auto &edge = ei.first; edge < ei.second; ++edge) {
+        EdgeProperties edgeData = workflow->edgeProperties(*edge);
+        actual[edgeData._outputParameterIndex] = -1;    // has internal connection, so remove from actual outputs
+    }
+
+    int index = 0;
     foreach (SPOperationParameter parameter, params) {
         QJsonObject output;
-        output["url"] = QString("");
-        output["value"] = QString("");
+        QString url("");
+        output["url"] = url;
+        output["value"] = url;
         output["name"] = parameter->term();  // weird naming!!
         output["type"] = parameter->name();  // weird naming!!
-        output["id"] = QString("");
+        output["id"] = QString("%1").arg(index);
         output["optional"] = parameter->isOptional();
         output["description"] = parameter->description();
+        if (actual[index] != -1) { // an actual workflow output parameter
+            names[index] += "_out";
+        }
+        url = names[index];
+        if (hasType(parameter->type(), itILWISOBJECT)) {
+            output["url"] = url;
+        }
+        else {
+            output["value"] = url;
+        }
+        index++;
 
         outputs.append(output);
     }
@@ -457,9 +419,25 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workfl
     return outputs;
 }
 
-QJsonArray WorkflowJSONConnector::createJSONOperationConnectionList(const Resource &res) {
+QJsonArray WorkflowJSONConnector::createJSONOperationConnectionList(Workflow *workflow) {
     QJsonArray connections;
+
+    std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = workflow->getNodeIterators();
+    for (auto iterOper = nodeIterators.first; iterOper < nodeIterators.second; ++iterOper) {
+        std::pair<OutEdgeIterator, OutEdgeIterator> edgeIterators = workflow->getOutEdges(*iterOper);
+
+        for (auto &edge = edgeIterators.first; edge < edgeIterators.second; ++edge) {
+            OVertex toVertex = workflow->getTargetOperationNode(*edge);
+            EdgeProperties edgeData = workflow->edgeProperties(*edge);
+            QJsonObject connection;
+            connection["fromOperationID"] = (int) *iterOper;
+            connection["fromParameterID"] = edgeData._outputParameterIndex;
+            connection["toOperationID"] = (int) toVertex;
+            connection["toParameterID"] = edgeData._inputParameterIndex;
+
+            connections.append(connection);
+        }
+    }
 
     return connections;
 }
-

@@ -32,10 +32,12 @@ namespace WorkflowConnector {
         QJsonObject createJSONOperationList(const Resource &res);
         QJsonArray createJSONOperationInputList(Workflow* workflow, const OVertex v);
         QJsonArray createJSONOperationOutputList(Ilwis::Workflow *workflow, const Ilwis::OVertex v);
-        QJsonArray createJSONOperationConnectionList(const Resource &res);
+        QJsonArray createJSONOperationConnectionList(Ilwis::Workflow *workflow);
         bool openTarget();
 
         std::unique_ptr<QIODevice> _datasource;
+
+        JsonConfig _config;
 
         QByteArray _data;
         QMap<OVertex, QStringList> _nodeExecutionContext;   // contains a list of completed operations
@@ -43,12 +45,9 @@ namespace WorkflowConnector {
         OperationExpression _expression;
         QStringList _outputNames;
 
-        bool reverseFollowPath(Workflow *workflow, const OVertex &v, QStringList &names, QStringList &script,int order=-1);
-        bool doInputEdges(InEdgeIterator &ei, const InEdgeIterator &ei_end, Ilwis::Workflow *workflow, const OVertex &v, QStringList &arguments, QStringList &script);
-        void executeInputNode(Workflow *workflow, const OVertex &v, QStringList &names, QStringList &script);
+        void parseOutputNames(OperationExpression expression);
         void parseInputNodeArguments(Ilwis::Workflow *workflow, const QList<OVertex> &inputNodes);
         void addGeneratedNames(const OVertex &v, QStringList& names, const Ilwis::IOperationMetaData &meta);
-        QString createArgumentList(const Ilwis::IOperationMetaData &meta, const QStringList &arguments);
     };
 
 }
