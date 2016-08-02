@@ -2,6 +2,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QStringBuilder>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "symboltable.h"
@@ -83,6 +84,7 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
 
     std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = workflow->getNodeIterators();
 
+    QStringList wmsList;
     for (auto iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
         OVertex v = *iter;
         NodeProperties nodeData = workflow->nodeProperties(*iter);
@@ -94,8 +96,8 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
             QJsonObject obj = createJSONOperationMetadata(res);
             operation["id"] = QString::number(v);
             operation["metadata"] = obj;
-            operation["inputs"] = createJSONOperationInputList(workflow, v);
-            operation["outputs"] = createJSONOperationOutputList(workflow, v);
+            operation["inputs"] = createJSONOperationInputList(workflow, v, wmsList);
+            operation["outputs"] = createJSONOperationOutputList(workflow, v, wmsList);
             operations.append(operation);
         }
     }
@@ -291,7 +293,24 @@ QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const Resource &r
     return jsonMeta;
 }
 
-QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflow, const OVertex v) {
+/*
+    Add all workflow input fields to the json document. This happens both
+    for internal connections and actual input nodes.
+
+    Pre-assigned inputs are taken as is (it is assumed they point to actual existing objects)
+
+    External inputs that are not specified remain empty (this should be avoided, because that
+    invalidates the output Json file!).
+
+    Internal inputs get a name (auto-generated) based on the name of the operation
+    that provides the input and its corresponding output edge number. The user input folder
+    is used to create an actual local file location.
+
+    Every input is also added into a local file list. The list links the WMS layername
+    with the local filename. This necessary to find the correct local file, when the
+    Json file is interpreted as a workflow.
+ */
+QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflow, const OVertex v, QStringList wmsList) {
     QJsonArray inputs;
 
     // get the metadata from the operation
@@ -311,7 +330,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         inputs.append(input);
     }
 
-    // pre-assigned values
+    // pre-assigned values, fully qualified filename / url
     for (InputAssignment assignment : workflow->getConstantInputAssignments(v)) {
         SPAssignedInputData inputValue = workflow->getAssignedInputData(assignment);
         QJsonObject input = inputs.at(assignment.second).toObject();
@@ -319,8 +338,12 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         SPOperationParameter parm = meta->inputParameter(assignment.second);
         if (parm) {
             if (hasType(parm->type(), itCOVERAGE)) {
-                input["local"] = inputValue->value;
-                input["url"] = _config.getWMSGetMapURL(inputValue->value);
+                QString url = inputValue->value;
+                input["local"] = url;   // note: can be local or regular url
+                QString layerName;
+                QString wms = _config.getWMSGetMapURL(url, layerName);
+                input["url"] = wms;
+                wmsList.append("\"" % url % "\":\"" % "\"" % wms % "\"");
             }
             else {
                 input["value"] = inputValue->value;
@@ -329,7 +352,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         inputs.replace(assignment.second, input);
     }
 
-    // externals
+    // externals; this may include pre-assigned inputs
     QStringList externalInputs = _inputArgs.value(v);
     for (int i = 0 ; i < externalInputs.size() ; i++) {
         auto input = inputs[i].toObject();
@@ -345,7 +368,11 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         if (parm) {
             if (hasType(parm->type(), itCOVERAGE)) {
                 input["local"] = url;
-                input["url"] = _config.getWMSGetMapURL(url);
+                QString layerName;
+                QString wms = _config.getWMSGetMapURL(url, layerName);
+                input["url"] = wms;
+                if (url.length() > 0)
+                    wmsList.append("\"" % url % "\":\"" % "\"" % wms % "\"");
             }
             else {
                 input["value"] = url;
@@ -366,7 +393,8 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         quint16 inputEdge = edges._inputParameterIndex;
         auto input = inputs[inputEdge].toObject();
         input["id"] = QString("%1").arg(inputEdge);
-        input["url"] = names[0];
+        QString local = _config.getLocalName(names[0]);
+        input["local"] = local;
 
         inputs.replace(inputEdge, input);
     }
@@ -374,7 +402,21 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
     return inputs;
 }
 
-QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workflow, const OVertex v) {
+/*
+    Add all workflow output fields to the json document. This happens both
+    for internal connections and actual output nodes.
+
+    Internal outputs get a name (auto-generated) based on the name of the operation
+    and the output edge number. Actual output nodes get "_out" appended to the name so they
+    can be recognized. The user output folder is used to create an actual local
+    file location. The output names are generated, because they cannot yet be specified in
+    the workflow (august 2016).
+
+    Every output is also added into a local file list. The list links the WMS layername
+    with the local filename. This necessary to find the correct local file, when the
+    Json file is interpreted as a workflow.
+ */
+QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workflow, const OVertex v, QStringList wmsList) {
     QJsonArray outputs;
 
     // get the metadata from the operation
@@ -396,10 +438,10 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workfl
     int index = 0;
     foreach (SPOperationParameter parameter, params) {
         QJsonObject output;
-        QString url("");
-        output["local"] = url;
-        output["url"] = url;
-        output["value"] = url;
+        QString baseName("");
+        output["local"] = baseName;
+        output["url"] = baseName;
+        output["value"] = baseName;
         output["name"] = parameter->term();  // weird naming!!
         output["type"] = parameter->name();  // weird naming!!
         output["id"] = QString("%1").arg(index);
@@ -408,13 +450,17 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workfl
         if (actual[index] != -1) { // an actual workflow output parameter
             names[index] += "_out";
         }
-        url = names[index];
+        baseName = names[index];
         if (hasType(parameter->type(), itCOVERAGE)) {
-            output["local"] = url;
-            output["url"] = _config.getWMSGetMapURL(url);
+            QString local = _config.getLocalName(baseName);
+            output["local"] = local;
+            QString layerName;
+            QString wms = _config.getWMSGetMapURL(baseName, layerName);
+            output["url"] = wms;
+            wmsList.append("\"" % layerName % "\":\"" % "\"" % local % "\"");
         }
         else {
-            output["value"] = url;
+            output["value"] = baseName;
         }
         index++;
 

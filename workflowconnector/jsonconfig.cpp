@@ -1,6 +1,7 @@
 #include <QtDebug>
 #include <QString>
 #include <QStringBuilder>
+#include <QDir>
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -38,7 +39,12 @@ bool JsonConfig::loadSystemConfig(const QString name)
     v = geo["WMS_version"]; _wms_version = v.toString();             // f.e: 1.1.1, or 1.3.0 (needed for correct order of bbox)
     v = geo["width"]; _wms_width = v.toString();                     // f.e:  800
     v = geo["height"];_wms_height = v.toString();                    // f.e:  600
-    v = geo["Output_type"]; _out_type = v.toString();                // f.e.: "Geotiff;.tif"
+    v = geo["output_type"]; _out_type = v.toString();                // f.e.: "Geotiff;.tif"
+    QStringList parts = _out_type.split(';');
+    if (parts.size() == 2) {
+        _out_type = parts[0];
+        _out_ext = parts[1];
+    }
     QString dummy = _wms_version;
     dummy.remove(".");
     _version = dummy.toInt();
@@ -60,12 +66,15 @@ bool JsonConfig::loadUserConfig(const QString name)
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject geo = doc.object().value(QString("geoserver")).toObject();
     _workspace = geo.value(QString("workspace")).toString();
+    geo = doc.object().value(QString("datafolder")).toObject();
+    _userInFolder = geo["inputpath"].toString();
+    _userOutFolder = geo["outputpath"].toString();
 
     _isValidUser = true;
     return _isValidUser;
 }
 
-QString JsonConfig::getWMSGetMapURL(const QString layer)
+QString JsonConfig::getWMSGetMapURL(const QString layer, QString &layerName)
 {
     if (!_isValidSystem)
         return layer;
@@ -75,7 +84,7 @@ QString JsonConfig::getWMSGetMapURL(const QString layer)
 
     QUrl url(layer);
     QFileInfo fn(url.toLocalFile());
-    QString layerName = fn.completeBaseName();
+    layerName = fn.completeBaseName();
     if (fn.absolutePath().length() == 0)
         layerName = layer;
     layerName.replace(QRegExp("[ \\.]"), "_");   // layer name for use in WMS server
@@ -91,6 +100,17 @@ QString JsonConfig::getWMSGetMapURL(const QString layer)
 
     return base % QString("?") % request;
 
+}
+
+QString JsonConfig::getLocalName(const QString localName) {
+    if (localName.length() == 0)
+        return localName;
+
+    QFileInfo fi;
+    QString name = localName % _out_ext;
+    fi.setFile(QDir(_userInFolder), name);
+
+    return fi.absoluteFilePath();
 }
 
 QString JsonConfig::getSRS()

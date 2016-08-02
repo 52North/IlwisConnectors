@@ -19,10 +19,13 @@ class JsonConfig
     QString _wms_width;
     QString _wms_height;
     QString _out_type;
+    QString _out_ext;
     int _version;
 
     // User config:
     QString _workspace;
+    QString _userInFolder;
+    QString _userOutFolder;
 
 public:
     JsonConfig();
@@ -32,10 +35,10 @@ public:
     bool loadSystemConfig(const QString name);
     bool loadUserConfig(const QString name);
 
-    QString getWMSGetMapURL(const QString layer);
+    QString getLocalName(const QString localName);
+    QString getWMSGetMapURL(const QString layer, QString& layerName);
     QString getBBox();
     QString getSRS();
-//    void store();
 };
 
 #endif // JSONCONFIG_H
