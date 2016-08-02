@@ -300,6 +300,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
     foreach (SPOperationParameter parameter, params) {
         QJsonObject input;
         input["url"] = QString("");
+        input["local"] = QString("");
         input["value"] = QString("");
         input["name"] = parameter->term();  // weird naming!!
         input["type"] = parameter->name();  // weird naming!!
@@ -317,8 +318,9 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         input["id"] = QString("%1").arg(assignment.second);
         SPOperationParameter parm = meta->inputParameter(assignment.second);
         if (parm) {
-            if (hasType(parm->type(), itILWISOBJECT)) {
-                input["url"] = inputValue->value;
+            if (hasType(parm->type(), itCOVERAGE)) {
+                input["local"] = inputValue->value;
+                input["url"] = _config.getWMSGetMapURL(inputValue->value);
             }
             else {
                 input["value"] = inputValue->value;
@@ -341,8 +343,9 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         }
         SPOperationParameter parm = meta->inputParameter(i);
         if (parm) {
-            if (hasType(parm->type(), itILWISOBJECT)) {
-                input["url"] = url;
+            if (hasType(parm->type(), itCOVERAGE)) {
+                input["local"] = url;
+                input["url"] = _config.getWMSGetMapURL(url);
             }
             else {
                 input["value"] = url;
@@ -394,6 +397,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workfl
     foreach (SPOperationParameter parameter, params) {
         QJsonObject output;
         QString url("");
+        output["local"] = url;
         output["url"] = url;
         output["value"] = url;
         output["name"] = parameter->term();  // weird naming!!
@@ -405,8 +409,9 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workfl
             names[index] += "_out";
         }
         url = names[index];
-        if (hasType(parameter->type(), itILWISOBJECT)) {
-            output["url"] = url;
+        if (hasType(parameter->type(), itCOVERAGE)) {
+            output["local"] = url;
+            output["url"] = _config.getWMSGetMapURL(url);
         }
         else {
             output["value"] = url;

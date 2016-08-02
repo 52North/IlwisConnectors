@@ -18,6 +18,8 @@ class JsonConfig
     QString _wms_version;
     QString _wms_width;
     QString _wms_height;
+    QString _out_type;
+    int _version;
 
     // User config:
     QString _workspace;
@@ -32,6 +34,7 @@ public:
 
     QString getWMSGetMapURL(const QString layer);
     QString getBBox();
+    QString getSRS();
 //    void store();
 };
 
