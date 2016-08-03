@@ -30,8 +30,8 @@ namespace WorkflowConnector {
         QJsonObject createJSONWorkflowMetaData(const Resource& res);
         QJsonObject createJSONOperationMetadata(const Resource &res);
         QJsonObject createJSONOperationList(const Resource &res);
-        QJsonArray createJSONOperationInputList(Workflow* workflow, const OVertex v, QStringList wmsList);
-        QJsonArray createJSONOperationOutputList(Ilwis::Workflow *workflow, const Ilwis::OVertex v, QStringList wmsList);
+        QJsonArray createJSONOperationInputList(Workflow* workflow, const OVertex v);
+        QJsonArray createJSONOperationOutputList(Ilwis::Workflow *workflow, const Ilwis::OVertex v);
         QJsonArray createJSONOperationConnectionList(Ilwis::Workflow *workflow);
         bool openTarget();
 
@@ -44,6 +44,9 @@ namespace WorkflowConnector {
         QMap<OVertex, QStringList> _inputArgs;
         OperationExpression _expression;
         QStringList _outputNames;
+        QMap<QString, QString> _layer2LocalLUT;
+
+        void setInputParm(const QString baseName, const Ilwis::SPOperationParameter parm, QJsonObject &input);
 
         void parseOutputNames(OperationExpression expression);
         void parseInputNodeArguments(Ilwis::Workflow *workflow, const QList<OVertex> &inputNodes);

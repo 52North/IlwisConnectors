@@ -28,6 +28,9 @@ class JsonConfig
     QString _userOutFolder;
 
 public:
+    static const bool FORINPUT = true;
+    static const bool FOROUTPUT = false;
+
     JsonConfig();
 
     bool isValid() { return _isValidSystem && _isValidUser; }
@@ -35,7 +38,7 @@ public:
     bool loadSystemConfig(const QString name);
     bool loadUserConfig(const QString name);
 
-    QString getLocalName(const QString localName);
+    QString getLocalName(const QString localName, bool inputParam);
     QString getWMSGetMapURL(const QString layer, QString& layerName);
     QString getBBox();
     QString getSRS();

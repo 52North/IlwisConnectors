@@ -102,13 +102,16 @@ QString JsonConfig::getWMSGetMapURL(const QString layer, QString &layerName)
 
 }
 
-QString JsonConfig::getLocalName(const QString localName) {
+QString JsonConfig::getLocalName(const QString localName, bool inputParam) {
     if (localName.length() == 0)
         return localName;
 
     QFileInfo fi;
     QString name = localName % _out_ext;
-    fi.setFile(QDir(_userInFolder), name);
+    if (inputParam)
+        fi.setFile(QDir(_userInFolder), name);
+    else
+        fi.setFile(QDir(_userOutFolder), name);
 
     return fi.absoluteFilePath();
 }
