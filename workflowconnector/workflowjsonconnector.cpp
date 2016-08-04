@@ -103,6 +103,9 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
     QJsonObject single = createJSONWorkflow(workflow->resource());
     single["metadata"] = createJSONWorkflowMetaData(workflow->resource());
 
+    // get all the connections; keep a list of output operations
+    single["connections"] = createJSONOperationConnectionList(workflow);
+
     // deal with all the operations
     QJsonArray operations;
 
@@ -119,7 +122,7 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
         metadata.prepare(res);
         if (res.isValid()) {
             QJsonObject operation;
-            QJsonObject obj = createJSONOperationMetadata(res);
+            QJsonObject obj = createJSONOperationMetadata(res, v);
             operation["id"] = QString::number(v);
             operation["metadata"] = obj;
             operation["inputs"] = createJSONOperationInputList(workflow, v);
@@ -128,8 +131,6 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
         }
     }
     single["operations"] = operations;
-
-    single["connections"] = createJSONOperationConnectionList(workflow);
 
     workflows.append(single);
 
@@ -309,7 +310,7 @@ QJsonObject WorkflowJSONConnector::createJSONWorkflowMetaData(const Resource& re
     return meta;
 }
 
-QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const Resource &res) {
+QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const Resource &res, const OVertex v) {
     QJsonObject jsonMeta;
     jsonMeta["longname"] = res.name();
     jsonMeta["description"] = res.description();
@@ -318,28 +319,35 @@ QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const Resource &r
     jsonMeta["keywords"] = res["keywords"].toString();
     jsonMeta["inputparametercount"] = res["inparameters"].toString();
     jsonMeta["outputparametercount"] = res["outparameters"].toString();
-    jsonMeta["final"] = res["final"].toString();
 
     return jsonMeta;
 }
 
-void WorkflowJSONConnector::setInputParm(const QString baseName, const SPOperationParameter parm, QJsonObject& input)
+void WorkflowJSONConnector::setInputParm(const QString baseName, const SPOperationParameter parm, QJsonObject& input, int nameType)
 {
     if (baseName.length() == 0)
         return;
 
     if (parm) {
-        QUrl url(baseName);
-        QFileInfo fi(baseName);
-        QString localName = baseName;
-        if (url.scheme().length() == 0)
-            localName = _config.getLocalName(fi.baseName(), JsonConfig::FORINPUT);
-
         if (hasType(parm->type(), itCOVERAGE)) {
+            QString localName = baseName;
+            QFileInfo fi(baseName);
+
+            QUrl url(baseName);
+            QString scheme = url.scheme();
+            if (scheme.length() == 0)
+                localName = _config.getLocalName(fi.baseName(), JsonConfig::FORINPUT);
+            else if (url.isLocalFile())
+                localName = url.toLocalFile();
+
+            fi.setFile(localName);
             input["local"] = localName;   // note: can be local or regular url
             QString layerName;
             QString wms = _config.getWMSGetMapURL(fi.baseName(), layerName);
             input["url"] = wms;
+            // for now generated internal coverages are available in WMS, but are switched off for showing
+            input["show"] = nameType == GENERATED_INPUT ? QString("false") : QString("true");
+
             if (localName.length() > 0)
                 _layer2LocalLUT[layerName] = localName;
         }
@@ -393,7 +401,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         input["id"] = QString("%1").arg(assignment.second);
 
         SPOperationParameter parm = meta->inputParameter(assignment.second);
-        setInputParm(inputValue->value, parm, input);
+        setInputParm(inputValue->value, parm, input, INTERNAL_INPUT);
 
         inputs.replace(assignment.second, input);
     }
@@ -412,7 +420,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         }
 
         SPOperationParameter parm = meta->inputParameter(i);
-        setInputParm(localName, parm, input);
+        setInputParm(localName, parm, input, EXTERNAL_INPUT);
 
         inputs.replace(i, input);
     }
@@ -433,7 +441,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         input["id"] = QString("%1").arg(inputEdge);
 
         SPOperationParameter parm = metaPrev->outputParameter(outputEdge);
-        setInputParm(names[outputEdge], parm, input);
+        setInputParm(names[outputEdge], parm, input, GENERATED_INPUT);
 
         inputs.replace(inputEdge, input);
     }
@@ -494,10 +502,12 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workfl
         if (hasType(parameter->type(), itCOVERAGE)) {
             output["local"] = localName;
             QString layerName;
-            QString wms = _config.getWMSGetMapURL(baseName, layerName);
+            QString wms = _config.getWMSGetMapURL(localName, layerName);
             output["url"] = wms;
             _layer2LocalLUT[layerName] = localName;
         }
+        else if (hasType(parameter->type(), itTABLE))
+            output["value"] = baseName;
         else {
             output["value"] = localName;
         }
@@ -511,6 +521,9 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workfl
 
 QJsonArray WorkflowJSONConnector::createJSONOperationConnectionList(Workflow *workflow) {
     QJsonArray connections;
+
+    _leafOperations.clear();
+    QSet<int> connectedOperations;
 
     std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = workflow->getNodeIterators();
     for (auto iterOper = nodeIterators.first; iterOper < nodeIterators.second; ++iterOper) {
@@ -526,8 +539,12 @@ QJsonArray WorkflowJSONConnector::createJSONOperationConnectionList(Workflow *wo
             connection["toParameterID"] = edgeData._inputParameterIndex;
 
             connections.append(connection);
+
+            connectedOperations.insert((int) *iterOper);    // operations with input connections from operations
+            _leafOperations.insert((int) toVertex);         // operations with output connections to other operations
         }
     }
+    _leafOperations.subtract(connectedOperations);  // this leaves only output operations that are not connected
 
     return connections;
 }

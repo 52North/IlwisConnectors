@@ -12,6 +12,10 @@ namespace WorkflowConnector {
     class WorkflowJSONConnector : public IlwisObjectConnector
     {
     public:
+        static const int EXTERNAL_INPUT = 1;
+        static const int INTERNAL_INPUT = 2;
+        static const int GENERATED_INPUT = 4;
+
         WorkflowJSONConnector(const Ilwis::Resource &resource, bool,const IOOptions& options=IOOptions() );
 
         bool loadMetaData(IlwisObject*, const IOOptions & );
@@ -28,9 +32,9 @@ namespace WorkflowConnector {
     private:
         QJsonObject createJSONWorkflow(const Resource & res);
         QJsonObject createJSONWorkflowMetaData(const Resource& res);
-        QJsonObject createJSONOperationMetadata(const Resource &res);
+        QJsonObject createJSONOperationMetadata(const Resource &res, const Ilwis::OVertex v);
         QJsonObject createJSONOperationList(const Resource &res);
-        QJsonArray createJSONOperationInputList(Workflow* workflow, const OVertex v);
+        QJsonArray createJSONOperationInputList(Ilwis::Workflow* workflow, const Ilwis::OVertex v);
         QJsonArray createJSONOperationOutputList(Ilwis::Workflow *workflow, const Ilwis::OVertex v);
         QJsonArray createJSONOperationConnectionList(Ilwis::Workflow *workflow);
         bool openTarget();
@@ -45,8 +49,9 @@ namespace WorkflowConnector {
         OperationExpression _expression;
         QStringList _outputNames;
         QMap<QString, QString> _layer2LocalLUT;
+        QSet<int> _leafOperations;
 
-        void setInputParm(const QString baseName, const Ilwis::SPOperationParameter parm, QJsonObject &input);
+        void setInputParm(const QString baseName, const Ilwis::SPOperationParameter parm, QJsonObject &input, int nameType);
 
         void parseOutputNames(OperationExpression expression);
         void parseInputNodeArguments(Ilwis::Workflow *workflow, const QList<OVertex> &inputNodes);

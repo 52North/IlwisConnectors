@@ -82,9 +82,8 @@ QString JsonConfig::getWMSGetMapURL(const QString layer, QString &layerName)
     if (layer.length() == 0)
         return layer;
 
-    QUrl url(layer);
-    QFileInfo fn(url.toLocalFile());
-    layerName = fn.completeBaseName();
+    QFileInfo fn(layer);
+    layerName = fn.baseName();
     if (fn.absolutePath().length() == 0)
         layerName = layer;
     layerName.replace(QRegExp("[ \\.]"), "_");   // layer name for use in WMS server
