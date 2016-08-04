@@ -51,6 +51,7 @@ namespace WorkflowConnector {
         void parseOutputNames(OperationExpression expression);
         void parseInputNodeArguments(Ilwis::Workflow *workflow, const QList<OVertex> &inputNodes);
         void addGeneratedNames(const OVertex &v, QStringList& names, const Ilwis::IOperationMetaData &meta);
+        void writeWMSLocalLUT(QString filename);
     };
 
 }

@@ -1,3 +1,4 @@
+#include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -50,6 +51,30 @@ bool WorkflowJSONConnector::openTarget() {
         }
     }
     return false;
+}
+
+void WorkflowJSONConnector::writeWMSLocalLUT(QString filename) {
+    QFile *file = new QFile(filename);
+
+    if (file->open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate)) {
+        _datasource.reset(file);
+    }
+    else return;
+
+    QJsonDocument document;
+    QJsonObject links;
+
+    QMapIterator<QString, QString> lut(_layer2LocalLUT);
+    while (lut.hasNext()) {
+        lut.next();
+        links[lut.key()] = lut.value();
+    }
+
+    document.setObject(links);
+    QTextStream stream(_datasource.get());
+    stream << document.toJson();
+    stream.device()->close();
+
 }
 
 bool WorkflowJSONConnector::loadMetaData(IlwisObject *object, const IOOptions &)
@@ -118,6 +143,10 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
     QTextStream stream(_datasource.get());
     stream << document.toJson();
     stream.device()->close();
+
+    // write the LUT (WMS layername <-> local name)
+    QFileInfo filename(QDir(workflowPath), "wms2local.json");
+    writeWMSLocalLUT(filename.absoluteFilePath());
 
     return true;
 }
