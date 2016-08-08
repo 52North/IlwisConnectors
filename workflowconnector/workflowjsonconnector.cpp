@@ -123,7 +123,7 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
         if (res.isValid()) {
             QJsonObject operation;
             QJsonObject obj = createJSONOperationMetadata(res, v);
-            operation["id"] = QString::number(v);
+            operation["id"] = (int) v;
             operation["metadata"] = obj;
             operation["inputs"] = createJSONOperationInputList(workflow, v);
             operation["outputs"] = createJSONOperationOutputList(workflow, v);
@@ -292,7 +292,7 @@ QJsonObject WorkflowJSONConnector::createJSONWorkflow(const Resource &res)
 {
     QJsonObject workflow;
 
-    workflow["id"] = QString("0");
+    workflow["id"] =0;
     return workflow;
 }
 
@@ -304,8 +304,8 @@ QJsonObject WorkflowJSONConnector::createJSONWorkflowMetaData(const Resource& re
     meta.insert("syntax", res["syntax"].toString());
     meta.insert("resource", QString("Ilwis"));
     meta.insert("keywords", res["keywords"].toString());
-    meta.insert("inputparametercount", res["inparameters"].toString());
-    meta.insert("outputparametercount", res["outparameters"].toString());
+    meta.insert("inputparametercount", res["inparameters"].toInt());
+    meta.insert("outputparametercount", res["outparameters"].toInt());
 
     return meta;
 }
@@ -317,8 +317,8 @@ QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const Resource &r
     jsonMeta["syntax"] = res["syntax"].toString();
     jsonMeta["resource"] = QString("Ilwis");
     jsonMeta["keywords"] = res["keywords"].toString();
-    jsonMeta["inputparametercount"] = res["inparameters"].toString();
-    jsonMeta["outputparametercount"] = res["outparameters"].toString();
+    jsonMeta["inputparametercount"] = res["inparameters"].toInt();
+    jsonMeta["outputparametercount"] = res["outparameters"].toInt();
 
     return jsonMeta;
 }
@@ -346,13 +346,17 @@ void WorkflowJSONConnector::setInputParm(const QString baseName, const SPOperati
             QString wms = _config.getWMSGetMapURL(fi.baseName(), layerName);
             input["url"] = wms;
             // for now generated internal coverages are available in WMS, but are switched off for showing
-            input["show"] = nameType == GENERATED_INPUT ? QString("false") : QString("true");
+            input["show"] = nameType == ASSIGNED_INPUT;
 
             if (localName.length() > 0)
                 _layer2LocalLUT[layerName] = localName;
         }
         else {
-            input["value"] = baseName;
+            QString local = baseName;
+            QUrl url(baseName);
+            if (url.isLocalFile())
+                local = url.toLocalFile();
+            input["value"] = local;
         }
     }
 }
@@ -387,30 +391,17 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         input["value"] = QString("");
         input["name"] = parameter->term();  // weird naming!!
         input["type"] = parameter->name();  // weird naming!!
-        input["id"] = QString("");  // parameter ID to be filled in in the coming sections
         input["optional"] = parameter->isOptional();
         input["description"] = parameter->description();
 
         inputs.append(input);
     }
 
-    // pre-assigned values, fully qualified filename / url
-    for (InputAssignment assignment : workflow->getConstantInputAssignments(v)) {
-        SPAssignedInputData inputValue = workflow->getAssignedInputData(assignment);
-        QJsonObject input = inputs.at(assignment.second).toObject();
-        input["id"] = QString("%1").arg(assignment.second);
-
-        SPOperationParameter parm = meta->inputParameter(assignment.second);
-        setInputParm(inputValue->value, parm, input, INTERNAL_INPUT);
-
-        inputs.replace(assignment.second, input);
-    }
-
     // external inputs; this may include pre-assigned inputs
     QStringList externalInputs = _inputArgs.value(v);
     for (int i = 0 ; i < externalInputs.size() ; i++) {
         auto input = inputs[i].toObject();
-        input["id"] = QString("%1").arg(i);
+        input["id"] = i;
         QString externalInput = externalInputs.at(i);
         QString localName = "";
         if ( !externalInput.isEmpty()) {
@@ -423,6 +414,18 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         setInputParm(localName, parm, input, EXTERNAL_INPUT);
 
         inputs.replace(i, input);
+    }
+
+    // pre-assigned values, fully qualified filename / url
+    for (InputAssignment assignment : workflow->getConstantInputAssignments(v)) {
+        SPAssignedInputData inputValue = workflow->getAssignedInputData(assignment);
+        QJsonObject input = inputs.at(assignment.second).toObject();
+        input["id"] = assignment.second;
+
+        SPOperationParameter parm = meta->inputParameter(assignment.second);
+        setInputParm(inputValue->value, parm, input, ASSIGNED_INPUT);
+
+        inputs.replace(assignment.second, input);
     }
 
     // internal calculation result
@@ -438,7 +441,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflo
         quint16 inputEdge = edges._inputParameterIndex;
         quint16 outputEdge = edges._outputParameterIndex;
         auto input = inputs[inputEdge].toObject();
-        input["id"] = QString("%1").arg(inputEdge);
+        input["id"] = inputEdge;
 
         SPOperationParameter parm = metaPrev->outputParameter(outputEdge);
         setInputParm(names[outputEdge], parm, input, GENERATED_INPUT);
@@ -491,7 +494,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workfl
         output["value"] = baseName;
         output["name"] = parameter->term();  // weird naming!!
         output["type"] = parameter->name();  // weird naming!!
-        output["id"] = QString("%1").arg(index);
+        output["id"] = index;
         output["optional"] = parameter->isOptional();
         output["description"] = parameter->description();
         if (actual[index] != -1) { // an actual workflow output parameter
@@ -500,6 +503,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workfl
         baseName = names[index];
         QString localName = _config.getLocalName(baseName, JsonConfig::FOROUTPUT);
         if (hasType(parameter->type(), itCOVERAGE)) {
+            output["show"] = true;
             output["local"] = localName;
             QString layerName;
             QString wms = _config.getWMSGetMapURL(localName, layerName);

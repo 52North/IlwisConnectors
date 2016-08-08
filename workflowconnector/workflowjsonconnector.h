@@ -13,7 +13,7 @@ namespace WorkflowConnector {
     {
     public:
         static const int EXTERNAL_INPUT = 1;
-        static const int INTERNAL_INPUT = 2;
+        static const int ASSIGNED_INPUT = 2;
         static const int GENERATED_INPUT = 4;
 
         WorkflowJSONConnector(const Ilwis::Resource &resource, bool,const IOOptions& options=IOOptions() );
