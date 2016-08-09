@@ -336,7 +336,7 @@ void WorkflowJSONConnector::setInputParm(const QString baseName, const SPOperati
             QUrl url(baseName);
             QString scheme = url.scheme();
             if (scheme.length() == 0)
-                localName = _config.getLocalName(fi.baseName(), JsonConfig::FORINPUT);
+                localName = _config.getLocalName(fi.baseName());
             else if (url.isLocalFile())
                 localName = url.toLocalFile();
 
@@ -501,7 +501,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workfl
             names[index] += "_out";
         }
         baseName = names[index];
-        QString localName = _config.getLocalName(baseName, JsonConfig::FOROUTPUT);
+        QString localName = _config.getLocalName(baseName);
         if (hasType(parameter->type(), itCOVERAGE)) {
             output["show"] = true;
             output["local"] = localName;

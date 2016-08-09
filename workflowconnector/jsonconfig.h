@@ -24,13 +24,9 @@ class JsonConfig
 
     // User config:
     QString _workspace;
-    QString _userInFolder;
-    QString _userOutFolder;
+    QString _userMainFolder;    // main user data folder
 
 public:
-    static const bool FORINPUT = true;
-    static const bool FOROUTPUT = false;
-
     JsonConfig();
 
     bool isValid() { return _isValidSystem && _isValidUser; }
@@ -38,7 +34,7 @@ public:
     bool loadSystemConfig(const QString name);
     bool loadUserConfig(const QString name);
 
-    QString getLocalName(const QString localName, bool inputParam);
+    QString getLocalName(const QString localName);
     QString getWMSGetMapURL(const QString layer, QString& layerName);
     QString getBBox();
     QString getSRS();

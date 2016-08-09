@@ -67,8 +67,7 @@ bool JsonConfig::loadUserConfig(const QString name)
     QJsonObject geo = doc.object().value(QString("geoserver")).toObject();
     _workspace = geo.value(QString("workspace")).toString();
     geo = doc.object().value(QString("datafolder")).toObject();
-    _userInFolder = geo["inputpath"].toString();
-    _userOutFolder = geo["outputpath"].toString();
+    _userMainFolder = geo["name"].toString();
 
     _isValidUser = true;
     return _isValidUser;
@@ -101,16 +100,13 @@ QString JsonConfig::getWMSGetMapURL(const QString layer, QString &layerName)
 
 }
 
-QString JsonConfig::getLocalName(const QString localName, bool inputParam) {
+QString JsonConfig::getLocalName(const QString localName) {
     if (localName.length() == 0)
         return localName;
 
     QFileInfo fi;
     QString name = localName % _out_ext;
-    if (inputParam)
-        fi.setFile(QDir(_userInFolder), name);
-    else
-        fi.setFile(QDir(_userOutFolder), name);
+    fi.setFile(QDir(_userMainFolder), name);
 
     return fi.absoluteFilePath();
 }
