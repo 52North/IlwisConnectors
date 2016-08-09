@@ -238,8 +238,8 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
 
     setStoreType(storeType);
     const DataDefinition & def = gcoverage->datadef();
-    if ( def.domain<>()->valueType() & itNUMBER)
-        updateConverter(*_odf);
+   // if ( def.domain<>()->valueType() & itNUMBER)
+   updateConverter(*_odf);
 
     gcoverage->gridRef()->prepare(gcoverage, grf->size());
 
