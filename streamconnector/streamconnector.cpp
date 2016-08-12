@@ -130,7 +130,7 @@ bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
         //QFileInfo inf(_resource.url().toLocalFile());
         VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
         QDataStream stream(_datasource.get());
-        quint64 pos = stream.device()->pos();
+        //quint64 pos = stream.device()->pos();
         IlwisTypes tp;
         QString version;
         stream >> tp;
@@ -167,8 +167,11 @@ bool StreamConnector::openSource(bool reading){
         if ( inf.suffix() != "ilwis"){
             filename = inf.absolutePath() + "/" + inf.baseName() + ".ilwis";
             QString correctUrl = QUrl::fromLocalFile(filename).toString();
+            // we remove the resource for the moment from the mastercatalog as it will de re-added under a different name; else we get two references to it
+            mastercatalog()->removeItems({source()});
             sourceRef().setUrl(correctUrl,false,false);
             sourceRef().setUrl(correctUrl,true,false);
+            mastercatalog()->addItems({source()});
         }
         QFile *file = new QFile(filename);
 
