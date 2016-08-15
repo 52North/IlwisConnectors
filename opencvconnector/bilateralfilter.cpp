@@ -64,6 +64,7 @@ quint64 BilateralFilter::createMetadata()
     operation.addInParameter(2,itDOUBLE , TR("sigma color"),TR("sigma in the color space.Larger value means that farther colors within the pixel neighborhood will be mixed together, resulting in larger areas of semi-equal color"));
     operation.addInParameter(3,itDOUBLE , TR("sigma space"),TR("sigma in the pixel space.Larger value means that farther pixels will influence each other as long as their colors are close enough. When pixel neighborhood>0, it specifies the size regardless of sigmaSpace. Otherwise, d is proportional to sigmaSpace"));
     operation.setOutParameterCount({1});
+    operation.addValidation(0,0,"domain=numericdomain");
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("a raster with reduced noise"));
     operation.setKeywords("image processing,raster,noise reduction, filter");
 

@@ -71,6 +71,7 @@ quint64 AdaptiveBilateralFilter::createMetadata()
     operation.addInParameter(3,itDOUBLE , TR("sigma space"),TR("sigma in the pixel space.Larger value means that farther pixels will influence each other as long as their colors are close enough. When pixel neighborhood>0, it specifies the size regardless of sigmaSpace. Otherwise, d is proportional to sigmaSpace"));
     operation.addOptionalInParameter(4,itDOUBLE , TR("max sigma color"),TR("Maximum allowed sigma color. Larger value of the parameter means that more dissimilar pixels will influence each other, optional"));
     operation.setOutParameterCount({1});
+    operation.addValidation(0,0,"domain=numericdomain");
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("a raster with sharpened features"));
     operation.setKeywords("image processing,raster,sharpen, filter");
 
