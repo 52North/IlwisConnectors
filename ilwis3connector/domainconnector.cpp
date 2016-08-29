@@ -358,6 +358,7 @@ bool DomainConnector::storeMetaData(IlwisObject *data, const IOOptions &options)
         _odf->setKeyValue("DomainValue", "Type", type);
         _odf->setKeyValue(type, "Min", (type == "DomainValueReal") ? IniFile::FormatElement(numRange->min()) : IniFile::FormatElement((long)(numRange->min())));
         _odf->setKeyValue(type, "Max", (type == "DomainValueReal") ? IniFile::FormatElement(numRange->max()) : IniFile::FormatElement((long)(numRange->max())));
+        _odf->setKeyValue("Domain","Representation","gray.rpr");
         if ( numRange->resolution() != 1) {
             _odf->setKeyValue(type, "Step", IniFile::FormatElement(numRange->resolution()));
         }
