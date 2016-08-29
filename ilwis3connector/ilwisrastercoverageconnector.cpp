@@ -607,6 +607,15 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, const IOOptions& 
         } else if ( conv.storeType() == itDOUBLE){
             _odf->setKeyValue("MapStore","Type","Real");
         }
+        if(!dom->isSystemObject()){
+            QString filename = context()->workingCatalog()->resolve(_domainName);
+            if ( filename == sUNDEF){
+                int index = _odf->url().lastIndexOf("/");
+                filename = _odf->url().left(index) + "/" + _domainName;
+            }
+            dom->connectTo(filename,"domain","ilwis3", Ilwis::IlwisObject::cmOUTPUT);
+            dom->store();
+        }
     } if ( hasType(dom->ilwisType(),itITEMDOMAIN)) {
         if ( hasType(dom->valueType(), itTHEMATICITEM | itNUMERICITEM)  )
             _odf->setKeyValue("MapStore","Type","Byte");
@@ -615,6 +624,10 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, const IOOptions& 
         }
         if ( _domainName.indexOf(".dom") != -1 && !dom->isSystemObject()){
             QString filename = context()->workingCatalog()->resolve(_domainName);
+            if ( filename == sUNDEF){
+                int index = _odf->url().lastIndexOf("/");
+                filename = _odf->url().left(index) + "/" + _domainName;
+            }
             dom->connectTo(filename,"domain","ilwis3", Ilwis::IlwisObject::cmOUTPUT);
             dom->store();
         }
