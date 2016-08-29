@@ -408,31 +408,22 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
                     csyName += ".csy";
                 //return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
             }
-
-            QFileInfo csyinf(csyName);
+            int index = _odf->url().lastIndexOf("/");
+            QString csyurl = _odf->url().left(index) + "/" + csyName;
+            QFileInfo csyinf(QUrl(csyurl).toLocalFile());
             if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
 
                 bool mustWriteCsyFile = true;
 
-                if (!csyinf.isAbsolute()){
-                    QString destinationPath = QFileInfo(sourceRef().toLocalFile()).absolutePath();
-                    csyName = destinationPath + "/" + csyName;
-                }
-
-                QFileInfo csyFileInfo(csyName);
-                Resource resource = mastercatalog()->name2Resource(csyFileInfo.fileName(), itCOORDSYSTEM );
+                Resource resource = mastercatalog()->name2Resource(csyurl, itCOORDSYSTEM );
                 ICoordinateSystem existingCsy(resource);
 
-                if (csyFileInfo.exists()) {
-                    if (!csy->isEqual(existingCsy.ptr()) ) {
-                        csyName = OSHelper::ensureUniqueFilename(csyName);
-                    } else {
-                        mustWriteCsyFile = false;
-                    }
+                if (existingCsy.isValid() && csy->isEqual(existingCsy.ptr()) ){
+                    mustWriteCsyFile = false;
                 }
 
                 if (mustWriteCsyFile) {
-                    QUrl url = QUrl::fromLocalFile(csyName); // new attempt to create a suitable path;
+                    QUrl url = csyurl; // new attempt to create a suitable path;
                     csy->connectTo(url,"coordsystem","ilwis3", IlwisObject::cmOUTPUT);
                     if(!csy->store({"storemode",Ilwis::IlwisObject::smMETADATA})){ // fail, we default to unknown
                         csyName = "Unknown.csy";
