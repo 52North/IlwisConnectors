@@ -219,20 +219,6 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
     _csyName = writeCsy(obj, csy);
     _odf->setKeyValue("BaseMap", "CoordSystem", _csyName);
 
-    /*
-    Envelope bounds = coverage->envelope();
-    if ( bounds.isNull())
-        bounds = coverage->coordinateSystem()->envelope();
-    if(!bounds.isValid())
-        return ERROR2(ERR_NO_INITIALIZED_2, "Bounds", coverage->name());
-
-    _odf->setKeyValue("BaseMap","CoordBounds",QString("%1 %2 %3 %4").
-                      arg(bounds.min_corner().x,0,'f').
-                      arg(bounds.min_corner().y,0,'f').
-                      arg(bounds.max_corner().x,0,'f').
-                      arg(bounds.max_corner().y,0,'f'));
-     */
-
     calcStatistics(obj,NumericStatistics::pBASIC);
 
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
@@ -264,26 +250,28 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
             const NumericStatistics& stats = coverage->statistics();
             double precision = (resolution == 0.0) ? resolution : pow(10, -stats.significantDigits());           
             RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], precision);           
-
+            QString storeType;
             if ( delta >= 0 && delta < 256 &&  resolution == 1){
-               _odf->setKeyValue("MapStore","Type","Byte");
+                storeType = "Byte";
             } else if ( conv.storeType() == itUINT8){
-               _odf->setKeyValue("MapStore","Type","Byte");
+                storeType = "Byte";
             } else if ( conv.storeType() == itINT16){
-                _odf->setKeyValue("MapStore","Type","Int");
+                storeType = "Int";
             } else if ( conv.storeType() == itINT32){
-                _odf->setKeyValue("MapStore","Type","Long");
+                storeType = "Long";
             } else if ( conv.storeType() == itDOUBLE){
-                _odf->setKeyValue("MapStore","Type","Real");
-            }
+                storeType = "Real";
 
-            _domainInfo = QString("%1:%2:%3:offset=%4").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]).arg(precision).arg(conv.offset());
+            }
+             _odf->setKeyValue("MapStore","Type",storeType);
+            INumericDomain numdom = dom.as<NumericDomain>();
+            _domainInfo = QString("%1:%2:%3:offset=%4").arg(dom->range<NumericRange>()->min()).arg(dom->range<NumericRange>()->max()).arg(dom->range<NumericRange>()->resolution()).arg(conv.offset());
             _odf->setKeyValue("BaseMap","Range",_domainInfo);
             _odf->setKeyValue("BaseMap","Domain",_domainName);
-
+            QString rng = QString("%1;%2;%3").arg(dom->range<NumericRange>()->min()).arg(dom->range<NumericRange>()->max()).arg(dom->range<NumericRange>()->resolution());
             _odf->setKeyValue("BaseMap","MinMax",QString("%1:%2").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]));
-            QString _domainInfo = QString("%1;Long;value;0;-9999999.9:9999999.9:0.1:offset=0").arg(_domainName);
-            _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
+            QString domainInfo = QString("%1;%2;value;0;%3:offset=%4").arg(_domainName).arg(storeType).arg(rng).arg(conv.offset());
+            _odf->setKeyValue("BaseMap","DomainInfo",domainInfo);
         }
     }
     if ( dom->ilwisType() == itITEMDOMAIN) {
