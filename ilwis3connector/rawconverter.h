@@ -133,7 +133,7 @@ private:
     double determineScale(double low, double high, double step) const;
     IlwisTypes minNeededStoreType(double low, double high, double step) const;
 
-    double _offset;
+    qint32 _offset;
     double _scale;
     IlwisTypes _storeType;
     double _undefined;
