@@ -227,8 +227,12 @@ bool GeorefConnector::loadGeorefCorners(const IniFile& odf, IlwisObject *data) {
                 return false;
             }
         }else {
-
-            QUrl path = mastercatalog()->name2url(csyName, itCOORDSYSTEM);
+            QUrl path;
+            if ( csyName.indexOf(":/") == -1){
+                int index = odf.url().lastIndexOf("/");
+                path = odf.url().left(index) + "/" + csyName;
+            }else
+                path = QUrl::fromLocalFile(csyName).toString();
             if( !csy.prepare(path.toString())) {
                 kernel()->issues()->log(TR("Couldn't find coordinate system %1, defaulting to unknown").arg(csyName),IssueObject::itWarning);
                 Resource resource = mastercatalog()->name2Resource("code=csy:unknown", itCOORDSYSTEM);
