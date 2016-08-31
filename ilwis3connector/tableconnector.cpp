@@ -315,7 +315,11 @@ bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
         _odf->setKeyValue(colName, "Time", Time::now().toString());
         _odf->setKeyValue(colName, "Version", "3.1");
         _odf->setKeyValue(colName, "Class", "Column");
-        _odf->setKeyValue(colName, "Domain", domName.indexOf(".dom") != -1 ? domName : domName + ".dom");
+        if (!( domName.indexOf(".mpa") != -1 || domName.indexOf(".mps")!= -1 || domName.indexOf(".mpp")!= -1 || domName.indexOf(".mpr")!= -1)){
+            domName =  domName.indexOf(".dom") != -1 ? domName : domName + ".dom";
+        }
+
+        _odf->setKeyValue(colName, "Domain",domName);
         //_odf->setKeyValue(colName, "Time", Time::now().toString());
         _odf->setKeyValue(colName, "DomainChangeable", "Yes");
         _odf->setKeyValue(colName, "ValueRangeChangeable", "Yes");
