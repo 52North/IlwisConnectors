@@ -19,9 +19,9 @@ using namespace Gdal;
 GdalConnector::GdalConnector(const Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource,load, options), _internalPath(sUNDEF)
 {
     _handle = NULL;
-    if ( resource.url().hasFragment())
-        _internalPath = resource.url().fragment();
-    _filename = resource.url();
+    if ( resource.url(true).hasFragment())
+        _internalPath = resource.url(true).fragment();
+    _fileUrl = resource.url(true);
 }
 
 GdalConnector::~GdalConnector()
@@ -71,11 +71,11 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
     if (!gdal()->isValid()) {
         return ERROR1(ERR_NO_INITIALIZED_1,"gdal library");
     }
-    if ( !_filename.isValid()) {
+    if ( !_fileUrl.isValid()) {
         return ERROR1(ERR_MISSING_DATA_FILE_1,"Gdal reading");
     }
 
-    QFileInfo fileinf (_filename.toLocalFile());
+    QFileInfo fileinf (_fileUrl.toLocalFile());
     _handle = gdal()->openFile(fileinf, data->id(), GA_ReadOnly,false); // no messages here
     if (!_handle){ // could be a container based object
         QString code = sourceRef().code();
@@ -101,7 +101,7 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
                 kernel()->issues()->silent(prev);
                 // read ourselves back out of the mastercatalog, and overwrite our resource
                 tp = data->ilwisType();
-                auto resource = mastercatalog()->name2Resource(_filename.toString(),tp );
+                auto resource = mastercatalog()->name2Resource(_fileUrl.toString(),tp );
                 if (resource.isValid()) {
                     sourceRef() = resource;
                     code = sourceRef().code();
@@ -120,7 +120,7 @@ bool GdalConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
         data->name(fileinf.fileName());
     }
     if (!_handle){
-        return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_filename.toString(),QString(gdal()->getLastErrorMsg()));
+        return ERROR2(ERR_COULD_NOT_OPEN_READING_2,_fileUrl.toString(),QString(gdal()->getLastErrorMsg()));
     }
 
     if ( data->ilwisType() == itRASTER){

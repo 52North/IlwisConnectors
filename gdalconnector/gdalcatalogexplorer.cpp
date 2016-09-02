@@ -133,7 +133,7 @@ bool GdalCatalogExplorer::canUse(const Resource &resource) const
         return false;
     if (resource.url().scheme() != "file") //  for the moment only local based catalogs are acceptable
         return false;
-    QFileInfo fileInfo(resource.url().toLocalFile());
+    QFileInfo fileInfo(resource.url(true).toLocalFile());
     if ( fileInfo.isDir()) { // must be a folder
         return true;
     }

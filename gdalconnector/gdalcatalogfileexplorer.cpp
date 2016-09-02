@@ -84,7 +84,7 @@ bool GdalCatalogFileExplorer::canUse(const Resource &resource) const
         return false;
     if (resource.url().scheme() == "ilwis")
         return false;
-    QFileInfo fileInfo(resource.url().toLocalFile());
+    QFileInfo fileInfo(resource.url(true).toLocalFile());
     if ( fileInfo.isFile()) { // must be a file and extension must be supported by gdal
         QStringList lst = gdal()->getExtensions(itFEATURE | itRASTER);
         QString ext = "*." + fileInfo.suffix();

@@ -276,7 +276,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
     }
     if ( dom->ilwisType() == itITEMDOMAIN) {
          if ( hasType(dom->valueType(),itTHEMATICITEM | itNUMERICITEM) && coverage->ilwisType() == itRASTER) {
-            _domainName =  Resource::toLocalFile(dom->resource().url(), true);
+            _domainName =  Resource::toLocalFile(dom->resource().url(true), true);
             if ( _domainName == sUNDEF){
                 if ( baseName != sUNDEF)
                     _domainName = QFileInfo(baseName).baseName() + ".dom";

@@ -101,7 +101,7 @@ bool CoordinateSystemConnector::canUse(const Resource& resource,const UPCatalogC
     IlwisTypes requiredType = resource.ilwisType();
     if ( (requiredType & itCOORDSYSTEM)!= 0)
         return true;
-    QString file = resource.url().toLocalFile();
+    QString file = resource.url(true).toLocalFile();
     QFileInfo inf(file);
     if ( inf.exists()) {
         IniFile odf;
