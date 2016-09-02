@@ -52,7 +52,7 @@ std::vector<Ilwis::Resource> SpreadSheetCatalogExplorer::loadItems(const IOOptio
                     continue;
                 QString urlSheet = res.url().toString() + "/" + sheetName;
                 Resource resSheet(urlSheet, itTABLE);
-                QFileInfo inf(res.url().toLocalFile());
+                QFileInfo inf(res.url(true).toLocalFile());
                 resSheet.name(inf.baseName() + "_" + sheetName,false);
                 resources.push_back(resSheet);
             }
@@ -75,7 +75,7 @@ bool SpreadSheetCatalogExplorer::canUse(const Resource &resource) const
         return false;
     if (resource.url().scheme() == "ilwis")
         return false;
-    if ( QFileInfo(resource.url().toLocalFile()).isFile()) // no file can be an ods folder catalog.
+    if ( QFileInfo(resource.url(true).toLocalFile()).isFile()) // no file can be an ods folder catalog.
         return false;
     return true;
 

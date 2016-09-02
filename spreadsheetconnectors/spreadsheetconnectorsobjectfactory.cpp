@@ -37,11 +37,11 @@ bool SpreadSheetConnectorsObjectFactory::canUse(const Resource &resource) const
     if ( !hasType(resource.ilwisType(), itTABLE))
         return false;
 
-    QString filename = resource.url().toLocalFile();
+    QString filename = resource.url(true).toLocalFile();
     if ( filename == "")
         return false;
 
-    QFileInfo info(resource.container().toLocalFile()); // possible case that the container is a gdal catalog
+    QFileInfo info(resource.container(true).toLocalFile()); // possible case that the container is a gdal catalog
     if (info.isFile() && SpreadSheetTableConnector::knownSuffix(info.suffix()))
         return true;
     else {

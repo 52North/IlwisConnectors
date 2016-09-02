@@ -84,7 +84,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
         //feature types
         IlwisTypes type = translateOGRType(gdal()->getLayerGeometry(hLayer));
         if (type == itUNKNOWN){
-            WARN(QString("Unknown feature type of layer %1 from: %2").arg(0).arg(_filename.toString()));
+            WARN(QString("Unknown feature type of layer %1 from: %2").arg(0).arg(_fileUrl.toString()));
         }else{
             fcoverage->featureTypes(type);
         }
@@ -92,7 +92,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
         //feature counts
         int temp = gdal()->getFeatureCount(hLayer, FALSE);//TRUE to FORCE databases to scan whole layer, FALSe can end up in -1 for unknown result
         if (temp == -1){
-            WARN(QString("Couldn't determine feature count of layer %1 from meta data of %2").arg(0).arg(_filename.toString()));
+            WARN(QString("Couldn't determine feature count of layer %1 from meta data of %2").arg(0).arg(_fileUrl.toString()));
         }else{
             int featureCount = fcoverage->featureCount(type);
             featureCount += temp;
@@ -100,7 +100,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
         }
         //attribute table
         ITable attTable;
-        Resource resource(_filename, itFLATTABLE);
+        Resource resource(_fileUrl, itFLATTABLE);
         if(!attTable.prepare(resource,{"asflattable", true})) {//will load whole meta data of the table
             ERROR1(ERR_NO_INITIALIZED_1,resource.name());
             return false;
@@ -113,9 +113,9 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
         OGRErr err = gdal()->getLayerExtent(hLayer, &envelope , FALSE);//TRUE to FORCE
         if (err != OGRERR_NONE){
             if (err == OGRERR_FAILURE){//on an empty layer or if simply too expensive(FORECE=FALSE) OGR_L_GetExtent may return OGRERR_FAILURE
-                WARN(QString("Couldn't determine the extent of layer %1 from meta data of %2").arg(0).arg(_filename.toString()));
+                WARN(QString("Couldn't determine the extent of layer %1 from meta data of %2").arg(0).arg(_fileUrl.toString()));
             }else{
-                ERROR0(QString("Couldn't load extent of layer %1 from %2: %3").arg(0).arg(_filename.toString()).arg(gdal()->translateOGRERR(err)));
+                ERROR0(QString("Couldn't load extent of layer %1 from %2: %3").arg(0).arg(_fileUrl.toString()).arg(gdal()->translateOGRERR(err)));
             }
         }else{
             bbox = Envelope(Coordinate(envelope.MinX,envelope.MinY),Coordinate(envelope.MaxX,envelope.MaxY));
@@ -139,7 +139,7 @@ bool GdalFeatureConnector::loadData(IlwisObject* data, const IOOptions &){
     if ( fcoverage->isValid() ) {
         ITable attTable = fcoverage->attributeTable();
         if (!attTable.isValid()){
-            ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_filename.toString());
+            ERROR2(ERR_NO_INITIALIZED_2,"attribute table",_fileUrl.toString());
             return false;
         }
         fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // metadata already set it to correct number, creating new features will up the count agains; so reset to 0.
@@ -161,7 +161,7 @@ bool GdalFeatureConnector::loadData(IlwisObject* data, const IOOptions &){
                         auto feature = fcoverage->newFeature(geometry, false);
                         feature->record(record);
                     }else{
-                        ERROR1("GDAL error during load of binary data: no geometry detected for feature in %1", _filename.toString());
+                        ERROR1("GDAL error during load of binary data: no geometry detected for feature in %1", _fileUrl.toString());
                     }
                     gdal()->destroyFeature( hFeature );
                 }
@@ -175,7 +175,7 @@ bool GdalFeatureConnector::loadData(IlwisObject* data, const IOOptions &){
         OGREnvelope envelope;//might sometimes be supported as 3D now only posssible from OGRGeometry
         OGRErr err = gdal()->getLayerExtent(hLayer, &envelope , TRUE);//TRUE to FORCE
         if (err != OGRERR_NONE && fcoverage->featureCount() != 0){
-            ERROR0(QString("Couldn't load extent of a layer from %1 after binary was loaded: %2").arg(_filename.toString()).arg(gdal()->translateOGRERR(err)));
+            ERROR0(QString("Couldn't load extent of a layer from %1 after binary was loaded: %2").arg(_fileUrl.toString()).arg(gdal()->translateOGRERR(err)));
         }else{
             bbox = Envelope(Coordinate(envelope.MinX,envelope.MinY),Coordinate(envelope.MaxX,envelope.MaxY));
         }
@@ -268,7 +268,7 @@ geos::geom::Geometry* GdalFeatureConnector::fillPolygon(FeatureCoverage *fcovera
         }
         return fcoverage->geomfactory()->createPolygon(outerring, inners);
     }else{
-        ERROR1("GDAL couldn't find outer ring of a polygon for a record in %1",_filename.toString());
+        ERROR1("GDAL couldn't find outer ring of a polygon for a record in %1",_fileUrl.toString());
         return 0;
     }
 }
@@ -610,7 +610,7 @@ OGRGeometryH GdalFeatureConnector::createMultiPoint(const geos::geom::Geometry* 
     for(int i = 0; i < geom->getNumGeometries();i++){
         err = gdal()->addGeometryDirectly(hmulti, createPoint(geom->getGeometryN(i)));
         if(err != OGRERR_NONE)
-            ERROR1("not able to add point to non-container geometry in %1",_filename.toString());
+            ERROR1("not able to add point to non-container geometry in %1",_fileUrl.toString());
     }
     return hmulti;
 }
@@ -621,7 +621,7 @@ OGRGeometryH GdalFeatureConnector::createMultiLine(const geos::geom::Geometry* g
     for(int i = 0; i < geom->getNumGeometries();i++){
         err = gdal()->addGeometryDirectly(hmulti, createLine(geom->getGeometryN(i)));
         if(err != OGRERR_NONE)
-            ERROR1("not able to add line to non-container geometry in %1",_filename.toString());
+            ERROR1("not able to add line to non-container geometry in %1",_fileUrl.toString());
     }
     return hmulti;
 
@@ -633,7 +633,7 @@ OGRGeometryH GdalFeatureConnector::createMultiPolygon(const geos::geom::Geometry
     for(int i = 0; i < geom->getNumGeometries();i++){
         err = gdal()->addGeometryDirectly(hmulti, createPolygon(geom->getGeometryN(i)));
         if(err != OGRERR_NONE)
-            ERROR1("not able to add polygon to non-container geometry in %1",_filename.toString());
+            ERROR1("not able to add polygon to non-container geometry in %1",_fileUrl.toString());
     }
     return hmulti;
 }
@@ -644,7 +644,7 @@ OGRGeometryH GdalFeatureConnector::createGeometryCollection(const geos::geom::Ge
     for(int i = 0; i < geom->getNumGeometries();i++){
         err = gdal()->addGeometryDirectly(hmulti, createPolygon(geom->getGeometryN(i)));
         if(err != OGRERR_NONE)
-            ERROR1("not able to add geometry to non-container geometry in %1",_filename.toString());
+            ERROR1("not able to add geometry to non-container geometry in %1",_fileUrl.toString());
     }
     return hmulti;
 }
@@ -654,7 +654,7 @@ bool GdalFeatureConnector::loadDriver()
 
     _driver = gdal()->getDriverByName(_gdalShortName.toLocal8Bit());
     if ( !_driver ) {
-        return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _filename.toString());
+        return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _fileUrl.toString());
     }
 
 
@@ -692,9 +692,9 @@ bool GdalFeatureConnector::store(IlwisObject *obj, const IOOptions&   )
                 setAttributes(hfeature, feature, validAttributes, defs);
                 const geos::geom::Geometry* geometry = feature->geometry().get();
                 if (gdal()->setGeometryDirectly(hfeature,createFeature(geometry)) != OGRERR_NONE)
-                    ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("geometry"), _filename.toString());
+                    ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("geometry"), _fileUrl.toString());
                 if (gdal()->addFeature2Layer(lyr, hfeature) != OGRERR_NONE) {
-                    ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("feature"), _filename.toString());
+                    ERROR2(ERR_COULD_NOT_ALLOCATE_2, TR("feature"), _fileUrl.toString());
                 }
                 gdal()->destroyFeature(hfeature);
             };

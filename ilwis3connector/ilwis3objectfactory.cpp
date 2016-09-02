@@ -95,7 +95,7 @@ bool Ilwis3ObjectFactory::canUse(const Resource &resource) const
 //    if ( (cur = _types.find(type)) != _types.end()) {
 //        return (cur.value())(resource);
 //    }
-    QString filename = resource.url().toLocalFile();
+    QString filename = resource.url(true).toLocalFile();
     if ( filename == "")
         return false;
 

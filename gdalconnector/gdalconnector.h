@@ -25,7 +25,7 @@ protected:
     static OGRFieldType ilwisType2GdalFieldType(IlwisTypes tp);
     QString constructOutputName(GDALDriverH hdriver) const;
     void getTypes(const std::multimap<QString, DataFormat>& formats, IlwisTypes & tp, IlwisTypes & extendedType) const;
-    QUrl _filename;
+    QUrl _fileUrl;
     QString _internalPath;
     QString _gdalShortName;
     bool _readOnly = true;

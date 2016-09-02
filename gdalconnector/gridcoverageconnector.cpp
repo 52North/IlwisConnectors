@@ -144,7 +144,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
         return true;
 
     }else{
-        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"non-RasterCoverage",_filename.toLocalFile());
+        return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"non-RasterCoverage",_fileUrl.toLocalFile());
     }
 }
 
@@ -569,11 +569,11 @@ bool RasterCoverageConnector::loadDriver()
 {
     _driver = gdal()->getGDALDriverByName(_gdalShortName.toLocal8Bit());
     if ( !_driver ) {
-        return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _filename.toString());
+        return ERROR2(ERR_COULD_NOT_LOAD_2, "data-source", _fileUrl.toString());
     }
     const char* metaitem = gdal()->getMetaDataItem(_driver, GDAL_DCAP_CREATE, NULL);
     if (QString(metaitem).toLower() != "yes") {
-        return ERROR2(ERR_OPERATION_NOTSUPPORTED2, "write data-source", _filename.toString());
+        return ERROR2(ERR_OPERATION_NOTSUPPORTED2, "write data-source", _fileUrl.toString());
     }
 
     return true;
@@ -608,7 +608,7 @@ bool RasterCoverageConnector::store(IlwisObject *obj, const IOOptions & )
     }else
         dataset = gdal()->create( _driver, filename.toLocal8Bit(), sz.xsize(), sz.ysize(),  isColorMap ?  sz.zsize() * 3 : sz.zsize(), gdalType, 0 );
     if ( dataset == 0) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data set",_filename.toLocalFile());
+        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "data set",_fileUrl.toLocalFile());
     }
     bool ok = setGeotransform(raster, dataset);
     if (ok)

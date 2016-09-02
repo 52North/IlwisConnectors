@@ -62,7 +62,7 @@ bool SpreadSheetCatalogFileExplorer::canUse(const Resource &resource) const
         return false;
     if (resource.url().scheme() == "ilwis")
         return false;
-    QFileInfo fileInfo(resource.url().toLocalFile());
+    QFileInfo fileInfo(resource.url(true).toLocalFile());
     if ( fileInfo.isFile()) { // must be a file
         if ( fileInfo.suffix().toLower() == "xls" || fileInfo.suffix().toLower() == "ods" || fileInfo.suffix() == "xslx")
         return true;

@@ -93,7 +93,7 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                names[kvp.second.fileInfo().absoluteFilePath().toLower()] = item.id();
            }
            for(auto& resource : finalList){
-               names[OSHelper::neutralizeFileName(resource.url().toLocalFile())] = resource.id();
+               names[OSHelper::neutralizeFileName(resource.url(true).toLocalFile())] = resource.id();
            }
            std::vector<ODFItem> items;
            trq->prepare(TR("Organizing data"),"",odfitems.size()*2);
@@ -128,7 +128,7 @@ bool Ilwis3CatalogExplorer::canUse(const Resource &resource) const
             return false;
         if (resource.url().scheme() == "ilwis")
             return false;
-        if ( QFileInfo(resource.url().toLocalFile()).isFile()) // no file can be an ilwis3 catalog.
+        if ( QFileInfo(resource.url(true).toLocalFile()).isFile()) // no file can be an ilwis3 catalog.
             return false;
         return true;
 }

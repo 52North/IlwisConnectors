@@ -39,6 +39,8 @@ ODFItem::ODFItem(const IniFile &file, std::unordered_map<QString, IniFile> *know
             QString internalPath = _odf.fileInfo().canonicalPath() + "/" + mpl;
             if ( QFile::exists(internalPath)) {
                 addContainer(QUrl::fromLocalFile(internalPath));
+                QUrl newUrl = "file:///"+ internalPath + "/" + _odf.fileInfo().fileName();
+                setUrl(newUrl,false, false); // normalized url
             }
         }
     }
@@ -260,7 +262,7 @@ QString ODFItem::findDomainName(const QString& path) const
             QFile file(rasmap) ;
             if ( !file.exists()) {
                 rasmap = rasmap.remove("\'");
-                rasmap = container().toLocalFile() + "/" + rasmap ;
+                rasmap = container(true).toLocalFile() + "/" + rasmap ;
             }
             if ( rasmap.indexOf(".mpr") == -1)
                 rasmap += ".mpr";
@@ -316,7 +318,7 @@ IlwisTypes ODFItem::findDomainType(const QString& path) const
         return itCOLORDOMAIN;
 
     IniFile dm;
-    QString localpath = container().toLocalFile() + "/" + _domname;
+    QString localpath = container(true).toLocalFile() + "/" + _domname;
     if(!getIni(dm, localpath))
         return itUNKNOWN;
 
@@ -413,7 +415,7 @@ IlwisTypes ODFItem::findCsyType(const QString& path)
             QFile file(csyname);
             if ( !file.exists()){
                 csyname = csyname.remove("\'");
-                csyname = container().toLocalFile() + "/" + csyname;
+                csyname = container(true).toLocalFile() + "/" + csyname;
             }
             getIni(csy, csyname);
 
@@ -422,7 +424,7 @@ IlwisTypes ODFItem::findCsyType(const QString& path)
         QString path = _csyname;
         QFile file(_csyname);
         if ( !file.exists())
-            path = container().toLocalFile() + "/" + path;
+            path = container(true).toLocalFile() + "/" + path;
         else{
             QFileInfo inf (_csyname);
             path = inf.absoluteFilePath();

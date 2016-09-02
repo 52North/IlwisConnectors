@@ -344,7 +344,7 @@ bool GDALProxy::supports(const Resource &resource) const{
     };
     QString sAllIlwisExtensions = ".mpr.mpa.mps.mpp.tbt.mpl.ioc.mpv.ilo.atx.grh.dom.rpr.grf.csy.his.hsa.hss.hsp.sms.stp.smc.ta2.mat.fil.fun.isl";
     if (! testFunc(resource.toLocalFile()))   {
-        QFileInfo info(resource.container().toLocalFile()); // possible case that the container is a gdal catalog
+        QFileInfo info(resource.container(true).toLocalFile()); // possible case that the container is a gdal catalog
         if (info.isFile() && testFunc(info)) // for the moment a gdal catalog has to be another file
             return true;
         else {
@@ -401,7 +401,7 @@ GdalHandle* GDALProxy::openUrl(const QUrl& url, quint64 asker, GDALAccess mode, 
         return _openedDatasets[name];
     } else if ( ok){
         Resource res = mastercatalog()->id2Resource(asker);
-        QString localFile = QFileInfo(res.container().toLocalFile()).absoluteFilePath();
+        QString localFile = QFileInfo(res.container(true).toLocalFile()).absoluteFilePath();
         handle = gdal()->open(localFile.toLocal8Bit(), mode);
         if (handle){
             return _openedDatasets[localFile] = new GdalHandle(handle, GdalHandle::etGDALDatasetH, asker);

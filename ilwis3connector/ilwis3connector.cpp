@@ -29,14 +29,14 @@ Ilwis3Connector::Ilwis3Connector(const Resource &resource, bool load, const IOOp
     IniFile *odf = new IniFile();
     odf->setIniFile(fullname.toLocalFile(),load);
     _odf.reset(odf);
-    _resource = Resource(fullname, resource.ilwisType());
-    if (!load && resource.id() != i64UNDEF)
-        _resource.setId(resource.id());
+//    _resource = Resource(fullname, resource.ilwisType());
+//    if (!load && resource.id() != i64UNDEF)
+//        _resource.setId(resource.id());
 }
 
 bool Ilwis3Connector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
-    QFileInfo inf = _resource.url().toLocalFile();
+    QFileInfo inf = _resource.url(true).toLocalFile();
     if ( inf.exists()) {
         IniFile *ini = new IniFile();
         ini->setIniFile(inf);
@@ -321,7 +321,7 @@ QString Ilwis3Connector::suffix(IlwisTypes type) {
 }
 
 QUrl Ilwis3Connector::resolve(const Resource& resource) const {
-    QString filename = resource.url().toLocalFile();
+    QString filename = resource.url(true).toLocalFile();
     if ( filename == "") {
         if ( resource.name() == sUNDEF)
             return QUrl();
@@ -370,7 +370,7 @@ QString Ilwis3Connector::filename2FullPath(const QString& name, const Resource& 
         }
         else {
             if ( owner.isValid())  {
-                QString loc = "file:///" + owner.container().toLocalFile() + "/" + localName;
+                QString loc = "file:///" + owner.container(true).toLocalFile() + "/" + localName;
                 return loc;
             }
             int index = _odf->url().lastIndexOf("/");
@@ -387,7 +387,7 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
     QString csyName;
     if ( csy->code() != "unknown"){
         if ( csy->code() != "epsg:4326"){
-            csyName = Resource::toLocalFile(csy->resource().url(),true, "csy");
+            csyName = Resource::toLocalFile(csy->resource().url(true),true, "csy");
             if ( csy->isInternalObject()){
                 QString csyFile = Resource::toLocalFile(sourceRef().url(),false, "csy");
                 QString name = csy->name().trimmed();
@@ -443,7 +443,7 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
 
 IniFile *Ilwis3Connector::makeIni(const Resource &resource, IlwisTypes type)
 {
-    QString name = resource.url().toLocalFile();
+    QString name = resource.url(true).toLocalFile();
     QString ext = suffix(type);
     int index = name.lastIndexOf(".");
     if ( index != -1 && index > name.size() - 5){
@@ -460,7 +460,7 @@ IniFile *Ilwis3Connector::makeIni(const Resource &resource, IlwisTypes type)
 QUrl Ilwis3Connector::makeUrl(const QString& path, const QString& name, IlwisTypes type) {
     QString file = path.indexOf("file://") == 0 ? QUrl(path).toLocalFile() : path;
     if ( file == "")
-        file = _resource.url().toString();
+        file = _resource.url(true).toString();
     if ( file.indexOf("file:///") != -1){
         file = QUrl(file).toLocalFile();
     }

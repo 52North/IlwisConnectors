@@ -963,7 +963,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         }
         indexdom->setRange(range);
         datadef.domain(indexdom);
-        QFileInfo inf ( _resource.url().toLocalFile());
+        QFileInfo inf ( _resource.url(true).toLocalFile());
         QString filename = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/" + inf.baseName() + ".dom";
         indexdom->connectTo(filename,"domain","ilwis3", Ilwis::IlwisObject::cmOUTPUT);
         indexdom->store();

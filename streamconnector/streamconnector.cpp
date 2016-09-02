@@ -116,7 +116,10 @@ bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options
         if (!serializer)
             return false;
         serializer->connector(this);
-        return serializer->loadMetaData(object,options);
+        bool ok = serializer->loadMetaData(object,options);
+        if ( !hasType(object->ilwisType(), itCOVERAGE | itTABLE)) // apart from these one the rest has no binaries, so we never need to load it
+            _binaryIsLoaded = true;
+        return ok;
 
     }else {
         DownloadManager manager(_resource);
@@ -130,7 +133,7 @@ bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
         //QFileInfo inf(_resource.url().toLocalFile());
         VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
         QDataStream stream(_datasource.get());
-        //quint64 pos = stream.device()->pos();
+        quint64 pos = stream.device()->pos();
         IlwisTypes tp;
         QString version;
         stream >> tp;

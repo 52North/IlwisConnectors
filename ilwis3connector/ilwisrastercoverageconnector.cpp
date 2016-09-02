@@ -73,11 +73,11 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
     for(int i = 0; i < z; ++i) {
         QString file = _odf->value("MapList",QString("Map%1").arg(i));
         //file = filename2FullPath(file);
-        file = _resource.container().toLocalFile()+ "/" + file;
+        file = _resource.container(true).toLocalFile()+ "/" + file;
         if ( file != sUNDEF) {
             ODF odf(new IniFile(file));
             //QString dataFile = filename2FullPath(odf.value("MapStore","Data"));
-            QUrl url (QUrl::fromLocalFile(_resource.container().toLocalFile() + "/" + odf->value("MapStore","Data")));
+            QUrl url (QUrl::fromLocalFile(_resource.container(true).toLocalFile() + "/" + odf->value("MapStore","Data")));
             _dataFiles.push_back(url);
 
             DataDefinition def = determineDataDefintion(odf, options);
@@ -526,7 +526,7 @@ QString RasterCoverageConnector::getGrfName(const IRasterCoverage& raster) {
     }
     QString localName = Resource::toLocalFile(QUrl(name),false, "grf");
     if ( localName == sUNDEF){
-        QFileInfo localGrfPath(_resource.url().toLocalFile());
+        QFileInfo localGrfPath(_resource.url(true).toLocalFile());
         QString namePart = name.mid(name.lastIndexOf("/"));
         localName = localGrfPath.absolutePath() + namePart;
 
