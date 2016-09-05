@@ -211,7 +211,7 @@ QString GdalConnector::constructOutputName(GDALDriverH hdriver) const
         QString ext(cext);
         int index = filename.lastIndexOf(".");
         if ( index != -1) {
-            QString pext = filename.right(filename.size() - index);
+            QString pext = filename.right(filename.size() - index - 1);
             if ( pext.toLower() != ext) {
                 filename += "." + ext;
             }
