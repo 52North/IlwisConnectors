@@ -881,6 +881,7 @@ bool FeatureConnector::storeMetaPolygon(FeatureCoverage *fcov, const QString& fi
     _odf->setKeyValue("PolygonMapStore","Format",IniFile::FormatElement(5));
     _odf->setKeyValue("PolygonMapStore","DeletedPolygons",IniFile::FormatElement(0));
     _odf->setKeyValue("Ilwis","Class","ILWIS::Polygon Map");
+    _odf->setKeyValue("Ilwis","Version", "3.7");
 
     QString localFile = dataFile + ".mpz#";
     _odf->setKeyValue("PolygonMapStore","DataPol", localFile);
@@ -978,8 +979,6 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     bool ok = CoverageConnector::storeMetaData(fcov, type, datadef, baseName);
     if ( !ok)
         return false;
-
-
 
     if ( datadef.domain()->valueType() == itINDEXEDITEM) {
         _odf->setKeyValue("Domain","Type","DomainUniqueID");
