@@ -89,6 +89,8 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
     fcoverage->setFeatureCount(itFEATURE, iUNDEF, FeatureInfo::ALLFEATURES); // reset all counts
 
     double v;
+    map<quint32,vector<geos::geom::Geometry *>> polygons;
+    std::vector<double> featureValues(isNumeric ? nrPolygons : 0);
     for(int i = 0; i < nrPolygons; ++i) {
         polTable.get(i,colArea, v);
         if ( v < 0)
@@ -105,20 +107,19 @@ bool FeatureConnector::loadBinaryPolygons30(FeatureCoverage *fcoverage, ITable& 
                 (*inners)[j-1] = rings->at(j);
             }
 
-            geos::geom::Polygon *polygon = fcoverage->geomfactory()->createPolygon(outer, inners);
-            //std::copy(rings[0].begin(), rings[0].end(), polygon.outer().begin());
-            polTable.get(i, colValue, v);
+            geos::geom::Polygon *pol = fcoverage->geomfactory()->createPolygon(outer, inners);
+
+            //collect all polygons in a map; the key is either a unique number ( index j) or the raw value from the polygon
+            //in this way all polygons with the same raw value will become a multipolygon
+            double value;
+            polTable.get(i, colValue, value);
+            polygons[isNumeric ? i + 1 : (quint32)value].push_back(pol);
             if ( isNumeric) {
-                fcoverage->newFeature({polygon}, false);
-                tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(i));
-                tbl->setCell(FEATUREVALUECOLUMN, i, QVariant(v));
-            } else {
-                fcoverage->newFeature({polygon}, false);
-                quint32 itemId = v;
-                tbl->setCell(COVERAGEKEYCOLUMN, i, QVariant(itemId - 1));
+                featureValues[i] = value;
             }
         }
     }
+    addFeatures(polygons, fcoverage,featureValues, itPOLYGON);
     return true;
 }
 
