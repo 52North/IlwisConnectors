@@ -179,7 +179,7 @@ bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions &options )
     if ( hasType(raster->datadef().domain()->ilwisType() , itNUMERICDOMAIN)){
         NumericStatistics& stats = raster->statistics(ContainerStatistics<double>::pBASIC);
         qint16 digits = stats.significantDigits();
-        double scale = std::pow(10,-digits);
+        double scale = digits >= 10 ? 0 : std::pow(10,-digits);
         converter = RawConverter(stats[ContainerStatistics<double>::pMIN], stats[ContainerStatistics<double>::pMAX],scale);
 
         _stream << stats[ContainerStatistics<double>::pMIN] << stats[ContainerStatistics<double>::pMAX] << scale;
