@@ -80,11 +80,15 @@ public:
         }
         if ( (_item && raw == 0) || raw == _undefined)
             return rUNDEF;
+        if ( _scale == 0)
+            return raw;
         return (raw + _offset) * MathHelper::roundTo3DecimalDigits (_scale);
     }
-    long real2raw(double real) const {
+    double real2raw(double real) const {
         if ( real == rUNDEF)
             return _undefined;
+        if ( _scale == 0)
+            return real;
         return real / MathHelper::roundTo3DecimalDigits (_scale)   - _offset;
     }
     bool isNeutral() const{
