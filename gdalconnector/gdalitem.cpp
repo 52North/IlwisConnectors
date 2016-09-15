@@ -121,8 +121,8 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes tp,
                 int featureCount = gdal()->getFeatureCount(layerH, FALSE);
                 sz = findSize(file);
                 if (tp & itFEATURE) {
-                    addItem(handle, url, csyId, featureCount, itFEATURE , itCOORDSYSTEM | itTABLE, sz);
-                    addItem(handle, url, 0, iUNDEF, itTABLE , itFEATURE, sz);
+                    addItem(handle, url, csyId, featureCount, itFEATURE , itCOORDSYSTEM|itTABLE , sz);
+                    //addItem(handle, url, 0, iUNDEF, itTABLE , itFEATURE, sz);
                     if (! mastercatalog()->id2Resource(csyId).isValid())
                         addItem(handle, QUrl(url), 0, iUNDEF, itCONVENTIONALCOORDSYSTEM , 0, sz);
                 } else if (tp & itTABLE)
