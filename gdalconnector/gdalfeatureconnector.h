@@ -29,7 +29,7 @@ private:
     enum OutputState { osIndex2Layer=1,osType2Layer=2, osLayer2DataSource=4};
 
     QVariant fillEmptyColumn(OGRFeatureH, int);
-    IlwisTypes translateOGRType(OGRwkbGeometryType type) const;
+
     geos::geom::Geometry* fillFeature(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
     geos::geom::Geometry* fillPoint(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;
     geos::geom::Geometry* fillLine(FeatureCoverage *fcoverage, OGRGeometryH geometry) const;

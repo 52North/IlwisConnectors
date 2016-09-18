@@ -52,24 +52,6 @@ Ilwis::IlwisObject* GdalFeatureConnector::create() const{
     return new FeatureCoverage(this->_resource);
 }
 
-IlwisTypes GdalFeatureConnector::translateOGRType(OGRwkbGeometryType type) const{
-    IlwisTypes ret = itUNKNOWN;
-
-    if ( type == wkbPoint || type == wkbMultiPoint || type == wkbPoint25D || type == wkbMultiPoint25D)
-        ret += itPOINT;
-
-    if ( type == wkbLineString || type == wkbMultiLineString || type == wkbLineString25D || type == wkbMultiLineString25D)
-        ret += itLINE;
-
-    if ( type == wkbPolygon || type == wkbMultiPolygon || type == wkbPolygon25D || type == wkbMultiPolygon25D)
-        ret += itPOLYGON;
-
-    if ( type == wkbGeometryCollection )
-        ret = itFEATURE;
-
-    return ret;
-}
-
 bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions& options){
 
     if(!CoverageConnector::loadMetaData(data, options))
@@ -82,7 +64,7 @@ bool GdalFeatureConnector::loadMetaData(Ilwis::IlwisObject *data,const IOOptions
 
     if ( hLayer) {
         //feature types
-        IlwisTypes type = translateOGRType(gdal()->getLayerGeometry(hLayer));
+        IlwisTypes type = GDALProxy::translateOGRType(gdal()->getLayerGeometry(hLayer));
         if (type == itUNKNOWN){
             WARN(QString("Unknown feature type of layer %1 from: %2").arg(0).arg(_fileUrl.toString()));
         }else{

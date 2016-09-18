@@ -532,3 +532,21 @@ Envelope GDALProxy::envelope(GdalHandle* handle, int index, bool force){
     }
     return bbox;
 }
+
+IlwisTypes GDALProxy::translateOGRType(OGRwkbGeometryType type){
+    IlwisTypes ret = itUNKNOWN;
+
+    if ( type == wkbPoint || type == wkbMultiPoint || type == wkbPoint25D || type == wkbMultiPoint25D)
+        ret += itPOINT;
+
+    if ( type == wkbLineString || type == wkbMultiLineString || type == wkbLineString25D || type == wkbMultiLineString25D)
+        ret += itLINE;
+
+    if ( type == wkbPolygon || type == wkbMultiPolygon || type == wkbPolygon25D || type == wkbMultiPolygon25D)
+        ret += itPOLYGON;
+
+    if ( type == wkbGeometryCollection )
+        ret = itFEATURE;
+
+    return ret;
+}

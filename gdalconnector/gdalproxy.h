@@ -200,6 +200,7 @@ class GDALProxy {
         Envelope envelope(GdalHandle *handle, int index, bool force=false);
 
         static QString translateOGRERR(char ogrErrCode);
+        static IlwisTypes translateOGRType(OGRwkbGeometryType type) ;
 
     private:
         bool prepare();
