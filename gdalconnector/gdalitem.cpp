@@ -119,9 +119,10 @@ GDALItems::GDALItems(const QUrl &url, const QFileInfo &localFile, IlwisTypes tp,
             if ( count == 1) {//  default case, one layer per object
                 OGRLayerH layerH = gdal()->getLayer(handle->handle(),0);
                 int featureCount = gdal()->getFeatureCount(layerH, FALSE);
+                IlwisTypes featuretype = GDALProxy::translateOGRType(gdal()->getLayerGeometry(layerH));
                 sz = findSize(file);
                 if (tp & itFEATURE) {
-                    addItem(handle, url, csyId, featureCount, itFEATURE , itCOORDSYSTEM|itTABLE , sz);
+                    addItem(handle, url, csyId, featureCount, featuretype , itCOORDSYSTEM|itTABLE , sz);
                     //addItem(handle, url, 0, iUNDEF, itTABLE , itFEATURE, sz);
                     if (! mastercatalog()->id2Resource(csyId).isValid())
                         addItem(handle, QUrl(url), 0, iUNDEF, itCONVENTIONALCOORDSYSTEM , 0, sz);
