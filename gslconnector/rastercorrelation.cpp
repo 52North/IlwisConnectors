@@ -117,7 +117,7 @@ quint64 RasterCorrelation::createMetadata()
     operation.addInParameter(1,itRASTER, TR("second raster"),TR("second mulit dimensional raster"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"), TR("Single with the correlation between the raster columns"));
-    operation.setKeywords("raster, statistics");
+    operation.setKeywords("raster, statistics,numeric");
 
     mastercatalog()->addItems({operation});
     return operation.id();

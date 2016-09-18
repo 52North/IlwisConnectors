@@ -147,7 +147,7 @@ quint64 RelativeAggregateRasterStatistics::createMetadata()
     operation.addInParameter(2,itRASTER, TR("relative map"),TR("values are calculated relative to the pixel values in this raster"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"), TR("Single band raster with the aggregated statistical values"));
-    operation.setKeywords("raster, statistics");
+    operation.setKeywords("raster, statistics,numeric");
 
     mastercatalog()->addItems({operation});
     return operation.id();

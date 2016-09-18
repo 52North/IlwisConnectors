@@ -86,7 +86,7 @@ quint64 PostgresqlConnection::createMetadata()
     operation.addOptionalInParameter(8,itSTRING , TR("rasterid"),TR("The rasterid of a multiraster column in the table"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itSTRING, TR("connection url"),TR("string that is sufficient to access the remote catalog"));
-    operation.setKeywords("service,postgresql,postgis,database");
+    operation.setKeywords("service,postgresql,database");
     mastercatalog()->addItems({operation});
     return operation.id();
 }

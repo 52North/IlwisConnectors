@@ -107,7 +107,7 @@ quint64 RasterQuantile::createMetadata()
     operation.addInParameter(1,itPOSITIVEINTEGER, TR("quantile"),TR("quantile of the ordered z column"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"), TR("Single band raster with the aggregated statical values"));
-    operation.setKeywords("raster, statistics");
+    operation.setKeywords("raster, statistics,numeric");
 
     mastercatalog()->addItems({operation});
     return operation.id();
