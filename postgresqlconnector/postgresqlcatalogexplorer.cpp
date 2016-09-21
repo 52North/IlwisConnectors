@@ -91,7 +91,6 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
 
                 // add per-geometry-column FeatureCoverages
                 sqlBuilder = "SELECT table_name,column_name FROM INFORMATION_SCHEMA.Columns WHERE table_schema='" + params.schema() + "' and udt_name='geometry'";
-                qDebug() << "SQL: " << sqlBuilder;
                 query = pgUtil.doQuery(sqlBuilder);
                 while (query.next()) {
                     QString tablename = query.value(0).toString();
