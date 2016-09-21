@@ -22,8 +22,13 @@ namespace pythonapi {
     bool _initIlwisObjects(const char * ilwisDir){
         int argc = 0;
         char* argv[0];
-        app = new QCoreApplication(argc, argv);
-        bool ret = Ilwis::initIlwis(Ilwis::rmCOMMANDLINE, ilwisDir);
+        bool ret = true;
+
+        app = QCoreApplication::instance();
+        if (!app){
+            app = new QCoreApplication(argc, argv);
+            ret = Ilwis::initIlwis(Ilwis::rmCOMMANDLINE, ilwisDir);
+        }
         pythonapi::logger = new pythonapi::QIssueLogger();
         pythonapi::connection = QObject::connect(Ilwis::kernel()->issues().data(),&Ilwis::IssueLogger::updateIssues,pythonapi::logger,&QIssueLogger::ilwiserrormessage);
         return ret;
