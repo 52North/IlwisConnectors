@@ -88,13 +88,15 @@ OTHER_FILES += \
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 INCLUDEPATH += $$PWD/../ilwiscore/core \
-               $$PWD/../external/geos
+               $$PWD/../external/geos \
+               $$PWD/../external/python35
 
 PYMINORVERSION = 0
 PYVERLIST = 1 2 3 4 5 6 7 8 9
 for (VER, PYVERLIST): exists($$PWD/../external/Python3$$VER/include/Python.h) {
     PYMINORVERSION = $$VER
 }
+
 equals(PYMINORVERSION, 0) {
     for (VER, PYVERLIST): exists(C:/Python3$$VER/include/Python.h) {
         PYMINORVERSION = $$VER
