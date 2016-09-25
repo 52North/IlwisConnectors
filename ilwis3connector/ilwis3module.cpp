@@ -91,7 +91,7 @@ void Ilwis3Module::prepare()
 
     factory->addCreator("map","ilwis3",Ilwis3::RasterCoverageConnector::create);
     factory->addCreator("georef","ilwis3",Ilwis3::GeorefConnector::create);
-    factory->addCreator("georeference","ilwis3",Ilwis3::GeorefConnector::create);  // Oh joy... stop using magic strings, use constants
+    factory->addCreator("georeference","ilwis3",Ilwis3::GeorefConnector::create);
     factory->addCreator("vectormap","ilwis3",Ilwis3::FeatureConnector::create);
     factory->addCreator("domain","ilwis3",Ilwis3::DomainConnector::create);
     factory->addCreator("coordsystem","ilwis3",Ilwis3::CoordinateSystemConnector::create);
