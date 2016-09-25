@@ -27,6 +27,7 @@
 #include "catalogserializerv1.h"
 #include "operationmetadataserializerv1.h"
 #include "workflowserializerv1.h"
+#include "scriptserializerv1.h"
 #include "dataformat.h"
 
 using namespace Ilwis;
@@ -79,6 +80,7 @@ void StreamModule::prepare()
     versionFactory->addCreator({"iv40",itCATALOG},CatalogserializerV1::create);
     versionFactory->addCreator({"iv40",itSINGLEOPERATION},OperationMetadataSerializerV1::create);
     versionFactory->addCreator({"iv40",itWORKFLOW},WorkflowSerializerV1::create);
+    versionFactory->addCreator({"iv40",itSCRIPT},ScriptSerializerV1::create);
 
 
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
@@ -100,6 +102,7 @@ void StreamModule::prepare()
     cfactory->addCreator("coordinatesystem","stream",StreamConnector::create);
     cfactory->addCreator("operationmetadata","stream",StreamConnector::create);
     cfactory->addCreator("workflow","stream",StreamConnector::create);
+    cfactory->addCreator("script","stream",StreamConnector::create);
 
     QFileInfo ilw = context()->ilwisFolder();
     QString path = ilw.canonicalFilePath() + "/extensions/streamconnector/resources";

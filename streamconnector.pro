@@ -64,7 +64,8 @@ HEADERS += \
     streamconnector/catalogconnection.h \
     streamconnector/streamcatalogexplorer.h \
     streamconnector/operationmetadataserializerv1.h \
-    streamconnector/workflowserializerv1.h
+    streamconnector/workflowserializerv1.h \
+    streamconnector/scriptserializerv1.h
 
 SOURCES += \
     streamconnector/streammodule.cpp \
@@ -88,7 +89,8 @@ SOURCES += \
     streamconnector/catalogconnection.cpp \
     streamconnector/streamcatalogexplorer.cpp \
     streamconnector/operationmetadataserializerv1.cpp \
-    streamconnector/workflowserializerv1.cpp
+    streamconnector/workflowserializerv1.cpp \
+    streamconnector/scriptserializerv1.cpp
 
 resources.files = streamconnector/resources/streamformats.config
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
