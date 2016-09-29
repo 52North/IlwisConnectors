@@ -10,7 +10,7 @@ QMAKE_EXTENSION_SHLIB = pyd
 
 TEMPLATE = lib
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$PYTHONAPI_FOLDER
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/pythonscript
 
 HEADERS += \
     pythonapi/pythonapi_util.h \
@@ -146,7 +146,7 @@ linux {
 }
 
 win32 {
-    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$PYTHONAPI_FOLDER
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonscript/python/Lib/site-packages/ilwis
     SOURCE_DIR = $$replace(SOURCE_DIR,/,\\)
     DEST_DIR = $$clean_path($$DLLDESTDIR)
     DEST_DIR = $$replace(DEST_DIR,/,\\)
