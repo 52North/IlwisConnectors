@@ -6,6 +6,8 @@ TARGET = _ilwisobjects
 
 PYTHONAPI_FOLDER = pythonapi
 
+DEFINES += PYTHONAPI_LIBRARY
+
 QMAKE_EXTENSION_SHLIB = pyd
 
 TEMPLATE = lib
@@ -42,6 +44,7 @@ HEADERS += \
     pythonapi/pythonapi_columndefinition.h \
     pythonapi/pythonapi_domainitem.h \
     pythonapi/pythonapi_vertexiterator.h \
+    pythonapi/pythonapi_global.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \

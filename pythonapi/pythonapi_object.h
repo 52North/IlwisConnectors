@@ -1,13 +1,14 @@
 #ifndef PYTHONAPI_OBJECT_H
 #define PYTHONAPI_OBJECT_H
 
+#include "pythonapi_global.h"
 #include "pythonapi_extension.h"
 
 typedef quint64 IlwisTypes;
 
 namespace pythonapi{
 
-    class Object{
+    class PYTHONAPI_EXPORT Object{
     public:
         Object(){}
         virtual ~Object(){}

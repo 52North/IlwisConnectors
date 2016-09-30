@@ -39431,7 +39431,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "it_TABLE",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::TABLE)));
   SWIG_Python_SetConstant(d, "it_GEOREF",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::GEOREF)));
   SWIG_Python_SetConstant(d, "it_COORDSYSTEM",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::COORDSYSTEM)));
-  SWIG_Python_SetConstant(d, "it_DOMAIN",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::DOMAIN)));
+  SWIG_Python_SetConstant(d, "it_DOMAIN",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::ILWDOMAIN)));
   SWIG_Python_SetConstant(d, "it_NUMERICDOMAIN",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::NUMERICDOMAIN)));
   SWIG_Python_SetConstant(d, "it_ITEMDOMAIN",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::ITEMDOMAIN)));
   SWIG_Python_SetConstant(d, "it_SINGLEOPERATION",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(pythonapi::it::SINGLEOPERATION)));

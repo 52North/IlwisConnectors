@@ -2,6 +2,7 @@
 #define PYTHONAPI_ILWISOBJECT_H
 
 #include <memory>
+#include "pythonapi_global.h"
 #include "pythonapi_object.h"
 #include "pythonapi_util.h"
 
@@ -14,7 +15,7 @@ namespace Ilwis {
 
 namespace pythonapi {
 
-    class IlwisObject: public Object{
+    class PYTHONAPI_EXPORT IlwisObject: public Object{
         friend class Engine;
         friend class Catalog;
     public:

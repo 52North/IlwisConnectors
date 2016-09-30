@@ -20,7 +20,7 @@ namespace pythonapi{
         static const quint64 TABLE = itTABLE;
         static const quint64 GEOREF = itGEOREF;
         static const quint64 COORDSYSTEM = itCOORDSYSTEM;
-        static const quint64 DOMAIN = itDOMAIN;
+        static const quint64 ILWDOMAIN = itDOMAIN;
         static const quint64 NUMERICDOMAIN = itNUMERICDOMAIN;
         static const quint64 ITEMDOMAIN = itITEMDOMAIN;
         static const quint64 SINGLEOPERATION = itSINGLEOPERATION;
