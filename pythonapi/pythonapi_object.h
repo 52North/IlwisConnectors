@@ -8,7 +8,7 @@ typedef quint64 IlwisTypes;
 
 namespace pythonapi{
 
-    class PYTHONAPI_EXPORT Object{
+    class Object{
     public:
         Object(){}
         virtual ~Object(){}

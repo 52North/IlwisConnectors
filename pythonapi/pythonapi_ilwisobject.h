@@ -15,7 +15,7 @@ namespace Ilwis {
 
 namespace pythonapi {
 
-    class PYTHONAPI_EXPORT IlwisObject: public Object{
+    class IlwisObject: public Object{
         friend class Engine;
         friend class Catalog;
     public:
