@@ -18,6 +18,7 @@
 #include "itemrange.h"
 #include "catalog.h"
 
+#include "pythonapi_global.h"
 #include "pythonapi_pyobject.h"
 #include "pythonapi_error.h"
 #include "pythonapi_extension.h"
@@ -105,7 +106,7 @@ def object_cast(obj):
         return Table.toTable(obj)
     elif it.NUMERICDOMAIN & type != 0:
       return NumericDomain.toNumericDomain(obj)
-    elif it.DOMAIN & type != 0:
+    elif it.ILWDOMAIN & type != 0:
       return Domain.toDomain(obj)
     elif it.COORDSYSTEM & type != 0:
         return CoordinateSystem.toCoordinateSystem(obj)
@@ -137,6 +138,14 @@ def object_cast(obj):
         else:
             raise IlwisException("no operation given!")
         return object_cast(obj)
+
+    @staticmethod
+    def do2(operation,arg1="",arg2="",arg3="",arg4="",arg5="",arg6="",arg7="",out=""):
+        if str(operation) != "":
+          obj = Engine__do2(str(out),str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7))
+        else:
+          raise IlwisException("no operation given!")
+        return obj
 
     @staticmethod
     def catalogItems():
