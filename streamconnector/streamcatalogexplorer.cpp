@@ -24,6 +24,7 @@
 #include "streamcatalogexplorer.h"
 #include "streamconnector.h"
 #include "versionedserializer.h"
+#include "mastercatalogcache.h"
 #include "versioneddatastreamfactory.h"
 
 using namespace Ilwis;
@@ -36,6 +37,31 @@ StreamCatalogExplorer::StreamCatalogExplorer(const Ilwis::Resource &resource, co
 
 }
 
+void createCatalog(const IRasterCoverage& raster){
+    Resource resCatalog = raster->resource();
+    resCatalog.newId();
+    resCatalog.name(raster->name());
+    resCatalog.createTime(Time::now());
+    resCatalog.modifiedTime(Time::now());
+    resCatalog.setIlwisType(itCATALOG);
+    resCatalog.setExtendedType(resCatalog.extendedType() | itRASTER);
+    mastercatalog()->addItems({resCatalog});
+    std::vector<Resource> bands;
+    RasterStackDefinition defs = raster->stackDefinition();
+    for(quint32 band=0; band < raster->size().zsize(); ++band){
+        Resource resBand = raster->resource();
+        resBand.newId();
+        resBand.createTime(Time::now());
+        resBand.modifiedTime(Time::now());
+        QUrl newUrl = resBand.url().toString();
+        QString newName = resBand.name() + "_" + defs.index(band);
+        resBand.setUrl(newUrl.toString() + "/" + newName);
+        resBand.code("band="+QString::number(band));
+        bands.push_back(resBand);
+    }
+    mastercatalog()->addItems(bands);
+}
+
 std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
 {
     QStringList sfilters;
@@ -46,31 +72,46 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
     std::vector<Resource> items;
     for(auto url : files){
         QString path = url.toLocalFile();
-        if ( QFileInfo(path).isDir())
+
+
+        QFileInfo localfile = QFileInfo(url.toLocalFile());
+        if ( localfile.isDir())
             continue;
+        if (localfile.isFile()){
+            std::vector<Resource> resources = CatalogConnector::cache()->find(url, Time(localfile.lastModified()));
+            if ( resources.size() != 0){
+                for(auto resource : resources)
+                    items.push_back(resource);
+            }else {
+                QFile file(path);
+                if ( file.open(QIODevice::ReadOnly)){
+                    QDataStream stream(&file);
+                    IlwisTypes tp;
 
-        QFile file(path);
-        if ( file.open(QIODevice::ReadOnly)){
-            QDataStream stream(&file);
-            IlwisTypes tp;
+                    stream >> tp;
+                    file.close();
 
-            stream >> tp;
-            file.close();
-
-            if ( tp == itUNKNOWN)
-                continue;
-            Resource res(url, tp);
-            if ( tp == itWORKFLOW){
-                IWorkflow wf;
-                wf.prepare(res);
-                wf->createMetadata();
-                Resource res2 = wf->resource();
-                res2.code(res.code()); //code comes from other machine or possibly older instance which might have different id's
-                items.push_back(res2);
-            }else if (hasType(tp, itILWISOBJECT)){
-                IIlwisObject obj(res);
-                Resource res2 = obj->resource();
-                items.push_back(res);
+                    if ( tp == itUNKNOWN)
+                        continue;
+                    Resource res(url, tp);
+                    if ( tp == itWORKFLOW){
+                        IWorkflow wf;
+                        wf.prepare(res);
+                        wf->createMetadata();
+                        Resource res2 = wf->resource();
+                        res2.code(res.code()); //code comes from other machine or possibly older instance which might have different id's
+                        items.push_back(res2);
+                    }else if (hasType(tp, itILWISOBJECT)){
+                        IIlwisObject obj(res);
+                        if ( obj->ilwisType() == itRASTER){
+                            IRasterCoverage raster = obj.as<RasterCoverage>();
+                            if ( raster->size().zsize() > 1){
+                                createCatalog(raster);
+                            }
+                        }
+                        items.push_back(res);
+                    }
+                }
             }
         }
     }
