@@ -65,12 +65,11 @@ template<typename T> void loadBulk(const RawConverter& converter, QDataStream& s
             //for the moment we only accept whole layers as possible subsets, might improve this in the future
             int layer = box.min_corner().z;
             blockCount =  raster->grid()->blocksPerBand();
-            int seekPos = layer * (raster->size().xsize() * raster->size().ysize() * sizeof(T) + sizeof(quint32) + sizeof(quint64));
+            int seekPos = stream.device()->pos() + layer * (raster->size().xsize() * raster->size().ysize() * sizeof(T) + sizeof(quint32) + sizeof(quint64));
             stream.device()->seek(seekPos);
         }
         quint32 blockIndex;
         quint64 blockSize, initBlockSize;
-
         stream >> blockIndex;
         stream >> blockSize;
         initBlockSize = blockSize;
