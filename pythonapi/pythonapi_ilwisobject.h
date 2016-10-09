@@ -2,7 +2,6 @@
 #define PYTHONAPI_ILWISOBJECT_H
 
 #include <memory>
-#include "pythonapi_global.h"
 #include "pythonapi_object.h"
 #include "pythonapi_util.h"
 
