@@ -155,7 +155,7 @@ quint64 AggregateRasterStatistics::createMetadata()
     operation.addInParameter(1,itSTRING, TR("statistical method"),TR("method of calucaltion for a pixel column of the stack of bands"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"), TR("Single band raster with the aggregated statical values"));
-    operation.setKeywords("raster, statistics,numeric");
+    operation.setKeywords("raster, statistics,numeric,aggregate");
 
     mastercatalog()->addItems({operation});
     return operation.id();
