@@ -292,7 +292,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
         bool isOldSystem = true;
         QString domName = getDomainName(dmColumn, isOldSystem);
         if ( !isOldSystem) {
-            if (domName.indexOf("?code=") > -1)
+            if (domName.indexOf("/domains/") > -1)
                 domName = def.name() + ".dom";
             QString fileUrl = context()->workingCatalog()->filesystemLocation().toString() + "/" + domName;
             if (QFileInfo(QUrl(fileUrl).toLocalFile()).exists()) {
