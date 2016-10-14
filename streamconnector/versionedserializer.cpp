@@ -101,7 +101,7 @@ bool VersionedSerializer::storeDataDefintion(const DataDefinition &def, QDataStr
     if ( !domainStreamer)
         return false;
     _stream << def.domain()->valueType();
-    _stream << def.domain()->resource().url().toString(); // this string is (potentially) only usefull if it is a system object.
+    storeSystemPath(def.domain()->resource());
     domainStreamer->store(def.domain().ptr(), options);
     if ( !def.range().isNull()) // no range for textdomains
         def.range()->store(_stream);
@@ -124,10 +124,7 @@ bool VersionedSerializer::loadDataDefinition(DataDefinition &def, QDataStream &s
     if ( !domainStreamer)
         return false;
 
-    IDomain systemDomain;
-    if ( url.indexOf("ilwis://system") == 0){ // it used to be a system object, check if it still is and if so use it
-        systemDomain.prepare(url,{"mustexist", true});
-    }
+    IDomain systemDomain = makeSystemObject<IDomain>(url);
     IDomain dom(type | valueType);
     Range *range = 0;
     domainStreamer->loadMetaData(dom.ptr(), options);
