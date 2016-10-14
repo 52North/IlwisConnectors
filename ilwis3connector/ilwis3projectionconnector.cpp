@@ -95,7 +95,7 @@ Projection::ProjectionParamValue ProjectionConnector::mapKeyToEnum(const QString
 
 IlwisObject *ProjectionConnector::create() const
 {
-    QString url = QString("ilwis://factory/projection?code=%1").arg(_internalCode);
+    QString url = QString("ilwis://factory/projections/%1").arg(_internalCode);
     Resource resource = mastercatalog()->name2Resource(url, itPROJECTION);
     if ( !resource.isValid()) {
         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Projection",url));
