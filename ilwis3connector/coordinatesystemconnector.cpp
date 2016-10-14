@@ -139,7 +139,7 @@ IEllipsoid CoordinateSystemConnector::getEllipsoid() {
     if ( code == sUNDEF)
         return IEllipsoid();
 
-    QString resource = QString("ilwis://system/ellipsoid?code=%1").arg(code);
+    QString resource = QString("ilwis://system/ellipsoids/%1").arg(code);
 
     ellipsoid.prepare(resource);
 
@@ -252,7 +252,7 @@ IProjection CoordinateSystemConnector::getProjection(ConventionalCoordinateSyste
     }
 
     QString code = name2Code(projection, "projection");
-    Resource resource(QUrl(QString("ilwis://system/projection?code=%1").arg(code)), itPROJECTION);
+    Resource resource(QUrl(QString("ilwis://system/projections/%1").arg(code)), itPROJECTION);
 
     if ( code == sUNDEF) {
         kernel()->issues()->log(TR("Couldnt find projection %1").arg(projection));
