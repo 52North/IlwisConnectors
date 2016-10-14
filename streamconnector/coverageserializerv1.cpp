@@ -34,6 +34,7 @@ bool CoverageSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     if ( !csyStreamer)
         return false;
     Coverage *coverage = static_cast<Coverage *>(obj);
+    storeSystemPath(coverage->coordinateSystem()->resource());
     csyStreamer->store(coverage->coordinateSystem().ptr(),options);
 
     _stream << coverage->envelope().min_corner().x << coverage->envelope().min_corner().y << coverage->envelope().max_corner().x << coverage->envelope().max_corner().y;
@@ -48,7 +49,8 @@ bool CoverageSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &optio
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     Coverage *coverage = static_cast<Coverage *>(obj);
     quint64 type;
-    QString version;
+    QString version, url;
+    _stream >> url;
     _stream >> type;
     if ( type != itUNKNOWN){
 
@@ -57,9 +59,10 @@ bool CoverageSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &optio
         std::unique_ptr<DataInterface> csyStreamer(factory->create(version, itCOORDSYSTEM,_stream));
         if ( !csyStreamer)
             return false;
+        ICoordinateSystem systemCsy = makeSystemObject<ICoordinateSystem>(url);
         ICoordinateSystem csy(type);
         csyStreamer->loadMetaData(csy.ptr(),options);
-        coverage->coordinateSystem(csy);
+        coverage->coordinateSystem(systemCsy.isValid() ? systemCsy : csy);
     }
 
     double minx, miny, maxx, maxy;

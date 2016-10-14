@@ -44,10 +44,12 @@ bool CoordinateSystemSerializerV1::store(IlwisObject *obj, const IOOptions &opti
         if ( !projstreamer)
             return false;
         ConventionalCoordinateSystem *ccsy = static_cast<ConventionalCoordinateSystem *>(csy);
+        storeSystemPath(ccsy->projection()->resource());
         projstreamer->store(ccsy->projection().ptr(),options);
         std::unique_ptr<DataInterface> ellstreamer(factory->create(Version::interfaceVersion, itELLIPSOID,_stream));
         if ( !ellstreamer)
             return false;
+        storeSystemPath(ccsy->ellipsoid()->resource());
         ellstreamer->store(ccsy->ellipsoid().ptr(),options);
 
         const std::unique_ptr<GeodeticDatum>& datum = ccsy->datum();
@@ -78,17 +80,20 @@ bool CoordinateSystemSerializerV1::loadMetaData(IlwisObject *obj, const IOOption
     if ( csy->ilwisType() == itCONVENTIONALCOORDSYSTEM){
         ConventionalCoordinateSystem *convCsy = static_cast<ConventionalCoordinateSystem *>(obj);
         quint64 type;
-        QString version;
+        QString version, url;
+        _stream >> url;
         _stream >> type;
         if ( type != itUNKNOWN){
             _stream >> version;
             std::unique_ptr<DataInterface> projstreamer(factory->create(version, type,_stream));
             if ( !projstreamer)
                 return false;
+            IProjection systemPrj = makeSystemObject<IProjection>(url);
             IProjection proj(itPROJECTION);
             projstreamer->loadMetaData(proj.ptr(), options );
-            convCsy->setProjection(proj);
+            convCsy->setProjection(systemPrj.isValid() ? systemPrj : proj);
         }
+        _stream >> url;
         _stream >> type;
         if ( type != itUNKNOWN){
             _stream >> version;
@@ -96,10 +101,11 @@ bool CoordinateSystemSerializerV1::loadMetaData(IlwisObject *obj, const IOOption
             std::unique_ptr<DataInterface> ellstreamer(factory->create(Version::interfaceVersion, itELLIPSOID,_stream));
             if ( !ellstreamer)
                 return false;
+            IEllipsoid systemEll = makeSystemObject<IEllipsoid>(url);
             IEllipsoid ellipsoid;
             ellipsoid.prepare();
             ellstreamer->loadMetaData(ellipsoid.ptr(), options);
-            convCsy->setEllipsoid(ellipsoid);
+            convCsy->setEllipsoid(systemEll.isValid() ? systemEll : ellipsoid);
         }
         _stream >> type;
         if ( type != itUNKNOWN){

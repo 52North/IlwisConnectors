@@ -52,13 +52,13 @@ bool VersionedSerializer::loadMetaData(IlwisObject *obj, const IOOptions &)
     // we are not going to replace info in the resource if not needed.
     // reason is that this can be a container object (e.g multiband raster) and we are reading here the container
     // and not the actual object embedded in the container
-    QString var;
+    QString var,code;
     _stream >> var;
+    _stream >> code;
+    if (!skip)
+        obj->code(code);
     if (!skip )
         obj->name(var);
-    _stream >> var;
-    if (!skip)
-        obj->code(var);
     _stream >> var;
     if (!skip)
         obj->setDescription(var);
@@ -101,6 +101,7 @@ bool VersionedSerializer::storeDataDefintion(const DataDefinition &def, QDataStr
     if ( !domainStreamer)
         return false;
     _stream << def.domain()->valueType();
+    _stream << def.domain()->resource().url().toString(); // this string is (potentially) only usefull if it is a system object.
     domainStreamer->store(def.domain().ptr(), options);
     if ( !def.range().isNull()) // no range for textdomains
         def.range()->store(_stream);
@@ -114,14 +115,19 @@ bool VersionedSerializer::loadDataDefinition(DataDefinition &def, QDataStream &s
     if (!factory)
         return false;
     IlwisTypes valueType, type;
-    QString version;
+    QString version, url;
     _stream >> valueType;
+    _stream >> url;
     _stream >> type;
     _stream >> version;
     std::unique_ptr<DataInterface> domainStreamer(factory->create(version, itDOMAIN,_stream));
     if ( !domainStreamer)
         return false;
 
+    IDomain systemDomain;
+    if ( url.indexOf("ilwis://system") == 0){ // it used to be a system object, check if it still is and if so use it
+        systemDomain.prepare(url,{"mustexist", true});
+    }
     IDomain dom(type | valueType);
     Range *range = 0;
     domainStreamer->loadMetaData(dom.ptr(), options);
@@ -131,7 +137,18 @@ bool VersionedSerializer::loadDataDefinition(DataDefinition &def, QDataStream &s
             return false;
         range->load(_stream);
     }
-    def = DataDefinition(dom,range);
+    def = DataDefinition(systemDomain.isValid() ? systemDomain : dom,range);
 
     return true;
 }
+
+void VersionedSerializer::storeSystemPath(const Resource &resource) const
+{
+    QString path = resource.url().toString();
+    if ( path.indexOf("ilwis://system") == 0)
+        _stream << resource.url().toString(); // this string is (potentially) only usefull if it is a system object.
+    else
+        _stream << QString(sUNDEF);
+}
+
+

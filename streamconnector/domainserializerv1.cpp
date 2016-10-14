@@ -52,6 +52,8 @@ bool DomainSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
 
 
     Domain *dom = static_cast<Domain *>(obj);
+
+
     if ( dom->ilwisType() == itITEMDOMAIN){
         QString theme;
         _stream >> theme;

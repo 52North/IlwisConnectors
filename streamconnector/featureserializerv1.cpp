@@ -53,6 +53,7 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
         if ( !domainStreamer)
             return false;
+        storeSystemPath(coldef.datadef().domain()->resource());
         domainStreamer->store(coldef.datadef().domain().ptr(), options);
         if ( !coldef.datadef().range().isNull()) // no range for textdomains
             coldef.datadef().range()->store(_stream);
@@ -62,6 +63,8 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
         if ( !domainStreamer)
             return false;
+         _stream << fcoverage->attributeDefinitions().domain()->valueType();
+        storeSystemPath(fcoverage->attributeDefinitions().domain()->resource());
         domainStreamer->store( fcoverage->attributeDefinitions().domain().ptr(), options);
 
         std::vector<QString> indexes = fcoverage->attributeDefinitions().indexes();
@@ -70,6 +73,7 @@ bool FeatureSerializerV1::store(IlwisObject *obj, const IOOptions &options)
             _stream << index;
     }else{
         _stream << itUNKNOWN;
+        _stream << QString(sUNDEF);
         _stream << itUNKNOWN;
         _stream << Version::interfaceVersion;
     }
@@ -95,7 +99,7 @@ bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &option
         return false;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(obj);
     int columnCount;
-    QString version;
+    QString version, url;
     quint64 type;
     IlwisTypes valueType;
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
@@ -116,12 +120,13 @@ bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &option
         _stream >> columnName;
 
         _stream >> valueType;
+        _stream >> url;
         _stream >> type;
         _stream >> version;
         std::unique_ptr<DataInterface> domainStreamer(factory->create(version, itDOMAIN,_stream));
         if ( !domainStreamer)
             return false;
-
+        IDomain systemDomain = makeSystemObject<IDomain>(url);
         IDomain dom(type | valueType);
         Range *range = 0;
         types.push_back(valueType);
@@ -133,17 +138,19 @@ bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &option
             range->load(_stream);
         }
 
-        fcoverage->attributeDefinitionsRef().addColumn(ColumnDefinition(columnName, dom));
+        fcoverage->attributeDefinitionsRef().addColumn(ColumnDefinition(columnName, systemDomain.isValid() ? systemDomain : dom));
         if ( range)
             fcoverage->attributeDefinitionsRef().columndefinitionRef(col).datadef().range(range);
     }
     _stream >> valueType;
+    _stream >> url;
     _stream >> type;
     _stream >> version;
     if ( type != itUNKNOWN){
         std::unique_ptr<DataInterface> domainStreamer(factory->create(version, itDOMAIN,_stream));
         if ( !domainStreamer)
             return false;
+        IDomain systemDomain = makeSystemObject<IDomain>(url);
         IDomain dom(type | valueType);
         domainStreamer->loadMetaData( dom.ptr(), options);
         quint32 nrOfVariants;
@@ -152,7 +159,7 @@ bool FeatureSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &option
         for(int i =0; i < nrOfVariants; ++i){
             _stream >> variants[i];
         }
-        fcoverage->attributeDefinitionsRef().setSubDefinition(dom, variants);
+        fcoverage->attributeDefinitionsRef().setSubDefinition(systemDomain.isValid() ? systemDomain : dom, variants);
     }
 
     return true;

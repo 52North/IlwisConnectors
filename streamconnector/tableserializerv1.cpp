@@ -44,6 +44,7 @@ bool TableSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
         if ( !domainStreamer)
             return false;
+        storeSystemPath(coldef.datadef().domain()->resource());
         domainStreamer->store(coldef.datadef().domain().ptr(), options);
         if ( !coldef.datadef().range().isNull()) // no range for textdomains
             coldef.datadef().range()->store(_stream);
@@ -67,7 +68,7 @@ bool TableSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
     Table *tbl = static_cast<Table *>(obj);
     int columnCount, recordCount;
     std::vector<IlwisTypes> types;
-    QString version;
+    QString version, url;
     quint64 type;
     _stream >> columnCount;
     _stream >> recordCount;
@@ -78,13 +79,13 @@ bool TableSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 
         IlwisTypes valueType;
         _stream >> valueType;
-
+        _stream >> url;
         _stream >> type;
         _stream >> version;
         std::unique_ptr<DataInterface> domainStreamer(factory->create(version, itDOMAIN,_stream));
         if ( !domainStreamer)
             return false;
-
+        IDomain systemDomain = makeSystemObject<IDomain>(url);
         IDomain dom(type | valueType);
         Range *range = 0;
         types.push_back(valueType);
@@ -96,7 +97,7 @@ bool TableSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
             range->load(_stream);
         }
 
-        tbl->addColumn(ColumnDefinition(columnName, dom));
+        tbl->addColumn(ColumnDefinition(columnName, systemDomain.isValid() ? systemDomain : dom));
         if ( range)
             tbl->columndefinition(col).datadef().range(range);
 

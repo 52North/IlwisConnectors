@@ -144,6 +144,7 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
     if ( !domainStreamer)
         return false;
+    storeSystemPath(raster->stackDefinition().domain()->resource());
     domainStreamer->store( raster->stackDefinition().domain().ptr(), options);
     std::vector<QString> indexes = raster->stackDefinition().indexes();
     _stream << (quint32)indexes.size();
@@ -154,6 +155,7 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     if ( !grfstreamer)
         return false;
 
+    storeSystemPath(raster->georeference()->resource());
     if(!grfstreamer->store(raster->georeference().ptr(), options))
         return false;
     _stream << raster->hasAttributes();
@@ -252,13 +254,15 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
         loadDataDefinition(raster->datadefRef(band), _stream, options)    ;
     }
     quint64 type;
-    QString version;
+    QString version, url;
+    _stream >> url;
     _stream >> type;
     _stream >> version;
 
     std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
     if ( !domainStreamer)
         return false;
+    IDomain systemDomain = makeSystemObject<IDomain>(url);
     IDomain dom(type);
     domainStreamer->loadMetaData( dom.ptr(), options);
     quint32 nrOfBands;
@@ -267,7 +271,7 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
     for(int i =0; i < nrOfBands; ++i){
         _stream >> variants[i];
     }
-    raster->stackDefinitionRef().setSubDefinition(dom, variants);
+    raster->stackDefinitionRef().setSubDefinition(systemDomain.isValid() ? systemDomain : dom, variants);
 
     _stream >> type;
     _stream >> version;
@@ -275,9 +279,10 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
     std::unique_ptr<DataInterface> grfstreamer(factory->create(version, itGEOREF,_stream));
     if ( !grfstreamer)
         return false;
+    IGeoReference systemGrf = makeSystemObject<IGeoReference>(url);
     IGeoReference georeference (type);
     grfstreamer->loadMetaData(georeference.ptr(), options)    ;
-    raster->georeference(georeference);
+    raster->georeference(systemGrf.isValid() ? systemGrf : georeference);
 
 
     bool hasAttr;

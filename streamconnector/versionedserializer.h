@@ -32,6 +32,15 @@ protected:
 
     bool storeDataDefintion(const DataDefinition& def, QDataStream& stream,  const IOOptions& options = IOOptions()) const;
     bool loadDataDefinition(DataDefinition& def, QDataStream& stream, const Ilwis::IOOptions &options);
+    void storeSystemPath(const Resource& resource) const;
+    template<class T> T makeSystemObject(const QString& url){
+        T systemObject;
+        if ( url.indexOf("ilwis://system") == 0){ // it used to be a system object, check if it still is and if so use it
+            systemObject.prepare(url,{"mustexist", true});
+        }
+        return systemObject;
+    }
+
 };
 }
 }
