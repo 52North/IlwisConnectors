@@ -321,7 +321,7 @@ quint64 GDALItems::addItem(GdalHandle* handle, const QUrl& url, quint64 csyid, q
         gdalItem.dimensions(count);// misuse of grfid
     }
     else if ( tp == itRASTER){
-        Resource resValue = mastercatalog()->name2Resource("code=value",itNUMERICDOMAIN);
+        Resource resValue = mastercatalog()->name2Resource("code=domain:value",itNUMERICDOMAIN);
         gdalItem.addProperty("domain", resValue.id());
         gdalItem.addProperty("georeference", grfId);
 
