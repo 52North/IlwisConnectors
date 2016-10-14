@@ -359,7 +359,7 @@ bool WfsFeatureParser::updateSrsInfoUntil(QString qname)
 }
 
 void WfsFeatureParser::initCrs(ICoordinateSystem &crs) {
-    QString geomCrsCode = QString("code=").append(_context.srsName());
+    QString geomCrsCode = QString("code=csy:").append(_context.srsName());
     if ( !crs.prepare(geomCrsCode, itCONVENTIONALCOORDSYSTEM)) {
         ERROR1("Could not prepare crs with code=%1.",_context.srsName());
     }
