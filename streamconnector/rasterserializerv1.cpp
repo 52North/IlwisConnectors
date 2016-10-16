@@ -273,6 +273,8 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
     }
     raster->stackDefinitionRef().setSubDefinition(systemDomain.isValid() ? systemDomain : dom, variants);
 
+
+    _stream >> url;
     _stream >> type;
     _stream >> version;
 
