@@ -405,7 +405,7 @@ DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const 
         }
     } else
         filename = odf->url(); // probe if it is an internal domain
-    if (!dom.prepare("code=domain:" + filename, options)) {
+    if (!dom.prepare(filename, options)) {
         ERROR2(ERR_NO_INITIALIZED_2,"domain",odf->url());
         return DataDefinition();
     }
