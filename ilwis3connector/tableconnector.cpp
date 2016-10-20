@@ -140,6 +140,12 @@ ColumnDefinition TableConnector::getKeyColumn() {
     QString domain = _odf->value("Table","Domain").toLower();
     if (domain == "none.dom" || domain == "none")
         return ColumnDefinition();
+    if (domain.indexOf(".mpa") != -1 || domain.indexOf(".mps") != -1 || domain.indexOf(".mpp") !=-1){
+        QFileInfo inf(QUrl(_odf->url()).toLocalFile());
+        QString fn = inf.absolutePath() + "/" + domain;
+        IniFile ini(fn);
+        domain = ini.value("BaseMap", "Domain");
+    }
     IThematicDomain dom;
     dom.prepare(filename2FullPath(domain, this->_resource));
     if ( !dom.isValid()) {
@@ -198,6 +204,12 @@ bool TableConnector::loadData(IlwisObject* data , const IOOptions &) {
     if ( _primaryKey != sUNDEF){
         QString domain = _odf->value("Table","Domain").toLower();
         if (domain != "none.dom" && domain != "none"){
+            if (domain.indexOf(".mpa") != -1 || domain.indexOf(".mps") != -1 || domain.indexOf(".mpp") !=-1){
+                QFileInfo inf(QUrl(_odf->url()).toLocalFile());
+                QString fn = inf.absolutePath() + "/" + domain;
+                IniFile ini(fn);
+                domain = ini.value("BaseMap", "Domain");
+            }
             IDomain dom;
             dom.prepare(filename2FullPath(domain, this->_resource));
             IItemDomain itemdom = dom.as<ItemDomain<DomainItem>>();
@@ -286,6 +298,16 @@ bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
     QFileInfo tblOdf(_resource.toLocalFile(true));
     QString dataFile = tblOdf.baseName() + ".tb#";
     _odf->setKeyValue("TableStore", "Data", dataFile);
+    _odf->setKeyValue("TableStore", "StoreTime", Time::now().toString());
+    if (storeColumns(tbl, options)){
+        _odf->store("tbt", sourceRef().toLocalFile());
+        return true;
+    }
+    return false;
+
+}
+
+bool TableConnector::storeColumns(const Table *tbl, const IOOptions &options) {
     for(int i=0; i < tbl->columnCount(); ++i) {
         ColumnDefinition def = tbl->columndefinition(i);
         IDomain dmColumn = def.datadef().domain<>();
@@ -304,6 +326,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
             domName = fileUrl.right(fileUrl.length() - lastSlash - 1);
             Resource res = dmColumn->resource();
             res.setUrl(fileUrl);
+            res.setUrl(fileUrl,true);
             DomainConnector conn(res, false);
             conn.storeMetaData(dmColumn.ptr(), options);
         }
@@ -328,43 +351,7 @@ bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
         _odf->setKeyValue(colName, "OwnedByTable", "Yes");
         QString domainInfo;
         if ( dmColumn->ilwisType() == itNUMERICDOMAIN) {
-            //INumericDomain numdom = dmColumn.get<NumericDomain>();
-            SPNumericRange numdmrange = dmColumn->range<NumericRange>();
-            if ( numdmrange.isNull()){
-                return ERROR1(ERR_NO_INITIALIZED_1,TR("numeric range"));
-            }
-            SPNumericRange numrange = def.datadef().range<NumericRange>();
-            if ( numrange.isNull()){
-                numrange = def.datadef().domain()->range<NumericRange>();
-            }
-            RawConverter conv(numrange->min(), numrange->max(), numrange->resolution());
-            double resolution = numrange->resolution();
-            if ( domName == sUNDEF) {
-                domName = "value.dom";
-                if ( numdmrange->min() >= 0 && numdmrange->max() <=255 && resolution == 1)
-                    domName = "image.dom";
-            }
-            _odf->setKeyValue(colName, "Domain", domName.indexOf(".dom") != -1 ? domName : domName + ".dom");
-            QString range;
-            if ( resolution != 1)
-                range = QString("%1:%2:%3:offset=%4").arg(numrange->min()).arg(numrange->max()).arg(resolution).arg(conv.offset());
-            else
-                range = QString("%1:%2:offset=%3").arg(numrange->min()).arg(numrange->max()).arg(conv.offset());
-
-            _odf->setKeyValue(colName,"Range",range);
-            QString storeType = "Real";
-            if ( conv.storeType() & itINT32 )
-                storeType = "Long";
-           else if ( conv.storeType() & itINT16 )
-                storeType = "Int"  ;
-            else if ( conv.storeType() & itUINT8 )
-                 storeType = "Byte"  ;
-            domainInfo = QString("%1;%2;value;0;%3;%4;0.1;offset=%5").arg(domName).
-                    arg(storeType).
-                    arg(IniFile::FormatElement(numdmrange->min())).
-                    arg(IniFile::FormatElement(numdmrange->max())).
-                    arg(conv.offset());
-            _odf->setKeyValue(colName, "StoreType", storeType == "Real" ? "Real" : "Long");
+            domainInfo = storeNumericColumn(def, colName, domName);
         } else if ( dmColumn->valueType() == itTHEMATICITEM) {
             domainInfo = QString("%1;Int;class;256;;").arg(domName) ;
             _odf->setKeyValue(colName, "StoreType", "Long");
@@ -378,9 +365,50 @@ bool TableConnector::storeMetaData(IlwisObject *obj, const IOOptions &options)
         }
         _odf->setKeyValue(colName, "DomainInfo", domainInfo);
     }
-    _odf->setKeyValue("TableStore", "StoreTime", Time::now().toString());
-    _odf->store("tbt", sourceRef().toLocalFile());
     return true;
+}
+
+QString TableConnector::storeNumericColumn(const ColumnDefinition& def, const QString& colName, QString& domName) {
+    IDomain dmColumn = def.datadef().domain();
+    SPNumericRange numdmrange = dmColumn->range<NumericRange>();
+    if ( numdmrange.isNull()){
+        ERROR1(ERR_NO_INITIALIZED_1,TR("numeric range"));
+        return sUNDEF;
+    }
+    SPNumericRange numrange = def.datadef().range<NumericRange>();
+    if ( numrange.isNull()){
+        numrange = def.datadef().domain()->range<NumericRange>();
+    }
+    RawConverter conv(numrange->min(), numrange->max(), numrange->resolution());
+    double resolution = numrange->resolution();
+    if ( domName == sUNDEF) {
+        domName = "value.dom";
+        if ( numdmrange->min() >= 0 && numdmrange->max() <=255 && resolution == 1)
+            domName = "image.dom";
+    }
+    _odf->setKeyValue(colName, "Domain", domName.indexOf(".dom") != -1 ? domName : domName + ".dom");
+    QString range;
+    if ( resolution != 1)
+        range = QString("%1:%2:%3:offset=%4").arg(numrange->min()).arg(numrange->max()).arg(resolution).arg(conv.offset());
+    else
+        range = QString("%1:%2:offset=%3").arg(numrange->min()).arg(numrange->max()).arg(conv.offset());
+
+    _odf->setKeyValue(colName,"Range",range);
+    QString storeType = "Real";
+    if ( conv.storeType() & itINT32 )
+        storeType = "Long";
+   else if ( conv.storeType() & itINT16 )
+        storeType = "Int"  ;
+    else if ( conv.storeType() & itUINT8 )
+         storeType = "Byte"  ;
+    QString domainInfo = QString("%1;%2;value;0;%3;%4;0.1;offset=%5").arg(domName).
+            arg(storeType).
+            arg(IniFile::FormatElement(numdmrange->min())).
+            arg(IniFile::FormatElement(numdmrange->max())).
+            arg(conv.offset());
+    _odf->setKeyValue(colName, "StoreType", storeType == "Real" ? "Real" : "Long");
+
+    return domainInfo;
 }
 
 QString TableConnector::valueType2DataType(IlwisTypes ty) {

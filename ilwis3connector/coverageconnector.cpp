@@ -374,7 +374,7 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
         _odf->setKeyValue("BaseMap","AttributeTable",dataFile + ".tbt");
 //        attTable->setName(inf.baseName()); // why should we chance the name of the table to a local filename here ?
 
-        IOOptions opt({"attributedomain"}, attDom);
+        IOOptions opt({"attributedomain"}, _domainName == "" ?  attDom : _domainName);
         attTable->connectTo(QUrl(dataFilePath),"table","ilwis3", IlwisObject::cmOUTPUT,opt);
         TableConnector *conn = tp == itRASTER ? 0 : new TableConnector(Resource(dataFilePath, itTABLE), false, opt);
         //TableConnector *conn = new TableConnector(Resource(dataFilePath, itTABLE), false);

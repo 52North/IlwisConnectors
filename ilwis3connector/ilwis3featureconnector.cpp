@@ -989,6 +989,16 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         _odf->setKeyValue("DomainIdentifier","Nr",IniFile::FormatElement(fcov->featureCount(type)));
     }
 
+    Envelope bounds = fcov->envelope();
+    if ( bounds.isNull())
+        bounds = fcov->coordinateSystem()->envelope();
+
+    _odf->setKeyValue("BaseMap","CoordBounds",QString("%1 %2 %3 %4").
+                      arg(bounds.min_corner().x,0,'f',10).
+                      arg(-bounds.max_corner().y,0,'f',10).
+                      arg(bounds.max_corner().x,0,'f',10).
+                      arg(-bounds.min_corner().y,0,'f',10));
+
     QString ext = "mpa";
     if ( hasType(type, itPOLYGON)){
         ok = storeMetaPolygon(fcov, baseName);

@@ -32,6 +32,8 @@ private:
     QString _attributeDomain;
     std::vector<quint32> _selected;
     QString _primaryKey = sUNDEF;
+    bool storeColumns(const Ilwis::Table *tbl, const IOOptions &options);
+    QString storeNumericColumn(const Ilwis::ColumnDefinition &def, const QString &colName, QString &domName);
 };
 }
 }
