@@ -2,10 +2,18 @@
 #define MODELSERIALIZERV1_H
 
 
-class ModelSerializerV1
+namespace Ilwis {
+namespace Stream {
+class ModelSerializerV1 : public VersionedSerializer
 {
 public:
-    ModelSerializerV1();
+    ModelSerializerV1(QDataStream &stream) ;
+
+    bool store(IlwisObject *obj, const Ilwis::IOOptions &options= IOOptions());
+    bool loadMetaData(IlwisObject*obj, const IOOptions & options);
+    static VersionedSerializer *create(QDataStream &stream);
 };
+}
+}
 
 #endif // MODELSERIALIZERV1_H
