@@ -70,13 +70,13 @@ double RawConverter::determineOffset(double low, double high, double step, Ilwis
        if (minDivStep < -LONG_MAX || maxDivStep > LONG_MAX)
          r0 = minDivStep / 2 + maxDivStep / 2 - 0.0001;
        else
-         r0 = -0.001;
+         r0 =  0;
        break;
      case itINT16:
        if (minDivStep < -SHRT_MAX || maxDivStep > SHRT_MAX)
          r0 = minDivStep / 2 + maxDivStep / 2 - 0.0001;
        else
-         r0 = -0.001;
+         r0 = 0;
        break;
      case itUINT8:
        if (minDivStep < 0 || maxDivStep > 255)
