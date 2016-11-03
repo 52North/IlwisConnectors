@@ -5,7 +5,7 @@
 #include "versionedserializer.h"
 #include "operationmetadataserializerv1.h"
 #include "workflowserializerv1.h"
-#include "workflow/workflow.h"
+#include "workflow.h"
 
 using namespace Ilwis;
 using namespace Stream;

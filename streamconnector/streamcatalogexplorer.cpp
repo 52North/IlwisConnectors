@@ -17,7 +17,7 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "factory.h"
-#include "workflow/workflow.h"
+#include "workflow.h"
 #include "abstractfactory.h"
 #include "rawconverter.h"
 #include "ilwiscontext.h"

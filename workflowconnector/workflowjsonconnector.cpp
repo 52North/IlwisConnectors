@@ -14,7 +14,7 @@
 #include "operationExpression.h"
 #include "operation.h"
 #include "jsonconfig.h"
-#include "workflow/workflow.h"
+#include "workflow.h"
 #include "WorkflowJSONConnector.h"
 
 using namespace Ilwis;

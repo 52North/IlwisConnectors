@@ -34,7 +34,7 @@
 #include "factory.h"
 #include "abstractfactory.h"
 #include "rawconverter.h"
-#include "workflow/workflow.h"
+#include "workflow.h"
 #include "downloadmanager.h"
 #include "versioneddatastreamfactory.h"
 

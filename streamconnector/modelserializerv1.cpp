@@ -3,7 +3,7 @@
 #include "geometries.h"
 #include "ilwisdata.h"
 #include "operationmetadata.h"
-#include "workflow/workflow.h"
+#include "workflow.h"
 #include "analysispattern.h"
 #include "applicationsetup.h"
 #include "model.h"
@@ -90,9 +90,9 @@ bool ModelSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
     }
     _stream >> count;
     for(int i=0; i < count; ++i){
-        AnalysisPattern *pattern = new AnalysisPattern();
-        pattern->load(_stream);
-        model->addAnalysisPattern(pattern);
+        //AnalysisPattern *pattern = new AnalysisPattern();
+        //pattern->load(_stream);
+        //model->addAnalysisPattern(pattern);
     }
 
     _stream >> count;
