@@ -1,12 +1,12 @@
 #include "../../IlwisCore/core/kernel.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 
-#include "../../IlwisCore/core/util/angle.h"
+#include "../../IlwisCore/core/util/ilwisangle.h"
 
 #include "geos/geom/Geometry.h"
 #include "geos/geom/Coordinate.h"
 #include "../../IlwisCore/core/util/location.h"
-#include "../../IlwisCore/core/util/coordinate.h"
+#include "../../IlwisCore/core/util/ilwiscoordinate.h"
 #include "../../IlwisCore/core/util/box.h"
 
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"

@@ -3,7 +3,7 @@
 #include "../../IlwisCore/core/catalog/catalog.h"
 #include "../../IlwisCore/core/ilwisobjects/ilwisobject.h"
 
-#include "../../IlwisCore/core/util/angle.h"
+#include "../../IlwisCore/core/util/ilwisangle.h"
 
 #include "../../IlwisCore/core/util/geometries.h"
 #include "../../IlwisCore/core/util/box.h"

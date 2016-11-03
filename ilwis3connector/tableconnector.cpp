@@ -3,7 +3,7 @@
 #include <QDir>
 
 #include "kernel.h"
-#include "angle.h"
+#include "ilwisangle.h"
 #include "geos/geom/Coordinate.h"
 #include "connectorinterface.h"
 #include "mastercatalog.h"

@@ -7,7 +7,7 @@
 
 #include "../../IlwisCore/core/ilwisobjects/ilwisdata.h"
 #include "../../IlwisCore/core/util/location.h"
-#include "../../IlwisCore/core/util/coordinate.h"
+#include "../../IlwisCore/core/util/ilwiscoordinate.h"
 #include "../../IlwisCore/core/util/box.h"
 #include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/geometryhelper.h"

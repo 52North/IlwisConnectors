@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Python.h"
 
 #include "pythonapi_pyobject.h"

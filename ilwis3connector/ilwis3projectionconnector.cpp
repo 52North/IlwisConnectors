@@ -6,10 +6,10 @@
 #include <QStringList>
 
 #include "kernel.h"
-#include "angle.h"
+#include "ilwisangle.h"
 #include "geos/geom/Coordinate.h"
 #include "location.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"

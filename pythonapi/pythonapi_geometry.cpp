@@ -5,15 +5,15 @@
 #include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h"
 #include "geos/io/ParseException.h"
 #include "../../IlwisCore/core/ilwisobjects/coverage/geometryhelper.h"
-#include "../../IlwisCore/core/util/angle.h"
+#include "../../IlwisCore/core/util/ilwisangle.h"
 
 #include "geos/geom/Geometry.h"
 #include "geos/geom/GeometryFactory.h"
 #include "geos/geom/Coordinate.h"
 #include "geos/io/WKTReader.h"
-#include "geos/io/WKTReader.inl"
+#include "geos/io/WKTReader.h"
 #include "../../IlwisCore/core/util/location.h"
-#include "../../IlwisCore/core/util/coordinate.h"
+#include "../../IlwisCore/core/util/ilwiscoordinate.h"
 #include "../../IlwisCore/core/util/box.h"
 
 #include "../../IlwisCore/core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h"

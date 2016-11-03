@@ -12,8 +12,8 @@
 #include "geos/geom/Polygon.h"
 #include "geos/geom/GeometryFactory.h"
 #ifdef Q_OS_WIN
-#include "geos/geom/Coordinate.inl"
-#include "geos/geom/Envelope.inl"
+#include "geos/geom/Coordinate.h"
+#include "geos/geom/Envelope.h"
 #endif
 #include "geos/algorithm/CGAlgorithms.h"
 #include "module.h"

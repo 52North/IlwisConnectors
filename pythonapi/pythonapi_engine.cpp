@@ -22,7 +22,7 @@
 
 #include "../../IlwisCore/core/ilwisobjects/coverage/rastercoverage.h"
 
-#include "../../IlwisCore/core/util/angle.h"
+#include "../../IlwisCore/core/util/ilwisangle.h"
 
 #include "../../IlwisCore/core/util/box.h"
 
