@@ -58,7 +58,7 @@ INCLUDEPATH += ../IlwisCore/core \
                 ../IlwisCore/core/ilwisobjects/coverage \
                 ../IlwisCore/core/ilwisobjects/table \
                 ../IlwisCore/core/ilwisobjects/operation \
-                ../IlwisCore/core/ilwisobjects/operation/model \
+                ../IlwisCore/core/ilwisobjects/operation/modeller \
                 ../IlwisCore/core/ilwisobjects/representation \
                 ../IlwisCore/core/catalog \
                 ../IlwisCore/core/ilwisobjects/domain \
