@@ -19,20 +19,12 @@ win32{
     BOOST=../external
     SHAREDEXT=dll
     PREFIXSHARED=
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
-    INCLUDEPATH += $$PWD/../external/geos
-    DEPENDPATH += $$PWD/../external/geos
 }
 linux{
     BOOST=/usr/include
-    GEOSINCL=/usr/include
-    GEOSLIB=/usr/lib
     OPENCVLIB=/usr/local/lib
     SHAREDEXT=so
     PREFIXSHARED=lib
-    INCLUDEPATH += $$GEOSINCL
-    DEPENDPATH += $$GEOSINCL
-    LIBS += -L$$GEOSLIB/ -lgeos-3.4.2
 }
 
 linux-g++{
@@ -62,6 +54,7 @@ INCLUDEPATH += ../IlwisCore/core \
                 ../IlwisCore/core/ilwisobjects/representation \
                 ../IlwisCore/core/catalog \
                 ../IlwisCore/core/ilwisobjects/domain \
+                ../IlwisCore/core/geos/include \
                 $$BOOST
 
 
