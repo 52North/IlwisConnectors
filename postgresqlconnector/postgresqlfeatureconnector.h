@@ -23,6 +23,8 @@ public:
 private:
     QString trimAndRemoveLastCharacter(const QString &string);
 
+    IOOptions merge(const IOOptions &first, const IOOptions &second);
+
 };
 }
 }

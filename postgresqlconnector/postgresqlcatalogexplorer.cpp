@@ -37,9 +37,31 @@ PostgresqlCatalogExplorer::~PostgresqlCatalogExplorer()
 {
 }
 
+IOOptions PostgresqlCatalogExplorer::merge(const IOOptions &first, const IOOptions &second) {
+
+    IOOptions result;
+
+    auto end = first.end();
+
+    for (auto it = first.begin(); it != end; ++it)
+    {
+        result.addOption(  it.key(), it.value());
+    }
+
+    end = second.end();
+    for (auto it = second.begin(); it != end; ++it)
+    {
+        result.addOption(  it.key(), it.value());
+    }
+
+    return result;
+}
+
 std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &options)
 {
-    IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
+    IOOptions iooptions = this->ioOptions();
+    iooptions = merge(iooptions, options);
+    //IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
     PostgresqlParameters params (iooptions);
     std::vector<Resource> resources;
     QString sqlBuilder;

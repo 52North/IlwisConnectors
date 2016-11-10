@@ -77,11 +77,33 @@ bool PostgresqlFeatureConnector::loadData(IlwisObject *data, const IOOptions& op
 
 
 
+IOOptions PostgresqlFeatureConnector::merge(const IOOptions &first, const IOOptions &second) {
+
+    IOOptions result;
+    auto end = first.end();
+    for (auto it = first.begin(); it != end; ++it)
+    {
+        result.addOption(  it.key(), it.value());
+    }
+
+    end = second.end();
+    for (auto it = second.begin(); it != end; ++it)
+    {
+        result.addOption(  it.key(), it.value());
+    }
+
+    return result;
+}
+
+
+
 bool PostgresqlFeatureConnector::store(IlwisObject *data, const IOOptions& options)
 {
     //qDebug() << "PostgresqlFeatureConnector::store()";
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
-    IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
+    //IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
+    IOOptions iooptions = this->ioOptions();
+    iooptions = merge(iooptions, options);
     PostgresqlFeatureCoverageLoader loader = PostgresqlFeatureCoverageLoader(sourceRef(), iooptions);
     bool ok = loader.storeData(fcoverage);
     return ok;

@@ -30,6 +30,8 @@ public:
 private:
 
     NEW_CATALOGEXPLORER(PostgresqlCatalogExplorer);
+
+    IOOptions merge(const IOOptions &first, const IOOptions &second);
 };
 }
 }
