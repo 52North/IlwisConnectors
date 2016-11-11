@@ -16,6 +16,8 @@ public:
     IlwisObject *create() const;
     static ConnectorInterface *create(const Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
+    void extractUserDefinedEllipsoid(ConventionalCoordinateSystem *csyp, OGRSpatialReferenceH srshandle);
+    
 private:
     void setProjectionParameter(OGRSpatialReferenceH handle, const char *wkt, Projection::ProjectionParamValue parmType, IProjection &projection);
 };

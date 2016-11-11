@@ -46,6 +46,22 @@ CoordinateSystemConnector::CoordinateSystemConnector(const Resource &resource, b
 
 
 
+void CoordinateSystemConnector::extractUserDefinedEllipsoid(ConventionalCoordinateSystem *csyp, OGRSpatialReferenceH srshandle)
+{
+    IEllipsoid ellipsoid;
+    QString axis(gdal()->getAttributeValue(srshandle,"SPHEROID",1));
+    QString flat(gdal()->getAttributeValue(srshandle,"SPHEROID",2));
+    bool ok1, ok2;
+    double laxis = axis.toDouble(&ok1);
+    double flattening = flat.toDouble(&ok2);
+    if ( ok1 && ok2){
+        ellipsoid.prepare();
+        ellipsoid->name("unnamend");
+        ellipsoid->setEllipsoid(laxis, 1.0/flattening);
+        csyp->setEllipsoid(ellipsoid);
+    }
+}
+
 bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
 
     if (!GdalConnector::loadMetaData(data, options))
@@ -70,7 +86,11 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const IOOptions 
                 if ( projectionName != "") {
                    IProjection projection;
                    IOOptions opt = options;
-                   opt << IOOptions::Option("proj4", _resource.code().mid(6));
+                   if (_resource.code().indexOf("code=") == 0){
+                        opt << IOOptions::Option("proj4", _resource.code().mid(6));
+                   }else
+                       opt << IOOptions::Option("proj4", _resource.code());
+
                    projection.prepare("code=wkt:" + projectionName, opt);
                    if ( projection.isValid()) {
                         setProjectionParameter(srshandle, "false_easting", Projection::pvFALSEEASTING, projection);
@@ -103,18 +123,10 @@ bool CoordinateSystemConnector::loadMetaData(IlwisObject *data, const IOOptions 
                 ellipsoid.prepare("code=wkt:" + ellipsoidName);
                 if ( ellipsoid.isValid())
                     csyp->setEllipsoid(ellipsoid);
+                else
+                 extractUserDefinedEllipsoid(csyp, srshandle);
             }else {
-                QString axis(gdal()->getAttributeValue(srshandle,"SPHEROID",1));
-                QString flat(gdal()->getAttributeValue(srshandle,"SPHEROID",2));
-                bool ok1, ok2;
-                double laxis = axis.toDouble(&ok1);
-                double flattening = flat.toDouble(&ok2);
-                if ( ok1 && ok2){
-                    ellipsoid.prepare();
-                    ellipsoid->name("unnamend");
-                    ellipsoid->setEllipsoid(laxis, 1.0/flattening);
-                    csyp->setEllipsoid(ellipsoid);
-                }
+                extractUserDefinedEllipsoid(csyp, srshandle);
 
             }
             Envelope env = gdal()->envelope(_handle, 0);

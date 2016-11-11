@@ -195,7 +195,8 @@ geos::geom::Geometry* GdalFeatureConnector::fillPoint(FeatureCoverage *fcoverage
         return fcoverage->geomfactory()->createPoint(coord);
     }else if (gdal()->getCoordinateDimension(geometry) == 3){
         Coordinate coord(x,y,z);
-        return fcoverage->geomfactory()->createPoint(coord);
+        const UPGeomFactory& factory = fcoverage->geomfactory();
+        return factory->createPoint(coord);
     }else{
         return fcoverage->geomfactory()->createPoint();//POINT EMPTY
     }
