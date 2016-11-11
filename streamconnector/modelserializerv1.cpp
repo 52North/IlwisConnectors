@@ -97,9 +97,9 @@ bool ModelSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 
     _stream >> count;
     for(int i=0; i < count; ++i){
-        ModelApplication *app = new ModelApplication();
-        app->load(_stream);
-        model->addApplication(app);
+//        ModelApplication *app = new ModelApplication();
+//        app->load(_stream);
+//        model->addApplication(app);
     }
 
     return true;
