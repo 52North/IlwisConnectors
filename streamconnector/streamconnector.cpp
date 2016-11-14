@@ -36,6 +36,10 @@
 #include "rawconverter.h"
 #include "workflow.h"
 #include "downloadmanager.h"
+#include "workflow.h"
+#include "analysispattern.h"
+#include "applicationsetup.h"
+#include "model.h"
 #include "versioneddatastreamfactory.h"
 
 
@@ -65,9 +69,10 @@ IlwisObject *StreamConnector::create() const
         return new Workflow(_resource);
     case itCONVENTIONALCOORDSYSTEM:
         return new ConventionalCoordinateSystem(_resource);
-    case itCATALOG:{
+    case itCATALOG:
         return new Catalog(_resource);
-    }
+    case itMODEL:
+        return new Model(_resource);
     case itITEMDOMAIN:{
         if ( hasType(_resource.extendedType(), itNUMERICITEM))
             return new IntervalDomain(_resource);

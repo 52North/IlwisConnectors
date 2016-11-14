@@ -91,7 +91,7 @@ void StreamModule::prepare()
 
     //inputconnectors
     cfactory->addCreator(itCOVERAGE|itDOMAIN|itGEOREF|itCOORDSYSTEM|itREPRESENTATION|itELLIPSOID|itPROJECTION|itTABLE|
-                         itOPERATIONMETADATA  ,"stream", StreamConnector::create);
+                         itOPERATIONMETADATA|itMODEL|itSCRIPT  ,"stream", StreamConnector::create);
     cfactory->addCreator(itCATALOG,"stream", CatalogConnector::create);
 
     //outputconnectors

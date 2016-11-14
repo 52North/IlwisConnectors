@@ -65,6 +65,8 @@ bool StreamObjectFactory::canUse(const Resource &resource) const
         return true;
     else if ( type & itSCRIPT)
         return true;
+    else if ( type & itMODEL)
+        return true;
     return false;
 }
 
