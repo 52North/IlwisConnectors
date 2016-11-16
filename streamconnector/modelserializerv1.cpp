@@ -5,7 +5,7 @@
 #include "operationmetadata.h"
 #include "workflow.h"
 #include "analysispattern.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "model.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -109,7 +109,7 @@ bool ModelSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
         _stream >> type;
         ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory","ilwis");
         if ( factory){
-            ModelApplication *app = factory->createApplication(type,sUNDEF,sUNDEF, options);
+            ApplicationModel *app = factory->createApplication(type);
             if ( app){
                 app->load(_stream);
                 model->addApplication(app);
