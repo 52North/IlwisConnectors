@@ -38,7 +38,7 @@
 #include "downloadmanager.h"
 #include "workflow.h"
 #include "analysispattern.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "model.h"
 #include "versioneddatastreamfactory.h"
 
