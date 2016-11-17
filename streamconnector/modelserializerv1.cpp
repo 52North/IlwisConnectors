@@ -5,13 +5,14 @@
 #include "operationmetadata.h"
 #include "workflow.h"
 #include "analysispattern.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "model.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "connectorinterface.h"
 #include "versionedserializer.h"
 #include "versioneddatastreamfactory.h"
+#include "modellerfactory.h"
 #include "modelserializerV1.h"
 
 using namespace Ilwis;
@@ -36,7 +37,7 @@ bool ModelSerializerV1::store(IlwisObject *obj,const IOOptions& options)
     if (!factory)
         return false;
 
-    std::unique_ptr<DataInterface> wfstreamer(factory->create(Version::interfaceVersion, itWORKFLOW,_stream));
+    std::unique_ptr<DataInterface> wfstreamer(factory->create(Version::interfaceVersion, itMODEL,_stream));
     if ( !wfstreamer)
         return false;
 
@@ -68,7 +69,7 @@ bool ModelSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
     if (!factory)
         return false;
 
-    std::unique_ptr<DataInterface> wfstreamer(factory->create(Version::interfaceVersion, itWORKFLOW,_stream));
+    std::unique_ptr<DataInterface> wfstreamer(factory->create(Version::interfaceVersion, itMODEL,_stream));
     if ( !wfstreamer)
         return false;
 
@@ -90,16 +91,30 @@ bool ModelSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
     }
     _stream >> count;
     for(int i=0; i < count; ++i){
-        //AnalysisPattern *pattern = new AnalysisPattern();
-        //pattern->load(_stream);
-        //model->addAnalysisPattern(pattern);
+        QString type;
+        _stream >> type;
+        ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory","ilwis");
+        if ( factory){
+            AnalysisPattern *pattern = factory->createAnalysisPattern(type,sUNDEF,sUNDEF, options);
+            if ( pattern){
+                pattern->load(_stream);
+                model->addAnalysisPattern(pattern);
+            }
+        }
     }
 
     _stream >> count;
     for(int i=0; i < count; ++i){
-//        ModelApplication *app = new ModelApplication();
-//        app->load(_stream);
-//        model->addApplication(app);
+        QString type;
+        _stream >> type;
+        ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory","ilwis");
+        if ( factory){
+            ApplicationModel *app = factory->createApplication(type);
+            if ( app){
+                app->load(_stream);
+                model->addApplication(app);
+            }
+        }
     }
 
     return true;
