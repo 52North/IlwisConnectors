@@ -18,7 +18,6 @@
 #include "itemrange.h"
 #include "catalog.h"
 
-#include "pythonapi_global.h"
 #include "pythonapi_pyobject.h"
 #include "pythonapi_error.h"
 #include "pythonapi_extension.h"
