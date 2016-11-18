@@ -86,14 +86,22 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
                 QFile file(path);
                 if ( file.open(QIODevice::ReadOnly)){
                     QDataStream stream(&file);
-                    IlwisTypes tp;
+                    int qtstreamversion;
+                    IlwisTypes tp, exttype;
+                    QString version;
 
+                    stream >> qtstreamversion;
+                    stream.setVersion(qtstreamversion);
                     stream >> tp;
+                    stream >> version;
+                    stream >> exttype;
+
                     file.close();
 
                     if ( tp == itUNKNOWN)
                         continue;
                     Resource res(url, tp);
+                    res.setExtendedType(exttype);
                     if ( tp == itWORKFLOW){
                         IWorkflow wf;
                         wf.prepare(res);
