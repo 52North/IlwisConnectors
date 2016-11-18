@@ -113,6 +113,9 @@ bool StreamConnector::loadMetaData(IlwisObject *object, const IOOptions &options
         if (!openSource(true))
             return false;
         QDataStream stream(_datasource.get());
+        int streamversion;
+        stream >> streamversion;
+        stream.setVersion(streamversion);
         IlwisTypes tp;
         QString version;
         stream >> tp;
@@ -138,7 +141,7 @@ bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
         //QFileInfo inf(_resource.url().toLocalFile());
         VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
         QDataStream stream(_datasource.get());
-        quint64 pos = stream.device()->pos();
+        //quint64 pos = stream.device()->pos();
         IlwisTypes tp;
         QString version;
         stream >> tp;
@@ -202,7 +205,7 @@ bool StreamConnector::store(IlwisObject *obj, const IOOptions &options){
     if (!openSource(false))
         return false;
     QDataStream stream(_datasource.get());
-    //stream << Version::IlwisVersion;
+    stream << stream.version();
 
     const VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
     if (factory){
