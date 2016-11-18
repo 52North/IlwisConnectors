@@ -85,7 +85,7 @@ bool ModelSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
         _stream >> version;
         IWorkflow systemWf = makeSystemObject<IWorkflow>(url);
         IWorkflow wf (type);
-        if(!wfstreamer->loadData(wf.ptr(), options))
+        if(!wfstreamer->loadMetaData(wf.ptr(), options))
             return false;
         model->addWorklfow(systemWf.isValid() ? systemWf :wf );
     }
@@ -97,7 +97,7 @@ bool ModelSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
         if ( factory){
             AnalysisPattern *pattern = factory->createAnalysisPattern(type,sUNDEF,sUNDEF, options);
             if ( pattern){
-                pattern->load(_stream);
+                pattern->loadMetadata(_stream);
                 model->addAnalysisPattern(pattern);
             }
         }
@@ -111,12 +111,17 @@ bool ModelSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
         if ( factory){
             ApplicationModel *app = factory->createApplication(type);
             if ( app){
-                app->load(_stream);
+                app->loadMetadata(_stream);
                 model->addApplication(app);
             }
         }
     }
 
     return true;
+}
+
+bool Ilwis::Stream::ModelSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
+{
+    //TODO
 }
 
