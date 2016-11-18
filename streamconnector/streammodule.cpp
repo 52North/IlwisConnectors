@@ -100,8 +100,13 @@ void StreamModule::prepare()
     cfactory->addCreator("table","stream",StreamConnector::create);
     cfactory->addCreator("catalog","stream",StreamConnector::create);
     cfactory->addCreator("domain","stream",StreamConnector::create);
+    cfactory->addCreator("itemdomain","stream",StreamConnector::create);
+    cfactory->addCreator("textdomain","stream",StreamConnector::create);
+    cfactory->addCreator("colordomain","stream",StreamConnector::create);
     cfactory->addCreator("georeference","stream",StreamConnector::create);
     cfactory->addCreator("coordinatesystem","stream",StreamConnector::create);
+    cfactory->addCreator("conventionalcoordinatesystem","stream",StreamConnector::create);
+    cfactory->addCreator("boundsonlycoordinatesystem","stream",StreamConnector::create);
     cfactory->addCreator("operationmetadata","stream",StreamConnector::create);
     cfactory->addCreator("workflow","stream",StreamConnector::create);
     cfactory->addCreator("script","stream",StreamConnector::create);
