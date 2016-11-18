@@ -11,6 +11,7 @@ public:
 
     bool store(IlwisObject *obj, const Ilwis::IOOptions &options= IOOptions());
     bool loadMetaData(IlwisObject*obj, const IOOptions & options);
+    bool loadData(IlwisObject *data, const IOOptions &options);
     static VersionedSerializer *create(QDataStream &stream);
 };
 }

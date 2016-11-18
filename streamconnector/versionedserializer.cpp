@@ -52,6 +52,11 @@ bool VersionedSerializer::loadMetaData(IlwisObject *obj, const IOOptions &)
     // we are not going to replace info in the resource if not needed.
     // reason is that this can be a container object (e.g multiband raster) and we are reading here the container
     // and not the actual object embedded in the container
+    IlwisTypes tp;
+    _stream >> tp;
+    if (!skip)
+        obj->extendedType(tp);
+
     QString var,code;
     _stream >> var;
     _stream >> code;
@@ -59,13 +64,16 @@ bool VersionedSerializer::loadMetaData(IlwisObject *obj, const IOOptions &)
         obj->code(code);
     if (!skip )
         obj->name(var);
+
     _stream >> var;
     if (!skip)
         obj->setDescription(var);
     bool readonly;
-     _stream >> readonly;
+    _stream >> readonly;
     if (!skip)
         obj->readOnly(readonly);
+
+
     double time;
     _stream >> time;
     if (!skip)
@@ -82,7 +90,7 @@ bool VersionedSerializer::store(IlwisObject *obj, const IOOptions &options)
 {
     double mtime = (double)obj->modifiedTime();
     double ctime = (double)obj->createTime();
-    _stream <<  obj->ilwisType() << Version::interfaceVersion << obj->name() << obj->code() << obj->description() << obj->isReadOnly() << mtime << ctime;
+    _stream <<  obj->ilwisType() << Version::interfaceVersion << obj->extendedType() << obj->name() << obj->code() << obj->description() << obj->isReadOnly()  << mtime << ctime;
 
     return true;
 }
