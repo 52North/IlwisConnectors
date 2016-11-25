@@ -61,7 +61,7 @@ template<typename T> void loadBulk(const RawConverter& converter, QDataStream& s
         //const UPGrid& grid = raster->grid();
         quint32 blockCount;
         stream >> blockCount;
-        if ( !box.isNull()){
+        if ( !box.isNull() && box.isValid()){
             //for the moment we only accept whole layers as possible subsets, might improve this in the future
             int layer = box.min_corner().z;
             blockCount =  raster->grid()->blocksPerBand();

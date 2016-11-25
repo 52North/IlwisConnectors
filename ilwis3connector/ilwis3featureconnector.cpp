@@ -990,7 +990,7 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     }
 
     Envelope bounds = fcov->envelope();
-    if ( bounds.isNull())
+    if ( bounds.isNull() || !bounds.isValid())
         bounds = fcov->coordinateSystem()->envelope();
 
     _odf->setKeyValue("BaseMap","CoordBounds",QString("%1 %2 %3 %4").
