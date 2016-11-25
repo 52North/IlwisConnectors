@@ -129,6 +129,7 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
                 if(!georeference.prepare("code=georef:undetermined"))
                     return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Georeference",raster->name() );
                 georeference->coordinateSystem(raster->coordinateSystem()); // the grf.prepare() for internal ilwis georeferences (among others "undetermined") does not autmatically set its csy
+                georeference->envelope(Envelope(cMin, cMax));
             }
         }
 
@@ -427,12 +428,18 @@ void RasterCoverageConnector::setColorValues(GDALColorInterp colorType, std::vec
 
 void RasterCoverageConnector::readData(UPGrid& grid, GDALRasterBandH layerHandle, int inLayerBlockIndex, quint32 linesPerBlock, char *block, quint64 linesLeft) const
 {
+    CPLErr err;
     if ( linesLeft > linesPerBlock)
-        gdal()->rasterIO(layerHandle,GF_Read,0,inLayerBlockIndex * linesPerBlock,grid->size().xsize(), linesPerBlock,
+        err = gdal()->rasterIO(layerHandle,GF_Read,0,inLayerBlockIndex * linesPerBlock,grid->size().xsize(), linesPerBlock,
                          block,grid->size().xsize(), linesPerBlock,_gdalValueType,0,0 );
     else {
-        gdal()->rasterIO(layerHandle,GF_Read,0,inLayerBlockIndex * linesPerBlock,grid->size().xsize(), linesLeft,
+        err = gdal()->rasterIO(layerHandle,GF_Read,0,inLayerBlockIndex * linesPerBlock,grid->size().xsize(), linesLeft,
                          block,grid->size().xsize(), linesLeft,_gdalValueType,0,0 );
+    }
+    if ( err != CP_NONE ){
+        QString message( gdal()->getLastErrorMsg());
+        if ( message != "")
+            kernel()->issues()->log("GDAL error :"+  message, IssueObject::itWarning);
     }
 }
 
@@ -447,8 +454,8 @@ bool RasterCoverageConnector::moveIndexes(quint32& linesPerBlock, quint64& lines
 }
 
 bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& options ){
-    quint32 layer = sourceRef().hasProperty("bandindex") ? sourceRef()["bandindex"].toUInt(): iUNDEF;
-    auto layerHandle = gdal()->getRasterBand(_handle->handle(), layer != iUNDEF ? layer + 1 : 1);
+    quint32 bandindex = sourceRef().hasProperty("bandindex") ? sourceRef()["bandindex"].toUInt(): iUNDEF;
+    auto layerHandle = gdal()->getRasterBand(_handle->handle(), bandindex != iUNDEF ? bandindex + 1 : 1);
     if (!layerHandle) {
         ERROR2(ERR_COULD_NOT_LOAD_2, "GDAL","layer");
         return false;
@@ -464,11 +471,11 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& optio
     std::map<quint32, std::vector<quint32> > blocklimits;
 
     //blocklimits; key = band number, value= blocks needed from this band
-    if ( layer == iUNDEF)
+    if ( bandindex == iUNDEF)
         blocklimits = grid->calcBlockLimits(options);
     else{
-        for(int i = 0; i < totalLines / linesPerBlock; ++i)
-            blocklimits[layer].push_back(i);
+        for(int i = 0; i < std::ceil((double)totalLines / linesPerBlock); ++i)
+            blocklimits[bandindex].push_back(i);
     }
 
     for(const auto& layer : blocklimits){
@@ -477,7 +484,8 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions& optio
             layerHandle = gdal()->getRasterBand(_handle->handle(), layer.first + 1);
             int inLayerBlockIndex = layer.second[0] % grid->blocksPerBand(); //
             for(const auto& index : layer.second) {
-                loadNumericBlock(layerHandle, index, inLayerBlockIndex, linesPerBlock, linesLeft, block, raster,layer.first);
+                quint32 offsetIndex = bandindex == iUNDEF ? layer.first : (layer.first - bandindex);
+                loadNumericBlock(layerHandle, index, inLayerBlockIndex, linesPerBlock, linesLeft, block, raster,offsetIndex );
 
                 if(!moveIndexes(linesPerBlock, linesLeft, inLayerBlockIndex))
                     break;
@@ -526,21 +534,25 @@ void RasterCoverageConnector::loadNumericBlock(GDALRasterBandH layerHandle,
                                                int bandIndex) const {
     UPGrid& grid = raster->gridRef();
     readData(grid, layerHandle, inLayerBlockIndex, linesPerBlock, block, linesLeft);
-
     int ok;
     const double nodata = gdal()->getUndefinedValue(layerHandle,&ok);
     quint32 noItems = grid->blockSize(index);
     if ( noItems == iUNDEF)
         return ;
-    std::vector<double> values(noItems);
+    std::vector<double> values(noItems, rUNDEF);
     bool hasScaleOffset = _offsetScales[bandIndex].offset != rUNDEF && _offsetScales[bandIndex].scale != rUNDEF;
     for(quint32 i=0; i < noItems; ++i) {
         double v = value(block, i);
+        if ( std::isnan(v) || std::isinf(v) )
+            continue;
 
         if (hasScaleOffset)
             v = v * _offsetScales[bandIndex].scale + _offsetScales[bandIndex].offset;
 
-        values[i] = (ok && (nodata == v)) || std::isnan(v) || std::isinf(v) ? rUNDEF : v;
+        if ( ok == 0)
+            values[i] = v;
+        else
+            values[i] = (ok && (nodata == v))  ? rUNDEF : v;
     }
     grid->setBlockData(index, values);
 }

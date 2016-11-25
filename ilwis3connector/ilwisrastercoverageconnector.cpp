@@ -572,7 +572,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, const IOOptions& 
         return false;
     if ( raster->georeference()->code() == "undetermined"){
         Envelope bounds = raster->envelope();
-        if ( bounds.isNull())
+        if ( bounds.isNull() || !bounds.isValid())
             bounds = raster->coordinateSystem()->envelope();
         _odf->setKeyValue("BaseMap","CoordBounds",QString("%1 %2 %3 %4").
                           arg(bounds.min_corner().x,0,'f',10).

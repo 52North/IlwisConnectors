@@ -88,10 +88,9 @@ bool CoordinateSystemSerializerV1::loadMetaData(IlwisObject *obj, const IOOption
             std::unique_ptr<DataInterface> projstreamer(factory->create(version, type,_stream));
             if ( !projstreamer)
                 return false;
-            IProjection systemPrj = makeSystemObject<IProjection>(url);
             IProjection proj(itPROJECTION);
             projstreamer->loadMetaData(proj.ptr(), options );
-            convCsy->setProjection(systemPrj.isValid() ? systemPrj : proj);
+            convCsy->setProjection(proj);
         }
         _stream >> url;
         _stream >> type;
