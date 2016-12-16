@@ -1,5 +1,12 @@
 # Instructions:
 #
+# For Windows:
+# 1. Download the "swigwin" zipfile from http://www.swig.org/download.html
+# 2. Unzip "swigwin" to C:\Program Files (x86)\swigwin\
+#
+# For Linux:
+# 1. Install swig
+#
 # To build an "internal" Python for "pythonscript":
 #
 # 1. Copy folder C:\Python35\include to <ilwis4_sources>/external/Python35/include
@@ -152,6 +159,11 @@ COPY_FILES = ilwisobjects.py test.py README UPDATE CHANGELOG
 SOURCE_DIR = $$clean_path($$PWD/$$PYTHONAPI_FOLDER)
 
 linux {
+    swig.target = $$SOURCE_DIR/ilwisobjects.py
+    swig.commands = swig -python -c++ $$SOURCE_DIR/ilwisobjects.i
+    swig.depends = $$SOURCE_DIR/ilwisobjects.i $$SOURCE_DIR/*.h $$SOURCE_DIR/*.cpp
+    QMAKE_EXTRA_TARGETS += swig
+    PRE_TARGETDEPS += $$SOURCE_DIR/ilwisobjects.py
     DEST_DIR = $$clean_path($$DESTDIR)
     QMAKE_POST_LINK += $$quote(test -d $$DEST_DIR || mkdir -p $$DEST_DIR$$escape_expand(\n\t))
     for(FILE,COPY_FILES){
@@ -175,6 +187,11 @@ linux {
 win32 {
     PYDLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$PYTHONAPI_FOLDER # copy .pyd to output is done manually (not through DLLDESTDIR because that happens too late)
     SOURCE_DIR = $$replace(SOURCE_DIR,/,\\)
+    swig.target = $$SOURCE_DIR\\ilwisobjects.py
+    swig.commands = $$quote(C:\\Program Files (x86)\\swigwin\\swig.exe) -python -c++ $$SOURCE_DIR\\ilwisobjects.i
+    swig.depends = $$SOURCE_DIR\\ilwisobjects.i $$SOURCE_DIR\\*.h $$SOURCE_DIR\\*.cpp
+    QMAKE_EXTRA_TARGETS += swig
+    PRE_TARGETDEPS += $$SOURCE_DIR\\ilwisobjects.py
     DEST_DIR = $$clean_path($$PYDLLDESTDIR)
     DEST_DIR = $$replace(DEST_DIR,/,\\)
     LIB_DIR = $$clean_path($$DESTDIR)
