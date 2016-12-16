@@ -3,6 +3,7 @@
 # For Windows:
 # 1. Download the "swigwin" zipfile from http://www.swig.org/download.html
 # 2. Unzip "swigwin" to C:\Program Files (x86)\swigwin\
+# 3. Optionally (for creating installers of the python extension) install NSIS: http://nsis.sourceforge.net/Download ; the installer is created when chosing "Deploy"
 #
 # For Linux:
 # 1. Install swig
@@ -10,8 +11,8 @@
 # To build an "internal" Python for "pythonscript":
 #
 # 1. Copy folder C:\Python35\include to <ilwis4_sources>/external/Python35/include
-# 2. Copy either libpython35.a or python*.lib from C:\Python35\libs to <ilwis4_sources>/libraries/win32debug/extensions/pythonapi/
-# 3. Copy folder C:\Python35 to <ilwis4_sources>\output\win32debug\bin\extensions\pythonscript\python\ (destination folder is called "python", thus without the version number)
+# 2. Copy either libpython35.a or python*.lib from C:\Python35\libs to <ilwis4_sources>/libraries/win32debug/extensions/pythonapi/ and to <ilwis4_sources>/libraries/win32release/extensions/pythonapi/
+# 3. Copy folder C:\Python35 to <ilwis4_sources>\output\win32debug\bin\extensions\pythonscript\python\ and to <ilwis4_sources>\output\win32release\bin\extensions\pythonscript\python\ (destination folder is called "python", thus without the version number)
 # 4. Build project "pythonapi"
 # In the above, replace 35 with the actual version
 #
@@ -151,10 +152,6 @@ win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
 
-installer_target.files = pythonapi/installerPy.nsi
-installer_target.path = $$PWD/../output/$$PLATFORM$$CONF
-INSTALLS += installer_target
-
 COPY_FILES = ilwisobjects.py test.py README UPDATE CHANGELOG
 SOURCE_DIR = $$clean_path($$PWD/$$PYTHONAPI_FOLDER)
 
@@ -192,6 +189,11 @@ win32 {
     swig.depends = $$SOURCE_DIR\\ilwisobjects.i $$SOURCE_DIR\\*.h $$SOURCE_DIR\\*.cpp
     QMAKE_EXTRA_TARGETS += swig
     PRE_TARGETDEPS += $$SOURCE_DIR\\ilwisobjects.py
+    installer_script.files = pythonapi/installerPy.nsi
+    installer_script.path = $$PWD/../output/$$PLATFORM$$CONF
+    installer.commands = $$quote(C:\\Program Files (x86)\\NSIS\\makensis.exe) /V4 $$PWD/../output/$$PLATFORM$$CONF/installerPy.nsi
+    installer.path = $$PWD/../output/$$PLATFORM$$CONF
+    INSTALLS += installer_script installer
     DEST_DIR = $$clean_path($$PYDLLDESTDIR)
     DEST_DIR = $$replace(DEST_DIR,/,\\)
     LIB_DIR = $$clean_path($$DESTDIR)
