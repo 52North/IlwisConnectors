@@ -199,8 +199,7 @@ Section "Python Extension" pySecID
     DetailPrint "Copy to $pythonDir\Lib\site-packages\ilwis\_ilwisobjects.pyd"
     File bin\extensions\pythonapi\_ilwisobjects.pyd
     DetailPrint "Copy to $pythonDir\Lib\site-packages\ilwis\__init__.py"
-    File bin\extensions\pythonapi\ilwisobjects.py
-    Rename ilwisobjects.py __init__.py
+    File bin\extensions\pythonapi\__init__.py
 
     WriteRegStr HKLM "${REGKEY}\python" Path $pythonDir
     	

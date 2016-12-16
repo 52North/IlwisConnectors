@@ -77,8 +77,13 @@ void exitPython()
     IlwisException = _ilwisobjects.IlwisException
     InvalidObjectException = _ilwisobjects.InvalidObjectException
     FeatureCreationError = _ilwisobjects.FeatureCreationError
-    if (not _ilwisobjects._initIlwisObjects(path)):
-        raise ImportError("ILWIS couldn't be initialized!")
+    try:
+        if not path is None:
+            if not _ilwisobjects._initIlwisObjects(path):
+                raise ImportError("ILWIS couldn't be initialized!")
+    except NameError:
+        if not _ilwisobjects._initIlwisObjects(""):
+            raise ImportError("ILWIS couldn't be initialized!")
 %}
 //catch std::exception's on all C API function calls
 %exception{

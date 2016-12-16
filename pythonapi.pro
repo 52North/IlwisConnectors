@@ -1,3 +1,20 @@
+# Instructions:
+#
+# To build an "internal" Python for "pythonscript":
+#
+# 1. Copy folder C:\Python35\include to <ilwis4_sources>/external/Python35/include
+# 2. Copy either libpython35.a or python*.lib from C:\Python35\libs to <ilwis4_sources>/libraries/win32debug/extensions/pythonapi/
+# 3. Copy folder C:\Python35 to <ilwis4_sources>\output\win32debug\bin\extensions\pythonscript\python\ (destination folder is called "python", thus without the version number)
+# 4. Build project "pythonapi"
+# In the above, replace 35 with the actual version
+#
+# To build for a random Python version, unrelated to "pythonscript":
+#
+# 1. Install Python to C:\ (ensure the "standard python folder naming is used", e.g. C:\Python34 , C:\Python35 etc.)
+# 2. Build project "pythonapi"
+# When multiple python versions are installed on C:\, automatically the newest one is chosen
+# When python is available in both C:\ and <ilwis4_sources>/external/, the "external" is preferred. temporarily remove it from "external" if this is unwanted (alternatively, temporarily alter this .pro script)
+
 include(global.pri)
 
 QT += core
@@ -6,13 +23,11 @@ TARGET = _ilwisobjects
 
 PYTHONAPI_FOLDER = pythonapi
 
-DEFINES += PYTHONAPI_LIBRARY
-
 QMAKE_EXTENSION_SHLIB = pyd
 
 TEMPLATE = lib
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/pythonscript
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$PYTHONAPI_FOLDER
 
 HEADERS += \
     pythonapi/pythonapi_util.h \
@@ -44,7 +59,6 @@ HEADERS += \
     pythonapi/pythonapi_columndefinition.h \
     pythonapi/pythonapi_domainitem.h \
     pythonapi/pythonapi_vertexiterator.h \
-    pythonapi/pythonapi_global.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
@@ -91,8 +105,7 @@ OTHER_FILES += \
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 INCLUDEPATH += $$PWD/../ilwiscore/core \
-               $$PWD/../external/geos \
-               $$PWD/../external/python35
+               $$PWD/../external/geos
 
 PYMINORVERSION = 0
 PYVERLIST = 1 2 3 4 5 6 7 8 9
@@ -140,23 +153,49 @@ SOURCE_DIR = $$clean_path($$PWD/$$PYTHONAPI_FOLDER)
 
 linux {
     DEST_DIR = $$clean_path($$DESTDIR)
-    QMAKE_PRE_LINK += $$quote(cat $$SOURCE_DIR/paths.py $$SOURCE_DIR/ilwisobjects.py > $$SOURCE_DIR/temp.py$$escape_expand(\n\t))
-    QMAKE_PRE_LINK += $$quote(mv -f $$SOURCE_DIR/temp.py $$SOURCE_DIR/ilwisobjects.py$$escape_expand(\n\t))
-    QMAKE_POST_LINK +=$$quote(test -d $$DEST_DIR || mkdir -p $$DEST_DIR$$escape_expand(\n\t))
+    QMAKE_POST_LINK += $$quote(test -d $$DEST_DIR || mkdir -p $$DEST_DIR$$escape_expand(\n\t))
     for(FILE,COPY_FILES){
         QMAKE_POST_LINK += $$quote(cp $$SOURCE_DIR/$$FILE $$DEST_DIR$$escape_expand(\n\t))
+    }
+    QMAKE_POST_LINK += $$quote(cat $$SOURCE_DIR/paths.py $$DEST_DIR/ilwisobjects.py > $$DEST_DIR/temp.py$$escape_expand(\n\t))
+    QMAKE_POST_LINK += $$quote(mv -f $$DEST_DIR/temp.py $$DEST_DIR/__init__.py$$escape_expand(\n\t))
+    QMAKE_POST_LINK += $$quote(rm -f $$DEST_DIR/ilwisobjects.py$$escape_expand(\n\t))
+    exists($$PWD/../external/Python3$$PYMINORVERSION/include/Python.h) {
+        PYTHONSCRIPT_DIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/pythonscript/python/Lib/site-packages/ilwis
+        PYTHONSCRIPT_DIR = $$clean_path($$PYTHONSCRIPT_DIR)
+        QMAKE_POST_LINK +=$$quote(test -d $$PYTHONSCRIPT_DIR || mkdir -p $$PYTHONSCRIPT_DIR$$escape_expand(\n\t))
+        for(FILE,COPY_FILES){
+            QMAKE_POST_LINK +=$$quote(cp $$SOURCE_DIR/$$FILE $$PYTHONSCRIPT_DIR$$escape_expand(\n\t))
+        }
+        QMAKE_POST_LINK += $$quote(cp $$DEST_DIR/$${TARGET}.$${QMAKE_EXTENSION_SHLIB} $$PYTHONSCRIPT_DIR$$escape_expand(\n\t))
+        QMAKE_POST_LINK += $$quote(mv -f $$PYTHONSCRIPT_DIR/ilwisobjects.py $$PYTHONSCRIPT_DIR/__init__.py$$escape_expand(\n\t))
     }
 }
 
 win32 {
-    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonscript/python/Lib/site-packages/ilwis
+    PYDLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$PYTHONAPI_FOLDER # copy .pyd to output is done manually (not through DLLDESTDIR because that happens too late)
     SOURCE_DIR = $$replace(SOURCE_DIR,/,\\)
-    DEST_DIR = $$clean_path($$DLLDESTDIR)
+    DEST_DIR = $$clean_path($$PYDLLDESTDIR)
     DEST_DIR = $$replace(DEST_DIR,/,\\)
-    QMAKE_PRE_LINK += $$quote(copy /y /b $$SOURCE_DIR\\paths.py + $$SOURCE_DIR\\ilwisobjects.py $$SOURCE_DIR\\temp.py$$escape_expand(\n\t))
-    QMAKE_PRE_LINK += $$quote(move /y $$SOURCE_DIR\\temp.py $$SOURCE_DIR\\ilwisobjects.py$$escape_expand(\n\t))
+    LIB_DIR = $$clean_path($$DESTDIR)
+    LIB_DIR = $$replace(LIB_DIR,/,\\)
     QMAKE_POST_LINK +=$$quote(if not exist $$DEST_DIR mkdir $$DEST_DIR$$escape_expand(\n\t))
+    QMAKE_POST_LINK +=$$quote(copy /y $$LIB_DIR\\$${TARGET}.$${QMAKE_EXTENSION_SHLIB} $$DEST_DIR$$escape_expand(\n\t))
     for(FILE,COPY_FILES){
         QMAKE_POST_LINK +=$$quote(copy /y $$SOURCE_DIR\\$$FILE $$DEST_DIR$$escape_expand(\n\t))
+    }
+    QMAKE_POST_LINK += $$quote(copy /y /b $$SOURCE_DIR\\paths.py + $$DEST_DIR\\ilwisobjects.py $$DEST_DIR\\temp.py$$escape_expand(\n\t))
+    QMAKE_POST_LINK += $$quote(move /y $$DEST_DIR\\temp.py $$DEST_DIR\\__init__.py$$escape_expand(\n\t))
+    QMAKE_POST_LINK += $$quote(del /f $$DEST_DIR\\ilwisobjects.py$$escape_expand(\n\t))
+    exists($$PWD/../external/Python3$$PYMINORVERSION/include/Python.h) {
+        PYTHONSCRIPT_DIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/pythonscript/python/Lib/site-packages/ilwis
+        PYTHONSCRIPT_DIR = $$clean_path($$PYTHONSCRIPT_DIR)
+        PYTHONSCRIPT_DIR = $$replace(PYTHONSCRIPT_DIR,/,\\)
+        QMAKE_POST_LINK +=$$quote(if not exist $$PYTHONSCRIPT_DIR mkdir $$PYTHONSCRIPT_DIR$$escape_expand(\n\t))
+        for(FILE,COPY_FILES){
+            QMAKE_POST_LINK +=$$quote(copy /y $$SOURCE_DIR\\$$FILE $$PYTHONSCRIPT_DIR$$escape_expand(\n\t))
+        }
+        QMAKE_POST_LINK += $$quote(copy /y $$DEST_DIR\\$${TARGET}.$${QMAKE_EXTENSION_SHLIB} $$PYTHONSCRIPT_DIR$$escape_expand(\n\t))
+        QMAKE_POST_LINK += $$quote(move /y $$PYTHONSCRIPT_DIR\\ilwisobjects.py $$PYTHONSCRIPT_DIR\\__init__.py$$escape_expand(\n\t))
     }
 }
