@@ -50,15 +50,37 @@ HEADERS += \
 
 OTHER_FILES += \
     gdalconnector/gdalconnector.json \
-    gdalconnector/resources/ogr_formats.config
+    gdalconnector/resources/ogr_formats.config \
+    gdalconnector/resources/libraries.config
 
 INCLUDEPATH +=  $$PWD/../external/gdal
 
-resources.files = gdalconnector/resources/ogr_formats.config
-resources.files += gdalconnector/resources/libraries.config
-resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
-
-INSTALLS += resources
+SOURCE_RESOURCE = $$clean_path($$PWD/$$TARGET/resources/libraries.config)
+SOURCE_RESOURCE_2 = $$clean_path($$PWD/$$TARGET/resources/ogr_formats.config)
+TARGET_RESOURCE_DIR = $$clean_path($$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources/)
+TARGET_RESOURCE = $$TARGET_RESOURCE_DIR/libraries.config
+TARGET_RESOURCE_2 = $$TARGET_RESOURCE_DIR/ogr_formats.config
+resources.target = $$TARGET_RESOURCE
+resources_2.target = $$TARGET_RESOURCE_2
+linux {
+    resources.commands = $$quote(test -d $$TARGET_RESOURCE_DIR || mkdir -p $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+    resources_2.commands = $$quote(test -d $$TARGET_RESOURCE_DIR || mkdir -p $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+}
+win32 {
+    SOURCE_RESOURCE = $$replace(SOURCE_RESOURCE,/,\\)
+    TARGET_RESOURCE = $$replace(TARGET_RESOURCE,/,\\)
+    SOURCE_RESOURCE_2 = $$replace(SOURCE_RESOURCE_2,/,\\)
+    TARGET_RESOURCE_2 = $$replace(TARGET_RESOURCE_2,/,\\)
+    TARGET_RESOURCE_DIR = $$replace(TARGET_RESOURCE_DIR,/,\\)
+    resources.commands = $$quote(if not exist $$TARGET_RESOURCE_DIR mkdir $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+    resources_2.commands = $$quote(if not exist $$TARGET_RESOURCE_DIR mkdir $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+}
+resources.commands += $$quote($(COPY) $$SOURCE_RESOURCE $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+resources_2.commands += $$quote($(COPY) $$SOURCE_RESOURCE_2 $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+resources.depends = $$SOURCE_RESOURCE
+resources_2.depends = $$SOURCE_RESOURCE_2
+PRE_TARGETDEPS += $$TARGET_RESOURCE $$TARGET_RESOURCE_2
+QMAKE_EXTRA_TARGETS += resources resources_2
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 

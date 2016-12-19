@@ -10,13 +10,37 @@ TEMPLATE = lib
 
 DEFINES += SPREADSHEETCONNECTOR_LIBRARY
 
-resources.files += spreadsheetconnectors/resources/libraries.config
-resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
-
-INSTALLS += resources
+SOURCE_RESOURCE = $$clean_path($$PWD/$$TARGET/resources/libraries.config)
+SOURCE_RESOURCE_2 = $$clean_path($$PWD/$$TARGET/resources/spreadsheetformats.config)
+TARGET_RESOURCE_DIR = $$clean_path($$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources/)
+TARGET_RESOURCE = $$TARGET_RESOURCE_DIR/libraries.config
+TARGET_RESOURCE_2 = $$TARGET_RESOURCE_DIR/spreadsheetformats.config
+resources.target = $$TARGET_RESOURCE
+resources_2.target = $$TARGET_RESOURCE_2
+linux {
+    resources.commands = $$quote(test -d $$TARGET_RESOURCE_DIR || mkdir -p $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+    resources_2.commands = $$quote(test -d $$TARGET_RESOURCE_DIR || mkdir -p $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+}
+win32 {
+    SOURCE_RESOURCE = $$replace(SOURCE_RESOURCE,/,\\)
+    TARGET_RESOURCE = $$replace(TARGET_RESOURCE,/,\\)
+    SOURCE_RESOURCE_2 = $$replace(SOURCE_RESOURCE_2,/,\\)
+    TARGET_RESOURCE_2 = $$replace(TARGET_RESOURCE_2,/,\\)
+    TARGET_RESOURCE_DIR = $$replace(TARGET_RESOURCE_DIR,/,\\)
+    resources.commands = $$quote(if not exist $$TARGET_RESOURCE_DIR mkdir $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+    resources_2.commands = $$quote(if not exist $$TARGET_RESOURCE_DIR mkdir $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+}
+resources.commands += $$quote($(COPY) $$SOURCE_RESOURCE $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+resources_2.commands += $$quote($(COPY) $$SOURCE_RESOURCE_2 $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+resources.depends = $$SOURCE_RESOURCE
+resources_2.depends = $$SOURCE_RESOURCE_2
+PRE_TARGETDEPS += $$TARGET_RESOURCE $$TARGET_RESOURCE_2
+QMAKE_EXTRA_TARGETS += resources resources_2
 
 OTHER_FILES += \
-    spreadsheetconnectors/spreadsheetconnectors.json
+    spreadsheetconnectors/spreadsheetconnectors.json \
+    spreadsheetconnectors/resources/libraries.config \
+    spreadsheetconnectors/resources/spreadsheetformats.config
 
 win32{
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
@@ -85,13 +109,6 @@ SOURCES += \
     spreadsheetconnectors/xlsformat.cpp \
     spreadsheetconnectors/spreadsheetcatalogexplorer.cpp \
     spreadsheetconnectors/xlsxformat.cpp
-
-resources.files = spreadsheetconnectors/resources/spreadsheetformats.config
-resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
-
-DISTFILES += \
-    spreadsheetconnectors/resources/libraries.config \
-    spreadsheetconnectors/resources/spreadsheetformats.config
 
 linux{
     dependencies.files = $$GEOSLIB/libgeos-3.4.2.so \
