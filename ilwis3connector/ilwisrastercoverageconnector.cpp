@@ -413,7 +413,10 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
         calcStatistics(obj, NumericStatistics::pBASIC);
         const NumericStatistics& stats = raster->statistics();
         double resolution = raster->datadef().range()->as<NumericRange>()->resolution();
-        RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], resolution);
+        double precision = (resolution == 0.0) ? resolution : pow(10, -stats.significantDigits());
+        if (precision < 1e-06)
+            precision = 0.0;
+        RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], precision);
 
         std::ofstream output_file(filename.toLatin1(),ios_base::out | ios_base::binary | ios_base::trunc);
         if ( !output_file.is_open())
@@ -592,7 +595,10 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, const IOOptions& 
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
         const NumericStatistics& stats = raster->statistics();
         double resolution = raster->datadef().range()->as<NumericRange>()->resolution();
-        RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], resolution);
+        double precision = (resolution == 0.0) ? resolution : pow(10, -stats.significantDigits());
+        if (precision < 1e-06)
+            precision = 0.0;
+        RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], precision);
         qint32 delta = stats[NumericStatistics::pDELTA];
         QString range = QString("%1:%2").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]);
          _odf->setKeyValue("BaseMap","MinMax",range);

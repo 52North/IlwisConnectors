@@ -248,7 +248,9 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
         }
         else {
             const NumericStatistics& stats = coverage->statistics();
-            double precision = (resolution == 0.0) ? resolution : pow(10, -stats.significantDigits());           
+            double precision = (resolution == 0.0) ? resolution : pow(10, -stats.significantDigits());
+            if (precision < 1e-06)
+                precision = 0.0;
             RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], precision);           
             QString storeType;
             if ( delta >= 0 && delta < 256 &&  resolution == 1){
@@ -261,17 +263,14 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
                 storeType = "Long";
             } else if ( conv.storeType() == itDOUBLE){
                 storeType = "Real";
-
             }
-             _odf->setKeyValue("MapStore","Type",storeType);
-            INumericDomain numdom = dom.as<NumericDomain>();
-            _domainInfo = QString("%1:%2:%3:offset=%4").arg(dom->range<NumericRange>()->min()).arg(dom->range<NumericRange>()->max()).arg(dom->range<NumericRange>()->resolution()).arg(conv.offset());
-            _odf->setKeyValue("BaseMap","Range",_domainInfo);
+            _odf->setKeyValue("MapStore","Type",storeType);
             _odf->setKeyValue("BaseMap","Domain",_domainName);
-            QString rng = QString("%1;%2;%3").arg(dom->range<NumericRange>()->min()).arg(dom->range<NumericRange>()->max()).arg(dom->range<NumericRange>()->resolution());
             _odf->setKeyValue("BaseMap","MinMax",QString("%1:%2").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]));
-            QString domainInfo = QString("%1;%2;value;0;%3:offset=%4").arg(_domainName).arg(storeType).arg(rng).arg(conv.offset());
-            _odf->setKeyValue("BaseMap","DomainInfo",domainInfo);
+            _domainInfo = QString("%1;%2;value;0;%3;%4;%5:offset=%6").arg(_domainName).arg(storeType).arg(dom->range<NumericRange>()->min()).arg(dom->range<NumericRange>()->max()).arg(dom->range<NumericRange>()->resolution()).arg(conv.offset());
+            _odf->setKeyValue("BaseMap","DomainInfo",_domainInfo);
+            QString rng = QString("%1:%2:%3:offset=%4").arg(stats[NumericStatistics::pMIN] - precision).arg(stats[NumericStatistics::pMAX] + precision).arg(precision).arg(conv.offset());
+            _odf->setKeyValue("BaseMap","Range",rng);
         }
     }
     if ( dom->ilwisType() == itITEMDOMAIN) {
