@@ -41,7 +41,7 @@ CoordinateSystem::CoordinateSystem(const std::string& resource){
                 input = "file:///" + file;
         }
     }
-    Ilwis::ICoordinateSystem cs(input, itCOORDSYSTEM);
+    Ilwis::ICoordinateSystem cs(input, itCONVENTIONALCOORDSYSTEM);
     if (cs.isValid())
         this->_ilwisObject = std::shared_ptr<Ilwis::IIlwisObject>(new Ilwis::IIlwisObject(cs));
 }
