@@ -2,7 +2,10 @@
 #include "version.h"
 #include "geometries.h"
 #include "ilwisdata.h"
+#include "symboltable.h"
 #include "operationmetadata.h"
+#include "location.h"
+#include "workflownode.h"
 #include "workflow.h"
 #include "analysispattern.h"
 #include "applicationmodel.h"
@@ -123,5 +126,6 @@ bool ModelSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
 bool Ilwis::Stream::ModelSerializerV1::loadData(IlwisObject *data, const IOOptions &options)
 {
     //TODO
+    return false;
 }
 

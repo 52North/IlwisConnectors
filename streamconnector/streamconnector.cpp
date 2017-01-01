@@ -34,9 +34,12 @@
 #include "factory.h"
 #include "abstractfactory.h"
 #include "rawconverter.h"
+#include "symboltable.h"
+#include "operationmetadata.h"
+#include "location.h"
+#include "workflownode.h"
 #include "workflow.h"
 #include "downloadmanager.h"
-#include "workflow.h"
 #include "analysispattern.h"
 #include "applicationmodel.h"
 #include "model.h"
@@ -69,7 +72,7 @@ IlwisObject *StreamConnector::create() const
         return new Workflow(_resource);
     case itCONVENTIONALCOORDSYSTEM:
         return new ConventionalCoordinateSystem(_resource);
-    case itCATALOG:
+     case itCATALOG:
         return new Catalog(_resource);
     case itMODEL:
         return new Model(_resource);
