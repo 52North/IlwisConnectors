@@ -17,6 +17,10 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "factory.h"
+#include "symboltable.h"
+#include "operationmetadata.h"
+#include "location.h"
+#include "workflownode.h"
 #include "workflow.h"
 #include "abstractfactory.h"
 #include "rawconverter.h"
@@ -86,7 +90,9 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
                 QFile file(path);
                 if ( file.open(QIODevice::ReadOnly)){
                     QDataStream stream(&file);
-                    int qtstreamversion;
+
+                              int qtstreamversion;
+
                     IlwisTypes tp, exttype;
                     QString version;
 
@@ -95,20 +101,20 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
                     stream >> tp;
                     stream >> version;
                     stream >> exttype;
-
                     file.close();
 
                     if ( tp == itUNKNOWN)
                         continue;
                     Resource res(url, tp);
                     res.setExtendedType(exttype);
-                    if ( tp == itWORKFLOW){
+                    if ( hasType(tp,itWORKFLOW)){
                         IWorkflow wf;
-                        wf.prepare(res);
-                        wf->createMetadata();
-                        Resource res2 = wf->resource();
-                        res2.code(res.code()); //code comes from other machine or possibly older instance which might have different id's
-                        items.push_back(res2);
+                        if(wf.prepare(res)){
+                            wf->createMetadata();
+                            Resource res2 = wf->resource();
+                            res2.code(res.code()); //code comes from other machine or possibly older instance which might have different id's
+                            items.push_back(res2);
+                        }
                     }else if (hasType(tp, itILWISOBJECT)){
                         IIlwisObject obj(res);
                         if ( obj->ilwisType() == itRASTER){

@@ -10,7 +10,7 @@
 #include "versioneddatastreamfactory.h"
 #include "ilwisobjectconnector.h"
 #include "streamconnector.h"
-//#include "streamcoveragedatainterfacev1.h"
+#include "operationhelper.h"
 
 using namespace Ilwis;
 using namespace Stream;
@@ -52,11 +52,10 @@ bool VersionedSerializer::loadMetaData(IlwisObject *obj, const IOOptions &)
     // we are not going to replace info in the resource if not needed.
     // reason is that this can be a container object (e.g multiband raster) and we are reading here the container
     // and not the actual object embedded in the container
-    IlwisTypes tp;
+ IlwisTypes tp;
     _stream >> tp;
     if (!skip)
         obj->extendedType(tp);
-
     QString var,code;
     _stream >> var;
     _stream >> code;
@@ -154,6 +153,51 @@ void VersionedSerializer::storeSystemPath(const Resource &resource) const
         _stream << resource.url().toString(); // this string is (potentially) only usefull if it is a system object.
     else
         _stream << QString(sUNDEF);
+}
+
+bool VersionedSerializer::store(const QString& v, IlwisTypes valueType,const IOOptions &options){
+
+    if ( hasType(valueType, itILWISOBJECT)){
+        bool storeall = options.contains("storeall") ? options["storall"].toBool() : false;
+        _stream << storeall;
+        if ( storeall){
+            VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+            std::unique_ptr<DataInterface>  streamer(factory->create(Version::interfaceVersion, valueType,_stream));
+            if ( !streamer)
+                return false;
+            IIlwisObject obj;
+            obj.prepare(v, valueType);
+            if ( obj.isValid())
+                return streamer->store( obj.ptr(), options);
+            return true;
+        }
+        _stream << v;
+    }else {
+        _stream << v;
+    }
+    return true;
+}
+
+bool VersionedSerializer::loadMetaData(const Ilwis::IOOptions &options, IlwisTypes tp, QString &v)
+{
+    if ( hasType(tp, itILWISOBJECT)){
+        bool storeall;
+        _stream >> storeall;
+        if ( storeall){
+            VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
+            std::unique_ptr<DataInterface>  streamer(factory->create(Version::interfaceVersion, tp,_stream));
+            if ( !streamer)
+                return false;
+            IIlwisObject obj ;// TODO : this wwont work :)
+            return streamer->loadMetaData( obj.ptr(), options);
+        }else {
+            _stream >> v;
+            return true;
+        }
+    }else {
+        _stream >> v;
+    }
+    return true;
 }
 
 

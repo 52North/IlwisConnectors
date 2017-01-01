@@ -89,7 +89,7 @@ void StreamModule::prepare()
     if (!cfactory)
         return ;
 
-    //inputconnectors
+  //inputconnectors
     cfactory->addCreator(itCOVERAGE|itDOMAIN|itGEOREF|itCOORDSYSTEM|itREPRESENTATION|itELLIPSOID|itPROJECTION|itTABLE|
                          itOPERATIONMETADATA|itMODEL|itSCRIPT  ,"stream", StreamConnector::create);
     cfactory->addCreator(itCATALOG,"stream", CatalogConnector::create);
@@ -105,7 +105,7 @@ void StreamModule::prepare()
     cfactory->addCreator("colordomain","stream",StreamConnector::create);
     cfactory->addCreator("georeference","stream",StreamConnector::create);
     cfactory->addCreator("coordinatesystem","stream",StreamConnector::create);
-    cfactory->addCreator("conventionalcoordinatesystem","stream",StreamConnector::create);
+  cfactory->addCreator("conventionalcoordinatesystem","stream",StreamConnector::create);
     cfactory->addCreator("boundsonlycoordinatesystem","stream",StreamConnector::create);
     cfactory->addCreator("operationmetadata","stream",StreamConnector::create);
     cfactory->addCreator("workflow","stream",StreamConnector::create);

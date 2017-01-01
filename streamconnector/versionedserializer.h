@@ -41,6 +41,8 @@ protected:
         return systemObject;
     }
 
+    bool store(const QString &v, IlwisTypes valueType, const Ilwis::IOOptions &options);
+    bool loadMetaData(const Ilwis::IOOptions &options, IlwisTypes tp, QString &v);
 };
 }
 }
