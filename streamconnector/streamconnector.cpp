@@ -195,7 +195,7 @@ bool StreamConnector::openSource(bool reading){
                 return ERROR1(ERR_MISSING_DATA_FILE_1,filename);
             }
         }
-        if (file->open(reading  ? QIODevice::ReadOnly : QIODevice::ReadWrite)) {
+        if (file->open(reading  ? QIODevice::ReadOnly : (QIODevice::ReadWrite | QIODevice::Truncate))) {
             _datasource.reset(file);
             return true;
         }
