@@ -36,7 +36,7 @@ Var verifyDir
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !define MUI_COMPONENTSPAGE_NODESC
 !insertmacro MUI_PAGE_COMPONENTS
-!define MUI_DIRECTORYPAGE_TEXT_TOP "Please select the directory of you Python 3.4 (32bit) installation! $\n Here you can download Python: $\n$\n $\t http://www.python.org/downloads/"
+!define MUI_DIRECTORYPAGE_TEXT_TOP "Please select the directory of you Python 3.5 (32bit) installation! $\n Here you can download Python: $\n$\n $\t http://www.python.org/downloads/"
 !define MUI_DIRECTORYPAGE_VARIABLE $pythonDir
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preparePythonDirVerify
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE leavePythonDirVerify
@@ -50,7 +50,7 @@ Var verifyDir
 !insertmacro MUI_LANGUAGE English
 
 #=======Installer attributes=================
-OutFile "ILWISObjects-beta3.0-forPython3.4-32bit.exe"
+OutFile "ILWISObjects-beta3.0-forPython3.5-32bit.exe"
 InstallDir $PROGRAMFILES32\n52\ILWISObjects
 #InstallDirRegKey HKLM "${REGKEY}" "InstallPath" <-- doesn't work!
 CRCCheck on
@@ -69,8 +69,8 @@ RequestExecutionLevel admin
 
 #======Callback functions====================
 Function .onInit
-    ReadRegStr $pythonDir HKLM "SOFTWARE\Wow6432Node\Python\PythonCore\3.4\InstallPath" ""
-    # ReadRegStr $pythonDir HKCU "SOFTWARE\Python\PythonCore\3.5-32\InstallPath" ""
+    # ReadRegStr $pythonDir HKLM "SOFTWARE\Wow6432Node\Python\PythonCore\3.4\InstallPath" ""
+    ReadRegStr $pythonDir HKCU "SOFTWARE\Python\PythonCore\3.5-32\InstallPath" ""
     ReadRegStr $0 HKLM "${REGKEY}" "InstallPath" # workaround for InstallDirRegKey!!
     StrCmp $0 "" done
         StrCpy $Instdir $0
@@ -97,7 +97,7 @@ Function .onVerifyInstDir
         IfErrors NoNext
         FileRead $0 $1
         FileClose $0
-        StrCmpS $1 "This is Python version 3.4.3$\r$\n" Next Next
+        StrCmpS $1 "This is Python version 3.5.1$\r$\n" Next Next
 
     NoNext:
         Abort
@@ -284,7 +284,7 @@ FunctionEnd
 Function leavePythonDirVerify
     IntOp $verifyDir 0 &
 
-    # ExecShell "open" "http://www.python.org/ftp/python/3.4.3/python-3.4.3.msi"
+    # ExecShell "open" "http://www.python.org/ftp/python/3.5.1/python-3.5.1.msi"
 
 FunctionEnd
 
