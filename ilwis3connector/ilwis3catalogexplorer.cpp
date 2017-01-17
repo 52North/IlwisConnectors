@@ -109,6 +109,8 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                }
            }
 
+           kernel()->issues()->silent(false);
+
            if ( finalList.size() > 0)
                kernel()->issues()->log(QString(TR("Added %1 objects through the ilwis3 connector")).arg( finalList.size()),IssueObject::itMessage);
 
