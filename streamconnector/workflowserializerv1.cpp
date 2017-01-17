@@ -79,8 +79,8 @@ bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions
         _stream << sz;
         for(qint32 t=0; t < sz; ++t){
             WorkFlowCondition::Test test = condition->test(t)    ;
-            _stream << (int)test._pre;
-            _stream << (int)test._post;
+            _stream << (qint32)test._pre;
+            _stream << (qint32)test._post;
            storeNode(test._operation);
         }
         auto operations = condition->subnodes("operations")    ;
@@ -91,7 +91,7 @@ bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions
     }
     node->box().store(_stream);
 
-    int count = node->inputCount();
+    qint32 count = node->inputCount();
     if ( node->type() == "junctionnode")
         // junctions have 3 parameters; but inputcount returns only 1 as the link to the condition is the only explicit parameter;
         //links to operations are implicit. Needed for saving though so we overrule here
@@ -102,7 +102,7 @@ bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions
 
     for(qint32 i = 0; i < count; ++i){
         WorkFlowParameter& wp = node->inputRef(i);
-        _stream << wp.id();
+        _stream << wp.order();
         _stream << wp.name();
         _stream << wp.description();
         _stream << wp.label();
@@ -228,9 +228,9 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
     _stream >> parmCount;
 
     for(qint32 j=0; j < parmCount; ++j){
-        quint64 parmid;
+        qint32 order;
 
-        _stream >> parmid;
+        _stream >> order;
         _stream >> nm;
         _stream >> ds;
 
@@ -241,7 +241,7 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
         _stream >> tp;
         qint32 state;
         _stream >> state;
-        WorkFlowParameter wp(parmid, node->id(), nm,ds);
+        WorkFlowParameter wp(j, node->id(), nm,ds);
 
         qint32 rctIndex;
         _stream >> rctIndex;
