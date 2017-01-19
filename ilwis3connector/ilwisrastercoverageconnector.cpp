@@ -600,18 +600,25 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, const IOOptions& 
             precision = 0.0;
         RawConverter conv(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], precision);
         qint32 delta = stats[NumericStatistics::pDELTA];
-        QString range = QString("%1:%2").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]);
-         _odf->setKeyValue("BaseMap","MinMax",range);
+        QString minmax = QString("%1:%2").arg(stats[NumericStatistics::pMIN]).arg(stats[NumericStatistics::pMAX]);
+        _odf->setKeyValue("BaseMap","MinMax",minmax);
+
+        // Add the BaseMap:Range section to match the default valuerange with the Type
         if ( delta >= 0 && delta < 256 &&  resolution == 1){
            _odf->setKeyValue("MapStore","Type","Byte");
+           _odf->setKeyValue("BaseMap", "Range", "0:255:offset=0");
         } else if ( conv.storeType() == itUINT8){
            _odf->setKeyValue("MapStore","Type","Byte");
+           _odf->setKeyValue("BaseMap", "Range", "0:255:offset=0");
         } else if ( conv.storeType() == itINT16){
             _odf->setKeyValue("MapStore","Type","Int");
+            _odf->setKeyValue("BaseMap", "Range", "-32768:32767:offset=0");
         } else if ( conv.storeType() == itINT32){
             _odf->setKeyValue("MapStore","Type","Long");
+            _odf->setKeyValue("BaseMap", "Range", "-2147483648:2147483647:offset=0");
         } else if ( conv.storeType() == itDOUBLE){
             _odf->setKeyValue("MapStore","Type","Real");
+            _odf->setKeyValue("BaseMap", "Range", "-1e300:1e300:0:offset=0");
         }
         if(!dom->isSystemObject()){
             QString filename = context()->workingCatalog()->resolve(_domainName);
