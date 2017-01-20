@@ -128,9 +128,9 @@ bool Ilwis3Connector::isSystemObject(const QString& filename) {
     else if ( tp & itPROJECTION)
         table = "projection";
     else if ( tp & itELLIPSOID)
-        table = "ellipsoide";
+        table = "ellipsoid";
     else if ( tp & itCOORDSYSTEM)
-        table = "coordinatesystem";
+        table = "projectedcsy";
 
     if ( table.size() == 0) {
         kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(filename));
