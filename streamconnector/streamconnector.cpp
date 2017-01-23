@@ -102,6 +102,11 @@ StreamConnector::StreamConnector(const Ilwis::Resource &resource, bool load, con
         url += "/" + item;
         sourceRef().setUrl(url);
     }
+    if ( url.indexOf(".ilwis") == -1){
+        url += ".ilwis";
+        sourceRef().setUrl(url);
+        sourceRef().setUrl(url,true);
+    }
 }
 
 StreamConnector::~StreamConnector()
