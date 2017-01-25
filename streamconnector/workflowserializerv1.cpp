@@ -272,7 +272,7 @@ bool WorkflowSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &optio
     _stream >> translationx;
     _stream >> translationy;
     workflow->scale(scale);
-    workflow->translation(translationx, translationy);
+    workflow->translation(translationx, translationy,false);
     qint32 sz;
     _stream >> sz;
     std::vector<SPWorkFlowNode> independenNodes;
