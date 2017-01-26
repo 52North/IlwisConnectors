@@ -67,6 +67,7 @@ void WorkflowSerializerV1::storeNodeLinks(const SPWorkFlowNode& node) {
 
 bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions &options){
     _stream << node->name();
+    _stream << node->label();
     _stream << node->description();
     _stream << node->id();
     IOperationMetaData op = node->operation();
@@ -106,6 +107,7 @@ bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions
         _stream << wp.name();
         _stream << wp.description();
         _stream << wp.label();
+        _stream << wp.flowLabel();
         _stream << wp.valueType();
         _stream << (qint32)wp.state();
         _stream << wp.attachement(true);
@@ -175,9 +177,10 @@ void WorkflowSerializerV1::loadNodeLinks(SPWorkFlowNode& node,Workflow *workflow
 
 void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, const IOOptions &options){
 
-    QString nm, type;
+    QString nm, type, lbl;
     qint32 collapsed;
     _stream >> nm;
+    _stream >> lbl;
     QString ds;
     _stream >> ds;
     quint64 nodeid, operationid;
@@ -221,6 +224,7 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
         throw ErrorObject(TR("Stored workflow definition is invalid"));
     }
     node->collapsed(collapsed > 0);
+    node->label(lbl);
     BoundingBox box;
     box.load(_stream);
     node->box(box);
@@ -234,14 +238,16 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
         _stream >> nm;
         _stream >> ds;
 
-        QString label;
+        QString label, flowlabel;
         _stream >> label;
+        _stream >> flowlabel;
 
         IlwisTypes tp;
         _stream >> tp;
         qint32 state;
         _stream >> state;
         WorkFlowParameter wp(j, node->id(), nm,ds);
+        wp.flowLabel(flowlabel);
 
         qint32 rctIndex;
         _stream >> rctIndex;
