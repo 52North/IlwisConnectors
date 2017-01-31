@@ -31,7 +31,7 @@ WorkflowSerializerV1::WorkflowSerializerV1(QDataStream &stream) : OperationMetad
 }
 
 void WorkflowSerializerV1::storeNodeLinks(const SPWorkFlowNode& node) {
-    if ( node->type() == "conditionnode"){
+    if ( node->type() == WorkFlowNode::ntCONDITION){
         std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
         qint32 sz = condition->subnodes("tests").size();
         _stream << sz;
@@ -45,7 +45,7 @@ void WorkflowSerializerV1::storeNodeLinks(const SPWorkFlowNode& node) {
         }
     }
     int count = node->inputCount();
-    if ( node->type() == "junctionnode")
+    if ( node->type() == WorkFlowNode::ntJUNCTION)
         // junctions have 3 parameters; but inputcount returns only 1 as the link to the condition is the only explicit parameter;
         //links to operations are implicit. Needed for saving though so we overrule here
         count = 3;
@@ -71,10 +71,18 @@ bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions
     _stream << node->description();
     _stream << node->id();
     IOperationMetaData op = node->operation();
-    _stream << (op.isValid() ? op->id() : i64UNDEF);
-    _stream << node->type();
+    if ( op.isValid()){
+        QString syntax = op->resource()["syntax"].toString();
+        QString provider = op->resource()["namespace"].toString();
+        _stream << syntax;
+        _stream << provider;
+    }else{
+        _stream << sUNDEF;
+        _stream << sUNDEF;
+    }
+    _stream << (qint32)node->type();
     _stream << (qint32)node->collapsed();
-    if ( node->type() == "conditionnode"){
+    if ( node->type() == WorkFlowNode::ntCONDITION){
         std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
         qint32 sz = condition->subnodes("tests").size();
         _stream << sz;
@@ -93,7 +101,7 @@ bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions
     node->box().store(_stream);
 
     qint32 count = node->inputCount();
-    if ( node->type() == "junctionnode")
+    if ( node->type() == WorkFlowNode::ntJUNCTION)
         // junctions have 3 parameters; but inputcount returns only 1 as the link to the condition is the only explicit parameter;
         //links to operations are implicit. Needed for saving though so we overrule here
         count = 3;
@@ -150,7 +158,7 @@ bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 
 void WorkflowSerializerV1::loadNodeLinks(SPWorkFlowNode& node,Workflow *workflow){
 
-     if ( node->type() == "conditionnode"){
+     if ( node->type() == WorkFlowNode::ntCONDITION){
         std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
         qint32 ocount;
         _stream >> ocount;
@@ -182,22 +190,24 @@ void WorkflowSerializerV1::loadNodeLinks(SPWorkFlowNode& node,Workflow *workflow
 
 void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, const IOOptions &options){
 
-    QString nm, type, lbl;
-    qint32 collapsed;
+    QString nm, lbl;
+    qint32 collapsed, type;
     _stream >> nm;
     _stream >> lbl;
     QString ds;
     _stream >> ds;
-    quint64 nodeid, operationid;
+    quint64 nodeid;
     _stream >> nodeid;
-    _stream >> operationid;
+    QString syntax, provider;
+    _stream >> syntax;
+    _stream >> provider;
     _stream >> type;
     _stream >> collapsed;
-    if ( type == "operationnode"){
+    if ( type == (qint32)WorkFlowNode::ntOPERATION){
         auto opNode = new OperationNode(nm, ds,nodeid);
-        opNode->operationid(operationid);
+        opNode->operation(provider, syntax);
         node.reset(opNode);
-    }else if ( type == "conditionnode"){
+    }else if ( type == (qint32)WorkFlowNode::ntCONDITION){
         auto cnode = new WorkFlowCondition();
         cnode->nodeId(nodeid);
         node.reset(cnode);
@@ -219,7 +229,7 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
             operationNode->owner(node);
         }
 
-    }else if ( type == "junctionnode"){
+    }else if ( type == (qint32)WorkFlowNode::ntJUNCTION){
         auto cnode = new Junction();
         cnode->nodeId(nodeid);
         node.reset(cnode);
