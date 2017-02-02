@@ -219,6 +219,18 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
     _csyName = writeCsy(obj, csy);
     _odf->setKeyValue("BaseMap", "CoordSystem", _csyName);
 
+    Envelope bounds = csy->envelope();
+    if(!bounds.isValid()){
+        ERROR2(ERR_NO_INITIALIZED_2, "Bounds", csy->name());
+        return sUNDEF;
+    }
+
+    _odf->setKeyValue("BaseMap", "CoordBounds", QString("%1 %2 %3 %4").
+                      arg(bounds.min_corner().x,10,'f').
+                      arg(bounds.min_corner().y,10,'f').
+                      arg(bounds.max_corner().x,10,'f').
+                      arg(bounds.max_corner().y,10,'f'));
+
     calcStatistics(obj,NumericStatistics::pBASIC);
 
     if ( dom->ilwisType() == itNUMERICDOMAIN) {
