@@ -264,6 +264,7 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
         _stream >> state;
         WorkFlowParameter wp(j, node->id(), nm,ds);
         wp.flowLabel(flowlabel);
+        wp.label(label);
 
         qint32 rctIndex;
         _stream >> rctIndex;
