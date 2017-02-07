@@ -220,6 +220,7 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
             SPWorkFlowNode operationNode;
             loadNode(operationNode, workflow);
             cnode->addTest(operationNode, (LogicalOperator) pre,(LogicalOperator) post);
+            operationNode->conditionIdOfTest(cnode->id());
         }
         _stream >> ocount;
         for(qint32 o=0; o < ocount; ++o){
