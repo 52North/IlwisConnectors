@@ -149,7 +149,7 @@ quint64 AggregateRasterStatistics::createMetadata()
 {
     OperationResource operation({"ilwis://operations/aggregaterasterstatistics"},"gsl");
     operation.setSyntax("aggregaterasterstatistics(inputraster,statisticalmarker=mean|variance|standarddev|totalsumsquares|absolutedeviation|skew|kurtosis|max|min|maxindex|minindex|median|sum)");
-    operation.setDescription(TR("transpose the raster according to the method indicated by the second parameter"));
+    operation.setDescription(TR("aggregates the bands of a raster stack into a new rastercoverage according to the method indicated by the second parameter"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER,  TR("input raster"),TR("set raster bands to be aggregated"));
     operation.addInParameter(1,itSTRING, TR("statistical method"),TR("method of calucaltion for a pixel column of the stack of bands"));
