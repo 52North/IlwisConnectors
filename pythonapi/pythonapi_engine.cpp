@@ -38,6 +38,7 @@
 #include "pythonapi_pyobject.h"
 #include "pythonapi_catalog.h"
 #include "pythonapi_table.h"
+#include "pythonapi_booleanobject.h"
 
 using namespace pythonapi;
 
@@ -232,7 +233,7 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
             }
         }
         if (results.size() == 0)
-            throw Ilwis::ErrorObject(QString("couldn't handle return type of \"%1\"").arg(command.mid(8 + output_name.size())));
+            return new BooleanObject();
         else if (results.size() == 1)
             return results[0];
         else {

@@ -67,6 +67,7 @@ HEADERS += \
     pythonapi/pythonapi_columndefinition.h \
     pythonapi/pythonapi_domainitem.h \
     pythonapi/pythonapi_vertexiterator.h \
+    pythonapi/pythonapi_booleanobject.h
 
 SOURCES += \
     pythonapi/ilwisobjects_wrap.cxx \
@@ -96,7 +97,8 @@ SOURCES += \
     pythonapi/pythonapi_rangeiterator.cpp \
     pythonapi/pythonapi_columndefinition.cpp \
     pythonapi/pythonapi_domainitem.cpp \
-    pythonapi/pythonapi_vertexiterator.cpp
+    pythonapi/pythonapi_vertexiterator.cpp \
+    pythonapi/pythonapi_booleanobject.cpp
 
 OTHER_FILES += \
     pythonapi/test.py \
