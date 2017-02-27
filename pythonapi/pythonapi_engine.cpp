@@ -189,7 +189,7 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
     }else{
         command = QString("script %1=%2").arg(output_name.c_str(),operation.c_str());
     }
-    if (Ilwis::commandhandler()->execute(command,&ctx, symtbl) && !ctx._results.empty()){
+    if (Ilwis::commandhandler()->execute(command,&ctx, symtbl)){
         std::vector<Object*> results;
         for (int i = 0; i < ctx._results.size(); ++i) {
             Ilwis::Symbol result = symtbl.getSymbol(ctx._results[i]);
