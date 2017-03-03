@@ -219,7 +219,7 @@ bool CoverageConnector::storeMetaData(IlwisObject *obj, IlwisTypes type, const I
     _csyName = writeCsy(obj, csy);
     _odf->setKeyValue("BaseMap", "CoordSystem", _csyName);
 
-    Envelope bounds = csy->envelope();
+    Envelope bounds = coverage->envelope();
     if(!bounds.isValid()){
         ERROR2(ERR_NO_INITIALIZED_2, "Bounds", csy->name());
         return sUNDEF;
