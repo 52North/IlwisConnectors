@@ -24,6 +24,7 @@ namespace pythonapi {
          RasterCoverage(const Ilwis::IRasterCoverage& coverage);
          QVariant resolveIndex(PyObject* pyTrackIndex);
          std::string dateToString(int datepart);
+         QString toId(QString val);
     protected:
          virtual const QString getStoreFormat() const;
     public:

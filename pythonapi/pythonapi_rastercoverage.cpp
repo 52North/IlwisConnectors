@@ -67,6 +67,10 @@ RasterCoverage::~RasterCoverage(){
 
 }
 
+QString RasterCoverage::toId(QString val){ // make the scientific notation of values used in output name "id"-compatible
+    return val.replace('-','_').replace('.','_');
+}
+
 RasterCoverage* RasterCoverage::operator+(RasterCoverage &rc){
     return (RasterCoverage*)Engine::_do(
                 QString("add_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
@@ -79,7 +83,7 @@ RasterCoverage* RasterCoverage::operator+(RasterCoverage &rc){
 
 RasterCoverage *RasterCoverage::operator+ (double value){
     return (RasterCoverage*)Engine::_do(
-                QString("add_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                toId(QString("add_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
                 "binarymathraster",
                 this->__str__(),
                 QString("%1").arg(value).toStdString(),
@@ -89,7 +93,7 @@ RasterCoverage *RasterCoverage::operator+ (double value){
 
 RasterCoverage *RasterCoverage::__radd__(double value){
     return (RasterCoverage*)Engine::_do(
-                QString("add_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),
+                toId(QString("add_%2_%1").arg((*this->ptr())->id()).arg(value)).toStdString(),
                 "binarymathraster",
                 QString("%1").arg(value).toStdString(),
                 this->__str__(),
@@ -109,7 +113,7 @@ RasterCoverage *RasterCoverage::operator-(RasterCoverage &rc){
 
 RasterCoverage *RasterCoverage::operator-(double value){
     return (RasterCoverage*)Engine::_do(
-                QString("sub_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                toId(QString("sub_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
                 "binarymathraster",
                 this->__str__(),
                 QString("%1").arg(value).toStdString(),
@@ -119,7 +123,7 @@ RasterCoverage *RasterCoverage::operator-(double value){
 
 RasterCoverage *RasterCoverage::__rsub__(double value){
     return (RasterCoverage*)Engine::_do(
-                QString("sub_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),
+                toId(QString("sub_%2_%1").arg((*this->ptr())->id()).arg(value)).toStdString(),
                 "binarymathraster",
                 QString("%1").arg(value).toStdString(),
                 this->__str__(),
@@ -139,7 +143,7 @@ RasterCoverage *RasterCoverage::operator*(RasterCoverage &rc){
 
 RasterCoverage *RasterCoverage::operator*(double value){
     return (RasterCoverage*)Engine::_do(
-                QString("mul_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                toId(QString("mul_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
                 "binarymathraster",
                 this->__str__(),
                 QString("%1").arg(value).toStdString(),
@@ -149,7 +153,7 @@ RasterCoverage *RasterCoverage::operator*(double value){
 
 RasterCoverage *RasterCoverage::__rmul__(double value){
     return (RasterCoverage*)Engine::_do(
-                QString("mul_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),
+                toId(QString("mul_%2_%1").arg((*this->ptr())->id()).arg(value)).toStdString(),
                 "binarymathraster",
                 QString("%1").arg(value).toStdString(),
                 this->__str__(),
@@ -169,7 +173,7 @@ RasterCoverage *RasterCoverage::__truediv__(RasterCoverage &rc){
 
 RasterCoverage *RasterCoverage::__truediv__(double value){
     return (RasterCoverage*)Engine::_do(
-                QString("div_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                toId(QString("div_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
                 "binarymathraster",
                 this->__str__(),
                 QString("%1").arg(value).toStdString(),
@@ -179,7 +183,7 @@ RasterCoverage *RasterCoverage::__truediv__(double value){
 
 RasterCoverage *RasterCoverage::__rtruediv__(double value){
     return (RasterCoverage*)Engine::_do(
-                QString("div_%2_%1").arg((*this->ptr())->id()).arg(value).toStdString(),
+                toId(QString("div_%2_%1").arg((*this->ptr())->id()).arg(value)).toStdString(),
                 "binarymathraster",
                 QString("%1").arg(value).toStdString(),
                 this->__str__(),
@@ -189,7 +193,7 @@ RasterCoverage *RasterCoverage::__rtruediv__(double value){
 
 RasterCoverage* RasterCoverage::operator>(double value){
     return (RasterCoverage*)Engine::_do(
-                QString("greater_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                toId(QString("greater_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
                 "binarylogicalraster",
                 this->__str__(),
                 QString("%1").arg(value).toStdString(),
@@ -199,7 +203,7 @@ RasterCoverage* RasterCoverage::operator>(double value){
 
 RasterCoverage* RasterCoverage::operator<(double value){
     return (RasterCoverage*)Engine::_do(
-                QString("less_%1_%2").arg((*this->ptr())->id()).arg(value).toStdString(),
+                toId(QString("less_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
                 "binarylogicalraster",
                 this->__str__(),
                 QString("%1").arg(value).toStdString(),
