@@ -81,11 +81,11 @@ Ilwis::OperationImplementation::State LaplaceFilter::prepare(ExecutionContext *c
 quint64 LaplaceFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/laplacefilter"},"opencv");
-    operation.setSyntax("laplacefilter(inputraster [, kernel-size])");
+    operation.setSyntax("laplacefilter(inputraster ,1|!3|5|7)");
     operation.setDescription(TR("highlights regions of rapid intensity change, used in edge detection"));
-    operation.setInParameterCount({1,2});
+    operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"),TR("input rastercoverage, color or image(grey) domain"));
-    operation.addOptionalInParameter(1,itPOSITIVEINTEGER , TR("Size of the kernel"),TR("size of the extended Sobel kernel; it must be 1, 3, 5, or 7"));
+    operation.addInParameter(1,itPOSITIVEINTEGER , TR("Size of the kernel"),TR("size of the extended Sobel kernel; it must be 1, 3, 5, or 7"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output raster with edges highlighted"));
     operation.setKeywords("image processing,raster,edge detection, filter");
