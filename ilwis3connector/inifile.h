@@ -44,6 +44,7 @@ public:
     void removeSection(const QString& section);
     QString url()const;
     QString filepath() const;
+    QString path() const;
     QStringList childKeys(const QString& section) const;
 
     void store(const QString &ext, const QFileInfo& url);

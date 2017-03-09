@@ -125,6 +125,11 @@ QString IniFile::filepath() const{
     return _filename.absoluteFilePath();
 }
 
+QString IniFile::path() const
+{
+    return _filename.absolutePath();
+}
+
 QStringList IniFile::childKeys(const QString &section) const
 {
     QStringList keys;
