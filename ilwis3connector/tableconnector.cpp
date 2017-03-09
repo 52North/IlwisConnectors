@@ -316,7 +316,10 @@ bool TableConnector::storeColumns(const Table *tbl, const IOOptions &options) {
         if ( !isOldSystem) {
             if (domName.indexOf("/domains/") > -1)
                 domName = def.name() + ".dom";
-            QString fileUrl = context()->workingCatalog()->filesystemLocation().toString() + "/" + domName;
+            QString fileUrl = "file:///" + _odf->path()+ "/" + domName;
+            if ( fileUrl.indexOf(".dom") == -1){
+                fileUrl += ".dom";
+            }
             if (QFileInfo(QUrl(fileUrl).toLocalFile()).exists()) {
                 IDomain existingDomain(fileUrl);
                 if (!dmColumn->isCompatibleWith(existingDomain.ptr(), true))
