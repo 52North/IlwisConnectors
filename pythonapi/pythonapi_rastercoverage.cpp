@@ -107,7 +107,7 @@ RasterCoverage *RasterCoverage::operator-(RasterCoverage &rc){
         "binarymathraster",
         this->__str__(),
         rc.__str__(),
-        "substract"
+        "subtract"
     );
 }
 
@@ -117,7 +117,7 @@ RasterCoverage *RasterCoverage::operator-(double value){
                 "binarymathraster",
                 this->__str__(),
                 QString("%1").arg(value).toStdString(),
-                "substract"
+                "subtract"
             );
 }
 
@@ -127,7 +127,7 @@ RasterCoverage *RasterCoverage::__rsub__(double value){
                 "binarymathraster",
                 QString("%1").arg(value).toStdString(),
                 this->__str__(),
-                "substract"
+                "subtract"
             );
 }
 
