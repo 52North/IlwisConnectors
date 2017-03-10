@@ -600,18 +600,20 @@ bool RasterCoverageConnector::store(IlwisObject *obj, const IOOptions & )
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
 
+    DataDefinition currentDef = raster->datadefRef();
     if (! hasType(raster->datadef().domain()->ilwisType(),itNUMERICDOMAIN | itCOLORDOMAIN)){
         IDomain dom;
-        if(!dom.prepare("code=value")) { //TODO:  for the moment only value maps in gdal
+        QString code = raster->datadef().domain()->ilwisType() == itITEMDOMAIN ? "code=count" : "code=value";
+        if(!dom.prepare(code)) { //TODO:  for the moment only value maps in gdal
             return ERROR1(ERR_NO_INITIALIZED_1,obj->name());
         }
-        raster->datadefRef().domain(dom);
+        currentDef.domain(dom);
     }
     Size<> sz = raster->size();
-    GDALDataType gdalType = ilwisType2GdalType(raster->datadef().range()->valueType());
+    GDALDataType gdalType = ilwisType2GdalType(currentDef.range()->valueType());
     QString filename = constructOutputName(_driver);
-    bool isColorMap = raster->datadef().domain()->ilwisType() == itCOLORDOMAIN;
-    bool ispaletteMap = raster->datadef().domain()->valueType() == itPALETTECOLOR;
+    bool isColorMap = currentDef.domain()->ilwisType() == itCOLORDOMAIN;
+    bool ispaletteMap = currentDef.domain()->valueType() == itPALETTECOLOR;
 
     GDALDatasetH dataset = 0;
     if ( ispaletteMap && format() == "GTiff"){
