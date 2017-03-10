@@ -88,7 +88,7 @@ private:
     void loadNumericBlock(GDALRasterBandH bandhandle, quint32 index, quint32 gdalindex, quint32 linesPerBlock, quint64 linesLeft, char *block, Ilwis::RasterCoverage *raster, int bandIndex) const;
     void loadColorBlock(quint32 ilwisLayer, quint32 index, quint32 gdalindex, quint32 linesPerBlock, quint64 linesLeft, char *block, UPGrid &grid) const;
     bool handleNumericCase(const Size<> &rastersize, RasterCoverage *raster);
-    bool handleColorCase(Size<> &rastersize, RasterCoverage *raster, GDALColorInterp colorType);
+    bool handleColorCase(const Size<> &rastersize, RasterCoverage *raster, GDALColorInterp colorType);
     bool handlePaletteCase(Size<> &rastersize, RasterCoverage *raster);
 
     bool moveIndexes(quint32 &linesPerBlock, quint64 &linesLeft, int &gdalindex);

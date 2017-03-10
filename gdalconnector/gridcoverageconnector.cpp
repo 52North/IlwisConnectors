@@ -84,10 +84,10 @@ bool RasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &o
             ok = handleNumericLayerCase(layer, raster);
         }else if( colorType <=1 || layer != iUNDEF){ // no colors + grayscale which equals image domain
                     raster->size(rastersize);
-                    ok = handleNumericCase(rastersize, raster);
+                    ok = handleNumericCase(raster->size(), raster);
         } else if ( colorType >= 3 && colorType <= 12){
             raster->size(Size<>(rastersize.xsize(), rastersize.ysize(), layer != iUNDEF  ? 1 : rastersize.zsize() / 3));
-            ok = handleColorCase(rastersize, raster,colorType);
+            ok = handleColorCase(raster->size(), raster,colorType);
         }else if (colorType == 2){ // color palette
             ok = handlePaletteCase(rastersize, raster);
         }
@@ -198,7 +198,7 @@ bool RasterCoverageConnector::handlePaletteCase(Size<> &rastersize, RasterCovera
     return true;
 }
 
-bool RasterCoverageConnector::handleColorCase(Size<> &rastersize, RasterCoverage* raster, GDALColorInterp colorType){
+bool RasterCoverageConnector::handleColorCase(const Size<> &rastersize, RasterCoverage* raster, GDALColorInterp colorType){
 
 
     if ( colorType >= 3 && colorType <=5)
