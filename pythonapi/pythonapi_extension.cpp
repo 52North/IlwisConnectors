@@ -18,6 +18,7 @@ namespace pythonapi {
     static QIssueLogger* logger;
     static QMetaObject::Connection connection;
     static QCoreApplication* app = 0;
+    static bool cleanupIlwisContext = false;
 
     bool _initIlwisObjects(const char * ilwisDir){
         int argc = 0;
@@ -26,6 +27,7 @@ namespace pythonapi {
 
         app = QCoreApplication::instance();
         if (!app){
+            cleanupIlwisContext = true;
             app = new QCoreApplication(argc, argv);
             ret = Ilwis::initIlwis(Ilwis::rmCOMMANDLINE, ilwisDir);
         }
@@ -35,7 +37,7 @@ namespace pythonapi {
     }
 
     void _exitIlwisObjects() {
-        if (app)
+        if (cleanupIlwisContext && app)
             delete app;
     }
 
