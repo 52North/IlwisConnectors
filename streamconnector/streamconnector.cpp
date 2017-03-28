@@ -42,6 +42,7 @@
 #include "downloadmanager.h"
 #include "analysispattern.h"
 #include "applicationmodel.h"
+#include "combinationmatrix.h"
 #include "model.h"
 #include "versioneddatastreamfactory.h"
 
@@ -76,6 +77,8 @@ IlwisObject *StreamConnector::create() const
         return new Catalog(_resource);
     case itMODEL:
         return new Model(_resource);
+    case itCOMBINATIONMATRIX:
+        return new CombinationMatrix(_resource) ;
     case itITEMDOMAIN:{
         if ( hasType(_resource.extendedType(), itNUMERICITEM))
             return new IntervalDomain(_resource);
