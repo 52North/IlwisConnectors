@@ -35,10 +35,11 @@ IlwisTypes RawConverter::minNeededStoreType(double low, double high, double step
     double minDivStep;
     double maxDivStep;
     intRange(low, high, step, minDivStep, maxDivStep );
+    bool containsNegatives = low < 0;
 
     quint64 delta = rounding(abs(maxDivStep - minDivStep));//TODO change from quint32 to quint64 might change behaviour??
     if ( step != 0) {
-        if ( delta <= 255)
+        if ( delta <= 255 && !containsNegatives)
             return itUINT8;
         else if ( delta <= 65535)
             return itINT16;
