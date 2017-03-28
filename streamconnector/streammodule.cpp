@@ -29,6 +29,7 @@
 #include "workflowserializerv1.h"
 #include "scriptserializerv1.h"
 #include "modelserializerv1.h"
+#include "combinationmatrixserializerv1.h"
 #include "dataformat.h"
 
 using namespace Ilwis;
@@ -83,6 +84,7 @@ void StreamModule::prepare()
     versionFactory->addCreator({"iv40",itWORKFLOW},WorkflowSerializerV1::create);
     versionFactory->addCreator({"iv40",itSCRIPT},ScriptSerializerV1::create);
     versionFactory->addCreator({"iv40",itMODEL},ModelSerializerV1::create);
+    versionFactory->addCreator({"iv40",itCOMBINATIONMATRIX},CombinationMatrixSerializerv1::create);
 
 
     ConnectorFactory *cfactory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
@@ -91,7 +93,7 @@ void StreamModule::prepare()
 
   //inputconnectors
     cfactory->addCreator(itCOVERAGE|itDOMAIN|itGEOREF|itCOORDSYSTEM|itREPRESENTATION|itELLIPSOID|itPROJECTION|itTABLE|
-                         itOPERATIONMETADATA|itMODEL|itSCRIPT  ,"stream", StreamConnector::create);
+                         itOPERATIONMETADATA|itMODEL|itSCRIPT|itCOMBINATIONMATRIX  ,"stream", StreamConnector::create);
     cfactory->addCreator(itCATALOG,"stream", CatalogConnector::create);
 
     //outputconnectors
@@ -111,6 +113,7 @@ void StreamModule::prepare()
     cfactory->addCreator("workflow","stream",StreamConnector::create);
     cfactory->addCreator("script","stream",StreamConnector::create);
     cfactory->addCreator("model","stream",StreamConnector::create);
+    cfactory->addCreator("combinationmatrix","stream",StreamConnector::create);
 
     QFileInfo ilw = context()->ilwisFolder();
     QString path = ilw.canonicalFilePath() + "/extensions/streamconnector/resources";
