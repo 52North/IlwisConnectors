@@ -103,11 +103,19 @@ ColumnDefinition TableConnector::makeColumn(const QString& colName, quint64 inde
 
     QString domName = _odf->value("Col:" + colName,"Domain");
     IDomain dom;
+    bool attachPath = true;
     if ( isSystemObject(domName)) {
         domName = noExt(domName).toLower();
+        attachPath = false;
     }
-    if ( domName.toLower() == "string.dom")
+    if ( domName.toLower() == "string.dom"){
         domName = "code=domain:text";
+        attachPath = false;
+    }
+    if ( attachPath){
+        QString path =  _resource.container().toString();
+        domName = path + "/" + domName;
+    }
     if(!dom.prepare(domName,{"mustexist",true})) {
         return ColumnDefinition();
     }
