@@ -2744,6 +2744,77 @@ class RasterCoverage(Coverage):
         return _ilwisobjects.RasterCoverage___lt__(self, *args)
 
 
+    def __ge__(self, *args):
+        """
+        __ge__(RasterCoverage self, double value) -> RasterCoverage
+        __ge__(RasterCoverage self, RasterCoverage rc) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage___ge__(self, *args)
+
+
+    def __le__(self, *args):
+        """
+        __le__(RasterCoverage self, double value) -> RasterCoverage
+        __le__(RasterCoverage self, RasterCoverage rc) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage___le__(self, *args)
+
+
+    def __rand__(self, value):
+        """__rand__(RasterCoverage self, double value) -> RasterCoverage"""
+        return _ilwisobjects.RasterCoverage___rand__(self, value)
+
+
+    def __ror__(self, value):
+        """__ror__(RasterCoverage self, double value) -> RasterCoverage"""
+        return _ilwisobjects.RasterCoverage___ror__(self, value)
+
+
+    def __rxor__(self, value):
+        """__rxor__(RasterCoverage self, double value) -> RasterCoverage"""
+        return _ilwisobjects.RasterCoverage___rxor__(self, value)
+
+
+    def __and__(self, *args):
+        """
+        __and__(RasterCoverage self, double value) -> RasterCoverage
+        __and__(RasterCoverage self, RasterCoverage rc) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage___and__(self, *args)
+
+
+    def __or__(self, *args):
+        """
+        __or__(RasterCoverage self, double value) -> RasterCoverage
+        __or__(RasterCoverage self, RasterCoverage rc) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage___or__(self, *args)
+
+
+    def __xor__(self, *args):
+        """
+        __xor__(RasterCoverage self, double value) -> RasterCoverage
+        __xor__(RasterCoverage self, RasterCoverage rc) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage___xor__(self, *args)
+
+
+    def __eq__(self, *args):
+        """
+        __eq__(RasterCoverage self, double value) -> RasterCoverage
+        __eq__(RasterCoverage self, RasterCoverage rc) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage___eq__(self, *args)
+
+
+    def __ne__(self, *args):
+        """
+        __ne__(RasterCoverage self, double value) -> RasterCoverage
+        __ne__(RasterCoverage self, RasterCoverage rc) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage___ne__(self, *args)
+
+
     def __iter__(self):
         """__iter__(RasterCoverage self) -> PixelIterator"""
         return _ilwisobjects.RasterCoverage___iter__(self)

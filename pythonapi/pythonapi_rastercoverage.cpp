@@ -81,7 +81,7 @@ RasterCoverage* RasterCoverage::operator+(RasterCoverage &rc){
             );
 }
 
-RasterCoverage *RasterCoverage::operator+ (double value){
+RasterCoverage *RasterCoverage::operator+(double value){
     return (RasterCoverage*)Engine::_do(
                 toId(QString("add_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
                 "binarymathraster",
@@ -228,6 +228,176 @@ RasterCoverage* RasterCoverage::operator<(RasterCoverage &rc){
                 this->__str__(),
                 rc.__str__(),
                 "less"
+            );
+}
+
+RasterCoverage* RasterCoverage::operator>=(double value){
+    return (RasterCoverage*)Engine::_do(
+                toId(QString("greatereq_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "greatereq"
+            );
+}
+
+RasterCoverage* RasterCoverage::operator<=(double value){
+    return (RasterCoverage*)Engine::_do(
+                toId(QString("lesseq_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "lesseq"
+            );
+}
+
+RasterCoverage* RasterCoverage::operator>=(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(
+                QString("greatereq_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                rc.__str__(),
+                "greatereq"
+            );
+}
+
+RasterCoverage* RasterCoverage::operator<=(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(
+                QString("lesseq_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                rc.__str__(),
+                "lesseq"
+            );
+}
+
+RasterCoverage* RasterCoverage::__and__(double value){
+    return (RasterCoverage*)Engine::_do(
+                toId(QString("and_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "'and'"
+            );
+}
+
+RasterCoverage* RasterCoverage::__or__(double value){
+    return (RasterCoverage*)Engine::_do(
+                toId(QString("or_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "'or'"
+            );
+}
+
+RasterCoverage* RasterCoverage::__xor__(double value){
+    return (RasterCoverage*)Engine::_do(
+                toId(QString("xor_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "'xor'"
+            );
+}
+
+RasterCoverage* RasterCoverage::__rand__(double value){
+    return (RasterCoverage*)Engine::_do(
+                toId(QString("and_%2_%1").arg((*this->ptr())->id()).arg(value)).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "'and'"
+            );
+}
+
+RasterCoverage* RasterCoverage::__ror__(double value){
+    return (RasterCoverage*)Engine::_do(
+                toId(QString("or_%2_%1").arg((*this->ptr())->id()).arg(value)).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "'or'"
+            );
+}
+
+RasterCoverage* RasterCoverage::__rxor__(double value){
+    return (RasterCoverage*)Engine::_do(
+                toId(QString("xor_%2_%1").arg((*this->ptr())->id()).arg(value)).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "'xor'"
+            );
+}
+
+RasterCoverage* RasterCoverage::__and__(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(
+                QString("and_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                rc.__str__(),
+                "'and'"
+            );
+}
+
+RasterCoverage* RasterCoverage::__or__(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(
+                QString("or_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                rc.__str__(),
+                "'or'"
+            );
+}
+
+RasterCoverage* RasterCoverage::__xor__(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(
+                QString("xor_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                rc.__str__(),
+                "'xor'"
+            );
+}
+
+RasterCoverage* RasterCoverage::__eq__(double value){
+    return (RasterCoverage*)Engine::_do(
+                toId(QString("eq_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "eq"
+            );
+}
+
+RasterCoverage* RasterCoverage::__ne__(double value){
+    return (RasterCoverage*)Engine::_do(
+                toId(QString("neq_%1_%2").arg((*this->ptr())->id()).arg(value)).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                QString("%1").arg(value).toStdString(),
+                "neq"
+            );
+}
+
+RasterCoverage* RasterCoverage::__eq__(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(
+                QString("eq_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                rc.__str__(),
+                "eq"
+            );
+}
+
+RasterCoverage* RasterCoverage::__ne__(RasterCoverage &rc){
+    return (RasterCoverage*)Engine::_do(
+                QString("neq_%1_%2").arg((*this->ptr())->id()).arg((*rc.ptr())->id()).toStdString(),
+                "binarylogicalraster",
+                this->__str__(),
+                rc.__str__(),
+                "neq"
             );
 }
 

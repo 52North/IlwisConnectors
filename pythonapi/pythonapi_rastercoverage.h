@@ -47,7 +47,23 @@ namespace pythonapi {
         RasterCoverage* operator<(double value);
         RasterCoverage* operator>(RasterCoverage &rc);
         RasterCoverage* operator<(RasterCoverage &rc);
-        //RasterCoverage* sin();
+        RasterCoverage* operator>=(double value);
+        RasterCoverage* operator<=(double value);
+        RasterCoverage* operator>=(RasterCoverage &rc);
+        RasterCoverage* operator<=(RasterCoverage &rc);
+        RasterCoverage* __and__(double value); // &
+        RasterCoverage* __or__(double value); // |
+        RasterCoverage* __xor__(double value); // ^
+        RasterCoverage* __rand__(double value); // &
+        RasterCoverage* __ror__(double value); // |
+        RasterCoverage* __rxor__(double value); // ^
+        RasterCoverage* __and__(RasterCoverage &rc); // &
+        RasterCoverage* __or__(RasterCoverage &rc); // |
+        RasterCoverage* __xor__(RasterCoverage &rc); // ^
+        RasterCoverage* __eq__(double value); // ==
+        RasterCoverage* __ne__(double value); // !=
+        RasterCoverage* __eq__(RasterCoverage &rc); // ==
+        RasterCoverage* __ne__(RasterCoverage &rc); // !=
         PixelIterator __iter__();
         double coord2value(const Coordinate& c);
         double pix2value(const Pixel& pix);
