@@ -7,6 +7,8 @@
 #include "geometries.h"
 #include "ilwisdata.h"
 #include "coordinatesystem.h"
+#include "conventionalcoordinatesystem.h"
+#include "proj4parameters.h"
 #include "domain.h"
 #include "itemdomain.h"
 #include "thematicitem.h"
@@ -115,7 +117,7 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::getMetaForGeometryColumns(QList<
     if ( !_params.schema().isEmpty()) {
         sqlBuilder += " WHERE f_table_schema = '" + _params.schema() + "'";
         if ( !_params.table().isEmpty())
-            sqlBuilder += " AND f_table_name = '" + _params.table() + "'";
+            sqlBuilder += " AND f_table_name = '" + _params.table().toLower() + "'";
     }
     QSqlQuery query = doQuery(sqlBuilder);
 
@@ -132,7 +134,7 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::getMetaForGeometryColumns(QList<
         prepareCoordinateSystem(srid, crs);
         meta.crs = crs;
 
-        IlwisTypes ilwisType;
+        IlwisTypes ilwisType = itPOINT | itLINE | itPOLYGON;
         QString geomType = query.value("type").toString();
         if (geomType.contains("LINE", Qt::CaseInsensitive) ) {
             ilwisType = itLINE;
@@ -144,6 +146,71 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::getMetaForGeometryColumns(QList<
         meta.geomType = ilwisType;
         columns.push_back(meta);
     }
+}
+
+bool PostgresqlDatabaseUtil::createTable(FeatureCoverage *fcoverage) const{
+    const FeatureAttributeDefinition& attributes =  fcoverage->attributeDefinitions();
+
+    std::vector<QString> dataStatements;
+    for(int col=0; col < attributes.columnCount(); ++col){
+        QString name = attributes.columndefinition(col).name();
+        IlwisTypes datatype = attributes.columndefinition(col).datadef().domain()->ilwisType();
+        switch(datatype){
+        case itITEMDOMAIN:
+        case itTEXTDOMAIN:
+            dataStatements.push_back(name + " " + "text");break;
+        case itNUMERICDOMAIN:{
+            IlwisTypes valueType = attributes.columndefinition(col).datadef().domain()->valueType();
+            if (  hasType(valueType, itINTEGER)){
+                dataStatements.push_back("\'" +name + " " + "integer");
+            }else {
+                dataStatements.push_back(name + " " + "real");
+            }
+
+        }
+            break;
+        case itBOOL:
+            dataStatements.push_back(name + " " + "boolean");break;
+        }
+    }
+    QString statement = "create table %1.%2(%3)";
+    QString columns;
+    for(QString column : dataStatements){
+        if ( columns != "")
+            columns += ",";
+        columns += column;
+    }
+    QString expr = statement.arg(_params.schema()).arg(_params.table().toLower()).arg(columns);
+    doQuery(expr);
+    QString csyCode = fcoverage->coordinateSystem()->code();
+    int epsg = 0;
+    if ( csyCode.indexOf("epsg:") == 0){
+        epsg = csyCode.mid(5).toInt() ;
+    }else {
+        if ( fcoverage->coordinateSystem()->ilwisType() == itCONVENTIONALCOORDSYSTEM){
+            IConventionalCoordinateSystem projectedCsy = fcoverage->coordinateSystem().as<ConventionalCoordinateSystem>();
+            QString prj4Def = projectedCsy->toProj4();
+            Proj4Def def = Proj4Parameters::lookupDefintion(prj4Def);
+            if ( def._epsg != ""){
+                epsg = def._epsg.toInt();
+            }
+        }
+    }
+    statement = "Select AddGeometryColumn ('%1','%2', 'geometries',%3,'%4',2)";
+    expr = statement.arg(_params.schema()).arg(_params.table().toLower()).arg(epsg).arg("GEOMETRY");
+    doQuery(expr);
+
+    return true;
+}
+
+bool PostgresqlDatabaseUtil::tableExists() const{
+
+    QString query = QString("SELECT EXISTS( SELECT * FROM information_schema.tables  where table_schema='%1' and table_name='%2')").arg(_params.schema()).arg(_params.table());
+    QSqlQuery result = doQuery(query);
+    while(result.next()){
+        return result.value(0).toBool();
+    }
+    return false;
 }
 
 bool Ilwis::Postgresql::PostgresqlDatabaseUtil::exists(Ilwis::SPFeatureI feature) const
