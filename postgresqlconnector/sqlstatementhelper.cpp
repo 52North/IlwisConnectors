@@ -218,9 +218,9 @@ QString SqlStatementHelper::createInsertValueString(QVariant value, const Column
 
         return QString::number(value.toDouble());
 
-    } else if (hasType(domain->valueType(),itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM | itTIMEITEM)) {
+    } else if (hasType(domain->ilwisType(),itITEMDOMAIN)) {
 
-        return domain->impliedValue(value).toString();
+        return "\'" + domain->impliedValue(value).toString() + "\'";
 
     } else if (hasType(domain->valueType(), itDATETIME)) {
         if ( QString(value.typeName()).compare("Ilwis::Time") != 0){
