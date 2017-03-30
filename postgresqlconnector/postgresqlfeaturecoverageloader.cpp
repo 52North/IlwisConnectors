@@ -255,8 +255,6 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
 
 
             sqlStmt.append(" ); ");
-            DEBUG1("SQL: '%1'", sqlStmt);
-
         } else {
 
             // update feature
