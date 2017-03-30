@@ -170,6 +170,13 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
     PostgresqlParameters params (_resource.url(true).toString());
     PostgresqlDatabaseUtil pgUtil(params);
     SqlStatementHelper sqlHelper(params);
+   bool newTable = false;
+   if ( !pgUtil.tableExists()){
+       if(!pgUtil.createTable(fcoverage)){
+           return false;
+       }
+       newTable = true;
+   }
 
    IDomain semantics; // subfeature semantics
     QList<QString> primaryKeys; // readonly keys
@@ -185,10 +192,10 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
 
     QString code = fcoverage->coordinateSystem()->code();
     QString srid = code.right(code.indexOf(":"));
-    QString qtablename = params.table();
+    QString qtablename = params.table().toLower();
     while(featureIter != featureIter.end()) {
         SPFeatureI feature = (*featureIter);
-        bool newFeature = !pgUtil.exists(feature);
+        bool newFeature = newTable ? true : !pgUtil.exists(feature);
         QString columnValuesCommaSeparated = sqlHelper.columnValuesCommaSeparated(feature);
         QString sqlStmt;
         if (newFeature) {
@@ -227,7 +234,7 @@ bool PostgresqlFeatureCoverageLoader::storeData(FeatureCoverage *fcoverage) cons
             foreach (MetaGeometryColumn geomMeta, metaGeomColumns) {
                 QString wkt = "NULL";
                 QString geomColumn = geomMeta.geomColumn;
-                if (rootGeomColumn == geomColumn) {
+                if (rootGeomColumn == geomColumn || rootGeomColumn == sUNDEF) {
                     if (feature->geometry() != nullptr){
                         wkt = QString("'%1'").arg(GeometryHelper::toWKT(feature->geometry().get()));
                     }
