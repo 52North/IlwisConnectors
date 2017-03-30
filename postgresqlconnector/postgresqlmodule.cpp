@@ -12,7 +12,7 @@
 #include "catalogconnector.h"
 #include "ilwiscontext.h"
 #include "domain.h"
-
+#include "dataformat.h"
 #include "postgresqlobjectfactory.h"
 #include "postgresqlconnector.h"
 #include "postgresqlcatalogexplorer.h"
@@ -63,5 +63,10 @@ void PostgresqlModule::prepare()
     cfactory->addCreator(itFEATURE, "postgresql", PostgresqlFeatureConnector::create);
     cfactory->addCreator(itRASTER, "postgresql", PostgresqlRasterConnector::create);
     cfactory->addCreator(itCATALOG, "postgresql", CatalogConnector::create);
+
+    QFileInfo ilw = context()->ilwisFolder();
+    QString path = ilw.canonicalFilePath() + "/extensions/postgresqlconnector/resources";
+    DataFormat::setFormatInfo(path + "/postgresformats.config","postgresql");
+
     kernel()->issues()->log("Loaded Postgresql Module", IssueObject::itMessage);
 }

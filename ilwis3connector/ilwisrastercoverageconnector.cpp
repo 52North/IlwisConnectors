@@ -604,7 +604,7 @@ bool RasterCoverageConnector::storeMetaData( IlwisObject *obj, const IOOptions& 
         _odf->setKeyValue("BaseMap","MinMax",minmax);
 
         // Add the BaseMap:Range section to match the default valuerange with the Type
-        if ( delta >= 0 && delta < 256 &&  resolution == 1){
+        if ( delta >= 0 && delta < 256 &&  resolution == 1 && stats[NumericStatistics::pMIN] >= 0){
            _odf->setKeyValue("MapStore","Type","Byte");
            _odf->setKeyValue("BaseMap", "Range", "0:255:offset=0");
         } else if ( conv.storeType() == itUINT8){

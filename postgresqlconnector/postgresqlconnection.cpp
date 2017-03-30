@@ -73,7 +73,7 @@ quint64 PostgresqlConnection::createMetadata()
     OperationResource operation({"ilwis://operations/postgresqlcatalog"});
     operation.setLongName("PostgreSQL Catalog");
     operation.setSyntax("postgresqlcatalog(username,password,host,port,database,schema,table,column,rasterid)");
-    operation.setDescription(TR("creates a url to access the catalog of a postgresql database"));
+    operation.setDescription(TR("creates a url to access the catalog of a postgresql database; the url must have look like postgresql://mysusername:mypassword@somehost:someport/adataabasename"));
     operation.setInParameterCount({9});
     operation.addInParameter(0, itSTRING, TR("username"),TR("username for authentication on the remote server"));
     operation.addInParameter(1, itSTRING, TR("password"),TR("password for authentication on the remote server"));
