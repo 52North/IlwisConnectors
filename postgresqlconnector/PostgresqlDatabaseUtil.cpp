@@ -15,6 +15,7 @@
 #include "range.h"
 #include "identifierrange.h"
 #include "coverage.h"
+#include "table.h"
 #include "featurecoverage.h"
 #include "rastercoverage.h"
 #include "feature.h"
@@ -148,6 +149,42 @@ void Ilwis::Postgresql::PostgresqlDatabaseUtil::getMetaForGeometryColumns(QList<
     }
 }
 
+bool PostgresqlDatabaseUtil::createTable(Table *table) const{
+
+    std::vector<QString> dataStatements;
+    for(int col=0; col < table->columnCount(); ++col){
+        QString name = table->columndefinition(col).name();
+        IlwisTypes datatype = table->columndefinition(col).datadef().domain()->ilwisType();
+        switch(datatype){
+        case itITEMDOMAIN:
+        case itTEXTDOMAIN:
+            dataStatements.push_back(name + " " + "text");break;
+        case itNUMERICDOMAIN:{
+            IlwisTypes valueType = table->columndefinition(col).datadef().domain()->valueType();
+            if (  hasType(valueType, itINTEGER)){
+                dataStatements.push_back(name + " " + "integer");
+            }else {
+                dataStatements.push_back(name + " " + "real");
+            }
+
+        }
+            break;
+        case itBOOL:
+            dataStatements.push_back(name + " " + "boolean");break;
+        }
+    }
+    QString statement = "create table %1.%2(%3)";
+    QString columns;
+    for(QString column : dataStatements){
+        if ( columns != "")
+            columns += ",";
+        columns += column;
+    }
+    QString expr = statement.arg(_params.schema()).arg(_params.table().toLower()).arg(columns);
+    doQuery(expr);
+
+    return true;
+}
 bool PostgresqlDatabaseUtil::createTable(FeatureCoverage *fcoverage) const{
     const FeatureAttributeDefinition& attributes =  fcoverage->attributeDefinitions();
 
@@ -198,7 +235,8 @@ bool PostgresqlDatabaseUtil::createTable(FeatureCoverage *fcoverage) const{
     }
     statement = "Select AddGeometryColumn ('%1','%2', 'geometries',%3,'%4',2)";
     expr = statement.arg(_params.schema()).arg(_params.table().toLower()).arg(epsg).arg("GEOMETRY");
-    doQuery(expr);
+    QSqlQuery result  = doQuery(expr);
+
 
     return true;
 }
@@ -245,6 +283,9 @@ bool Ilwis::Postgresql::PostgresqlDatabaseUtil::exists(Ilwis::SPFeatureI feature
 
 void Ilwis::Postgresql::PostgresqlDatabaseUtil::getPrimaryKeys(QList<QString> &primaryColumns) const
 {
+    if ( primaryColumns.size() == 0)
+        return;
+
     QString qtablename = _params.schema() + "." + _params.table();
     QString sqlBuilder;
     sqlBuilder.append("SELECT ");
