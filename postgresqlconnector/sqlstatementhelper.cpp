@@ -143,7 +143,8 @@ void SqlStatementHelper::addInsertStmt(const QList<QString> & primaryKeys, const
     sqlBuilder.append(tmpTable).append(" AS new ");
     sqlBuilder.append(" WHERE NOT EXISTS ( SELECT NULL FROM ");
     sqlBuilder.append(qtablename).append(" AS existing");
-    sqlBuilder.append(createWhereComparingPrimaryKeys(primaryKeys, "new", "existing"));
+    if ( primaryKeys.size() > 0)
+        sqlBuilder.append(createWhereComparingPrimaryKeys(primaryKeys, "new", "existing"));
     sqlBuilder.append(" ) ;");
     _sqlBuilder.append(sqlBuilder);
 }
