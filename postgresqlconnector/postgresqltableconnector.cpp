@@ -52,11 +52,21 @@ bool PostgresqlTableConnector::store(IlwisObject *data, const IOOptions& options
     PostgresqlParameters params (_resource.url(true).toString());
     PostgresqlDatabaseUtil pgUtil(params);
     SqlStatementHelper sqlHelper(params);
+
+    bool newTable = false;
+    if ( !pgUtil.tableExists()){
+        if(!pgUtil.createTable(table)){
+            return false;
+        }
+        newTable = true;
+    }
+
     QList<QString> primaryKeys;
     pgUtil.getPrimaryKeys(primaryKeys);
     sqlHelper.addCreateTempTableStmt("data_level_0");
     sqlHelper.addInsertChangedDataToTempTableStmt("data_level_0", table);
-    sqlHelper.addUpdateStmt(primaryKeys, "data_level_0", table);
+    if (!newTable)
+        sqlHelper.addUpdateStmt(primaryKeys, "data_level_0", table);
     sqlHelper.addInsertStmt(primaryKeys, "data_level_0", table);
 
     // TODO delete deleted rows
