@@ -67,6 +67,8 @@ bool PostgresqlFeatureConnector::loadMetaData(IlwisObject *data, const IOOptions
 
 bool PostgresqlFeatureConnector::loadData(IlwisObject *data, const IOOptions& options)
 {
+    if ( _binaryIsLoaded)
+        return true;
     FeatureCoverage *fcoverage = static_cast<FeatureCoverage *>(data);
     IOOptions iooptions = options.isEmpty() ? this->ioOptions() : options;
     PostgresqlFeatureCoverageLoader loader = PostgresqlFeatureCoverageLoader(sourceRef(), iooptions);
