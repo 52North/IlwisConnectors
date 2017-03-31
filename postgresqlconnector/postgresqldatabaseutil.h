@@ -12,6 +12,7 @@ namespace Ilwis {
 
 class SPFeatureI;
 class FeatureCoverage;
+class Table;
 
 namespace Postgresql {
 
@@ -70,7 +71,8 @@ public:
     QSqlQuery doQuery(QString stmt) const;
 
     bool tableExists() const;
-    bool createTable(FeatureCoverage *fcoverage) const;
+    bool createTable(Ilwis::FeatureCoverage *fcoverage) const;
+    bool createTable(Table *table) const;
 private:
     void prepareCoordinateSystem(QString srid, ICoordinateSystem &crs) const;
 
