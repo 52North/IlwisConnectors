@@ -953,7 +953,8 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
         const ColumnDefinition& coldef = attTable->columndefinitionRef(index);
         if ( coldef.datadef().domain<>()->ilwisType() == itITEMDOMAIN)
             datadef = DataDefinition(coldef.datadef().domain(),coldef.datadef().range()->clone());
-    } else {
+    }
+    if ( !datadef.isValid()) {
         INamedIdDomain indexdom;
         indexdom.prepare();
         indexdom->name(fcov->name());
