@@ -70,4 +70,13 @@ void OpenCVOperation::createInputOutputRasters(quint64 copyProperties)
 
     if ( outputName != sUNDEF)
         _outputRaster->name(outputName);
+
+    IDomain dom;
+    dom.prepare("code=domain:value");
+    _outputRaster->datadefRef().domain(dom);
+
+    for(quint32 i = 0; i < _outputRaster->size().zsize(); ++i){
+     QString index = _outputRaster->stackDefinition().index(i);
+        _outputRaster->setBandDefinition(index,DataDefinition(dom));
+    }
 }
