@@ -119,8 +119,15 @@ void StreamModule::prepare()
     QString path = ilw.canonicalFilePath() + "/extensions/streamconnector/resources";
     DataFormat::setFormatInfo(path + "/streamformats.config","stream");
 
+    IlwisObject::addTypeFunction(StreamModule::ilwisType);
+
     kernel()->issues()->log("Loaded streaming module",IssueObject::itMessage);
+}
 
-
-
+IlwisTypes StreamModule::ilwisType(const QString &name) {
+    if ( name.indexOf(".ilwis") > 0){
+        Resource res = mastercatalog()->name2Resource(name);
+        return res.ilwisType();
+    }
+    return itUNKNOWN;
 }

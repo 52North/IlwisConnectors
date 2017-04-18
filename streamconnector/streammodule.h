@@ -23,8 +23,9 @@ public:
     void prepare();
 
     Q_PLUGIN_METADATA(IID "n52.ilwis.streamconnector" FILE  "streamconnector.json")
-private:
 
+private:
+    static IlwisTypes ilwisType(const QString &name);
 
 signals:
 };
