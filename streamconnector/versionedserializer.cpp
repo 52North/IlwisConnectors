@@ -99,6 +99,7 @@ void VersionedSerializer::connector(StreamConnector *streamconnector)
     _streamconnector = streamconnector;
 }
 
+
 bool VersionedSerializer::storeDataDefintion(const DataDefinition &def, QDataStream &stream, const IOOptions &options) const
 {
     VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");

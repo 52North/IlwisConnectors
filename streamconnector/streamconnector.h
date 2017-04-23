@@ -27,10 +27,14 @@ public:
     QString format() const;
     static ConnectorInterface *create(const Resource &resource, bool load, const IOOptions &options);
 
+
+    qint64 beginDataSection() const;
+    void beginDataSection(qint64 begin);
 private:
     std::unique_ptr<VersionedSerializer> _versionedConnector;
     std::unique_ptr<QIODevice> _datasource;
     QByteArray _bytes;
+    qint64 _beginDataSection = -1;
 
     bool store(IlwisObject *obj,const IOOptions& options = IOOptions());
     bool openSource(bool reading);

@@ -63,10 +63,12 @@ template<typename T> void loadBulk(const RawConverter& converter, QDataStream& s
         stream >> blockCount;
         if ( !box.isNull() && box.isValid()){
             //for the moment we only accept whole layers as possible subsets, might improve this in the future
-            int layer = box.min_corner().z;
+            int layer = box.min_corner().z ;
             blockCount =  raster->grid()->blocksPerBand();
-            int seekPos = stream.device()->pos() + layer * (raster->size().xsize() * raster->size().ysize() * sizeof(T) + sizeof(quint32) + sizeof(quint64));
+            int extraOffsets = blockCount * layer * (sizeof(quint32) + sizeof(qint64)); // per block there is an index and a blocksize - 12 bytes;
+            int seekPos = stream.device()->pos() + extraOffsets + layer * (raster->size().xsize() * raster->size().ysize() * sizeof(T));
             stream.device()->seek(seekPos);
+
         }
         quint32 blockIndex;
         quint64 blockSize, initBlockSize;
@@ -74,8 +76,8 @@ template<typename T> void loadBulk(const RawConverter& converter, QDataStream& s
         stream >> blockSize;
         initBlockSize = blockSize;
 
-        std::vector<T> rawdata(blockSize);
-        std::vector<double> realdata(blockSize);
+        std::vector<T> rawdata(initBlockSize);
+        std::vector<double> realdata(initBlockSize);
 
         for(int i = 0; i < blockCount; ++i){
 
@@ -167,12 +169,15 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         if(!tblstreamer->store(raster->attributeTable().ptr(), options))
             return false;
     }
+
     return true;
 
 }
 
 bool RasterSerializerV1::storeData(IlwisObject *obj, const IOOptions &options )
 {
+    qint64 pos = _stream.device()->pos();
+    _stream << pos + sizeof(qint64);
     _stream << itRASTER;
     _stream << Version::interfaceVersion;
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
@@ -305,6 +310,9 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
         tableStreamer->loadData(tbl.ptr(),options);
         raster->setAttributes(tbl);
     }
+    qint64 beginData;
+    _stream >> beginData;
+    _streamconnector->beginDataSection(beginData);
 
     return true;
 }

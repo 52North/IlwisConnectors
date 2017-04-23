@@ -152,9 +152,11 @@ bool StreamConnector::loadData(IlwisObject *object, const IOOptions &options){
         //QFileInfo inf(_resource.url().toLocalFile());
         VersionedDataStreamFactory *factory = kernel()->factory<VersionedDataStreamFactory>("ilwis::VersionedDataStreamFactory");
         QDataStream stream(_datasource.get());
-        //quint64 pos = stream.device()->pos();
+
         IlwisTypes tp;
         QString version;
+        if ( _beginDataSection != -1)
+            stream.device()->seek(_beginDataSection);
         stream >> tp;
         stream >> version;
         std::unique_ptr<VersionedSerializer> serializer(factory->create(version, source().ilwisType(),stream));
@@ -285,4 +287,14 @@ bool StreamConnector::dataIsLoaded() const
 QString StreamConnector::format() const
 {
     return IlwisObject::type2Name(source().ilwisType());
+}
+
+qint64 StreamConnector::beginDataSection() const
+{
+    return _beginDataSection;
+}
+
+void StreamConnector::beginDataSection(qint64 begin)
+{
+    _beginDataSection = begin;
 }
