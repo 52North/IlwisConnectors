@@ -130,6 +130,11 @@ QString IniFile::path() const
     return _filename.absolutePath();
 }
 
+Time IniFile::modified() const
+{
+    return _filename.lastModified();
+}
+
 QStringList IniFile::childKeys(const QString &section) const
 {
     QStringList keys;
