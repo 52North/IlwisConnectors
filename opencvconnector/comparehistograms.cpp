@@ -109,7 +109,7 @@ quint64 CompareHistograms::createMetadata()
     operation.addInParameter(3,itBOOL , TR("acumulate"),TR("if there is more than one band it treats the whole raster as one; it is optional and the default is false") );
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itDOUBLE | itCOLLECTION, TR("statistical Marker"),TR("a raster with blurred features and reduced noise"));
-    operation.setKeywords("image processing,raster,noise reduction, filter");
+    operation.setKeywords("image processing,raster,statistics");
 
     mastercatalog()->addItems({operation});
     return operation.id();
