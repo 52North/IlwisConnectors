@@ -79,6 +79,7 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
 
            foreach(const auto& kvp, inifiles) {
                ODFItem item(kvp.second, &inifiles);
+               item.modifiedTime(Time(kvp.second.modified()),true);// this is a new scan so it should take over the time of the file
                odfitems.insert(item);
                if (!trq->update(1))
                    return std::vector<Resource>();
