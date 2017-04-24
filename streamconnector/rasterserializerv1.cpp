@@ -146,8 +146,11 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
     std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
     if ( !domainStreamer)
         return false;
+    auto vtype = raster->stackDefinition().domain()->valueType();
+    _stream << vtype;
     storeSystemPath(raster->stackDefinition().domain()->resource());
     domainStreamer->store( raster->stackDefinition().domain().ptr(), options);
+
     std::vector<QString> indexes = raster->stackDefinition().indexes();
     _stream << (quint32)indexes.size();
     for(auto index : indexes)
@@ -258,6 +261,8 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
     for(int band = 0; band < raster->size().zsize(); ++band) {
         loadDataDefinition(raster->datadefRef(band), _stream, options)    ;
     }
+    IlwisTypes valueType;
+    _stream >> valueType;
     quint64 type;
     QString version, url;
     _stream >> url;
@@ -267,8 +272,9 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
     std::unique_ptr<DataInterface> domainStreamer(factory->create(Version::interfaceVersion, itDOMAIN,_stream));
     if ( !domainStreamer)
         return false;
+
     IDomain systemDomain = makeSystemObject<IDomain>(url);
-    IDomain dom(type);
+    IDomain dom(type|valueType);
     domainStreamer->loadMetaData( dom.ptr(), options);
     quint32 nrOfBands;
     _stream >> nrOfBands;
