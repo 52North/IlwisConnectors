@@ -100,7 +100,7 @@ quint64 SobelFilter::createMetadata()
     operation.addOptionalInParameter(3,itPOSITIVEINTEGER , TR("Size of the kernel"),TR("size of the extended Sobel kernel; it must be 1, 3, 5, or 7"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output raster with edges highlighted"));
-    operation.setKeywords("image processing,raster,edge detection, filter");
+    operation.setKeywords("image processing,raster,edge detection,filter");
 
     mastercatalog()->addItems({operation});
     return operation.id();

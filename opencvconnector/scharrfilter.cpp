@@ -95,7 +95,7 @@ quint64 ScharrFilter::createMetadata()
     operation.addInParameter(2,itPOSITIVEINTEGER , TR("Y order derivative"),TR("order of the derivative in y direction"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output raster with edges highlighted"));
-    operation.setKeywords("image processing,raster,edge detection, filter");
+    operation.setKeywords("image processing,raster,edge detection,filter");
 
     mastercatalog()->addItems({operation});
     return operation.id();
