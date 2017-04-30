@@ -153,6 +153,7 @@ bool WorkflowSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         storeNodeLinks(node);
     }
     _dataLoaded = true;
+    workflow->changed(false);
     return true;
 }
 
