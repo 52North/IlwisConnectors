@@ -171,6 +171,7 @@ bool RasterSerializerV1::store(IlwisObject *obj, const IOOptions &options)
 
         if(!tblstreamer->store(raster->attributeTable().ptr(), options))
             return false;
+        _stream << raster->primaryKey();
     }
 
     return true;
@@ -314,6 +315,9 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
         _stream >> type;
         _stream >> version;
         tableStreamer->loadData(tbl.ptr(),options);
+        QString primkey;
+        _stream >> primkey;
+        raster->primaryKey(primkey);
         raster->setAttributes(tbl);
     }
     qint64 beginData;
