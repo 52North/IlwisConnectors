@@ -377,6 +377,7 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &optio
         for(quint32 i=0; i < tbl->recordCount() ; ++i) {
             tbl->setCell(COVERAGEKEYCOLUMN,i, QVariant(i));
         }
+        raster->primaryKey(COVERAGEKEYCOLUMN);
     }
     _binaryIsLoaded = true;
     return true;
