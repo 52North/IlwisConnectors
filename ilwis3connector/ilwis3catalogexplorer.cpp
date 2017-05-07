@@ -64,6 +64,7 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                QFileInfo localfile = QFileInfo(url.toLocalFile());
                if (localfile.isFile()){
                   std::vector<Resource> resources = CatalogConnector::cache()->find(url, Time(localfile.lastModified()));
+                  //TODO maplist seems to be stored only once in the cache; should 2 times, so for the moment we make an exception for mpl files; resolve later
                   if ( resources.size() == 0 || localfile.suffix() == "mpl")
                        inifiles[url.toLocalFile().toLower()] = IniFile(localfile);
                    else{
