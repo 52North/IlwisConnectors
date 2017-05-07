@@ -108,13 +108,14 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
                     Resource res(url, tp);
                     res.setExtendedType(exttype);
                     if ( hasType(tp,itWORKFLOW)){
-                        IWorkflow wf;
-                        if(wf.prepare(res)){
-                            wf->createMetadata();
-                            Resource res2 = wf->resource();
-                            res2.code(res.code()); //code comes from other machine or possibly older instance which might have different id's
-                            items.push_back(res2);
-                        }
+                        items.push_back(res);
+//                        IWorkflow wf;
+//                        if(wf.prepare(res)){
+//                            wf->createMetadata();
+//                            Resource res2 = wf->resource();
+//                            res2.code(res.code()); //code comes from other machine or possibly older instance which might have different id's
+//                            items.push_back(res2);
+//                        }
                     }else if (hasType(tp, itILWISOBJECT)){
                         IIlwisObject obj(res);
                         if ( obj->ilwisType() == itRASTER){
@@ -129,6 +130,15 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
             }
         }
     }
+//    for(auto& item : items){
+//        IWorkflow wf;
+//        if(item.ilwisType() == itWORKFLOW && wf.prepare(item)){
+//           wf->createMetadata();
+//           Resource res = wf->resource();
+//           res.code(item.code());
+//           item = res;
+//        }
+//    }
     return items;
 
 }
