@@ -139,7 +139,6 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
                     QUrl url(resourceId);
                     // Probe whether we're dealing with a single-raster-table or a multiraster table whereby each record is one raster; Note that for performance reasons we only check the first 100 records.
                     sqlBuilder = "WITH refrast AS (SELECT " + columnname + " AS rast FROM " + params.schema() + "." + tablename + " WHERE " + columnname + " IS NOT NULL AND ST_ScaleX(" + columnname + ") != 0 AND ST_ScaleY(" + columnname + ") != 0 LIMIT 1), crossrast AS (SELECT " + columnname + " AS rast FROM " + params.schema() + "." + tablename + " WHERE " + columnname + " IS NOT NULL AND ST_ScaleX(" + columnname + ") != 0 AND ST_ScaleY(" + columnname + ") != 0 OFFSET 1 LIMIT 100), conditions AS (SELECT ST_SameAlignment(crossrast.rast,refrast.rast) AS same, (ST_UpperLeftX(refrast.rast) / ST_ScaleX(refrast.rast) - ST_UpperLeftX(crossrast.rast) / ST_ScaleX(crossrast.rast))::integer % ST_Width(refrast.rast) AS modX, (ST_UpperLeftY(refrast.rast) / ST_ScaleY(refrast.rast) - ST_UpperLeftY(crossrast.rast) / ST_ScaleY(crossrast.rast))::integer % ST_Height(refrast.rast) AS modY, ST_Touches(ST_Envelope(crossrast.rast), ST_Envelope(refrast.rast)) OR NOT ST_Intersects(ST_Envelope(crossrast.rast), ST_Envelope(refrast.rast)) AS disjoint FROM crossrast, refrast GROUP BY same, modX, modY, disjoint) SELECT same AND modX=0 AND modY=0 AND disjoint AS singleraster FROM conditions GROUP BY singleraster ORDER BY singleraster";
-                    qDebug() << "SQL: " << sqlBuilder;
                     QSqlQuery query2 = pgUtil.doQuery(sqlBuilder);
                     if (query2.next()) {
                         bool fSingleRaster = query2.value(0).toBool();
@@ -153,7 +152,6 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
                         }
                     } else { // There are 0 or 1 records in the results; probe again.
                         sqlBuilder = "SELECT COUNT(" + columnname + ") FROM " + params.schema() + "." + tablename + " WHERE " + columnname + " IS NOT NULL";
-                        qDebug() << "SQL: " << sqlBuilder;
                         query2 = pgUtil.doQuery(sqlBuilder);
                         if (query2.next()) {
                             qlonglong count = query2.value(0).toLongLong();
@@ -172,7 +170,6 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
                 // add the remaining tables (non-geometry and non-raster) as plain tables
                 params.setColumn("");
                 sqlBuilder = "WITH geoms AS (SELECT DISTINCT table_name FROM INFORMATION_SCHEMA.Columns WHERE table_schema='" + params.schema() + "' AND (udt_name = 'geometry' OR udt_name = 'raster')) SELECT DISTINCT table_name FROM INFORMATION_SCHEMA.Columns WHERE table_schema='" + params.schema() + "' AND table_name NOT IN (SELECT * FROM geoms)";
-                qDebug() << "SQL: " << sqlBuilder;
                 query = pgUtil.doQuery(sqlBuilder);
                 while (query.next()) {
                     QString tablename = query.value(0).toString();
@@ -185,7 +182,6 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
             }
         } else { // discover schemas
             sqlBuilder = "SELECT distinct table_schema FROM INFORMATION_SCHEMA.Columns";
-            qDebug() << "SQL: " << sqlBuilder;
             PostgresqlDatabaseUtil pgUtil(params);
             QSqlQuery query = pgUtil.doQuery(sqlBuilder);
             while (query.next()) {
@@ -199,7 +195,6 @@ std::vector<Resource> PostgresqlCatalogExplorer::loadItems(const IOOptions &opti
         }
     } else { // discover databases
         sqlBuilder = "SELECT datname FROM pg_database WHERE NOT datistemplate order by datname;";
-        qDebug() << "SQL: " << sqlBuilder;
         params.setDatabase("postgres"); // the maintenance database where all other databases are registered
         PostgresqlDatabaseUtil pgUtil(params);
         QSqlQuery query = pgUtil.doQuery(sqlBuilder);

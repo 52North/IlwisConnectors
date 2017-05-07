@@ -58,7 +58,6 @@ bool PostgresqlRasterConnector::loadMetaData(IlwisObject *data, const IOOptions 
     pgUtil.getMetaForRasterColumns(metaGeometries);
     _newStyleST_AsBinary = false;
     QString sqlBuilder = "SELECT pg_type.typname FROM pg_proc, pg_type WHERE proname='st_asbinary' and pg_proc.proargtypes[1]=pg_type.oid and pg_type.typname='bool' limit 1";
-    qDebug()<<sqlBuilder;
     QSqlQuery query = pgUtil.doQuery(sqlBuilder);
     if (query.next())
         _newStyleST_AsBinary = true;
@@ -67,7 +66,6 @@ bool PostgresqlRasterConnector::loadMetaData(IlwisObject *data, const IOOptions 
     double y_pixel_size = 0;
     QString bandPixelType = "";
     sqlBuilder = "SELECT ST_SRID(" + params.column() + "), ST_ScaleX(" + params.column() + "), ST_ScaleY(" + params.column() + "), ST_Width(" + params.column() + "), ST_Height(" + params.column() + "), ST_NumBands(" + params.column() + ") FROM " + params.schema() + "." + params.table() + (params.rasterID().isEmpty() ? (" WHERE " + params.column() + " IS NOT NULL LIMIT 1") : (" WHERE rid=" + params.rasterID()));
-    qDebug()<<sqlBuilder;
     query = pgUtil.doQuery(sqlBuilder);
     if (query.next()) {
         _srid = query.value(0).toString();
@@ -85,7 +83,6 @@ bool PostgresqlRasterConnector::loadMetaData(IlwisObject *data, const IOOptions 
 
     Envelope bbox;
     sqlBuilder = "SELECT ST_Extent(" + params.column() + "::geometry) FROM " + params.schema() + "." + params.table() + (!params.rasterID().isEmpty() ? (" WHERE rid=" + params.rasterID()) : "");
-    qDebug()<<sqlBuilder;
     query = pgUtil.doQuery(sqlBuilder);
     if (query.next()) {
         QString extent = query.value(0).toString();
