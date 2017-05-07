@@ -74,9 +74,11 @@ bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions
     if ( op.isValid()){
         QString syntax = op->resource()["syntax"].toString();
         QString provider = op->resource()["namespace"].toString();
+        _stream << (bool)(op->ilwisType() == itWORKFLOW);
         _stream << syntax;
         _stream << provider;
     }else{
+        _stream << false;
         _stream << sUNDEF;
         _stream << sUNDEF;
     }
@@ -200,13 +202,15 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
     quint64 nodeid;
     _stream >> nodeid;
     QString syntax, provider;
+    bool isWorkflow;
+    _stream >> isWorkflow;
     _stream >> syntax;
     _stream >> provider;
     _stream >> type;
     _stream >> collapsed;
     if ( type == (qint32)WorkFlowNode::ntOPERATION){
         auto opNode = new OperationNode(nm, ds,nodeid);
-        opNode->operation(provider, syntax);
+        opNode->operation(provider, syntax, isWorkflow);
         node.reset(opNode);
     }else if ( type == (qint32)WorkFlowNode::ntCONDITION){
         auto cnode = new WorkFlowCondition();
