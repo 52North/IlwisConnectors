@@ -64,11 +64,11 @@ std::vector<Resource> Ilwis3CatalogExplorer::loadItems(const IOOptions &)
                QFileInfo localfile = QFileInfo(url.toLocalFile());
                if (localfile.isFile()){
                   std::vector<Resource> resources = CatalogConnector::cache()->find(url, Time(localfile.lastModified()));
-                  if ( resources.size() == 0)
+                  if ( resources.size() == 0 || localfile.suffix() == "mpl")
                        inifiles[url.toLocalFile().toLower()] = IniFile(localfile);
                    else{
-                       for(auto resource : resources)
-                           finalList.push_back(resource);
+                      for(auto resource : resources)
+                          finalList.push_back(resource);
                    }
                }
                else{
