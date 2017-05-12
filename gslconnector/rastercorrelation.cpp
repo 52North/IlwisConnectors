@@ -54,11 +54,10 @@ bool RasterCorrelation::execute(ExecutionContext *ctx, SymbolTable &symTable)
         zcolumn2.clear();
         xchanged = false; // reset flag as we are in the next column now
     }
-    if ( ctx != 0) {
-        QVariant value;
-        value.setValue<IRasterCoverage>(_outputRaster);
-        ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
-    }
+    QVariant value;
+    value.setValue<IRasterCoverage>(_outputRaster);
+    _outputRaster->addDescription(_expression.toString());
+    ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
     return true;
 }
 
