@@ -363,26 +363,36 @@ quint64 GDALItems::addCsy(GdalHandle* handle, const QString &path, const QUrl& u
                 ret = resource.id();
         }else {
             char *proj4;
-            gdal()->export2Proj4(srshandle, &proj4);
-            QString sproj4 = proj4;
-            if ( proj4){
+            OGRErr err =  gdal()->export2Proj4(srshandle, &proj4);
+
+            if ( err == OGRERR_NONE && proj4){
+                QString sproj4 = proj4;
                 gdal()->free(proj4);
 
-                Proj4Def def = Proj4Parameters::lookupDefintion(sproj4);
-                if ( def._epsg != sUNDEF){
-                    return mastercatalog()->name2id("code=" + def._epsg);
-                }else {
-                    Resource res("code=proj4:" + sproj4, itCONVENTIONALCOORDSYSTEM);
-                    QFileInfo inf(path);
-                    res.name(inf.fileName());
-                    if ( inf.exists()){
-                        res.setUrl(QUrl::fromLocalFile(path), true);
-                        res.setUrl(QUrl::fromLocalFile(path));
+                if ( sproj4 != ""){
+                    Proj4Def def = Proj4Parameters::lookupDefintion(sproj4);
+                    if ( def._epsg != sUNDEF){
+                        return mastercatalog()->name2id("code=" + def._epsg);
+                    }else {
+                        Resource res("code=proj4:" + sproj4, itCONVENTIONALCOORDSYSTEM);
+                        QFileInfo inf(path);
+                        res.name(inf.fileName());
+                        if ( inf.exists()){
+                            res.setUrl(QUrl::fromLocalFile(path), true);
+                            res.setUrl(QUrl::fromLocalFile(path));
+                        }
+                        res.addProperty("extendedtype",true);
+                        mastercatalog()->addItems({res});
+                        insert(res);
+                        return res.id();
                     }
-                    res.addProperty("extendedtype",true);
-                    mastercatalog()->addItems({res});
-                    insert(res);
-                    return res.id();
+                }else {
+                    char *wkt;
+                    OGRErr err =  gdal()->exportToWkt(srshandle, &wkt);
+                    if ( err == OGRERR_NONE && wkt){
+                        QString swkt = wkt;
+                        gdal()->free(proj4);
+                    }
                 }
             }
 
