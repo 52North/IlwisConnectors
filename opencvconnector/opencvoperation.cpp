@@ -44,11 +44,10 @@ bool OpenCVOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
             OpenCVHelper::mat2Raster(cvProcessed,outputIter);
         }
-        if ( ctx != 0) {
-            QVariant value;
-            value.setValue<IRasterCoverage>(_outputRaster);
-            ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
-        }
+        QVariant value;
+        value.setValue<IRasterCoverage>(_outputRaster);
+        logOperation(_outputRaster,_expression);
+        ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
         return true;
 
     }catch(cv::Exception& ex){

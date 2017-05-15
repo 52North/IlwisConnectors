@@ -51,7 +51,7 @@ bool RasterQuantile::execute(ExecutionContext *ctx, SymbolTable &symTable)
     }
     QVariant value;
     value.setValue<IRasterCoverage>(_outputRaster);
-    _outputRaster->addDescription(_expression.toString());
+    logOperation(_outputRaster,_expression);
     ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
     return true;
 }
