@@ -392,6 +392,18 @@ quint64 GDALItems::addCsy(GdalHandle* handle, const QString &path, const QUrl& u
                     if ( err == OGRERR_NONE && wkt){
                         QString swkt = wkt;
                         gdal()->free(proj4);
+                        QStringList parts = swkt.split("[");
+                        if ( parts.size()>2){
+                            QStringList parts2 = parts[1].split(",");
+                            if ( parts2.size() > 0){
+                                QString name = parts2[0];
+                                Proj4Def def = Proj4Parameters::lookupByName(name);
+                                if ( def._epsg != sUNDEF){
+                                    return mastercatalog()->name2id("code=" + def._epsg);
+                                }
+                            }
+                        }
+                        //TODO parse wkt
                     }
                 }
             }
