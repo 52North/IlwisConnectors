@@ -156,6 +156,18 @@ QString GdalConnector::provider() const
 void GdalConnector::format(const QString &f)
 {
     _gdalShortName = f;
+    QVariantList values = DataFormat::getFormatProperties(DataFormat::fpEXTENSION,itCOVERAGE,"gdal", _gdalShortName);
+    if ( values.size() > 0 && _fileUrl.toString().indexOf(values[0].toString())){
+        QString ext = "." + values[0].toString();
+        QString path = _fileUrl.toString();
+        if ( path.toLower().indexOf(ext) == -1){
+            path +=  ext;
+            // TODO: this might not be correct with hdf based formats
+            _fileUrl = path;
+            sourceRef().setUrl(path);
+            sourceRef().setUrl(path, true);
+        }
+    }
 }
 
 QString GdalConnector::format() const
