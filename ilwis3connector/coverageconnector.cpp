@@ -72,7 +72,7 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
         QString newfile = filename2FullPath(file, this->_resource);
         if(!attTable.prepare(OSHelper::neutralizeFileName(newfile), {"attributetable",true})){
             kernel()->issues()->log(file,TR(ERR_NO_INITIALIZED_1).arg(file),IssueObject::itWarning);
-            return attTable;
+            return ITable();
         }
     }
 
