@@ -17,6 +17,7 @@ namespace WorkflowConnector {
         static const int GENERATED_INPUT = 4;
 
         WorkflowJSONConnector(const Ilwis::Resource &resource, bool,const IOOptions& options=IOOptions() );
+        virtual ~WorkflowJSONConnector() {}
 
         bool loadMetaData(IlwisObject*, const IOOptions & );
         bool loadData(IlwisObject*, const IOOptions& options = IOOptions());
@@ -32,10 +33,10 @@ namespace WorkflowConnector {
     private:
         QJsonObject createJSONWorkflow(const Resource & res);
         QJsonObject createJSONWorkflowMetaData(const Resource& res);
-        QJsonObject createJSONOperationMetadata(const Resource &res, const Ilwis::OVertex v);
-        QJsonObject createJSONOperationList(const Resource &res);
-        QJsonArray createJSONOperationInputList(Ilwis::Workflow* workflow, const Ilwis::OVertex v);
-        QJsonArray createJSONOperationOutputList(Ilwis::Workflow *workflow, const Ilwis::OVertex v);
+//        QJsonObject createJSONOperationMetadata(const Resource &res, const Ilwis::OVertex v);
+//        QJsonObject createJSONOperationList(const Resource &res);
+//        QJsonArray createJSONOperationInputList(Ilwis::Workflow* workflow, const Ilwis::OVertex v);
+//        QJsonArray createJSONOperationOutputList(Ilwis::Workflow *workflow, const Ilwis::OVertex v);
         QJsonArray createJSONOperationConnectionList(Ilwis::Workflow *workflow);
         bool openTarget();
 
@@ -44,18 +45,18 @@ namespace WorkflowConnector {
         JsonConfig _config;
 
         QByteArray _data;
-        QMap<OVertex, QStringList> _nodeExecutionContext;   // contains a list of completed operations
-        QMap<OVertex, QStringList> _inputArgs;
-        OperationExpression _expression;
-        QStringList _outputNames;
+//        QMap<OVertex, QStringList> _nodeExecutionContext;   // contains a list of completed operations
+//        QMap<OVertex, QStringList> _inputArgs;
+//        OperationExpression _expression;
+//        QStringList _outputNames;
         QMap<QString, QString> _layer2LocalLUT;
         QSet<int> _leafOperations;
 
-        void setInputParm(const QString baseName, const Ilwis::SPOperationParameter parm, QJsonObject &input, int nameType);
+//        void setInputParm(const QString baseName, const Ilwis::SPOperationParameter parm, QJsonObject &input, int nameType);
 
-        void parseOutputNames(OperationExpression expression);
-        void parseInputNodeArguments(Ilwis::Workflow *workflow, const QList<OVertex> &inputNodes);
-        void addGeneratedNames(const OVertex &v, QStringList& names, const Ilwis::IOperationMetaData &meta);
+//        void parseOutputNames(OperationExpression expression);
+//        void parseInputNodeArguments(Ilwis::Workflow *workflow, const QList<OVertex> &inputNodes);
+//        void addGeneratedNames(const OVertex &v, QStringList& names, const Ilwis::IOperationMetaData &meta);
         void writeWMSLocalLUT(QString filename);
     };
 

@@ -18,7 +18,8 @@
 #include "operationExpression.h"
 #include "operation.h"
 #include "jsonconfig.h"
-#include "workflow.h"
+#include "modeller/workflownode.h"
+#include "modeller/workflow.h"
 #include "workflowconnectormodule.h"
 #include "workflowjsonconnector.h"
 
