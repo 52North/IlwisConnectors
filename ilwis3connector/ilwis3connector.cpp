@@ -413,14 +413,7 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
             QFileInfo csyinf(QUrl(csyurl).toLocalFile());
             if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
 
-                bool mustWriteCsyFile = true;
-
-                Resource resource = mastercatalog()->name2Resource(csyurl, itCOORDSYSTEM );
-                ICoordinateSystem existingCsy(resource);
-
-                if (existingCsy.isValid() && csy->isEqual(existingCsy.ptr()) ){
-                    mustWriteCsyFile = false;
-                }
+                bool mustWriteCsyFile = csy.isValid();
 
                 if (mustWriteCsyFile) {
                     QUrl url = csyurl; // new attempt to create a suitable path;
@@ -431,7 +424,8 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
                     } else {
                         csyName = url.toLocalFile();
                     }
-                }
+                }else
+                    csyName = "Unknown.csy";
             }
         }else
             csyName = "LatLonWGS84.csy";
