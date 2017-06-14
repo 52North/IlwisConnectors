@@ -64,14 +64,12 @@ std::vector<Ilwis::Resource> GdalCatalogFileExplorer::loadItems(const IOOptions 
             std::multimap<QString, DataFormat> formats = DataFormat::getSelectedBy(DataFormat::fpEXTENSION, "connector='gdal'");
             getTypes(formats, containerInf.suffix(), tp, extendedTypes);
             GDALItems gdalitems(containerInf, tp, extendedTypes);
-            std::vector<Resource> items;
             for( const auto& res : gdalitems){
                 Resource resource(res);
                 resource.createTime(Time(containerInf.created()));
                 resource.modifiedTime(Time(containerInf.lastModified()));
-                items.push_back(resource);
+                result.push_back(resource);
             }
-            mastercatalog()->addItems(items);
             kernel()->issues()->silent(prev);
         }
     }
