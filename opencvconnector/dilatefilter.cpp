@@ -35,9 +35,10 @@ Ilwis::OperationImplementation *DilateFilter::create(quint64 metaid, const Ilwis
     return new DilateFilter(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State DilateFilter::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State DilateFilter::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
     try{
+        OperationImplementation::prepare(ctx,st);
         createInputOutputRasters( itCOORDSYSTEM | itGEOREF | itENVELOPE | itDOMAIN);
 
         int iterations = _expression.input<int>(1);

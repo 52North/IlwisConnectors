@@ -33,9 +33,10 @@ Ilwis::OperationImplementation *HistogramEqualization::create(quint64 metaid, co
     return new HistogramEqualization(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State HistogramEqualization::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State HistogramEqualization::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
     try{
+        OperationImplementation::prepare(ctx,st);
         createInputOutputRasters( itCOORDSYSTEM | itGEOREF | itENVELOPE | itDOMAIN);
 
         OperationHelper::check([&] ()->bool { return hasType(_inputRaster->datadef().domain()->valueType(), itUINT8); },

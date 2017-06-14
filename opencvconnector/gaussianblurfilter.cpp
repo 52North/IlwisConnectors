@@ -33,9 +33,10 @@ Ilwis::OperationImplementation *GaussianBlurFilter::create(quint64 metaid, const
     return new GaussianBlurFilter(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State GaussianBlurFilter::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State GaussianBlurFilter::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
     try{
+        OperationImplementation::prepare(ctx,st);
         createInputOutputRasters( itCOORDSYSTEM | itGEOREF | itENVELOPE | itDOMAIN);
 
         OperationHelper::check([&] ()->bool { return hasType(_inputRaster->datadef().domain()->valueType(), itUINT8 | itFLOAT | itDOUBLE | itCONTINUOUSCOLOR | itPALETTECOLOR); },

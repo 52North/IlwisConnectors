@@ -45,9 +45,10 @@ Ilwis::OperationImplementation *ScharrFilter::create(quint64 metaid, const Ilwis
     return new ScharrFilter(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State ScharrFilter::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State ScharrFilter::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
     try{
+        OperationImplementation::prepare(ctx,st);
         createInputOutputRasters(itCOORDSYSTEM | itGEOREF | itENVELOPE | itRASTERSIZE);
 
         IDomain dom;

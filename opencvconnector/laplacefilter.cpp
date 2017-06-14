@@ -45,9 +45,10 @@ Ilwis::OperationImplementation *LaplaceFilter::create(quint64 metaid, const Ilwi
     return new LaplaceFilter(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State LaplaceFilter::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State LaplaceFilter::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
     try{
+        OperationImplementation::prepare(ctx,st);
         createInputOutputRasters(itCOORDSYSTEM | itGEOREF | itENVELOPE | itRASTERSIZE);
 
         IDomain dom;

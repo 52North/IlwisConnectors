@@ -71,9 +71,10 @@ Ilwis::OperationImplementation *AggregateRasterStatistics::create(quint64 metaid
     return new AggregateRasterStatistics(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State AggregateRasterStatistics::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State AggregateRasterStatistics::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
     try{
+        OperationImplementation::prepare(ctx,st);
         OperationHelper::check([&] ()->bool { return _inputRaster.prepare(_expression.input<QString>(0), itRASTER); },
         {ERR_COULD_NOT_LOAD_2,_expression.input<QString>(0), "" } );
 

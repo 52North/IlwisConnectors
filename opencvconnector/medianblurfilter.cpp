@@ -33,9 +33,10 @@ Ilwis::OperationImplementation *MedianBlurFilter::create(quint64 metaid, const I
     return new MedianBlurFilter(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State MedianBlurFilter::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State MedianBlurFilter::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
     try{
+        OperationImplementation::prepare(ctx,st);
         createInputOutputRasters( itCOORDSYSTEM | itGEOREF | itENVELOPE | itDOMAIN);
 
         OperationHelper::check([&] ()->bool { return hasType(_inputRaster->datadef().domain()->valueType(), itNUMBER | itCONTINUOUSCOLOR | itPALETTECOLOR); },

@@ -44,9 +44,10 @@ Ilwis::OperationImplementation *SobelFilter::create(quint64 metaid, const Ilwis:
     return new SobelFilter(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State SobelFilter::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State SobelFilter::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
     try{
+        OperationImplementation::prepare(ctx,st);
         createInputOutputRasters(itCOORDSYSTEM | itGEOREF | itENVELOPE | itRASTERSIZE);
 
         IDomain dom;

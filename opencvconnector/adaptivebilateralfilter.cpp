@@ -34,9 +34,10 @@ Ilwis::OperationImplementation *AdaptiveBilateralFilter::create(quint64 metaid, 
     return new AdaptiveBilateralFilter(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State AdaptiveBilateralFilter::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State AdaptiveBilateralFilter::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
     try{
+        OperationImplementation::prepare(ctx,st);
         createInputOutputRasters(itCOORDSYSTEM | itGEOREF | itENVELOPE | itDOMAIN);
 
         OperationHelper::check([&] ()->bool { return hasType(_inputRaster->datadef().domain()->valueType(), itUINT8 | itFLOAT | itDOUBLE | itCONTINUOUSCOLOR | itPALETTECOLOR); },

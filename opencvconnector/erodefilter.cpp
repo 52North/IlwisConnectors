@@ -35,9 +35,10 @@ Ilwis::OperationImplementation *ErodeFilter::create(quint64 metaid, const Ilwis:
     return new ErodeFilter(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State ErodeFilter::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State ErodeFilter::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
     try{
+        OperationImplementation::prepare(ctx,st);
         createInputOutputRasters( itCOORDSYSTEM | itGEOREF | itENVELOPE | itDOMAIN);
 
 
