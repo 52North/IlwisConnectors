@@ -317,7 +317,9 @@ bool RasterSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options
         tableStreamer->loadData(tbl.ptr(),options);
         QString primkey;
         _stream >> primkey;
-        raster->primaryKey(primkey);
+          raster->primaryKey(primkey);
+        tbl->resourceRef().setExtendedType(itRASTER);
+        tbl->resourceRef().addProperty("rasterid", raster->id());
         raster->setAttributes(tbl);
     }
     qint64 beginData;
