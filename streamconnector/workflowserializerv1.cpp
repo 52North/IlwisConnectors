@@ -236,7 +236,7 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
         }
 
     }else if ( type == (qint32)WorkFlowNode::ntJUNCTION){
-        auto cnode = new Junction();
+        auto cnode = new JunctionNode();
         cnode->nodeId(nodeid);
         node.reset(cnode);
 
