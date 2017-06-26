@@ -33,10 +33,10 @@ namespace WorkflowConnector {
     private:
         QJsonObject createJSONWorkflow(const Resource & res);
         QJsonObject createJSONWorkflowMetaData(const Resource& res);
-//        QJsonObject createJSONOperationMetadata(const Resource &res, const Ilwis::OVertex v);
+        QJsonObject createJSONOperationMetadata(const SPWorkFlowNode& node);
 //        QJsonObject createJSONOperationList(const Resource &res);
-//        QJsonArray createJSONOperationInputList(Ilwis::Workflow* workflow, const Ilwis::OVertex v);
-//        QJsonArray createJSONOperationOutputList(Ilwis::Workflow *workflow, const Ilwis::OVertex v);
+        QJsonArray createJSONOperationInputList(const SPWorkFlowNode& node);
+        QJsonArray createJSONOperationOutputList(const Ilwis::SPWorkFlowNode &node);
         QJsonArray createJSONOperationConnectionList(Ilwis::Workflow *workflow);
         bool openTarget();
 

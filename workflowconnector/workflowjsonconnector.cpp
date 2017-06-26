@@ -88,6 +88,76 @@ bool WorkflowJSONConnector::loadData(IlwisObject *, const IOOptions &options)
     return false;
 }
 
+//bool WorkflowJSONConnector::buildNode(const SPWorkFlowNode& node, const IOOptions &options){
+//    _stream << node->name();
+//    _stream << node->label();
+//    _stream << node->description();
+//    _stream << node->id();
+//    IOperationMetaData op = node->operation();
+//    if ( op.isValid()){
+//        QString syntax = op->resource()["syntax"].toString();
+//        QString provider = op->resource()["namespace"].toString();
+//        _stream << (bool)(op->ilwisType() == itWORKFLOW);
+//        _stream << syntax;
+//        _stream << provider;
+//    }else{
+//        _stream << false;
+//        _stream << sUNDEF;
+//        _stream << sUNDEF;
+//    }
+//    _stream << (qint32)node->type();
+//    _stream << (qint32)node->collapsed();
+//    if ( node->type() == WorkFlowNode::ntCONDITION){
+//        std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
+//        qint32 sz = condition->subnodes("tests").size();
+//        _stream << sz;
+//        for(qint32 t=0; t < sz; ++t){
+//            WorkFlowCondition::Test test = condition->test(t)    ;
+//            _stream << (qint32)test._pre;
+//            _stream << (qint32)test._post;
+//           storeNode(test._operation);
+//        }
+//        auto operations = condition->subnodes("operations")    ;
+//        _stream << (int)operations.size();
+//        for(qint32 o=0; o < operations.size(); ++o){
+//            storeNode(operations[o]);
+//        }
+//    }
+//    node->box().store(_stream);
+
+//    qint32 count = node->inputCount();
+//    if ( node->type() == WorkFlowNode::ntJUNCTION)
+//        // junctions have 3 parameters; but inputcount returns only 1 as the link to the condition is the only explicit parameter;
+//        //links to operations are implicit. Needed for saving though so we overrule here
+//        count = 3;
+//    _stream << count;
+
+
+
+//    for(qint32 i = 0; i < count; ++i){
+//        WorkFlowParameter& wp = node->inputRef(i);
+//        _stream << wp.order();
+//        _stream << wp.name();
+//        _stream << wp.description();
+//        _stream << wp.label();
+//        _stream << wp.flowLabel();
+//        _stream << wp.valueType();
+//        _stream << (qint32)wp.state();
+//        _stream << wp.attachement(true);
+//        _stream << wp.attachement(false);
+//        _stream << wp.syntax();
+//        auto line = wp.line();
+//        _stream << line.size();
+//        for(int p=0; p< line.size();++p ){
+//            line[i].store(_stream);
+//        }
+//        if(!VersionedSerializer::store(wp.value(), wp.valueType(), options))
+//            return false;
+//    }
+//    return true;
+//}
+
+
 bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
 {
     Workflow *workflow = static_cast<Workflow *>(object);
@@ -97,7 +167,13 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
 
     _layer2LocalLUT.clear();   // clear layer to local file lookup table
 
-    QString workflowPath = workflow->resourceRef().container(true).toLocalFile();
+    //TODO: resove hack: rawcontainer of the workflow contains the wrong info, so:
+    // extra steps to get workflow folder
+    Resource wf_res = workflow->resource();
+    QString ppp = wf_res.url(true).toLocalFile();
+    QFileInfo qfi(ppp);
+    QDir par = qfi.dir();
+    QString workflowPath = par.absolutePath(); //workflow->resourceRef().container(true).toLocalFile();
     _config.loadSystemConfig(QString("%1/config.json").arg(workflowPath));
     _config.loadUserConfig(QString("%1/userconfig.json").arg(workflowPath));
 
@@ -109,6 +185,22 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
 
     // deal with all the operations
     QJsonArray operations;
+
+    std::vector<SPWorkFlowNode> nodes = workflow->nodes();
+    for (auto node : nodes) {
+        if (node->type() == WorkFlowNode::ntOPERATION) {
+            QJsonObject operation;
+
+            operation["id"] = (int) node->id();
+            operation["metadata"] = createJSONOperationMetadata(node);
+            operation["inputs"] = createJSONOperationInputList(node);
+            operation["outputs"] = createJSONOperationOutputList(node);
+            operations.append(operation);
+        }
+
+    }
+
+
 
 //    QList<OVertex> inputOperations = workflow->getNodesWithExternalInput();
 //    parseInputNodeArguments(workflow, inputOperations);
@@ -131,9 +223,9 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
 //            operations.append(operation);
 //        }
 //    }
-//    single["operations"] = operations;
+    single["operations"] = operations;
 
-//    workflows.append(single);
+    workflows.append(single);
 
     allworkflows["workflows"] = workflows;
     document.setObject(allworkflows);
@@ -293,7 +385,7 @@ QJsonObject WorkflowJSONConnector::createJSONWorkflow(const Resource &res)
 {
     QJsonObject workflow;
 
-    workflow["id"] =0;
+    workflow["id"] = 0;
     return workflow;
 }
 
@@ -304,25 +396,32 @@ QJsonObject WorkflowJSONConnector::createJSONWorkflowMetaData(const Resource& re
     meta.insert("description", res.description());
     meta.insert("syntax", res["syntax"].toString());
     meta.insert("resource", QString("Ilwis"));
-    meta.insert("keywords", res["keywords"].toString());
+//    meta.insert("keywords", res["keyword"].toString());   // june 2017: there is no way to set workflows keywords
     meta.insert("inputparametercount", res["inparameters"].toInt());
     meta.insert("outputparametercount", res["outparameters"].toInt());
 
     return meta;
 }
 
-//QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const Resource &res, const OVertex v) {
-//    QJsonObject jsonMeta;
-//    jsonMeta["longname"] = res.name();
-//    jsonMeta["description"] = res.description();
-//    jsonMeta["syntax"] = res["syntax"].toString();
-//    jsonMeta["resource"] = QString("Ilwis");
-//    jsonMeta["keywords"] = res["keywords"].toString();
-//    jsonMeta["inputparametercount"] = res["inparameters"].toInt();
-//    jsonMeta["outputparametercount"] = res["outparameters"].toInt();
+QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const SPWorkFlowNode& node) {
+    QJsonObject jsonMeta;
+    jsonMeta["longname"] = node->name();
+    jsonMeta["label"] = node->label();
+    jsonMeta["description"] = node->description();
+    IOperationMetaData op = node->operation();
+    if (op.isValid()){
+        QString provider = op->resource()["namespace"].toString();
+        jsonMeta["resource"] = provider;
+        jsonMeta["syntax"] = op->resource()["syntax"].toString();
+        QString keywords = op->resource()["keyword"].toString();
+        jsonMeta["keywords"] = keywords;
+    }
 
-//    return jsonMeta;
-//}
+    jsonMeta["inputparametercount"] = node->inputCount();
+    jsonMeta["outputparametercount"] = (int) op->outputParameterCount();
+
+    return jsonMeta;
+}
 
 //void WorkflowJSONConnector::setInputParm(const QString baseName, const SPOperationParameter parm, QJsonObject& input, int nameType)
 //{
@@ -362,26 +461,46 @@ QJsonObject WorkflowJSONConnector::createJSONWorkflowMetaData(const Resource& re
 //    }
 //}
 
-///*
-//    Add all workflow input fields for an operation to the json document. This happens both
-//    for internal connections and actual input nodes.
+/*
+    Add all workflow input fields for an operation to the json document. This happens both
+    for internal connections and actual input nodes.
 
-//    Pre-assigned inputs are taken as is (it is assumed they point to actual existing objects)
+    Pre-assigned inputs (fixed values) are taken as is (it is assumed they point to actual existing objects)
 
-//    External inputs that are not specified remain empty (this should be avoided, because that
-//    invalidates the output Json file!).
+    External inputs that are not specified remain empty (this should be avoided, because that
+    invalidates the output Json file!).
 
-//    Internal inputs get a name (auto-generated) based on the name of the operation
-//    that provides the input and its corresponding output edge number. The user input folder
-//    is used to create an actual local file location.
+    Internal inputs get a name (auto-generated) based on the name of the operation
+    that provides the input and its corresponding output edge number. The user input folder
+    is used to create an actual local file location.
 
-//    Every input is also added into a local file list. The list links the WMS layername
-//    with the local filename. This necessary to find the correct local file, when the
-//    Json file is interpreted as a workflow.
-// */
-//QJsonArray WorkflowJSONConnector::createJSONOperationInputList(Workflow* workflow, const OVertex v) {
-//    QJsonArray inputs;
+    Every input is also added into a local file list. The list links the WMS layername
+    with the local filename. This is necessary to find the correct local file, when the
+    Json file is interpreted as a workflow.
+ */
+QJsonArray WorkflowJSONConnector::createJSONOperationInputList(const SPWorkFlowNode& node) {
+    QJsonArray inputs;
 
+    for (int i = 0; i < node->inputCount(); i++) {
+        QJsonObject input;
+
+        WorkFlowParameter& wfp = node->inputRef(i);
+        input["url"] = QString("");
+        input["local"] = QString("");
+        input["value"] = QString("");
+        input["name"] = wfp.label();
+        input["id"] = wfp.order();
+        input["description"] = wfp.description();
+        if (wfp.state() == WorkFlowParameter::pkFIXED)
+            input["value"] = wfp.value();
+
+        IOperationMetaData op = node->operation();
+        if (op.isValid()) {
+            SPOperationParameter parm = op->getInputParameters()[i];
+            input["optional"] = parm->isOptional();
+        }
+        inputs.append(input);
+    }
 //    // get the metadata from the operation
 //    IOperationMetaData meta = workflow->getOperationMetadata(v);
 //    std::vector<SPOperationParameter> params = meta->getInputParameters();
@@ -450,25 +569,51 @@ QJsonObject WorkflowJSONConnector::createJSONWorkflowMetaData(const Resource& re
 //        inputs.replace(inputEdge, input);
 //    }
 
-//    return inputs;
-//}
+    return inputs;
+}
 
-///*
-//    Add all workflow output fields for an operation to the json document. This happens both
-//    for internal connections and actual output nodes.
+/*
+    Add all workflow output fields for an operation to the json document. This happens both
+    for internal connections and actual output nodes.
 
-//    Internal outputs get a name (auto-generated) based on the name of the operation
-//    and the output edge number. Actual output nodes get "_out" appended to the name so they
-//    can be recognized. The user output folder is used to create an actual local
-//    file location. The output names are generated, because they cannot yet be specified in
-//    the workflow (august 2016).
+    Internal outputs get a name (auto-generated) based on the name of the operation
+    and the output edge number. Actual output nodes get "_out" appended to the name so they
+    can be recognized. The user output folder is used to create an actual local
+    file location. The output names are generated, because they cannot yet be specified in
+    the workflow (august 2016).
 
-//    Every output is also added into a local file list. The list links the WMS layername
-//    with the local filename. This necessary to find the correct local file, when the
-//    Json file is interpreted as a workflow.
-// */
-//QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(Workflow* workflow, const OVertex v) {
-//    QJsonArray outputs;
+    Every output is also added into a local file list. The list links the WMS layername
+    with the local filename. This necessary to find the correct local file, when the
+    Json file is interpreted as a workflow.
+ */
+QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(const SPWorkFlowNode& node) {
+    QJsonArray outputs;
+
+    IOperationMetaData op = node->operation();
+    if (op.isValid()) {
+
+        int index = 0;
+        std::vector<SPOperationParameter> params = op->getOutputParameters();
+        foreach (SPOperationParameter opParam, params) {
+            QJsonObject output;
+            QString baseName("");
+            output["local"] = baseName;
+            output["url"] = baseName;
+            output["value"] = baseName;
+            output["name"] = opParam->term();  // weird naming!!
+            output["type"] = opParam->name();  // weird naming!!
+            output["id"] = index;
+            output["optional"] = opParam->isOptional();
+            output["description"] = opParam->description();
+//            if (actual[index] != -1) { // an actual workflow output parameter
+//                names[index] += "_out";
+//            }
+            index++;
+
+            outputs.append(output);
+        }
+    }
+
 
 //    // get the metadata from the operation
 //    IOperationMetaData meta = workflow->getOperationMetadata(v);
@@ -521,14 +666,39 @@ QJsonObject WorkflowJSONConnector::createJSONWorkflowMetaData(const Resource& re
 //        outputs.append(output);
 //    }
 
-//    return outputs;
-//}
+    return outputs;
+}
 
 QJsonArray WorkflowJSONConnector::createJSONOperationConnectionList(Workflow *workflow) {
     QJsonArray connections;
 
     _leafOperations.clear();
     QSet<int> connectedOperations;
+
+    std::vector<SPWorkFlowNode> nodes = workflow->nodes();
+    for (auto node : nodes) {
+        QJsonObject connection;
+
+        if (node->type() == WorkFlowNode::ntOPERATION) {
+            for (int i = 0; i < node->inputCount(); ++i) {
+                if (node->inputRef(i).inputLink()) {
+                    WorkFlowParameter wfp = node->inputRef(i);
+                    int toParamID = wfp.order();
+                    int toOperID = wfp.nodeId();
+                    int fromParamID = wfp.outputParameterIndex();
+                    int fromOperID = wfp.inputLink()->id();
+
+                    connection["fromOperationID"] = fromOperID;
+                    connection["fromParameterID"] = fromParamID;
+                    connection["toOperationID"] = toOperID;
+                    connection["toParameterID"] = toParamID;
+
+                    connections.append(connection);
+                }
+            }
+        }
+
+    }
 
 //    std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = workflow->getNodeIterators();
 //    for (auto iterOper = nodeIterators.first; iterOper < nodeIterators.second; ++iterOper) {
