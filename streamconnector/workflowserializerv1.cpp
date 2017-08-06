@@ -15,6 +15,7 @@
 #include "junctionNode.h"
 #include "operationnode.h"
 #include "conditionNode.h"
+#include "rangenode.h"
 #include "workflowserializerv1.h"
 #include "workflow.h"
 
@@ -40,6 +41,12 @@ void WorkflowSerializerV1::storeNodeLinks(const SPWorkFlowNode& node) {
            storeNodeLinks(test._operation);
         }
         auto operations = condition->subnodes("operations")    ;
+        for(qint32 o=0; o < operations.size(); ++o){
+            storeNodeLinks(operations[o]);
+        }
+    }
+    if ( node->type() == WorkFlowNode::ntRANGE){
+        auto operations = node->subnodes("operations")    ;
         for(qint32 o=0; o < operations.size(); ++o){
             storeNodeLinks(operations[o]);
         }
@@ -96,6 +103,14 @@ bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions
         }
         auto operations = condition->subnodes("operations")    ;
         _stream << (int)operations.size();
+        for(qint32 o=0; o < operations.size(); ++o){
+            storeNode(operations[o]);
+        }
+    }
+    if ( node->type() == WorkFlowNode::ntRANGE){
+        qint32 sz = node->subnodes().size();
+        _stream << sz;
+        auto operations = node->subnodes("operations")    ;
         for(qint32 o=0; o < operations.size(); ++o){
             storeNode(operations[o]);
         }
@@ -175,6 +190,12 @@ void WorkflowSerializerV1::loadNodeLinks(SPWorkFlowNode& node,Workflow *workflow
             loadNodeLinks(operationNode, workflow);
         }
     }
+     if ( node->type() == WorkFlowNode::ntRANGE){
+        auto subnodes = node->subnodes("operations");
+        for(SPWorkFlowNode& operationNode : subnodes){
+            loadNodeLinks(operationNode, workflow);
+        }
+    }
     qint32 parmCount;
     _stream >> parmCount;
 
@@ -235,6 +256,19 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
             operationNode->owner(node);
         }
 
+    }else if ( type == (qint32)WorkFlowNode::ntRANGE){
+        auto rnode = new RangeNode();
+        rnode->nodeId(nodeid);
+        node.reset(rnode);
+        qint32 ocount;
+        _stream >> ocount;
+        for(qint32 o=0; o < ocount; ++o){
+            SPWorkFlowNode operationNode;
+            loadNode(operationNode, workflow);
+            rnode->addSubNode(operationNode,"operations");
+            operationNode->owner(node);
+        }
+
     }else if ( type == (qint32)WorkFlowNode::ntJUNCTION){
         auto cnode = new JunctionNode();
         cnode->nodeId(nodeid);
@@ -242,6 +276,7 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
 
     }
     if (!node){
+        _stream.device()->close();
         throw ErrorObject(TR("Stored workflow definition is invalid"));
     }
     node->collapsed(collapsed > 0);

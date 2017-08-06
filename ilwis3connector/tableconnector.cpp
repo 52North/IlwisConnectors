@@ -106,6 +106,7 @@ ColumnDefinition TableConnector::makeColumn(const QString& colName, quint64 inde
     bool attachPath = true;
     if ( isSystemObject(domName)) {
         domName = noExt(domName).toLower();
+        domName = name2Code(domName, TypeHelper::type2name(itDOMAIN));
         attachPath = false;
     }
     if ( domName.toLower() == "string.dom"){

@@ -9,6 +9,8 @@
 #include "table.h"
 #include "connectorinterface.h"
 #include "tableserializerv1.h"
+#include "ilwisobjectconnector.h"
+#include "streamconnector.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "versioneddatastreamfactory.h"
@@ -35,7 +37,6 @@ bool TableSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         return false;
     _stream << tbl->columnCount();
     _stream << tbl->recordCount();
-    std::vector<IlwisTypes> types;
     for(int col = 0; col < tbl->columnCount(); ++col){
         const ColumnDefinition& coldef = tbl->columndefinitionRef(col);
         _stream << coldef.name();
@@ -48,9 +49,23 @@ bool TableSerializerV1::store(IlwisObject *obj, const IOOptions &options)
         domainStreamer->store(coldef.datadef().domain().ptr(), options);
         if ( !coldef.datadef().range().isNull()) // no range for textdomains
             coldef.datadef().range()->store(_stream);
-        types.push_back(coldef.datadef().domain()->valueType());
     }
-    _stream <<  obj->ilwisType() << Version::interfaceVersion;
+
+    return true;
+}
+
+bool TableSerializerV1::storeData(IlwisObject *obj, const IOOptions &options ){
+    qint64 pos = _stream.device()->pos();
+    _stream << pos + sizeof(qint64);
+    _stream << itTABLE;
+    _stream << Version::interfaceVersion;
+    Table *tbl = static_cast<Table *>(obj);
+
+    std::vector<IlwisTypes> types;
+    for(int col =0; col < tbl->columnCount(); ++col){
+        types.push_back(tbl->columndefinition(col).datadef().domain()->valueType());
+    }
+
     for(int rec = 0; rec < tbl->recordCount(); ++rec){
         auto record = tbl->record(rec);
         record.storeData(types, _stream,options);
@@ -102,6 +117,9 @@ bool TableSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
             tbl->columndefinition(col).datadef().range(range);
 
     }
+    qint64 beginData;
+    _stream >> beginData;
+    _streamconnector->beginDataSection(beginData);
 
     return true;
 }
