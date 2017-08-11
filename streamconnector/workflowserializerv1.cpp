@@ -108,6 +108,9 @@ bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions
         }
     }
     if ( node->type() == WorkFlowNode::ntRANGE){
+        std::shared_ptr<RangeNode> range = std::static_pointer_cast<RangeNode>(node);
+        QString rangedef =  range->rangeDefinition( );
+        _stream << rangedef;
         qint32 sz = node->subnodes().size();
         _stream << sz;
         auto operations = node->subnodes("operations")    ;
@@ -191,6 +194,8 @@ void WorkflowSerializerV1::loadNodeLinks(SPWorkFlowNode& node,Workflow *workflow
         }
     }
      if ( node->type() == WorkFlowNode::ntRANGE){
+       // loadNodeLinks(node, workflow);
+
         auto subnodes = node->subnodes("operations");
         for(SPWorkFlowNode& operationNode : subnodes){
             loadNodeLinks(operationNode, workflow);
@@ -260,6 +265,9 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
         auto rnode = new RangeNode();
         rnode->nodeId(nodeid);
         node.reset(rnode);
+        QString rangedef;
+        _stream >> rangedef;
+        rnode->setRangeDefinition( rangedef);
         qint32 ocount;
         _stream >> ocount;
         for(qint32 o=0; o < ocount; ++o){
