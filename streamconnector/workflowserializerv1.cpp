@@ -16,6 +16,7 @@
 #include "operationnode.h"
 #include "conditionNode.h"
 #include "rangenode.h"
+#include "rangejunctionnode.h"
 #include "workflowserializerv1.h"
 #include "workflow.h"
 
@@ -50,12 +51,18 @@ void WorkflowSerializerV1::storeNodeLinks(const SPWorkFlowNode& node) {
         for(qint32 o=0; o < operations.size(); ++o){
             storeNodeLinks(operations[o]);
         }
+        auto junctions = node->subnodes("junctions")    ;
+        for(qint32 o=0; o < junctions.size(); ++o){
+            storeNodeLinks(junctions[o]);
+        }
     }
     int count = node->inputCount();
+    // junctions have 3 or 4 parameters; but inputcount returns only 1 as the link to the condition is the only explicit parameter;
+    //links to operations are implicit. Needed for saving though so we overrule here
     if ( node->type() == WorkFlowNode::ntJUNCTION)
-        // junctions have 3 parameters; but inputcount returns only 1 as the link to the condition is the only explicit parameter;
-        //links to operations are implicit. Needed for saving though so we overrule here
         count = 3;
+    if ( node->type() == WorkFlowNode::ntRANGEJUNCTION)
+        count = 4;
 
     _stream << count;
 
@@ -111,23 +118,30 @@ bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions
         std::shared_ptr<RangeNode> range = std::static_pointer_cast<RangeNode>(node);
         QString rangedef =  range->rangeDefinition( );
         _stream << rangedef;
-        qint32 sz = node->subnodes().size();
+        qint32 sz = node->subnodes("operations").size();
         _stream << sz;
         auto operations = node->subnodes("operations")    ;
         for(qint32 o=0; o < operations.size(); ++o){
             storeNode(operations[o]);
         }
+        sz = node->subnodes("junctions").size();
+        _stream << sz;
+        auto junctions = node->subnodes("junctions")    ;
+        for(qint32 o=0; o < junctions.size(); ++o){
+            storeNode(junctions[o]);
+        }
     }
     node->box().store(_stream);
 
     qint32 count = node->inputCount();
+    // junctions have 3 or 4 parameters; but inputcount returns only 1 as the link to the condition is the only explicit parameter;
+    //links to operations are implicit. Needed for saving though so we overrule here
     if ( node->type() == WorkFlowNode::ntJUNCTION)
-        // junctions have 3 parameters; but inputcount returns only 1 as the link to the condition is the only explicit parameter;
-        //links to operations are implicit. Needed for saving though so we overrule here
         count = 3;
+    if ( node->type() == WorkFlowNode::ntRANGEJUNCTION)
+        count = 4;
+
     _stream << count;
-
-
 
     for(qint32 i = 0; i < count; ++i){
         WorkFlowParameter& wp = node->inputRef(i);
@@ -200,6 +214,10 @@ void WorkflowSerializerV1::loadNodeLinks(SPWorkFlowNode& node,Workflow *workflow
         for(SPWorkFlowNode& operationNode : subnodes){
             loadNodeLinks(operationNode, workflow);
         }
+        auto junctions = node->subnodes("junctions");
+        for(SPWorkFlowNode& junctionNode : junctions){
+            loadNodeLinks(junctionNode, workflow);
+        }
     }
     qint32 parmCount;
     _stream >> parmCount;
@@ -234,7 +252,12 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
     _stream >> provider;
     _stream >> type;
     _stream >> collapsed;
-    if ( type == (qint32)WorkFlowNode::ntOPERATION){
+    if ( type == (qint32)WorkFlowNode::ntRANGEJUNCTION){
+        auto opNode = new RangeJunctionNode(nodeid);
+        opNode->name(nm);
+        opNode->setDescription(ds);
+        node.reset(opNode);
+    }else  if ( type == (qint32)WorkFlowNode::ntOPERATION){
         auto opNode = new OperationNode(nm, ds,nodeid);
         opNode->operation(provider, syntax, isWorkflow);
         node.reset(opNode);
@@ -275,6 +298,13 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
             loadNode(operationNode, workflow);
             rnode->addSubNode(operationNode,"operations");
             operationNode->owner(node);
+        }
+        _stream >> ocount;
+        for(qint32 o=0; o < ocount; ++o){
+            SPWorkFlowNode junctionNode;
+            loadNode(junctionNode, workflow);
+            rnode->addSubNode(junctionNode,"junctions");
+            junctionNode->owner(node);
         }
 
     }else if ( type == (qint32)WorkFlowNode::ntJUNCTION){
