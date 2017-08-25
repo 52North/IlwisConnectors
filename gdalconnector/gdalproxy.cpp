@@ -321,6 +321,9 @@ QStringList GDALProxy::getExtensions(IlwisTypes tp) const
 {
     if ( tp == itRASTER)
         return _rasterExtensions;
+    if ( tp == itTABLE){
+        return {"*.csv"};
+    }
     else if ( tp == itFEATURE)
         return _featureExtensions;
     else if ( tp == (itFEATURE | itRASTER))
@@ -339,6 +342,8 @@ bool GDALProxy::supports(const Resource &resource) const{
         if ( gdal()->getExtensions(itRASTER).contains(filter,Qt::CaseInsensitive))
             return true;
         if ( gdal()->getExtensions(itFEATURE).contains(filter,Qt::CaseInsensitive))
+            return true;
+        if ( gdal()->getExtensions(itTABLE).contains(filter,Qt::CaseInsensitive))
             return true;
         return false;
     };
