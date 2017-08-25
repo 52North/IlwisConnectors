@@ -186,13 +186,14 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
     // deal with all the operations
     QJsonArray operations;
 
+    std::vector<SPWorkFlowNode> outNodes = workflow->outputNodes();
     std::vector<SPWorkFlowNode> nodes = workflow->nodes();
     for (auto node : nodes) {
         if (node->type() == WorkFlowNode::ntOPERATION) {
             QJsonObject operation;
 
             operation["id"] = (int) node->id();
-            operation["metadata"] = createJSONOperationMetadata(node);
+            operation["metadata"] = createJSONOperationMetadata(node, outNodes);
             operation["inputs"] = createJSONOperationInputList(node);
             operation["outputs"] = createJSONOperationOutputList(node);
             operations.append(operation);
@@ -403,11 +404,23 @@ QJsonObject WorkflowJSONConnector::createJSONWorkflowMetaData(const Resource& re
     return meta;
 }
 
-QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const SPWorkFlowNode& node) {
+QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const SPWorkFlowNode& node, const std::vector<SPWorkFlowNode>& outNodes) {
     QJsonObject jsonMeta;
     jsonMeta["longname"] = node->name();
     jsonMeta["label"] = node->label();
     jsonMeta["description"] = node->description();
+
+    quint64 nid = node->id();
+    std::vector<SPWorkFlowNode>::const_iterator p = std::find_if(
+                outNodes.begin(),
+                outNodes.end(),
+                [nid] (const SPWorkFlowNode& nod) { return nod->id() == nid; }
+    );
+    if (p != outNodes.end())
+        jsonMeta["final"] = QString("true");
+    else
+        jsonMeta["final"] = QString("false");
+
     IOperationMetaData op = node->operation();
     if (op.isValid()){
         QString provider = op->resource()["namespace"].toString();
@@ -491,6 +504,10 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(const SPWorkFlowN
         input["name"] = wfp.label();
         input["id"] = wfp.order();
         input["description"] = wfp.description();
+
+        input["change"] = QString("false");
+        input["show"] = QString("false");
+        input["type"] = QString("");
         if (wfp.state() == WorkFlowParameter::pkFIXED)
             input["value"] = wfp.value();
 
@@ -498,6 +515,13 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(const SPWorkFlowN
         if (op.isValid()) {
             SPOperationParameter parm = op->getInputParameters()[i];
             input["optional"] = parm->isOptional();
+            bool isExp = hasType(parm->type(), itSTRING) && wfp.value().contains('@');
+            bool isNum = hasType(parm->type(), itNUMBER);
+            bool isMap = hasType(parm->type(), itRASTER );    // or should this be itCOVERAGE?
+            if (isNum || isMap) input["show"] = QString("true");
+            if (isNum) input["type"] = QString("number");
+            if (isMap) input["type"] = QString("map");
+            if (isExp) input["type"] = QString("expression");
         }
         inputs.append(input);
     }
@@ -576,15 +600,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationInputList(const SPWorkFlowN
     Add all workflow output fields for an operation to the json document. This happens both
     for internal connections and actual output nodes.
 
-    Internal outputs get a name (auto-generated) based on the name of the operation
-    and the output edge number. Actual output nodes get "_out" appended to the name so they
-    can be recognized. The user output folder is used to create an actual local
-    file location. The output names are generated, because they cannot yet be specified in
-    the workflow (august 2016).
 
-    Every output is also added into a local file list. The list links the WMS layername
-    with the local filename. This necessary to find the correct local file, when the
-    Json file is interpreted as a workflow.
  */
 QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(const SPWorkFlowNode& node) {
     QJsonArray outputs;
@@ -605,6 +621,13 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(const SPWorkFlow
             output["id"] = index;
             output["optional"] = opParam->isOptional();
             output["description"] = opParam->description();
+
+            bool isNum = hasType(opParam->type(), itNUMBER);
+            bool isMap = hasType(opParam->type(), itRASTER );    // or should this be itCOVERAGE?
+            if (isNum || isMap) output["show"] = QString("true");
+            if (isNum) output["type"] = QString("number");
+            if (isMap) output["type"] = QString("map");
+
 //            if (actual[index] != -1) { // an actual workflow output parameter
 //                names[index] += "_out";
 //            }
