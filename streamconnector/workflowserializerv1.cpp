@@ -290,7 +290,7 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
         node.reset(rnode);
         QString rangedef;
         _stream >> rangedef;
-        rnode->setRangeDefinition( rangedef);
+        rnode->setRangeDefinition( rangedef, workflow);
         qint32 ocount;
         _stream >> ocount;
         for(qint32 o=0; o < ocount; ++o){
