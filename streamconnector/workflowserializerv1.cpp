@@ -155,6 +155,7 @@ bool WorkflowSerializerV1::storeNode(const SPWorkFlowNode& node, const IOOptions
         _stream << wp.attachement(true);
         _stream << wp.attachement(false);
         _stream << wp.syntax();
+        _stream << wp.needsQuotes();
         auto line = wp.line();
         _stream << line.size();
         for(int p=0; p< line.size();++p ){
@@ -352,6 +353,9 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
         QString syntax;
         _stream >> syntax;
         wp.addSyntax(syntax);
+        bool quotes;
+        _stream >> quotes;
+        wp.needsQuotes(quotes);
         size_t sz;
         _stream >> sz;
         std::vector<XY> line;
